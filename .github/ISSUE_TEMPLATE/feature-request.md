@@ -1,7 +1,7 @@
 ---
 name: Feature Request
 about: 구현할 기능에 대한 내용을 작성해주세요
-title: "[TODO-]"
+title: ""
 labels: ''
 assignees: ''
 
