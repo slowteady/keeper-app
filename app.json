@@ -1,0 +1,42 @@
+{
+  "expo": {
+    "name": "keeper",
+    "slug": "keeper",
+    "version": "1.0.3",
+    "orientation": "portrait",
+    "scheme": "keeper",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "icon": "./assets/images/icon.png",
+    "ios": {
+      "supportsTablet": false,
+      "entitlements": {
+        "aps-environment": "development"
+      },
+      "bundleIdentifier": "com.keeper.love"
+    },
+    "android": {
+      "package": "com.keeper.love"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "6a4a1356-b842-4472-b78e-e1bebffeb444"
+      }
+    }
+  }
+}
