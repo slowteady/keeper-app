@@ -1,23 +1,45 @@
 import { ArrowLeftIcon, ArrowRightIcon } from '@/components/atoms/icons/ArrowIcon';
 import theme from '@/constants/theme';
-import { forwardRef } from 'react';
-import { Image, ImageProps, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, ImageProps } from 'expo-image';
+import { forwardRef, useState } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import PagerView, { PagerViewProps } from 'react-native-pager-view';
+import { Skeleton } from '../placeholder/Skeleton';
 
 export interface BasicCarouselProps<T extends { uri: string }> extends PagerViewProps {
   data: T[];
   onChange?: (data: T) => void;
+  isLoading?: boolean;
   ImageProps?: ImageProps;
 }
 
 const BasicCarousel = forwardRef<PagerView, BasicCarouselProps<{ uri: string }>>(
-  ({ data, onChange, ImageProps, ...props }, ref) => {
+  ({ data, onChange, isLoading: isFetchLoading, ImageProps, ...props }, ref) => {
+    const [loadedCount, setLoadedCount] = useState(0);
+
+    const handleLoad = () => {
+      setLoadedCount((prevCount) => prevCount + 1);
+    };
+
+    const allImagesLoaded = loadedCount === data.length;
+    const isLoading = isFetchLoading || !allImagesLoaded;
+
     return (
-      <PagerView style={styles.container} ref={ref} {...props}>
-        {data.map(({ uri }, idx) => (
-          <Image key={idx} source={{ uri }} resizeMode="cover" style={{ borderRadius: 10 }} {...ImageProps} />
-        ))}
-      </PagerView>
+      <>
+        {isLoading && <Skeleton />}
+        <PagerView style={styles.container} ref={ref} {...props}>
+          {data.map(({ uri }, idx) => (
+            <Image
+              key={idx}
+              source={{ uri }}
+              contentFit="cover"
+              style={{ borderRadius: 10 }}
+              onLoad={handleLoad}
+              {...ImageProps}
+            />
+          ))}
+        </PagerView>
+      </>
     );
   }
 );
