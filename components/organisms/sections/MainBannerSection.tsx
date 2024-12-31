@@ -1,22 +1,20 @@
 import { Carousel } from '@/components/molecules/carousel/Carousel';
 import { MAIN_CONTENT_SUBTEXT, MAIN_CONTENT_TEXT } from '@/constants/main';
 import theme from '@/constants/theme';
-import { getBannerMockData } from '@/mock/banner';
-import { memo, useCallback, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, NativeSyntheticEvent, StyleSheet, Text, View } from 'react-native';
+import { useBanners } from '@/hooks/queries/useBanners';
+import { memo, useCallback, useRef, useState } from 'react';
+import { NativeSyntheticEvent, StyleSheet, Text, View } from 'react-native';
 import PagerView from 'react-native-pager-view';
 
-interface MainBannerSectionProps {
-  //
-}
-
-const MainBannerSection = memo(({}: MainBannerSectionProps) => {
+const {
+  colors: { background, black, white }
+} = theme;
+const MainBannerSection = memo(() => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
   const carouselRef = useRef<PagerView | null>(null);
 
-  const data = getBannerMockData(10);
-  const convertedData = useMemo(() => data.map(({ id, image }) => ({ id, uri: image })), [data]);
+  const { data = [], isLoading } = useBanners({ select: (data) => data.data });
+  const convertedData = data?.map(({ id, image }) => ({ id, uri: image }));
 
   const handleChangeBanner = useCallback(
     (
@@ -39,12 +37,12 @@ const MainBannerSection = memo(({}: MainBannerSectionProps) => {
       if (type === 'prev' && currentIndex > 0) {
         carouselRef.current.setPage(currentIndex - 1);
         setCurrentIndex(currentIndex - 1);
-      } else if (type === 'next' && currentIndex < data.length - 1) {
+      } else if (type === 'next' && currentIndex < convertedData.length - 1) {
         carouselRef.current.setPage(currentIndex + 1);
         setCurrentIndex(currentIndex + 1);
       }
     },
-    [currentIndex, data.length]
+    [convertedData.length, currentIndex]
   );
 
   return (
@@ -53,19 +51,17 @@ const MainBannerSection = memo(({}: MainBannerSectionProps) => {
         <Text style={styles.title}>{MAIN_CONTENT_TEXT}</Text>
         <Text style={styles.subTitle}>{MAIN_CONTENT_SUBTEXT}</Text>
       </View>
-
       <View style={styles.controllerContainer}>
-        <Carousel.Controller currentIndex={currentIndex} max={data.length} onPress={handlePress} />
+        <Carousel.Controller currentIndex={currentIndex} max={convertedData.length} onPress={handlePress} />
       </View>
-
       <View style={styles.image}>
-        {isLoading ? (
-          <View style={styles.suspense}>
-            <ActivityIndicator size="large" />
-          </View>
-        ) : (
-          <Carousel initialPage={0} data={convertedData} onPageScroll={handleChangeBanner} ref={carouselRef} />
-        )}
+        <Carousel
+          initialPage={0}
+          data={convertedData}
+          isLoading={isLoading}
+          onPageScroll={handleChangeBanner}
+          ref={carouselRef}
+        />
       </View>
     </View>
   );
@@ -73,9 +69,6 @@ const MainBannerSection = memo(({}: MainBannerSectionProps) => {
 
 export default MainBannerSection;
 
-const {
-  colors: { background, black, white }
-} = theme;
 const styles = StyleSheet.create({
   container: {
     backgroundColor: background.default,
@@ -99,7 +92,8 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: 320
+    height: 320,
+    marginBottom: 24
   },
   suspense: {
     backgroundColor: white[900],
@@ -113,3 +107,5 @@ const styles = StyleSheet.create({
     paddingBottom: 28
   }
 });
+
+MainBannerSection.displayName = 'MainBannerSection';
