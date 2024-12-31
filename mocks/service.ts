@@ -1,7 +1,7 @@
 import { fakerKO as faker } from '@faker-js/faker';
 import { http, HttpResponse } from 'msw';
 
-export const banners = http.get('http://3.39.64.86:8080/api/banners', ({ request }) => {
+export const banners = http.get('https://3.39.64.86:8080/api/banners', ({ request }) => {
   const url = new URL(request.url);
   const quantity = Number(url.searchParams.get('quantity')) || 10;
 
