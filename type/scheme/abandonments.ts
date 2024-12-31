@@ -1,4 +1,12 @@
-export interface AbandonmentResponse {
+export interface AbandonmentData {
+  total: number;
+  page: number;
+  size: number;
+  has_next: boolean;
+  value: AbandonmentValue[];
+}
+
+export interface AbandonmentValue {
   /**
    * 유기 동물 id
    */
