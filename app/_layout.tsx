@@ -30,13 +30,12 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-
-      (async () => {
-        enableMocking();
-      })();
-    }
+    (async () => {
+      await enableMocking();
+      if (loaded) {
+        SplashScreen.hideAsync();
+      }
+    })();
   }, [loaded]);
 
   if (!loaded) {
@@ -72,7 +71,7 @@ const enableMocking = async () => {
 
   await import('../mocks/msw.polyfills');
   const { server } = await import('../mocks/server');
-  server.listen();
+  server.listen({ onUnhandledRequest: 'bypass' });
 
   console.log('[MSW] Mock server started');
 };

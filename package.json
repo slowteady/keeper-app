@@ -27,7 +27,6 @@
     "@react-navigation/bottom-tabs": "^7.0.0",
     "@react-navigation/native": "^7.0.0",
     "@tanstack/react-query": "^5.62.7",
-    "axios": "^1.7.9",
     "dayjs": "^1.11.13",
     "expo": "~52.0.18",
     "expo-blur": "~14.0.1",
@@ -71,7 +70,6 @@
     "prettier": "^3.4.2",
     "react-native-url-polyfill": "^2.0.0",
     "react-test-renderer": "18.3.1",
-    "typescript": "^5.3.3",
-    "web-streams-polyfill": "^4.0.0"
+    "typescript": "^5.3.3"
   }
 }
