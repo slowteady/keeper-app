@@ -25,14 +25,11 @@ export const useAbandonmentsContext = () => {
 
 export const AbandonmentsProvider = ({ children }: AbandonmentsProviderProps) => {
   const [animalType, setAnimalType] = useState<AnimalType>('ALL');
-  const [filter, setFilter] = useState<AbandonmentsFilter>('NEAR_DEADLINE');
   const [page, setPage] = useState<number>(1);
 
   const value: Partial<AbandonmentsContextProps> = {
     animalType,
     setAnimalType,
-    filter,
-    setFilter,
     page,
     setPage
   };
