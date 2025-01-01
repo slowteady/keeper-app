@@ -1,6 +1,6 @@
 export interface PublicApiParams {
   endpoint: string;
-  params?: Record<string, string>;
+  params?: Record<string, any>;
   options?: RequestInit;
   timeout?: number;
 }
@@ -30,6 +30,8 @@ export const publicApi = async ({ endpoint, params = {}, options = {}, timeout =
 
     return await response.json();
   } catch (error) {
+    console.error('API call error:', error);
+
     if (error instanceof Error && error.name === 'AbortError') {
       throw new Error('Request timed out');
     }
