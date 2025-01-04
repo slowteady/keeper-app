@@ -26,13 +26,6 @@ const Complete = <T,>({ items, value, onChange, interval, duration = 300 }: Togg
   const values = useRef(items.map(({ value: itemValue }) => useSharedValue(itemValue === value ? 1 : 0))).current;
 
   useEffect(() => {
-    items.forEach(({ value: itemValue }, idx) => {
-      const isSelected = itemValue === value;
-      values[idx].value = withTiming(isSelected ? 1 : 0, { duration });
-    });
-  }, [items, value, duration, values]);
-
-  useEffect(() => {
     requestAnimationFrame(() => {
       Promise.all(
         buttonRefs.current.map(
@@ -47,20 +40,29 @@ const Complete = <T,>({ items, value, onChange, interval, duration = 300 }: Togg
     });
   }, [items]);
 
-  const handleChangeValue = useCallback(
-    (selectedValue: T, idx: number) => {
-      onChange(selectedValue);
-      const selectedButton = buttonRefs.current[idx];
+  useEffect(() => {
+    items.forEach(({ value: itemValue }, idx) => {
+      const isSelected = itemValue === value;
+      values[idx].value = withTiming(isSelected ? 1 : 0, { duration });
 
-      if (selectedButton) {
-        selectedButton.measure((left) => {
-          translateX.value = withTiming(left > interval ? left : interval, {
-            duration
+      if (isSelected) {
+        const selectedButton = buttonRefs.current[idx];
+        if (selectedButton) {
+          selectedButton.measure((left) => {
+            translateX.value = withTiming(left > interval ? left : interval, {
+              duration
+            });
           });
-        });
+        }
       }
+    });
+  }, [items, value, duration, values, translateX, interval]);
+
+  const handleChangeValue = useCallback(
+    (selectedValue: T) => {
+      onChange(selectedValue);
     },
-    [onChange, translateX, interval, duration]
+    [onChange]
   );
 
   return (

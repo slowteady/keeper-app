@@ -1,5 +1,5 @@
 import MainTemplate from '@/components/templates/MainTemplate';
-import { AbandonmentsProvider } from '@/state/AbandonmentsProvider';
+import { AbandonmentsProvider } from '@/states/AbandonmentsProvider';
 import { Stack } from 'expo-router';
 
 const Page = () => {

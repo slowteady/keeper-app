@@ -5,7 +5,7 @@ export interface PublicApiParams {
   timeout?: number;
 }
 
-const BASE_URL = 'https://3.39.64.86:8080/api';
+const BASE_URL = 'https://app.our-keeper.com/api';
 
 export const publicApi = async ({ endpoint, params = {}, options = {}, timeout = 10000 }: PublicApiParams) => {
   const controller = new AbortController();

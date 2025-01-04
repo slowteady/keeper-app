@@ -1,4 +1,4 @@
-import { getBanners } from '@/api/bannersApi';
+import { getBanners } from '@/apis/bannersApi';
 import { BANNERS_QUERY_KEY } from '@/constants/queryKeys';
 import { ApiResponse } from '@/type/common';
 import { BannerData } from '@/type/scheme/banners';

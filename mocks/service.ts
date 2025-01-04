@@ -2,7 +2,7 @@ import { fakerKO as faker } from '@faker-js/faker';
 import { http, HttpResponse } from 'msw';
 import abandonmentsData from './data/abandonments.json';
 
-export const banners = http.get('https://3.39.64.86:8080/api/banners', ({ request }) => {
+export const banners = http.get('https://app.our-keeper.com/api/banners', ({ request }) => {
   const url = new URL(request.url);
   const quantity = Number(url.searchParams.get('quantity')) || 10;
 
@@ -19,7 +19,7 @@ export const banners = http.get('https://3.39.64.86:8080/api/banners', ({ reques
   });
 });
 
-export const abandonments = http.get('https://3.39.64.86:8080/api/abandonments', ({ request }) => {
+export const abandonments = http.get('https://app.our-keeper.com/api/abandonments', ({ request }) => {
   const url = new URL(request.url);
   const page = Number(url.searchParams.get('page')) || 1;
   const size = Number(url.searchParams.get('size')) || 10;

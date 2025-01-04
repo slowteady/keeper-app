@@ -17,7 +17,8 @@ const theme = {
     },
     primary: {
       main: '#1FE678',
-      dark: '#15BC60'
+      dark: '#15BC60',
+      lightest: '#30e582'
     },
     error: {
       main: '#FF4C47',

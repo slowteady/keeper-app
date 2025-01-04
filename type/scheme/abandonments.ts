@@ -10,7 +10,7 @@ export interface AbandonmentValue {
   /**
    * 유기 동물 id
    */
-  id: string;
+  id: number;
 
   /**
    * 이미지
@@ -41,6 +41,21 @@ export interface AbandonmentValue {
    * 특이 사항
    */
   specialMark: string;
+
+  /**
+   * 출생년도
+   */
+  age: string;
+
+  /**
+   * 몸무게
+   */
+  weight: string;
+
+  /**
+   * 성별
+   */
+  gender: string;
 
   /**
    * 구조 장소
