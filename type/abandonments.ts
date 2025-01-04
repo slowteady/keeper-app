@@ -28,3 +28,4 @@ export interface GetAbandonmentsParams {
 }
 
 export type AbandonmentsFilter = 'NEW' | 'NEAR_DEADLINE';
+export type AbandonmentsChipId = 'NEAR_DEADLINE' | 'NEW' | 'GENDER' | 'RESULT' | 'AGE' | 'WEIGHT' | 'COLOR' | 'NEUTER';

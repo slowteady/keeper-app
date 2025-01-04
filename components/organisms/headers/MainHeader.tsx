@@ -3,7 +3,7 @@ import { SearchIcon } from '@/components/atoms/icons/SearchIcon';
 import { Toggle } from '@/components/molecules/button/Toggle';
 import { MAIN_ANIMAL_TOGGLE_CONF } from '@/constants/main';
 import theme from '@/constants/theme';
-import { useAbandonmentsContext } from '@/state/AbandonmentsProvider';
+import { useAbandonmentsContext } from '@/states/AbandonmentsProvider';
 import { AnimalType } from '@/type/common';
 import * as Haptics from 'expo-haptics';
 import { memo } from 'react';

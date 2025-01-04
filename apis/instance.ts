@@ -1,11 +1,11 @@
 export interface PublicApiParams {
   endpoint: string;
-  params?: Record<string, string>;
+  params?: Record<string, any>;
   options?: RequestInit;
   timeout?: number;
 }
 
-const BASE_URL = 'https://3.39.64.86:8080/api';
+const BASE_URL = 'https://app.our-keeper.com/api';
 
 export const publicApi = async ({ endpoint, params = {}, options = {}, timeout = 10000 }: PublicApiParams) => {
   const controller = new AbortController();
@@ -30,6 +30,8 @@ export const publicApi = async ({ endpoint, params = {}, options = {}, timeout =
 
     return await response.json();
   } catch (error) {
+    console.error('API call error:', error);
+
     if (error instanceof Error && error.name === 'AbortError') {
       throw new Error('Request timed out');
     }
