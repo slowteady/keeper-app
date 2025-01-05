@@ -3,19 +3,11 @@ import theme from '@/constants/theme';
 import { useCallback, useState } from 'react';
 import { StyleProp, StyleSheet, TextInput, TextInputProps, TouchableOpacity, View, ViewStyle } from 'react-native';
 
-interface BasicTextFieldProps {
-  //
-}
-
-const BasicTextField = ({}: BasicTextFieldProps) => {
-  return <View></View>;
-};
-
-export interface TextFieldSearchbarProps extends TextInputProps {
+export interface SearchbarProps extends TextInputProps {
   onSubmit: (text: string) => void;
   ViewStyle?: StyleProp<ViewStyle>;
 }
-const Searchbar = ({ onSubmit, ViewStyle, style, ...props }: TextFieldSearchbarProps) => {
+const Searchbar = ({ onSubmit, ViewStyle, style, ...props }: SearchbarProps) => {
   const [value, setValue] = useState('');
 
   const handleChangeText = useCallback((text: string) => {
@@ -50,9 +42,7 @@ const Searchbar = ({ onSubmit, ViewStyle, style, ...props }: TextFieldSearchbarP
   );
 };
 
-export const TextField = Object.assign(BasicTextField, {
-  Searchbar
-});
+export default Searchbar;
 
 const styles = StyleSheet.create({
   textInput: {

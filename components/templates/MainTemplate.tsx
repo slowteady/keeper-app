@@ -2,10 +2,10 @@ import theme from '@/constants/theme';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { FlatList, NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
 import MainHeader from '../organisms/headers/MainHeader';
-import MainAbandonmentSection from '../sections/MainAbandonmentSection';
-import MainAnnounceSection from '../sections/MainAnnounceSection';
-import MainBannerSection from '../sections/MainBannerSection';
-import MainReviewSection from '../sections/MainReviewSection';
+import MainAbandonmentSection from '../sections/main/MainAbandonmentSection';
+import MainAnnounceSection from '../sections/main/MainAnnounceSection';
+import MainBannerSection from '../sections/main/MainBannerSection';
+import MainReviewSection from '../sections/main/MainReviewSection';
 
 const {
   colors: { background }
