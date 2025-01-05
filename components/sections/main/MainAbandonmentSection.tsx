@@ -1,29 +1,31 @@
 import { abandonmentBusiness, AbandonmentBusinessResult } from '@/businesses/abandonmentBusiness';
 import { Toggle } from '@/components/molecules/button/Toggle';
-import { BasicCard } from '@/components/molecules/card/BasicCard';
-import { TextField } from '@/components/molecules/input/TextField';
+import Searchbar from '@/components/molecules/input/Searchbar';
+import { BasicCard } from '@/components/organisms/card/BasicCard';
 import { MAIN_ABANDONMENTS_TOGGLE_CONF } from '@/constants/main';
 import theme from '@/constants/theme';
-import { useGetAbandonments } from '@/hooks/queries/useAbandonments';
+import { useGetInfiniteAbandonments } from '@/hooks/queries/useAbandonments';
 import { useAbandonmentsContext } from '@/states/AbandonmentsProvider';
 import { AbandonmentsFilter } from '@/type/abandonments';
-import { AbandonmentData } from '@/type/scheme/abandonments';
+import { AbandonmentValue } from '@/type/scheme/abandonments';
 import { useCallback, useEffect, useState } from 'react';
 import { FlatList, ListRenderItemInfo, Pressable, StyleSheet, Text, View } from 'react-native';
 
-const DEFAULT_PAGE = 1;
 const DEFAULT_SIZE = 10;
 const MainAbandonmentSection = () => {
   const { animalType = 'ALL' } = useAbandonmentsContext();
-  const [page, setPage] = useState(DEFAULT_PAGE);
   const [filter, setFilter] = useState<AbandonmentsFilter>('NEAR_DEADLINE');
   const [searchValue, setSearchValue] = useState('');
 
-  const { data, isLoading } = useGetAbandonments({ animalType, page, size: DEFAULT_SIZE, filter, search: searchValue });
+  const { data, isLoading, hasNextPage, fetchNextPage } = useGetInfiniteAbandonments({
+    animalType,
+    size: DEFAULT_SIZE,
+    filter,
+    search: searchValue
+  });
 
   useEffect(() => {
     const resetState = () => {
-      setPage(DEFAULT_PAGE);
       setFilter('NEAR_DEADLINE');
       setSearchValue('');
     };
@@ -35,14 +37,18 @@ const MainAbandonmentSection = () => {
     setSearchValue(text);
   }, []);
 
+  const handleFetchMore = () => {
+    if (hasNextPage) fetchNextPage();
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>전체공고</Text>
       <View style={styles.toggleWrap}>
         <Toggle items={MAIN_ABANDONMENTS_TOGGLE_CONF} value={filter} interval={4} onChange={setFilter} />
       </View>
-      <TextField.Searchbar onSubmit={handleSubmit} />
-      <AbandonmentCardList data={data} isLoading={isLoading} filter={filter} />
+      <Searchbar onSubmit={handleSubmit} />
+      <AbandonmentCardList data={data} isLoading={isLoading} filter={filter} onFetch={handleFetchMore} />
     </View>
   );
 };
@@ -50,18 +56,20 @@ const MainAbandonmentSection = () => {
 export default MainAbandonmentSection;
 
 interface MainAbandonmentSectionCardListProps {
-  data?: AbandonmentData;
+  data?: AbandonmentValue[];
   isLoading: boolean;
   filter: AbandonmentsFilter;
+  onFetch: () => void;
 }
 const CARD_GAP = 18;
 const IMAGE_WIDTH = 220;
 const IMAGE_HEIGHT = 170;
-const AbandonmentCardList = ({ data, isLoading, filter }: MainAbandonmentSectionCardListProps) => {
-  const formattedAbandonmentData = abandonmentBusiness(data?.value || [], filter);
+const AbandonmentCardList = ({ data, isLoading, filter, onFetch }: MainAbandonmentSectionCardListProps) => {
+  const formattedAbandonmentData = abandonmentBusiness(data || [], filter);
 
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<AbandonmentBusinessResult>) => {
+      console.log(item.uri);
       return (
         <Pressable>
           <BasicCard isLoading={isLoading} data={item} width={IMAGE_WIDTH} height={IMAGE_HEIGHT} />
@@ -79,6 +87,8 @@ const AbandonmentCardList = ({ data, isLoading, filter }: MainAbandonmentSection
       scrollEventThrottle={40}
       showsHorizontalScrollIndicator={false}
       keyExtractor={({ id }, idx) => `${id}-${idx}`}
+      onEndReached={onFetch}
+      onEndReachedThreshold={1}
       bounces
       initialNumToRender={4}
       decelerationRate="fast"

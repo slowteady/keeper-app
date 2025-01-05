@@ -1,9 +1,9 @@
+import { Description } from '@/components/atoms/text/Description';
+import { Skeleton } from '@/components/molecules/placeholder/Skeleton';
 import theme from '@/constants/theme';
 import { Image as ExpoImage, ImageProps } from 'expo-image';
 import { useState } from 'react';
 import { StyleSheet, Text, TextProps, TextStyle, View, ViewStyle } from 'react-native';
-import { Skeleton } from '../placeholder/Skeleton';
-import { Description } from '../text/Description';
 
 interface BasicCardData<T> {
   id: number;
