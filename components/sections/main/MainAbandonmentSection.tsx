@@ -69,7 +69,6 @@ const AbandonmentCardList = ({ data, isLoading, filter, onFetch }: MainAbandonme
 
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<AbandonmentBusinessResult>) => {
-      console.log(item.uri);
       return (
         <Pressable>
           <BasicCard isLoading={isLoading} data={item} width={IMAGE_WIDTH} height={IMAGE_HEIGHT} />
