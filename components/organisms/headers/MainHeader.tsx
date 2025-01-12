@@ -6,6 +6,7 @@ import theme from '@/constants/theme';
 import { useAbandonmentsContext } from '@/states/AbandonmentsProvider';
 import { AnimalType } from '@/type/common';
 import * as Haptics from 'expo-haptics';
+import { router } from 'expo-router';
 import { memo } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -19,6 +20,11 @@ const MainHeader = memo(() => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
   };
 
+  const handlePressMenu = async () => {
+    router.push('/menu');
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+  };
+
   return (
     <View style={styles.container}>
       <View style={[styles.wrap, { paddingTop: positionTop }]}>
@@ -27,7 +33,7 @@ const MainHeader = memo(() => {
           <TouchableOpacity>
             <SearchIcon />
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handlePressMenu}>
             <MenuIcon />
           </TouchableOpacity>
         </View>
