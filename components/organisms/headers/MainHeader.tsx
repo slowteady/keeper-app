@@ -1,7 +1,7 @@
 import { MenuIcon } from '@/components/atoms/icons/MenuIcon';
 import { SearchIcon } from '@/components/atoms/icons/SearchIcon';
 import { Toggle } from '@/components/molecules/button/Toggle';
-import { MAIN_ANIMAL_TOGGLE_CONF } from '@/constants/main';
+import { ANIMAL_CONF } from '@/constants/config';
 import theme from '@/constants/theme';
 import { useAbandonmentsContext } from '@/states/AbandonmentsProvider';
 import { AnimalType } from '@/type/common';
@@ -28,7 +28,7 @@ const MainHeader = memo(() => {
   return (
     <View style={styles.container}>
       <View style={[styles.wrap, { paddingTop: positionTop }]}>
-        <Toggle items={MAIN_ANIMAL_TOGGLE_CONF} value={animalType} onChange={handleChangeValue} interval={4} />
+        <Toggle items={ANIMAL_CONF} value={animalType} onChange={handleChangeValue} interval={4} />
         <View style={styles.rightContainer}>
           <TouchableOpacity>
             <SearchIcon />
