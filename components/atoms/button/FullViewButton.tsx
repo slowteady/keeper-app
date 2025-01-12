@@ -8,7 +8,7 @@ interface FullViewButtonProps {
 
 const FullViewButton = ({ onPress }: FullViewButtonProps) => {
   return (
-    <Pressable>
+    <Pressable onPress={onPress}>
       <View style={styles.container}>
         <NavArrowIcon width={48} height={48} stroke={theme.colors.white[900]} strokeWidth={1.5} />
       </View>
