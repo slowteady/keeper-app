@@ -9,6 +9,7 @@ const theme = {
       900: '#FFF'
     },
     black: {
+      400: '#C1C4C2',
       500: '#ADB3AF',
       600: '#868B88',
       700: '#3F403F',
@@ -31,6 +32,10 @@ const theme = {
     },
     background: {
       default: '#F3F4F4'
+    },
+    notice: {
+      main: '#FFB800',
+      lightest: '#FFF5DB'
     }
   }
 };

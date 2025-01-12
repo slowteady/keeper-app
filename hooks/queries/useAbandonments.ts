@@ -8,12 +8,12 @@ import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 
 export const useGetAbandonments = (
   params: GetAbandonmentsParams,
-  queryOptions?: UseQueryCustomOptions<ApiResponse<AbandonmentData>, Error, AbandonmentData>
+  queryOptions?: UseQueryCustomOptions<ApiResponse<AbandonmentData>, Error, AbandonmentValue[]>
 ) => {
-  return useQuery<ApiResponse<AbandonmentData>, Error, AbandonmentData>({
+  return useQuery<ApiResponse<AbandonmentData>, Error, AbandonmentValue[]>({
     queryKey: [ABANDONMENTS_QUERY_KEY, params],
     queryFn: () => getAbandonments(params),
-    select: (data) => data.data,
+    select: (data) => data.data.value,
     ...queryOptions
   });
 };

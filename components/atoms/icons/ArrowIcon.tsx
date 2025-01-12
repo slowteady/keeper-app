@@ -22,14 +22,14 @@ export const ArrowLeftIcon = ({ ...props }: SvgProps) => {
   );
 };
 
-export const NavArrowIcon = ({ ...props }: SvgProps) => {
+export const NavArrowIcon = ({ stroke = '#222423', strokeWidth = 1, ...props }: SvgProps) => {
   return (
     <Svg width="24" height="24" viewBox="0 0 24 24" fill="none" {...props}>
       <Mask id="mask0_2659_5298" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
         <Rect y="24" width="24" height="24" transform="rotate(-90 0 24)" fill="#D9D9D9" />
       </Mask>
       <G mask="url(#mask0_2659_5298)">
-        <Path d="M9 16.5L14 12L9 7.5" stroke="#222423" />
+        <Path d="M9 16.5L14 12L9 7.5" stroke={stroke} strokeWidth={strokeWidth} />
       </G>
     </Svg>
   );
