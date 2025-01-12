@@ -1,3 +1,4 @@
+import { LogoEmblem } from '@/components/atoms/icons/LogoIcon';
 import { Description } from '@/components/atoms/text/Description';
 import { Skeleton } from '@/components/molecules/placeholder/Skeleton';
 import theme from '@/constants/theme';
@@ -26,11 +27,20 @@ const Complete = <T,>({ data, isLoading, width, height }: BasicCardProps<T>) => 
   const isCompleteLoad = !isLoading && isLoad;
   const commonStyle = { width, height, marginBottom: 24 };
 
+  const renderNoImage = () => {
+    return (
+      <View style={[styles.image, styles.flex, { backgroundColor: theme.colors.background.default }]}>
+        <Text style={styles.noImageText}>No Image</Text>
+        <LogoEmblem />
+      </View>
+    );
+  };
+
   return (
     <View style={{ width }}>
       <View style={commonStyle}>
         {!isCompleteLoad && <Skeleton />}
-        <Image source={{ uri }} onLoad={() => setIsLoad(true)} />
+        {uri ? <Image source={{ uri }} onLoad={() => setIsLoad(true)} /> : renderNoImage()}
       </View>
       <Title style={{ marginBottom: 20 }}>{title}</Title>
       <Chips data={sortedChips} />
@@ -132,5 +142,17 @@ const styles = StyleSheet.create({
   chipText: {
     fontSize: 12,
     fontWeight: '400'
+  },
+  flex: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    gap: 8
+  },
+  noImageText: {
+    color: theme.colors.black[400],
+    fontSize: 19,
+    fontWeight: '600'
   }
 });
