@@ -66,7 +66,7 @@ export const transformChipLabel = ({ color, neuterYn, filter, weight, gender, ag
     containerStyle?: ViewStyle;
     chipStyle?: TextStyle;
   }[] = [];
-  const { error, success, white, black, primary, background } = theme.colors;
+  const { error, success, white, black, notice } = theme.colors;
 
   switch (filter) {
     case 'NEAR_DEADLINE':
@@ -89,11 +89,21 @@ export const transformChipLabel = ({ color, neuterYn, filter, weight, gender, ag
       break;
   }
 
+  if (neuterYn === 'Y') {
+    data.push({
+      id: 'NEUTER',
+      value: '중성화',
+      sort: 2,
+      containerStyle: { backgroundColor: notice.lightest },
+      chipStyle: { color: notice.main }
+    });
+  }
+
   const genderLabel = gender === 'F' ? '여아' : gender === 'M' ? '남아' : '미상';
   data.push({
     id: 'GENDER',
     value: genderLabel,
-    sort: 2,
+    sort: 3,
     containerStyle: { backgroundColor: white[800] },
     chipStyle: { color: black[600] }
   });
@@ -102,19 +112,9 @@ export const transformChipLabel = ({ color, neuterYn, filter, weight, gender, ag
     data.push({
       id: 'AGE',
       value: `${age}년생`,
-      sort: 3,
-      containerStyle: { backgroundColor: primary.lightest },
-      chipStyle: { color: black[800] }
-    });
-  }
-
-  if (neuterYn === 'Y') {
-    data.push({
-      id: 'NEUTER',
-      value: '중성화',
       sort: 4,
-      containerStyle: { backgroundColor: white[600] },
-      chipStyle: { color: primary.dark }
+      containerStyle: { backgroundColor: white[800] },
+      chipStyle: { color: black[600] }
     });
   }
 
@@ -123,7 +123,7 @@ export const transformChipLabel = ({ color, neuterYn, filter, weight, gender, ag
       id: 'WEIGHT',
       value: `${weight}kg`,
       sort: 5,
-      containerStyle: { backgroundColor: background.default },
+      containerStyle: { backgroundColor: white[800] },
       chipStyle: { color: black[600] }
     });
   }
@@ -133,8 +133,8 @@ export const transformChipLabel = ({ color, neuterYn, filter, weight, gender, ag
       id: 'COLOR',
       value: color,
       sort: 6,
-      containerStyle: { backgroundColor: background.default },
-      chipStyle: { color: primary.dark }
+      containerStyle: { backgroundColor: white[800] },
+      chipStyle: { color: black[600] }
     });
   }
 

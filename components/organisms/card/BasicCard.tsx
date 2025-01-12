@@ -141,7 +141,8 @@ const styles = StyleSheet.create({
   },
   chipText: {
     fontSize: 12,
-    fontWeight: '400'
+    fontWeight: '400',
+    lineHeight: 14
   },
   flex: {
     display: 'flex',

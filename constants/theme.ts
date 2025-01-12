@@ -32,6 +32,10 @@ const theme = {
     },
     background: {
       default: '#F3F4F4'
+    },
+    notice: {
+      main: '#FFB800',
+      lightest: '#FFF5DB'
     }
   }
 };
