@@ -4,7 +4,7 @@ import { Skeleton } from '@/components/molecules/placeholder/Skeleton';
 import theme from '@/constants/theme';
 import { Image as ExpoImage, ImageProps } from 'expo-image';
 import { useState } from 'react';
-import { StyleSheet, Text, TextProps, TextStyle, View, ViewStyle } from 'react-native';
+import { StyleSheet, Text, TextProps, TextStyle, View, ViewProps, ViewStyle } from 'react-native';
 
 interface BasicCardData<T> {
   id: number;
@@ -25,22 +25,12 @@ const Complete = <T,>({ data, isLoading, width, height }: BasicCardProps<T>) => 
   const { uri, title, description, chips } = data;
   const sortedChips = chips.sort((a, b) => a.sort - b.sort);
   const isCompleteLoad = !isLoading && isLoad;
-  const commonStyle = { width, height, marginBottom: 24 };
-
-  const renderNoImage = () => {
-    return (
-      <View style={[styles.image, styles.flex, { backgroundColor: theme.colors.background.default }]}>
-        <Text style={styles.noImageText}>No Image</Text>
-        <LogoEmblem />
-      </View>
-    );
-  };
 
   return (
     <View style={{ width }}>
-      <View style={commonStyle}>
+      <View style={{ width, height, marginBottom: 24 }}>
         {!isCompleteLoad && <Skeleton />}
-        {uri ? <Image source={{ uri }} onLoad={() => setIsLoad(true)} /> : renderNoImage()}
+        {uri ? <Image source={{ uri }} onLoad={() => setIsLoad(true)} /> : <NoImage />}
       </View>
       <Title style={{ marginBottom: 20 }}>{title}</Title>
       <Chips data={sortedChips} />
@@ -64,7 +54,7 @@ const Title = ({ children, style, ...props }: BasicCardTitleProps) => {
   );
 };
 
-export interface BasicCardChipsProps<T> {
+export interface BasicCardChipsProps<T> extends ViewProps {
   data: BasicCardChipsValue<T>[];
 }
 export interface BasicCardChipsValue<T> {
@@ -73,9 +63,9 @@ export interface BasicCardChipsValue<T> {
   containerStyle?: ViewStyle;
   chipStyle?: TextStyle;
 }
-const Chips = <T,>({ data }: BasicCardChipsProps<T>) => {
+const Chips = <T,>({ data, style }: BasicCardChipsProps<T>) => {
   return (
-    <View style={styles.chipsBlockContainer}>
+    <View style={[styles.chipsBlockContainer, style]}>
       {data.map(({ id, value, containerStyle, chipStyle }, idx) => {
         const key = `${id}-${idx}`;
 
@@ -89,28 +79,46 @@ const Chips = <T,>({ data }: BasicCardChipsProps<T>) => {
   );
 };
 
+export interface BasicCardDescriptionsProps {
+  data: BasicCardDescriptionsValue[];
+  style?: ViewStyle;
+  primaryStyle?: TextStyle;
+  secondaryStyle?: TextStyle;
+}
 export interface BasicCardDescriptionsValue {
   label: string;
   value: string;
 }
-const Descriptions = ({ data }: Record<'data', BasicCardDescriptionsValue[]>) => {
+const Descriptions = ({ data, style, primaryStyle, secondaryStyle }: BasicCardDescriptionsProps) => {
   return data.map(({ label, value }, idx) => {
     const key = `${label}-${idx}`;
 
     return (
       <Description
         key={key}
-        PrimaryTextProps={{ children: label, style: { minWidth: 55 } }}
-        SecondaryTextProps={{ children: value }}
+        PrimaryTextProps={{ children: label, style: { minWidth: 55, ...primaryStyle } }}
+        SecondaryTextProps={{ children: value, style: { ...secondaryStyle } }}
+        style={style}
       />
     );
   });
 };
 
+const NoImage = ({ style }: Record<string, ViewStyle>) => {
+  return (
+    <View style={[styles.image, styles.flex, { backgroundColor: theme.colors.background.default }, style]}>
+      <Text style={styles.noImageText}>No Image</Text>
+      <LogoEmblem />
+    </View>
+  );
+};
+
 export const BasicCard = Object.assign(Complete, {
   Image,
   Title,
-  Descriptions
+  Descriptions,
+  Chips,
+  NoImage
 });
 
 const styles = StyleSheet.create({
