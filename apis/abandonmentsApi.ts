@@ -1,6 +1,6 @@
-import { GetAbandonmentsParams } from '@/type/abandonments';
-import { ApiResponse } from '@/type/common';
-import { AbandonmentData } from '@/type/scheme/abandonments';
+import { GetAbandonmentsParams } from '@/types/abandonments';
+import { ApiResponse } from '@/types/common';
+import { AbandonmentData } from '@/types/scheme/abandonments';
 import { publicApi } from './instance';
 
 export const getAbandonments = async (params: GetAbandonmentsParams): Promise<ApiResponse<AbandonmentData>> => {

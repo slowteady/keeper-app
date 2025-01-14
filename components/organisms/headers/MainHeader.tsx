@@ -4,7 +4,7 @@ import { Toggle } from '@/components/molecules/button/Toggle';
 import { ANIMAL_CONF } from '@/constants/config';
 import theme from '@/constants/theme';
 import { useAbandonmentsContext } from '@/states/AbandonmentsProvider';
-import { AnimalType } from '@/type/common';
+import { AnimalType } from '@/types/common';
 import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import { memo } from 'react';

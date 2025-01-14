@@ -1,9 +1,9 @@
 import { getAbandonments } from '@/apis/abandonmentsApi';
 import { ABANDONMENTS_QUERY_KEY } from '@/constants/queryKeys';
-import { GetAbandonmentsParams } from '@/type/abandonments';
-import { ApiResponse } from '@/type/common';
-import { AbandonmentData, AbandonmentValue } from '@/type/scheme/abandonments';
-import { UseInfiniteQueryCustomOptions, UseQueryCustomOptions } from '@/type/utils';
+import { GetAbandonmentsParams } from '@/types/abandonments';
+import { ApiResponse } from '@/types/common';
+import { AbandonmentData, AbandonmentValue } from '@/types/scheme/abandonments';
+import { UseInfiniteQueryCustomOptions, UseQueryCustomOptions } from '@/types/utils';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 
 export const useGetAbandonments = (

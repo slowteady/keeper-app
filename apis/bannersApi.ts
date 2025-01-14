@@ -1,5 +1,5 @@
-import { ApiResponse } from '@/type/common';
-import { BannerData } from '@/type/scheme/banners';
+import { ApiResponse } from '@/types/common';
+import { BannerData } from '@/types/scheme/banners';
 import { publicApi } from './instance';
 
 export const getBanners = async (): Promise<ApiResponse<BannerData[]>> => {

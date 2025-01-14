@@ -1,7 +1,7 @@
-import { AbandonmentsFilter } from '@/type/abandonments';
-import { AnimalType } from '@/type/common';
+import { AbandonmentsConfigValue } from '@/types/abandonments';
+import { AnimalType } from '@/types/common';
 
-export const ABANDONMENTS_CONF: { value: AbandonmentsFilter; label: string }[] = [
+export const ABANDONMENTS_CONF: AbandonmentsConfigValue[] = [
   { value: 'NEAR_DEADLINE', label: '마감임박공고' },
   { value: 'NEW', label: '신규공고' }
 ] as const;
