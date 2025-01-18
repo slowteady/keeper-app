@@ -175,7 +175,6 @@ const AbandonmentCard = ({ width, data, isLoading }: AbandonmentCardProps) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingVertical: 24,
     paddingHorizontal: PADDING_HORIZONTAL,
     position: 'relative'
   },
@@ -184,7 +183,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 20
+    marginVertical: 20
   },
   title: {
     color: theme.colors.black[900],

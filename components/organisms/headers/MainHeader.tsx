@@ -3,17 +3,17 @@ import { SearchIcon } from '@/components/atoms/icons/SearchIcon';
 import { Toggle } from '@/components/molecules/button/Toggle';
 import { ANIMAL_CONF } from '@/constants/config';
 import theme from '@/constants/theme';
+import { useLayout } from '@/hooks/useLayout';
 import { useAbandonmentsContext } from '@/states/AbandonmentsProvider';
 import { AnimalType } from '@/types/common';
 import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import { memo } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const MainHeader = memo(() => {
   const { animalType = 'ALL', setAnimalType } = useAbandonmentsContext();
-  const positionTop = useSafeAreaInsets().top || 16;
+  const { headerTop } = useLayout();
 
   const handleChangeValue = async (value: AnimalType) => {
     setAnimalType?.(value);
@@ -27,7 +27,7 @@ const MainHeader = memo(() => {
 
   return (
     <View style={styles.container}>
-      <View style={[styles.wrap, { paddingTop: positionTop }]}>
+      <View style={[styles.wrap, { paddingTop: headerTop }]}>
         <Toggle items={ANIMAL_CONF} value={animalType} onChange={handleChangeValue} interval={4} />
         <View style={styles.rightContainer}>
           <TouchableOpacity>

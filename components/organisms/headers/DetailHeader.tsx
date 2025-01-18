@@ -2,12 +2,12 @@ import { ArrowLeftIcon } from '@/components/atoms/icons/ArrowIcon';
 import { HomeIcon } from '@/components/atoms/icons/HomeIcon';
 import { SearchIcon } from '@/components/atoms/icons/SearchIcon';
 import theme from '@/constants/theme';
+import { useLayout } from '@/hooks/useLayout';
 import { router } from 'expo-router';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const DetailHeader = () => {
-  const { top = 16 } = useSafeAreaInsets();
+  const { headerTop } = useLayout();
 
   const handlePressBack = () => {
     router.back();
@@ -22,7 +22,7 @@ const DetailHeader = () => {
   };
 
   return (
-    <View style={[styles.container, { paddingTop: top }]}>
+    <View style={[styles.container, { paddingTop: headerTop }]}>
       <TouchableOpacity onPress={handlePressBack}>
         <ArrowLeftIcon width={24} height={24} />
       </TouchableOpacity>
