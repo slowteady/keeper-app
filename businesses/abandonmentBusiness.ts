@@ -1,28 +1,14 @@
 import theme from '@/constants/theme';
-import { AbandonmentsChipId, AbandonmentsFilter } from '@/type/abandonments';
-import { AbandonmentValue } from '@/type/scheme/abandonments';
+import { AbandonmentsChipId, AbandonmentsFilter } from '@/types/abandonments';
+import { AbandonmentValue } from '@/types/scheme/abandonments';
 import dayjs from 'dayjs';
 import { TextStyle, ViewStyle } from 'react-native';
 
 export type AbandonmentBusinessResult = ReturnType<typeof abandonmentBusiness>[number];
 export const abandonmentBusiness = (data: AbandonmentValue[], filter: AbandonmentsFilter) => {
   return data.map(
-    ({
-      id,
-      image,
-      specificType,
-      noticeStartDt,
-      noticeEndDt,
-      orgName,
-      happenPlace,
-      color,
-      neuterYn,
-      weight,
-      gender,
-      age
-    }) => {
+    ({ id, image, specificType, noticeStartDt, noticeEndDt, orgName, happenPlace, neuterYn, weight, gender, age }) => {
       const chipLabelParams: ChipLabelParams = {
-        color,
         neuterYn,
         filter,
         weight,
@@ -51,14 +37,13 @@ export const abandonmentBusiness = (data: AbandonmentValue[], filter: Abandonmen
 };
 
 interface ChipLabelParams {
-  color: string;
   neuterYn: string;
   filter: AbandonmentsFilter;
   weight: string;
   gender: string;
   age: string;
 }
-export const transformChipLabel = ({ color, neuterYn, filter, weight, gender, age }: ChipLabelParams) => {
+export const transformChipLabel = ({ neuterYn, filter, weight, gender, age }: ChipLabelParams) => {
   let data: {
     id: AbandonmentsChipId;
     value: string;
@@ -123,16 +108,6 @@ export const transformChipLabel = ({ color, neuterYn, filter, weight, gender, ag
       id: 'WEIGHT',
       value: `${weight}kg`,
       sort: 5,
-      containerStyle: { backgroundColor: white[800] },
-      chipStyle: { color: black[600] }
-    });
-  }
-
-  if (color) {
-    data.push({
-      id: 'COLOR',
-      value: color,
-      sort: 6,
       containerStyle: { backgroundColor: white[800] },
       chipStyle: { color: black[600] }
     });

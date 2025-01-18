@@ -1,5 +1,5 @@
-import { AbandonmentsFilter } from '@/type/abandonments';
-import { AnimalType } from '@/type/common';
+import { AbandonmentsFilter } from '@/types/abandonments';
+import { AnimalType } from '@/types/common';
 import { createContext, useContext, useState } from 'react';
 
 export interface AbandonmentsContextProps {

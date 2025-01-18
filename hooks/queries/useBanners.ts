@@ -1,8 +1,8 @@
 import { getBanners } from '@/apis/bannersApi';
 import { BANNERS_QUERY_KEY } from '@/constants/queryKeys';
-import { ApiResponse } from '@/type/common';
-import { BannerData } from '@/type/scheme/banners';
-import { UseQueryCustomOptions } from '@/type/utils';
+import { ApiResponse } from '@/types/common';
+import { BannerData } from '@/types/scheme/banners';
+import { UseQueryCustomOptions } from '@/types/utils';
 import { useQuery } from '@tanstack/react-query';
 
 export const useBanners = (queryOptions?: UseQueryCustomOptions<ApiResponse<BannerData[]>, Error, BannerData[]>) => {
