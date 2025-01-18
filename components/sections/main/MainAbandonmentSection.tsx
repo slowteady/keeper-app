@@ -28,7 +28,14 @@ const MainAbandonmentSection = () => {
     resetState();
   }, [animalType]);
 
-  const handlePress = () => {};
+  const handlePress = (item: AbandonmentBusinessResult) => {
+    const { id } = item;
+
+    router.push({
+      pathname: '/abandonments/[id]',
+      params: { id }
+    });
+  };
 
   const handlePressButton = () => {
     router.push('/abandonments');
@@ -63,7 +70,7 @@ interface MainAbandonmentSectionCardListProps {
   data?: AbandonmentValue[];
   isLoading: boolean;
   filter: AbandonmentsFilter;
-  onPress: () => void;
+  onPress: (item: AbandonmentBusinessResult) => void;
   onPressMoreButton: () => void;
 }
 const CARD_GAP = 18;
@@ -81,7 +88,7 @@ const AbandonmentCardList = ({
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<AbandonmentBusinessResult>) => {
       return (
-        <Pressable onPress={onPress}>
+        <Pressable onPress={() => onPress(item)}>
           <BasicCard isLoading={isLoading} data={item} width={IMAGE_WIDTH} height={IMAGE_HEIGHT} />
         </Pressable>
       );
