@@ -22,7 +22,7 @@ export const HeartIcon = ({ ...props }: SvgProps) => {
 };
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
-export const AnimatedHeartIcon = forwardRef<any, AnimatedProps<{ animatedProps: any }>>((props, ref) => {
+export const AnimatedMenuHeartIcon = forwardRef<any, AnimatedProps<{ animatedProps: any }>>((props, ref) => {
   return (
     <Svg width="24" height="24" viewBox="0 0 24 24" fill="none">
       <AnimatedPath
@@ -42,4 +42,19 @@ export const AnimatedHeartIcon = forwardRef<any, AnimatedProps<{ animatedProps: 
   );
 });
 
+export const AnimatedHeartIcon = forwardRef<any, AnimatedProps<{ animatedProps: any }>>((props, ref) => {
+  return (
+    <Svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+      <AnimatedPath
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M16.8376 3C15.331 2.99873 13.8874 3.60428 12.8326 4.68L12.0001 5.52L11.1676 4.68C10.1115 3.60629 8.66859 3.00157 7.16258 3.00157C5.65656 3.00157 4.21361 3.60629 3.15758 4.68C0.944871 6.9325 0.944871 10.5425 3.15758 12.795L12.0001 21.75L20.8426 12.795C23.0553 10.5425 23.0553 6.9325 20.8426 4.68C19.7868 3.60571 18.3438 3.00042 16.8376 3Z"
+        stroke="#868B88"
+        {...props}
+      />
+    </Svg>
+  );
+});
+
+AnimatedMenuHeartIcon.displayName = 'AnimatedMenuHeartIcon';
 AnimatedHeartIcon.displayName = 'AnimatedHeartIcon';
