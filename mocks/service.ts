@@ -56,3 +56,13 @@ export const abandonments = http.get('https://app.our-keeper.com/api/abandonment
 
   return HttpResponse.json(responseData);
 });
+
+export const abandonment = http.get('https://app.our-keeper.com/api/abandonments/:id', ({ params }) => {
+  const { id } = params;
+  const abandonmentItem = abandonmentsData.find((item) => item.id === Number(id));
+
+  return HttpResponse.json({
+    code: 'OK',
+    data: abandonmentItem
+  });
+});
