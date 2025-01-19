@@ -1,4 +1,4 @@
-import { abandonmentBusiness, AbandonmentBusinessResult } from '@/businesses/abandonmentBusiness';
+import { AbandonmentBusinessResult, abandonmentsBusiness } from '@/businesses/abandonmentsBusiness';
 import FullViewButton from '@/components/atoms/button/FullViewButton';
 import { NavArrowIcon } from '@/components/atoms/icons/ArrowIcon';
 import { Toggle } from '@/components/molecules/button/Toggle';
@@ -83,7 +83,7 @@ const AbandonmentCardList = ({
   onPress,
   onPressMoreButton
 }: MainAbandonmentSectionCardListProps) => {
-  const formattedAbandonmentData = abandonmentBusiness(data || [], filter);
+  const formattedAbandonmentData = abandonmentsBusiness(data || [], filter);
 
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<AbandonmentBusinessResult>) => {
