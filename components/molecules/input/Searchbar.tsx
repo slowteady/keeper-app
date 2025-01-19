@@ -35,7 +35,7 @@ const Searchbar = ({ onSubmit, ViewStyle, style, ...props }: SearchbarProps) => 
         style={[styles.textInput, style]}
         {...props}
       />
-      <TouchableOpacity onPress={handleSubmit} style={styles.searchButton}>
+      <TouchableOpacity onPress={handleSubmit} style={styles.searchButton} activeOpacity={0.5}>
         <SearchIcon width={20} height={20} stroke={theme.colors.black[500]} strokeWidth={2} />
       </TouchableOpacity>
     </View>

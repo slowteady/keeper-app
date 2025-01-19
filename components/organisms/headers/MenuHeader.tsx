@@ -19,11 +19,11 @@ const MenuHeader = () => {
 
   return (
     <View style={[styles.container, { paddingTop: headerTop }]}>
-      <TouchableOpacity onPress={handlePressHome}>
+      <TouchableOpacity onPress={handlePressHome} activeOpacity={0.5}>
         <HomeIcon />
       </TouchableOpacity>
       <LogoIcon />
-      <TouchableOpacity onPress={handlePressMenuClose}>
+      <TouchableOpacity onPress={handlePressMenuClose} activeOpacity={0.5}>
         <CloseIcon />
       </TouchableOpacity>
     </View>

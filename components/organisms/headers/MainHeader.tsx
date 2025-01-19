@@ -30,10 +30,10 @@ const MainHeader = memo(() => {
       <View style={[styles.wrap, { paddingTop: headerTop }]}>
         <Toggle items={ANIMAL_CONF} value={animalType} onChange={handleChangeValue} interval={4} />
         <View style={styles.rightContainer}>
-          <TouchableOpacity>
+          <TouchableOpacity activeOpacity={0.5}>
             <SearchIcon />
           </TouchableOpacity>
-          <TouchableOpacity onPress={handlePressMenu}>
+          <TouchableOpacity onPress={handlePressMenu} activeOpacity={0.5}>
             <MenuIcon />
           </TouchableOpacity>
         </View>

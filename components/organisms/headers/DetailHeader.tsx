@@ -23,15 +23,15 @@ const DetailHeader = () => {
 
   return (
     <View style={[styles.container, { paddingTop: headerTop }]}>
-      <TouchableOpacity onPress={handlePressBack}>
+      <TouchableOpacity onPress={handlePressBack} activeOpacity={0.5}>
         <ArrowLeftIcon width={24} height={24} />
       </TouchableOpacity>
 
       <View style={styles.rightContainer}>
-        <TouchableOpacity onPress={handlePressHome}>
+        <TouchableOpacity onPress={handlePressHome} activeOpacity={0.5}>
           <HomeIcon />
         </TouchableOpacity>
-        <TouchableOpacity onPress={handlePressSearch}>
+        <TouchableOpacity onPress={handlePressSearch} activeOpacity={0.5}>
           <SearchIcon />
         </TouchableOpacity>
       </View>
