@@ -1,10 +1,22 @@
-import { getAbandonments } from '@/apis/abandonmentsApi';
-import { ABANDONMENTS_QUERY_KEY } from '@/constants/queryKeys';
+import { getAbandonment, getAbandonments } from '@/apis/abandonmentsApi';
+import { ABANDONMENT_QUERY_KEY, ABANDONMENTS_QUERY_KEY } from '@/constants/queryKeys';
 import { GetAbandonmentsParams } from '@/types/abandonments';
 import { ApiResponse } from '@/types/common';
 import { AbandonmentData, AbandonmentValue } from '@/types/scheme/abandonments';
 import { UseInfiniteQueryCustomOptions, UseQueryCustomOptions } from '@/types/utils';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+
+export const useGetAbandonment = (
+  id: number,
+  queryOptions?: UseQueryCustomOptions<ApiResponse<AbandonmentValue>, Error, AbandonmentValue>
+) => {
+  return useQuery<ApiResponse<AbandonmentValue>, Error, AbandonmentValue>({
+    queryKey: [ABANDONMENT_QUERY_KEY, id],
+    queryFn: () => getAbandonment(id),
+    select: (data) => data.data,
+    ...queryOptions
+  });
+};
 
 export const useGetAbandonments = (
   params: GetAbandonmentsParams,
