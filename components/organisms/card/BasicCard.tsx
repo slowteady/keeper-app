@@ -1,5 +1,4 @@
 import { LogoEmblem } from '@/components/atoms/icons/LogoIcon';
-import { Description } from '@/components/atoms/text/Description';
 import { Skeleton } from '@/components/molecules/placeholder/Skeleton';
 import theme from '@/constants/theme';
 import { Image as ExpoImage, ImageProps } from 'expo-image';
@@ -33,7 +32,7 @@ const Complete = <T,>({ data, isLoading, width, height }: BasicCardProps<T>) => 
         {uri ? <Image source={{ uri }} onLoad={() => setIsLoad(true)} /> : <NoImage />}
       </View>
       <Title style={{ marginBottom: 20 }}>{title}</Title>
-      <Chips data={sortedChips} />
+      <Chips data={sortedChips} style={{ minHeight: 55 }} />
       <Descriptions data={description} />
     </View>
   );
@@ -94,12 +93,12 @@ const Descriptions = ({ data, style, primaryStyle, secondaryStyle }: BasicCardDe
     const key = `${label}-${idx}`;
 
     return (
-      <Description
-        key={key}
-        PrimaryTextProps={{ children: label, style: { minWidth: 50, ...primaryStyle } }}
-        SecondaryTextProps={{ children: value, style: { ...secondaryStyle } }}
-        style={style}
-      />
+      <View key={key} style={[styles.descriptionContainer, style]}>
+        <Text style={[styles.label, primaryStyle]}>{label}</Text>
+        <Text numberOfLines={1} ellipsizeMode="tail" style={[styles.text, secondaryStyle]}>
+          {value}
+        </Text>
+      </View>
     );
   });
 };
@@ -162,5 +161,28 @@ const styles = StyleSheet.create({
     color: theme.colors.black[400],
     fontSize: 19,
     fontWeight: '600'
+  },
+  descriptionContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    flex: 1,
+    gap: 16,
+    alignItems: 'center',
+    marginBottom: 14
+  },
+  label: {
+    flexShrink: 0,
+    fontSize: 14,
+    color: theme.colors.black[600],
+    fontWeight: '400',
+    lineHeight: 18,
+    minWidth: 50
+  },
+  text: {
+    flex: 1,
+    color: theme.colors.black[900],
+    fontSize: 14,
+    fontWeight: '400',
+    lineHeight: 18
   }
 });
