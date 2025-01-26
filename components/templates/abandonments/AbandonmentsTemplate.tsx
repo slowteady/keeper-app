@@ -1,4 +1,4 @@
-import { abandonmentBusiness, AbandonmentBusinessResult } from '@/businesses/abandonmentBusiness';
+import { AbandonmentBusinessResult, abandonmentsBusiness } from '@/businesses/abandonmentsBusiness';
 import ScrollFloatingButton from '@/components/atoms/button/ScrollFloatingButton';
 import { Skeleton } from '@/components/molecules/placeholder/Skeleton';
 import BasicTab from '@/components/molecules/tab/BasicTab';
@@ -81,7 +81,7 @@ const AbandonmentCardList = memo(({ data, onFetch, isLoading, filter }: Abandonm
     router.push({ pathname: '/abandonments/[id]', params: { id } });
   }, []);
 
-  const formattedAbandonmentData = abandonmentBusiness(data || [], filter);
+  const formattedAbandonmentData = abandonmentsBusiness(data || [], filter);
   const imageWidth = useMemo(() => (Dimensions.get('screen').width - PADDING_HORIZONTAL * 2) / 2 - CARD_GAP, []);
 
   const renderItem = useCallback(
@@ -175,7 +175,6 @@ const AbandonmentCard = ({ width, data, isLoading }: AbandonmentCardProps) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingVertical: 24,
     paddingHorizontal: PADDING_HORIZONTAL,
     position: 'relative'
   },
@@ -184,7 +183,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 20
+    marginVertical: 20
   },
   title: {
     color: theme.colors.black[900],

@@ -12,8 +12,8 @@ const MenuTemplate = () => {
     <View style={styles.container}>
       <View style={styles.menuWrapper}>
         <AdoptMenuSection />
-        <ShelterMenuSection />
         <CommunityMenuSection />
+        <ShelterMenuSection />
         <AboutUsMenuSection />
         <LoginMenuSection />
         <MypageMenuSection />

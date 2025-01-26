@@ -4,44 +4,54 @@ import { AbandonmentValue } from '@/types/scheme/abandonments';
 import dayjs from 'dayjs';
 import { TextStyle, ViewStyle } from 'react-native';
 
-export type AbandonmentBusinessResult = ReturnType<typeof abandonmentBusiness>[number];
-export const abandonmentBusiness = (data: AbandonmentValue[], filter: AbandonmentsFilter) => {
-  return data.map(
-    ({ id, image, specificType, noticeStartDt, noticeEndDt, orgName, happenPlace, neuterYn, weight, gender, age }) => {
-      const chipLabelParams: ChipLabelParams = {
-        neuterYn,
-        filter,
-        weight,
-        gender,
-        age
-      };
-      const descriptionParams: DescriptionParams = {
-        specificType,
-        noticeStartDt,
-        noticeEndDt,
-        orgName,
-        happenPlace
-      };
-      const transformedDescription = transformDescription(descriptionParams);
-      const transformedChipLabel = transformChipLabel(chipLabelParams);
+export type AbandonmentBusinessResult = ReturnType<typeof abandonmentsBusiness>[number];
+export const abandonmentsBusiness = (data: AbandonmentValue[], filter?: AbandonmentsFilter) => {
+  return data.map((item) => transformAbandonmentData(item, filter));
+};
 
-      return {
-        id,
-        uri: image,
-        title: specificType,
-        description: transformedDescription,
-        chips: transformedChipLabel
-      };
-    }
-  );
+export type AbandonmentDetailBusinessResult = ReturnType<typeof abandonmentDetailBusiness>;
+export const abandonmentDetailBusiness = (data: AbandonmentValue) => {
+  return transformAbandonmentData(data);
+};
+
+const transformAbandonmentData = (data: AbandonmentValue, filter?: AbandonmentsFilter) => {
+  const { id, image, neuterYn, weight, gender, age, specificType, noticeStartDt, noticeEndDt, orgName, happenPlace } =
+    data;
+
+  const chipLabelParams: ChipLabelParams = {
+    neuterYn,
+    weight,
+    gender,
+    age,
+    filter
+  };
+
+  const descriptionParams: DescriptionParams = {
+    specificType,
+    noticeStartDt,
+    noticeEndDt,
+    orgName,
+    happenPlace
+  };
+
+  const transformedDescription = transformDescription(descriptionParams);
+  const transformedChipLabel = transformChipLabel(chipLabelParams);
+
+  return {
+    id,
+    uri: image,
+    title: specificType,
+    description: transformedDescription,
+    chips: transformedChipLabel
+  };
 };
 
 interface ChipLabelParams {
   neuterYn: string;
-  filter: AbandonmentsFilter;
   weight: string;
   gender: string;
   age: string;
+  filter?: AbandonmentsFilter;
 }
 export const transformChipLabel = ({ neuterYn, filter, weight, gender, age }: ChipLabelParams) => {
   let data: {

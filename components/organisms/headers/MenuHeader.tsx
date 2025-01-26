@@ -2,12 +2,12 @@ import { CloseIcon } from '@/components/atoms/icons/CloseIcon';
 import { HomeIcon } from '@/components/atoms/icons/HomeIcon';
 import { LogoIcon } from '@/components/atoms/icons/LogoIcon';
 import theme from '@/constants/theme';
+import { useLayout } from '@/hooks/useLayout';
 import { router } from 'expo-router';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const MenuHeader = () => {
-  const { top = 16 } = useSafeAreaInsets();
+  const { headerTop } = useLayout();
 
   const handlePressHome = () => {
     router.replace('/');
@@ -18,12 +18,12 @@ const MenuHeader = () => {
   };
 
   return (
-    <View style={[styles.container, { paddingTop: top }]}>
-      <TouchableOpacity onPress={handlePressHome}>
+    <View style={[styles.container, { paddingTop: headerTop }]}>
+      <TouchableOpacity onPress={handlePressHome} activeOpacity={0.5}>
         <HomeIcon />
       </TouchableOpacity>
       <LogoIcon />
-      <TouchableOpacity onPress={handlePressMenuClose}>
+      <TouchableOpacity onPress={handlePressMenuClose} activeOpacity={0.5}>
         <CloseIcon />
       </TouchableOpacity>
     </View>

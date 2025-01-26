@@ -1,5 +1,5 @@
 import { NavArrowIcon } from '@/components/atoms/icons/ArrowIcon';
-import { AnimatedHeartIcon } from '@/components/atoms/icons/HeartIcon';
+import { AnimatedMenuHeartIcon } from '@/components/atoms/icons/HeartIcon';
 import { Accordion } from '@/components/molecules/transition/Accordion';
 import { ADOPT_SUB_MENU } from '@/constants/menu';
 import theme from '@/constants/theme';
@@ -37,7 +37,7 @@ const AdoptMenuSection = () => {
     <View style={{ position: 'relative' }}>
       <Pressable onPress={handleExpand}>
         <View style={styles.box}>
-          <AnimatedHeartIcon animatedProps={animatedProps} />
+          <AnimatedMenuHeartIcon animatedProps={animatedProps} />
           <Text style={[styles.text]}>입양공고</Text>
           <Animated.View style={animatedStyle}>
             <NavArrowIcon />

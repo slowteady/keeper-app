@@ -96,7 +96,7 @@ const Descriptions = ({ data, style, primaryStyle, secondaryStyle }: BasicCardDe
     return (
       <Description
         key={key}
-        PrimaryTextProps={{ children: label, style: { minWidth: 55, ...primaryStyle } }}
+        PrimaryTextProps={{ children: label, style: { minWidth: 50, ...primaryStyle } }}
         SecondaryTextProps={{ children: value, style: { ...secondaryStyle } }}
         style={style}
       />
@@ -138,8 +138,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 6,
-    marginBottom: 24,
-    minHeight: 60
+    marginBottom: 24
   },
   chipsContainer: {
     alignSelf: 'baseline',

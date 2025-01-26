@@ -1,3 +1,3 @@
-import { abandonments, banners } from './service';
+import { abandonment, abandonments, banners } from './service';
 
-export const handlers = [banners, abandonments];
+export const handlers = [banners, abandonments, abandonment];
