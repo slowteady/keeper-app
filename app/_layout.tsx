@@ -2,6 +2,9 @@ import { useReactQueryDevTools } from '@dev-plugins/react-query';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import dayjs from 'dayjs';
+import 'dayjs/locale/ko';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 import 'expo-dev-client';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
@@ -35,6 +38,7 @@ export default function RootLayout() {
       await enableMocking();
       if (loaded) {
         SplashScreen.hideAsync();
+        dayjs.extend(customParseFormat);
       }
     })();
   }, [loaded]);
