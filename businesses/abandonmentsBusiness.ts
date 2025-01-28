@@ -4,19 +4,14 @@ import { AbandonmentValue } from '@/types/scheme/abandonments';
 import dayjs from 'dayjs';
 import { TextStyle, ViewStyle } from 'react-native';
 
-export type AbandonmentBusinessResult = ReturnType<typeof abandonmentsBusiness>[number];
+export type AbandonmentsBusinessResult = ReturnType<typeof abandonmentsBusiness>[number];
 export const abandonmentsBusiness = (data: AbandonmentValue[], filter?: AbandonmentsFilter) => {
   return data.map((item) => transformAbandonmentData(item, filter));
 };
 
-export type AbandonmentDetailBusinessResult = ReturnType<typeof abandonmentDetailBusiness>;
-export const abandonmentDetailBusiness = (data: AbandonmentValue) => {
-  return transformAbandonmentData(data);
-};
-
-const transformAbandonmentData = (data: AbandonmentValue, filter?: AbandonmentsFilter) => {
-  const { id, image, neuterYn, weight, gender, age, specificType, noticeStartDt, noticeEndDt, orgName, happenPlace } =
-    data;
+export type TransformedAbandonmentData = ReturnType<typeof transformAbandonmentData>;
+export const transformAbandonmentData = (data: AbandonmentValue, filter?: AbandonmentsFilter) => {
+  const { image, neuterYn, weight, gender, age, specificType, noticeStartDt, noticeEndDt, orgName, happenPlace } = data;
 
   const chipLabelParams: ChipLabelParams = {
     neuterYn,
@@ -38,7 +33,7 @@ const transformAbandonmentData = (data: AbandonmentValue, filter?: AbandonmentsF
   const transformedChipLabel = transformChipLabel(chipLabelParams);
 
   return {
-    id,
+    ...data,
     uri: image,
     title: specificType,
     description: transformedDescription,
