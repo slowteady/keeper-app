@@ -7,9 +7,24 @@ import { formatTimeAMPM } from '@/utils/timeUtils';
  */
 export type TransformedShelterValue = ReturnType<typeof transformShelterData>;
 export const transformShelterData = (data: ShelterValue) => {
-  const formattedTime = formatOperatingTime(data);
+  const {
+    address,
+    weekdayOpenTime,
+    weekdayCloseTime,
+    weekendCloseTime,
+    weekendOpenTime,
+    veterinarianCount,
+    caretakerCount
+  } = data;
 
-  return [{ id: 'TIME', value: formattedTime }];
+  const formattedTime = formatOperatingTime({ weekdayOpenTime, weekdayCloseTime, weekendCloseTime, weekendOpenTime });
+  const formattedPerson = formatPerson({ veterinarianCount, caretakerCount });
+
+  return {
+    time: formattedTime,
+    person: formattedPerson,
+    address
+  };
 };
 
 /**
@@ -17,11 +32,22 @@ export const transformShelterData = (data: ShelterValue) => {
  * @param data
  * @returns
  */
-const formatOperatingTime = (data: ShelterValue) => {
-  const weekdayOpen = formatTimeAMPM(data.weekdayOpenTime);
-  const weekdayClose = formatTimeAMPM(data.weekdayCloseTime);
-  const weekendOpen = formatTimeAMPM(data.weekendOpenTime);
-  const weekendClose = formatTimeAMPM(data.weekendCloseTime);
+interface FormatOperatingTimeParams {
+  weekdayOpenTime: string;
+  weekdayCloseTime: string;
+  weekendOpenTime: string;
+  weekendCloseTime: string;
+}
+const formatOperatingTime = ({
+  weekdayOpenTime,
+  weekdayCloseTime,
+  weekendOpenTime,
+  weekendCloseTime
+}: FormatOperatingTimeParams) => {
+  const weekdayOpen = formatTimeAMPM(weekdayOpenTime);
+  const weekdayClose = formatTimeAMPM(weekdayCloseTime);
+  const weekendOpen = formatTimeAMPM(weekendOpenTime);
+  const weekendClose = formatTimeAMPM(weekendCloseTime);
 
   const weekdayHours =
     weekdayOpen && weekdayClose
@@ -37,8 +63,35 @@ const formatOperatingTime = (data: ShelterValue) => {
         ? `주말 ${weekendOpen} ~`
         : null;
 
-  return {
-    weekdayHours,
-    weekendHours
-  };
+  const timeString = (() => {
+    if (weekdayHours && weekendHours) {
+      return `${weekdayHours}\n${weekendHours}`; // 평일과 주말 둘 다 있을 경우
+    }
+    if (weekdayHours) {
+      return weekdayHours; // 평일만 있을 경우
+    }
+    if (weekendHours) {
+      return weekendHours; // 주말만 있을 경우
+    }
+    return '정보 없음'; // 둘 다 없을 경우
+  })();
+
+  return timeString;
+};
+
+/**
+ * 수의사, 보조사 수 문장으로 변환
+ */
+interface FormatPersonParams {
+  veterinarianCount: number;
+  caretakerCount: number;
+}
+const formatPerson = ({ caretakerCount, veterinarianCount }: FormatPersonParams) => {
+  if (veterinarianCount > 0) {
+    return `수의사 ${veterinarianCount}명 외`;
+  } else if (caretakerCount > 0) {
+    return `보조사 ${caretakerCount}명 외`;
+  } else {
+    return '정보 없음';
+  }
 };
