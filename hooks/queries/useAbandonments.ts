@@ -6,6 +6,12 @@ import { AbandonmentData, AbandonmentValue } from '@/types/scheme/abandonments';
 import { UseInfiniteQueryCustomOptions, UseQueryCustomOptions } from '@/types/utils';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 
+/**
+ * 입양공고 상세
+ * @param id
+ * @param queryOptions
+ * @returns
+ */
 export const useGetAbandonment = (
   id: number,
   queryOptions?: UseQueryCustomOptions<ApiResponse<AbandonmentValue>, Error, AbandonmentValue>
@@ -18,6 +24,12 @@ export const useGetAbandonment = (
   });
 };
 
+/**
+ * 입양공고
+ * @param params
+ * @param queryOptions
+ * @returns
+ */
 export const useGetAbandonments = (
   params: GetAbandonmentsParams,
   queryOptions?: UseQueryCustomOptions<ApiResponse<AbandonmentData>, Error, AbandonmentValue[]>
@@ -30,6 +42,12 @@ export const useGetAbandonments = (
   });
 };
 
+/**
+ * 입양공고 무한스크롤
+ * @param params
+ * @param queryOptions
+ * @returns
+ */
 export const useGetInfiniteAbandonments = (
   params: GetAbandonmentsParams,
   queryOptions?: UseInfiniteQueryCustomOptions<ApiResponse<AbandonmentData>, Error, AbandonmentValue[]>

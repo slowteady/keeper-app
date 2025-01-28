@@ -4,6 +4,9 @@ import AbandonmentDetailPrimaryInfoSection from '@/components/sections/abandonme
 import AbandonmentDetailSecondaryInfoSection from '@/components/sections/abandonments/AbandonmentDetailSecondaryInfoSection';
 import theme from '@/constants/theme';
 import { AbandonmentValue } from '@/types/scheme/abandonments';
+import BottomSheet, { BottomSheetProps, BottomSheetView } from '@gorhom/bottom-sheet';
+import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
+import { forwardRef, useMemo, useRef } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -15,7 +18,19 @@ interface AbandonmentsDetailTemplateProps {
 // NOTE: 스켈레톤 만들기
 const AbandonmentsDetailTemplate = ({ data, isLoading }: AbandonmentsDetailTemplateProps) => {
   const { bottom } = useSafeAreaInsets();
+  const bottomSheetRef = useRef<BottomSheet>(null);
+
+  const snapPoints = useMemo(() => ['50%'], []);
   const isComplete = data && !isLoading;
+
+  const handlePress = () => {
+    bottomSheetRef.current?.expand();
+    // <Button onPress={{Linking.openURL(`tel:01012341234`)}} />
+  };
+
+  const handleAnimate = (fromIndex: number, toIndex: number) => {
+    if (toIndex === 0) bottomSheetRef.current?.close();
+  };
 
   return (
     <View style={styles.container}>
@@ -34,15 +49,33 @@ const AbandonmentsDetailTemplate = ({ data, isLoading }: AbandonmentsDetailTempl
       </ScrollView>
 
       <View style={[styles.bottomWrap, { paddingBottom: bottom || 20 }]}>
-        <TouchableOpacity activeOpacity={0.5} style={styles.fixedButton}>
-          <Text style={styles.buttonText}>보호소에 연락하기</Text>
+        <TouchableOpacity activeOpacity={0.5} onPress={handlePress} style={styles.fixedButton}>
+          <Text style={styles.buttonText}>보호소에 문의하기</Text>
         </TouchableOpacity>
       </View>
+
+      <ShelterBottomSheet
+        ref={bottomSheetRef}
+        index={-1}
+        snapPoints={snapPoints}
+        onAnimate={handleAnimate}
+        animationConfigs={{ duration: 300 }}
+      />
     </View>
   );
 };
 
 export default AbandonmentsDetailTemplate;
+
+const ShelterBottomSheet = forwardRef<BottomSheetMethods, Omit<BottomSheetProps, 'children'>>((props, ref) => {
+  return (
+    <BottomSheet ref={ref} {...props}>
+      <BottomSheetView style={{ flex: 1 }}>
+        <Text>바텀시트</Text>
+      </BottomSheetView>
+    </BottomSheet>
+  );
+});
 
 const styles = StyleSheet.create({
   container: {

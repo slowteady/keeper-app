@@ -76,4 +76,14 @@ export interface AbandonmentValue {
    * 공고 종료일
    */
   noticeEndDt: string;
+
+  /**
+   * 보호소 아이디
+   */
+  shelterId: number;
+
+  /**
+   * 보호소 전화번호
+   */
+  careTel: string;
 }
