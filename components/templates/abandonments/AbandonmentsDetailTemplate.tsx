@@ -4,6 +4,7 @@ import { CandyIcon } from '@/components/atoms/icons/CandyIcon';
 import { StethoscopeIcon } from '@/components/atoms/icons/StethoscopeIcon';
 import { TelIcon } from '@/components/atoms/icons/TelIcon';
 import { TimeIcon } from '@/components/atoms/icons/TimeIcon';
+import { BasicModal } from '@/components/organisms/modal/BasicModal';
 import AbandonmentDetailCardSection from '@/components/sections/abandonments/AbandonmentDetailCardSection';
 import AbandonmentDetailPrimaryInfoSection from '@/components/sections/abandonments/AbandonmentDetailPrimaryInfoSection';
 import AbandonmentDetailSecondaryInfoSection from '@/components/sections/abandonments/AbandonmentDetailSecondaryInfoSection';
@@ -16,8 +17,8 @@ import {
   BottomSheetView
 } from '@gorhom/bottom-sheet';
 import { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
-import { forwardRef, useCallback, useMemo, useRef } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { forwardRef, useCallback, useMemo, useRef, useState } from 'react';
+import { Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export interface AbandonmentsDetailTemplateProps {
@@ -27,6 +28,7 @@ export interface AbandonmentsDetailTemplateProps {
 // NOTE: 스켈레톤 만들기
 const AbandonmentsDetailTemplate = ({ abandonment, shelter }: AbandonmentsDetailTemplateProps) => {
   const { bottom } = useSafeAreaInsets();
+  const [isVisible, setIsVisible] = useState(false);
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => ['45%'], []);
 
@@ -40,12 +42,22 @@ const AbandonmentsDetailTemplate = ({ abandonment, shelter }: AbandonmentsDetail
   };
 
   const handlePress = () => {
-    // <Button onPress={{Linking.openURL(`tel:01012341234`)}} />
     if (shelter) {
       bottomSheetModalRef.current?.present();
     } else {
       return null;
     }
+  };
+
+  const handlePressTelButton = () => {
+    setIsVisible(true);
+  };
+
+  const handlePressContact = (tel: string) => {
+    const sanitizedNumber = tel.replace(/-/g, '');
+    Linking.openURL(`tel:${sanitizedNumber}`);
+    setIsVisible(false);
+    bottomSheetModalRef.current?.dismiss();
   };
 
   const handleAnimate = (fromIndex: number, toIndex: number) => {
@@ -78,7 +90,22 @@ const AbandonmentsDetailTemplate = ({ abandonment, shelter }: AbandonmentsDetail
         style={styles.bsInnerContainer}
         backgroundStyle={styles.bsBackground}
         data={bottomSheetData}
+        onPressButton={handlePressTelButton}
       />
+
+      <BasicModal isVisible={isVisible} containerStyle={{ paddingTop: 32, paddingBottom: 16 }}>
+        <BasicModal.Title value={'OOO센터에 전화 문의하기'} style={{ marginBottom: 12 }} />
+        <BasicModal.Description
+          value={'*원활한 소통을 위해 상담원이 상담, 휴대폰 번호, 주소 등을 수집할 수 있습니다.'}
+          style={{ marginBottom: 32 }}
+        />
+        <BasicModal.Buttons
+          onPress={() => handlePressContact(careTel)}
+          onClose={() => setIsVisible(false)}
+          PrimaryTextProps={{ children: '문의하기' }}
+          SecondaryTextProps={{ children: '닫기' }}
+        />
+      </BasicModal>
     </View>
   );
 };
@@ -87,6 +114,7 @@ export default AbandonmentsDetailTemplate;
 
 interface ShelterBottomSheetProps extends Omit<BottomSheetModalProps, 'children'> {
   data: Partial<TransformedShelterValue> & { careTel: string };
+  onPressButton: () => void;
 }
 const ShelterBottomSheet = forwardRef<BottomSheetModalMethods, ShelterBottomSheetProps>((props, ref) => {
   const { bottom } = useSafeAreaInsets();
@@ -95,7 +123,7 @@ const ShelterBottomSheet = forwardRef<BottomSheetModalMethods, ShelterBottomShee
     return <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} />;
   }, []);
 
-  const { data, ...rest } = props;
+  const { data, onPressButton, ...rest } = props;
   const time = data.time || '정보 없음';
   const careTel = data.careTel || '정보 없음';
   const person = data.person || '정보 없음';
@@ -133,6 +161,7 @@ const ShelterBottomSheet = forwardRef<BottomSheetModalMethods, ShelterBottomShee
         <TouchableOpacity
           activeOpacity={0.5}
           disabled={!careTel}
+          onPress={onPressButton}
           style={[styles.fixedButton, !careTel && styles.disabledButton]}
         >
           <Text style={[styles.buttonText, { fontSize: 14 }]}>{careTel || '번호가 존재하지 않습니다.'}</Text>
