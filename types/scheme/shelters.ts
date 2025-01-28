@@ -1,4 +1,4 @@
-export interface SheltersValue {
+export interface ShelterValue {
   /**
    * 보호소 아이디
    */

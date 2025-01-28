@@ -1,21 +1,13 @@
-import { fakerKO as faker } from '@faker-js/faker';
 import { http, HttpResponse } from 'msw';
-import abandonmentsData from './data/abandonments.json';
+import abandonmentsData from './abandonments.json';
 
-export const banners = http.get('https://app.our-keeper.com/api/banners', ({ request }) => {
-  const url = new URL(request.url);
-  const quantity = Number(url.searchParams.get('quantity')) || 10;
-
-  const data = Array.from({ length: quantity }, (_, i) => ({
-    id: i + 1,
-    image: faker.image.urlLoremFlickr({ width: 480, height: 480 }),
-    title: faker.lorem.words(3),
-    description: faker.lorem.sentence()
-  }));
+export const abandonment = http.get('https://app.our-keeper.com/api/abandonments/:id', ({ params }) => {
+  const { id } = params;
+  const abandonmentItem = abandonmentsData.find((item) => item.id === Number(id));
 
   return HttpResponse.json({
     code: 'OK',
-    data
+    data: abandonmentItem
   });
 });
 
@@ -55,14 +47,4 @@ export const abandonments = http.get('https://app.our-keeper.com/api/abandonment
   };
 
   return HttpResponse.json(responseData);
-});
-
-export const abandonment = http.get('https://app.our-keeper.com/api/abandonments/:id', ({ params }) => {
-  const { id } = params;
-  const abandonmentItem = abandonmentsData.find((item) => item.id === Number(id));
-
-  return HttpResponse.json({
-    code: 'OK',
-    data: abandonmentItem
-  });
 });
