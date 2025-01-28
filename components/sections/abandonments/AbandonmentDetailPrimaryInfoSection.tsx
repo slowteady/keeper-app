@@ -1,14 +1,14 @@
 import theme from '@/constants/theme';
-import { AbandonmentValue } from '@/types/scheme/abandonments';
 import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 interface AbandonmentDetailPrimaryInfoSectionProps {
-  data: AbandonmentValue;
+  age: string;
+  gender: string;
+  weight: string;
 }
 const PADDING_HORIZONTAL = 20;
-const AbandonmentDetailPrimaryInfoSection = ({ data }: AbandonmentDetailPrimaryInfoSectionProps) => {
-  const { age, gender, weight } = data;
+const AbandonmentDetailPrimaryInfoSection = ({ age, gender, weight }: AbandonmentDetailPrimaryInfoSectionProps) => {
   const genderValue = gender === 'F' ? '여아' : gender === 'M' ? '남아' : '미상';
   const weightValue = `${weight}kg`;
 

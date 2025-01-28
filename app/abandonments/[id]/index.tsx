@@ -1,20 +1,38 @@
+import { transformAbandonmentData } from '@/businesses/abandonmentsBusiness';
+import { transformShelterData } from '@/businesses/sheltersBusiness';
 import DetailHeader from '@/components/organisms/headers/DetailHeader';
 import AbandonmentsDetailTemplate from '@/components/templates/abandonments/AbandonmentsDetailTemplate';
 import theme from '@/constants/theme';
 import { useGetAbandonment } from '@/hooks/queries/useAbandonments';
+import { useGetShelter } from '@/hooks/queries/useShelters';
 import { Stack, useLocalSearchParams } from 'expo-router';
+import { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 const Page = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { data, isLoading } = useGetAbandonment(Number(id));
+  const { data: abandonmentData } = useGetAbandonment(Number(id));
+  const { data: shelterData } = useGetShelter(abandonmentData?.shelterId || 0, {
+    enabled: Boolean(abandonmentData?.shelterId)
+  });
+
+  const transformedAbandonmentData = useMemo(
+    () => (abandonmentData ? transformAbandonmentData(abandonmentData) : undefined),
+    [abandonmentData]
+  );
+  const transformedShelterData = useMemo(
+    () => (shelterData ? transformShelterData(shelterData) : undefined),
+    [shelterData]
+  );
 
   return (
     <>
       <Stack.Screen options={{ header: () => <DetailHeader /> }} />
 
       <View style={styles.container}>
-        <AbandonmentsDetailTemplate data={data} isLoading={isLoading} />
+        {transformedAbandonmentData && (
+          <AbandonmentsDetailTemplate abandonment={transformedAbandonmentData} shelter={transformedShelterData} />
+        )}
       </View>
     </>
   );

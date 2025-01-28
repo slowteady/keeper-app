@@ -1,4 +1,5 @@
 import { useReactQueryDevTools } from '@dev-plugins/react-query';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import 'expo-dev-client';
@@ -54,10 +55,12 @@ export default function RootLayout() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider value={navTheme}>
         <GestureHandlerRootView style={{ flex: 1 }}>
-          <SafeAreaProvider>
-            <StatusBar style="dark" />
-            <Stack />
-          </SafeAreaProvider>
+          <BottomSheetModalProvider>
+            <SafeAreaProvider>
+              <StatusBar style="dark" />
+              <Stack />
+            </SafeAreaProvider>
+          </BottomSheetModalProvider>
         </GestureHandlerRootView>
       </ThemeProvider>
     </QueryClientProvider>
