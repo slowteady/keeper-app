@@ -1,4 +1,4 @@
-import { AbandonmentBusinessResult, abandonmentsBusiness } from '@/businesses/abandonmentsBusiness';
+import { AbandonmentsBusinessResult, abandonmentsBusiness } from '@/businesses/abandonmentsBusiness';
 import ScrollFloatingButton from '@/components/atoms/button/ScrollFloatingButton';
 import { Skeleton } from '@/components/molecules/placeholder/Skeleton';
 import BasicTab from '@/components/molecules/tab/BasicTab';
@@ -85,7 +85,7 @@ const AbandonmentCardList = memo(({ data, onFetch, isLoading, filter }: Abandonm
   const imageWidth = useMemo(() => (Dimensions.get('screen').width - PADDING_HORIZONTAL * 2) / 2 - CARD_GAP, []);
 
   const renderItem = useCallback(
-    ({ item }: ListRenderItemInfo<AbandonmentBusinessResult>) => {
+    ({ item }: ListRenderItemInfo<AbandonmentsBusinessResult>) => {
       return (
         <Pressable onPress={() => handlePress(item.id)}>
           <AbandonmentCard width={imageWidth} data={item} isLoading={isLoading} />
@@ -121,7 +121,7 @@ const AbandonmentCardList = memo(({ data, onFetch, isLoading, filter }: Abandonm
 
 interface AbandonmentCardProps {
   width: number;
-  data: AbandonmentBusinessResult;
+  data: AbandonmentsBusinessResult;
   isLoading: boolean;
 }
 const IMAGE_HEIGHT = 140;

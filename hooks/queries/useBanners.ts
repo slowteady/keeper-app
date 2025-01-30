@@ -1,5 +1,5 @@
-import { getBanners } from '@/apis/bannersApi';
 import { BANNERS_QUERY_KEY } from '@/constants/queryKeys';
+import { getBanners } from '@/services/bannersService';
 import { ApiResponse } from '@/types/common';
 import { BannerData } from '@/types/scheme/banners';
 import { UseQueryCustomOptions } from '@/types/utils';

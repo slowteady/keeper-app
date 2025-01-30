@@ -1,15 +1,12 @@
 import { MessageIcon } from '@/components/atoms/icons/MessageIcon';
 import theme from '@/constants/theme';
-import { AbandonmentValue } from '@/types/scheme/abandonments';
 import { StyleSheet, Text, View } from 'react-native';
 
 interface AbandonmentDetailSecondaryInfoSectionProps {
-  data: AbandonmentValue;
+  specialMark: string;
 }
 
-const AbandonmentDetailSecondaryInfoSection = ({ data }: AbandonmentDetailSecondaryInfoSectionProps) => {
-  const { specialMark } = data;
-
+const AbandonmentDetailSecondaryInfoSection = ({ specialMark }: AbandonmentDetailSecondaryInfoSectionProps) => {
   return (
     <View style={styles.container}>
       <View style={styles.pointBox}>

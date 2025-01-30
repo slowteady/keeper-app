@@ -1,4 +1,4 @@
-import { AbandonmentBusinessResult, abandonmentsBusiness } from '@/businesses/abandonmentsBusiness';
+import { AbandonmentsBusinessResult, abandonmentsBusiness } from '@/businesses/abandonmentsBusiness';
 import FullViewButton from '@/components/atoms/button/FullViewButton';
 import { NavArrowIcon } from '@/components/atoms/icons/ArrowIcon';
 import { Toggle } from '@/components/molecules/button/Toggle';
@@ -28,7 +28,7 @@ const MainAbandonmentSection = () => {
     resetState();
   }, [animalType]);
 
-  const handlePress = (item: AbandonmentBusinessResult) => {
+  const handlePress = (item: AbandonmentsBusinessResult) => {
     const { id } = item;
 
     router.push({
@@ -70,7 +70,7 @@ interface MainAbandonmentSectionCardListProps {
   data?: AbandonmentValue[];
   isLoading: boolean;
   filter: AbandonmentsFilter;
-  onPress: (item: AbandonmentBusinessResult) => void;
+  onPress: (item: AbandonmentsBusinessResult) => void;
   onPressMoreButton: () => void;
 }
 const CARD_GAP = 18;
@@ -86,7 +86,7 @@ const AbandonmentCardList = ({
   const formattedAbandonmentData = abandonmentsBusiness(data || [], filter);
 
   const renderItem = useCallback(
-    ({ item }: ListRenderItemInfo<AbandonmentBusinessResult>) => {
+    ({ item }: ListRenderItemInfo<AbandonmentsBusinessResult>) => {
       return (
         <Pressable onPress={() => onPress(item)}>
           <BasicCard isLoading={isLoading} data={item} width={IMAGE_WIDTH} height={IMAGE_HEIGHT} />

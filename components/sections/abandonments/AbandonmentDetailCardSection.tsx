@@ -1,4 +1,4 @@
-import { AbandonmentDetailBusinessResult } from '@/businesses/abandonmentsBusiness';
+import { TransformedAbandonmentData } from '@/businesses/abandonmentsBusiness';
 import { AnimatedHeartIcon } from '@/components/atoms/icons/HeartIcon';
 import MoreIcon from '@/components/atoms/icons/MoreIcon';
 import { Skeleton } from '@/components/molecules/placeholder/Skeleton';
@@ -10,13 +10,12 @@ import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-nati
 import { interpolateColor, useAnimatedProps, useSharedValue, withTiming } from 'react-native-reanimated';
 
 interface AbandonmentDetailCardSectionProps {
-  data: AbandonmentDetailBusinessResult;
-  isLoading: boolean;
+  data: TransformedAbandonmentData;
 }
 const PADDING_HORIZONTAL = 20;
 const imgWidth = Dimensions.get('screen').width - PADDING_HORIZONTAL * 2;
 const imgHeight = imgWidth * 0.8;
-const AbandonmentDetailCardSection = ({ data, isLoading }: AbandonmentDetailCardSectionProps) => {
+const AbandonmentDetailCardSection = ({ data }: AbandonmentDetailCardSectionProps) => {
   const fill = useSharedValue(0);
 
   const handlePressHeart = useCallback(async () => {
@@ -54,7 +53,7 @@ const AbandonmentDetailCardSection = ({ data, isLoading }: AbandonmentDetailCard
         </View>
       </View>
 
-      <Card isLoading={isLoading} uri={uri} chips={chips} description={description} />
+      <Card uri={uri} chips={chips} description={description} />
     </View>
   );
 };
@@ -62,14 +61,12 @@ const AbandonmentDetailCardSection = ({ data, isLoading }: AbandonmentDetailCard
 export default AbandonmentDetailCardSection;
 
 interface CardProps {
-  isLoading: boolean;
   uri: string;
-  chips: AbandonmentDetailBusinessResult['chips'];
-  description: AbandonmentDetailBusinessResult['description'];
+  chips: TransformedAbandonmentData['chips'];
+  description: TransformedAbandonmentData['description'];
 }
-const Card = ({ isLoading, uri, chips, description }: CardProps) => {
+const Card = ({ uri, chips, description }: CardProps) => {
   const [isLoad, setIsLoad] = useState(false);
-  const isCompleteLoad = !isLoading && isLoad;
 
   const sortedChips = chips
     .map(({ chipStyle, containerStyle, ...rest }) => {
@@ -84,7 +81,7 @@ const Card = ({ isLoading, uri, chips, description }: CardProps) => {
   return (
     <View style={{ width: imgWidth }}>
       <View style={{ width: imgWidth, height: imgHeight, marginBottom: 20 }}>
-        {!isCompleteLoad && <Skeleton />}
+        {!isLoad && <Skeleton />}
         {uri ? <BasicCard.Image source={{ uri }} onLoad={() => setIsLoad(true)} /> : <BasicCard.NoImage />}
       </View>
       <BasicCard.Chips data={sortedChips} />

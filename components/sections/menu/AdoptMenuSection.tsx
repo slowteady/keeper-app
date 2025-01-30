@@ -3,7 +3,8 @@ import { AnimatedMenuHeartIcon } from '@/components/atoms/icons/HeartIcon';
 import { Accordion } from '@/components/molecules/transition/Accordion';
 import { ADOPT_SUB_MENU } from '@/constants/menu';
 import theme from '@/constants/theme';
-import { useCallback } from 'react';
+import { router } from 'expo-router';
+import { useCallback, useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, {
   interpolateColor,
@@ -33,6 +34,36 @@ const AdoptMenuSection = () => {
     fill.value = withTiming(fill.value === 0 ? 1 : 0, { duration: 300 });
   }, [open, rotate, fill]);
 
+  const menuData = useMemo(
+    () =>
+      ADOPT_SUB_MENU.map(({ id, ...rest }) => {
+        switch (id) {
+          case 'ALL': {
+            return {
+              id,
+              ...rest,
+              handlePress: () => router.replace('/abandonments')
+            };
+          }
+          case 'NEAR_DEADLINE': {
+            return {
+              id,
+              ...rest,
+              handlePress: () => router.replace({ pathname: '/abandonments', params: { filter: 'NEAR_DEADLINE' } })
+            };
+          }
+          case 'NEW': {
+            return {
+              id,
+              ...rest,
+              handlePress: () => router.replace({ pathname: '/abandonments', params: { filter: 'NEW' } })
+            };
+          }
+        }
+      }),
+    []
+  );
+
   return (
     <View style={{ position: 'relative' }}>
       <Pressable onPress={handleExpand}>
@@ -47,13 +78,13 @@ const AdoptMenuSection = () => {
 
       <Accordion expanded={open}>
         <View style={styles.moreMenuBox}>
-          {ADOPT_SUB_MENU.map(({ id, label }, idx) => {
+          {menuData.map(({ id, label, handlePress }, idx) => {
             const key = `${id}-${idx}`;
 
             return (
-              <View key={key + idx} style={{ paddingLeft: 20 }}>
+              <Pressable key={key + idx} onPress={handlePress} style={{ paddingLeft: 20 }}>
                 <Text style={styles.subMenuText}>{label}</Text>
-              </View>
+              </Pressable>
             );
           })}
           <View style={styles.divider} />
