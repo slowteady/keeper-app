@@ -10,11 +10,11 @@ const MenuHeader = () => {
   const { headerTop } = useLayout();
 
   const handlePressHome = () => {
-    router.replace('/');
+    router.dismissAll();
   };
 
   const handlePressMenuClose = () => {
-    router.back();
+    router.dismiss();
   };
 
   return (
