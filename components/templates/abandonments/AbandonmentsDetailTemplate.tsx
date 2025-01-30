@@ -42,11 +42,7 @@ const AbandonmentsDetailTemplate = ({ abandonment, shelter }: AbandonmentsDetail
   };
 
   const handlePress = () => {
-    if (shelter) {
-      bottomSheetModalRef.current?.present();
-    } else {
-      return null;
-    }
+    bottomSheetModalRef.current?.present();
   };
 
   const handlePressTelButton = () => {
