@@ -5,10 +5,8 @@ import ScrollFloatingButton from '../atoms/button/ScrollFloatingButton';
 import MainHeader from '../organisms/headers/MainHeader';
 import MainAbandonmentSection from '../sections/main/MainAbandonmentSection';
 import MainBannerSection from '../sections/main/MainBannerSection';
+import MainShelterSection from '../sections/main/MainShelterSection';
 
-const {
-  colors: { background }
-} = theme;
 const MainTemplate = () => {
   const [isButtonVisible, setIsButtonVisible] = useState(false);
   const lastScrollOffset = useRef(0);
@@ -30,8 +28,8 @@ const MainTemplate = () => {
   const data = useMemo(
     () => [
       { id: 'banner', Component: <MainBannerSection /> },
-      { id: 'abandonments', Component: <MainAbandonmentSection /> }
-      // { id: 'shelters', Component: <MainReviewSection /> },
+      { id: 'abandonments', Component: <MainAbandonmentSection /> },
+      { id: 'shelters', Component: <MainShelterSection /> }
       // { id: 'announce', Component: <MainAnnounceSection /> }
     ],
     []
@@ -50,7 +48,7 @@ const MainTemplate = () => {
         keyExtractor={(item, idx) => `${item.id}-${idx}`}
         data={data}
         renderItem={({ item }) => <>{item.Component}</>}
-        style={{ backgroundColor: background.default }}
+        style={{ backgroundColor: theme.colors.background.default }}
       />
       <ScrollFloatingButton visible={isButtonVisible} onPress={handlePress} />
     </>
