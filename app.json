@@ -28,6 +28,19 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
+      ],
+      ["@mj-studio/react-native-naver-map", { "client_id": "rg0cm283cu" }],
+      [
+        "expo-location",
+        { "locationWhenInUsePermission": "사용자의 위치를 기준으로 가까운 보호소 정보 제공을 위해 사용됩니다." }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "extraMavenRepos": ["https://repository.map.naver.com/archive/maven"]
+          }
+        }
       ]
     ],
     "experiments": {
