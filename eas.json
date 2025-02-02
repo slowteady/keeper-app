@@ -16,6 +16,11 @@
     }
   },
   "submit": {
+    "ios": {
+      "exportCompliance": {
+        "usesEncryption": false
+      }
+    },
     "production": {}
   }
 }
