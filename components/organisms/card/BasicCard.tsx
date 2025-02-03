@@ -32,7 +32,7 @@ const Complete = <T,>({ data, isLoading, width, height }: BasicCardProps<T>) => 
         {uri ? <Image source={{ uri }} onLoad={() => setIsLoad(true)} /> : <NoImage />}
       </View>
       <Title style={{ marginBottom: 20 }}>{title}</Title>
-      <Chips data={sortedChips} style={{ minHeight: 55 }} />
+      <Chips data={sortedChips} />
       <Descriptions data={description} />
     </View>
   );
