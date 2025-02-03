@@ -1,34 +1,25 @@
 import { AbandonmentsBusinessResult, abandonmentsBusiness } from '@/businesses/abandonmentsBusiness';
 import FullViewButton from '@/components/atoms/button/FullViewButton';
-import { NavArrowIcon } from '@/components/atoms/icons/ArrowIcon';
 import { Toggle } from '@/components/molecules/button/Toggle';
 import { BasicCard } from '@/components/organisms/card/BasicCard';
-import { ABANDONMENTS_CONF } from '@/constants/config';
+import { ANIMAL_CONF } from '@/constants/config';
 import theme from '@/constants/theme';
 import { useGetAbandonments } from '@/hooks/queries/useAbandonments';
-import { useAbandonmentsContext } from '@/states/AbandonmentsProvider';
 import { AbandonmentsFilter } from '@/types/abandonments';
+import { AnimalType } from '@/types/common';
 import { AbandonmentValue } from '@/types/scheme/abandonments';
 import { router } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
-import { FlatList, ListRenderItemInfo, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useCallback, useState } from 'react';
+import { FlatList, ListRenderItemInfo, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const DEFAULT_SIZE = 20;
 const MainAbandonmentSection = () => {
-  const { animalType = 'ALL' } = useAbandonmentsContext();
-  const [filter, setFilter] = useState<AbandonmentsFilter>('NEAR_DEADLINE');
+  const [type, setType] = useState<AnimalType>('ALL');
+  const [filter, setFilter] = useState<AbandonmentsFilter>('ALL');
 
-  const { data, isLoading } = useGetAbandonments({ animalType, filter, size: DEFAULT_SIZE, page: 1 });
+  const { data, isLoading } = useGetAbandonments({ animalType: type, filter, size: DEFAULT_SIZE, page: 1 });
 
-  useEffect(() => {
-    const resetState = () => {
-      setFilter('NEAR_DEADLINE');
-    };
-
-    resetState();
-  }, [animalType]);
-
-  const handlePress = (item: AbandonmentsBusinessResult) => {
+  const handlePressCard = (item: AbandonmentsBusinessResult) => {
     const { id } = item;
 
     router.push({
@@ -37,28 +28,48 @@ const MainAbandonmentSection = () => {
     });
   };
 
-  const handlePressButton = () => {
+  const handleFilter = () => {
+    // NOTE: 바텀시트
+  };
+
+  const handlePressAbandonments = () => {
     router.push('/abandonments');
+  };
+
+  const filterText = () => {
+    switch (filter) {
+      case 'ALL': {
+        return '전체공고';
+      }
+      case 'NEAR_DEADLINE': {
+        return '마감임박공고';
+      }
+      case 'NEW': {
+        return '신규공고';
+      }
+    }
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>전체공고</Text>
-        <Pressable style={styles.flex} onPress={handlePressButton}>
-          <Text style={styles.label}>전체보기</Text>
-          <NavArrowIcon />
+        <Pressable onPress={handlePressAbandonments}>
+          <Text style={styles.title}>전체공고</Text>
         </Pressable>
+
+        <TouchableOpacity activeOpacity={0.5} style={styles.flex} onPress={handleFilter}>
+          <Text style={styles.label}>{filterText()}</Text>
+        </TouchableOpacity>
       </View>
       <View style={styles.toggleWrap}>
-        <Toggle items={ABANDONMENTS_CONF} value={filter} interval={4} onChange={setFilter} />
+        <Toggle items={ANIMAL_CONF} value={type} interval={4} onChange={setType} />
       </View>
       <AbandonmentCardList
         data={data}
         isLoading={isLoading}
         filter={filter}
-        onPress={handlePress}
-        onPressMoreButton={handlePressButton}
+        onPress={handlePressCard}
+        onPressMoreButton={handlePressAbandonments}
       />
     </View>
   );
@@ -120,22 +131,19 @@ const AbandonmentCardList = ({
   );
 };
 
-const {
-  colors: { black, white }
-} = theme;
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: white[900],
+    backgroundColor: theme.colors.white[900],
     paddingHorizontal: 20,
     paddingVertical: 48
   },
   title: {
-    color: black[900],
+    color: theme.colors.black[900],
     fontSize: 28,
     fontWeight: '500'
   },
   toggleWrap: {
-    marginBottom: 40,
+    marginBottom: 32,
     alignSelf: 'baseline'
   },
   header: {
@@ -146,9 +154,8 @@ const styles = StyleSheet.create({
     marginBottom: 28
   },
   label: {
-    color: black[600],
-    fontSize: 15,
-    fontWeight: '500'
+    color: theme.colors.black[600],
+    ...theme.fonts.medium
   },
   flex: {
     display: 'flex',
