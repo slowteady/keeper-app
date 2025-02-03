@@ -6,9 +6,6 @@ import MainHeader from '../organisms/headers/MainHeader';
 import MainAbandonmentSection from '../sections/main/MainAbandonmentSection';
 import MainBannerSection from '../sections/main/MainBannerSection';
 
-const {
-  colors: { background }
-} = theme;
 const MainTemplate = () => {
   const [isButtonVisible, setIsButtonVisible] = useState(false);
   const lastScrollOffset = useRef(0);
@@ -50,7 +47,7 @@ const MainTemplate = () => {
         keyExtractor={(item, idx) => `${item.id}-${idx}`}
         data={data}
         renderItem={({ item }) => <>{item.Component}</>}
-        style={{ backgroundColor: background.default }}
+        style={{ backgroundColor: theme.colors.background.default }}
       />
       <ScrollFloatingButton visible={isButtonVisible} onPress={handlePress} />
     </>
