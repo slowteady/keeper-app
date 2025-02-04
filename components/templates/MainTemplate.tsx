@@ -43,11 +43,12 @@ const MainTemplate = () => {
         onScroll={handleScroll}
         scrollEventThrottle={40}
         bounces
+        decelerationRate="fast"
         initialNumToRender={2}
-        keyExtractor={(item, idx) => `${item.id}-${idx}`}
+        keyExtractor={(item) => item.id}
         data={data}
         renderItem={({ item }) => <>{item.Component}</>}
-        style={{ backgroundColor: theme.colors.background.default }}
+        style={{ backgroundColor: theme.colors.background.default, flex: 1 }}
       />
       <ScrollFloatingButton visible={isButtonVisible} onPress={handlePress} />
     </>

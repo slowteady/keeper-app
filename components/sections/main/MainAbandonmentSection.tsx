@@ -1,6 +1,7 @@
 import { AbandonmentsBusinessResult, abandonmentsBusiness } from '@/businesses/abandonmentsBusiness';
 import FullViewButton from '@/components/atoms/button/FullViewButton';
 import { Toggle } from '@/components/molecules/button/Toggle';
+import { AbandonmentsBottomSheet } from '@/components/organisms/bottomSheet/AbandonmentsBottomSheet';
 import { BasicCard } from '@/components/organisms/card/BasicCard';
 import { ANIMAL_CONF } from '@/constants/config';
 import theme from '@/constants/theme';
@@ -8,16 +9,33 @@ import { useGetAbandonments } from '@/hooks/queries/useAbandonments';
 import { AbandonmentsFilter } from '@/types/abandonments';
 import { AnimalType } from '@/types/common';
 import { AbandonmentValue } from '@/types/scheme/abandonments';
+import { BottomSheetBackdrop, BottomSheetBackdropProps, BottomSheetModal } from '@gorhom/bottom-sheet';
 import { router } from 'expo-router';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { FlatList, ListRenderItemInfo, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+interface FilterValue {
+  value: AbandonmentsFilter;
+  name: '마감임박공고' | '신규공고';
+}
 const DEFAULT_SIZE = 20;
 const MainAbandonmentSection = () => {
-  const [type, setType] = useState<AnimalType>('ALL');
-  const [filter, setFilter] = useState<AbandonmentsFilter>('ALL');
+  const FilterValues: FilterValue[] = [
+    { value: 'NEAR_DEADLINE', name: '마감임박공고' },
+    { value: 'NEW', name: '신규공고' }
+  ];
 
-  const { data, isLoading } = useGetAbandonments({ animalType: type, filter, size: DEFAULT_SIZE, page: 1 });
+  const [animalType, setAnimalType] = useState<AnimalType>('ALL');
+  const [filterValue, setFilterValue] = useState<FilterValue>(FilterValues[0]);
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const snapPoints = useMemo(() => ['20%'], []);
+
+  const { data, isLoading } = useGetAbandonments({
+    animalType,
+    filter: filterValue.value,
+    size: DEFAULT_SIZE,
+    page: 1
+  });
 
   const handlePressCard = (item: AbandonmentsBusinessResult) => {
     const { id } = item;
@@ -29,49 +47,61 @@ const MainAbandonmentSection = () => {
   };
 
   const handleFilter = () => {
-    // NOTE: 바텀시트
+    bottomSheetModalRef.current?.present();
   };
 
   const handlePressAbandonments = () => {
     router.push('/abandonments');
   };
 
-  const filterText = () => {
-    switch (filter) {
-      case 'ALL': {
-        return '전체공고';
-      }
-      case 'NEAR_DEADLINE': {
-        return '마감임박공고';
-      }
-      case 'NEW': {
-        return '신규공고';
-      }
-    }
+  const handleAnimate = (fromIndex: number, toIndex: number) => {
+    if (toIndex === 0) bottomSheetModalRef.current?.dismiss();
   };
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Pressable onPress={handlePressAbandonments}>
-          <Text style={styles.title}>전체공고</Text>
-        </Pressable>
+  const renderBackdrop = useCallback((props: BottomSheetBackdropProps) => {
+    return <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} />;
+  }, []);
 
-        <TouchableOpacity activeOpacity={0.5} style={styles.flex} onPress={handleFilter}>
-          <Text style={styles.label}>{filterText()}</Text>
-        </TouchableOpacity>
+  const handlePressFilter = useCallback((data: unknown) => {
+    setFilterValue(data as FilterValue);
+    bottomSheetModalRef.current?.dismiss();
+  }, []);
+
+  return (
+    <>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Pressable onPress={handlePressAbandonments}>
+            <Text style={styles.title}>전체공고</Text>
+          </Pressable>
+
+          <TouchableOpacity activeOpacity={0.5} style={styles.flex} onPress={handleFilter}>
+            <Text style={styles.label}>{filterValue.name}</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.toggleWrap}>
+          <Toggle items={ANIMAL_CONF} value={animalType} interval={4} onChange={setAnimalType} />
+        </View>
+        <AbandonmentCardList
+          data={data}
+          isLoading={isLoading}
+          filter={filterValue.value}
+          onPress={handlePressCard}
+          onPressMoreButton={handlePressAbandonments}
+        />
       </View>
-      <View style={styles.toggleWrap}>
-        <Toggle items={ANIMAL_CONF} value={type} interval={4} onChange={setType} />
-      </View>
-      <AbandonmentCardList
-        data={data}
-        isLoading={isLoading}
-        filter={filter}
-        onPress={handlePressCard}
-        onPressMoreButton={handlePressAbandonments}
-      />
-    </View>
+
+      <AbandonmentsBottomSheet
+        ref={bottomSheetModalRef}
+        index={1}
+        snapPoints={snapPoints}
+        onAnimate={handleAnimate}
+        backdropComponent={renderBackdrop}
+        containerStyle={{ paddingTop: 12 }}
+      >
+        <AbandonmentsBottomSheet.Menu data={FilterValues} value={filterValue.value} onPress={handlePressFilter} />
+      </AbandonmentsBottomSheet>
+    </>
   );
 };
 
@@ -118,7 +148,7 @@ const AbandonmentCardList = ({
       renderItem={renderItem}
       scrollEventThrottle={40}
       showsHorizontalScrollIndicator={false}
-      keyExtractor={({ id }, idx) => `${id}-${idx}`}
+      keyExtractor={({ id }) => id.toString()}
       onEndReachedThreshold={1}
       bounces
       initialNumToRender={4}
