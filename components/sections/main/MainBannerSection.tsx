@@ -1,67 +1,48 @@
 import { Carousel } from '@/components/molecules/carousel/Carousel';
-import { MAIN_CONTENT_SUBTEXT, MAIN_CONTENT_TEXT } from '@/constants/main';
 import theme from '@/constants/theme';
-import { useBanners } from '@/hooks/queries/useBanners';
 import { memo, useCallback, useRef, useState } from 'react';
 import { NativeSyntheticEvent, StyleSheet, Text, View } from 'react-native';
 import PagerView from 'react-native-pager-view';
 
-const {
-  colors: { background, black, white }
-} = theme;
 const MainBannerSection = memo(() => {
+  const images = [
+    require('@/assets/images/banner1.png'),
+    require('@/assets/images/banner2.png'),
+    require('@/assets/images/banner3.png')
+  ];
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const carouselRef = useRef<PagerView | null>(null);
 
-  const { data = [], isLoading } = useBanners({ select: (data) => data.data });
-  const convertedData = data?.map(({ id, image }) => ({ id, uri: image }));
+  const handleChangeBanner = useCallback((e: NativeSyntheticEvent<{ position: number }>) => {
+    const { position } = e.nativeEvent;
+    setCurrentIndex(position);
+  }, []);
 
-  const handleChangeBanner = useCallback(
-    (
-      e: NativeSyntheticEvent<{
-        position: number;
-      }>
-    ) => {
-      const { position } = e.nativeEvent;
-      if (position !== currentIndex) {
-        setCurrentIndex(position);
-      }
-    },
-    [currentIndex]
-  );
+  const handlePressIndicator = (type: 'prev' | 'next') => {
+    if (!carouselRef.current) return;
 
-  const handlePress = useCallback(
-    (type: 'prev' | 'next') => {
-      if (!carouselRef.current) return;
-
-      if (type === 'prev' && currentIndex > 0) {
-        carouselRef.current.setPage(currentIndex - 1);
-        setCurrentIndex(currentIndex - 1);
-      } else if (type === 'next' && currentIndex < convertedData.length - 1) {
-        carouselRef.current.setPage(currentIndex + 1);
-        setCurrentIndex(currentIndex + 1);
-      }
-    },
-    [convertedData.length, currentIndex]
-  );
+    let newIndex = currentIndex;
+    if (type === 'prev' && currentIndex > 0) {
+      newIndex = currentIndex - 1;
+      carouselRef.current.setPage(newIndex);
+    } else if (type === 'next' && currentIndex < images.length - 1) {
+      newIndex = currentIndex + 1;
+      carouselRef.current.setPage(newIndex);
+    }
+  };
 
   return (
     <View style={styles.container}>
       <View style={styles.labelContainer}>
-        <Text style={styles.title}>{MAIN_CONTENT_TEXT}</Text>
-        <Text style={styles.subTitle}>{MAIN_CONTENT_SUBTEXT}</Text>
+        <Text style={styles.title}>{'행복을 나누는\n첫번째 발걸음을 함께합니다.'}</Text>
+        <Text style={styles.subTitle}>{'Spread the love through adoption.'}</Text>
       </View>
       <View style={styles.controllerContainer}>
-        <Carousel.Controller currentIndex={currentIndex} max={convertedData.length} onPress={handlePress} />
+        <Carousel.Controller currentIndex={currentIndex} max={images.length} onPress={handlePressIndicator} />
       </View>
       <View style={styles.image}>
-        <Carousel
-          initialPage={0}
-          data={convertedData}
-          isLoading={isLoading}
-          onPageScroll={handleChangeBanner}
-          ref={carouselRef}
-        />
+        <Carousel initialPage={0} data={images} onPageScroll={handleChangeBanner} ref={carouselRef} />
       </View>
     </View>
   );
@@ -71,7 +52,7 @@ export default MainBannerSection;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: background.default,
+    backgroundColor: theme.colors.background.default,
     paddingHorizontal: 20,
     paddingVertical: 24
   },
@@ -80,15 +61,14 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 30,
-    color: black[900],
+    color: theme.colors.black[900],
     fontWeight: '500',
     lineHeight: 45,
     paddingBottom: 30
   },
   subTitle: {
-    fontSize: 14,
-    color: black[900],
-    fontWeight: '500'
+    color: theme.colors.black[900],
+    ...theme.fonts.regular
   },
   image: {
     width: '100%',
@@ -96,7 +76,7 @@ const styles = StyleSheet.create({
     marginBottom: 24
   },
   suspense: {
-    backgroundColor: white[900],
+    backgroundColor: theme.colors.white[900],
     borderRadius: 10,
     height: '100%',
     display: 'flex',

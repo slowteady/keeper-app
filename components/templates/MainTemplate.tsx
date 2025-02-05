@@ -6,9 +6,6 @@ import MainHeader from '../organisms/headers/MainHeader';
 import MainAbandonmentSection from '../sections/main/MainAbandonmentSection';
 import MainBannerSection from '../sections/main/MainBannerSection';
 
-const {
-  colors: { background }
-} = theme;
 const MainTemplate = () => {
   const [isButtonVisible, setIsButtonVisible] = useState(false);
   const lastScrollOffset = useRef(0);
@@ -46,11 +43,12 @@ const MainTemplate = () => {
         onScroll={handleScroll}
         scrollEventThrottle={40}
         bounces
+        decelerationRate="fast"
         initialNumToRender={2}
-        keyExtractor={(item, idx) => `${item.id}-${idx}`}
+        keyExtractor={(item) => item.id}
         data={data}
         renderItem={({ item }) => <>{item.Component}</>}
-        style={{ backgroundColor: background.default }}
+        style={{ backgroundColor: theme.colors.background.default, flex: 1 }}
       />
       <ScrollFloatingButton visible={isButtonVisible} onPress={handlePress} />
     </>

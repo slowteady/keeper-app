@@ -1,34 +1,43 @@
 import { AbandonmentsBusinessResult, abandonmentsBusiness } from '@/businesses/abandonmentsBusiness';
 import FullViewButton from '@/components/atoms/button/FullViewButton';
-import { NavArrowIcon } from '@/components/atoms/icons/ArrowIcon';
 import { Toggle } from '@/components/molecules/button/Toggle';
+import { AbandonmentsBottomSheet } from '@/components/organisms/bottomSheet/AbandonmentsBottomSheet';
 import { BasicCard } from '@/components/organisms/card/BasicCard';
-import { ABANDONMENTS_CONF } from '@/constants/config';
+import { ANIMAL_CONF } from '@/constants/config';
 import theme from '@/constants/theme';
 import { useGetAbandonments } from '@/hooks/queries/useAbandonments';
-import { useAbandonmentsContext } from '@/states/AbandonmentsProvider';
 import { AbandonmentsFilter } from '@/types/abandonments';
+import { AnimalType } from '@/types/common';
 import { AbandonmentValue } from '@/types/scheme/abandonments';
+import { BottomSheetBackdrop, BottomSheetBackdropProps, BottomSheetModal } from '@gorhom/bottom-sheet';
 import { router } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
-import { FlatList, ListRenderItemInfo, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useCallback, useMemo, useRef, useState } from 'react';
+import { FlatList, ListRenderItemInfo, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+interface FilterValue {
+  value: AbandonmentsFilter;
+  name: '마감임박공고' | '신규공고';
+}
 const DEFAULT_SIZE = 20;
 const MainAbandonmentSection = () => {
-  const { animalType = 'ALL' } = useAbandonmentsContext();
-  const [filter, setFilter] = useState<AbandonmentsFilter>('NEAR_DEADLINE');
+  const FilterValues: FilterValue[] = [
+    { value: 'NEAR_DEADLINE', name: '마감임박공고' },
+    { value: 'NEW', name: '신규공고' }
+  ];
 
-  const { data, isLoading } = useGetAbandonments({ animalType, filter, size: DEFAULT_SIZE, page: 1 });
+  const [animalType, setAnimalType] = useState<AnimalType>('ALL');
+  const [filterValue, setFilterValue] = useState<FilterValue>(FilterValues[0]);
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const snapPoints = useMemo(() => ['20%'], []);
 
-  useEffect(() => {
-    const resetState = () => {
-      setFilter('NEAR_DEADLINE');
-    };
+  const { data, isLoading } = useGetAbandonments({
+    animalType,
+    filter: filterValue.value,
+    size: DEFAULT_SIZE,
+    page: 1
+  });
 
-    resetState();
-  }, [animalType]);
-
-  const handlePress = (item: AbandonmentsBusinessResult) => {
+  const handlePressCard = (item: AbandonmentsBusinessResult) => {
     const { id } = item;
 
     router.push({
@@ -37,30 +46,62 @@ const MainAbandonmentSection = () => {
     });
   };
 
-  const handlePressButton = () => {
+  const handleFilter = () => {
+    bottomSheetModalRef.current?.present();
+  };
+
+  const handlePressAbandonments = () => {
     router.push('/abandonments');
   };
 
+  const handleAnimate = (fromIndex: number, toIndex: number) => {
+    if (toIndex === 0) bottomSheetModalRef.current?.dismiss();
+  };
+
+  const renderBackdrop = useCallback((props: BottomSheetBackdropProps) => {
+    return <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} />;
+  }, []);
+
+  const handlePressFilter = useCallback((data: unknown) => {
+    setFilterValue(data as FilterValue);
+    bottomSheetModalRef.current?.dismiss();
+  }, []);
+
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>전체공고</Text>
-        <Pressable style={styles.flex} onPress={handlePressButton}>
-          <Text style={styles.label}>전체보기</Text>
-          <NavArrowIcon />
-        </Pressable>
+    <>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Pressable onPress={handlePressAbandonments}>
+            <Text style={styles.title}>전체공고</Text>
+          </Pressable>
+
+          <TouchableOpacity activeOpacity={0.5} style={styles.flex} onPress={handleFilter}>
+            <Text style={styles.label}>{filterValue.name}</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.toggleWrap}>
+          <Toggle items={ANIMAL_CONF} value={animalType} interval={4} onChange={setAnimalType} />
+        </View>
+        <AbandonmentCardList
+          data={data}
+          isLoading={isLoading}
+          filter={filterValue.value}
+          onPress={handlePressCard}
+          onPressMoreButton={handlePressAbandonments}
+        />
       </View>
-      <View style={styles.toggleWrap}>
-        <Toggle items={ABANDONMENTS_CONF} value={filter} interval={4} onChange={setFilter} />
-      </View>
-      <AbandonmentCardList
-        data={data}
-        isLoading={isLoading}
-        filter={filter}
-        onPress={handlePress}
-        onPressMoreButton={handlePressButton}
-      />
-    </View>
+
+      <AbandonmentsBottomSheet
+        ref={bottomSheetModalRef}
+        index={1}
+        snapPoints={snapPoints}
+        onAnimate={handleAnimate}
+        backdropComponent={renderBackdrop}
+        containerStyle={{ paddingTop: 12 }}
+      >
+        <AbandonmentsBottomSheet.Menu data={FilterValues} value={filterValue.value} onPress={handlePressFilter} />
+      </AbandonmentsBottomSheet>
+    </>
   );
 };
 
@@ -107,7 +148,7 @@ const AbandonmentCardList = ({
       renderItem={renderItem}
       scrollEventThrottle={40}
       showsHorizontalScrollIndicator={false}
-      keyExtractor={({ id }, idx) => `${id}-${idx}`}
+      keyExtractor={({ id }) => id.toString()}
       onEndReachedThreshold={1}
       bounces
       initialNumToRender={4}
@@ -120,22 +161,19 @@ const AbandonmentCardList = ({
   );
 };
 
-const {
-  colors: { black, white }
-} = theme;
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: white[900],
+    backgroundColor: theme.colors.white[900],
     paddingHorizontal: 20,
     paddingVertical: 48
   },
   title: {
-    color: black[900],
+    color: theme.colors.black[900],
     fontSize: 28,
     fontWeight: '500'
   },
   toggleWrap: {
-    marginBottom: 40,
+    marginBottom: 32,
     alignSelf: 'baseline'
   },
   header: {
@@ -146,9 +184,8 @@ const styles = StyleSheet.create({
     marginBottom: 28
   },
   label: {
-    color: black[600],
-    fontSize: 15,
-    fontWeight: '500'
+    color: theme.colors.black[600],
+    ...theme.fonts.medium
   },
   flex: {
     display: 'flex',
