@@ -21,8 +21,6 @@ import {
   View
 } from 'react-native';
 
-// TODO
-// [ ] Provider 만들어서 데이터 흐름 관리, tab, cardlist sections로 이전
 interface AbandonmentsTemplateProps {
   abandonmentsFilter: AbandonmentsConfigValue;
   data?: AbandonmentValue[];
