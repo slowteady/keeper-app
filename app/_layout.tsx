@@ -1,7 +1,6 @@
 import MenuHeader from '@/components/organisms/headers/MenuHeader';
 import { useReactQueryDevTools } from '@dev-plugins/react-query';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
@@ -47,14 +46,6 @@ export default function RootLayout() {
   if (!loaded) {
     return null;
   }
-
-  const navTheme = {
-    ...DefaultTheme,
-    colors: {
-      ...DefaultTheme.colors,
-      background: 'initial'
-    }
-  };
 
   return (
     <QueryClientProvider client={queryClient}>

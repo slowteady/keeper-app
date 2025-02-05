@@ -1,48 +1,28 @@
 import { ArrowLeftIcon, ArrowRightIcon } from '@/components/atoms/icons/ArrowIcon';
 import theme from '@/constants/theme';
-import { Image, ImageProps } from 'expo-image';
-import { forwardRef, useState } from 'react';
+import { Image } from 'expo-image';
+import { forwardRef } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import PagerView, { PagerViewProps } from 'react-native-pager-view';
-import { Skeleton } from '../placeholder/Skeleton';
 
-export interface BasicCarouselProps<T extends { uri: string }> extends PagerViewProps {
-  data: T[];
-  onChange?: (data: T) => void;
-  isLoading?: boolean;
-  ImageProps?: ImageProps;
+export interface BasicCarouselProps extends PagerViewProps {
+  data: string[];
+  onChange?: (data: string) => void;
 }
 
-const BasicCarousel = forwardRef<PagerView, BasicCarouselProps<{ uri: string }>>(
-  ({ data, onChange, isLoading: isFetchLoading, ImageProps, ...props }, ref) => {
-    const [loadedCount, setLoadedCount] = useState(0);
+const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>((props, ref) => {
+  const { data } = props;
 
-    const handleLoad = () => {
-      setLoadedCount((prevCount) => prevCount + 1);
-    };
-
-    const allImagesLoaded = loadedCount === data.length;
-    const isLoading = isFetchLoading || !allImagesLoaded;
-
-    return (
-      <>
-        {isLoading && <Skeleton />}
-        <PagerView style={styles.container} ref={ref} {...props}>
-          {data.map(({ uri }, idx) => (
-            <Image
-              key={idx}
-              source={{ uri }}
-              contentFit="cover"
-              style={{ borderRadius: 10 }}
-              onLoad={handleLoad}
-              {...ImageProps}
-            />
-          ))}
-        </PagerView>
-      </>
-    );
-  }
-);
+  return (
+    <>
+      <PagerView style={styles.container} ref={ref} {...props}>
+        {data.map((image, idx) => (
+          <Image key={idx} source={image} contentFit="cover" style={{ borderRadius: 10 }} />
+        ))}
+      </PagerView>
+    </>
+  );
+});
 
 export interface BasicCarouselControllerProps {
   currentIndex: number;
@@ -74,7 +54,6 @@ export const Carousel = Object.assign(BasicCarousel, {
   Controller
 });
 
-const { black } = theme.colors;
 const styles = StyleSheet.create({
   container: {
     width: '100%',
@@ -86,7 +65,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     borderRadius: 40,
-    borderColor: black[900],
+    borderColor: theme.colors.black[900],
     borderWidth: 1,
     borderStyle: 'solid',
     alignSelf: 'baseline'
@@ -96,7 +75,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 11,
-    color: black[900],
+    color: theme.colors.black[900],
     fontWeight: '400'
   }
 });

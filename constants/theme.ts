@@ -37,6 +37,21 @@ const theme = {
       main: '#FFB800',
       lightest: '#FFF5DB'
     }
+  },
+  fonts: {
+    small: {},
+    regular: {
+      fontSize: 14,
+      fontWeight: '500' as const,
+      lineHeight: 16
+    },
+    medium: {
+      fontSize: 15,
+      fontWeight: '500' as const,
+      lineHeight: 17
+    },
+    big: {},
+    bold: {}
   }
 };
 

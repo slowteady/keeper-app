@@ -25,7 +25,6 @@ export interface AbandonmentsDetailTemplateProps {
   abandonment: TransformedAbandonmentData;
   shelter?: TransformedShelterValue;
 }
-// NOTE: 스켈레톤 만들기
 const AbandonmentsDetailTemplate = ({ abandonment, shelter }: AbandonmentsDetailTemplateProps) => {
   const { bottom } = useSafeAreaInsets();
   const [isVisible, setIsVisible] = useState(false);
@@ -81,7 +80,7 @@ const AbandonmentsDetailTemplate = ({ abandonment, shelter }: AbandonmentsDetail
         index={1}
         snapPoints={snapPoints}
         onAnimate={handleAnimate}
-        animationConfigs={{ duration: 300 }}
+        animationConfigs={{ duration: 100 }}
         handleIndicatorStyle={styles.indicator}
         style={styles.bsInnerContainer}
         backgroundStyle={styles.bsBackground}
