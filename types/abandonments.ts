@@ -9,7 +9,7 @@ export interface GetAbandonmentsParams {
   /**
    * 반려 동물 종류
    */
-  animalType: AnimalType;
+  type: AnimalType;
 
   /**
    * 페이지 번호
@@ -29,7 +29,7 @@ export interface GetAbandonmentsParams {
 
 export type AbandonmentsFilter = 'NEW' | 'NEAR_DEADLINE';
 export type AbandonmentsChipId = 'NEAR_DEADLINE' | 'NEW' | 'GENDER' | 'RESULT' | 'AGE' | 'WEIGHT' | 'COLOR' | 'NEUTER';
-export interface AbandonmentsConfigValue {
+export interface AbandonmentsFilterValue {
   value: AbandonmentsFilter;
-  label: string;
+  name: '마감임박공고' | '신규공고';
 }

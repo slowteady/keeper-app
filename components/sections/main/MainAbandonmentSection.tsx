@@ -1,39 +1,36 @@
 import { AbandonmentsBusinessResult, abandonmentsBusiness } from '@/businesses/abandonmentsBusiness';
 import FullViewButton from '@/components/atoms/button/FullViewButton';
 import { Toggle } from '@/components/molecules/button/Toggle';
-import { AbandonmentsBottomSheet } from '@/components/organisms/bottomSheet/AbandonmentsBottomSheet';
+import {
+  AbandonmentsBottomSheet,
+  AbandonmentsBottomSheetMenuData
+} from '@/components/organisms/bottomSheet/AbandonmentsBottomSheet';
 import { BasicCard } from '@/components/organisms/card/BasicCard';
-import { ANIMAL_CONF } from '@/constants/config';
+import { ABANDONMENTS_ANIMAL_TYPES, ABANDONMENTS_FILTERS } from '@/constants/abandonments.config';
 import theme from '@/constants/theme';
 import { useGetAbandonments } from '@/hooks/queries/useAbandonments';
+import { abandonmentsAtom, abandonmentsFilterValueAtom } from '@/states/abandonments';
 import { AbandonmentsFilter } from '@/types/abandonments';
 import { AnimalType } from '@/types/common';
 import { AbandonmentValue } from '@/types/scheme/abandonments';
 import { BottomSheetBackdrop, BottomSheetBackdropProps, BottomSheetModal } from '@gorhom/bottom-sheet';
 import { router } from 'expo-router';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useAtom, useAtomValue } from 'jotai';
+import { useCallback, useMemo, useRef } from 'react';
 import { FlatList, ListRenderItemInfo, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-interface FilterValue {
-  value: AbandonmentsFilter;
-  name: '마감임박공고' | '신규공고';
-}
-const DEFAULT_SIZE = 20;
+const DEFAULT_LIST_SIZE = 20;
 const MainAbandonmentSection = () => {
-  const FilterValues: FilterValue[] = [
-    { value: 'NEAR_DEADLINE', name: '마감임박공고' },
-    { value: 'NEW', name: '신규공고' }
-  ];
+  const [abandonmentsConfig, setAbandonmentsConfig] = useAtom(abandonmentsAtom);
+  const filterValue = useAtomValue(abandonmentsFilterValueAtom);
 
-  const [animalType, setAnimalType] = useState<AnimalType>('ALL');
-  const [filterValue, setFilterValue] = useState<FilterValue>(FilterValues[0]);
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => ['20%'], []);
 
   const { data, isLoading } = useGetAbandonments({
-    animalType,
-    filter: filterValue.value,
-    size: DEFAULT_SIZE,
+    type: abandonmentsConfig.type,
+    filter: abandonmentsConfig.filter,
+    size: DEFAULT_LIST_SIZE,
     page: 1
   });
 
@@ -58,13 +55,21 @@ const MainAbandonmentSection = () => {
     if (toIndex === 0) bottomSheetModalRef.current?.dismiss();
   };
 
+  const handlePressFilter = useCallback(
+    (data: AbandonmentsBottomSheetMenuData<AbandonmentsFilter>) => {
+      const { value } = data;
+      setAbandonmentsConfig((prev) => ({ ...prev, filter: value }));
+      bottomSheetModalRef.current?.dismiss();
+    },
+    [setAbandonmentsConfig]
+  );
+
+  const handleChangeToggle = (value: AnimalType) => {
+    setAbandonmentsConfig((prev) => ({ ...prev, type: value }));
+  };
+
   const renderBackdrop = useCallback((props: BottomSheetBackdropProps) => {
     return <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} />;
-  }, []);
-
-  const handlePressFilter = useCallback((data: unknown) => {
-    setFilterValue(data as FilterValue);
-    bottomSheetModalRef.current?.dismiss();
   }, []);
 
   return (
@@ -80,7 +85,12 @@ const MainAbandonmentSection = () => {
           </TouchableOpacity>
         </View>
         <View style={styles.toggleWrap}>
-          <Toggle items={ANIMAL_CONF} value={animalType} interval={4} onChange={setAnimalType} />
+          <Toggle
+            items={ABANDONMENTS_ANIMAL_TYPES}
+            value={abandonmentsConfig.type}
+            interval={4}
+            onChange={handleChangeToggle}
+          />
         </View>
         <AbandonmentCardList
           data={data}
@@ -99,7 +109,11 @@ const MainAbandonmentSection = () => {
         backdropComponent={renderBackdrop}
         containerStyle={{ paddingTop: 12 }}
       >
-        <AbandonmentsBottomSheet.Menu data={FilterValues} value={filterValue.value} onPress={handlePressFilter} />
+        <AbandonmentsBottomSheet.Menu
+          data={ABANDONMENTS_FILTERS}
+          value={filterValue.value}
+          onPress={handlePressFilter}
+        />
       </AbandonmentsBottomSheet>
     </>
   );

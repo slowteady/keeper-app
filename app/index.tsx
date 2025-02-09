@@ -1,16 +1,15 @@
 import MainTemplate from '@/components/templates/MainTemplate';
-import { AbandonmentsProvider } from '@/states/AbandonmentsProvider';
 import { Stack } from 'expo-router';
+import { createStore, Provider } from 'jotai';
 
 const Page = () => {
-  return (
-    <>
-      <Stack.Screen options={{ headerShown: false }} />
+  const store = createStore();
 
-      <AbandonmentsProvider>
-        <MainTemplate />
-      </AbandonmentsProvider>
-    </>
+  return (
+    <Provider store={store}>
+      <Stack.Screen options={{ headerShown: false }} />
+      <MainTemplate />
+    </Provider>
   );
 };
 
