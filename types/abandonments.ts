@@ -9,7 +9,7 @@ export interface GetAbandonmentsParams {
   /**
    * 반려 동물 종류
    */
-  type: AnimalType;
+  animalType: AnimalType;
 
   /**
    * 페이지 번호

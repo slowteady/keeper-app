@@ -15,6 +15,7 @@ import { AbandonmentsFilter } from '@/types/abandonments';
 import { AnimalType } from '@/types/common';
 import { AbandonmentData } from '@/types/scheme/abandonments';
 import { BottomSheetBackdrop, BottomSheetModal } from '@gorhom/bottom-sheet';
+import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -161,6 +162,7 @@ const FilterSection = ({ filterName, onPressFilter }: FilterSectionProps) => {
   };
 
   const handleChangeType = (value: AnimalType) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     setAbandonmentsConfig((prev) => ({ ...prev, type: value }));
   };
 

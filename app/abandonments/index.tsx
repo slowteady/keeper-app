@@ -12,7 +12,7 @@ const DEFAULT_SIZE = 16;
 const Page = () => {
   const queryClient = useQueryClient();
   const { type, filter, search } = useAtomValue(abandonmentsAtom);
-  const param = useMemo(() => ({ type, filter, search, size: DEFAULT_SIZE }), [filter, search, type]);
+  const param = useMemo(() => ({ animalType: type, filter, search, size: DEFAULT_SIZE }), [filter, search, type]);
 
   useEffect(() => {
     queryClient.invalidateQueries({ queryKey: [ABANDONMENTS_QUERY_KEY, param] });
