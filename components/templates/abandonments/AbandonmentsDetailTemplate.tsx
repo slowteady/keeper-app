@@ -29,10 +29,10 @@ const AbandonmentsDetailTemplate = ({ abandonment, shelter }: AbandonmentsDetail
   const { bottom } = useSafeAreaInsets();
   const [isVisible, setIsVisible] = useState(false);
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-  const snapPoints = useMemo(() => ['45%'], []);
+  const snapPoints = useMemo(() => ['50%'], []);
 
   const { weight, gender, age, specialMark, careTel } = abandonment;
-  const { time, person, address } = shelter || {};
+  const { time, person, address, name } = shelter || {};
   const bottomSheetData = {
     time,
     careTel,
@@ -89,7 +89,7 @@ const AbandonmentsDetailTemplate = ({ abandonment, shelter }: AbandonmentsDetail
       />
 
       <BasicModal isVisible={isVisible} containerStyle={{ paddingTop: 32, paddingBottom: 16 }}>
-        <BasicModal.Title value={'OOO센터에 전화 문의하기'} style={{ marginBottom: 12 }} />
+        <BasicModal.Title value={`${name}에 전화 문의하기`} style={{ marginBottom: 12 }} />
         <BasicModal.Description
           value={'*원활한 소통을 위해 상담원이 상담, 휴대폰 번호, 주소 등을 수집할 수 있습니다.'}
           style={{ marginBottom: 32 }}
@@ -130,32 +130,32 @@ const ShelterBottomSheet = forwardRef<BottomSheetModalMethods, ShelterBottomShee
         <Text style={styles.bsTitle}>보호소 운영정보</Text>
 
         <View style={{ flex: 1 }}>
-          <View style={[styles.bsDivider]} />
+          <View style={[styles.bsDivider, { marginBottom: 24 }]} />
           <View style={styles.dcContainer}>
             <View style={styles.dcBox}>
-              <TimeIcon width={24} height={24} />
+              <TimeIcon width={18} height={18} />
               <Text style={styles.dcText}>{time}</Text>
             </View>
             <View style={styles.dcBox}>
-              <TelIcon width={24} height={24} />
+              <TelIcon width={18} height={18} />
               <Text style={styles.dcText}>{careTel}</Text>
             </View>
             <View style={styles.dcBox}>
-              <StethoscopeIcon width={24} height={24} />
+              <StethoscopeIcon width={18} height={18} />
               <Text style={styles.dcText}>{person}</Text>
             </View>
             <View style={styles.dcBox}>
-              <CandyIcon width={24} height={24} />
+              <CandyIcon width={18} height={18} />
               <Text style={styles.dcText}>{address}</Text>
             </View>
           </View>
-          <View style={[styles.bsDivider, { marginBottom: 24 }]} />
+          <View style={[styles.bsDivider, { marginVertical: 24 }]} />
         </View>
 
         <Text style={styles.bsTitle}>보호소에 문의하기</Text>
         <TouchableOpacity
           activeOpacity={0.5}
-          disabled={!careTel}
+          disabled={!data.careTel}
           onPress={onPressButton}
           style={[styles.fixedButton, !careTel && styles.disabledButton]}
         >
