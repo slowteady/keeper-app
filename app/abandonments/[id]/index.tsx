@@ -1,11 +1,10 @@
 import { transformAbandonmentData } from '@/businesses/abandonmentsBusiness';
 import { transformShelterData } from '@/businesses/sheltersBusiness';
-import DetailHeader from '@/components/organisms/headers/DetailHeader';
 import AbandonmentsDetailTemplate from '@/components/templates/abandonments/AbandonmentsDetailTemplate';
 import theme from '@/constants/theme';
 import { useGetAbandonment } from '@/hooks/queries/useAbandonments';
 import { useGetShelter } from '@/hooks/queries/useShelters';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 
@@ -17,24 +16,17 @@ const Page = () => {
   });
 
   const transformedAbandonmentData = useMemo(
-    () => (abandonmentData ? transformAbandonmentData(abandonmentData) : undefined),
+    () => abandonmentData && transformAbandonmentData(abandonmentData),
     [abandonmentData]
   );
-  const transformedShelterData = useMemo(
-    () => (shelterData ? transformShelterData(shelterData) : undefined),
-    [shelterData]
-  );
+  const transformedShelterData = useMemo(() => shelterData && transformShelterData(shelterData), [shelterData]);
 
   return (
-    <>
-      <Stack.Screen options={{ header: () => <DetailHeader /> }} />
-
-      <View style={styles.container}>
-        {transformedAbandonmentData && (
-          <AbandonmentsDetailTemplate abandonment={transformedAbandonmentData} shelter={transformedShelterData} />
-        )}
-      </View>
-    </>
+    <View style={styles.container}>
+      {transformedAbandonmentData && (
+        <AbandonmentsDetailTemplate abandonment={transformedAbandonmentData} shelter={transformedShelterData} />
+      )}
+    </View>
   );
 };
 
