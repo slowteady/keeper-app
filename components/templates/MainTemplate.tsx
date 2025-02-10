@@ -2,7 +2,6 @@ import theme from '@/constants/theme';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { FlatList, NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
 import ScrollFloatingButton from '../atoms/button/ScrollFloatingButton';
-import MainHeader from '../organisms/headers/MainHeader';
 import MainAbandonmentSection from '../sections/main/MainAbandonmentSection';
 import MainBannerSection from '../sections/main/MainBannerSection';
 
@@ -36,8 +35,6 @@ const MainTemplate = () => {
 
   return (
     <>
-      <MainHeader />
-
       <FlatList
         ref={flatListRef}
         onScroll={handleScroll}

@@ -1,6 +1,5 @@
 import { TransformedAbandonmentData } from '@/businesses/abandonmentsBusiness';
 import { AnimatedHeartIcon } from '@/components/atoms/icons/HeartIcon';
-import MoreIcon from '@/components/atoms/icons/MoreIcon';
 import { Skeleton } from '@/components/molecules/placeholder/Skeleton';
 import { BasicCard } from '@/components/organisms/card/BasicCard';
 import theme from '@/constants/theme';
@@ -23,10 +22,6 @@ const AbandonmentDetailCardSection = ({ data }: AbandonmentDetailCardSectionProp
     fill.value = withTiming(fill.value === 0 ? 1 : 0, { duration: 300 });
   }, [fill]);
 
-  const handlePressMore = useCallback(() => {
-    //
-  }, []);
-
   const animatedProps = useAnimatedProps(() => {
     const fillColor = interpolateColor(fill.value, [0, 1], ['transparent', theme.colors.primary.main]);
     const strokeColor = interpolateColor(fill.value, [0, 1], [theme.colors.black[600], theme.colors.primary.main]);
@@ -47,9 +42,6 @@ const AbandonmentDetailCardSection = ({ data }: AbandonmentDetailCardSectionProp
           <TouchableOpacity onPress={handlePressHeart} activeOpacity={0.5}>
             <AnimatedHeartIcon animatedProps={animatedProps} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={handlePressMore} activeOpacity={0.5}>
-            <MoreIcon />
-          </TouchableOpacity>
         </View>
       </View>
 
@@ -68,23 +60,12 @@ interface CardProps {
 const Card = ({ uri, chips, description }: CardProps) => {
   const [isLoad, setIsLoad] = useState(false);
 
-  const sortedChips = chips
-    .map(({ chipStyle, containerStyle, ...rest }) => {
-      return {
-        chipStyle: { ...styles.chipText, ...chipStyle },
-        containerStyle: { ...styles.chipsContainer, ...containerStyle },
-        ...rest
-      };
-    })
-    .sort((a, b) => a.sort - b.sort);
-
   return (
     <View style={{ width: imgWidth }}>
       <View style={{ width: imgWidth, height: imgHeight, marginBottom: 20 }}>
         {!isLoad && <Skeleton />}
         {uri ? <BasicCard.Image source={{ uri }} onLoad={() => setIsLoad(true)} /> : <BasicCard.NoImage />}
       </View>
-      <BasicCard.Chips data={sortedChips} />
       <BasicCard.Descriptions data={description} primaryStyle={{ minWidth: 65 }} />
     </View>
   );
