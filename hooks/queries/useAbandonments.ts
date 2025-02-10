@@ -50,7 +50,7 @@ export const useGetAbandonments = (
  */
 export const useGetInfiniteAbandonments = (
   params: GetAbandonmentsParams,
-  queryOptions?: UseInfiniteQueryCustomOptions<ApiResponse<AbandonmentData>, Error, AbandonmentValue[]>
+  queryOptions?: UseInfiniteQueryCustomOptions<ApiResponse<AbandonmentData>, Error, AbandonmentData>
 ) => {
   return useInfiniteQuery({
     initialPageParam: 1,
@@ -59,7 +59,12 @@ export const useGetInfiniteAbandonments = (
     getNextPageParam: (lastPage) => {
       return lastPage.data.has_next ? lastPage.data.page + 1 : undefined;
     },
-    select: (data) => data.pages.flatMap((page) => page.data.value),
+    select: (data) => {
+      const lastPage = data.pages[data.pages.length - 1].data;
+      const allData = data.pages.flatMap((page) => page.data.value);
+
+      return { ...lastPage, value: allData };
+    },
     ...queryOptions
   });
 };
