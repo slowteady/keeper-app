@@ -1,18 +1,33 @@
 import theme from '@/constants/theme';
-import { NaverMapView } from '@mj-studio/react-native-naver-map';
+import { Camera, CameraChangeReason, NaverMapView, NaverMapViewRef, Region } from '@mj-studio/react-native-naver-map';
 import { applicationId } from 'expo-application';
 import { ActivityAction, startActivityAsync } from 'expo-intent-launcher';
-import { useForegroundPermissions } from 'expo-location';
-import { useEffect } from 'react';
+import * as Location from 'expo-location';
+import { useEffect, useRef, useState } from 'react';
 import { Dimensions, Linking, Platform, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 const Map = () => {
-  const [status, requestPermission] = useForegroundPermissions();
+  const [status, requestPermission] = Location.useForegroundPermissions();
+  const [camera, setCamera] = useState<Camera>();
+  const mapRef = useRef<NaverMapViewRef | null>(null);
 
   useEffect(() => {
-    (async () => {
+    const getCurrentLocation = async () => {
       const response = await requestPermission();
-    })();
+
+      if (response.status === Location.PermissionStatus.GRANTED) {
+        const { coords } = await Location.getCurrentPositionAsync({});
+
+        mapRef.current?.animateCameraTo({
+          latitude: coords.latitude,
+          longitude: coords.longitude,
+          zoom: 13
+        });
+        mapRef.current?.setLocationTrackingMode('Follow');
+      }
+    };
+
+    getCurrentLocation();
   }, [requestPermission]);
 
   const handlePressSetting = async () => {
@@ -25,10 +40,38 @@ const Map = () => {
     }
   };
 
+  const handleTapLeaf = () => {
+    // NOTE: 리프 마커 클릭 시 -> 보호소 배열 정렬 1등으로 나오도록
+  };
+
+  const handleChangeCamera = (
+    params: Camera & {
+      reason: CameraChangeReason;
+      region: Region;
+    }
+  ) => {
+    setCamera(params);
+  };
+
+  const hasLocation = Boolean(status) && status?.status === Location.PermissionStatus.GRANTED;
+
   return (
     <View style={[styles.container]}>
-      {status?.granted ? (
-        <NaverMapView style={styles.mapContainer} />
+      {hasLocation ? (
+        <NaverMapView
+          camera={camera}
+          ref={mapRef}
+          onTapClusterLeaf={handleTapLeaf}
+          onCameraChanged={handleChangeCamera}
+          isExtentBoundedInKorea
+          isShowLocationButton={true}
+          isShowScaleBar={false}
+          isShowZoomControls={false}
+          minZoom={13}
+          maxZoom={13}
+          isZoomGesturesEnabled={false}
+          style={styles.mapContainer}
+        ></NaverMapView>
       ) : (
         <View style={styles.requestContainer}>
           <Text>위치 권한 설정이 완료되지 않았습니다.</Text>
