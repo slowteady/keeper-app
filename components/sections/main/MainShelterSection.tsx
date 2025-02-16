@@ -1,4 +1,6 @@
+import FullViewButton from '@/components/atoms/button/FullViewButton';
 import { NavArrowIcon } from '@/components/atoms/icons/ArrowIcon';
+import ShelterCard from '@/components/organisms/card/ShelterCard';
 import { ShelterMap } from '@/components/organisms/map/ShelterMap';
 import theme from '@/constants/theme';
 import { useGetShelters } from '@/hooks/queries/useShelters';
@@ -6,14 +8,14 @@ import { ShelterValue } from '@/types/scheme/shelters';
 import { Camera, NaverMapViewRef } from '@mj-studio/react-native-naver-map';
 import * as Location from 'expo-location';
 import { router } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { FlatList, ListRenderItemInfo, Pressable, StyleSheet, Text, View } from 'react-native';
 
 const MainShelterSection = () => {
   const [camera, setCamera] = useState<Camera>();
   const [enabled, setEnabled] = useState(false);
   const [selectedMarkerId, setSelectedMarkerId] = useState(0);
-  const [shelterData, setShelterData] = useState<ShelterValue[]>([]); // ✅ 변경된 부분
+  const [shelterData, setShelterData] = useState<ShelterValue[]>([]);
   const mapRef = useRef<NaverMapViewRef | null>(null);
   const [status, requestPermission] = Location.useForegroundPermissions();
 
@@ -53,6 +55,7 @@ const MainShelterSection = () => {
 
   const handleRefetch = (camera?: Camera) => {
     setCamera(camera);
+    setSelectedMarkerId(0);
   };
 
   const handleTapMarker = (data: ShelterValue) => {
@@ -76,6 +79,7 @@ const MainShelterSection = () => {
   };
 
   const hasLocation = Boolean(status) && status?.status === Location.PermissionStatus.GRANTED;
+  const hasData = data && data.length > 0;
 
   return (
     <View style={styles.container}>
@@ -100,12 +104,49 @@ const MainShelterSection = () => {
           selectedMarkerId={selectedMarkerId}
           onInitialized={handleInitMap}
         />
+        {hasData && <ShelterCardList data={shelterData} />}
       </View>
     </View>
   );
 };
 
 export default MainShelterSection;
+
+const ShelterCardList = ({ data }: Record<'data', ShelterValue[]>) => {
+  const handlePressCard = useCallback((id: number) => {
+    router.push({ pathname: '/shelters/[id]', params: { id } });
+  }, []);
+
+  const handlePress = () => {
+    router.push('/shelters');
+  };
+
+  const renderItem = ({ item }: ListRenderItemInfo<ShelterValue>) => {
+    const { name, address, tel } = item;
+
+    return (
+      <Pressable onPress={() => handlePressCard(item.id)}>
+        <ShelterCard name={name} address={address} tel={tel} onPressLike={() => null} />
+      </Pressable>
+    );
+  };
+
+  return (
+    <FlatList
+      data={data}
+      showsHorizontalScrollIndicator={false}
+      decelerationRate="fast"
+      horizontal={true}
+      bounces
+      keyExtractor={(item) => `${item.id}`}
+      renderItem={renderItem}
+      ListFooterComponent={() => <FullViewButton onPress={handlePress} />}
+      ListFooterComponentStyle={[styles.flex, { paddingHorizontal: 20 }]}
+      style={{ paddingVertical: 16 }}
+      contentContainerStyle={{ gap: 16 }}
+    />
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
