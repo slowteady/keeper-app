@@ -4,6 +4,7 @@ import { FlatList, NativeScrollEvent, NativeSyntheticEvent } from 'react-native'
 import ScrollFloatingButton from '../atoms/button/ScrollFloatingButton';
 import MainAbandonmentSection from '../sections/main/MainAbandonmentSection';
 import MainBannerSection from '../sections/main/MainBannerSection';
+import MainShelterSection from '../sections/main/MainShelterSection';
 
 const MainTemplate = () => {
   const [isButtonVisible, setIsButtonVisible] = useState(false);
@@ -26,8 +27,8 @@ const MainTemplate = () => {
   const data = useMemo(
     () => [
       { id: 'banner', Component: <MainBannerSection /> },
-      { id: 'abandonments', Component: <MainAbandonmentSection /> }
-      // { id: 'shelters', Component: <MainReviewSection /> },
+      { id: 'abandonments', Component: <MainAbandonmentSection /> },
+      { id: 'shelters', Component: <MainShelterSection /> }
       // { id: 'announce', Component: <MainAnnounceSection /> }
     ],
     []

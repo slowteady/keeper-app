@@ -1,3 +1,4 @@
+import MenuHeader from '@/components/organisms/headers/MenuHeader';
 import { useReactQueryDevTools } from '@dev-plugins/react-query';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -52,7 +53,15 @@ export default function RootLayout() {
         <BottomSheetModalProvider>
           <SafeAreaProvider>
             <StatusBar style="dark" />
-            <Stack />
+            <Stack>
+              <Stack.Screen
+                name="menu"
+                options={{
+                  header: () => <MenuHeader />,
+                  presentation: 'fullScreenModal'
+                }}
+              />
+            </Stack>
           </SafeAreaProvider>
         </BottomSheetModalProvider>
       </GestureHandlerRootView>
