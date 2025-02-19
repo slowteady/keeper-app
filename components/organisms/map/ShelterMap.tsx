@@ -66,7 +66,7 @@ const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
               isZoomGesturesEnabled={true}
               isTiltGesturesEnabled={false}
               isRotateGesturesEnabled={true}
-              animationDuration={0.5}
+              animationDuration={500}
               style={styles.mapContainer}
               {...props}
             >
