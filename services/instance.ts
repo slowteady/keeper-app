@@ -1,3 +1,5 @@
+import { buildQueryString } from '@/utils/queryUtils';
+
 export interface PublicApiParams {
   endpoint: string;
   params?: Record<string, any>;
@@ -7,11 +9,11 @@ export interface PublicApiParams {
 
 const BASE_URL = 'https://app.our-keeper.com/api';
 
-export const publicApi = async ({ endpoint, params = {}, options = {}, timeout = 10000 }: PublicApiParams) => {
+export const publicApi = async ({ endpoint, params = {}, options = {}, timeout = 5000 }: PublicApiParams) => {
   const controller = new AbortController();
   const { signal } = controller;
 
-  const queryString = new URLSearchParams(params).toString();
+  const queryString = buildQueryString(params);
   const url = `${BASE_URL}${endpoint}${queryString ? `?${queryString}` : ''}`;
 
   const headers = {

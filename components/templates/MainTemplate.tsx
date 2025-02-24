@@ -2,6 +2,7 @@ import theme from '@/constants/theme';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { FlatList, NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
 import ScrollFloatingButton from '../atoms/button/ScrollFloatingButton';
+import { ScrollRefContext } from '../organisms/map/MapTouchableWrapper';
 import MainAbandonmentSection from '../sections/main/MainAbandonmentSection';
 import MainBannerSection from '../sections/main/MainBannerSection';
 import MainShelterSection from '../sections/main/MainShelterSection';
@@ -35,7 +36,7 @@ const MainTemplate = () => {
   );
 
   return (
-    <>
+    <ScrollRefContext.Provider value={flatListRef}>
       <FlatList
         ref={flatListRef}
         onScroll={handleScroll}
@@ -49,7 +50,7 @@ const MainTemplate = () => {
         style={{ backgroundColor: theme.colors.background.default, flex: 1 }}
       />
       <ScrollFloatingButton visible={isButtonVisible} onPress={handlePress} />
-    </>
+    </ScrollRefContext.Provider>
   );
 };
 

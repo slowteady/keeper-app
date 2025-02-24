@@ -58,15 +58,7 @@ const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
               ref={ref}
               onCameraChanged={handleChangeCamera}
               isExtentBoundedInKorea
-              minZoom={11}
-              isShowCompass={false}
-              isShowScaleBar={false}
-              isShowLocationButton={true}
-              isShowZoomControls={true}
-              isZoomGesturesEnabled={true}
-              isTiltGesturesEnabled={false}
-              isRotateGesturesEnabled={true}
-              animationDuration={0.5}
+              animationDuration={500}
               style={styles.mapContainer}
               {...props}
             >

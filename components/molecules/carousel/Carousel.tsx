@@ -17,7 +17,12 @@ const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>((props, ref) => 
     <>
       <PagerView style={styles.container} ref={ref} {...props}>
         {data.map((image, idx) => (
-          <Image key={idx} source={image} contentFit="cover" style={{ borderRadius: 10 }} />
+          <Image
+            key={idx}
+            source={image}
+            contentFit="cover"
+            style={{ borderRadius: 10, width: '100%', height: '100%' }}
+          />
         ))}
       </PagerView>
     </>
@@ -31,7 +36,7 @@ export interface BasicCarouselControllerProps {
 }
 const Controller = ({ currentIndex, max, onPress }: BasicCarouselControllerProps) => {
   const minCount = currentIndex + 1;
-  const text = `${minCount}P/${max}P`;
+  const text = `${minCount}/${max}`;
 
   const handlePress = (type: 'prev' | 'next') => {
     onPress(type);
