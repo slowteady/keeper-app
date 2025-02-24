@@ -1,9 +1,10 @@
 import FullViewButton from '@/components/atoms/button/FullViewButton';
 import { NavArrowIcon } from '@/components/atoms/icons/ArrowIcon';
-import ShelterCard from '@/components/organisms/card/ShelterCard';
-import { ShelterMap } from '@/components/organisms/map/ShelterMap';
+import MainShelterCard from '@/components/organisms/card/MainShelterCard';
+import { MapTouchableWrapper } from '@/components/organisms/map/MapTouchableWrapper';
+import { ShelterMap, ShelterMapDistanceBoxProps } from '@/components/organisms/map/ShelterMap';
 import theme from '@/constants/theme';
-import { useGetShelters } from '@/hooks/queries/useShelters';
+import { useGetShelterCount, useGetShelters } from '@/hooks/queries/useShelters';
 import { ShelterValue } from '@/types/scheme/shelters';
 import { Camera, NaverMapViewRef } from '@mj-studio/react-native-naver-map';
 import * as Location from 'expo-location';
@@ -12,6 +13,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { FlatList, ListRenderItemInfo, Pressable, StyleSheet, Text, View } from 'react-native';
 
 const MainShelterSection = () => {
+  const [controlsVisible, setControlsVisible] = useState(true);
   const [camera, setCamera] = useState<Camera>();
   const [enabled, setEnabled] = useState(false);
   const [selectedMarkerId, setSelectedMarkerId] = useState(0);
@@ -19,10 +21,14 @@ const MainShelterSection = () => {
   const mapRef = useRef<NaverMapViewRef | null>(null);
   const [status, requestPermission] = Location.useForegroundPermissions();
 
-  const { data } = useGetShelters(
+  const { data: sheltersData } = useGetShelters(
     { latitude: camera?.latitude || 0, longitude: camera?.longitude || 0, radius: 50 },
     { enabled: Boolean(camera) && enabled }
   );
+  const { data: shelterCountData } = useGetShelterCount({
+    latitude: camera?.latitude || 0,
+    longitude: camera?.longitude || 0
+  });
 
   useEffect(() => {
     const getCurrentLocation = async () => {
@@ -45,9 +51,9 @@ const MainShelterSection = () => {
   }, [requestPermission]);
 
   useEffect(() => {
-    if (!data) return;
-    setShelterData(data);
-  }, [data]);
+    if (!sheltersData) return;
+    setShelterData(sheltersData);
+  }, [sheltersData]);
 
   const handlePressButton = () => {
     router.push('/shelters');
@@ -69,17 +75,18 @@ const MainShelterSection = () => {
 
   const handleInitMap = () => {
     setEnabled(true);
+    setControlsVisible(true);
   };
 
-  const distanceValue = {
-    '1km': 0,
-    '10km': 0,
-    '30km': 0,
-    '50km': 0
+  const distanceValue: ShelterMapDistanceBoxProps['value'] = {
+    '1km': shelterCountData?.find((item) => item.distance === 1)?.count ?? 0,
+    '10km': shelterCountData?.find((item) => item.distance === 10)?.count ?? 0,
+    '30km': shelterCountData?.find((item) => item.distance === 30)?.count ?? 0,
+    '50km': shelterCountData?.find((item) => item.distance === 50)?.count ?? 0
   };
 
   const hasLocation = Boolean(status) && status?.status === Location.PermissionStatus.GRANTED;
-  const hasData = data && data.length > 0;
+  const hasData = sheltersData && sheltersData.length > 0;
 
   return (
     <View style={styles.container}>
@@ -93,17 +100,30 @@ const MainShelterSection = () => {
 
       <View style={{ paddingHorizontal: 20, flex: 1 }}>
         <ShelterMap.DistanceBox style={{ marginBottom: 16 }} value={distanceValue} />
-        <ShelterMap
-          ref={mapRef}
-          hasLocation={hasLocation}
-          data={shelterData}
-          camera={camera}
-          onRefetch={handleRefetch}
-          onTapMarker={handleTapMarker}
-          onTapMap={handleTapMap}
-          selectedMarkerId={selectedMarkerId}
-          onInitialized={handleInitMap}
-        />
+        <MapTouchableWrapper>
+          {/* <View style={{ flex: 1 }}> */}
+          <ShelterMap
+            ref={mapRef}
+            hasLocation={hasLocation}
+            data={shelterData}
+            camera={camera}
+            onRefetch={handleRefetch}
+            onTapMarker={handleTapMarker}
+            onTapMap={handleTapMap}
+            onInitialized={handleInitMap}
+            selectedMarkerId={selectedMarkerId}
+            isShowCompass={controlsVisible}
+            isShowScaleBar={controlsVisible}
+            isShowLocationButton={controlsVisible}
+            isShowZoomControls={controlsVisible}
+            isZoomGesturesEnabled={false}
+            isTiltGesturesEnabled={false}
+            isRotateGesturesEnabled={false}
+            minZoom={10}
+            // maxZoom={10}
+          />
+          {/* </View> */}
+        </MapTouchableWrapper>
         {hasData && <ShelterCardList data={shelterData} />}
       </View>
     </View>
@@ -126,7 +146,7 @@ const ShelterCardList = ({ data }: Record<'data', ShelterValue[]>) => {
 
     return (
       <Pressable onPress={() => handlePressCard(item.id)}>
-        <ShelterCard name={name} address={address} tel={tel} onPressLike={() => null} />
+        <MainShelterCard name={name} address={address} tel={tel} onPressLike={() => null} />
       </Pressable>
     );
   };

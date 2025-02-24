@@ -5,14 +5,14 @@ import { useCallback } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { interpolateColor, useAnimatedProps, useSharedValue, withTiming } from 'react-native-reanimated';
 
-interface ShelterCardProps {
+interface MainShelterCardProps {
   onPressLike: () => void;
   name: string;
   address: string;
   tel: string;
 }
 
-const ShelterCard = ({ onPressLike, name, address, tel }: ShelterCardProps) => {
+const MainShelterCard = ({ onPressLike, name, address, tel }: MainShelterCardProps) => {
   const fill = useSharedValue(0);
 
   const handlePressHeart = useCallback(async () => {
@@ -65,7 +65,7 @@ const ShelterCard = ({ onPressLike, name, address, tel }: ShelterCardProps) => {
   );
 };
 
-export default ShelterCard;
+export default MainShelterCard;
 
 const styles = StyleSheet.create({
   container: {

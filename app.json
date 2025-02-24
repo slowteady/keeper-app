@@ -7,7 +7,7 @@
     "scheme": "keeper",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/keeper-icon.png",
     "ios": {
       "supportsTablet": false,
       "entitlements": {
@@ -16,17 +16,21 @@
       "bundleIdentifier": "com.keeper.love"
     },
     "android": {
-      "package": "com.keeper.love"
+      "package": "com.keeper.love",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/keeper-icon.png",
+        "backgroundColor": "#1FE678"
+      }
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/keeper-logo.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#1FE678"
         }
       ],
       ["@mj-studio/react-native-naver-map", { "client_id": "rg0cm283cu" }],

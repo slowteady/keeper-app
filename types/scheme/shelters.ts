@@ -65,4 +65,9 @@ export interface ShelterValue {
   weekendCloseTime: string;
 }
 
+export interface ShelterCountValue {
+  distance: number;
+  count: number;
+}
+
 export type ShelterDivision = 'ANIMAL_HOSPITAL' | 'CORPORATION';
