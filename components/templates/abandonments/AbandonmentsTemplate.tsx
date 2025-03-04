@@ -1,14 +1,10 @@
 import { abandonmentsBusiness, AbandonmentsBusinessResult } from '@/businesses/abandonmentsBusiness';
 import ScrollFloatingButton from '@/components/atoms/button/ScrollFloatingButton';
-import { Toggle } from '@/components/molecules/button/Toggle';
-import Searchbar from '@/components/molecules/input/Searchbar';
-import { Skeleton } from '@/components/molecules/placeholder/Skeleton';
 import {
-  AbandonmentsBottomSheet,
-  AbandonmentsBottomSheetMenuData
-} from '@/components/organisms/bottomSheet/AbandonmentsBottomSheet';
-import { BasicCard } from '@/components/organisms/card/BasicCard';
-import { ABANDONMENTS_ANIMAL_TYPES, ABANDONMENTS_FILTERS } from '@/constants/abandonments.config';
+  DropdownBottomSheet,
+  DropdownBottomSheetMenuData
+} from '@/components/organisms/bottomSheet/DropdownBottomSheet';
+import { ABANDONMENTS_FILTERS } from '@/constants/config';
 import theme from '@/constants/theme';
 import { abandonmentsAtom, abandonmentsFilterValueAtom } from '@/states/abandonments';
 import { AbandonmentsFilter } from '@/types/abandonments';
@@ -51,7 +47,7 @@ const AbandonmentsTemplate = ({ data, onFetch, isLoading }: AbandonmentsTemplate
   };
 
   const handlePressFilterValue = useCallback(
-    (data: AbandonmentsBottomSheetMenuData<AbandonmentsFilter>) => {
+    (data: DropdownBottomSheetMenuData<AbandonmentsFilter>) => {
       const { value } = data;
       setAbandonmentsConfig((prev) => ({ ...prev, filter: value }));
       bottomSheetModalRef.current?.dismiss();
@@ -67,7 +63,7 @@ const AbandonmentsTemplate = ({ data, onFetch, isLoading }: AbandonmentsTemplate
     <>
       <AbandonmentList data={data} onPressFilter={handlePressFilter} onFetch={onFetch} isLoading={isLoading} />
 
-      <AbandonmentsBottomSheet
+      <DropdownBottomSheet
         ref={bottomSheetModalRef}
         index={1}
         snapPoints={snapPoints}
@@ -75,12 +71,12 @@ const AbandonmentsTemplate = ({ data, onFetch, isLoading }: AbandonmentsTemplate
         backdropComponent={(props) => <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} />}
         containerStyle={{ paddingTop: 12 }}
       >
-        <AbandonmentsBottomSheet.Menu
+        <DropdownBottomSheet.Menu
           data={ABANDONMENTS_FILTERS}
           value={filterValue.value}
           onPress={handlePressFilterValue}
         />
-      </AbandonmentsBottomSheet>
+      </DropdownBottomSheet>
     </>
   );
 };
@@ -168,7 +164,7 @@ const FilterSection = ({ filterName, onPressFilter }: FilterSectionProps) => {
 
   return (
     <>
-      <View style={styles.titleWrap}>
+      {/* <View style={styles.titleWrap}>
         <Text style={styles.title}>전체공고</Text>
 
         <TouchableOpacity activeOpacity={0.5} onPress={onPressFilter}>
@@ -183,7 +179,7 @@ const FilterSection = ({ filterName, onPressFilter }: FilterSectionProps) => {
           onChange={handleChangeType}
         />
       </View>
-      <Searchbar onSubmit={handleSubmit} ViewStyle={{ marginBottom: 14 }} />
+      <Searchbar onSubmit={handleSubmit} ViewStyle={{ marginBottom: 14 }} /> */}
     </>
   );
 };
@@ -239,7 +235,7 @@ const AbandonmentCard = ({ data, isLoading }: AbandonmentCardProps) => {
 
   return (
     <View style={{ width }}>
-      <View style={{ width, height: width * 0.8, marginBottom: 20 }}>
+      {/* <View style={{ width, height: width * 0.8, marginBottom: 20 }}>
         {!isCompleteLoad && <Skeleton />}
         {uri && !timeoutExceeded ? (
           <BasicCard.Image source={{ uri }} onLoad={() => setIsLoad(true)} />
@@ -253,7 +249,7 @@ const AbandonmentCard = ({ data, isLoading }: AbandonmentCardProps) => {
         data={description}
         primaryStyle={styles.primaryDescription}
         secondaryStyle={styles.secondaryDescription}
-      />
+      /> */}
     </View>
   );
 };

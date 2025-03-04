@@ -1,7 +1,7 @@
 import { NavArrowIcon } from '@/components/atoms/icons/ArrowIcon';
 import { AnimatedMenuHeartIcon } from '@/components/atoms/icons/HeartIcon';
 import { Accordion } from '@/components/molecules/transition/Accordion';
-import { ADOPT_SUB_MENU } from '@/constants/menu';
+import { ADOPT_SUB_MENU } from '@/constants/config';
 import theme from '@/constants/theme';
 import { router } from 'expo-router';
 import { useCallback, useMemo } from 'react';

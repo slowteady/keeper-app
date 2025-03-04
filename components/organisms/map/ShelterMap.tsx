@@ -1,54 +1,65 @@
 import theme from '@/constants/theme';
-import { ShelterValue } from '@/types/scheme/shelters';
+import { useDebounce } from '@/hooks/useDebounce';
+import { CameraParams } from '@/types/map';
+import { ShelterCountValue, ShelterValue } from '@/types/scheme/shelters';
+import { isCameraChanged } from '@/utils/mapUtils';
 import {
-  Camera,
-  CameraChangeReason,
   NaverMapMarkerOverlay,
   NaverMapView,
   NaverMapViewProps,
-  NaverMapViewRef,
-  Region
+  NaverMapViewRef
 } from '@mj-studio/react-native-naver-map';
 import { applicationId } from 'expo-application';
 import * as Haptics from 'expo-haptics';
 import { ActivityAction, startActivityAsync } from 'expo-intent-launcher';
-import { forwardRef, useRef, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
 import { Dimensions, Linking, Platform, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 export interface ShelterMapProps extends NaverMapViewProps {
   hasLocation: boolean;
   data?: ShelterValue[];
-  onRefetch: (camera?: Camera) => void;
+  onRefetch: (params?: CameraParams) => void;
   onTapMarker?: (data: ShelterValue) => void;
   selectedMarkerId?: number;
 }
 const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
   ({ hasLocation, data, onRefetch, onTapMarker, selectedMarkerId, ...props }, ref) => {
     const [isVisibleButton, setIsVisibleButton] = useState(false);
-    const cameraRef = useRef<Camera>();
+    const cameraRef = useRef<CameraParams>();
+    const scale = useSharedValue(0);
 
-    const handleChangeCamera = (
-      params: Camera & {
-        reason: CameraChangeReason;
-        region: Region;
+    useEffect(() => {
+      scale.value = withTiming(isVisibleButton ? 1 : 0, { duration: 200 });
+    }, [scale, isVisibleButton]);
+
+    const animatedStyle = useAnimatedStyle(() => ({
+      transform: [{ scale: scale.value }],
+      opacity: scale.value
+    }));
+
+    const handleChangeCamera = useDebounce((params: CameraParams) => {
+      if (cameraRef.current && !isCameraChanged(cameraRef.current, params)) {
+        return;
       }
-    ) => {
+
       setIsVisibleButton(true);
       cameraRef.current = params;
-    };
-
+    }, 500);
     const handlePressRefetch = async () => {
       await Haptics.selectionAsync();
       setIsVisibleButton(false);
       onRefetch(cameraRef.current);
     };
-
-    const handleTapMarker = (data: ShelterValue) => {
-      if (ref && 'current' in ref && ref.current) {
-        ref?.current?.animateCameraTo({ latitude: data.latitude, longitude: data.longitude });
-        onTapMarker?.(data);
-      }
-    };
+    const handleTapMarker = useCallback(
+      (data: ShelterValue) => {
+        if (ref && 'current' in ref && ref.current) {
+          ref?.current?.animateCameraTo({ latitude: data.latitude, longitude: data.longitude });
+          onTapMarker?.(data);
+        }
+      },
+      [onTapMarker, ref]
+    );
 
     return (
       <View style={[styles.container]}>
@@ -66,10 +77,13 @@ const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
                 <Marker data={item} key={item.id} onTap={handleTapMarker} isSelectedId={selectedMarkerId} />
               ))}
             </NaverMapView>
+
             {isVisibleButton && (
-              <TouchableOpacity style={styles.mapButton} activeOpacity={0.5} onPress={handlePressRefetch}>
-                <Text style={styles.mapButtonText}>현 지도에서 검색</Text>
-              </TouchableOpacity>
+              <Animated.View style={[styles.mapButton, animatedStyle]}>
+                <TouchableOpacity activeOpacity={0.5} onPress={handlePressRefetch}>
+                  <Text style={styles.mapButtonText}>현 지도에서 검색</Text>
+                </TouchableOpacity>
+              </Animated.View>
             )}
           </>
         ) : (
@@ -81,29 +95,22 @@ const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
 );
 
 export interface ShelterMapDistanceBoxProps {
-  value: {
-    '1km': number;
-    '10km': number;
-    '30km': number;
-    '50km': number;
-  };
+  value?: ShelterCountValue[];
   style?: ViewStyle;
 }
 const DistanceBox = ({ value, style }: ShelterMapDistanceBoxProps) => {
-  const convertedValue = Object.entries(value).map(([key, val]) => ({
-    label: key,
-    value: val
-  }));
+  const DISTANCES = [1, 5, 10, 30];
 
   return (
     <View style={[styles.distanceContainer, style]}>
-      {convertedValue.map(({ label, value }, idx) => {
-        const key = `${label}-${idx}`;
+      {DISTANCES.map((dist, idx) => {
+        const key = `${dist}-${idx}`;
+        const matchedCount = value?.find(({ distance }) => distance === dist);
 
         return (
-          <View style={styles.textContainer} key={key}>
-            <Text style={styles.label}>{label}</Text>
-            <Text style={styles.value}>{value}곳</Text>
+          <View key={key} style={styles.textContainer}>
+            <Text style={styles.label}>{dist}km</Text>
+            <Text style={styles.value}>{matchedCount?.count || 0}곳</Text>
           </View>
         );
       })}
@@ -125,6 +132,9 @@ const Marker = ({ data, onTap, isSelectedId }: ShelterMapMarkerProps) => {
   };
 
   const isSelected = isSelectedId === id;
+  const captionStyle = isSelected
+    ? { textSize: 13, haloColor: theme.colors.primary.main }
+    : { textSize: 11, haloColor: theme.colors.white[900] };
 
   return (
     <NaverMapMarkerOverlay
@@ -134,8 +144,8 @@ const Marker = ({ data, onTap, isSelectedId }: ShelterMapMarkerProps) => {
       height={isSelected ? 42 : 32}
       width={isSelected ? 38 : 28}
       onTap={handleTapMarker}
-      caption={isSelected ? { text: data.name, textSize: 13 } : undefined}
-      globalZIndex={isSelected ? MARKER_DEFAULT_ZINDEX + 1 : MARKER_DEFAULT_ZINDEX}
+      caption={{ text: data.name, minZoom: 10, ...captionStyle }}
+      globalZIndex={isSelected ? MARKER_DEFAULT_ZINDEX : MARKER_DEFAULT_ZINDEX - 1}
     />
   );
 };
@@ -152,15 +162,10 @@ const NoValidMap = () => {
   };
 
   return (
-    <View style={styles.requestContainer}>
-      <Text>위치 권한 설정이 완료되지 않았습니다.</Text>
-      <Text>{`설정 > Keeper > 위치 접근 허용을 설정해주세요.`}</Text>
-      <TouchableOpacity
-        style={{ padding: 20, borderRadius: 10, backgroundColor: theme.colors.black[500] }}
-        activeOpacity={0.5}
-        onPress={handlePressSetting}
-      >
-        <Text>설정하기</Text>
+    <View style={styles.reqContainer}>
+      <Text style={styles.reqText}>사용자의 위치 설정을 켜주세요.</Text>
+      <TouchableOpacity activeOpacity={0.5} onPress={handlePressSetting} style={styles.settingButton}>
+        <Text style={styles.settingButtonText}>설정하기</Text>
       </TouchableOpacity>
     </View>
   );
@@ -186,20 +191,31 @@ const styles = StyleSheet.create({
     height: '100%',
     position: 'relative'
   },
-  requestContainer: {
+  reqContainer: {
+    width: '100%',
+    height: '100%',
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center'
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.colors.white[900]
+  },
+  reqText: {
+    fontSize: 15,
+    lineHeight: 17,
+    fontWeight: '700',
+    color: theme.colors.black[600],
+    marginBottom: 18
   },
   distanceContainer: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 9,
+    paddingHorizontal: 28,
+    paddingVertical: 10,
     backgroundColor: theme.colors.white[800],
-    borderRadius: 8
+    borderRadius: 6
   },
   textContainer: {
     display: 'flex',
@@ -209,13 +225,13 @@ const styles = StyleSheet.create({
   },
   label: {
     color: theme.colors.black[600],
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '400',
     lineHeight: 22
   },
   value: {
     color: theme.colors.black[700],
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '700',
     lineHeight: 22
   },
@@ -246,6 +262,18 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
     lineHeight: 22
+  },
+  settingButton: {
+    padding: 12,
+    borderRadius: 30,
+    borderColor: theme.colors.black[600],
+    borderWidth: 1
+  },
+  settingButtonText: {
+    fontSize: 13,
+    lineHeight: 15,
+    fontWeight: '700',
+    color: theme.colors.black[700]
   }
 });
 

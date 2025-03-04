@@ -14,18 +14,16 @@ const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>((props, ref) => 
   const { data } = props;
 
   return (
-    <>
-      <PagerView style={styles.container} ref={ref} {...props}>
-        {data.map((image, idx) => (
-          <Image
-            key={idx}
-            source={image}
-            contentFit="cover"
-            style={{ borderRadius: 10, width: '100%', height: '100%' }}
-          />
-        ))}
-      </PagerView>
-    </>
+    <PagerView style={styles.container} ref={ref} {...props}>
+      {data.map((image, idx) => (
+        <Image
+          key={idx}
+          source={image}
+          contentFit="cover"
+          style={{ borderRadius: 10, width: '100%', height: '100%' }}
+        />
+      ))}
+    </PagerView>
   );
 });
 
@@ -44,11 +42,11 @@ const Controller = ({ currentIndex, max, onPress }: BasicCarouselControllerProps
 
   return (
     <View style={styles.controllerContainer}>
-      <Pressable onPress={() => handlePress('prev')} style={styles.button}>
+      <Pressable onPress={() => handlePress('prev')}>
         <ArrowLeftIcon width={14} height={14} />
       </Pressable>
       <Text style={styles.text}>{text}</Text>
-      <Pressable onPress={() => handlePress('next')} style={styles.button}>
+      <Pressable onPress={() => handlePress('next')}>
         <ArrowRightIcon width={14} height={14} />
       </Pressable>
     </View>
@@ -67,21 +65,22 @@ const styles = StyleSheet.create({
   controllerContainer: {
     display: 'flex',
     flexDirection: 'row',
+    gap: 8,
     alignItems: 'center',
     justifyContent: 'space-between',
     borderRadius: 40,
     borderColor: theme.colors.black[900],
     borderWidth: 1,
     borderStyle: 'solid',
-    alignSelf: 'baseline'
-  },
-  button: {
-    padding: 10
+    alignSelf: 'baseline',
+    paddingHorizontal: 15,
+    paddingVertical: 11
   },
   text: {
-    fontSize: 11,
-    color: theme.colors.black[900],
-    fontWeight: '400'
+    fontSize: 14,
+    lineHeight: 16,
+    fontWeight: '400',
+    color: theme.colors.black[900]
   }
 });
 

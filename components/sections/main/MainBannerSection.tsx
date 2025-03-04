@@ -1,7 +1,7 @@
 import { Carousel } from '@/components/molecules/carousel/Carousel';
 import theme from '@/constants/theme';
 import { memo, useCallback, useRef, useState } from 'react';
-import { NativeSyntheticEvent, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, NativeSyntheticEvent, StyleSheet, Text, View } from 'react-native';
 import PagerView from 'react-native-pager-view';
 
 const MainBannerSection = memo(() => {
@@ -50,14 +50,17 @@ const MainBannerSection = memo(() => {
 
 export default MainBannerSection;
 
+const width = Dimensions.get('screen').width - 40;
+const height = width * 1.1;
 const styles = StyleSheet.create({
   container: {
     backgroundColor: theme.colors.background.default,
     paddingHorizontal: 20,
-    paddingVertical: 24
+    paddingTop: 32,
+    paddingBottom: 24
   },
   labelContainer: {
-    paddingBottom: 20
+    paddingBottom: 32
   },
   title: {
     fontSize: 30,
@@ -67,13 +70,14 @@ const styles = StyleSheet.create({
     paddingBottom: 30
   },
   subTitle: {
-    color: theme.colors.black[900],
-    ...theme.fonts.regular
+    fontSize: 17,
+    fontWeight: '500',
+    lineHeight: 19,
+    color: theme.colors.black[900]
   },
   image: {
-    width: '100%',
-    height: 320,
-    marginBottom: 24
+    width,
+    height
   },
   suspense: {
     backgroundColor: theme.colors.white[900],

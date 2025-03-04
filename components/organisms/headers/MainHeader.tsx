@@ -6,7 +6,7 @@ import { useLayout } from '@/hooks/useLayout';
 import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import { memo } from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 const MainHeader = memo(() => {
   const { headerTop } = useLayout();
@@ -38,9 +38,20 @@ export default MainHeader;
 const styles = StyleSheet.create({
   container: {
     position: 'sticky',
-    backgroundColor: theme.colors.background.default,
+    backgroundColor: theme.colors.white[900],
     paddingHorizontal: 20,
-    paddingBottom: 16
+    paddingBottom: 16,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.14,
+        shadowRadius: 4
+      },
+      android: {
+        elevation: 4
+      }
+    })
   },
   wrap: {
     display: 'flex',

@@ -1,8 +1,7 @@
-import theme from '@/constants/theme';
+import { ChipVariant } from '@/components/organisms/card/AnimalCard';
 import { AbandonmentsChipId, AbandonmentsFilter } from '@/types/abandonments';
 import { AbandonmentValue } from '@/types/scheme/abandonments';
 import dayjs from 'dayjs';
-import { TextStyle, ViewStyle } from 'react-native';
 
 export type AbandonmentsBusinessResult = ReturnType<typeof abandonmentsBusiness>[number];
 export const abandonmentsBusiness = (data: AbandonmentValue[], filter?: AbandonmentsFilter) => {
@@ -53,10 +52,8 @@ export const transformChipLabel = ({ neuterYn, filter, weight, gender, age }: Ch
     id: AbandonmentsChipId;
     value: string;
     sort: number;
-    containerStyle?: ViewStyle;
-    chipStyle?: TextStyle;
+    variant?: ChipVariant;
   }[] = [];
-  const { error, success, white, black, notice } = theme.colors;
 
   switch (filter) {
     case 'NEAR_DEADLINE':
@@ -64,8 +61,7 @@ export const transformChipLabel = ({ neuterYn, filter, weight, gender, age }: Ch
         id: 'NEAR_DEADLINE',
         value: '안락사 위기',
         sort: 1,
-        containerStyle: { backgroundColor: error.lightest },
-        chipStyle: { color: error.main }
+        variant: 'error'
       });
       break;
     case 'NEW':
@@ -73,8 +69,7 @@ export const transformChipLabel = ({ neuterYn, filter, weight, gender, age }: Ch
         id: 'NEW',
         value: '신규',
         sort: 1,
-        containerStyle: { backgroundColor: success.lightest },
-        chipStyle: { color: success.main }
+        variant: 'success'
       });
       break;
   }
@@ -84,8 +79,7 @@ export const transformChipLabel = ({ neuterYn, filter, weight, gender, age }: Ch
       id: 'NEUTER',
       value: '중성화',
       sort: 2,
-      containerStyle: { backgroundColor: notice.lightest },
-      chipStyle: { color: notice.main }
+      variant: 'notice'
     });
   }
 
@@ -93,18 +87,14 @@ export const transformChipLabel = ({ neuterYn, filter, weight, gender, age }: Ch
   data.push({
     id: 'GENDER',
     value: genderLabel,
-    sort: 3,
-    containerStyle: { backgroundColor: white[800] },
-    chipStyle: { color: black[600] }
+    sort: 3
   });
 
   if (age) {
     data.push({
       id: 'AGE',
       value: `${age}년생`,
-      sort: 4,
-      containerStyle: { backgroundColor: white[800] },
-      chipStyle: { color: black[600] }
+      sort: 4
     });
   }
 
@@ -112,9 +102,7 @@ export const transformChipLabel = ({ neuterYn, filter, weight, gender, age }: Ch
     data.push({
       id: 'WEIGHT',
       value: `${weight}kg`,
-      sort: 5,
-      containerStyle: { backgroundColor: white[800] },
-      chipStyle: { color: black[600] }
+      sort: 5
     });
   }
 

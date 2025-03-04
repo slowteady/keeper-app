@@ -1,4 +1,4 @@
-import { ABANDONMENTS_FILTERS } from '@/constants/abandonments.config';
+import { ABANDONMENTS_FILTERS } from '@/constants/config';
 import { AbandonmentsFilter } from '@/types/abandonments';
 import { AnimalType } from '@/types/common';
 import { atom } from 'jotai';

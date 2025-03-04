@@ -1,33 +1,13 @@
-import { AnimatedHeartIcon } from '@/components/atoms/icons/HeartIcon';
 import theme from '@/constants/theme';
-import * as Haptics from 'expo-haptics';
-import { useCallback } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { interpolateColor, useAnimatedProps, useSharedValue, withTiming } from 'react-native-reanimated';
+import { StyleSheet, Text, View } from 'react-native';
 
 interface MainShelterCardProps {
-  onPressLike: () => void;
   name: string;
   address: string;
   tel: string;
 }
 
-const MainShelterCard = ({ onPressLike, name, address, tel }: MainShelterCardProps) => {
-  const fill = useSharedValue(0);
-
-  const handlePressHeart = useCallback(async () => {
-    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    fill.value = withTiming(fill.value === 0 ? 1 : 0, { duration: 300 });
-    onPressLike();
-  }, [fill, onPressLike]);
-
-  const animatedProps = useAnimatedProps(() => {
-    const fillColor = interpolateColor(fill.value, [0, 1], ['transparent', theme.colors.primary.main]);
-    const strokeColor = interpolateColor(fill.value, [0, 1], [theme.colors.black[600], theme.colors.primary.main]);
-
-    return { fill: fillColor, stroke: strokeColor };
-  });
-
+const MainShelterCard = ({ name, address, tel }: MainShelterCardProps) => {
   const descriptions = [
     { label: '주소', value: address },
     { label: '전화', value: tel }
@@ -39,9 +19,6 @@ const MainShelterCard = ({ onPressLike, name, address, tel }: MainShelterCardPro
         <Text style={styles.title} ellipsizeMode="tail" numberOfLines={1}>
           {name}
         </Text>
-        <TouchableOpacity onPress={handlePressHeart} activeOpacity={0.5}>
-          <AnimatedHeartIcon animatedProps={animatedProps} />
-        </TouchableOpacity>
       </View>
       <View style={styles.divider} />
       <View style={styles.descriptionWrap}>
@@ -69,7 +46,7 @@ export default MainShelterCard;
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 6,
+    borderRadius: 8,
     backgroundColor: theme.colors.white[900],
     paddingVertical: 18,
     width: 270
@@ -84,7 +61,9 @@ const styles = StyleSheet.create({
   title: {
     flex: 1,
     color: theme.colors.black[900],
-    ...theme.fonts.medium
+    fontSize: 17,
+    fontWeight: '500',
+    lineHeight: 19
   },
   divider: {
     height: 1,
@@ -105,9 +84,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20
   },
   description: {
-    fontSize: 12,
+    fontSize: 14,
     color: theme.colors.black[600],
-    lineHeight: 14,
+    lineHeight: 16,
     fontWeight: '400'
   }
 });

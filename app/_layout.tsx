@@ -35,9 +35,10 @@ export default function RootLayout() {
 
   useEffect(() => {
     (async () => {
-      await enableMocking();
+      // await enableMocking();
       if (loaded) {
-        SplashScreen.hideAsync();
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await SplashScreen.hideAsync();
         dayjs.extend(customParseFormat);
       }
     })();

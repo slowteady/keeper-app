@@ -1,12 +1,7 @@
 import { TransformedAbandonmentData } from '@/businesses/abandonmentsBusiness';
-import { AnimatedHeartIcon } from '@/components/atoms/icons/HeartIcon';
-import { Skeleton } from '@/components/molecules/placeholder/Skeleton';
-import { BasicCard } from '@/components/organisms/card/BasicCard';
 import theme from '@/constants/theme';
-import * as Haptics from 'expo-haptics';
-import { useCallback, useState } from 'react';
-import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { interpolateColor, useAnimatedProps, useSharedValue, withTiming } from 'react-native-reanimated';
+import { useState } from 'react';
+import { Dimensions, StyleSheet, View } from 'react-native';
 
 interface AbandonmentDetailCardSectionProps {
   data: TransformedAbandonmentData;
@@ -15,39 +10,38 @@ const PADDING_HORIZONTAL = 20;
 const imgWidth = Dimensions.get('screen').width - PADDING_HORIZONTAL * 2;
 const imgHeight = imgWidth * 0.8;
 const AbandonmentDetailCardSection = ({ data }: AbandonmentDetailCardSectionProps) => {
-  const fill = useSharedValue(0);
+  // const fill = useSharedValue(0);
 
-  const handlePressHeart = useCallback(async () => {
-    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    fill.value = withTiming(fill.value === 0 ? 1 : 0, { duration: 300 });
-  }, [fill]);
+  // const handlePressHeart = useCallback(async () => {
+  //   await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+  //   fill.value = withTiming(fill.value === 0 ? 1 : 0, { duration: 300 });
+  // }, [fill]);
 
-  const animatedProps = useAnimatedProps(() => {
-    const fillColor = interpolateColor(fill.value, [0, 1], ['transparent', theme.colors.primary.main]);
-    const strokeColor = interpolateColor(fill.value, [0, 1], [theme.colors.black[600], theme.colors.primary.main]);
+  // const animatedProps = useAnimatedProps(() => {
+  //   const fillColor = interpolateColor(fill.value, [0, 1], ['transparent', theme.colors.primary.main]);
+  //   const strokeColor = interpolateColor(fill.value, [0, 1], [theme.colors.black[600], theme.colors.primary.main]);
 
-    return { fill: fillColor, stroke: strokeColor };
-  });
+  //   return { fill: fillColor, stroke: strokeColor };
+  // });
 
-  const { title, uri, chips, description } = data;
+  // const { title, uri, chips, description } = data;
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.titleWrap}>
-        <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
-          {title}
-        </Text>
+  return null;
+  // <View style={styles.container}>
+  //   <View style={styles.titleWrap}>
+  //     <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
+  //       {title}
+  //     </Text>
 
-        <View style={styles.iconWrap}>
-          <TouchableOpacity onPress={handlePressHeart} activeOpacity={0.5}>
-            <AnimatedHeartIcon animatedProps={animatedProps} />
-          </TouchableOpacity>
-        </View>
-      </View>
+  //     <View style={styles.iconWrap}>
+  //       <TouchableOpacity onPress={handlePressHeart} activeOpacity={0.5}>
+  //         <AnimatedHeartIcon animatedProps={animatedProps} />
+  //       </TouchableOpacity>
+  //     </View>
+  //   </View>
 
-      <Card uri={uri} chips={chips} description={description} />
-    </View>
-  );
+  //   <Card uri={uri} chips={chips} description={description} />
+  // </View>
 };
 
 export default AbandonmentDetailCardSection;
@@ -62,11 +56,11 @@ const Card = ({ uri, chips, description }: CardProps) => {
 
   return (
     <View style={{ width: imgWidth }}>
-      <View style={{ width: imgWidth, height: imgHeight, marginBottom: 20 }}>
+      {/* <View style={{ width: imgWidth, height: imgHeight, marginBottom: 20 }}>
         {!isLoad && <Skeleton />}
         {uri ? <BasicCard.Image source={{ uri }} onLoad={() => setIsLoad(true)} /> : <BasicCard.NoImage />}
       </View>
-      <BasicCard.Descriptions data={description} primaryStyle={{ minWidth: 65 }} />
+      <BasicCard.Descriptions data={description} primaryStyle={{ minWidth: 65 }} /> */}
     </View>
   );
 };

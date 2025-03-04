@@ -9,12 +9,12 @@ import {
 import { forwardRef, useCallback } from 'react';
 import { StyleSheet, Text, TextStyle, TouchableOpacity, ViewStyle } from 'react-native';
 
-export interface AbandonmentsBottomSheetLayoutProps extends BottomSheetModalProps {
+export interface DropdownBottomSheetLayoutProps extends BottomSheetModalProps {
   containerStyle?: ViewStyle;
   children: React.ReactNode;
 }
 
-const BottomSheetLayout = forwardRef<BottomSheetModal, AbandonmentsBottomSheetLayoutProps>((props, ref) => {
+const Layout = forwardRef<BottomSheetModal, DropdownBottomSheetLayoutProps>((props, ref) => {
   const { children, containerStyle, ...rest } = props;
 
   const renderBackdrop = useCallback((props: BottomSheetBackdropProps) => {
@@ -37,18 +37,18 @@ const BottomSheetLayout = forwardRef<BottomSheetModal, AbandonmentsBottomSheetLa
   );
 });
 
-export interface AbandonmentsBottomSheetMenuData<T> {
+export interface DropdownBottomSheetMenuData<T> {
   value: T;
   name: string;
 }
-export interface AbandonmentsBottomSheetMenuProps<T> {
-  data: AbandonmentsBottomSheetMenuData<T>[];
+export interface DropdownBottomSheetMenuProps<T> {
+  data: DropdownBottomSheetMenuData<T>[];
   value: T;
-  onPress: (data: AbandonmentsBottomSheetMenuData<T>) => void;
+  onPress: (data: DropdownBottomSheetMenuData<T>) => void;
   style?: ViewStyle;
   textStyle?: TextStyle;
 }
-export const Menu = <T,>({ value, data, onPress, style, textStyle }: AbandonmentsBottomSheetMenuProps<T>) => {
+export const Menu = <T,>({ value, data, onPress, style, textStyle }: DropdownBottomSheetMenuProps<T>) => {
   return data.map((item, idx) => {
     const { name } = item;
     const key = `${name}-${idx}`;
@@ -64,7 +64,7 @@ export const Menu = <T,>({ value, data, onPress, style, textStyle }: Abandonment
   });
 };
 
-export const AbandonmentsBottomSheet = Object.assign(BottomSheetLayout, {
+export const DropdownBottomSheet = Object.assign(Layout, {
   Menu
 });
 
@@ -84,7 +84,8 @@ const styles = StyleSheet.create({
   viewContainer: {
     display: 'flex',
     flexDirection: 'column',
-    flex: 1
+    flex: 1,
+    paddingTop: 12
   },
   button: {
     paddingVertical: 16
@@ -96,4 +97,4 @@ const styles = StyleSheet.create({
   }
 });
 
-BottomSheetLayout.displayName = 'AbandonmentsBottomSheetLayout';
+Layout.displayName = 'DropdownBottomSheetLayout';
