@@ -31,17 +31,17 @@ const AbandonmentDetailCardSection = ({ data }: AbandonmentDetailCardSectionProp
       <View style={styles.imageContainer}>
         {!isLoad && <Skeleton style={styles.image} />}
         {uri ? (
-          <>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={handlePressImage}
+            disabled={!isLoad || !uri}
+            style={{ width: '100%', height: '100%' }}
+          >
             <Image source={{ uri }} onLoad={() => setIsLoad(true)} style={styles.image} contentFit="cover" />
-            <TouchableOpacity
-              activeOpacity={0.8}
-              style={styles.iconWrap}
-              onPress={handlePressImage}
-              disabled={!isLoad || !uri}
-            >
+            <View style={styles.iconWrap}>
               <MoreImageIcon color={theme.colors.black[900]} />
-            </TouchableOpacity>
-          </>
+            </View>
+          </TouchableOpacity>
         ) : (
           <NoImage style={{ backgroundColor: theme.colors.white[800] }} />
         )}
@@ -68,20 +68,20 @@ const PADDING_HORIZONTAL = 20;
 const imgWidth = Dimensions.get('screen').width - PADDING_HORIZONTAL * 2;
 const imgHeight = imgWidth * 0.8;
 const styles = StyleSheet.create({
-  imageContainer: {
-    position: 'relative',
-    width: imgWidth,
-    height: imgHeight,
-    marginBottom: 24
-  },
   titleWrap: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: 40,
-    marginBottom: 20,
+    marginBottom: 24,
     gap: 8
+  },
+  imageContainer: {
+    position: 'relative',
+    width: imgWidth,
+    height: imgHeight,
+    marginBottom: 28
   },
   image: {
     position: 'absolute',
@@ -92,7 +92,8 @@ const styles = StyleSheet.create({
   },
   title: {
     color: theme.colors.black[900],
-    fontSize: 26,
+    fontSize: 28,
+    lineHeight: 30,
     fontWeight: '500',
     flex: 1
   },
@@ -109,7 +110,8 @@ const styles = StyleSheet.create({
     color: theme.colors.black[600],
     fontWeight: '400',
     lineHeight: 17,
-    minWidth: 70
+    minWidth: 70,
+    alignSelf: 'flex-start'
   },
   text: {
     flex: 1,

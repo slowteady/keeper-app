@@ -43,11 +43,11 @@ const Controller = ({ currentIndex, max, onPress }: BasicCarouselControllerProps
   return (
     <View style={styles.controllerContainer}>
       <Pressable onPress={() => handlePress('prev')}>
-        <ArrowLeftIcon width={14} height={14} />
+        <ArrowLeftIcon width={11} height={11} />
       </Pressable>
       <Text style={styles.text}>{text}</Text>
       <Pressable onPress={() => handlePress('next')}>
-        <ArrowRightIcon width={14} height={14} />
+        <ArrowRightIcon width={11} height={11} />
       </Pressable>
     </View>
   );
@@ -65,22 +65,22 @@ const styles = StyleSheet.create({
   controllerContainer: {
     display: 'flex',
     flexDirection: 'row',
-    gap: 8,
+    gap: 4,
     alignItems: 'center',
     justifyContent: 'space-between',
     borderRadius: 40,
     borderColor: theme.colors.black[900],
-    borderWidth: 1,
+    borderWidth: 0.5,
     borderStyle: 'solid',
     alignSelf: 'baseline',
-    paddingHorizontal: 15,
-    paddingVertical: 11,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
     backgroundColor: theme.colors.white[900],
     opacity: 0.6
   },
   text: {
-    fontSize: 14,
-    lineHeight: 16,
+    fontSize: 12,
+    lineHeight: 14,
     fontWeight: '400',
     color: theme.colors.black[900]
   }

@@ -66,7 +66,7 @@ const transformTitle = (specificType: string, animalType: string) => {
 
 export type TransformedAbandonmentDetail = ReturnType<typeof transformAbandonmentDetail>;
 export const transformAbandonmentDetail = (data: AbandonmentValue) => {
-  const { image, specificType, noticeStartDt, noticeEndDt, orgName, happenPlace } = data;
+  const { image, specificType, noticeStartDt, noticeEndDt, orgName, happenPlace, animalType } = data;
   const descriptionParams: DescriptionParams = {
     specificType,
     noticeStartDt,
@@ -75,11 +75,12 @@ export const transformAbandonmentDetail = (data: AbandonmentValue) => {
     happenPlace
   };
   const transformedDescription = transformDescription(descriptionParams);
+  const transformedTitle = transformTitle(specificType, animalType);
 
   return {
     ...data,
     uri: image,
-    title: specificType,
+    title: transformedTitle,
     description: transformedDescription
   };
 };

@@ -18,7 +18,7 @@ const MainHeader = memo(() => {
   return (
     <View style={styles.container}>
       <View style={[styles.wrap, { paddingTop: headerTop }]}>
-        <LogoIcon />
+        <LogoIcon color={theme.colors.black[900]} />
         <View style={styles.rightContainer}>
           {/* <TouchableOpacity activeOpacity={0.5}>
             <SearchIcon />
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     position: 'sticky',
     backgroundColor: theme.colors.white[900],
     paddingHorizontal: 20,
-    paddingBottom: 16,
+    paddingBottom: 10,
     ...Platform.select({
       ios: {
         shadowColor: '#000',

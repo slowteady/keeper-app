@@ -7,7 +7,7 @@ import AbandonmentDetailInfoSection from '@/components/sections/abandonments/Aba
 import theme from '@/constants/theme';
 import { useLayout } from '@/hooks/useLayout';
 import { useCallback, useState } from 'react';
-import { LayoutChangeEvent, Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export interface AbandonmentsDetailTemplateProps {
   abandonment: TransformedAbandonmentDetail;
@@ -15,16 +15,11 @@ export interface AbandonmentsDetailTemplateProps {
 }
 
 const AbandonmentsDetailTemplate = ({ abandonment, shelter }: AbandonmentsDetailTemplateProps) => {
-  const [bottomHeight, setBottomHeight] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
   const { bottom } = useLayout();
 
   const { weight, gender, age, specialMark, careTel, neuterYn } = abandonment;
 
-  const handleLayout = (event: LayoutChangeEvent) => {
-    const height = event.nativeEvent.layout.height;
-    setBottomHeight(height);
-  };
   const handlePress = useCallback(() => {
     setModalOpen(true);
   }, []);
@@ -36,19 +31,19 @@ const AbandonmentsDetailTemplate = ({ abandonment, shelter }: AbandonmentsDetail
   return (
     <>
       <View style={styles.container}>
-        <ScrollView decelerationRate="fast" bounces contentContainerStyle={{ paddingBottom: bottomHeight }}>
+        <ScrollView decelerationRate="fast" bounces>
           <View style={{ paddingHorizontal: 20, marginBottom: 20 }}>
             <AbandonmentDetailCardSection data={abandonment} />
           </View>
           <View style={styles.divider} />
-          <View style={{ paddingHorizontal: 20, paddingVertical: 36 }}>
+          <View style={{ paddingHorizontal: 20, paddingTop: 36, paddingBottom: 48 }}>
             <AbandonmentDetailInfoSection age={age} gender={gender} weight={weight} />
           </View>
           <View style={styles.divider} />
           <AbandonmentDetailDescriptionSection specialMark={specialMark} neuterYn={neuterYn} shelter={shelter} />
         </ScrollView>
 
-        <View style={[styles.bottomWrap, { paddingBottom: bottom }]} onLayout={handleLayout}>
+        <View style={[styles.bottomWrap, { paddingBottom: bottom }]}>
           <TouchableOpacity activeOpacity={0.5} onPress={handlePress} style={styles.fixedButton}>
             <Text style={styles.buttonText}>보호소에 문의하기</Text>
           </TouchableOpacity>
@@ -102,8 +97,8 @@ const styles = StyleSheet.create({
   buttonText: {
     color: theme.colors.black[900],
     fontWeight: '600',
-    fontSize: 15,
-    lineHeight: 17,
+    fontSize: 16,
+    lineHeight: 18,
     textAlign: 'center'
   },
   divider: {

@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: theme.colors.background.default,
     paddingHorizontal: 20,
-    paddingTop: 32,
+    paddingTop: 40,
     paddingBottom: 48
   },
   labelContainer: {
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     color: theme.colors.black[900],
     fontWeight: '500',
     lineHeight: 45,
-    paddingBottom: 30
+    paddingBottom: 12
   },
   subTitle: {
     fontSize: 15,

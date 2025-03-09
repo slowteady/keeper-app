@@ -51,10 +51,8 @@ const AnimatedButton = ({ label, isSelected, onPress, color }: AnimatedButtonPro
   }, [isSelected, progress]);
 
   const animatedStyle = useAnimatedStyle(() => {
-    const unSelectedBgColor = color === 'primary' ? theme.colors.background.default : theme.colors.white[700];
-
     return {
-      backgroundColor: interpolateColor(progress.value, [0, 1], [unSelectedBgColor, theme.colors.black[900]])
+      backgroundColor: interpolateColor(progress.value, [0, 1], ['transparent', theme.colors.black[900]])
     };
   });
   const animatedTextStyle = useAnimatedStyle(() => {
@@ -88,11 +86,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 4,
-    paddingVertical: 11
+    paddingVertical: 11,
+    borderWidth: 1,
+    borderColor: theme.colors.white[600]
   },
   label: {
-    fontSize: 15,
-    lineHeight: 17,
+    fontSize: 14,
+    lineHeight: 15,
     fontWeight: '500',
     color: theme.colors.white[900]
   }

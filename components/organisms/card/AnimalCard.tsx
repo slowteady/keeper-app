@@ -26,6 +26,7 @@ export const AnimalCard = <T,>({ data, width, height, size = 'medium' }: AnimalC
   const { uri, title, description, chips } = data;
   const sortedChips = chips?.sort((a, b) => a.sort - b.sort);
 
+  const descriptionStyle = size === 'small' ? { gap: 8 } : { gap: 10 };
   const titleStyle = size === 'small' ? { fontSize: 18, lineHeight: 20 } : { fontSize: 20, lineHeight: 22 };
 
   return (
@@ -34,10 +35,10 @@ export const AnimalCard = <T,>({ data, width, height, size = 'medium' }: AnimalC
         {!isLoaded && <Skeleton />}
         {uri ? <ExpoImage source={{ uri }} onLoad={() => setIsLoaded(true)} style={styles.image} /> : <NoImage />}
       </View>
-      <Text numberOfLines={1} ellipsizeMode="tail" style={[styles.title, { ...titleStyle, marginBottom: 24 }]}>
+      <Text numberOfLines={1} ellipsizeMode="tail" style={[styles.title, { ...titleStyle }]}>
         {title}
       </Text>
-      <View style={styles.descriptionContainer}>
+      <View style={[styles.descriptionContainer, descriptionStyle]}>
         <Descriptions data={description} size={size} />
       </View>
       {sortedChips && <Chips data={sortedChips} size={size} />}
@@ -82,10 +83,9 @@ export interface BasicCardChipsValue<T> {
 }
 export type ChipVariant = 'error' | 'success' | 'notice' | 'default';
 const Chips = <T,>({ data, size }: BasicCardChipsProps<T>) => {
-  const containerStyle = size === 'small' ? { gap: 4 } : { gap: 6 };
-  const chipContainerStyle =
-    size === 'small' ? { paddingHorizontal: 6, paddingVertical: 4 } : { paddingHorizontal: 8, paddingVertical: 6 };
-  const textStyle = size === 'small' ? { fontSize: 11, lineHeight: 13 } : { fontSize: 12, lineHeight: 14 };
+  const containerStyle = { gap: 4 };
+  const chipContainerStyle = { paddingHorizontal: 6, paddingVertical: 4 };
+  const textStyle = { fontSize: 11, lineHeight: 13 };
 
   return (
     <View style={[containerStyle, styles.chipsBlockContainer]}>
@@ -136,7 +136,8 @@ const styles = StyleSheet.create({
   },
   title: {
     color: theme.colors.black[900],
-    fontWeight: '500'
+    fontWeight: '500',
+    marginBottom: 20
   },
   chipsBlockContainer: {
     display: 'flex',
@@ -146,14 +147,13 @@ const styles = StyleSheet.create({
   },
   chipsContainer: {
     alignSelf: 'baseline',
-    borderRadius: 3
+    borderRadius: 2
   },
   chipText: {
     fontWeight: '400'
   },
   descriptionContainer: {
     display: 'flex',
-    gap: 12,
     marginBottom: 20
   },
   descriptionWrap: {

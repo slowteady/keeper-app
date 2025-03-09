@@ -85,7 +85,7 @@ const AbandonmentsTemplate = ({ data, onFetch, isLoading, refreshControl }: Aban
         keyExtractor={({ id }, idx) => `${id}-${idx}`}
         scrollEventThrottle={40}
         showsVerticalScrollIndicator={false}
-        columnWrapperStyle={{ gap: CARD_GAP, justifyContent: 'space-between', marginBottom: 48 }}
+        columnWrapperStyle={{ gap: CARD_GAP, justifyContent: 'space-between', marginBottom: 40 }}
         refreshControl={refreshControl}
         style={styles.container}
       />
@@ -137,7 +137,7 @@ const FilterSection = () => {
           color="secondary"
         />
       </View>
-      <Searchbar onSubmit={handleSubmit} ViewStyle={{ marginBottom: 40 }} />
+      <Searchbar onSubmit={handleSubmit} ViewStyle={{ marginBottom: 32 }} />
     </>
   );
 };
@@ -154,7 +154,7 @@ const MoreButtonSection = ({ onFetch, isLoading, page, total }: MoreButtonSectio
   return (
     <View style={styles.moreButtonContainer}>
       <TouchableOpacity style={styles.moreButton} activeOpacity={0.5} onPress={onFetch} disabled={isLoading}>
-        {isLoading ? <ActivityIndicator /> : <Text style={styles.moreButtonText}>{text}</Text>}
+        {isLoading ? <ActivityIndicator size={16} /> : <Text style={styles.moreButtonText}>{text}</Text>}
       </TouchableOpacity>
     </View>
   );
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: PADDING_HORIZONTAL,
-    paddingVertical: 48,
+    paddingVertical: 40,
     position: 'relative'
   },
   titleWrap: {
@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 20
+    marginBottom: 24
   },
   title: {
     color: theme.colors.black[900],
@@ -187,11 +187,11 @@ const styles = StyleSheet.create({
     lineHeight: 17
   },
   buttonGroupWrap: {
-    marginBottom: 24
+    marginBottom: 16
   },
   moreButtonContainer: {
     display: 'flex',
-    paddingVertical: 30,
+    paddingBottom: 30,
     marginBottom: 20,
     alignSelf: 'center'
   },
@@ -208,8 +208,8 @@ const styles = StyleSheet.create({
   },
   moreButtonText: {
     color: theme.colors.white[900],
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '600',
-    lineHeight: 14
+    lineHeight: 15
   }
 });

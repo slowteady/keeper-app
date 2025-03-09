@@ -1,9 +1,9 @@
 import Svg, { G, Mask, Path, Rect, SvgProps } from 'react-native-svg';
 
-export const MenuArrowIcon = ({ ...props }: SvgProps) => {
+export const MenuArrowIcon = ({ strokeWidth = '1.5', ...props }: SvgProps) => {
   return (
     <Svg width="11" height="18" viewBox="0 0 11 18" fill="none" {...props}>
-      <Path d="M1 1L9 9L1 17" stroke="black" strokeWidth="1.5" strokeLinecap="round" />
+      <Path d="M1 1L9 9L1 17" stroke="black" strokeWidth={strokeWidth} strokeLinecap="round" />
     </Svg>
   );
 };

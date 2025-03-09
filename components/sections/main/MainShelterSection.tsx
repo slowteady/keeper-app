@@ -78,7 +78,7 @@ const MainShelterSection = () => {
       <View style={styles.headerContainer}>
         <Pressable onPress={handlePressTitle} style={styles.titleWrap}>
           <Text style={styles.title}>보호소 찾기</Text>
-          <MenuArrowIcon />
+          <MenuArrowIcon strokeWidth={2} />
         </Pressable>
 
         <Pressable style={styles.flex} onPress={handlePressTitle}>
@@ -89,22 +89,22 @@ const MainShelterSection = () => {
 
       <View style={{ paddingHorizontal: 20, flex: 1 }}>
         <ShelterMap.DistanceBox value={shelterCountData} style={{ marginBottom: 16 }} />
-
-        <ShelterMap
-          ref={mapRef}
-          hasLocation={hasLocationStatus}
-          data={shelterData}
-          camera={camera}
-          onInitialized={handleInitMap}
-          onRefetch={handleRefetch}
-          onTapMarker={handleTapMarker}
-          selectedMarkerId={selectedMarkerId}
-          isShowCompass={false}
-          minZoom={10}
-        />
-
+        <View style={{ marginBottom: 20 }}>
+          <ShelterMap
+            ref={mapRef}
+            hasLocation={hasLocationStatus}
+            data={shelterData}
+            camera={camera}
+            onInitialized={handleInitMap}
+            onRefetch={handleRefetch}
+            onTapMarker={handleTapMarker}
+            selectedMarkerId={selectedMarkerId}
+            isShowCompass={false}
+            minZoom={10}
+          />
+        </View>
         {hasData && (
-          <Animated.View style={animatedListStyle}>
+          <Animated.View style={[{ marginBottom: 20 }, animatedListStyle]}>
             <ShelterCardList data={shelterData} />
           </Animated.View>
         )}
@@ -145,11 +145,11 @@ const ShelterCardList = ({ data }: Record<'data', ShelterValue[]>) => {
       scrollEventThrottle={40}
       bounces
       keyExtractor={(item) => `${item.id}`}
+      nestedScrollEnabled={true}
       renderItem={renderItem}
       snapToInterval={270 + 16}
       ListFooterComponent={() => <FullViewButton onPress={handlePress} />}
       ListFooterComponentStyle={[styles.flex, { paddingHorizontal: 20 }]}
-      style={{ paddingVertical: 16 }}
       contentContainerStyle={{ gap: 16 }}
     />
   );
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
   titleWrap: {
     display: 'flex',
     flexDirection: 'row',
-    gap: 12,
+    gap: 8,
     alignItems: 'center'
   },
   title: {

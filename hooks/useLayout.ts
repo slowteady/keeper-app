@@ -9,7 +9,8 @@ export const useLayout = () => {
   let bottom = insetsBottom;
 
   if (Platform.OS === 'ios') {
-    top = insetsTop || 59;
+    top = insetsTop + 10 || 59;
+    bottom = insetsBottom + 10;
   } else if (Platform.OS === 'android') {
     top = insetsTop + 10 || 24;
     bottom = 20;

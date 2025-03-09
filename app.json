@@ -7,7 +7,6 @@
     "scheme": "keeper",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "icon": "./assets/images/keeper-icon.png",
     "ios": {
       "env": {
         "EXPO_PUBLIC_CLIENT_ID": "rg0cm283cu",
@@ -29,8 +28,7 @@
       },
       "package": "com.keeper.love",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/keeper-icon.png",
-        "backgroundColor": "#1FE678"
+        "foregroundImage": "./assets/images/keeper-android-icon.png"
       }
     },
     "plugins": [

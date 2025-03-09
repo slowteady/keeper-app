@@ -102,15 +102,15 @@ const styles = StyleSheet.create({
   },
   title: {
     color: theme.colors.black[800],
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '600',
-    lineHeight: 17
+    lineHeight: 18
   },
   description: {
     color: theme.colors.black[500],
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '400',
-    lineHeight: 18
+    lineHeight: 19
   },
   buttonContainer: {
     display: 'flex',
@@ -131,9 +131,9 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: theme.colors.black[800],
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: '600',
-    lineHeight: 12,
+    lineHeight: 16,
     textAlign: 'center'
   }
 });

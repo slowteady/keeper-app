@@ -21,7 +21,7 @@ import { FlatList, ListRenderItemInfo, Pressable, StyleSheet, Text, View } from 
 const MainAbandonmentSection = () => {
   const [abandonmentsConfig, setAbandonmentsConfig] = useAtom(abandonmentsAtom);
   const filterValue = useAtomValue(abandonmentsFilterValueAtom);
-  const snapPoints = useMemo(() => ['20%'], []);
+  const snapPoints = useMemo(() => [200], []);
 
   const { data, isLoading } = useGetAbandonments(
     {
@@ -59,9 +59,8 @@ const MainAbandonmentSection = () => {
       <View style={styles.header}>
         <Pressable onPress={handlePressTitle} style={styles.titleWrap}>
           <Text style={styles.title}>전체공고</Text>
-          <MenuArrowIcon />
+          <MenuArrowIcon strokeWidth={2} />
         </Pressable>
-
         <View style={{ marginTop: 12 }}>
           <Dropdown
             data={ABANDONMENTS_FILTERS}
@@ -71,17 +70,17 @@ const MainAbandonmentSection = () => {
           />
         </View>
       </View>
-
       <View style={styles.buttonGroupWrap}>
         <ButtonGroup data={ABANDONMENTS_ANIMAL_TYPES} id={abandonmentsConfig.type} onChange={handleChangeType} />
       </View>
-
-      <AbandonmentCardList
-        data={data}
-        filter={filterValue.value}
-        onPress={handlePressCard}
-        onPressMoreButton={handlePressTitle}
-      />
+      <View style={{ paddingLeft: 20 }}>
+        <AbandonmentCardList
+          data={data}
+          filter={filterValue.value}
+          onPress={handlePressCard}
+          onPressMoreButton={handlePressTitle}
+        />
+      </View>
     </View>
   );
 };
@@ -122,11 +121,12 @@ const AbandonmentCardList = ({ data, filter, onPress, onPressMoreButton }: MainA
       onEndReachedThreshold={1}
       bounces
       initialNumToRender={4}
+      nestedScrollEnabled={true}
       decelerationRate="fast"
       snapToInterval={IMAGE_WIDTH + CARD_GAP}
       contentContainerStyle={{ gap: CARD_GAP, paddingBottom: 8 }}
       ListFooterComponent={<FullViewButton onPress={onPressMoreButton} />}
-      ListFooterComponentStyle={[styles.dropdownWrap, { paddingHorizontal: 20 }]}
+      ListFooterComponentStyle={[styles.dropdownWrap, { paddingHorizontal: 40 }]}
     />
   );
 };
@@ -134,13 +134,12 @@ const AbandonmentCardList = ({ data, filter, onPress, onPressMoreButton }: MainA
 const styles = StyleSheet.create({
   container: {
     backgroundColor: theme.colors.white[900],
-    paddingHorizontal: 20,
     paddingVertical: 56
   },
   titleWrap: {
     display: 'flex',
     flexDirection: 'row',
-    gap: 12,
+    gap: 8,
     alignItems: 'center'
   },
   title: {
@@ -152,14 +151,16 @@ const styles = StyleSheet.create({
   buttonGroupWrap: {
     marginBottom: 20,
     alignSelf: 'baseline',
-    width: '100%'
+    width: '100%',
+    paddingHorizontal: 20
   },
   header: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 20
+    marginBottom: 24,
+    paddingHorizontal: 20
   },
   label: {
     color: theme.colors.black[600],

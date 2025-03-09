@@ -52,11 +52,11 @@ const Searchbar = ({ onSubmit, ViewStyle, style, ...props }: SearchbarProps) => 
       <View style={styles.iconContainer}>
         <Animated.View style={animatedCloseButtonStyle}>
           <TouchableOpacity onPress={handlePressReset}>
-            <CloseIcon width={24} height={24} color={theme.colors.black[500]} />
+            <CloseIcon width={28} height={28} color={theme.colors.black[500]} />
           </TouchableOpacity>
         </Animated.View>
         <TouchableOpacity onPress={handleSubmit} activeOpacity={0.5}>
-          <SearchIcon width={20} height={20} color={theme.colors.black[700]} />
+          <SearchIcon width={24} height={24} color={theme.colors.black[700]} />
         </TouchableOpacity>
       </View>
     </View>
@@ -74,12 +74,12 @@ const styles = StyleSheet.create({
     lineHeight: 17
   },
   searchbar: {
+    height: 48,
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: theme.colors.white[900],
     paddingHorizontal: 16,
-    paddingVertical: 12,
     borderRadius: 6,
     justifyContent: 'space-between'
   },

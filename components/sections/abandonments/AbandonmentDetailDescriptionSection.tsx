@@ -1,5 +1,6 @@
 import { CandyIcon } from '@/components/atoms/icons/CandyIcon';
 import { MessageIcon } from '@/components/atoms/icons/MessageIcon';
+import { StarbarIcon } from '@/components/atoms/icons/StarbarIcon';
 import theme from '@/constants/theme';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -23,8 +24,8 @@ const AbandonmentDetailDescriptionSection = ({
   const neuter = neuterYn === 'N' ? 'X' : 'O';
 
   return (
-    <View style={styles.container}>
-      <View style={styles.pointBox}>
+    <>
+      <View style={[styles.pointBox, { paddingTop: 40 }]}>
         <View style={styles.labelWrap}>
           <Text style={styles.label}>특징</Text>
           <MessageIcon width={20} height={20} />
@@ -36,6 +37,7 @@ const AbandonmentDetailDescriptionSection = ({
       <View style={styles.pointBox}>
         <View style={styles.labelWrap}>
           <Text style={styles.label}>중성화</Text>
+          <StarbarIcon width={20} height={20} />
         </View>
         <Text style={styles.description}>{neuter}</Text>
       </View>
@@ -53,16 +55,13 @@ const AbandonmentDetailDescriptionSection = ({
           {address && <Text style={styles.description}>{address}</Text>}
         </View>
       </View>
-    </View>
+    </>
   );
 };
 
 export default AbandonmentDetailDescriptionSection;
 
 const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: 20
-  },
   pointBox: {
     display: 'flex',
     flexDirection: 'row',
@@ -74,7 +73,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    minWidth: 80
+    minWidth: 100,
+    paddingHorizontal: 20
   },
   label: {
     fontSize: 16,
@@ -88,7 +88,8 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     lineHeight: 23,
     color: theme.colors.black[700],
-    flexShrink: 1
+    flexShrink: 1,
+    paddingRight: 10
   },
   divider: {
     borderWidth: theme.hairline,

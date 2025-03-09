@@ -39,7 +39,6 @@ const MainTemplate = () => {
         ref={flatListRef}
         onScroll={handleScroll}
         scrollEventThrottle={40}
-        nestedScrollEnabled
         bounces
         decelerationRate="fast"
         initialNumToRender={2}
@@ -65,8 +64,7 @@ const Footer = () => {
 
   return (
     <View style={styles.footerContainer}>
-      <LogoIcon />
-
+      <LogoIcon color={theme.colors.black[900]} />
       <View style={styles.menuContainer}>
         <Pressable>
           <Text style={styles.footerMenu}>about us</Text>
@@ -75,7 +73,6 @@ const Footer = () => {
           <Text style={styles.footerMenu}>contact us</Text>
         </Pressable>
       </View>
-
       <Text style={styles.copyright}>©2025, All right reserved.</Text>
     </View>
   );
@@ -84,7 +81,7 @@ const Footer = () => {
 const styles = StyleSheet.create({
   footerContainer: {
     backgroundColor: theme.colors.white[800],
-    paddingVertical: 48,
+    paddingVertical: 40,
     paddingHorizontal: 20
   },
   footerMenu: {
@@ -94,7 +91,7 @@ const styles = StyleSheet.create({
     color: theme.colors.black[900]
   },
   copyright: {
-    color: theme.colors.black[900],
+    color: theme.colors.black[500],
     fontSize: 13,
     lineHeight: 15,
     fontWeight: '300'
@@ -103,6 +100,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     gap: 12,
-    marginVertical: 32
+    marginTop: 20,
+    marginBottom: 40
   }
 });
