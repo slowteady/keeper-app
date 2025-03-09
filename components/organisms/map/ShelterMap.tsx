@@ -133,7 +133,7 @@ const Marker = ({ data, onTap, isSelectedId }: ShelterMapMarkerProps) => {
 
   const isSelected = isSelectedId === id;
   const captionStyle = isSelected
-    ? { textSize: 13, haloColor: theme.colors.primary.main }
+    ? { textSize: 13, haloColor: theme.colors.white[900] }
     : { textSize: 11, haloColor: theme.colors.white[900] };
 
   return (
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: '#D9D9D9',
     width: '100%',
-    height: Dimensions.get('screen').width * 0.8,
+    height: Dimensions.get('screen').width * 1.2,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center'

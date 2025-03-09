@@ -1,9 +1,9 @@
-import { LogoEmblem } from '@/components/atoms/icons/LogoIcon';
+import NoImage from '@/components/molecules/placeholder/NoImage';
 import { Skeleton } from '@/components/molecules/placeholder/Skeleton';
 import theme from '@/constants/theme';
 import { Image as ExpoImage } from 'expo-image';
 import { useState } from 'react';
-import { StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 export interface AnimalCardData<T> {
   id: number;
@@ -18,13 +18,15 @@ interface AnimalCardProps<T> {
   height: number;
   size?: AnimalCardSize;
 }
-type AnimalCardSize = 'small';
+type AnimalCardSize = 'small' | 'medium';
 
-export const AnimalCard = <T,>({ data, width, height, size = 'small' }: AnimalCardProps<T>) => {
+export const AnimalCard = <T,>({ data, width, height, size = 'medium' }: AnimalCardProps<T>) => {
   const [isLoaded, setIsLoaded] = useState(false);
 
   const { uri, title, description, chips } = data;
   const sortedChips = chips?.sort((a, b) => a.sort - b.sort);
+
+  const titleStyle = size === 'small' ? { fontSize: 18, lineHeight: 20 } : { fontSize: 20, lineHeight: 22 };
 
   return (
     <View style={{ width }}>
@@ -32,36 +34,36 @@ export const AnimalCard = <T,>({ data, width, height, size = 'small' }: AnimalCa
         {!isLoaded && <Skeleton />}
         {uri ? <ExpoImage source={{ uri }} onLoad={() => setIsLoaded(true)} style={styles.image} /> : <NoImage />}
       </View>
-
-      <Text numberOfLines={1} ellipsizeMode="tail" style={[styles.title, { marginBottom: 24 }]}>
+      <Text numberOfLines={1} ellipsizeMode="tail" style={[styles.title, { ...titleStyle, marginBottom: 24 }]}>
         {title}
       </Text>
-
-      <Descriptions data={description} />
-      {sortedChips && (
-        <View style={{ marginTop: 24 }}>
-          <Chips data={sortedChips} />
-        </View>
-      )}
+      <View style={styles.descriptionContainer}>
+        <Descriptions data={description} size={size} />
+      </View>
+      {sortedChips && <Chips data={sortedChips} size={size} />}
     </View>
   );
 };
 
 export interface BasicCardDescriptionsProps {
   data: BasicCardDescriptionsValue[];
+  size?: AnimalCardSize;
 }
 export interface BasicCardDescriptionsValue {
   label: string;
   value: string;
 }
-const Descriptions = ({ data }: BasicCardDescriptionsProps) => {
+const Descriptions = ({ data, size = 'medium' }: BasicCardDescriptionsProps) => {
+  const wrapStyle = size === 'small' ? {} : { gap: 16 };
+  const titleStyle = size === 'small' ? { fontSize: 13, lineHeight: 15 } : { fontSize: 15, lineHeight: 17 };
+
   return data.map(({ label, value }, idx) => {
     const key = `${label}-${idx}`;
 
     return (
-      <View key={key} style={styles.descriptionContainer}>
-        <Text style={styles.label}>{label}</Text>
-        <Text numberOfLines={1} ellipsizeMode="tail" style={styles.text}>
+      <View key={key} style={[wrapStyle, styles.descriptionWrap]}>
+        <Text style={[titleStyle, styles.label]}>{label}</Text>
+        <Text numberOfLines={1} ellipsizeMode="tail" style={[titleStyle, styles.text]}>
           {value}
         </Text>
       </View>
@@ -71,6 +73,7 @@ const Descriptions = ({ data }: BasicCardDescriptionsProps) => {
 
 export interface BasicCardChipsProps<T> {
   data: BasicCardChipsValue<T>[];
+  size?: AnimalCardSize;
 }
 export interface BasicCardChipsValue<T> {
   id: T;
@@ -78,28 +81,24 @@ export interface BasicCardChipsValue<T> {
   variant?: ChipVariant;
 }
 export type ChipVariant = 'error' | 'success' | 'notice' | 'default';
-const Chips = <T,>({ data }: BasicCardChipsProps<T>) => {
+const Chips = <T,>({ data, size }: BasicCardChipsProps<T>) => {
+  const containerStyle = size === 'small' ? { gap: 4 } : { gap: 6 };
+  const chipContainerStyle =
+    size === 'small' ? { paddingHorizontal: 6, paddingVertical: 4 } : { paddingHorizontal: 8, paddingVertical: 6 };
+  const textStyle = size === 'small' ? { fontSize: 11, lineHeight: 13 } : { fontSize: 12, lineHeight: 14 };
+
   return (
-    <View style={styles.chipsBlockContainer}>
+    <View style={[containerStyle, styles.chipsBlockContainer]}>
       {data.map(({ id, value, variant }, idx) => {
         const key = `${id}-${idx}`;
         const { containerStyle, chipStyle } = getChipStyle(variant);
 
         return (
-          <View key={key} style={[styles.chipsContainer, containerStyle]}>
-            <Text style={[styles.chipText, chipStyle]}>{value}</Text>
+          <View key={key} style={[styles.chipsContainer, chipContainerStyle, containerStyle]}>
+            <Text style={[styles.chipText, textStyle, chipStyle]}>{value}</Text>
           </View>
         );
       })}
-    </View>
-  );
-};
-
-const NoImage = ({ style }: Record<string, ViewStyle>) => {
-  return (
-    <View style={[styles.image, styles.flex, { backgroundColor: theme.colors.background.default }, style]}>
-      <Text style={styles.noImageText}>No Image</Text>
-      <LogoEmblem />
     </View>
   );
 };
@@ -137,61 +136,41 @@ const styles = StyleSheet.create({
   },
   title: {
     color: theme.colors.black[900],
-    fontSize: 20,
-    fontWeight: '500',
-    lineHeight: 22
+    fontWeight: '500'
   },
   chipsBlockContainer: {
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 6,
     rowGap: 8
   },
   chipsContainer: {
     alignSelf: 'baseline',
-    paddingHorizontal: 8,
-    paddingVertical: 6,
     borderRadius: 3
   },
   chipText: {
-    fontSize: 12,
-    fontWeight: '400',
-    lineHeight: 14
-  },
-  flex: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-    gap: 8
-  },
-  noImageText: {
-    color: theme.colors.black[400],
-    fontSize: 19,
-    fontWeight: '600'
+    fontWeight: '400'
   },
   descriptionContainer: {
     display: 'flex',
+    gap: 12,
+    marginBottom: 20
+  },
+  descriptionWrap: {
+    display: 'flex',
     flexDirection: 'row',
     flex: 1,
-    gap: 16,
-    alignItems: 'center',
-    marginBottom: 12
+    alignItems: 'center'
   },
   label: {
     flexShrink: 0,
-    fontSize: 15,
     color: theme.colors.black[600],
     fontWeight: '400',
-    lineHeight: 17,
     minWidth: 55
   },
   text: {
     flex: 1,
     color: theme.colors.black[900],
-    fontSize: 15,
-    fontWeight: '400',
-    lineHeight: 17
+    fontWeight: '400'
   }
 });

@@ -9,13 +9,14 @@ import {
 import { forwardRef, useCallback } from 'react';
 import { StyleSheet, Text, TextStyle, TouchableOpacity, ViewStyle } from 'react-native';
 
-export interface DropdownBottomSheetLayoutProps extends BottomSheetModalProps {
+export interface BottomSheetLayoutProps extends Omit<BottomSheetModalProps, 'children'> {
   containerStyle?: ViewStyle;
-  children: React.ReactNode;
+  children?: React.ReactNode;
+  renderChildren?: () => React.ReactNode;
 }
 
-const Layout = forwardRef<BottomSheetModal, DropdownBottomSheetLayoutProps>((props, ref) => {
-  const { children, containerStyle, ...rest } = props;
+const Layout = forwardRef<BottomSheetModal, BottomSheetLayoutProps>((props, ref) => {
+  const { children, containerStyle, renderChildren, ...rest } = props;
 
   const renderBackdrop = useCallback((props: BottomSheetBackdropProps) => {
     return <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} />;
@@ -32,23 +33,27 @@ const Layout = forwardRef<BottomSheetModal, DropdownBottomSheetLayoutProps>((pro
       backdropComponent={renderBackdrop}
       {...rest}
     >
-      <BottomSheetView style={[styles.viewContainer, containerStyle]}>{children}</BottomSheetView>
+      {renderChildren ? (
+        renderChildren()
+      ) : (
+        <BottomSheetView style={[styles.viewContainer, containerStyle]}>{children}</BottomSheetView>
+      )}
     </BottomSheetModal>
   );
 });
 
-export interface DropdownBottomSheetMenuData<T> {
+export interface BottomSheetMenuData<T> {
   value: T;
   name: string;
 }
-export interface DropdownBottomSheetMenuProps<T> {
-  data: DropdownBottomSheetMenuData<T>[];
+export interface BottomSheetMenuProps<T> {
+  data: BottomSheetMenuData<T>[];
   value: T;
-  onPress: (data: DropdownBottomSheetMenuData<T>) => void;
+  onPress: (data: BottomSheetMenuData<T>) => void;
   style?: ViewStyle;
   textStyle?: TextStyle;
 }
-export const Menu = <T,>({ value, data, onPress, style, textStyle }: DropdownBottomSheetMenuProps<T>) => {
+export const Menu = <T,>({ value, data, onPress, style, textStyle }: BottomSheetMenuProps<T>) => {
   return data.map((item, idx) => {
     const { name } = item;
     const key = `${name}-${idx}`;
@@ -64,7 +69,7 @@ export const Menu = <T,>({ value, data, onPress, style, textStyle }: DropdownBot
   });
 };
 
-export const DropdownBottomSheet = Object.assign(Layout, {
+export const BottomSheet = Object.assign(Layout, {
   Menu
 });
 
@@ -97,4 +102,4 @@ const styles = StyleSheet.create({
   }
 });
 
-Layout.displayName = 'DropdownBottomSheetLayout';
+Layout.displayName = 'BottomSheetLayout';

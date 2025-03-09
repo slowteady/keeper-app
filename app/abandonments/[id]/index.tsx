@@ -1,4 +1,4 @@
-import { transformAbandonmentData } from '@/businesses/abandonmentsBusiness';
+import { transformAbandonmentDetail } from '@/businesses/abandonmentsBusiness';
 import { transformShelterData } from '@/businesses/sheltersBusiness';
 import DetailHeader from '@/components/organisms/headers/DetailHeader';
 import AbandonmentsDetailTemplate from '@/components/templates/abandonments/AbandonmentsDetailTemplate';
@@ -16,8 +16,8 @@ const Page = () => {
     enabled: Boolean(abandonmentData?.shelterId)
   });
 
-  const transformedAbandonmentData = useMemo(
-    () => abandonmentData && transformAbandonmentData(abandonmentData),
+  const transformedAbandonmentDetailData = useMemo(
+    () => abandonmentData && transformAbandonmentDetail(abandonmentData),
     [abandonmentData]
   );
   const transformedShelterData = useMemo(() => shelterData && transformShelterData(shelterData), [shelterData]);
@@ -27,8 +27,8 @@ const Page = () => {
       <Stack.Screen options={{ header: () => <DetailHeader /> }} />
 
       <View style={styles.container}>
-        {transformedAbandonmentData && (
-          <AbandonmentsDetailTemplate abandonment={transformedAbandonmentData} shelter={transformedShelterData} />
+        {transformedAbandonmentDetailData && (
+          <AbandonmentsDetailTemplate abandonment={transformedAbandonmentDetailData} shelter={transformedShelterData} />
         )}
       </View>
     </>

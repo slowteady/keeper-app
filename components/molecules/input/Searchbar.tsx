@@ -69,7 +69,9 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     color: theme.colors.black[800],
-    ...theme.fonts.medium
+    fontSize: 15,
+    fontWeight: '500',
+    lineHeight: 17
   },
   searchbar: {
     display: 'flex',

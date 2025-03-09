@@ -53,7 +53,7 @@ export const useGetInfiniteAbandonments = (
   queryOptions?: UseInfiniteQueryCustomOptions<ApiResponse<AbandonmentData>, Error, AbandonmentData>
 ) => {
   return useInfiniteQuery({
-    initialPageParam: 1,
+    initialPageParam: 0,
     queryKey: [ABANDONMENTS_QUERY_KEY, params],
     queryFn: ({ pageParam }) => getAbandonments({ ...params, page: pageParam }),
     getNextPageParam: (lastPage) => {

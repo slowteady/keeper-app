@@ -74,7 +74,9 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
     alignSelf: 'baseline',
     paddingHorizontal: 15,
-    paddingVertical: 11
+    paddingVertical: 11,
+    backgroundColor: theme.colors.white[900],
+    opacity: 0.6
   },
   text: {
     fontSize: 14,

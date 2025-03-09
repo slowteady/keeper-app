@@ -1,10 +1,10 @@
 import { ABANDONMENTS_QUERY_KEY, SHELTER_QUERY_KEY } from '@/constants/queryKeys';
 import theme from '@/constants/theme';
+import useRefreshing from '@/hooks/useRefreshing';
 import useScrollFloatingButton from '@/hooks/useScrollFloatingButton';
 import { useQueryClient } from '@tanstack/react-query';
-import * as Haptics from 'expo-haptics';
-import { useMemo, useState } from 'react';
-import { FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import { useCallback, useMemo } from 'react';
+import { FlatList, Linking, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
 import ScrollFloatingButton from '../atoms/button/ScrollFloatingButton';
 import { LogoIcon } from '../atoms/icons/LogoIcon';
 import MainAbandonmentSection from '../sections/main/MainAbandonmentSection';
@@ -12,29 +12,17 @@ import MainBannerSection from '../sections/main/MainBannerSection';
 import MainShelterSection from '../sections/main/MainShelterSection';
 
 const MainTemplate = () => {
-  const [refreshing, setRefreshing] = useState(false);
   const { isButtonVisible, handlePress, handleScroll, flatListRef } = useScrollFloatingButton();
   const queryClient = useQueryClient();
 
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-
-    const MIN_REFRESH_TIME = 1000;
-    const startTime = Date.now();
-
+  const onRefreshCallback = async () => {
     await Promise.all([
-      queryClient.invalidateQueries({ queryKey: ABANDONMENTS_QUERY_KEY }),
-      queryClient.invalidateQueries({ queryKey: SHELTER_QUERY_KEY })
+      queryClient.invalidateQueries({ queryKey: [ABANDONMENTS_QUERY_KEY] }),
+      queryClient.invalidateQueries({ queryKey: [SHELTER_QUERY_KEY] })
     ]);
-
-    const elapsedTime = Date.now() - startTime;
-    if (elapsedTime < MIN_REFRESH_TIME) {
-      await new Promise((resolve) => setTimeout(resolve, MIN_REFRESH_TIME - elapsedTime));
-    }
-
-    setRefreshing(false);
   };
+
+  const { refreshing, handleRefresh } = useRefreshing(onRefreshCallback);
 
   const data = useMemo(
     () => [
@@ -55,7 +43,7 @@ const MainTemplate = () => {
         bounces
         decelerationRate="fast"
         initialNumToRender={2}
-        keyExtractor={(item) => item.id}
+        keyExtractor={({ id }, idx) => `${id}-${idx}`}
         data={data}
         renderItem={({ item }) => <>{item.Component}</>}
         ListFooterComponent={<Footer />}
@@ -70,6 +58,11 @@ const MainTemplate = () => {
 export default MainTemplate;
 
 const Footer = () => {
+  const handleClickContact = useCallback(() => {
+    const email = 'ymlee.dev@gmail.com';
+    Linking.openURL(`mailto:${email}`);
+  }, []);
+
   return (
     <View style={styles.footerContainer}>
       <LogoIcon />
@@ -78,7 +71,7 @@ const Footer = () => {
         <Pressable>
           <Text style={styles.footerMenu}>about us</Text>
         </Pressable>
-        <Pressable>
+        <Pressable onPress={handleClickContact}>
           <Text style={styles.footerMenu}>contact us</Text>
         </Pressable>
       </View>

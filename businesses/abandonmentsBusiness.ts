@@ -3,23 +3,70 @@ import { AbandonmentsChipId, AbandonmentsFilter } from '@/types/abandonments';
 import { AbandonmentValue } from '@/types/scheme/abandonments';
 import dayjs from 'dayjs';
 
-export type AbandonmentsBusinessResult = ReturnType<typeof abandonmentsBusiness>[number];
-export const abandonmentsBusiness = (data: AbandonmentValue[], filter?: AbandonmentsFilter) => {
-  return data.map((item) => transformAbandonmentData(item, filter));
+export type TransformedAbandonments = ReturnType<typeof transformAbandonments>[number];
+export const transformAbandonments = (data: AbandonmentValue[], filter?: AbandonmentsFilter) => {
+  return data.map((item) => {
+    const {
+      image,
+      neuterYn,
+      weight,
+      gender,
+      age,
+      specificType,
+      noticeStartDt,
+      noticeEndDt,
+      orgName,
+      happenPlace,
+      animalType
+    } = item;
+    const chipLabelParams: ChipLabelParams = {
+      neuterYn,
+      weight,
+      gender,
+      age,
+      filter
+    };
+    const descriptionParams: DescriptionParams = {
+      specificType,
+      noticeStartDt,
+      noticeEndDt,
+      orgName,
+      happenPlace
+    };
+    const transformedDescription = transformDescription(descriptionParams);
+    const transformedChipLabel = transformChipLabel(chipLabelParams);
+    const transformedTitle = transformTitle(specificType, animalType);
+
+    return {
+      ...item,
+      uri: image,
+      title: transformedTitle,
+      description: transformedDescription,
+      chips: transformedChipLabel
+    };
+  });
 };
 
-export type TransformedAbandonmentData = ReturnType<typeof transformAbandonmentData>;
-export const transformAbandonmentData = (data: AbandonmentValue, filter?: AbandonmentsFilter) => {
-  const { image, neuterYn, weight, gender, age, specificType, noticeStartDt, noticeEndDt, orgName, happenPlace } = data;
+const transformTitle = (specificType: string, animalType: string) => {
+  switch (animalType) {
+    case 'DOG': {
+      return `[강아지] ${specificType}`;
+    }
+    case 'CAT': {
+      return `[고양이] ${specificType}`;
+    }
+    case 'OTHER': {
+      return `[기타] ${specificType}`;
+    }
+    default: {
+      return `${specificType}`;
+    }
+  }
+};
 
-  const chipLabelParams: ChipLabelParams = {
-    neuterYn,
-    weight,
-    gender,
-    age,
-    filter
-  };
-
+export type TransformedAbandonmentDetail = ReturnType<typeof transformAbandonmentDetail>;
+export const transformAbandonmentDetail = (data: AbandonmentValue) => {
+  const { image, specificType, noticeStartDt, noticeEndDt, orgName, happenPlace } = data;
   const descriptionParams: DescriptionParams = {
     specificType,
     noticeStartDt,
@@ -27,16 +74,13 @@ export const transformAbandonmentData = (data: AbandonmentValue, filter?: Abando
     orgName,
     happenPlace
   };
-
   const transformedDescription = transformDescription(descriptionParams);
-  const transformedChipLabel = transformChipLabel(chipLabelParams);
 
   return {
     ...data,
     uri: image,
     title: specificType,
-    description: transformedDescription,
-    chips: transformedChipLabel
+    description: transformedDescription
   };
 };
 

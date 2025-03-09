@@ -6,11 +6,11 @@ export const ABANDONMENTS_FILTERS: AbandonmentsFilterValue[] = [
   { value: 'NEW', name: '신규공고' }
 ];
 
-export const ABANDONMENTS_ANIMAL_TYPES: { value: AnimalType; label: string }[] = [
-  { value: 'ALL', label: '전체' },
-  { value: 'DOG', label: '강아지' },
-  { value: 'CAT', label: '고양이' },
-  { value: 'OTHER', label: '기타' }
+export const ABANDONMENTS_ANIMAL_TYPES: { id: AnimalType; label: string }[] = [
+  { id: 'ALL', label: '전체' },
+  { id: 'DOG', label: '강아지' },
+  { id: 'CAT', label: '고양이' },
+  { id: 'OTHER', label: '기타' }
 ] as const;
 
 export const ADOPT_SUB_MENU = [

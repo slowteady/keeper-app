@@ -1,6 +1,5 @@
 import { LogoIcon } from '@/components/atoms/icons/LogoIcon';
 import { MenuIcon } from '@/components/atoms/icons/MenuIcon';
-import { SearchIcon } from '@/components/atoms/icons/SearchIcon';
 import theme from '@/constants/theme';
 import { useLayout } from '@/hooks/useLayout';
 import * as Haptics from 'expo-haptics';
@@ -9,7 +8,7 @@ import { memo } from 'react';
 import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 const MainHeader = memo(() => {
-  const { headerTop } = useLayout();
+  const { top: headerTop } = useLayout();
 
   const handlePressMenu = async () => {
     router.push('/menu');
@@ -21,9 +20,9 @@ const MainHeader = memo(() => {
       <View style={[styles.wrap, { paddingTop: headerTop }]}>
         <LogoIcon />
         <View style={styles.rightContainer}>
-          <TouchableOpacity activeOpacity={0.5}>
+          {/* <TouchableOpacity activeOpacity={0.5}>
             <SearchIcon />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <TouchableOpacity onPress={handlePressMenu} activeOpacity={0.5}>
             <MenuIcon />
           </TouchableOpacity>

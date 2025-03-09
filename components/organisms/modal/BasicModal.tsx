@@ -12,15 +12,15 @@ import {
 } from 'react-native';
 
 export interface BasicModalProps {
-  isVisible: boolean;
+  open: boolean;
   onPressBackdrop?: () => void;
   children: React.ReactNode;
   containerStyle?: ViewStyle;
 }
 
-const Layout = ({ isVisible, onPressBackdrop, children, containerStyle }: BasicModalProps) => {
+const Layout = ({ open, onPressBackdrop, children, containerStyle }: BasicModalProps) => {
   return (
-    <Modal animationType="fade" visible={isVisible} transparent={true}>
+    <Modal animationType="fade" visible={open} transparent={true}>
       <Pressable style={styles.overlay} onPress={onPressBackdrop}>
         <View style={[styles.innerContainer, containerStyle]}>{children}</View>
       </Pressable>

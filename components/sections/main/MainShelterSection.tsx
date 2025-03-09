@@ -1,5 +1,5 @@
 import FullViewButton from '@/components/atoms/button/FullViewButton';
-import { MenuArrowIcon, NavArrowIcon } from '@/components/atoms/icons/ArrowIcon';
+import { DropDownArrowDownIcon, MenuArrowIcon } from '@/components/atoms/icons/ArrowIcon';
 import MainShelterCard from '@/components/organisms/card/MainShelterCard';
 import { ShelterMap } from '@/components/organisms/map/ShelterMap';
 import theme from '@/constants/theme';
@@ -83,7 +83,7 @@ const MainShelterSection = () => {
 
         <Pressable style={styles.flex} onPress={handlePressTitle}>
           <Text style={styles.label}>전체보기</Text>
-          <NavArrowIcon stroke={theme.colors.black[500]} />
+          <DropDownArrowDownIcon color={theme.colors.black[500]} transform={[{ rotate: '-90deg' }]} />
         </Pressable>
       </View>
 
@@ -181,14 +181,16 @@ const styles = StyleSheet.create({
   },
   label: {
     color: theme.colors.black[500],
-    fontSize: 14,
+    fontSize: 15,
+    lineHeight: 17,
     fontWeight: '500'
   },
   flex: {
     marginTop: 12,
     display: 'flex',
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
+    gap: 2
   },
   distanceSkelton: {
     display: 'flex',

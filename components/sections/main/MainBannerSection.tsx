@@ -38,11 +38,11 @@ const MainBannerSection = memo(() => {
         <Text style={styles.title}>{'행복을 나누는\n첫번째 발걸음을 함께합니다.'}</Text>
         <Text style={styles.subTitle}>{'Spread the love through adoption.'}</Text>
       </View>
-      <View style={styles.controllerContainer}>
-        <Carousel.Controller currentIndex={currentIndex} max={images.length} onPress={handlePressIndicator} />
-      </View>
       <View style={styles.image}>
         <Carousel initialPage={0} data={images} onPageScroll={handleChangeBanner} ref={carouselRef} />
+        <View style={styles.controllerContainer}>
+          <Carousel.Controller currentIndex={currentIndex} max={images.length} onPress={handlePressIndicator} />
+        </View>
       </View>
     </View>
   );
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background.default,
     paddingHorizontal: 20,
     paddingTop: 32,
-    paddingBottom: 24
+    paddingBottom: 48
   },
   labelContainer: {
     paddingBottom: 32
@@ -70,14 +70,15 @@ const styles = StyleSheet.create({
     paddingBottom: 30
   },
   subTitle: {
-    fontSize: 17,
+    fontSize: 15,
     fontWeight: '500',
-    lineHeight: 19,
+    lineHeight: 17,
     color: theme.colors.black[900]
   },
   image: {
     width,
-    height
+    height,
+    position: 'relative'
   },
   suspense: {
     backgroundColor: theme.colors.white[900],
@@ -88,7 +89,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   controllerContainer: {
-    paddingBottom: 28
+    position: 'absolute',
+    bottom: 16,
+    left: 16
   }
 });
 

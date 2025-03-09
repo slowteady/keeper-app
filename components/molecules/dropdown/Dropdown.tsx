@@ -1,17 +1,14 @@
 import { DropDownArrowDownIcon } from '@/components/atoms/icons/ArrowIcon';
-import {
-  DropdownBottomSheet,
-  DropdownBottomSheetMenuData
-} from '@/components/organisms/bottomSheet/DropdownBottomSheet';
+import { BottomSheet, BottomSheetMenuData } from '@/components/organisms/bottomSheet/BottomSheet';
 import theme from '@/constants/theme';
 import { BottomSheetModal, BottomSheetModalProps } from '@gorhom/bottom-sheet';
 import { useRef } from 'react';
 import { StyleSheet, Text, TouchableOpacity, TouchableOpacityProps } from 'react-native';
 
 export interface DropdownProps<T> extends TouchableOpacityProps {
-  data: DropdownBottomSheetMenuData<T>[];
+  data: BottomSheetMenuData<T>[];
   value: T;
-  onChange: (value: DropdownBottomSheetMenuData<T>) => void;
+  onChange: (value: BottomSheetMenuData<T>) => void;
   snapPoints: BottomSheetModalProps['snapPoints'];
 }
 
@@ -21,12 +18,10 @@ const Dropdown = <T,>({ data, value, onChange, snapPoints, ...props }: DropdownP
   const handlePress = () => {
     bottomSheetModalRef.current?.present();
   };
-
   const handleAnimate = (fromIndex: number, toIndex: number) => {
     if (toIndex === 0) bottomSheetModalRef.current?.dismiss();
   };
-
-  const handleChange = (data: DropdownBottomSheetMenuData<T>) => {
+  const handleChange = (data: BottomSheetMenuData<T>) => {
     bottomSheetModalRef.current?.dismiss();
     onChange(data);
   };
@@ -40,9 +35,9 @@ const Dropdown = <T,>({ data, value, onChange, snapPoints, ...props }: DropdownP
         <DropDownArrowDownIcon color={theme.colors.black[500]} />
       </TouchableOpacity>
 
-      <DropdownBottomSheet ref={bottomSheetModalRef} snapPoints={snapPoints} onAnimate={handleAnimate}>
-        <DropdownBottomSheet.Menu data={data} value={value} onPress={handleChange} />
-      </DropdownBottomSheet>
+      <BottomSheet ref={bottomSheetModalRef} snapPoints={snapPoints} onAnimate={handleAnimate}>
+        <BottomSheet.Menu data={data} value={value} onPress={handleChange} />
+      </BottomSheet>
     </>
   );
 };
@@ -54,10 +49,12 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6
+    gap: 4
   },
   label: {
     color: theme.colors.black[500],
-    ...theme.fonts.regular
+    fontSize: 15,
+    fontWeight: '500',
+    lineHeight: 17
   }
 });

@@ -7,7 +7,7 @@ import { router } from 'expo-router';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 const MenuHeader = () => {
-  const { headerTop } = useLayout();
+  const { top: headerTop } = useLayout();
 
   const handlePressHome = () => {
     router.dismissAll();

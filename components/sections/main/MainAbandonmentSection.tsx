@@ -1,9 +1,9 @@
-import { AbandonmentsBusinessResult, abandonmentsBusiness } from '@/businesses/abandonmentsBusiness';
+import { TransformedAbandonments, transformAbandonments } from '@/businesses/abandonmentsBusiness';
 import FullViewButton from '@/components/atoms/button/FullViewButton';
 import { MenuArrowIcon } from '@/components/atoms/icons/ArrowIcon';
-import { Toggle } from '@/components/molecules/button/Toggle';
+import ButtonGroup from '@/components/molecules/button/ButtonGroup';
 import Dropdown from '@/components/molecules/dropdown/Dropdown';
-import { DropdownBottomSheetMenuData } from '@/components/organisms/bottomSheet/DropdownBottomSheet';
+import { BottomSheetMenuData } from '@/components/organisms/bottomSheet/BottomSheet';
 import { AnimalCard } from '@/components/organisms/card/AnimalCard';
 import { ABANDONMENTS_ANIMAL_TYPES, ABANDONMENTS_FILTERS } from '@/constants/config';
 import theme from '@/constants/theme';
@@ -28,12 +28,12 @@ const MainAbandonmentSection = () => {
       animalType: abandonmentsConfig.type,
       filter: abandonmentsConfig.filter,
       size: 20,
-      page: 1
+      page: 0
     },
     { staleTime: 1000 * 60 * 60 }
   );
 
-  const handlePressCard = ({ id }: AbandonmentsBusinessResult) => {
+  const handlePressCard = ({ id }: TransformedAbandonments) => {
     router.push({
       pathname: '/abandonments/[id]',
       params: { id }
@@ -43,15 +43,15 @@ const MainAbandonmentSection = () => {
     router.push('/abandonments');
   };
   const handlePressFilter = useCallback(
-    (data: DropdownBottomSheetMenuData<AbandonmentsFilter>) => {
+    (data: BottomSheetMenuData<AbandonmentsFilter>) => {
       const { value } = data;
       setAbandonmentsConfig((prev) => ({ ...prev, filter: value }));
     },
     [setAbandonmentsConfig]
   );
-  const handleChangeToggle = (value: AnimalType) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-    setAbandonmentsConfig((prev) => ({ ...prev, type: value }));
+  const handleChangeType = async (id: AnimalType) => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setAbandonmentsConfig((prev) => ({ ...prev, type: id }));
   };
 
   return (
@@ -72,8 +72,8 @@ const MainAbandonmentSection = () => {
         </View>
       </View>
 
-      <View style={styles.toggleWrap}>
-        <Toggle items={ABANDONMENTS_ANIMAL_TYPES} value={abandonmentsConfig.type} onChange={handleChangeToggle} />
+      <View style={styles.buttonGroupWrap}>
+        <ButtonGroup data={ABANDONMENTS_ANIMAL_TYPES} id={abandonmentsConfig.type} onChange={handleChangeType} />
       </View>
 
       <AbandonmentCardList
@@ -91,17 +91,17 @@ export default MainAbandonmentSection;
 interface MainAbandonmentSectionCardListProps {
   data?: AbandonmentValue[];
   filter: AbandonmentsFilter;
-  onPress: (item: AbandonmentsBusinessResult) => void;
+  onPress: (item: TransformedAbandonments) => void;
   onPressMoreButton: () => void;
 }
 const CARD_GAP = 18;
 const IMAGE_WIDTH = 220;
 const IMAGE_HEIGHT = 170;
 const AbandonmentCardList = ({ data, filter, onPress, onPressMoreButton }: MainAbandonmentSectionCardListProps) => {
-  const formattedAbandonmentData = abandonmentsBusiness(data || [], filter);
+  const formattedAbandonmentData = transformAbandonments(data || [], filter);
 
   const renderItem = useCallback(
-    ({ item }: ListRenderItemInfo<AbandonmentsBusinessResult>) => {
+    ({ item }: ListRenderItemInfo<TransformedAbandonments>) => {
       return (
         <Pressable onPress={() => onPress(item)}>
           <AnimalCard data={item} width={IMAGE_WIDTH} height={IMAGE_HEIGHT} />
@@ -118,7 +118,7 @@ const AbandonmentCardList = ({ data, filter, onPress, onPressMoreButton }: MainA
       renderItem={renderItem}
       scrollEventThrottle={40}
       showsHorizontalScrollIndicator={false}
-      keyExtractor={({ id }) => id.toString()}
+      keyExtractor={({ id }, idx) => `${id}-${idx}`}
       onEndReachedThreshold={1}
       bounces
       initialNumToRender={4}
@@ -146,22 +146,26 @@ const styles = StyleSheet.create({
   title: {
     color: theme.colors.black[900],
     fontSize: 32,
+    lineHeight: 34,
     fontWeight: '500'
   },
-  toggleWrap: {
-    marginBottom: 16,
-    alignSelf: 'baseline'
+  buttonGroupWrap: {
+    marginBottom: 20,
+    alignSelf: 'baseline',
+    width: '100%'
   },
   header: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 30
+    marginBottom: 20
   },
   label: {
     color: theme.colors.black[600],
-    ...theme.fonts.medium
+    fontSize: 14,
+    fontWeight: '500',
+    lineHeight: 16
   },
   dropdownWrap: {
     display: 'flex',
