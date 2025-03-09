@@ -15,12 +15,5 @@
       "autoIncrement": true
     }
   },
-  "submit": {
-    "production": {
-      "android": {
-        "serviceAccountKeyPath": "./service-account.json",
-        "track": "internal"
-      }
-    }
-  }
+  "submit": {}
 }
