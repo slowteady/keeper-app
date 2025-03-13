@@ -12,7 +12,7 @@ import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
  * @param queryOptions
  * @returns
  */
-export const useGetAbandonment = (
+export const useGetAbandonmentQuery = (
   id: number,
   queryOptions?: UseQueryCustomOptions<ApiResponse<AbandonmentValue>, Error, AbandonmentValue>
 ) => {
@@ -30,7 +30,7 @@ export const useGetAbandonment = (
  * @param queryOptions
  * @returns
  */
-export const useGetAbandonments = (
+export const useGetAbandonmentsQuery = (
   params: GetAbandonmentsParams,
   queryOptions?: UseQueryCustomOptions<ApiResponse<AbandonmentData>, Error, AbandonmentValue[]>
 ) => {
@@ -48,7 +48,7 @@ export const useGetAbandonments = (
  * @param queryOptions
  * @returns
  */
-export const useGetInfiniteAbandonments = (
+export const useGetInfiniteAbandonmentsQuery = (
   params: GetAbandonmentsParams,
   queryOptions?: UseInfiniteQueryCustomOptions<ApiResponse<AbandonmentData>, Error, AbandonmentData>
 ) => {

@@ -1,4 +1,4 @@
-import { TransformedAbandonments, transformAbandonments } from '@/businesses/abandonmentsBusiness';
+import { TransformedAbandonments, transformAbandonments } from '@/business/abandonmentsBusiness';
 import ScrollFloatingButton from '@/components/atoms/button/ScrollFloatingButton';
 import ButtonGroup from '@/components/molecules/button/ButtonGroup';
 import Dropdown from '@/components/molecules/dropdown/Dropdown';
@@ -130,12 +130,7 @@ const FilterSection = () => {
         </View>
       </View>
       <View style={styles.buttonGroupWrap}>
-        <ButtonGroup
-          data={ABANDONMENTS_ANIMAL_TYPES}
-          id={abandonmentsConfig.type}
-          onChange={handleChangeType}
-          color="secondary"
-        />
+        <ButtonGroup data={ABANDONMENTS_ANIMAL_TYPES} id={abandonmentsConfig.type} onChange={handleChangeType} />
       </View>
       <Searchbar onSubmit={handleSubmit} ViewStyle={{ marginBottom: 32 }} />
     </>

@@ -1,4 +1,4 @@
-import { TransformedAbandonments, transformAbandonments } from '@/businesses/abandonmentsBusiness';
+import { TransformedAbandonments, transformAbandonments } from '@/business/abandonmentsBusiness';
 import FullViewButton from '@/components/atoms/button/FullViewButton';
 import { MenuArrowIcon } from '@/components/atoms/icons/ArrowIcon';
 import ButtonGroup from '@/components/molecules/button/ButtonGroup';
@@ -7,7 +7,7 @@ import { BottomSheetMenuData } from '@/components/organisms/bottomSheet/BottomSh
 import { AnimalCard } from '@/components/organisms/card/AnimalCard';
 import { ABANDONMENTS_ANIMAL_TYPES, ABANDONMENTS_FILTERS } from '@/constants/config';
 import theme from '@/constants/theme';
-import { useGetAbandonments } from '@/hooks/queries/useAbandonments';
+import { useGetAbandonmentsQuery } from '@/hooks/queries/useAbandonments';
 import { abandonmentsAtom, abandonmentsFilterValueAtom } from '@/states/abandonments';
 import { AbandonmentsFilter } from '@/types/abandonments';
 import { AnimalType } from '@/types/common';
@@ -23,7 +23,7 @@ const MainAbandonmentSection = () => {
   const filterValue = useAtomValue(abandonmentsFilterValueAtom);
   const snapPoints = useMemo(() => [200], []);
 
-  const { data, isLoading } = useGetAbandonments(
+  const { data, isLoading } = useGetAbandonmentsQuery(
     {
       animalType: abandonmentsConfig.type,
       filter: abandonmentsConfig.filter,
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
   title: {
     color: theme.colors.black[900],
     fontSize: 32,
-    lineHeight: 34,
+    lineHeight: 40,
     fontWeight: '500'
   },
   buttonGroupWrap: {

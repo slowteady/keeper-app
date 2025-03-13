@@ -11,10 +11,9 @@ export interface ButtonGroupProps<T> {
   data: ButtonGroupData<T>[];
   id: T;
   onChange: (id: T) => void;
-  color?: 'primary' | 'secondary';
 }
 
-const ButtonGroup = <T,>({ data, id, onChange, color = 'primary' }: ButtonGroupProps<T>) => {
+const ButtonGroup = <T,>({ data, id, onChange }: ButtonGroupProps<T>) => {
   return (
     <View style={styles.container}>
       {data.map((item, idx) => {
@@ -22,13 +21,7 @@ const ButtonGroup = <T,>({ data, id, onChange, color = 'primary' }: ButtonGroupP
         const isSelected = item.id === id;
 
         return (
-          <AnimatedButton
-            key={key}
-            color={color}
-            label={item.label}
-            isSelected={isSelected}
-            onPress={() => onChange(item.id)}
-          />
+          <AnimatedButton key={key} label={item.label} isSelected={isSelected} onPress={() => onChange(item.id)} />
         );
       })}
     </View>
@@ -41,9 +34,8 @@ interface AnimatedButtonProps {
   label: string;
   isSelected: boolean;
   onPress: () => void;
-  color?: 'primary' | 'secondary';
 }
-const AnimatedButton = ({ label, isSelected, onPress, color }: AnimatedButtonProps) => {
+const AnimatedButton = ({ label, isSelected, onPress }: AnimatedButtonProps) => {
   const progress = useSharedValue(isSelected ? 1 : 0);
 
   useEffect(() => {
@@ -63,7 +55,14 @@ const AnimatedButton = ({ label, isSelected, onPress, color }: AnimatedButtonPro
 
   return (
     <TouchableOpacity activeOpacity={0.7} onPress={onPress} style={styles.button}>
-      <Animated.View style={[styles.buttonInner, animatedStyle]}>
+      <Animated.View
+        style={[
+          styles.buttonInner,
+          ,
+          { borderColor: isSelected ? 'transparent' : theme.colors.white[600] },
+          animatedStyle
+        ]}
+      >
         <Animated.Text style={[styles.label, animatedTextStyle]}>{label}</Animated.Text>
       </Animated.View>
     </TouchableOpacity>
@@ -87,8 +86,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 4,
     paddingVertical: 11,
-    borderWidth: 1,
-    borderColor: theme.colors.white[600]
+    borderWidth: 1
   },
   label: {
     fontSize: 14,

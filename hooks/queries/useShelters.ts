@@ -16,7 +16,7 @@ import { useQuery } from '@tanstack/react-query';
  * @param queryOptions
  * @returns
  */
-export const useGetShelters = (
+export const useGetSheltersQuery = (
   params: GetSheltersParams,
   queryOptions?: UseQueryCustomOptions<ApiResponse<ShelterValue[]>, Error, ShelterValue[]>
 ) => {
@@ -34,7 +34,7 @@ export const useGetShelters = (
  * @param queryOptions
  * @returns
  */
-export const useGetShelter = (
+export const useGetShelterQuery = (
   id: number,
   queryOptions?: UseQueryCustomOptions<ApiResponse<ShelterValue>, Error, ShelterValue>
 ) => {
@@ -52,7 +52,7 @@ export const useGetShelter = (
  * @param queryOptions
  * @returns
  */
-export const useGetShelterCount = (
+export const useGetShelterCountQuery = (
   params: GetShelterCountParams,
   queryOptions?: UseQueryCustomOptions<ApiResponse<ShelterCountValue[]>, Error, ShelterCountValue[]>
 ) => {

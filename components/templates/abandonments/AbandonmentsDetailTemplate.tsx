@@ -55,7 +55,7 @@ const AbandonmentsDetailTemplate = ({ abandonment, shelter }: AbandonmentsDetail
         onPressBackdrop={() => setModalOpen(false)}
         containerStyle={{ paddingTop: 32, paddingBottom: 16 }}
       >
-        <BasicModal.Title value={`${shelter?.name}에 전화 문의하기`} style={{ marginBottom: 12 }} />
+        <BasicModal.Title value={`${shelter?.name || '담당자'}에 전화 문의하기`} style={{ marginBottom: 12 }} />
         <BasicModal.Description
           value={'*원활한 소통을 위해 상담원이 상담, 휴대폰 번호, 주소 등을 수집할 수 있습니다.'}
           style={{ marginBottom: 32 }}

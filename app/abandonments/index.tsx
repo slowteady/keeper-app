@@ -2,7 +2,7 @@ import DetailHeader from '@/components/organisms/headers/DetailHeader';
 import AbandonmentsTemplate from '@/components/templates/abandonments/AbandonmentsTemplate';
 import { ABANDONMENTS_QUERY_KEY } from '@/constants/queryKeys';
 import theme from '@/constants/theme';
-import { useGetInfiniteAbandonments } from '@/hooks/queries/useAbandonments';
+import { useGetInfiniteAbandonmentsQuery } from '@/hooks/queries/useAbandonments';
 import useRefreshing from '@/hooks/useRefreshing';
 import { abandonmentsAtom } from '@/states/abandonments';
 import { useQueryClient } from '@tanstack/react-query';
@@ -35,7 +35,7 @@ const Page = () => {
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage
-  } = useGetInfiniteAbandonments(param);
+  } = useGetInfiniteAbandonmentsQuery(param);
 
   const handleFetch = useCallback(() => {
     if (hasNextPage) fetchNextPage();

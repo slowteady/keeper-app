@@ -96,9 +96,10 @@ const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
 
 export interface ShelterMapDistanceBoxProps {
   value?: ShelterCountValue[];
+  hasLocationStatus: boolean;
   style?: ViewStyle;
 }
-const DistanceBox = ({ value, style }: ShelterMapDistanceBoxProps) => {
+const DistanceBox = ({ value, hasLocationStatus, style }: ShelterMapDistanceBoxProps) => {
   const DISTANCES = [1, 5, 10, 30];
 
   return (
@@ -106,11 +107,12 @@ const DistanceBox = ({ value, style }: ShelterMapDistanceBoxProps) => {
       {DISTANCES.map((dist, idx) => {
         const key = `${dist}-${idx}`;
         const matchedCount = value?.find(({ distance }) => distance === dist);
+        const count = hasLocationStatus ? (matchedCount?.count ?? 0) : 0;
 
         return (
           <View key={key} style={styles.textContainer}>
             <Text style={styles.label}>{dist}km</Text>
-            <Text style={styles.value}>{matchedCount?.count || 0}곳</Text>
+            <Text style={styles.value}>{count}곳</Text>
           </View>
         );
       })}
@@ -165,7 +167,7 @@ const NoValidMap = () => {
     <View style={styles.reqContainer}>
       <Text style={styles.reqText}>사용자의 위치 설정을 켜주세요.</Text>
       <TouchableOpacity activeOpacity={0.5} onPress={handlePressSetting} style={styles.settingButton}>
-        <Text style={styles.settingButtonText}>설정하기</Text>
+        <Text style={styles.settingButtonText}>위치 설정 바로가기</Text>
       </TouchableOpacity>
     </View>
   );
@@ -192,9 +194,10 @@ const styles = StyleSheet.create({
     position: 'relative'
   },
   reqContainer: {
+    position: 'relative',
     width: '100%',
-    height: '100%',
     display: 'flex',
+    flex: 1,
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
@@ -203,9 +206,8 @@ const styles = StyleSheet.create({
   reqText: {
     fontSize: 15,
     lineHeight: 17,
-    fontWeight: '700',
-    color: theme.colors.black[600],
-    marginBottom: 18
+    fontWeight: '500',
+    color: theme.colors.black[600]
   },
   distanceContainer: {
     display: 'flex',
@@ -264,16 +266,19 @@ const styles = StyleSheet.create({
     lineHeight: 22
   },
   settingButton: {
-    padding: 12,
+    position: 'absolute',
+    paddingVertical: 16,
+    paddingHorizontal: 32,
     borderRadius: 30,
-    borderColor: theme.colors.black[600],
-    borderWidth: 1
+    backgroundColor: theme.colors.black[900],
+    borderWidth: 1,
+    bottom: 24
   },
   settingButtonText: {
-    fontSize: 13,
-    lineHeight: 15,
-    fontWeight: '700',
-    color: theme.colors.black[700]
+    fontSize: 14,
+    lineHeight: 16,
+    fontWeight: '500',
+    color: theme.colors.white[900]
   }
 });
 

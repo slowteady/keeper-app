@@ -3,7 +3,7 @@ import { DropDownArrowDownIcon, MenuArrowIcon } from '@/components/atoms/icons/A
 import MainShelterCard from '@/components/organisms/card/MainShelterCard';
 import { ShelterMap } from '@/components/organisms/map/ShelterMap';
 import theme from '@/constants/theme';
-import { useGetShelterCount, useGetShelters } from '@/hooks/queries/useShelters';
+import { useGetShelterCountQuery, useGetSheltersQuery } from '@/hooks/queries/useShelters';
 import { useMapInit } from '@/hooks/useMapInit';
 import { CameraParams } from '@/types/map';
 import { ShelterValue } from '@/types/scheme/shelters';
@@ -21,7 +21,7 @@ const MainShelterSection = () => {
   const { camera, setCamera, distance, setDistance, initialLocation, mapRef, permissionStatus } = useMapInit();
   const scale = useSharedValue(1);
 
-  const { data: sheltersData } = useGetShelters(
+  const { data: sheltersData } = useGetSheltersQuery(
     {
       latitude: camera?.latitude || 0,
       longitude: camera?.longitude || 0,
@@ -29,10 +29,16 @@ const MainShelterSection = () => {
       userLatitude: initialLocation?.latitude || 0,
       userLongitude: initialLocation?.longitude || 0
     },
-    { enabled: !!camera && enabled, staleTime: 1000 * 60 * 60 }
+    {
+      select: ({ data }) => {
+        return data.sort((a, b) => a.distance - b.distance);
+      },
+      enabled: !!camera && enabled,
+      staleTime: 1000 * 60 * 60
+    }
   );
 
-  const { data: shelterCountData } = useGetShelterCount({
+  const { data: shelterCountData } = useGetShelterCountQuery({
     latitude: initialLocation?.latitude || 0,
     longitude: initialLocation?.longitude || 0
   });
@@ -42,6 +48,9 @@ const MainShelterSection = () => {
     setShelterData(sheltersData);
   }, [sheltersData]);
 
+  const handleInitMap = () => {
+    setEnabled(true);
+  };
   const handlePressTitle = () => {
     router.push('/shelters');
   };
@@ -61,9 +70,6 @@ const MainShelterSection = () => {
     scale.value = withTiming(0.7, { duration: 100 }, () => {
       scale.value = withTiming(1, { duration: 100 });
     });
-  };
-  const handleInitMap = () => {
-    setEnabled(true);
   };
 
   const animatedListStyle = useAnimatedStyle(() => ({
@@ -88,7 +94,11 @@ const MainShelterSection = () => {
       </View>
 
       <View style={{ paddingHorizontal: 20, flex: 1 }}>
-        <ShelterMap.DistanceBox value={shelterCountData} style={{ marginBottom: 16 }} />
+        <ShelterMap.DistanceBox
+          value={shelterCountData}
+          hasLocationStatus={hasLocationStatus}
+          style={{ marginBottom: 16 }}
+        />
         <View style={{ marginBottom: 20 }}>
           <ShelterMap
             ref={mapRef}
@@ -177,12 +187,13 @@ const styles = StyleSheet.create({
   title: {
     color: theme.colors.black[900],
     fontSize: 32,
+    lineHeight: 40,
     fontWeight: '500'
   },
   label: {
     color: theme.colors.black[500],
     fontSize: 15,
-    lineHeight: 17,
+    lineHeight: 21,
     fontWeight: '500'
   },
   flex: {

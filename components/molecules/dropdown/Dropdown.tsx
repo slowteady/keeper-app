@@ -55,6 +55,6 @@ const styles = StyleSheet.create({
     color: theme.colors.black[500],
     fontSize: 15,
     fontWeight: '500',
-    lineHeight: 17
+    lineHeight: 21
   }
 });

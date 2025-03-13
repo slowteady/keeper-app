@@ -1,8 +1,6 @@
 import { buildQueryString } from '@/utils/queryUtils';
 
 export interface GeocodeOptionalParams {
-  /** 응답 형식: 'json' 또는 'xml' (기본값: json) */
-  output?: 'json' | 'xml';
   /** 검색 결과 페이지 번호 (기본값: 1) */
   page?: number;
   /** 한 페이지에 보여줄 결과 개수 (예: 10) */
@@ -11,11 +9,11 @@ export interface GeocodeOptionalParams {
   coordinate?: string;
 }
 
-export interface GeocodeApiParams {
+export interface GeocodeParams {
   query: string;
   params?: GeocodeOptionalParams;
 }
-export const geocodeService = async ({ query, params = {} }: GeocodeApiParams) => {
+export const getGeocode = async ({ query, params = {} }: GeocodeParams) => {
   const controller = new AbortController();
   const { signal } = controller;
 

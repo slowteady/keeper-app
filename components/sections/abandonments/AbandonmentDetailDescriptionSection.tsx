@@ -49,6 +49,7 @@ const AbandonmentDetailDescriptionSection = ({
           <CandyIcon width={20} height={20} />
         </View>
         <View style={styles.shelter}>
+          {!shelter && <Text style={styles.description}>정보 없음</Text>}
           {name && <Text style={styles.description}>{name}</Text>}
           {time && <Text style={styles.description}>{time}</Text>}
           {person && <Text style={styles.description}>{person}</Text>}
