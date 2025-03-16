@@ -4,10 +4,11 @@ import LocationBottomSheet from '@/components/organisms/bottomSheet/LocationBott
 import ShelterCard from '@/components/organisms/card/ShelterCard';
 import { ShelterMap } from '@/components/organisms/map/ShelterMap';
 import theme from '@/constants/theme';
+import { useGeocodeMutation } from '@/hooks/queries/useGeocode';
 import { useGetShelterCountQuery, useGetSheltersQuery } from '@/hooks/queries/useShelters';
 import { useMapInit } from '@/hooks/useMapInit';
 import useScrollFloatingButton from '@/hooks/useScrollFloatingButton';
-import { CameraParams } from '@/types/map';
+import { Address, CameraParams } from '@/types/map';
 import { ShelterValue } from '@/types/scheme/shelters';
 import { calcMapRadiusKm } from '@/utils/mapUtils';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
@@ -16,8 +17,6 @@ import { router } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FlatList, ListRenderItemInfo, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-// TODO
-// [ ] geocode 데이터 패칭 통해 데이터 받아서 리스트 출력
 const PADDING_HORIZONTAL = 20;
 const SheltersTemplate = () => {
   const [shelterValues, setShelterValues] = useState<ShelterValue[]>([]);
@@ -64,13 +63,14 @@ interface MapSectionProps {
 }
 const MapSection = ({ shelterValues, onChange }: MapSectionProps) => {
   const [enabled, setEnabled] = useState(false);
+  const [addresses, setAddresses] = useState<Address[]>();
   const [selectedMarkerId, setSelectedMarkerId] = useState<number>();
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => [400], []);
 
   const { camera, setCamera, distance, setDistance, initialLocation, mapRef, permissionStatus } = useMapInit();
-  // const { mutate, isPending } = useGeocodeMutation();
+  const { mutateAsync, isPending } = useGeocodeMutation();
 
   const { data: sheltersData } = useGetSheltersQuery(
     {
@@ -98,19 +98,32 @@ const MapSection = ({ shelterValues, onChange }: MapSectionProps) => {
     onChange(sheltersData);
   }, [onChange, sheltersData]);
 
+  const handleSubmitGeocode = async (value: string) => {
+    const response = await mutateAsync({ query: value });
+    const addresses = response.addresses;
+    setAddresses(addresses);
+  };
   const handleInitMap = () => {
     setEnabled(true);
   };
-  const handleRefetch = (params?: CameraParams) => {
-    if (!params) return null;
+  const handleRefetch = useCallback(
+    (params?: CameraParams) => {
+      if (!params) return null;
 
-    const { latitude, longitude, zoom, region } = params;
-    setCamera({ latitude, longitude, zoom });
-    setSelectedMarkerId(undefined);
+      const { latitude, longitude, zoom, region } = params;
+      setCamera({ latitude, longitude, zoom });
+      setSelectedMarkerId(undefined);
 
-    const radius = calcMapRadiusKm({ ...region, latitude, longitude });
-    setDistance(radius);
-  };
+      const radius = calcMapRadiusKm({
+        latitudeDelta: region?.latitudeDelta || 0,
+        longitudeDelta: region?.longitudeDelta || 0,
+        latitude,
+        longitude
+      });
+      setDistance(radius);
+    },
+    [setCamera, setDistance]
+  );
   const handleTapMarker = (data: ShelterValue) => {
     setSelectedMarkerId(data.id);
     onChange([data, ...shelterValues]);
@@ -119,9 +132,22 @@ const MapSection = ({ shelterValues, onChange }: MapSectionProps) => {
   const handlePress = () => {
     bottomSheetModalRef.current?.present();
   };
-  const handleAnimate = (fromIndex: number, toIndex: number) => {
-    if (toIndex === 0) bottomSheetModalRef.current?.dismiss();
-  };
+  const handleAnimate = useCallback((fromIndex: number, toIndex: number) => {
+    if (toIndex === -1) {
+      bottomSheetModalRef.current?.dismiss();
+      setAddresses(undefined);
+    }
+  }, []);
+  const handlePressAddress = useCallback(
+    (item: Address) => {
+      const { x, y } = item;
+      handleRefetch({ longitude: Number(x), latitude: Number(y) });
+      // mapRef.current?.animateCameraTo({ longitude: Number(x), latitude: Number(y) });
+      bottomSheetModalRef.current?.dismiss();
+      setAddresses(undefined);
+    },
+    [handleRefetch]
+  );
 
   const hasLocationStatus = permissionStatus?.status === Location.PermissionStatus.GRANTED;
   const hasData = sheltersData !== undefined && sheltersData.length > 0;
@@ -155,10 +181,12 @@ const MapSection = ({ shelterValues, onChange }: MapSectionProps) => {
       />
 
       <LocationBottomSheet
+        addresses={addresses}
         snapPoints={snapPoints}
         onAnimate={handleAnimate}
         ref={bottomSheetModalRef}
-        onSubmit={() => null}
+        onSubmit={handleSubmitGeocode}
+        onPressAddress={handlePressAddress}
       />
     </>
   );

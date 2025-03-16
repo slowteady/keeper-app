@@ -19,7 +19,7 @@ const Dropdown = <T,>({ data, value, onChange, snapPoints, ...props }: DropdownP
     bottomSheetModalRef.current?.present();
   };
   const handleAnimate = (fromIndex: number, toIndex: number) => {
-    if (toIndex === 0) bottomSheetModalRef.current?.dismiss();
+    if (toIndex === -1) bottomSheetModalRef.current?.dismiss();
   };
   const handleChange = (data: BottomSheetMenuData<T>) => {
     bottomSheetModalRef.current?.dismiss();

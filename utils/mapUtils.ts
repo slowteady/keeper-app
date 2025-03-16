@@ -28,8 +28,8 @@ export function calcMapRadiusKm(region: {
   // 피타고라스 정리를 사용해 대각선 절반(=반경)을 구함
   const radiusKm = Math.sqrt(halfLatKm ** 2 + halfLngKm ** 2);
 
-  // 소수점 버리고 정수로 반올림
-  return Math.round(radiusKm);
+  // 소수점 버리고 정수로 반내림
+  return Math.floor(radiusKm);
 }
 
 const EPSILON_CAMERA_COORD = 0.001;

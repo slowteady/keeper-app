@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 8,
     backgroundColor: theme.colors.white[900],
-    opacity: 0.6
+    opacity: 0.4
   },
   text: {
     fontSize: 12,

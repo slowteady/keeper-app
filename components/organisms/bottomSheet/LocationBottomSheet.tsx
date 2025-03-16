@@ -1,16 +1,29 @@
 import Searchbar from '@/components/molecules/input/Searchbar';
 import theme from '@/constants/theme';
+import { Address } from '@/types/map';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { forwardRef, useState } from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, ListRenderItemInfo, Pressable, StyleSheet, Text, View } from 'react-native';
 import { BottomSheet, BottomSheetLayoutProps } from './BottomSheet';
 
 interface LocationBottomSheetProps extends BottomSheetLayoutProps {
-  onSubmit: () => void;
+  onSubmit: (value: string) => void;
+  onPressAddress: (value: Address) => void;
+  addresses?: Address[];
 }
 
 const LocationBottomSheet = forwardRef<BottomSheetModal, LocationBottomSheetProps>((props, ref) => {
-  const { onSubmit } = props;
+  const { onSubmit, onPressAddress, addresses, ...rest } = props;
+
+  const renderItem = ({ item }: ListRenderItemInfo<Address>) => {
+    const { roadAddress } = item;
+
+    return (
+      <Pressable style={styles.listButton} onPress={() => onPressAddress(item)}>
+        <Text style={styles.listText}>{roadAddress}</Text>
+      </Pressable>
+    );
+  };
 
   return (
     <BottomSheet
@@ -18,9 +31,17 @@ const LocationBottomSheet = forwardRef<BottomSheetModal, LocationBottomSheetProp
       android_keyboardInputMode="adjustResize"
       keyboardBehavior="interactive"
       keyboardBlurBehavior="restore"
-      {...props}
+      {...rest}
     >
-      <FlatList ListHeaderComponent={<Header onSubmit={onSubmit} />} data={[]} renderItem={null} />
+      <Header onSubmit={onSubmit} />
+      <FlatList
+        keyExtractor={({ roadAddress }, idx) => `${roadAddress}-${idx}`}
+        showsVerticalScrollIndicator
+        data={addresses}
+        renderItem={renderItem}
+        ListEmptyComponent={addresses ? <Nodata /> : <></>}
+        style={{ marginBottom: 48 }}
+      />
     </BottomSheet>
   );
 });
@@ -59,6 +80,10 @@ const Header = ({ onSubmit }: HeaderProps) => {
   );
 };
 
+const Nodata = () => {
+  return <Text>노데이터</Text>;
+};
+
 const styles = StyleSheet.create({
   headerContainer: {
     paddingVertical: 10
@@ -72,7 +97,18 @@ const styles = StyleSheet.create({
   },
   searchbar: {
     backgroundColor: 'transparent',
-    borderWidth: 1
+    borderWidth: 1,
+    marginBottom: 16
+  },
+  listButton: {
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.white[800]
+  },
+  listText: {
+    fontSize: 18,
+    lineHeight: 20,
+    color: theme.colors.black[800]
   }
 });
 

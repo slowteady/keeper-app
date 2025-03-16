@@ -40,7 +40,6 @@ const MainTemplate = () => {
         onScroll={handleScroll}
         scrollEventThrottle={40}
         bounces
-        decelerationRate="fast"
         initialNumToRender={2}
         keyExtractor={({ id }, idx) => `${id}-${idx}`}
         data={data}
