@@ -3,17 +3,17 @@ import theme from '@/constants/theme';
 import { Address } from '@/types/map';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { forwardRef, useState } from 'react';
-import { FlatList, ListRenderItemInfo, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, ListRenderItemInfo, Pressable, StyleSheet, Text, View } from 'react-native';
 import { BottomSheet, BottomSheetLayoutProps } from './BottomSheet';
 
 interface LocationBottomSheetProps extends BottomSheetLayoutProps {
   onSubmit: (value: string) => void;
   onPressAddress: (value: Address) => void;
   addresses?: Address[];
+  isPending?: boolean;
 }
-
 const LocationBottomSheet = forwardRef<BottomSheetModal, LocationBottomSheetProps>((props, ref) => {
-  const { onSubmit, onPressAddress, addresses, ...rest } = props;
+  const { onSubmit, onPressAddress, addresses, isPending, ...rest } = props;
 
   const renderItem = ({ item }: ListRenderItemInfo<Address>) => {
     const { roadAddress } = item;
@@ -34,14 +34,20 @@ const LocationBottomSheet = forwardRef<BottomSheetModal, LocationBottomSheetProp
       {...rest}
     >
       <Header onSubmit={onSubmit} />
-      <FlatList
-        keyExtractor={({ roadAddress }, idx) => `${roadAddress}-${idx}`}
-        showsVerticalScrollIndicator
-        data={addresses}
-        renderItem={renderItem}
-        ListEmptyComponent={addresses ? <Nodata /> : <></>}
-        style={{ marginBottom: 48 }}
-      />
+      {isPending ? (
+        <View style={styles.indicatorContainer}>
+          <ActivityIndicator size="large" />
+        </View>
+      ) : (
+        <FlatList
+          keyExtractor={({ roadAddress }, idx) => `${roadAddress}-${idx}`}
+          showsVerticalScrollIndicator
+          data={addresses}
+          renderItem={renderItem}
+          ListEmptyComponent={addresses ? <Nodata /> : <></>}
+          style={{ marginBottom: 48 }}
+        />
+      )}
     </BottomSheet>
   );
 });
@@ -81,7 +87,7 @@ const Header = ({ onSubmit }: HeaderProps) => {
 };
 
 const Nodata = () => {
-  return <Text>노데이터</Text>;
+  return <Text>검색 결과가 없습니다.</Text>;
 };
 
 const styles = StyleSheet.create({
@@ -109,6 +115,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     lineHeight: 20,
     color: theme.colors.black[800]
+  },
+  indicatorContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1
   }
 });
 

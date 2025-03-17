@@ -1,4 +1,3 @@
-import { GreyTelIcon } from '@/components/atoms/icons/TelIcon';
 import theme from '@/constants/theme';
 import { ShelterValue } from '@/types/scheme/shelters';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -23,10 +22,9 @@ interface ShrinkCardProps {
   data: ShelterValue;
 }
 const ShrinkCard = ({ data }: ShrinkCardProps) => {
-  const { name, distance, address, tel } = data;
+  const { name, distance, address } = data;
   const convertedDistance = Math.round(distance * 10) / 10;
-  const convertedAddress = address.split(' ').slice(0, 2).join(' ');
-  const convertedInfo = `${convertedDistance}km ${convertedAddress}`;
+  const convertedAddress = address.split(' ').slice(0, 3).join(' ');
 
   return (
     <View style={[styles.shrinkContainer]}>
@@ -34,15 +32,16 @@ const ShrinkCard = ({ data }: ShrinkCardProps) => {
         <Text numberOfLines={1} ellipsizeMode="tail" style={[styles.nameText]}>
           {name}
         </Text>
-        <Text numberOfLines={1} ellipsizeMode="tail" style={[styles.locationText]}>
-          {convertedInfo}
-        </Text>
       </View>
       <View style={[styles.labelWrap]}>
-        <GreyTelIcon color={theme.colors.black[500]} />
-        <Text style={[styles.labelText]}>{tel}</Text>
-        <View style={styles.verticalDivider} />
-        <Text style={[styles.labelText]}>매일 오전 9시 ~ 오후6시</Text>
+        <Text style={[styles.locationText]}>{convertedDistance}km</Text>
+        <Text
+          numberOfLines={1}
+          ellipsizeMode="tail"
+          style={[styles.locationText, { marginLeft: 4, color: theme.colors.black[500] }]}
+        >
+          {convertedAddress}
+        </Text>
       </View>
     </View>
   );
@@ -69,15 +68,14 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '400',
     lineHeight: 15,
-    color: theme.colors.black[800],
-    flex: 1
+    color: theme.colors.black[800]
   },
   titleWrap: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    marginBottom: 12
+    marginBottom: 10
   },
   labelText: {
     color: theme.colors.black[500],

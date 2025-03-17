@@ -9,9 +9,13 @@ export interface GetSheltersParams {
   userLatitude: number;
   userLongitude: number;
 }
-export interface GetShelterCountParams {
+export interface GetShelterCountsParams {
   latitude: number;
   longitude: number;
+}
+export interface GetShelterAbandonmentsParams {
+  size: number;
+  page?: number;
 }
 /**
  * 보호소 전체 조회
@@ -32,9 +36,17 @@ export const getShelter = (id: number): Promise<ApiResponse<ShelterValue>> => {
 /**
  * 주변 보호소 갯수 조회
  */
-export const getShelterCount = (params: GetShelterCountParams): Promise<ApiResponse<ShelterCountValue[]>> => {
+export const getShelterCounts = (params: GetShelterCountsParams): Promise<ApiResponse<ShelterCountValue[]>> => {
   const endpoint = `/shelters/nearby/count`;
   const distances = '1,5,10,30';
 
   return publicApi({ endpoint, params: { ...params, distances } });
+};
+
+/**
+ * 보호소 전체 공고 조회
+ */
+export const getShelterAbandonments = (id: number, params: GetShelterAbandonmentsParams) => {
+  const endpoint = `/shelters/${id}/abandonments`;
+  return publicApi({ endpoint, params, options: { method: 'GET' } });
 };

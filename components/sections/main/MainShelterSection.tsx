@@ -2,12 +2,14 @@ import FullViewButton from '@/components/atoms/button/FullViewButton';
 import { DropDownArrowDownIcon, MenuArrowIcon } from '@/components/atoms/icons/ArrowIcon';
 import MainShelterCard from '@/components/organisms/card/MainShelterCard';
 import { ShelterMap } from '@/components/organisms/map/ShelterMap';
+import { SHELTER_COUNT_QUERY_KEY } from '@/constants/queryKeys';
 import theme from '@/constants/theme';
 import { useGetShelterCountQuery, useGetSheltersQuery } from '@/hooks/queries/useShelters';
 import { useMapInit } from '@/hooks/useMapInit';
 import { CameraParams } from '@/types/map';
 import { ShelterValue } from '@/types/scheme/shelters';
 import { calcMapRadiusKm } from '@/utils/mapUtils';
+import { useRoute } from '@react-navigation/native';
 import * as Location from 'expo-location';
 import { router } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
@@ -20,6 +22,7 @@ const MainShelterSection = () => {
   const [shelterData, setShelterData] = useState<ShelterValue[]>([]);
   const { camera, setCamera, distance, setDistance, initialLocation, mapRef, permissionStatus } = useMapInit();
   const scale = useSharedValue(1);
+  const { name } = useRoute();
 
   const { data: sheltersData } = useGetSheltersQuery(
     {
@@ -38,10 +41,13 @@ const MainShelterSection = () => {
     }
   );
 
-  const { data: shelterCountData } = useGetShelterCountQuery({
-    latitude: initialLocation?.latitude || 0,
-    longitude: initialLocation?.longitude || 0
-  });
+  const { data: shelterCountData } = useGetShelterCountQuery(
+    {
+      latitude: initialLocation?.latitude || 0,
+      longitude: initialLocation?.longitude || 0
+    },
+    { queryKey: [SHELTER_COUNT_QUERY_KEY, name], enabled: !!initialLocation, staleTime: 0 }
+  );
 
   useEffect(() => {
     if (!sheltersData) return;

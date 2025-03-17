@@ -1,3 +1,4 @@
+import { AbandonmentValue } from '@/types/scheme/abandonments';
 import { ShelterValue } from '@/types/scheme/shelters';
 import { formatTimeAMPM } from '@/utils/timeUtils';
 
@@ -13,8 +14,8 @@ export const transformShelterData = (data: ShelterValue) => {
     weekdayCloseTime,
     weekendCloseTime,
     weekendOpenTime,
-    veterinarianCount,
-    caretakerCount,
+    veterinarianCount = 0,
+    caretakerCount = 0,
     name
   } = data;
 
@@ -96,4 +97,15 @@ const formatPerson = ({ caretakerCount, veterinarianCount }: FormatPersonParams)
   } else {
     return '정보 없음';
   }
+};
+
+/**
+ * 보호소 정보, 공고 데이터 변환
+ */
+export type TransformedShelterAbandonmentsValue = ReturnType<typeof transformShelterAbandonmentsData>;
+export const transformShelterAbandonmentsData = (shelterData: ShelterValue, abandonmentsData?: AbandonmentValue[]) => {
+  const formattedShelterData = { type: 'shelter', data: shelterData } as const;
+  const formattedAbandonmentsData = { type: 'abandonments', data: abandonmentsData } as const;
+
+  return [formattedShelterData, formattedAbandonmentsData];
 };

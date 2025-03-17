@@ -175,7 +175,8 @@ const NoValidMap = () => {
 
 export const ShelterMap = Object.assign(Map, {
   DistanceBox,
-  NoValidMap
+  NoValidMap,
+  Marker
 });
 
 const styles = StyleSheet.create({

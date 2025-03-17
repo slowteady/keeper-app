@@ -1,6 +1,5 @@
 import { ABANDONMENT_QUERY_KEY, ABANDONMENTS_QUERY_KEY } from '@/constants/queryKeys';
-import { getAbandonment, getAbandonments } from '@/services/abandonmentsService';
-import { GetAbandonmentsParams } from '@/types/abandonments';
+import { getAbandonment, getAbandonments, GetAbandonmentsParams } from '@/services/abandonmentsService';
 import { ApiResponse } from '@/types/common';
 import { AbandonmentData, AbandonmentValue } from '@/types/scheme/abandonments';
 import { UseInfiniteQueryCustomOptions, UseQueryCustomOptions } from '@/types/utils';
