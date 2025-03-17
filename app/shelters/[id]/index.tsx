@@ -4,13 +4,29 @@ import { SHELTER_ABANDONMENTS_QUERY_KEY, SHELTER_QUERY_KEY } from '@/constants/q
 import theme from '@/constants/theme';
 import { useGetShelterAbandonmentsQuery, useGetShelterQuery } from '@/hooks/queries/useShelters';
 import useRefreshing from '@/hooks/useRefreshing';
+import { abandonmentsFilterValueAtom } from '@/states/abandonments';
 import { useQueryClient } from '@tanstack/react-query';
 import { Stack, useLocalSearchParams } from 'expo-router';
+import { createStore, Provider, useAtomValue } from 'jotai';
 import { useCallback, useMemo } from 'react';
 import { RefreshControl, StyleSheet, View } from 'react-native';
 
+const Layout = () => {
+  const store = createStore();
+
+  return (
+    <Provider store={store}>
+      <Page />
+    </Provider>
+  );
+};
+
+export default Layout;
+
 const Page = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const filterValue = useAtomValue(abandonmentsFilterValueAtom);
+
   const { data: shelterData, isLoading: isShelterLoading } = useGetShelterQuery(Number(id), { enabled: !!id });
   const {
     data: abandonmentsData,
@@ -19,9 +35,7 @@ const Page = () => {
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage
-  } = useGetShelterAbandonmentsQuery(Number(id), {
-    size: 16
-  });
+  } = useGetShelterAbandonmentsQuery(Number(id), { size: 16, filter: filterValue.value });
   const queryClient = useQueryClient();
 
   const handleFetch = useCallback(() => {
@@ -63,8 +77,6 @@ const Page = () => {
     </>
   );
 };
-
-export default Page;
 
 const styles = StyleSheet.create({
   container: {

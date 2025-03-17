@@ -1,3 +1,4 @@
+import { AbandonmentsFilter } from '@/types/abandonments';
 import { ApiResponse } from '@/types/common';
 import { ShelterCountValue, ShelterValue } from '@/types/scheme/shelters';
 import { publicApi } from './instance';
@@ -16,6 +17,7 @@ export interface GetShelterCountsParams {
 export interface GetShelterAbandonmentsParams {
   size: number;
   page?: number;
+  filter: AbandonmentsFilter;
 }
 /**
  * 보호소 전체 조회

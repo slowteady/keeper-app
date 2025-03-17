@@ -1,13 +1,13 @@
 import { TransformedAbandonmentDetail } from '@/businesses/abandonmentsBusiness';
 import { TransformedShelterValue } from '@/businesses/sheltersBusiness';
-import { BasicModal } from '@/components/organisms/modal/BasicModal';
+import ShelterTelModal from '@/components/organisms/modal/ShelterTelModal';
 import AbandonmentDetailCardSection from '@/components/sections/abandonments/AbandonmentDetailCardSection';
 import AbandonmentDetailDescriptionSection from '@/components/sections/abandonments/AbandonmentDetailDescriptionSection';
 import AbandonmentDetailInfoSection from '@/components/sections/abandonments/AbandonmentDetailInfoSection';
 import theme from '@/constants/theme';
 import { useLayout } from '@/hooks/useLayout';
 import { useCallback, useState } from 'react';
-import { Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export interface AbandonmentsDetailTemplateProps {
   abandonment: TransformedAbandonmentDetail;
@@ -23,10 +23,6 @@ const AbandonmentsDetailTemplate = ({ abandonment, shelter }: AbandonmentsDetail
   const handlePress = useCallback(() => {
     setModalOpen(true);
   }, []);
-  const handlePressContact = useCallback(() => {
-    const sanitizedNumber = careTel.replace(/-/g, '');
-    Linking.openURL(`tel:${sanitizedNumber}`);
-  }, [careTel]);
 
   return (
     <>
@@ -50,23 +46,7 @@ const AbandonmentsDetailTemplate = ({ abandonment, shelter }: AbandonmentsDetail
         </View>
       </View>
 
-      <BasicModal
-        open={modalOpen}
-        onPressBackdrop={() => setModalOpen(false)}
-        containerStyle={{ paddingTop: 32, paddingBottom: 16 }}
-      >
-        <BasicModal.Title value={`${shelter?.name || '담당자'}에 전화 문의하기`} style={{ marginBottom: 12 }} />
-        <BasicModal.Description
-          value={'*원활한 소통을 위해 상담원이 상담, 휴대폰 번호, 주소 등을 수집할 수 있습니다.'}
-          style={{ marginBottom: 32 }}
-        />
-        <BasicModal.Buttons
-          onPress={handlePressContact}
-          onClose={() => setModalOpen(false)}
-          PrimaryTextProps={{ children: '문의하기' }}
-          SecondaryTextProps={{ children: '닫기' }}
-        />
-      </BasicModal>
+      <ShelterTelModal open={modalOpen} onClose={() => setModalOpen(false)} tel={careTel} name={shelter?.name} />
     </>
   );
 };
