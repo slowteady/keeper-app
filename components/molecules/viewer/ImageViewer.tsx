@@ -1,6 +1,7 @@
 import theme from '@/constants/theme';
-import { Image } from 'expo-image';
 import { Modal, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 
 interface ImageViewerProps {
   open: boolean;
@@ -9,11 +10,23 @@ interface ImageViewerProps {
 }
 
 const ImageViewer = ({ open, onClose, image }: ImageViewerProps) => {
+  const scale = useSharedValue(1);
+
+  const pinchGesture = Gesture.Pinch().onUpdate((event) => {
+    scale.value = Math.max(1, event.scale);
+  });
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }]
+  }));
+
   return (
     <Modal visible={open} transparent={true} animationType="fade">
       <TouchableWithoutFeedback onPress={onClose}>
         <View style={styles.background}>
-          <Image source={{ uri: image }} style={styles.image} contentFit="contain" />
+          <GestureDetector gesture={pinchGesture}>
+            <Animated.Image source={{ uri: image }} style={[styles.image, animatedStyle]} resizeMode="contain" />
+          </GestureDetector>
         </View>
       </TouchableWithoutFeedback>
     </Modal>
