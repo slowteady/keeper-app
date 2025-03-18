@@ -1,57 +1,105 @@
+import { ABANDONMENTS_QUERY_KEY, SHELTER_QUERY_KEY } from '@/constants/queryKeys';
 import theme from '@/constants/theme';
-import { useCallback, useMemo, useRef, useState } from 'react';
-import { FlatList, NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
+import useRefreshing from '@/hooks/useRefreshing';
+import useScrollFloatingButton from '@/hooks/useScrollFloatingButton';
+import { useQueryClient } from '@tanstack/react-query';
+import { useCallback, useMemo } from 'react';
+import { FlatList, Linking, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
 import ScrollFloatingButton from '../atoms/button/ScrollFloatingButton';
-import { ScrollRefContext } from '../organisms/map/MapTouchableWrapper';
+import { LogoIcon } from '../atoms/icons/LogoIcon';
 import MainAbandonmentSection from '../sections/main/MainAbandonmentSection';
 import MainBannerSection from '../sections/main/MainBannerSection';
 import MainShelterSection from '../sections/main/MainShelterSection';
 
 const MainTemplate = () => {
-  const [isButtonVisible, setIsButtonVisible] = useState(false);
-  const lastScrollOffset = useRef(0);
-  const flatListRef = useRef<FlatList>(null);
+  const { isButtonVisible, handlePress, handleScroll, flatListRef } = useScrollFloatingButton();
+  const queryClient = useQueryClient();
 
-  const handleScroll = useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const offset = event.nativeEvent.contentOffset.y;
-    const isScrollingUp = offset < lastScrollOffset.current;
-    const isAboveThreshold = offset > 100;
+  const onRefreshCallback = async () => {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: [ABANDONMENTS_QUERY_KEY] }),
+      queryClient.invalidateQueries({ queryKey: [SHELTER_QUERY_KEY] })
+    ]);
+  };
 
-    setIsButtonVisible(isScrollingUp && isAboveThreshold);
-    lastScrollOffset.current = offset;
-  }, []);
-
-  const handlePress = useCallback(() => {
-    flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
-  }, []);
+  const { refreshing, handleRefresh } = useRefreshing(onRefreshCallback);
 
   const data = useMemo(
     () => [
       { id: 'banner', Component: <MainBannerSection /> },
       { id: 'abandonments', Component: <MainAbandonmentSection /> },
       { id: 'shelters', Component: <MainShelterSection /> }
-      // { id: 'announce', Component: <MainAnnounceSection /> }
     ],
     []
   );
 
   return (
-    <ScrollRefContext.Provider value={flatListRef}>
+    <>
       <FlatList
         ref={flatListRef}
         onScroll={handleScroll}
         scrollEventThrottle={40}
         bounces
-        decelerationRate="fast"
         initialNumToRender={2}
-        keyExtractor={(item) => item.id}
+        keyExtractor={({ id }, idx) => `${id}-${idx}`}
         data={data}
         renderItem={({ item }) => <>{item.Component}</>}
-        style={{ backgroundColor: theme.colors.background.default, flex: 1 }}
+        ListFooterComponent={<Footer />}
+        style={{ backgroundColor: theme.colors.background.default }}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
       />
       <ScrollFloatingButton visible={isButtonVisible} onPress={handlePress} />
-    </ScrollRefContext.Provider>
+    </>
   );
 };
 
 export default MainTemplate;
+
+const Footer = () => {
+  const handleClickContact = useCallback(() => {
+    const email = process.env.EXPO_PUBLIC_DEVELOPER_EMAIL;
+    Linking.openURL(`mailto:${email}`);
+  }, []);
+
+  return (
+    <View style={styles.footerContainer}>
+      <LogoIcon color={theme.colors.black[900]} />
+      <View style={styles.menuContainer}>
+        {/* <Pressable>
+          <Text style={styles.footerMenu}>about us</Text>
+        </Pressable> */}
+        <Pressable onPress={handleClickContact}>
+          <Text style={styles.footerMenu}>contact us</Text>
+        </Pressable>
+      </View>
+      <Text style={styles.copyright}>©2025, All right reserved.</Text>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  footerContainer: {
+    backgroundColor: theme.colors.white[800],
+    paddingVertical: 40,
+    paddingHorizontal: 20
+  },
+  footerMenu: {
+    fontSize: 14,
+    lineHeight: 16,
+    fontWeight: '400',
+    color: theme.colors.black[900]
+  },
+  copyright: {
+    color: theme.colors.black[500],
+    fontSize: 13,
+    lineHeight: 15,
+    fontWeight: '300'
+  },
+  menuContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 12,
+    marginTop: 20,
+    marginBottom: 40
+  }
+});

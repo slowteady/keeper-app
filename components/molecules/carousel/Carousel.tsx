@@ -14,18 +14,16 @@ const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>((props, ref) => 
   const { data } = props;
 
   return (
-    <>
-      <PagerView style={styles.container} ref={ref} {...props}>
-        {data.map((image, idx) => (
-          <Image
-            key={idx}
-            source={image}
-            contentFit="cover"
-            style={{ borderRadius: 10, width: '100%', height: '100%' }}
-          />
-        ))}
-      </PagerView>
-    </>
+    <PagerView style={styles.container} ref={ref} {...props}>
+      {data.map((image, idx) => (
+        <Image
+          key={idx}
+          source={image}
+          contentFit="cover"
+          style={{ borderRadius: 10, width: '100%', height: '100%' }}
+        />
+      ))}
+    </PagerView>
   );
 });
 
@@ -44,12 +42,12 @@ const Controller = ({ currentIndex, max, onPress }: BasicCarouselControllerProps
 
   return (
     <View style={styles.controllerContainer}>
-      <Pressable onPress={() => handlePress('prev')} style={styles.button}>
-        <ArrowLeftIcon width={14} height={14} />
+      <Pressable onPress={() => handlePress('prev')}>
+        <ArrowLeftIcon width={11} height={11} />
       </Pressable>
       <Text style={styles.text}>{text}</Text>
-      <Pressable onPress={() => handlePress('next')} style={styles.button}>
-        <ArrowRightIcon width={14} height={14} />
+      <Pressable onPress={() => handlePress('next')}>
+        <ArrowRightIcon width={11} height={11} />
       </Pressable>
     </View>
   );
@@ -67,21 +65,24 @@ const styles = StyleSheet.create({
   controllerContainer: {
     display: 'flex',
     flexDirection: 'row',
+    gap: 4,
     alignItems: 'center',
     justifyContent: 'space-between',
     borderRadius: 40,
     borderColor: theme.colors.black[900],
-    borderWidth: 1,
+    borderWidth: 0.5,
     borderStyle: 'solid',
-    alignSelf: 'baseline'
-  },
-  button: {
-    padding: 10
+    alignSelf: 'baseline',
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    backgroundColor: theme.colors.white[900],
+    opacity: 0.4
   },
   text: {
-    fontSize: 11,
-    color: theme.colors.black[900],
-    fontWeight: '400'
+    fontSize: 12,
+    lineHeight: 14,
+    fontWeight: '400',
+    color: theme.colors.black[900]
   }
 });
 

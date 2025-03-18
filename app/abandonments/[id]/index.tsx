@@ -1,23 +1,29 @@
-import { transformAbandonmentData } from '@/businesses/abandonmentsBusiness';
-import { transformShelterData } from '@/businesses/sheltersBusiness';
+import { transformAbandonmentDetail } from '@/business/abandonmentsBusiness';
+import { transformShelterData } from '@/business/sheltersBusiness';
 import DetailHeader from '@/components/organisms/headers/DetailHeader';
 import AbandonmentsDetailTemplate from '@/components/templates/abandonments/AbandonmentsDetailTemplate';
 import theme from '@/constants/theme';
-import { useGetAbandonment } from '@/hooks/queries/useAbandonments';
-import { useGetShelter } from '@/hooks/queries/useShelters';
+import { useGetAbandonmentQuery } from '@/hooks/queries/useAbandonments';
+import { useGetShelterQuery } from '@/hooks/queries/useShelters';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 
+/**
+ * 공고 상세 페이지
+ * TODO
+ * [ ] 보호소 클릭 시, 이동할 수 있게 보호소 링킹 처리
+ * [ ] 스켈레톤 처리
+ */
 const Page = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { data: abandonmentData } = useGetAbandonment(Number(id));
-  const { data: shelterData } = useGetShelter(abandonmentData?.shelterId || 0, {
+  const { data: abandonmentData } = useGetAbandonmentQuery(Number(id));
+  const { data: shelterData } = useGetShelterQuery(abandonmentData?.shelterId || 0, {
     enabled: Boolean(abandonmentData?.shelterId)
   });
 
-  const transformedAbandonmentData = useMemo(
-    () => abandonmentData && transformAbandonmentData(abandonmentData),
+  const transformedAbandonmentDetailData = useMemo(
+    () => abandonmentData && transformAbandonmentDetail(abandonmentData),
     [abandonmentData]
   );
   const transformedShelterData = useMemo(() => shelterData && transformShelterData(shelterData), [shelterData]);
@@ -27,8 +33,8 @@ const Page = () => {
       <Stack.Screen options={{ header: () => <DetailHeader /> }} />
 
       <View style={styles.container}>
-        {transformedAbandonmentData && (
-          <AbandonmentsDetailTemplate abandonment={transformedAbandonmentData} shelter={transformedShelterData} />
+        {transformedAbandonmentDetailData && (
+          <AbandonmentsDetailTemplate abandonment={transformedAbandonmentDetailData} shelter={transformedShelterData} />
         )}
       </View>
     </>

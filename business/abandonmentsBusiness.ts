@@ -1,26 +1,72 @@
-import theme from '@/constants/theme';
+import { ChipVariant } from '@/components/organisms/card/AnimalCard';
 import { AbandonmentsChipId, AbandonmentsFilter } from '@/types/abandonments';
 import { AbandonmentValue } from '@/types/scheme/abandonments';
 import dayjs from 'dayjs';
-import { TextStyle, ViewStyle } from 'react-native';
 
-export type AbandonmentsBusinessResult = ReturnType<typeof abandonmentsBusiness>[number];
-export const abandonmentsBusiness = (data: AbandonmentValue[], filter?: AbandonmentsFilter) => {
-  return data.map((item) => transformAbandonmentData(item, filter));
+export type TransformedAbandonments = ReturnType<typeof transformAbandonments>[number];
+export const transformAbandonments = (data: AbandonmentValue[], filter?: AbandonmentsFilter) => {
+  return data.map((item) => {
+    const {
+      image,
+      neuterYn,
+      weight,
+      gender,
+      age,
+      specificType,
+      noticeStartDt,
+      noticeEndDt,
+      orgName,
+      happenPlace,
+      animalType
+    } = item;
+    const chipLabelParams: ChipLabelParams = {
+      neuterYn,
+      weight,
+      gender,
+      age,
+      filter
+    };
+    const descriptionParams: DescriptionParams = {
+      specificType,
+      noticeStartDt,
+      noticeEndDt,
+      orgName,
+      happenPlace
+    };
+    const transformedDescription = transformDescription(descriptionParams);
+    const transformedChipLabel = transformChipLabel(chipLabelParams);
+    const transformedTitle = transformTitle(specificType, animalType);
+
+    return {
+      ...item,
+      uri: image,
+      title: transformedTitle,
+      description: transformedDescription,
+      chips: transformedChipLabel
+    };
+  });
 };
 
-export type TransformedAbandonmentData = ReturnType<typeof transformAbandonmentData>;
-export const transformAbandonmentData = (data: AbandonmentValue, filter?: AbandonmentsFilter) => {
-  const { image, neuterYn, weight, gender, age, specificType, noticeStartDt, noticeEndDt, orgName, happenPlace } = data;
+const transformTitle = (specificType: string, animalType: string) => {
+  switch (animalType) {
+    case 'DOG': {
+      return `[강아지] ${specificType}`;
+    }
+    case 'CAT': {
+      return `[고양이] ${specificType}`;
+    }
+    case 'OTHER': {
+      return `[기타] ${specificType}`;
+    }
+    default: {
+      return `${specificType}`;
+    }
+  }
+};
 
-  const chipLabelParams: ChipLabelParams = {
-    neuterYn,
-    weight,
-    gender,
-    age,
-    filter
-  };
-
+export type TransformedAbandonmentDetail = ReturnType<typeof transformAbandonmentDetail>;
+export const transformAbandonmentDetail = (data: AbandonmentValue) => {
+  const { image, specificType, noticeStartDt, noticeEndDt, orgName, happenPlace, animalType } = data;
   const descriptionParams: DescriptionParams = {
     specificType,
     noticeStartDt,
@@ -28,16 +74,14 @@ export const transformAbandonmentData = (data: AbandonmentValue, filter?: Abando
     orgName,
     happenPlace
   };
-
   const transformedDescription = transformDescription(descriptionParams);
-  const transformedChipLabel = transformChipLabel(chipLabelParams);
+  const transformedTitle = transformTitle(specificType, animalType);
 
   return {
     ...data,
     uri: image,
-    title: specificType,
-    description: transformedDescription,
-    chips: transformedChipLabel
+    title: transformedTitle,
+    description: transformedDescription
   };
 };
 
@@ -53,10 +97,8 @@ export const transformChipLabel = ({ neuterYn, filter, weight, gender, age }: Ch
     id: AbandonmentsChipId;
     value: string;
     sort: number;
-    containerStyle?: ViewStyle;
-    chipStyle?: TextStyle;
+    variant?: ChipVariant;
   }[] = [];
-  const { error, success, white, black, notice } = theme.colors;
 
   switch (filter) {
     case 'NEAR_DEADLINE':
@@ -64,8 +106,7 @@ export const transformChipLabel = ({ neuterYn, filter, weight, gender, age }: Ch
         id: 'NEAR_DEADLINE',
         value: '안락사 위기',
         sort: 1,
-        containerStyle: { backgroundColor: error.lightest },
-        chipStyle: { color: error.main }
+        variant: 'error'
       });
       break;
     case 'NEW':
@@ -73,8 +114,7 @@ export const transformChipLabel = ({ neuterYn, filter, weight, gender, age }: Ch
         id: 'NEW',
         value: '신규',
         sort: 1,
-        containerStyle: { backgroundColor: success.lightest },
-        chipStyle: { color: success.main }
+        variant: 'success'
       });
       break;
   }
@@ -84,8 +124,7 @@ export const transformChipLabel = ({ neuterYn, filter, weight, gender, age }: Ch
       id: 'NEUTER',
       value: '중성화',
       sort: 2,
-      containerStyle: { backgroundColor: notice.lightest },
-      chipStyle: { color: notice.main }
+      variant: 'notice'
     });
   }
 
@@ -93,18 +132,14 @@ export const transformChipLabel = ({ neuterYn, filter, weight, gender, age }: Ch
   data.push({
     id: 'GENDER',
     value: genderLabel,
-    sort: 3,
-    containerStyle: { backgroundColor: white[800] },
-    chipStyle: { color: black[600] }
+    sort: 3
   });
 
   if (age) {
     data.push({
       id: 'AGE',
       value: `${age}년생`,
-      sort: 4,
-      containerStyle: { backgroundColor: white[800] },
-      chipStyle: { color: black[600] }
+      sort: 4
     });
   }
 
@@ -112,9 +147,7 @@ export const transformChipLabel = ({ neuterYn, filter, weight, gender, age }: Ch
     data.push({
       id: 'WEIGHT',
       value: `${weight}kg`,
-      sort: 5,
-      containerStyle: { backgroundColor: white[800] },
-      chipStyle: { color: black[600] }
+      sort: 5
     });
   }
 

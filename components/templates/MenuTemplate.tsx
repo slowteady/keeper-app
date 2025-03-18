@@ -1,10 +1,6 @@
 import theme from '@/constants/theme';
 import { Platform, StyleSheet, View } from 'react-native';
-import AboutUsMenuSection from '../sections/menu/AboutUsMenuSection';
 import AdoptMenuSection from '../sections/menu/AdoptMenuSection';
-import CommunityMenuSection from '../sections/menu/CommunityMenuSection';
-import LoginMenuSection from '../sections/menu/LoginMenuSection';
-import MypageMenuSection from '../sections/menu/MypageMenuSection';
 import ShelterMenuSection from '../sections/menu/ShelterMenuSection';
 
 const MenuTemplate = () => {
@@ -12,11 +8,11 @@ const MenuTemplate = () => {
     <View style={styles.container}>
       <View style={styles.menuWrapper}>
         <AdoptMenuSection />
-        <CommunityMenuSection />
         <ShelterMenuSection />
-        <AboutUsMenuSection />
-        <LoginMenuSection />
-        <MypageMenuSection />
+        {/* <CommunityMenuSection /> */}
+        {/* <AboutUsMenuSection /> */}
+        {/* <LoginMenuSection /> */}
+        {/* <MypageMenuSection /> */}
       </View>
     </View>
   );
@@ -40,7 +36,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 1
       },
       android: {
-        elevation: 2
+        elevation: 6
       }
     })
   },

@@ -2,15 +2,22 @@ import DetailHeader from '@/components/organisms/headers/DetailHeader';
 import AbandonmentsTemplate from '@/components/templates/abandonments/AbandonmentsTemplate';
 import { ABANDONMENTS_QUERY_KEY } from '@/constants/queryKeys';
 import theme from '@/constants/theme';
-import { useGetInfiniteAbandonments } from '@/hooks/queries/useAbandonments';
+import { useGetInfiniteAbandonmentsQuery } from '@/hooks/queries/useAbandonments';
+import useRefreshing from '@/hooks/useRefreshing';
 import { abandonmentsAtom } from '@/states/abandonments';
 import { useQueryClient } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
 import { createStore, Provider, useAtomValue } from 'jotai';
-import { useCallback, useEffect, useMemo } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { useCallback, useMemo } from 'react';
+import { RefreshControl, StyleSheet, View } from 'react-native';
 
-const DEFAULT_SIZE = 16;
+/**
+ * 공고 목록 페이지
+ * TODO
+ * [ ] 공고 노데이터 처리
+ * [ ] 공고 스켈레톤 처리
+ * [ ] 자간 수정 ui 반영
+ */
 const Layout = () => {
   const store = createStore();
 
@@ -24,14 +31,10 @@ const Layout = () => {
 export default Layout;
 
 const Page = () => {
-  const queryClient = useQueryClient();
   const { type, filter, search } = useAtomValue(abandonmentsAtom);
-  const param = useMemo(() => ({ animalType: type, filter, search, size: DEFAULT_SIZE }), [filter, search, type]);
+  const param = useMemo(() => ({ animalType: type, filter, search, size: 16 }), [filter, search, type]);
 
-  useEffect(() => {
-    queryClient.invalidateQueries({ queryKey: [ABANDONMENTS_QUERY_KEY, param] });
-  }, [param, queryClient]);
-
+  const queryClient = useQueryClient();
   const {
     data,
     isLoading: isFetchLoading,
@@ -39,20 +42,34 @@ const Page = () => {
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage
-  } = useGetInfiniteAbandonments(param);
+  } = useGetInfiniteAbandonmentsQuery(param);
 
   const handleFetch = useCallback(() => {
     if (hasNextPage) fetchNextPage();
   }, [fetchNextPage, hasNextPage]);
 
-  const isLoading = isFetchLoading || isFetching || isFetchingNextPage;
+  const isLoading = useMemo(
+    () => isFetchLoading || isFetching || isFetchingNextPage,
+    [isFetchLoading, isFetching, isFetchingNextPage]
+  );
+
+  const onRefreshCallback = useCallback(async () => {
+    await Promise.all([queryClient.invalidateQueries({ queryKey: [ABANDONMENTS_QUERY_KEY] })]);
+  }, [queryClient]);
+
+  const { refreshing, handleRefresh } = useRefreshing(onRefreshCallback);
 
   return (
     <>
       <Stack.Screen options={{ header: () => <DetailHeader /> }} />
 
       <View style={styles.container}>
-        <AbandonmentsTemplate data={data} onFetch={handleFetch} isLoading={isLoading} />
+        <AbandonmentsTemplate
+          data={data}
+          onFetch={handleFetch}
+          isLoading={isLoading}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
+        />
       </View>
     </>
   );

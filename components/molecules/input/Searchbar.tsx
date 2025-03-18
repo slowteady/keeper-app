@@ -1,15 +1,19 @@
 import { CloseIcon } from '@/components/atoms/icons/CloseIcon';
 import { SearchIcon } from '@/components/atoms/icons/SearchIcon';
 import theme from '@/constants/theme';
+import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { useCallback, useState } from 'react';
 import { StyleProp, StyleSheet, TextInput, TextInputProps, TouchableOpacity, View, ViewStyle } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 export interface SearchbarProps extends TextInputProps {
+  variant?: SearchbarVariant;
   onSubmit: (text: string) => void;
   ViewStyle?: StyleProp<ViewStyle>;
+  iconColor?: string;
 }
-const Searchbar = ({ onSubmit, ViewStyle, style, ...props }: SearchbarProps) => {
+export type SearchbarVariant = 'default' | 'bottomsheet';
+const Searchbar = ({ variant = 'default', onSubmit, ViewStyle, iconColor, style, ...props }: SearchbarProps) => {
   const [value, setValue] = useState('');
   const closeButtonOpacity = useSharedValue(0);
 
@@ -20,11 +24,9 @@ const Searchbar = ({ onSubmit, ViewStyle, style, ...props }: SearchbarProps) => 
     },
     [closeButtonOpacity]
   );
-
   const handleSubmit = () => {
     onSubmit(value);
   };
-
   const handlePressReset = () => {
     setValue('');
     closeButtonOpacity.value = 0;
@@ -37,26 +39,40 @@ const Searchbar = ({ onSubmit, ViewStyle, style, ...props }: SearchbarProps) => 
 
   return (
     <View style={[styles.searchbar, ViewStyle]}>
-      <TextInput
-        placeholder="검색어를 입력하세요."
-        placeholderTextColor={theme.colors.black[500]}
-        keyboardType="default"
-        returnKeyType="search"
-        value={value}
-        onChangeText={handleChangeText}
-        onSubmitEditing={handleSubmit}
-        style={[styles.textInput, style]}
-        {...props}
-      />
+      {variant === 'default' ? (
+        <TextInput
+          placeholder="검색어를 입력하세요."
+          placeholderTextColor={theme.colors.black[500]}
+          keyboardType="default"
+          returnKeyType="search"
+          value={value}
+          onChangeText={handleChangeText}
+          onSubmitEditing={handleSubmit}
+          style={[styles.textInput, style]}
+          {...props}
+        />
+      ) : (
+        <BottomSheetTextInput
+          placeholder="검색어를 입력하세요."
+          placeholderTextColor={theme.colors.black[500]}
+          keyboardType="default"
+          returnKeyType="search"
+          value={value}
+          onChangeText={handleChangeText}
+          onSubmitEditing={handleSubmit}
+          style={[styles.textInput, style]}
+          {...props}
+        />
+      )}
 
       <View style={styles.iconContainer}>
         <Animated.View style={animatedCloseButtonStyle}>
           <TouchableOpacity onPress={handlePressReset}>
-            <CloseIcon width={24} height={24} color={theme.colors.black[500]} />
+            <CloseIcon width={28} height={28} color={theme.colors.black[500]} />
           </TouchableOpacity>
         </Animated.View>
         <TouchableOpacity onPress={handleSubmit} activeOpacity={0.5}>
-          <SearchIcon width={20} height={20} color={theme.colors.black[700]} />
+          <SearchIcon width={24} height={24} color={iconColor || theme.colors.black[700]} />
         </TouchableOpacity>
       </View>
     </View>
@@ -69,15 +85,17 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     color: theme.colors.black[800],
-    ...theme.fonts.medium
+    fontSize: 15,
+    fontWeight: '500',
+    lineHeight: 17
   },
   searchbar: {
+    height: 48,
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: theme.colors.white[900],
     paddingHorizontal: 16,
-    paddingVertical: 12,
     borderRadius: 6,
     justifyContent: 'space-between'
   },

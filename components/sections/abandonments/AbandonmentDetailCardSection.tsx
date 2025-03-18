@@ -1,111 +1,128 @@
-import { TransformedAbandonmentData } from '@/businesses/abandonmentsBusiness';
-import { AnimatedHeartIcon } from '@/components/atoms/icons/HeartIcon';
+import { TransformedAbandonmentDetail } from '@/businesses/abandonmentsBusiness';
+import { MoreImageIcon } from '@/components/atoms/icons/MoreImageIcon';
+import NoImage from '@/components/molecules/placeholder/NoImage';
 import { Skeleton } from '@/components/molecules/placeholder/Skeleton';
-import { BasicCard } from '@/components/organisms/card/BasicCard';
+import ImageViewer from '@/components/molecules/viewer/ImageViewer';
 import theme from '@/constants/theme';
-import * as Haptics from 'expo-haptics';
-import { useCallback, useState } from 'react';
+import { Image } from 'expo-image';
+import { useState } from 'react';
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { interpolateColor, useAnimatedProps, useSharedValue, withTiming } from 'react-native-reanimated';
 
 interface AbandonmentDetailCardSectionProps {
-  data: TransformedAbandonmentData;
+  data: TransformedAbandonmentDetail;
 }
-const PADDING_HORIZONTAL = 20;
-const imgWidth = Dimensions.get('screen').width - PADDING_HORIZONTAL * 2;
-const imgHeight = imgWidth * 0.8;
 const AbandonmentDetailCardSection = ({ data }: AbandonmentDetailCardSectionProps) => {
-  const fill = useSharedValue(0);
+  const [isLoad, setIsLoad] = useState(false);
+  const [openImgViewer, setOpenImgViewer] = useState(false);
+  const { title, uri, description } = data;
 
-  const handlePressHeart = useCallback(async () => {
-    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    fill.value = withTiming(fill.value === 0 ? 1 : 0, { duration: 300 });
-  }, [fill]);
-
-  const animatedProps = useAnimatedProps(() => {
-    const fillColor = interpolateColor(fill.value, [0, 1], ['transparent', theme.colors.primary.main]);
-    const strokeColor = interpolateColor(fill.value, [0, 1], [theme.colors.black[600], theme.colors.primary.main]);
-
-    return { fill: fillColor, stroke: strokeColor };
-  });
-
-  const { title, uri, chips, description } = data;
+  const handlePressImage = () => {
+    setOpenImgViewer((prev) => !prev);
+  };
 
   return (
-    <View style={styles.container}>
+    <>
       <View style={styles.titleWrap}>
         <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
           {title}
         </Text>
-
-        <View style={styles.iconWrap}>
-          <TouchableOpacity onPress={handlePressHeart} activeOpacity={0.5}>
-            <AnimatedHeartIcon animatedProps={animatedProps} />
-          </TouchableOpacity>
-        </View>
       </View>
 
-      <Card uri={uri} chips={chips} description={description} />
-    </View>
+      <View style={styles.imageContainer}>
+        {!isLoad && <Skeleton style={styles.image} />}
+        {uri ? (
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={handlePressImage}
+            disabled={!isLoad || !uri}
+            style={{ width: '100%', height: '100%' }}
+          >
+            <Image source={{ uri }} onLoad={() => setIsLoad(true)} style={styles.image} contentFit="cover" />
+            <View style={styles.iconWrap}>
+              <MoreImageIcon color={theme.colors.black[900]} />
+            </View>
+          </TouchableOpacity>
+        ) : (
+          <NoImage style={{ backgroundColor: theme.colors.white[800] }} />
+        )}
+      </View>
+
+      {description.map(({ label, value }, idx) => {
+        const key = `${label}-${idx}`;
+        return (
+          <View key={key} style={styles.descriptionContainer}>
+            <Text style={styles.label}>{label}</Text>
+            <Text style={styles.text}>{value}</Text>
+          </View>
+        );
+      })}
+
+      <ImageViewer open={openImgViewer} onClose={() => setOpenImgViewer((prev) => !prev)} image={uri} />
+    </>
   );
 };
 
 export default AbandonmentDetailCardSection;
 
-interface CardProps {
-  uri: string;
-  chips: TransformedAbandonmentData['chips'];
-  description: TransformedAbandonmentData['description'];
-}
-const Card = ({ uri, chips, description }: CardProps) => {
-  const [isLoad, setIsLoad] = useState(false);
-
-  return (
-    <View style={{ width: imgWidth }}>
-      <View style={{ width: imgWidth, height: imgHeight, marginBottom: 20 }}>
-        {!isLoad && <Skeleton />}
-        {uri ? <BasicCard.Image source={{ uri }} onLoad={() => setIsLoad(true)} /> : <BasicCard.NoImage />}
-      </View>
-      <BasicCard.Descriptions data={description} primaryStyle={{ minWidth: 65 }} />
-    </View>
-  );
-};
-
+const PADDING_HORIZONTAL = 20;
+const imgWidth = Dimensions.get('screen').width - PADDING_HORIZONTAL * 2;
+const imgHeight = imgWidth * 0.8;
 const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: PADDING_HORIZONTAL,
-    paddingBottom: 24
-  },
   titleWrap: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginVertical: 32,
-    gap: 8,
-    marginBottom: 20
+    marginTop: 40,
+    marginBottom: 24,
+    gap: 8
+  },
+  imageContainer: {
+    position: 'relative',
+    width: imgWidth,
+    height: imgHeight,
+    marginBottom: 28
+  },
+  image: {
+    position: 'absolute',
+    top: 0,
+    borderRadius: 10,
+    width: '100%',
+    height: '100%'
   },
   title: {
     color: theme.colors.black[900],
-    fontSize: 26,
+    fontSize: 28,
+    lineHeight: 30,
     fontWeight: '500',
     flex: 1
   },
-  iconWrap: {
+  descriptionContainer: {
     display: 'flex',
     flexDirection: 'row',
+    gap: 16,
     alignItems: 'center',
-    gap: 8
+    marginBottom: 16
   },
-  chipsContainer: {
-    alignSelf: 'baseline',
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    borderRadius: 3
-  },
-  chipText: {
-    fontSize: 12,
+  label: {
+    flexShrink: 0,
+    fontSize: 15,
+    color: theme.colors.black[600],
     fontWeight: '400',
-    lineHeight: 14
+    lineHeight: 17,
+    minWidth: 70,
+    alignSelf: 'flex-start'
+  },
+  text: {
+    flex: 1,
+    color: theme.colors.black[900],
+    fontSize: 15,
+    fontWeight: '400',
+    lineHeight: 17
+  },
+  iconWrap: {
+    position: 'absolute',
+    right: 16,
+    top: 16
   }
 });

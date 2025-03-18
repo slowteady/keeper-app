@@ -9,13 +9,14 @@ import {
 import { forwardRef, useCallback } from 'react';
 import { StyleSheet, Text, TextStyle, TouchableOpacity, ViewStyle } from 'react-native';
 
-export interface AbandonmentsBottomSheetLayoutProps extends BottomSheetModalProps {
+export interface BottomSheetLayoutProps extends Omit<BottomSheetModalProps, 'children'> {
   containerStyle?: ViewStyle;
-  children: React.ReactNode;
+  children?: React.ReactNode;
+  renderChildren?: () => React.ReactNode;
 }
 
-const BottomSheetLayout = forwardRef<BottomSheetModal, AbandonmentsBottomSheetLayoutProps>((props, ref) => {
-  const { children, containerStyle, ...rest } = props;
+const Layout = forwardRef<BottomSheetModal, BottomSheetLayoutProps>((props, ref) => {
+  const { children, containerStyle, renderChildren, ...rest } = props;
 
   const renderBackdrop = useCallback((props: BottomSheetBackdropProps) => {
     return <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} />;
@@ -32,23 +33,27 @@ const BottomSheetLayout = forwardRef<BottomSheetModal, AbandonmentsBottomSheetLa
       backdropComponent={renderBackdrop}
       {...rest}
     >
-      <BottomSheetView style={[styles.viewContainer, containerStyle]}>{children}</BottomSheetView>
+      {renderChildren ? (
+        renderChildren()
+      ) : (
+        <BottomSheetView style={[styles.viewContainer, containerStyle]}>{children}</BottomSheetView>
+      )}
     </BottomSheetModal>
   );
 });
 
-export interface AbandonmentsBottomSheetMenuData<T> {
+export interface BottomSheetMenuData<T> {
   value: T;
   name: string;
 }
-export interface AbandonmentsBottomSheetMenuProps<T> {
-  data: AbandonmentsBottomSheetMenuData<T>[];
+export interface BottomSheetMenuProps<T> {
+  data: BottomSheetMenuData<T>[];
   value: T;
-  onPress: (data: AbandonmentsBottomSheetMenuData<T>) => void;
+  onPress: (data: BottomSheetMenuData<T>) => void;
   style?: ViewStyle;
   textStyle?: TextStyle;
 }
-export const Menu = <T,>({ value, data, onPress, style, textStyle }: AbandonmentsBottomSheetMenuProps<T>) => {
+export const Menu = <T,>({ value, data, onPress, style, textStyle }: BottomSheetMenuProps<T>) => {
   return data.map((item, idx) => {
     const { name } = item;
     const key = `${name}-${idx}`;
@@ -64,7 +69,7 @@ export const Menu = <T,>({ value, data, onPress, style, textStyle }: Abandonment
   });
 };
 
-export const AbandonmentsBottomSheet = Object.assign(BottomSheetLayout, {
+export const BottomSheet = Object.assign(Layout, {
   Menu
 });
 
@@ -84,7 +89,8 @@ const styles = StyleSheet.create({
   viewContainer: {
     display: 'flex',
     flexDirection: 'column',
-    flex: 1
+    flex: 1,
+    paddingTop: 12
   },
   button: {
     paddingVertical: 16
@@ -96,4 +102,4 @@ const styles = StyleSheet.create({
   }
 });
 
-BottomSheetLayout.displayName = 'AbandonmentsBottomSheetLayout';
+Layout.displayName = 'BottomSheetLayout';

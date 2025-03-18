@@ -7,8 +7,14 @@
     "scheme": "keeper",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "icon": "./assets/images/keeper-icon.png",
     "ios": {
+      "env": {
+        "EXPO_PUBLIC_DEVELOPER_EMAIL": "ymlee.dev@gmail.com",
+        "EXPO_PUBLIC_CLIENT_ID": "rg0cm283cu",
+        "EXPO_PUBLIC_SECRET_ID": "uJ7EksxVsuemgpearWYtZxdOEtNxvMqOltBYNnYJ",
+        "EXPO_PUBLIC_GEOCODE_URL": "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode"
+      },
+      "icon": "./assets/images/keeper-icon.png",
       "supportsTablet": false,
       "entitlements": {
         "aps-environment": "development"
@@ -16,10 +22,15 @@
       "bundleIdentifier": "com.keeper.love"
     },
     "android": {
+      "env": {
+        "EXPO_PUBLIC_DEVELOPER_EMAIL": "ymlee.dev@gmail.com",
+        "EXPO_PUBLIC_CLIENT_ID": "rg0cm283cu",
+        "EXPO_PUBLIC_SECRET_ID": "uJ7EksxVsuemgpearWYtZxdOEtNxvMqOltBYNnYJ",
+        "EXPO_PUBLIC_GEOCODE_URL": "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode"
+      },
       "package": "com.keeper.love",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/keeper-icon.png",
-        "backgroundColor": "#1FE678"
+        "foregroundImage": "./assets/images/keeper-android-icon.png"
       }
     },
     "plugins": [
@@ -28,7 +39,7 @@
         "expo-splash-screen",
         {
           "image": "./assets/images/keeper-logo.png",
-          "imageWidth": 200,
+          "imageWidth": 180,
           "resizeMode": "contain",
           "backgroundColor": "#1FE678"
         }

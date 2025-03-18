@@ -1,123 +1,87 @@
-import { AbandonmentsBusinessResult, abandonmentsBusiness } from '@/businesses/abandonmentsBusiness';
+import { TransformedAbandonments, transformAbandonments } from '@/business/abandonmentsBusiness';
 import FullViewButton from '@/components/atoms/button/FullViewButton';
-import { Toggle } from '@/components/molecules/button/Toggle';
-import {
-  AbandonmentsBottomSheet,
-  AbandonmentsBottomSheetMenuData
-} from '@/components/organisms/bottomSheet/AbandonmentsBottomSheet';
-import { BasicCard } from '@/components/organisms/card/BasicCard';
-import { ABANDONMENTS_ANIMAL_TYPES, ABANDONMENTS_FILTERS } from '@/constants/abandonments.config';
+import { MenuArrowIcon } from '@/components/atoms/icons/ArrowIcon';
+import ButtonGroup from '@/components/molecules/button/ButtonGroup';
+import Dropdown from '@/components/molecules/dropdown/Dropdown';
+import { BottomSheetMenuData } from '@/components/organisms/bottomSheet/BottomSheet';
+import { AnimalCard } from '@/components/organisms/card/AnimalCard';
+import { ABANDONMENTS_ANIMAL_TYPES, ABANDONMENTS_FILTERS } from '@/constants/config';
 import theme from '@/constants/theme';
-import { useGetAbandonments } from '@/hooks/queries/useAbandonments';
+import { useGetAbandonmentsQuery } from '@/hooks/queries/useAbandonments';
 import { abandonmentsAtom, abandonmentsFilterValueAtom } from '@/states/abandonments';
 import { AbandonmentsFilter } from '@/types/abandonments';
 import { AnimalType } from '@/types/common';
 import { AbandonmentValue } from '@/types/scheme/abandonments';
-import { BottomSheetBackdrop, BottomSheetBackdropProps, BottomSheetModal } from '@gorhom/bottom-sheet';
 import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import { useAtom, useAtomValue } from 'jotai';
-import { useCallback, useMemo, useRef } from 'react';
-import { FlatList, ListRenderItemInfo, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useCallback, useMemo } from 'react';
+import { FlatList, ListRenderItemInfo, Pressable, StyleSheet, Text, View } from 'react-native';
 
-const DEFAULT_LIST_SIZE = 20;
 const MainAbandonmentSection = () => {
   const [abandonmentsConfig, setAbandonmentsConfig] = useAtom(abandonmentsAtom);
   const filterValue = useAtomValue(abandonmentsFilterValueAtom);
+  const snapPoints = useMemo(() => [200], []);
 
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-  const snapPoints = useMemo(() => ['20%'], []);
+  const { data, isLoading } = useGetAbandonmentsQuery(
+    {
+      animalType: abandonmentsConfig.type,
+      filter: abandonmentsConfig.filter,
+      size: 20,
+      page: 0
+    },
+    { staleTime: 1000 * 60 * 60 }
+  );
 
-  const { data, isLoading } = useGetAbandonments({
-    animalType: abandonmentsConfig.type,
-    filter: abandonmentsConfig.filter,
-    size: DEFAULT_LIST_SIZE,
-    page: 1
-  });
-
-  const handlePressCard = (item: AbandonmentsBusinessResult) => {
-    const { id } = item;
-
+  const handlePressCard = ({ id }: TransformedAbandonments) => {
     router.push({
       pathname: '/abandonments/[id]',
       params: { id }
     });
   };
-
-  const handleFilter = () => {
-    bottomSheetModalRef.current?.present();
-  };
-
-  const handlePressAbandonments = () => {
+  const handlePressTitle = () => {
     router.push('/abandonments');
   };
-
-  const handleAnimate = (fromIndex: number, toIndex: number) => {
-    if (toIndex === 0) bottomSheetModalRef.current?.dismiss();
-  };
-
   const handlePressFilter = useCallback(
-    (data: AbandonmentsBottomSheetMenuData<AbandonmentsFilter>) => {
+    (data: BottomSheetMenuData<AbandonmentsFilter>) => {
       const { value } = data;
       setAbandonmentsConfig((prev) => ({ ...prev, filter: value }));
-      bottomSheetModalRef.current?.dismiss();
     },
     [setAbandonmentsConfig]
   );
-
-  const handleChangeToggle = (value: AnimalType) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-    setAbandonmentsConfig((prev) => ({ ...prev, type: value }));
+  const handleChangeType = async (id: AnimalType) => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setAbandonmentsConfig((prev) => ({ ...prev, type: id }));
   };
 
-  const renderBackdrop = useCallback((props: BottomSheetBackdropProps) => {
-    return <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} />;
-  }, []);
-
   return (
-    <>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <Pressable onPress={handlePressAbandonments}>
-            <Text style={styles.title}>전체공고</Text>
-          </Pressable>
-
-          <TouchableOpacity activeOpacity={0.5} style={styles.flex} onPress={handleFilter}>
-            <Text style={styles.label}>{filterValue.name}</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.toggleWrap}>
-          <Toggle
-            items={ABANDONMENTS_ANIMAL_TYPES}
-            value={abandonmentsConfig.type}
-            interval={4}
-            onChange={handleChangeToggle}
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Pressable onPress={handlePressTitle} style={styles.titleWrap}>
+          <Text style={styles.title}>전체공고</Text>
+          <MenuArrowIcon strokeWidth={2} />
+        </Pressable>
+        <View style={{ marginTop: 12 }}>
+          <Dropdown
+            data={ABANDONMENTS_FILTERS}
+            value={filterValue.value}
+            onChange={handlePressFilter}
+            snapPoints={snapPoints}
           />
         </View>
+      </View>
+      <View style={styles.buttonGroupWrap}>
+        <ButtonGroup data={ABANDONMENTS_ANIMAL_TYPES} id={abandonmentsConfig.type} onChange={handleChangeType} />
+      </View>
+      <View style={{ paddingLeft: 20 }}>
         <AbandonmentCardList
           data={data}
-          isLoading={isLoading}
           filter={filterValue.value}
           onPress={handlePressCard}
-          onPressMoreButton={handlePressAbandonments}
+          onPressMoreButton={handlePressTitle}
         />
       </View>
-
-      <AbandonmentsBottomSheet
-        ref={bottomSheetModalRef}
-        index={1}
-        snapPoints={snapPoints}
-        onAnimate={handleAnimate}
-        backdropComponent={renderBackdrop}
-        containerStyle={{ paddingTop: 12 }}
-      >
-        <AbandonmentsBottomSheet.Menu
-          data={ABANDONMENTS_FILTERS}
-          value={filterValue.value}
-          onPress={handlePressFilter}
-        />
-      </AbandonmentsBottomSheet>
-    </>
+    </View>
   );
 };
 
@@ -125,37 +89,26 @@ export default MainAbandonmentSection;
 
 interface MainAbandonmentSectionCardListProps {
   data?: AbandonmentValue[];
-  isLoading: boolean;
   filter: AbandonmentsFilter;
-  onPress: (item: AbandonmentsBusinessResult) => void;
+  onPress: (item: TransformedAbandonments) => void;
   onPressMoreButton: () => void;
 }
 const CARD_GAP = 18;
 const IMAGE_WIDTH = 220;
 const IMAGE_HEIGHT = 170;
-const AbandonmentCardList = ({
-  data,
-  isLoading,
-  filter,
-  onPress,
-  onPressMoreButton
-}: MainAbandonmentSectionCardListProps) => {
-  const formattedAbandonmentData = abandonmentsBusiness(data || [], filter);
+const AbandonmentCardList = ({ data, filter, onPress, onPressMoreButton }: MainAbandonmentSectionCardListProps) => {
+  const formattedAbandonmentData = transformAbandonments(data || [], filter);
 
   const renderItem = useCallback(
-    ({ item }: ListRenderItemInfo<AbandonmentsBusinessResult>) => {
+    ({ item }: ListRenderItemInfo<TransformedAbandonments>) => {
       return (
         <Pressable onPress={() => onPress(item)}>
-          <BasicCard isLoading={isLoading} data={item} width={IMAGE_WIDTH} height={IMAGE_HEIGHT} />
+          <AnimalCard data={item} width={IMAGE_WIDTH} height={IMAGE_HEIGHT} />
         </Pressable>
       );
     },
-    [isLoading, onPress]
+    [onPress]
   );
-
-  const renderFooter = useCallback(() => {
-    return <FullViewButton onPress={onPressMoreButton} />;
-  }, [onPressMoreButton]);
 
   return (
     <FlatList
@@ -164,15 +117,16 @@ const AbandonmentCardList = ({
       renderItem={renderItem}
       scrollEventThrottle={40}
       showsHorizontalScrollIndicator={false}
-      keyExtractor={({ id }) => id.toString()}
+      keyExtractor={({ id }, idx) => `${id}-${idx}`}
       onEndReachedThreshold={1}
       bounces
       initialNumToRender={4}
+      nestedScrollEnabled={true}
       decelerationRate="fast"
       snapToInterval={IMAGE_WIDTH + CARD_GAP}
       contentContainerStyle={{ gap: CARD_GAP, paddingBottom: 8 }}
-      ListFooterComponent={renderFooter}
-      ListFooterComponentStyle={[styles.flex, { paddingHorizontal: 20 }]}
+      ListFooterComponent={<FullViewButton onPress={onPressMoreButton} />}
+      ListFooterComponentStyle={[styles.dropdownWrap, { paddingHorizontal: 40 }]}
     />
   );
 };
@@ -180,30 +134,41 @@ const AbandonmentCardList = ({
 const styles = StyleSheet.create({
   container: {
     backgroundColor: theme.colors.white[900],
-    paddingHorizontal: 20,
-    paddingVertical: 48
+    paddingVertical: 56
+  },
+  titleWrap: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 8,
+    alignItems: 'center'
   },
   title: {
     color: theme.colors.black[900],
-    fontSize: 28,
+    fontSize: 32,
+    lineHeight: 40,
     fontWeight: '500'
   },
-  toggleWrap: {
-    marginBottom: 32,
-    alignSelf: 'baseline'
+  buttonGroupWrap: {
+    marginBottom: 20,
+    alignSelf: 'baseline',
+    width: '100%',
+    paddingHorizontal: 20
   },
   header: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 28
+    marginBottom: 24,
+    paddingHorizontal: 20
   },
   label: {
     color: theme.colors.black[600],
-    ...theme.fonts.medium
+    fontSize: 14,
+    fontWeight: '500',
+    lineHeight: 16
   },
-  flex: {
+  dropdownWrap: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center'

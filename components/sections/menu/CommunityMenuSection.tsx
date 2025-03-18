@@ -1,7 +1,7 @@
 import { NavArrowIcon } from '@/components/atoms/icons/ArrowIcon';
 import { AnimatedChatIcon } from '@/components/atoms/icons/ChatIcon';
 import { Accordion } from '@/components/molecules/transition/Accordion';
-import { COMMUNITY_SUB_MENU } from '@/constants/menu';
+import { COMMUNITY_SUB_MENU } from '@/constants/config';
 import theme from '@/constants/theme';
 import { useCallback } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';

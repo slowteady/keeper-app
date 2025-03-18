@@ -3,13 +3,18 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export const useLayout = () => {
   const insetsTop = useSafeAreaInsets().top;
-  let headerTop;
+  const insetsBottom = useSafeAreaInsets().bottom;
+
+  let top;
+  let bottom = insetsBottom;
 
   if (Platform.OS === 'ios') {
-    headerTop = insetsTop || 59;
+    top = insetsTop + 10 || 59;
+    bottom = insetsBottom + 10;
   } else if (Platform.OS === 'android') {
-    headerTop = insetsTop + 10 || 24;
+    top = insetsTop + 10 || 24;
+    bottom = 20;
   }
 
-  return { headerTop };
+  return { top, bottom };
 };

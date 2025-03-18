@@ -13,8 +13,8 @@ export const transformShelterData = (data: ShelterValue) => {
     weekdayCloseTime,
     weekendCloseTime,
     weekendOpenTime,
-    veterinarianCount,
-    caretakerCount,
+    veterinarianCount = 0,
+    caretakerCount = 0,
     name
   } = data;
 

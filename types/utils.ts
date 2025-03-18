@@ -3,7 +3,7 @@ import { QueryKey, UseInfiniteQueryOptions, UseMutationOptions, UseQueryOptions 
 export type UseQueryCustomOptions<TQueryFnData = unknown, TError = unknown, TData = TQueryFnData> = Omit<
   UseQueryOptions<TQueryFnData, TError, TData, QueryKey>,
   'queryKey'
->;
+> & { queryKey?: readonly unknown[] };
 
 export type UseMutationCustomOptions<
   TData = unknown,

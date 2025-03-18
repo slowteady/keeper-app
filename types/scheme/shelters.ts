@@ -32,17 +32,17 @@ export interface ShelterValue {
   /**
    * 동물보호센터유형
    */
-  division: ShelterDivision;
+  division?: ShelterDivision;
 
   /**
    * 수의사 인원수
    */
-  veterinarianCount: number;
+  veterinarianCount?: number;
 
   /**
    * 사양관리사 인원수
    */
-  caretakerCount: number;
+  caretakerCount?: number;
 
   /**
    * 평일운영시작시간
@@ -63,6 +63,11 @@ export interface ShelterValue {
    * 주말운영종료시간
    */
   weekendCloseTime: string;
+
+  /**
+   * 내 위치 기준으로 보호소 거리
+   */
+  distance: number;
 }
 
 export interface ShelterCountValue {

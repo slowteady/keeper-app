@@ -30,11 +30,7 @@ export const Skeleton = ({ style }: SkeletonProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
-    height: '100%',
     overflow: 'hidden',
-    borderRadius: 10,
-    backgroundColor: theme.colors.black[500],
-    ...StyleSheet.absoluteFillObject
+    backgroundColor: theme.colors.black[500]
   }
 });

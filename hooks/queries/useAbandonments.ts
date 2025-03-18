@@ -1,6 +1,5 @@
 import { ABANDONMENT_QUERY_KEY, ABANDONMENTS_QUERY_KEY } from '@/constants/queryKeys';
-import { getAbandonment, getAbandonments } from '@/services/abandonmentsService';
-import { GetAbandonmentsParams } from '@/types/abandonments';
+import { getAbandonment, getAbandonments, GetAbandonmentsParams } from '@/services/abandonmentsService';
 import { ApiResponse } from '@/types/common';
 import { AbandonmentData, AbandonmentValue } from '@/types/scheme/abandonments';
 import { UseInfiniteQueryCustomOptions, UseQueryCustomOptions } from '@/types/utils';
@@ -12,7 +11,7 @@ import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
  * @param queryOptions
  * @returns
  */
-export const useGetAbandonment = (
+export const useGetAbandonmentQuery = (
   id: number,
   queryOptions?: UseQueryCustomOptions<ApiResponse<AbandonmentValue>, Error, AbandonmentValue>
 ) => {
@@ -30,7 +29,7 @@ export const useGetAbandonment = (
  * @param queryOptions
  * @returns
  */
-export const useGetAbandonments = (
+export const useGetAbandonmentsQuery = (
   params: GetAbandonmentsParams,
   queryOptions?: UseQueryCustomOptions<ApiResponse<AbandonmentData>, Error, AbandonmentValue[]>
 ) => {
@@ -48,12 +47,12 @@ export const useGetAbandonments = (
  * @param queryOptions
  * @returns
  */
-export const useGetInfiniteAbandonments = (
+export const useGetInfiniteAbandonmentsQuery = (
   params: GetAbandonmentsParams,
   queryOptions?: UseInfiniteQueryCustomOptions<ApiResponse<AbandonmentData>, Error, AbandonmentData>
 ) => {
   return useInfiniteQuery({
-    initialPageParam: 1,
+    initialPageParam: 0,
     queryKey: [ABANDONMENTS_QUERY_KEY, params],
     queryFn: ({ pageParam }) => getAbandonments({ ...params, page: pageParam }),
     getNextPageParam: (lastPage) => {

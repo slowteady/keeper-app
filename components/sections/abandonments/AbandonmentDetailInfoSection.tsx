@@ -2,13 +2,12 @@ import theme from '@/constants/theme';
 import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-interface AbandonmentDetailPrimaryInfoSectionProps {
+interface AbandonmentDetailInfoSectionProps {
   age: string;
   gender: string;
   weight: string;
 }
-const PADDING_HORIZONTAL = 20;
-const AbandonmentDetailPrimaryInfoSection = ({ age, gender, weight }: AbandonmentDetailPrimaryInfoSectionProps) => {
+const AbandonmentDetailInfoSection = ({ age, gender, weight }: AbandonmentDetailInfoSectionProps) => {
   const genderValue = gender === 'F' ? '여아' : gender === 'M' ? '남아' : '미상';
   const weightValue = `${weight}kg`;
 
@@ -42,12 +41,10 @@ const AbandonmentDetailPrimaryInfoSection = ({ age, gender, weight }: Abandonmen
   );
 };
 
-export default AbandonmentDetailPrimaryInfoSection;
+export default AbandonmentDetailInfoSection;
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 36,
-    paddingHorizontal: PADDING_HORIZONTAL,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',

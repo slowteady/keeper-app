@@ -1,7 +1,7 @@
 import { Carousel } from '@/components/molecules/carousel/Carousel';
 import theme from '@/constants/theme';
 import { memo, useCallback, useRef, useState } from 'react';
-import { NativeSyntheticEvent, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, NativeSyntheticEvent, StyleSheet, Text, View } from 'react-native';
 import PagerView from 'react-native-pager-view';
 
 const MainBannerSection = memo(() => {
@@ -38,11 +38,11 @@ const MainBannerSection = memo(() => {
         <Text style={styles.title}>{'행복을 나누는\n첫번째 발걸음을 함께합니다.'}</Text>
         <Text style={styles.subTitle}>{'Spread the love through adoption.'}</Text>
       </View>
-      <View style={styles.controllerContainer}>
-        <Carousel.Controller currentIndex={currentIndex} max={images.length} onPress={handlePressIndicator} />
-      </View>
       <View style={styles.image}>
         <Carousel initialPage={0} data={images} onPageScroll={handleChangeBanner} ref={carouselRef} />
+        <View style={styles.controllerContainer}>
+          <Carousel.Controller currentIndex={currentIndex} max={images.length} onPress={handlePressIndicator} />
+        </View>
       </View>
     </View>
   );
@@ -50,30 +50,35 @@ const MainBannerSection = memo(() => {
 
 export default MainBannerSection;
 
+const width = Dimensions.get('screen').width - 40;
+const height = width * 1.1;
 const styles = StyleSheet.create({
   container: {
     backgroundColor: theme.colors.background.default,
     paddingHorizontal: 20,
-    paddingVertical: 24
+    paddingTop: 40,
+    paddingBottom: 48
   },
   labelContainer: {
-    paddingBottom: 20
+    paddingBottom: 32
   },
   title: {
     fontSize: 30,
     color: theme.colors.black[900],
     fontWeight: '500',
     lineHeight: 45,
-    paddingBottom: 30
+    paddingBottom: 12
   },
   subTitle: {
-    color: theme.colors.black[900],
-    ...theme.fonts.regular
+    fontSize: 15,
+    fontWeight: '500',
+    lineHeight: 17,
+    color: theme.colors.black[900]
   },
   image: {
-    width: '100%',
-    height: 320,
-    marginBottom: 24
+    width,
+    height,
+    position: 'relative'
   },
   suspense: {
     backgroundColor: theme.colors.white[900],
@@ -84,7 +89,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   controllerContainer: {
-    paddingBottom: 28
+    position: 'absolute',
+    bottom: 16,
+    left: 16
   }
 });
 

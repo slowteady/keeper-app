@@ -1,5 +1,5 @@
 import theme from '@/constants/theme';
-import { forwardRef, memo, PropsWithChildren, useCallback, useEffect, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { Pressable, StyleProp, StyleSheet, TextStyle, View, ViewProps } from 'react-native';
 import Animated, {
   interpolateColor,
@@ -13,13 +13,15 @@ export interface ToggleCompleteProps<T> {
   items: ToggleItemsProps<T>['items'];
   value: T;
   onChange: (value: T) => void;
-  interval: number;
-  duration?: number;
+  size?: ToggleSize;
 }
+export type ToggleSize = 'small';
 
-const Complete = <T,>({ items, value, onChange, interval, duration = 300 }: ToggleCompleteProps<T>) => {
+export const Toggle = <T,>({ items, value, onChange, size = 'small' }: ToggleCompleteProps<T>) => {
   const [buttonWidth, setButtonWidth] = useState(0);
+  const interval = size === 'small' ? 6 : 0;
   const translateX = useSharedValue(interval);
+  const duration = 200;
 
   const buttonRefs = useRef<(View | null)[]>([]);
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -79,14 +81,6 @@ const Complete = <T,>({ items, value, onChange, interval, duration = 300 }: Togg
   );
 };
 
-const Layout = forwardRef<View, PropsWithChildren>(({ children }, ref) => {
-  return (
-    <View style={styles.container} ref={ref}>
-      {children}
-    </View>
-  );
-});
-
 export interface ToggleEffectProps {
   buttonWidth: number;
   interval: number;
@@ -139,22 +133,14 @@ interface ToggleTextProps {
   label: string;
 }
 const Text = ({ item, label }: ToggleTextProps) => {
-  const { black } = theme.colors;
-
   const textStyle = useAnimatedStyle(() => {
-    const color = interpolateColor(item.value, [0, 1], [black[500], black[900]]);
+    const color = interpolateColor(item.value, [0, 1], [theme.colors.black[500], theme.colors.black[900]]);
 
     return { color };
   }, [item]);
 
   return <Animated.Text style={[textStyle, styles.text]}>{label}</Animated.Text>;
 };
-
-export const Toggle = Object.assign(Complete, {
-  Layout,
-  Effect,
-  Items
-});
 
 const { white } = theme.colors;
 const styles = StyleSheet.create({
@@ -181,14 +167,14 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 10
+    paddingHorizontal: 16,
+    paddingVertical: 16
   },
   text: {
-    fontSize: 13,
-    fontWeight: 500
+    fontSize: 14,
+    fontWeight: 500,
+    lineHeight: 16
   }
 });
 
-Layout.displayName = 'ToggleLayout';
 Effect.displayName = 'ToggleEffect';
