@@ -4,6 +4,14 @@ import { Stack } from 'expo-router';
 import { createStore, Provider } from 'jotai';
 import { StyleSheet, View } from 'react-native';
 
+/**
+ * 메인화면
+ * TODO
+ * [ ] 전체공고 섹션 노데이터 처리
+ * [ ] 전체공고 섹션 스켈레톤 처리
+ * [ ] 보호소 섹션 노데이터 처리
+ * [ ] 보호소 섹션 스켈레톤 처리
+ */
 const Page = () => {
   const store = createStore();
 

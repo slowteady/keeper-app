@@ -8,7 +8,7 @@ import { memo } from 'react';
 import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 const MainHeader = memo(() => {
-  const { top: headerTop } = useLayout();
+  const { top } = useLayout();
 
   const handlePressMenu = async () => {
     router.push('/menu');
@@ -17,12 +17,9 @@ const MainHeader = memo(() => {
 
   return (
     <View style={styles.container}>
-      <View style={[styles.wrap, { paddingTop: headerTop }]}>
+      <View style={[styles.wrap, { paddingTop: top }]}>
         <LogoIcon color={theme.colors.black[900]} />
         <View style={styles.rightContainer}>
-          {/* <TouchableOpacity activeOpacity={0.5}>
-            <SearchIcon />
-          </TouchableOpacity> */}
           <TouchableOpacity onPress={handlePressMenu} activeOpacity={0.5}>
             <MenuIcon />
           </TouchableOpacity>

@@ -1,13 +1,14 @@
 import { NavArrowIcon } from '@/components/atoms/icons/ArrowIcon';
 import { LocationIcon } from '@/components/atoms/icons/LocationIcon';
 import theme from '@/constants/theme';
-import { useCallback } from 'react';
+import { router } from 'expo-router';
 import { Pressable, StyleSheet, Text } from 'react-native';
 
 const ShelterMenuSection = () => {
-  const handlePress = useCallback(() => {
-    //
-  }, []);
+  const handlePress = () => {
+    router.dismiss();
+    setTimeout(() => router.replace('/shelters'), 100);
+  };
 
   return (
     <Pressable onPress={handlePress} style={styles.container}>

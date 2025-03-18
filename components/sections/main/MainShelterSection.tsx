@@ -67,7 +67,12 @@ const MainShelterSection = () => {
     setCamera({ latitude, longitude, zoom });
     setSelectedMarkerId(undefined);
 
-    const radius = calcMapRadiusKm({ ...region, latitude, longitude });
+    const radius = calcMapRadiusKm({
+      longitudeDelta: region?.longitudeDelta || 0,
+      latitudeDelta: region?.latitudeDelta || 0,
+      latitude,
+      longitude
+    });
     setDistance(radius);
   };
   const handleTapMarker = (data: ShelterValue) => {

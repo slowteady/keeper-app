@@ -34,7 +34,6 @@ import {
   View
 } from 'react-native';
 
-// NOTE: 기능 점검 후 노데이터, 스켈레톤 처리
 interface SheltersDetailTemplateProps {
   shelterData: ShelterValue;
   abandonmentsData?: AbandonmentData;

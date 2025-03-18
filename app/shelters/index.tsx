@@ -11,6 +11,14 @@ import { Stack } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
+/**
+ * 보호소 목록 페이지
+ * TODO
+ * [ ] 보호소 검색 기능 구현
+ * [ ] 보호소 목록 노데이터 처리
+ * [ ] 보호소 목록 스켈레톤 처리
+ * [ ] 주소 검색 검색결과 노데이터 처리
+ */
 const Page = () => {
   const [mapEnabled, setMapEnabled] = useState(false);
   const { camera, setCamera, distance, setDistance, initialLocation, mapRef, permissionStatus } = useMapInit();

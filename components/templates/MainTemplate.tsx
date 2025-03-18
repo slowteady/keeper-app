@@ -57,7 +57,7 @@ export default MainTemplate;
 
 const Footer = () => {
   const handleClickContact = useCallback(() => {
-    const email = 'ymlee.dev@gmail.com';
+    const email = process.env.EXPO_PUBLIC_DEVELOPER_EMAIL;
     Linking.openURL(`mailto:${email}`);
   }, []);
 
@@ -65,9 +65,9 @@ const Footer = () => {
     <View style={styles.footerContainer}>
       <LogoIcon color={theme.colors.black[900]} />
       <View style={styles.menuContainer}>
-        <Pressable>
+        {/* <Pressable>
           <Text style={styles.footerMenu}>about us</Text>
-        </Pressable>
+        </Pressable> */}
         <Pressable onPress={handleClickContact}>
           <Text style={styles.footerMenu}>contact us</Text>
         </Pressable>

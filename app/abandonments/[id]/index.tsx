@@ -9,6 +9,12 @@ import { Stack, useLocalSearchParams } from 'expo-router';
 import { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 
+/**
+ * 공고 상세 페이지
+ * TODO
+ * [ ] 보호소 클릭 시, 이동할 수 있게 보호소 링킹 처리
+ * [ ] 스켈레톤 처리
+ */
 const Page = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data: abandonmentData } = useGetAbandonmentQuery(Number(id));

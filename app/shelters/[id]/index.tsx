@@ -11,6 +11,13 @@ import { createStore, Provider, useAtomValue } from 'jotai';
 import { useCallback, useMemo } from 'react';
 import { RefreshControl, StyleSheet, View } from 'react-native';
 
+/**
+ * 보호소 상세 페이지
+ * TODO
+ * [ ] 보호소 설명 박스 아이콘 교체
+ * [ ] 공고 노데이터 처리
+ * [ ] 공고 스켈레톤 처리
+ */
 const Layout = () => {
   const store = createStore();
 
