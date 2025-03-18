@@ -22,7 +22,7 @@ const MenuHeader = () => {
       <TouchableOpacity onPress={handlePressHome} activeOpacity={0.5}>
         <HomeIcon />
       </TouchableOpacity>
-      <LogoIcon />
+      <LogoIcon color={theme.colors.black[900]} />
       <TouchableOpacity onPress={handlePressMenuClose} activeOpacity={0.5}>
         <CloseIcon />
       </TouchableOpacity>

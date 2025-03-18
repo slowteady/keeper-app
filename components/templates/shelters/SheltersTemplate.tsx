@@ -55,9 +55,11 @@ const SheltersTemplate = forwardRef<NaverMapViewRef, SheltersTemplateProps>((pro
     }
   }, []);
   const handleSubmitGeocode = async (value: string) => {
-    const response = await mutateAsync({ query: value });
-    const addresses = response.addresses;
-    setAddresses(addresses);
+    try {
+      const response = await mutateAsync({ query: value });
+      const addresses = response.addresses;
+      setAddresses(addresses);
+    } catch {}
   };
   const handlePressAddress = useCallback(
     (item: Address) => {

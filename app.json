@@ -8,30 +8,22 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "env": {
-        "EXPO_PUBLIC_DEVELOPER_EMAIL": "ymlee.dev@gmail.com",
-        "EXPO_PUBLIC_CLIENT_ID": "rg0cm283cu",
-        "EXPO_PUBLIC_SECRET_ID": "uJ7EksxVsuemgpearWYtZxdOEtNxvMqOltBYNnYJ",
-        "EXPO_PUBLIC_GEOCODE_URL": "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode"
-      },
       "icon": "./assets/images/keeper-icon.png",
       "supportsTablet": false,
       "entitlements": {
         "aps-environment": "development"
       },
-      "bundleIdentifier": "com.keeper.love"
+      "bundleIdentifier": "com.keeper.love",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
-      "env": {
-        "EXPO_PUBLIC_DEVELOPER_EMAIL": "ymlee.dev@gmail.com",
-        "EXPO_PUBLIC_CLIENT_ID": "rg0cm283cu",
-        "EXPO_PUBLIC_SECRET_ID": "uJ7EksxVsuemgpearWYtZxdOEtNxvMqOltBYNnYJ",
-        "EXPO_PUBLIC_GEOCODE_URL": "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode"
-      },
       "package": "com.keeper.love",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/keeper-android-icon.png"
-      }
+      },
+      "permissions": ["android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"]
     },
     "plugins": [
       "expo-router",
@@ -44,10 +36,17 @@
           "backgroundColor": "#1FE678"
         }
       ],
-      ["@mj-studio/react-native-naver-map", { "client_id": "rg0cm283cu" }],
+      [
+        "@mj-studio/react-native-naver-map",
+        {
+          "client_id": "rg0cm283cu"
+        }
+      ],
       [
         "expo-location",
-        { "locationWhenInUsePermission": "사용자의 위치를 기준으로 가까운 보호소 정보 제공을 위해 사용됩니다." }
+        {
+          "locationWhenInUsePermission": "사용자의 위치를 기준으로 가까운 보호소 정보 제공을 위해 사용됩니다."
+        }
       ],
       [
         "expo-build-properties",
@@ -62,6 +61,10 @@
       "typedRoutes": true
     },
     "extra": {
+      "EXPO_PUBLIC_DEVELOPER_EMAIL": "ymlee.dev@gmail.com",
+      "EXPO_PUBLIC_CLIENT_ID": "rg0cm283cu",
+      "EXPO_PUBLIC_SECRET_ID": "uJ7EksxVsuemgpearWYtZxdOEtNxvMqOltBYNnYJ",
+      "EXPO_PUBLIC_GEOCODE_URL": "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode",
       "eas": {
         "projectId": "6a4a1356-b842-4472-b78e-e1bebffeb444"
       }
