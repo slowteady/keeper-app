@@ -11,6 +11,7 @@ import { StyleSheet, View } from 'react-native';
  * [ ] 전체공고 섹션 스켈레톤 처리
  * [ ] 보호소 섹션 노데이터 처리
  * [ ] 보호소 섹션 스켈레톤 처리
+ * [ ] 에러 바운더리
  */
 const Page = () => {
   const store = createStore();

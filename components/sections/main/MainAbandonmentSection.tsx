@@ -3,6 +3,7 @@ import FullViewButton from '@/components/atoms/button/FullViewButton';
 import { MenuArrowIcon } from '@/components/atoms/icons/ArrowIcon';
 import ButtonGroup from '@/components/molecules/button/ButtonGroup';
 import Dropdown from '@/components/molecules/dropdown/Dropdown';
+import CardSkeleton from '@/components/molecules/placeholder/CardSkeleton';
 import { BottomSheetMenuData } from '@/components/organisms/bottomSheet/BottomSheet';
 import { AnimalCard } from '@/components/organisms/card/AnimalCard';
 import { ABANDONMENTS_ANIMAL_TYPES, ABANDONMENTS_FILTERS } from '@/constants/config';
@@ -49,10 +50,13 @@ const MainAbandonmentSection = () => {
     },
     [setAbandonmentsConfig]
   );
-  const handleChangeType = async (id: AnimalType) => {
-    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setAbandonmentsConfig((prev) => ({ ...prev, type: id }));
-  };
+  const handleChangeType = useCallback(
+    async (id: AnimalType) => {
+      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      setAbandonmentsConfig((prev) => ({ ...prev, type: id }));
+    },
+    [setAbandonmentsConfig]
+  );
 
   return (
     <View style={styles.container}>
@@ -79,6 +83,7 @@ const MainAbandonmentSection = () => {
           filter={filterValue.value}
           onPress={handlePressCard}
           onPressMoreButton={handlePressTitle}
+          isLoading={isLoading}
         />
       </View>
     </View>
@@ -92,11 +97,18 @@ interface MainAbandonmentSectionCardListProps {
   filter: AbandonmentsFilter;
   onPress: (item: TransformedAbandonments) => void;
   onPressMoreButton: () => void;
+  isLoading: boolean;
 }
 const CARD_GAP = 18;
 const IMAGE_WIDTH = 220;
 const IMAGE_HEIGHT = 170;
-const AbandonmentCardList = ({ data, filter, onPress, onPressMoreButton }: MainAbandonmentSectionCardListProps) => {
+const AbandonmentCardList = ({
+  data,
+  filter,
+  onPress,
+  isLoading,
+  onPressMoreButton
+}: MainAbandonmentSectionCardListProps) => {
   const formattedAbandonmentData = transformAbandonments(data || [], filter);
 
   const renderItem = useCallback(
@@ -112,13 +124,12 @@ const AbandonmentCardList = ({ data, filter, onPress, onPressMoreButton }: MainA
 
   return (
     <FlatList
-      data={formattedAbandonmentData}
+      data={[]}
       horizontal={true}
       renderItem={renderItem}
       scrollEventThrottle={40}
       showsHorizontalScrollIndicator={false}
       keyExtractor={({ id }, idx) => `${id}-${idx}`}
-      onEndReachedThreshold={1}
       bounces
       initialNumToRender={4}
       nestedScrollEnabled={true}
@@ -127,7 +138,19 @@ const AbandonmentCardList = ({ data, filter, onPress, onPressMoreButton }: MainA
       contentContainerStyle={{ gap: CARD_GAP, paddingBottom: 8 }}
       ListFooterComponent={<FullViewButton onPress={onPressMoreButton} />}
       ListFooterComponentStyle={[styles.dropdownWrap, { paddingHorizontal: 40 }]}
+      ListEmptyComponent={isLoading ? <NodataCard /> : <CardSkeleton />}
     />
+  );
+};
+
+const NodataCard = () => {
+  return (
+    <View style={styles.noDataContainer}>
+      <View style={styles.noDataBox}>
+        <Text style={styles.noDataBoxText}>[No Data]</Text>
+      </View>
+      <Text style={styles.noDataText}>공고가 없습니다.</Text>
+    </View>
   );
 };
 
@@ -172,5 +195,31 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center'
+  },
+  noDataContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 20
+  },
+  noDataBox: {
+    width: IMAGE_WIDTH,
+    height: IMAGE_HEIGHT,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.colors.white[600],
+    borderRadius: 8
+  },
+  noDataBoxText: {
+    fontSize: 18,
+    lineHeight: 20,
+    fontWeight: '500',
+    color: theme.colors.black[500]
+  },
+  noDataText: {
+    fontSize: 20,
+    lineHeight: 22,
+    fontWeight: '500',
+    color: theme.colors.black[900]
   }
 });

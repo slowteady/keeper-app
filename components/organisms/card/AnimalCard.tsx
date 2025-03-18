@@ -2,7 +2,7 @@ import NoImage from '@/components/molecules/placeholder/NoImage';
 import { Skeleton } from '@/components/molecules/placeholder/Skeleton';
 import theme from '@/constants/theme';
 import { Image as ExpoImage } from 'expo-image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 export interface AnimalCardData<T> {
@@ -22,9 +22,22 @@ type AnimalCardSize = 'small' | 'medium';
 
 export const AnimalCard = <T,>({ data, width, height, size = 'medium' }: AnimalCardProps<T>) => {
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isError, setIsError] = useState(false);
 
   const { uri, title, description, chips } = data;
   const sortedChips = chips?.sort((a, b) => a.sort - b.sort);
+
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+
+    if (!isLoaded) {
+      timeoutId = setTimeout(() => {
+        setIsError(true);
+      }, 5000);
+    }
+
+    return () => clearTimeout(timeoutId);
+  }, [uri, isLoaded]);
 
   const descriptionStyle = size === 'small' ? { gap: 8 } : { gap: 10 };
   const titleStyle = size === 'small' ? { fontSize: 18, lineHeight: 20 } : { fontSize: 20, lineHeight: 22 };
@@ -32,8 +45,17 @@ export const AnimalCard = <T,>({ data, width, height, size = 'medium' }: AnimalC
   return (
     <View style={{ width }}>
       <View style={{ width, height, marginBottom: 20 }}>
-        {!isLoaded && <Skeleton />}
-        {uri ? <ExpoImage source={{ uri }} onLoad={() => setIsLoaded(true)} style={styles.image} /> : <NoImage />}
+        {!isLoaded && !isError && <Skeleton />}
+        {uri && !isError ? (
+          <ExpoImage
+            source={{ uri }}
+            onLoad={() => setIsLoaded(true)}
+            onError={() => setIsError(true)}
+            style={styles.image}
+          />
+        ) : (
+          <NoImage />
+        )}
       </View>
       <Text numberOfLines={1} ellipsizeMode="tail" style={[styles.title, { ...titleStyle }]}>
         {title}
