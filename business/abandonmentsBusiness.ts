@@ -172,7 +172,7 @@ export const transformDescription = ({
   const endDt = dayjs(noticeEndDt).format('YY.MM.DD');
 
   return [
-    { label: '공고기간', value: `${startDt} - ${endDt}` },
+    { label: '공고기간', value: `${startDt}-${endDt}` },
     { label: '품종', value: specificType },
     { label: '지역', value: orgName },
     { label: '구조장소', value: happenPlace }

@@ -39,7 +39,6 @@ export const AnimalCard = <T,>({ data, width, height, size = 'medium' }: AnimalC
     return () => clearTimeout(timeoutId);
   }, [uri, isLoaded]);
 
-  const descriptionStyle = size === 'small' ? { gap: 8 } : { gap: 10 };
   const titleStyle = size === 'small' ? { fontSize: 18, lineHeight: 20 } : { fontSize: 20, lineHeight: 22 };
 
   return (
@@ -60,7 +59,7 @@ export const AnimalCard = <T,>({ data, width, height, size = 'medium' }: AnimalC
       <Text numberOfLines={1} ellipsizeMode="tail" style={[styles.title, { ...titleStyle }]}>
         {title}
       </Text>
-      <View style={[styles.descriptionContainer, descriptionStyle]}>
+      <View style={[styles.descriptionContainer]}>
         <Descriptions data={description} size={size} />
       </View>
       {sortedChips && <Chips data={sortedChips} size={size} />}
@@ -176,7 +175,8 @@ const styles = StyleSheet.create({
   },
   descriptionContainer: {
     display: 'flex',
-    marginBottom: 20
+    marginBottom: 20,
+    gap: 10
   },
   descriptionWrap: {
     display: 'flex',
@@ -188,11 +188,12 @@ const styles = StyleSheet.create({
     flexShrink: 0,
     color: theme.colors.black[600],
     fontWeight: '400',
-    minWidth: 55
+    minWidth: 57
   },
   text: {
     flex: 1,
     color: theme.colors.black[900],
-    fontWeight: '400'
+    fontWeight: '400',
+    marginRight: 6
   }
 });

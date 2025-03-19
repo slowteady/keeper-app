@@ -159,7 +159,7 @@ const ShelterCardList = ({ data }: Record<'data', ShelterValue[]>) => {
 
   return (
     <FlatList
-      data={data}
+      data={[]}
       showsHorizontalScrollIndicator={false}
       decelerationRate="fast"
       horizontal={true}
@@ -171,8 +171,17 @@ const ShelterCardList = ({ data }: Record<'data', ShelterValue[]>) => {
       snapToInterval={270 + 16}
       ListFooterComponent={() => <FullViewButton onPress={handlePress} />}
       ListFooterComponentStyle={[styles.flex, { paddingHorizontal: 20 }]}
+      ListEmptyComponent={<Nodata />}
       contentContainerStyle={{ gap: 16 }}
     />
+  );
+};
+
+const Nodata = () => {
+  return (
+    <View style={styles.noDataContainer}>
+      <Text style={styles.noDataText}>가까운 곳에 보호소가 없습니다.</Text>
+    </View>
   );
 };
 
@@ -223,5 +232,17 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 40,
     marginBottom: 16
+  },
+  noDataContainer: {
+    paddingVertical: 34,
+    paddingHorizontal: 74,
+    backgroundColor: theme.colors.white[900],
+    borderRadius: 8
+  },
+  noDataText: {
+    fontSize: 14,
+    fontWeight: '500',
+    lineHeight: 16,
+    color: theme.colors.black[500]
   }
 });

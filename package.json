@@ -26,6 +26,7 @@
     "@gorhom/bottom-sheet": "^5",
     "@mj-studio/react-native-naver-map": "^2.2.0",
     "@react-navigation/bottom-tabs": "^7.0.0",
+    "@react-navigation/drawer": "^7.1.2",
     "@react-navigation/native": "^7.0.0",
     "@tanstack/react-query": "^5.62.7",
     "dayjs": "^1.11.13",

@@ -28,7 +28,7 @@ export const getGeocode = async ({ query, params = {} }: GeocodeParams) => {
     'X-NCP-APIGW-API-KEY-ID': Constants.expoConfig?.extra?.EXPO_PUBLIC_CLIENT_ID || '',
     'X-NCP-APIGW-API-KEY': Constants.expoConfig?.extra?.EXPO_PUBLIC_SECRET_ID || ''
   };
-  console.log(headers);
+
   const config: RequestInit = {
     method: 'GET',
     headers,

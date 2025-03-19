@@ -50,7 +50,7 @@ const ShrinkCard = ({ data }: ShrinkCardProps) => {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: theme.colors.white[900],
-    borderRadius: 4
+    borderRadius: 6
   },
   shrinkContainer: {
     padding: 20

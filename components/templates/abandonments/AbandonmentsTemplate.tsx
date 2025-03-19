@@ -3,6 +3,7 @@ import ScrollFloatingButton from '@/components/atoms/button/ScrollFloatingButton
 import ButtonGroup from '@/components/molecules/button/ButtonGroup';
 import Dropdown from '@/components/molecules/dropdown/Dropdown';
 import Searchbar from '@/components/molecules/input/Searchbar';
+import CardSkeleton from '@/components/molecules/placeholder/CardSkeleton';
 import { BottomSheetMenuData } from '@/components/organisms/bottomSheet/BottomSheet';
 import { AnimalCard } from '@/components/organisms/card/AnimalCard';
 import { ABANDONMENTS_ANIMAL_TYPES, ABANDONMENTS_FILTERS } from '@/constants/config';
@@ -73,8 +74,6 @@ const AbandonmentsTemplate = ({ data, onFetch, isLoading, refreshControl }: Aban
     <>
       <FlatList
         data={transformedAbandonments}
-        ListHeaderComponent={<FilterSection />}
-        ListFooterComponent={renderListFooter()}
         renderItem={renderItem}
         ref={flatListRef}
         onScroll={handleScroll}
@@ -88,6 +87,19 @@ const AbandonmentsTemplate = ({ data, onFetch, isLoading, refreshControl }: Aban
         columnWrapperStyle={{ gap: CARD_GAP, justifyContent: 'space-between', marginBottom: 40 }}
         refreshControl={refreshControl}
         style={styles.container}
+        ListHeaderComponent={<FilterSection />}
+        ListFooterComponent={renderListFooter()}
+        ListEmptyComponent={
+          isLoading ? (
+            <>
+              {Array.from({ length: 4 }).map((_, idx) => (
+                <CardSkeleton key={idx} />
+              ))}
+            </>
+          ) : (
+            <NodataCard />
+          )
+        }
       />
       <ScrollFloatingButton visible={isButtonVisible} onPress={handlePress} />
     </>
@@ -99,7 +111,7 @@ export default AbandonmentsTemplate;
 const FilterSection = () => {
   const filterValue = useAtomValue(abandonmentsFilterValueAtom);
   const [abandonmentsConfig, setAbandonmentsConfig] = useAtom(abandonmentsAtom);
-  const snapPoints = useMemo(() => ['20%'], []);
+  const snapPoints = useMemo(() => [200], []);
 
   const handleSubmit = (text: string) => {
     setAbandonmentsConfig((prev) => ({ ...prev, search: text }));
@@ -155,6 +167,17 @@ const MoreButtonSection = ({ onFetch, isLoading, page, total }: MoreButtonSectio
   );
 };
 
+const NodataCard = () => {
+  return (
+    <View style={styles.noDataContainer}>
+      <View style={styles.noDataBox}>
+        <Text style={styles.noDataBoxText}>[No Data]</Text>
+      </View>
+      <Text style={styles.noDataText}>공고가 없습니다.</Text>
+    </View>
+  );
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -206,5 +229,31 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
     lineHeight: 15
+  },
+  noDataContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 20
+  },
+  noDataBox: {
+    width: IMAGE_WIDTH,
+    height: IMAGE_HEIGHT,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.colors.white[600],
+    borderRadius: 8
+  },
+  noDataBoxText: {
+    fontSize: 18,
+    lineHeight: 20,
+    fontWeight: '500',
+    color: theme.colors.black[500]
+  },
+  noDataText: {
+    fontSize: 20,
+    lineHeight: 22,
+    fontWeight: '500',
+    color: theme.colors.black[900]
   }
 });

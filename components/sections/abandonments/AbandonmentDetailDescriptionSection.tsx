@@ -2,12 +2,14 @@ import { CandyIcon } from '@/components/atoms/icons/CandyIcon';
 import { MessageIcon } from '@/components/atoms/icons/MessageIcon';
 import { StarbarIcon } from '@/components/atoms/icons/StarbarIcon';
 import theme from '@/constants/theme';
-import { StyleSheet, Text, View } from 'react-native';
+import { router } from 'expo-router';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 interface AbandonmentDetailDescriptionSectionProps {
   specialMark: string;
   neuterYn: string;
   shelter?: {
+    id: number;
     time: string;
     person: string;
     address: string;
@@ -20,8 +22,17 @@ const AbandonmentDetailDescriptionSection = ({
   neuterYn,
   shelter
 }: AbandonmentDetailDescriptionSectionProps) => {
-  const { time, person, address, name } = shelter || {};
+  const { id, time, person, address, name } = shelter || {};
   const neuter = neuterYn === 'N' ? 'X' : 'O';
+
+  const handlePress = () => {
+    if (!id) return;
+
+    router.push({
+      pathname: '/shelters/[id]',
+      params: { id }
+    });
+  };
 
   return (
     <>
@@ -50,7 +61,11 @@ const AbandonmentDetailDescriptionSection = ({
         </View>
         <View style={styles.shelter}>
           {!shelter && <Text style={styles.description}>정보 없음</Text>}
-          {name && <Text style={styles.description}>{name}</Text>}
+          {name && (
+            <Pressable onPress={handlePress}>
+              <Text style={styles.shelterText}>{name}</Text>
+            </Pressable>
+          )}
           {time && <Text style={styles.description}>{time}</Text>}
           {person && <Text style={styles.description}>{person}</Text>}
           {address && <Text style={styles.description}>{address}</Text>}
@@ -78,19 +93,29 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20
   },
   label: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '500',
     lineHeight: 24,
     color: theme.colors.black[800]
+  },
+  shelterText: {
+    flex: 1,
+    fontSize: 16,
+    lineHeight: 22,
+    fontWeight: '600',
+    flexShrink: 1,
+    paddingRight: 10,
+    color: theme.colors.black[700],
+    textDecorationLine: 'underline'
   },
   description: {
     flex: 1,
     fontSize: 16,
     fontWeight: '400',
-    lineHeight: 23,
+    lineHeight: 22,
     color: theme.colors.black[700],
     flexShrink: 1,
-    paddingRight: 10
+    paddingRight: 24
   },
   divider: {
     borderWidth: theme.hairline,
@@ -99,7 +124,7 @@ const styles = StyleSheet.create({
   shelter: {
     display: 'flex',
     flexDirection: 'column',
-    gap: 6,
+    gap: 8,
     flex: 1
   }
 });

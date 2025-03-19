@@ -124,7 +124,7 @@ const AbandonmentCardList = ({
 
   return (
     <FlatList
-      data={[]}
+      data={formattedAbandonmentData}
       horizontal={true}
       renderItem={renderItem}
       scrollEventThrottle={40}
@@ -138,7 +138,17 @@ const AbandonmentCardList = ({
       contentContainerStyle={{ gap: CARD_GAP, paddingBottom: 8 }}
       ListFooterComponent={<FullViewButton onPress={onPressMoreButton} />}
       ListFooterComponentStyle={[styles.dropdownWrap, { paddingHorizontal: 40 }]}
-      ListEmptyComponent={isLoading ? <NodataCard /> : <CardSkeleton />}
+      ListEmptyComponent={
+        isLoading ? (
+          <>
+            {Array.from({ length: 4 }).map((_, idx) => (
+              <CardSkeleton key={idx} />
+            ))}
+          </>
+        ) : (
+          <NodataCard />
+        )
+      }
     />
   );
 };
@@ -207,7 +217,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: theme.colors.white[600],
+    backgroundColor: theme.colors.background.default,
     borderRadius: 8
   },
   noDataBoxText: {
@@ -217,8 +227,8 @@ const styles = StyleSheet.create({
     color: theme.colors.black[500]
   },
   noDataText: {
-    fontSize: 20,
-    lineHeight: 22,
+    fontSize: 17,
+    lineHeight: 19,
     fontWeight: '500',
     color: theme.colors.black[900]
   }

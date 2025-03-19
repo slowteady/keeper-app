@@ -73,15 +73,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   value: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '600',
-    lineHeight: 18,
+    lineHeight: 19,
     color: theme.colors.black[800]
   },
   subValue: {
     color: theme.colors.black[600],
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: '400',
-    lineHeight: 13
+    lineHeight: 14
   }
 });

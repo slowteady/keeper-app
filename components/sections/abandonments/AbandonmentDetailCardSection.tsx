@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: 40,
-    marginBottom: 24,
+    marginBottom: 30,
     gap: 8
   },
   imageContainer: {
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: theme.colors.black[600],
     fontWeight: '400',
-    lineHeight: 17,
+    lineHeight: 21,
     minWidth: 70,
     alignSelf: 'flex-start'
   },
@@ -118,7 +118,8 @@ const styles = StyleSheet.create({
     color: theme.colors.black[900],
     fontSize: 15,
     fontWeight: '400',
-    lineHeight: 17
+    lineHeight: 21,
+    alignSelf: 'flex-start'
   },
   iconWrap: {
     position: 'absolute',

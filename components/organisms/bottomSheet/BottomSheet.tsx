@@ -1,3 +1,4 @@
+import CheckIcon from '@/components/atoms/icons/CheckIcon';
 import theme from '@/constants/theme';
 import {
   BottomSheetBackdrop,
@@ -64,6 +65,7 @@ export const Menu = <T,>({ value, data, onPress, style, textStyle }: BottomSheet
         <Text style={[styles.text, { color: isActive ? theme.colors.black[800] : theme.colors.black[500] }, textStyle]}>
           {name}
         </Text>
+        {isActive && <CheckIcon color={theme.colors.black[800]} />}
       </TouchableOpacity>
     );
   });
@@ -80,7 +82,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.white[800]
   },
   innerContainer: {
-    paddingHorizontal: 20
+    paddingHorizontal: 24
   },
   background: {
     borderTopLeftRadius: 20,
@@ -93,12 +95,15 @@ const styles = StyleSheet.create({
     paddingTop: 12
   },
   button: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     paddingVertical: 16
   },
   text: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '500',
-    lineHeight: 18
+    lineHeight: 19
   }
 });
 

@@ -1,6 +1,8 @@
 import { transformAbandonments, TransformedAbandonments } from '@/business/abandonmentsBusiness';
 import { transformShelterData } from '@/business/sheltersBusiness';
 import ScrollFloatingButton from '@/components/atoms/button/ScrollFloatingButton';
+import { CandyIcon } from '@/components/atoms/icons/CandyIcon';
+import { StethoscopeIcon } from '@/components/atoms/icons/StethoscopeIcon';
 import { TelIcon } from '@/components/atoms/icons/TelIcon';
 import { TimeIcon } from '@/components/atoms/icons/TimeIcon';
 import Dropdown from '@/components/molecules/dropdown/Dropdown';
@@ -196,25 +198,25 @@ const ShelterDescription = ({ data }: ShelterDescriptionProps) => {
       <View style={styles.shelterDescriptionWrap}>
         {time && (
           <View style={styles.flexWrap}>
-            <TimeIcon width={24} height={24} />
+            <TimeIcon width={20} height={20} />
             <Text style={styles.descriptionText}>{time}</Text>
           </View>
         )}
         {data.tel && (
           <View style={styles.flexWrap}>
-            <TelIcon width={24} height={24} />
+            <TelIcon width={20} height={20} />
             <Text style={styles.descriptionText}>{data.tel}</Text>
           </View>
         )}
         {person && (
           <View style={styles.flexWrap}>
-            <TimeIcon width={24} height={24} />
+            <StethoscopeIcon width={20} height={20} />
             <Text style={styles.descriptionText}>{person}</Text>
           </View>
         )}
         {address && (
           <View style={styles.flexWrap}>
-            <TimeIcon width={24} height={24} />
+            <CandyIcon width={20} height={20} />
             <Text style={styles.descriptionText}>{address}</Text>
           </View>
         )}
@@ -296,11 +298,11 @@ const styles = StyleSheet.create({
   mapContainer: {
     borderRadius: 10,
     backgroundColor: '#D9D9D9',
-    height: Dimensions.get('screen').width * 1.2,
+    height: Dimensions.get('screen').width * 1.1,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 24,
+    marginBottom: 32,
     marginHorizontal: PADDING_HORIZONTAL
   },
   mapInnerContainer: {
@@ -310,18 +312,18 @@ const styles = StyleSheet.create({
     marginHorizontal: PADDING_HORIZONTAL
   },
   shelterTitleText: {
-    fontSize: 17,
-    lineHeight: 19,
+    fontSize: 20,
+    lineHeight: 22,
     fontWeight: '600',
     color: theme.colors.black[800],
-    marginBottom: 19
+    marginBottom: 24
   },
   shelterDescriptionContainer: {
     paddingHorizontal: PADDING_HORIZONTAL
   },
   shelterDivider: {
     height: 1,
-    backgroundColor: theme.colors.white[800]
+    backgroundColor: theme.colors.black[500]
   },
   divider: {
     height: 8,
@@ -331,12 +333,13 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    paddingVertical: 24,
+    paddingVertical: 32,
     gap: 10
   },
   flexWrap: {
     display: 'flex',
-    flexDirection: 'row'
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   descriptionText: {
     flex: 1,
@@ -347,8 +350,8 @@ const styles = StyleSheet.create({
     marginLeft: 20
   },
   buttonContainer: {
-    marginTop: 24,
-    marginBottom: 40,
+    marginTop: 32,
+    marginBottom: 48,
     paddingHorizontal: PADDING_HORIZONTAL
   },
   buttonTitleText: {
@@ -378,7 +381,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: PADDING_HORIZONTAL,
-    marginTop: 48,
+    marginTop: 56,
     marginBottom: 24
   },
   filterWrap: {

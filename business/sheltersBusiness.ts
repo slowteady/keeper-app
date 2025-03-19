@@ -15,7 +15,8 @@ export const transformShelterData = (data: ShelterValue) => {
     weekendOpenTime,
     veterinarianCount = 0,
     caretakerCount = 0,
-    name
+    name,
+    ...rest
   } = data;
 
   const formattedTime = formatOperatingTime({ weekdayOpenTime, weekdayCloseTime, weekendCloseTime, weekendOpenTime });
@@ -25,7 +26,8 @@ export const transformShelterData = (data: ShelterValue) => {
     time: formattedTime,
     person: formattedPerson,
     address,
-    name
+    name,
+    ...rest
   };
 };
 
