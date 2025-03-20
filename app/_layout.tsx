@@ -1,4 +1,3 @@
-import MenuHeader from '@/components/organisms/headers/MenuHeader';
 import { useReactQueryDevTools } from '@dev-plugins/react-query';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -15,8 +14,6 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-// TODO
-// [ ] Menu Stack -> Drawer로 전환
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -56,15 +53,7 @@ export default function RootLayout() {
         <BottomSheetModalProvider>
           <SafeAreaProvider>
             <StatusBar style="dark" />
-            <Stack>
-              <Stack.Screen
-                name="menu"
-                options={{
-                  header: () => <MenuHeader />,
-                  presentation: 'fullScreenModal'
-                }}
-              />
-            </Stack>
+            <Stack screenOptions={{ headerShown: false }} />
           </SafeAreaProvider>
         </BottomSheetModalProvider>
       </GestureHandlerRootView>

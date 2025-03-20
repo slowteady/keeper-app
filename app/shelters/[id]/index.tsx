@@ -1,4 +1,3 @@
-import DetailHeader from '@/components/organisms/headers/DetailHeader';
 import SheltersDetailTamplate from '@/components/templates/shelters/SheltersDetailTamplate';
 import { SHELTER_ABANDONMENTS_QUERY_KEY, SHELTER_QUERY_KEY } from '@/constants/queryKeys';
 import theme from '@/constants/theme';
@@ -6,7 +5,7 @@ import { useGetShelterAbandonmentsQuery, useGetShelterQuery } from '@/hooks/quer
 import useRefreshing from '@/hooks/useRefreshing';
 import { abandonmentsFilterValueAtom } from '@/states/abandonments';
 import { useQueryClient } from '@tanstack/react-query';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { createStore, Provider, useAtomValue } from 'jotai';
 import { useCallback, useMemo } from 'react';
 import { RefreshControl, StyleSheet, View } from 'react-native';
@@ -68,8 +67,6 @@ const Page = () => {
 
   return (
     <>
-      <Stack.Screen options={{ header: () => <DetailHeader /> }} />
-
       {shelterData && (
         <View style={styles.container}>
           <SheltersDetailTamplate

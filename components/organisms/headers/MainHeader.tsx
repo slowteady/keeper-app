@@ -2,17 +2,19 @@ import { LogoIcon } from '@/components/atoms/icons/LogoIcon';
 import { MenuIcon } from '@/components/atoms/icons/MenuIcon';
 import theme from '@/constants/theme';
 import { useLayout } from '@/hooks/useLayout';
+import { DrawerActions } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
-import { router } from 'expo-router';
+import { useNavigation } from 'expo-router';
 import { memo } from 'react';
 import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 const MainHeader = memo(() => {
+  const navigation = useNavigation();
   const { top } = useLayout();
 
   const handlePressMenu = async () => {
-    router.push('/menu');
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    navigation.dispatch(DrawerActions.openDrawer());
   };
 
   return (
