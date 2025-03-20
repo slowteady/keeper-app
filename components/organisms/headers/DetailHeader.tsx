@@ -2,11 +2,13 @@ import { ArrowLeftIcon } from '@/components/atoms/icons/ArrowIcon';
 import { HomeIcon } from '@/components/atoms/icons/HomeIcon';
 import theme from '@/constants/theme';
 import { useLayout } from '@/hooks/useLayout';
-import { router } from 'expo-router';
+import { StackActions } from '@react-navigation/native';
+import { router, useNavigationContainerRef } from 'expo-router';
 import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 const DetailHeader = () => {
-  const { top: headerTop } = useLayout();
+  const rootNavigation = useNavigationContainerRef();
+  const { top } = useLayout();
 
   const handlePressBack = () => {
     if (router.canGoBack()) {
@@ -16,11 +18,12 @@ const DetailHeader = () => {
     }
   };
   const handlePressHome = () => {
-    router.replace('/');
+    rootNavigation.dispatch(StackActions.popToTop());
+    // router.replace('/');
   };
 
   return (
-    <View style={[styles.container, { paddingTop: headerTop }]}>
+    <View style={[styles.container, { paddingTop: top }]}>
       <TouchableOpacity onPress={handlePressBack} activeOpacity={0.5}>
         <ArrowLeftIcon width={24} height={24} />
       </TouchableOpacity>

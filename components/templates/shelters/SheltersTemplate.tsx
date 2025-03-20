@@ -1,5 +1,6 @@
 import ScrollFloatingButton from '@/components/atoms/button/ScrollFloatingButton';
 import Searchbar from '@/components/molecules/input/Searchbar';
+import { Skeleton } from '@/components/molecules/placeholder/Skeleton';
 import LocationBottomSheet from '@/components/organisms/bottomSheet/LocationBottomSheet';
 import ShelterCard from '@/components/organisms/card/ShelterCard';
 import { ShelterMap } from '@/components/organisms/map/ShelterMap';
@@ -18,17 +19,18 @@ import { FlatList, ListRenderItemInfo, StyleSheet, Text, TouchableOpacity, View 
 const PADDING_HORIZONTAL = 20;
 interface SheltersTemplateProps {
   data: SheltersTemplateData;
-  camera?: Camera;
+  isLoading: boolean;
   onRefetch: (params: CameraParams) => void;
   permissionStatus: Location.LocationPermissionResponse | null;
   onInitMap: () => void;
+  camera?: Camera;
 }
 interface SheltersTemplateData {
   sheltersData?: ShelterValue[];
   shelterCountData?: ShelterCountValue[];
 }
 const SheltersTemplate = forwardRef<NaverMapViewRef, SheltersTemplateProps>((props, ref) => {
-  const { data, camera, permissionStatus, onRefetch, onInitMap } = props;
+  const { data, isLoading, camera, permissionStatus, onRefetch, onInitMap } = props;
   const [addresses, setAddresses] = useState<Address[]>();
   const [shelterValues, setShelterValues] = useState<ShelterValue[]>([]);
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
@@ -100,7 +102,6 @@ const SheltersTemplate = forwardRef<NaverMapViewRef, SheltersTemplateProps>((pro
             ref={ref}
           />
         }
-        ListEmptyComponent={<NoData onPress={handlePressLocation} />}
         onScroll={handleScroll}
         ref={flatListRef}
         decelerationRate="fast"
@@ -111,6 +112,19 @@ const SheltersTemplate = forwardRef<NaverMapViewRef, SheltersTemplateProps>((pro
         showsVerticalScrollIndicator={false}
         style={styles.container}
         contentContainerStyle={styles.contentContainer}
+        ListEmptyComponent={
+          !isLoading ? (
+            <>
+              {Array.from({ length: 8 }).map((_, idx) => (
+                <View key={idx} style={styles.skeletonContainer}>
+                  <Skeleton style={styles.skeleton} />
+                </View>
+              ))}
+            </>
+          ) : (
+            <NoData />
+          )
+        }
       />
       <ScrollFloatingButton visible={isButtonVisible} onPress={handlePress} />
       <LocationBottomSheet
@@ -187,16 +201,10 @@ const MapSection = forwardRef<NaverMapViewRef, MapSectionProps>((props, ref) => 
   );
 });
 
-interface NodataProps {
-  onPress: () => void;
-}
-const NoData = ({ onPress }: NodataProps) => {
+const NoData = () => {
   return (
     <View style={styles.noDataContainer}>
-      <Text style={styles.noDataText}>가까운 보호소를 찾지 못했어요.</Text>
-      <TouchableOpacity activeOpacity={0.8} style={styles.button} onPress={onPress}>
-        <Text style={styles.noDataButtonText}>위치설정</Text>
-      </TouchableOpacity>
+      <Text style={styles.noDataText}>가까운 곳에 보호소가 없습니다.</Text>
     </View>
   );
 };
@@ -239,21 +247,16 @@ const styles = StyleSheet.create({
     color: theme.colors.black[600]
   },
   noDataContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 44,
-    paddingVertical: 40,
+    paddingVertical: 34,
+    paddingHorizontal: 74,
     backgroundColor: theme.colors.white[900],
-    borderRadius: 8,
-    gap: 16
+    borderRadius: 8
   },
   noDataText: {
-    fontSize: 15,
-    lineHeight: 17,
-    color: theme.colors.black[900],
-    fontWeight: '500'
+    fontSize: 14,
+    fontWeight: '500',
+    lineHeight: 16,
+    color: theme.colors.black[500]
   },
   noDataButton: {
     paddingHorizontal: 16,
@@ -267,6 +270,14 @@ const styles = StyleSheet.create({
     lineHeight: 15,
     fontWeight: '600',
     color: theme.colors.black[700]
+  },
+  skeletonContainer: {
+    height: 80
+  },
+  skeleton: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 4
   }
 });
 

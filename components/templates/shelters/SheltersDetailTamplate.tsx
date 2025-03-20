@@ -48,7 +48,8 @@ interface ShelterDetailTemplateLoading {
   abandonments: boolean;
 }
 const PADDING_HORIZONTAL = 20;
-const IMAGE_WIDTH = Dimensions.get('screen').width / 2 - PADDING_HORIZONTAL;
+const CARD_GAP = 8;
+const IMAGE_WIDTH = (Dimensions.get('screen').width - 2 * PADDING_HORIZONTAL - CARD_GAP) / 2;
 const IMAGE_HEIGHT = IMAGE_WIDTH * 0.9;
 const SheltersDetailTamplate = ({
   shelterData,
@@ -113,7 +114,7 @@ const SheltersDetailTamplate = ({
             <AbandonmentsFilterSection number={abandonmentsData?.total} />
           </>
         }
-        ListEmptyComponent={<View style={{ paddingVertical: 100 }}></View>}
+        ListEmptyComponent={<Nodata />}
         ListFooterComponent={renderListFooter()}
         refreshControl={refreshControl}
       />
@@ -275,6 +276,14 @@ const MoreButtonSection = ({ onFetch, isLoading, page, total }: MoreButtonSectio
   );
 };
 
+const Nodata = () => {
+  return (
+    <View style={styles.noDataContainer}>
+      <Text style={styles.noDataText}>공고가 없습니다.</Text>
+    </View>
+  );
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -430,5 +439,18 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
     lineHeight: 15
+  },
+  noDataContainer: {
+    flex: 1,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 200
+  },
+  noDataText: {
+    fontSize: 20,
+    fontWeight: '500',
+    lineHeight: 22,
+    color: theme.colors.black[500]
   }
 });

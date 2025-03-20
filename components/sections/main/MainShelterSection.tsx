@@ -1,5 +1,6 @@
 import FullViewButton from '@/components/atoms/button/FullViewButton';
 import { DropDownArrowDownIcon, MenuArrowIcon } from '@/components/atoms/icons/ArrowIcon';
+import { Skeleton } from '@/components/molecules/placeholder/Skeleton';
 import MainShelterCard from '@/components/organisms/card/MainShelterCard';
 import { ShelterMap } from '@/components/organisms/map/ShelterMap';
 import { SHELTER_COUNT_QUERY_KEY } from '@/constants/queryKeys';
@@ -24,7 +25,7 @@ const MainShelterSection = () => {
   const scale = useSharedValue(1);
   const { name } = useRoute();
 
-  const { data: sheltersData } = useGetSheltersQuery(
+  const { data: sheltersData, isLoading } = useGetSheltersQuery(
     {
       latitude: camera?.latitude || 0,
       longitude: camera?.longitude || 0,
@@ -88,7 +89,6 @@ const MainShelterSection = () => {
   }));
 
   const hasLocationStatus = permissionStatus?.status === Location.PermissionStatus.GRANTED;
-  const hasData = sheltersData !== undefined && sheltersData.length > 0;
 
   return (
     <View style={styles.container}>
@@ -124,11 +124,9 @@ const MainShelterSection = () => {
             minZoom={10}
           />
         </View>
-        {hasData && (
-          <Animated.View style={[{ marginBottom: 20 }, animatedListStyle]}>
-            <ShelterCardList data={shelterData} />
-          </Animated.View>
-        )}
+        <Animated.View style={[{ marginBottom: 20 }, animatedListStyle]}>
+          <ShelterCardList data={shelterData} isLoading={isLoading} />
+        </Animated.View>
       </View>
     </View>
   );
@@ -136,7 +134,11 @@ const MainShelterSection = () => {
 
 export default MainShelterSection;
 
-const ShelterCardList = ({ data }: Record<'data', ShelterValue[]>) => {
+interface ShelterCardListProps {
+  data: ShelterValue[];
+  isLoading: boolean;
+}
+const ShelterCardList = ({ data, isLoading }: ShelterCardListProps) => {
   const handlePressCard = useCallback((id: number) => {
     router.push({ pathname: '/shelters/[id]', params: { id } });
   }, []);
@@ -159,7 +161,7 @@ const ShelterCardList = ({ data }: Record<'data', ShelterValue[]>) => {
 
   return (
     <FlatList
-      data={[]}
+      data={data}
       showsHorizontalScrollIndicator={false}
       decelerationRate="fast"
       horizontal={true}
@@ -171,7 +173,19 @@ const ShelterCardList = ({ data }: Record<'data', ShelterValue[]>) => {
       snapToInterval={270 + 16}
       ListFooterComponent={() => <FullViewButton onPress={handlePress} />}
       ListFooterComponentStyle={[styles.flex, { paddingHorizontal: 20 }]}
-      ListEmptyComponent={<Nodata />}
+      ListEmptyComponent={
+        isLoading ? (
+          <>
+            {Array.from({ length: 4 }).map((_, idx) => (
+              <View key={idx} style={styles.skeletonContainer}>
+                <Skeleton style={styles.skeleton} />
+              </View>
+            ))}
+          </>
+        ) : (
+          <Nodata />
+        )
+      }
       contentContainerStyle={{ gap: 16 }}
     />
   );
@@ -244,5 +258,14 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     lineHeight: 16,
     color: theme.colors.black[500]
+  },
+  skeletonContainer: {
+    width: 270,
+    height: 140
+  },
+  skeleton: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 4
   }
 });

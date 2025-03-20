@@ -10,8 +10,6 @@ import { StyleSheet, View } from 'react-native';
 
 /**
  * 공고 상세 페이지
- * TODO
- * [ ] 스켈레톤 처리
  */
 const Page = () => {
   const { id } = useLocalSearchParams<{ id: string }>();

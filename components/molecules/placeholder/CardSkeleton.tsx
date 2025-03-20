@@ -5,7 +5,7 @@ interface CardSkeletonProps {
   size?: CardSkeltonSize;
 }
 type CardSkeltonSize = 'small';
-const CardSkeleton = ({ size = 'small' }: CardSkeletonProps) => {
+export const CardSkeleton = ({ size = 'small' }: CardSkeletonProps) => {
   const { width, height } = getSize(size);
 
   return (
@@ -17,18 +17,11 @@ const CardSkeleton = ({ size = 'small' }: CardSkeletonProps) => {
         <Skeleton style={styles.skeleton} />
       </View>
       <View style={{ marginBottom: 20 }}>
-        <View style={styles.description}>
-          <Skeleton style={styles.skeleton} />
-        </View>
-        <View style={styles.description}>
-          <Skeleton style={styles.skeleton} />
-        </View>
-        <View style={styles.description}>
-          <Skeleton style={styles.skeleton} />
-        </View>
-        <View style={[styles.description]}>
-          <Skeleton style={styles.skeleton} />
-        </View>
+        {Array.from({ length: 4 }).map((_, idx) => (
+          <View key={idx} style={styles.description}>
+            <Skeleton style={styles.skeleton} />
+          </View>
+        ))}
       </View>
       <View style={[styles.description]}>
         <Skeleton style={styles.skeleton} />
@@ -36,8 +29,6 @@ const CardSkeleton = ({ size = 'small' }: CardSkeletonProps) => {
     </View>
   );
 };
-
-export default CardSkeleton;
 
 const getSize = (size: CardSkeltonSize) => {
   switch (size) {

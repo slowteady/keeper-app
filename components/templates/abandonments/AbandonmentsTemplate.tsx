@@ -3,7 +3,7 @@ import ScrollFloatingButton from '@/components/atoms/button/ScrollFloatingButton
 import ButtonGroup from '@/components/molecules/button/ButtonGroup';
 import Dropdown from '@/components/molecules/dropdown/Dropdown';
 import Searchbar from '@/components/molecules/input/Searchbar';
-import CardSkeleton from '@/components/molecules/placeholder/CardSkeleton';
+import { CardSkeleton } from '@/components/molecules/placeholder/CardSkeleton';
 import { BottomSheetMenuData } from '@/components/organisms/bottomSheet/BottomSheet';
 import { AnimalCard } from '@/components/organisms/card/AnimalCard';
 import { ABANDONMENTS_ANIMAL_TYPES, ABANDONMENTS_FILTERS } from '@/constants/config';
@@ -37,7 +37,7 @@ interface AbandonmentsTemplateProps {
 }
 const PADDING_HORIZONTAL = 20;
 const CARD_GAP = 8;
-const IMAGE_WIDTH = Dimensions.get('screen').width / 2 - PADDING_HORIZONTAL;
+const IMAGE_WIDTH = (Dimensions.get('screen').width - 2 * PADDING_HORIZONTAL - CARD_GAP) / 2;
 const IMAGE_HEIGHT = IMAGE_WIDTH * 0.9;
 const AbandonmentsTemplate = ({ data, onFetch, isLoading, refreshControl }: AbandonmentsTemplateProps) => {
   const filterValue = useAtomValue(abandonmentsFilterValueAtom);
@@ -84,20 +84,21 @@ const AbandonmentsTemplate = ({ data, onFetch, isLoading, refreshControl }: Aban
         keyExtractor={({ id }, idx) => `${id}-${idx}`}
         scrollEventThrottle={40}
         showsVerticalScrollIndicator={false}
-        columnWrapperStyle={{ gap: CARD_GAP, justifyContent: 'space-between', marginBottom: 40 }}
         refreshControl={refreshControl}
+        columnWrapperStyle={{ gap: CARD_GAP, marginBottom: 40, justifyContent: 'space-between' }}
+        contentContainerStyle={{ paddingHorizontal: PADDING_HORIZONTAL }}
         style={styles.container}
         ListHeaderComponent={<FilterSection />}
         ListFooterComponent={renderListFooter()}
         ListEmptyComponent={
           isLoading ? (
             <>
-              {Array.from({ length: 4 }).map((_, idx) => (
+              {Array.from({ length: 8 }).map((_, idx) => (
                 <CardSkeleton key={idx} />
               ))}
             </>
           ) : (
-            <NodataCard />
+            <Nodata />
           )
         }
       />
@@ -167,12 +168,9 @@ const MoreButtonSection = ({ onFetch, isLoading, page, total }: MoreButtonSectio
   );
 };
 
-const NodataCard = () => {
+const Nodata = () => {
   return (
     <View style={styles.noDataContainer}>
-      <View style={styles.noDataBox}>
-        <Text style={styles.noDataBoxText}>[No Data]</Text>
-      </View>
       <Text style={styles.noDataText}>공고가 없습니다.</Text>
     </View>
   );
@@ -181,7 +179,6 @@ const NodataCard = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: PADDING_HORIZONTAL,
     paddingVertical: 40,
     position: 'relative'
   },
@@ -231,29 +228,16 @@ const styles = StyleSheet.create({
     lineHeight: 15
   },
   noDataContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 20
-  },
-  noDataBox: {
-    width: IMAGE_WIDTH,
-    height: IMAGE_HEIGHT,
+    flex: 1,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: theme.colors.white[600],
-    borderRadius: 8
-  },
-  noDataBoxText: {
-    fontSize: 18,
-    lineHeight: 20,
-    fontWeight: '500',
-    color: theme.colors.black[500]
+    height: 300
   },
   noDataText: {
     fontSize: 20,
-    lineHeight: 22,
     fontWeight: '500',
-    color: theme.colors.black[900]
+    lineHeight: 22,
+    color: theme.colors.black[500]
   }
 });

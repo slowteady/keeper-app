@@ -3,7 +3,7 @@ import FullViewButton from '@/components/atoms/button/FullViewButton';
 import { MenuArrowIcon } from '@/components/atoms/icons/ArrowIcon';
 import ButtonGroup from '@/components/molecules/button/ButtonGroup';
 import Dropdown from '@/components/molecules/dropdown/Dropdown';
-import CardSkeleton from '@/components/molecules/placeholder/CardSkeleton';
+import { CardSkeleton } from '@/components/molecules/placeholder/CardSkeleton';
 import { BottomSheetMenuData } from '@/components/organisms/bottomSheet/BottomSheet';
 import { AnimalCard } from '@/components/organisms/card/AnimalCard';
 import { ABANDONMENTS_ANIMAL_TYPES, ABANDONMENTS_FILTERS } from '@/constants/config';

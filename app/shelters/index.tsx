@@ -13,8 +13,6 @@ import { StyleSheet, View } from 'react-native';
  * 보호소 목록 페이지
  * TODO
  * [ ] 보호소 검색 기능 구현
- * [ ] 보호소 목록 노데이터 처리
- * [ ] 보호소 목록 스켈레톤 처리
  * [ ] 주소 검색 검색결과 노데이터 처리
  */
 const Page = () => {
@@ -22,7 +20,7 @@ const Page = () => {
   const { camera, setCamera, distance, setDistance, initialLocation, mapRef, permissionStatus } = useMapInit();
   const { name } = useRoute();
 
-  const { data: sheltersData } = useGetSheltersQuery(
+  const { data: sheltersData, isLoading } = useGetSheltersQuery(
     {
       latitude: camera?.latitude || 0,
       longitude: camera?.longitude || 0,
@@ -81,6 +79,7 @@ const Page = () => {
         permissionStatus={permissionStatus}
         onInitMap={handleInitMap}
         ref={mapRef}
+        isLoading={isLoading}
       />
     </View>
   );
