@@ -142,7 +142,7 @@ const AbandonmentCardList = ({
         isLoading ? (
           <>
             {Array.from({ length: 4 }).map((_, idx) => (
-              <CardSkeleton key={idx} />
+              <CardSkeleton key={idx} width={IMAGE_WIDTH} height={IMAGE_HEIGHT} />
             ))}
           </>
         ) : (

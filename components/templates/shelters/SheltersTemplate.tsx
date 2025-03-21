@@ -7,6 +7,7 @@ import { ShelterMap } from '@/components/organisms/map/ShelterMap';
 import theme from '@/constants/theme';
 import { useGeocodeMutation } from '@/hooks/queries/useGeocode';
 import useScrollFloatingButton from '@/hooks/useScrollFloatingButton';
+import { GetShelterSearchParams } from '@/services/sheltersService';
 import { Address, CameraParams } from '@/types/map';
 import { ShelterCountValue, ShelterValue } from '@/types/scheme/shelters';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
@@ -14,23 +15,25 @@ import { Camera, NaverMapViewRef } from '@mj-studio/react-native-naver-map';
 import * as Location from 'expo-location';
 import { router } from 'expo-router';
 import { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useFormContext } from 'react-hook-form';
 import { FlatList, ListRenderItemInfo, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-const PADDING_HORIZONTAL = 20;
 interface SheltersTemplateProps {
   data: SheltersTemplateData;
   isLoading: boolean;
   onRefetch: (params: CameraParams) => void;
   permissionStatus: Location.LocationPermissionResponse | null;
   onInitMap: () => void;
+  onSubmitSearch: () => void;
   camera?: Camera;
 }
 interface SheltersTemplateData {
   sheltersData?: ShelterValue[];
   shelterCountData?: ShelterCountValue[];
 }
+const PADDING_HORIZONTAL = 20;
 const SheltersTemplate = forwardRef<NaverMapViewRef, SheltersTemplateProps>((props, ref) => {
-  const { data, isLoading, camera, permissionStatus, onRefetch, onInitMap } = props;
+  const { data, isLoading, camera, permissionStatus, onSubmitSearch, onRefetch, onInitMap } = props;
   const [addresses, setAddresses] = useState<Address[]>();
   const [shelterValues, setShelterValues] = useState<ShelterValue[]>([]);
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
@@ -99,6 +102,7 @@ const SheltersTemplate = forwardRef<NaverMapViewRef, SheltersTemplateProps>((pro
             onPressLocation={handlePressLocation}
             permissionStatus={permissionStatus}
             onRefetch={onRefetch}
+            onSubmitSearch={onSubmitSearch}
             ref={ref}
           />
         }
@@ -113,9 +117,9 @@ const SheltersTemplate = forwardRef<NaverMapViewRef, SheltersTemplateProps>((pro
         style={styles.container}
         contentContainerStyle={styles.contentContainer}
         ListEmptyComponent={
-          !isLoading ? (
+          isLoading ? (
             <>
-              {Array.from({ length: 8 }).map((_, idx) => (
+              {Array.from({ length: 4 }).map((_, idx) => (
                 <View key={idx} style={styles.skeletonContainer}>
                   <Skeleton style={styles.skeleton} />
                 </View>
@@ -144,15 +148,17 @@ export default SheltersTemplate;
 
 interface MapSectionProps {
   data: SheltersTemplateData;
-  camera?: Camera;
   permissionStatus: Location.LocationPermissionResponse | null;
   onInitMap: () => void;
   onChange: (data: ShelterValue) => void;
   onRefetch: (params: CameraParams) => void;
   onPressLocation: () => void;
+  onSubmitSearch: () => void;
+  camera?: Camera;
 }
 const MapSection = forwardRef<NaverMapViewRef, MapSectionProps>((props, ref) => {
-  const { data, camera, permissionStatus, onInitMap, onRefetch, onChange, onPressLocation } = props;
+  const { handleSubmit, setValue } = useFormContext<GetShelterSearchParams>();
+  const { data, camera, permissionStatus, onInitMap, onRefetch, onChange, onPressLocation, onSubmitSearch } = props;
   const [selectedMarkerId, setSelectedMarkerId] = useState<number>();
 
   const handleRefetch = useCallback(
@@ -167,6 +173,13 @@ const MapSection = forwardRef<NaverMapViewRef, MapSectionProps>((props, ref) => 
     setSelectedMarkerId(data.id);
     onChange(data);
   };
+  const handleSubmitSearch = useCallback(
+    (text: string) => {
+      setValue('search', text);
+      handleSubmit(onSubmitSearch)();
+    },
+    [handleSubmit, onSubmitSearch, setValue]
+  );
 
   const hasLocationStatus = permissionStatus?.status === Location.PermissionStatus.GRANTED;
 
@@ -178,7 +191,7 @@ const MapSection = forwardRef<NaverMapViewRef, MapSectionProps>((props, ref) => 
           <Text style={styles.buttonText}>위치설정</Text>
         </TouchableOpacity>
       </View>
-      <Searchbar onSubmit={() => null} ViewStyle={{ marginBottom: 24 }} />
+      <Searchbar onSubmit={handleSubmitSearch} ViewStyle={{ marginBottom: 24 }} />
 
       <ShelterMap.DistanceBox
         hasLocationStatus={hasLocationStatus}

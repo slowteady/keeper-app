@@ -1,26 +1,30 @@
 import SheltersTemplate from '@/components/templates/shelters/SheltersTemplate';
 import { SHELTER_COUNT_QUERY_KEY } from '@/constants/queryKeys';
 import theme from '@/constants/theme';
-import { useGetShelterCountQuery, useGetSheltersQuery } from '@/hooks/queries/useShelters';
+import { useGetShelterCountQuery, useGetShelterSearchMutation, useGetSheltersQuery } from '@/hooks/queries/useShelters';
 import { useMapInit } from '@/hooks/useMapInit';
+import { GetShelterSearchParams } from '@/services/sheltersService';
 import { CameraParams } from '@/types/map';
+import { ShelterValue } from '@/types/scheme/shelters';
 import { calcMapRadiusKm } from '@/utils/mapUtils';
 import { useRoute } from '@react-navigation/native';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
 
 /**
  * 보호소 목록 페이지
  * TODO
  * [ ] 보호소 검색 기능 구현
- * [ ] 주소 검색 검색결과 노데이터 처리
  */
 const Page = () => {
+  const methods = useForm<GetShelterSearchParams>({ defaultValues: { search: '' } });
   const [mapEnabled, setMapEnabled] = useState(false);
+  const [sheltersData, setSheltersData] = useState<ShelterValue[]>();
   const { camera, setCamera, distance, setDistance, initialLocation, mapRef, permissionStatus } = useMapInit();
   const { name } = useRoute();
 
-  const { data: sheltersData, isLoading } = useGetSheltersQuery(
+  const { data: sheltersFetchData, isLoading: sheltersLoading } = useGetSheltersQuery(
     {
       latitude: camera?.latitude || 0,
       longitude: camera?.longitude || 0,
@@ -36,6 +40,7 @@ const Page = () => {
       staleTime: 1000 * 60 * 60
     }
   );
+  const { mutate, isPending: searchPending } = useGetShelterSearchMutation();
   const { data: shelterCountData } = useGetShelterCountQuery(
     {
       latitude: initialLocation?.latitude || 0,
@@ -43,14 +48,15 @@ const Page = () => {
     },
     { queryKey: [SHELTER_COUNT_QUERY_KEY, name], enabled: !!initialLocation, staleTime: 0 }
   );
-  const data = useMemo(
-    () => ({
-      sheltersData,
-      shelterCountData
-    }),
-    [shelterCountData, sheltersData]
-  );
 
+  useEffect(() => {
+    const hasSheltersData = !!sheltersFetchData && sheltersFetchData.length > 0;
+    if (hasSheltersData) setSheltersData(sheltersFetchData);
+  }, [sheltersFetchData]);
+
+  const handleSubmit = () => {
+    //
+  };
   const handleRefetch = useCallback(
     (params: CameraParams) => {
       const { latitude, longitude, zoom, region } = params;
@@ -70,18 +76,29 @@ const Page = () => {
     setMapEnabled(true);
   };
 
+  const data = useMemo(
+    () => ({
+      sheltersData,
+      shelterCountData
+    }),
+    [shelterCountData, sheltersData]
+  );
+
   return (
-    <View style={styles.container}>
-      <SheltersTemplate
-        data={data}
-        camera={camera}
-        onRefetch={handleRefetch}
-        permissionStatus={permissionStatus}
-        onInitMap={handleInitMap}
-        ref={mapRef}
-        isLoading={isLoading}
-      />
-    </View>
+    <FormProvider {...methods}>
+      <View style={styles.container}>
+        <SheltersTemplate
+          data={data}
+          camera={camera}
+          onRefetch={handleRefetch}
+          onSubmitSearch={handleSubmit}
+          permissionStatus={permissionStatus}
+          onInitMap={handleInitMap}
+          ref={mapRef}
+          isLoading={sheltersLoading}
+        />
+      </View>
+    </FormProvider>
   );
 };
 

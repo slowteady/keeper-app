@@ -6,18 +6,19 @@ import {
   getShelterCounts,
   GetShelterCountsParams,
   getShelters,
+  getShelterSearch,
+  GetShelterSearchParams,
   GetSheltersParams
 } from '@/services/sheltersService';
 import { ApiResponse } from '@/types/common';
 import { AbandonmentData } from '@/types/scheme/abandonments';
 import { ShelterCountValue, ShelterValue } from '@/types/scheme/shelters';
-import { UseInfiniteQueryCustomOptions, UseQueryCustomOptions } from '@/types/utils';
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { UseInfiniteQueryCustomOptions, UseMutationCustomOptions, UseQueryCustomOptions } from '@/types/utils';
+import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
 
 /**
  * 보호소 전체 조회
  * @param queryOptions
- * @returns
  */
 export const useGetSheltersQuery = (
   params: GetSheltersParams,
@@ -26,6 +27,7 @@ export const useGetSheltersQuery = (
   return useQuery<ApiResponse<ShelterValue[]>, Error, ShelterValue[]>({
     queryKey: [SHELTER_QUERY_KEY, params],
     queryFn: () => getShelters(params),
+    throwOnError: true,
     select: (data) => data.data,
     ...queryOptions
   });
@@ -35,7 +37,6 @@ export const useGetSheltersQuery = (
  * 보호소 상세 조회
  * @param id
  * @param queryOptions
- * @returns
  */
 export const useGetShelterQuery = (
   id: number,
@@ -44,6 +45,7 @@ export const useGetShelterQuery = (
   return useQuery<ApiResponse<ShelterValue>, Error, ShelterValue>({
     queryKey: [SHELTER_QUERY_KEY, id],
     queryFn: () => getShelter(id),
+    throwOnError: true,
     select: (data) => data.data,
     ...queryOptions
   });
@@ -53,7 +55,6 @@ export const useGetShelterQuery = (
  * 주변 보호소 갯수 조회
  * @param params
  * @param queryOptions
- * @returns
  */
 export const useGetShelterCountQuery = (
   params: GetShelterCountsParams,
@@ -67,6 +68,12 @@ export const useGetShelterCountQuery = (
   });
 };
 
+/**
+ * 보호소의 공고 조회
+ * @param id
+ * @param params
+ * @param queryOptions
+ */
 export const useGetShelterAbandonmentsQuery = (
   id: number,
   params: GetShelterAbandonmentsParams,
@@ -74,6 +81,7 @@ export const useGetShelterAbandonmentsQuery = (
 ) => {
   return useInfiniteQuery({
     initialPageParam: 0,
+    throwOnError: true,
     queryKey: [SHELTER_ABANDONMENTS_QUERY_KEY, params],
     queryFn: ({ pageParam }) => getShelterAbandonments(id, { ...params, page: pageParam }),
     getNextPageParam: (lastPage) => {
@@ -86,5 +94,18 @@ export const useGetShelterAbandonmentsQuery = (
       return { ...lastPage, value: allData };
     },
     ...queryOptions
+  });
+};
+
+/**
+ * 보호소 검색
+ */
+export const useGetShelterSearchMutation = (
+  mutationOptions?: UseMutationCustomOptions<ApiResponse<ShelterValue[]>, Error, GetShelterSearchParams>
+) => {
+  return useMutation<ApiResponse<ShelterValue[]>, Error, GetShelterSearchParams>({
+    mutationFn: (params) => getShelterSearch(params),
+    throwOnError: true,
+    ...mutationOptions
   });
 };

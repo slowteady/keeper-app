@@ -18,6 +18,7 @@ export const useGetAbandonmentQuery = (
   return useQuery<ApiResponse<AbandonmentValue>, Error, AbandonmentValue>({
     queryKey: [ABANDONMENT_QUERY_KEY, id],
     queryFn: () => getAbandonment(id),
+    throwOnError: true,
     select: (data) => data.data,
     ...queryOptions
   });
@@ -36,6 +37,7 @@ export const useGetAbandonmentsQuery = (
   return useQuery<ApiResponse<AbandonmentData>, Error, AbandonmentValue[]>({
     queryKey: [ABANDONMENTS_QUERY_KEY, params],
     queryFn: () => getAbandonments(params),
+    throwOnError: true,
     select: (data) => data.data.value,
     ...queryOptions
   });
@@ -55,6 +57,7 @@ export const useGetInfiniteAbandonmentsQuery = (
     initialPageParam: 0,
     queryKey: [ABANDONMENTS_QUERY_KEY, params],
     queryFn: ({ pageParam }) => getAbandonments({ ...params, page: pageParam }),
+    throwOnError: true,
     getNextPageParam: (lastPage) => {
       return lastPage.data.has_next ? lastPage.data.page + 1 : undefined;
     },

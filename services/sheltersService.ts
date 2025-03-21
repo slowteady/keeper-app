@@ -19,6 +19,9 @@ export interface GetShelterAbandonmentsParams {
   page?: number;
   filter: AbandonmentsFilter;
 }
+export interface GetShelterSearchParams {
+  search: string;
+}
 /**
  * 보호소 전체 조회
  */
@@ -51,4 +54,12 @@ export const getShelterCounts = (params: GetShelterCountsParams): Promise<ApiRes
 export const getShelterAbandonments = (id: number, params: GetShelterAbandonmentsParams) => {
   const endpoint = `/shelters/${id}/abandonments`;
   return publicApi({ endpoint, params, options: { method: 'GET' } });
+};
+
+/**
+ * 보호소 검색
+ */
+export const getShelterSearch = (params: GetShelterSearchParams) => {
+  const endpoint = `/shelters/search`;
+  return publicApi({ endpoint, params });
 };

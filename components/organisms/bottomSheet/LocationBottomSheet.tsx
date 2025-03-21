@@ -87,7 +87,11 @@ const Header = ({ onSubmit }: HeaderProps) => {
 };
 
 const Nodata = () => {
-  return <Text>검색 결과가 없습니다.</Text>;
+  return (
+    <View style={styles.noDataContainer}>
+      <Text style={styles.noDataText}>검색 결과가 없습니다.</Text>
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
@@ -121,6 +125,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1
+  },
+  noDataContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 200
+  },
+  noDataText: {
+    fontSize: 14,
+    fontWeight: '400',
+    lineHeight: 16,
+    color: theme.colors.black[500]
   }
 });
 

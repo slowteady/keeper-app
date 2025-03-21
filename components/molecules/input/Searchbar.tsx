@@ -3,7 +3,17 @@ import { SearchIcon } from '@/components/atoms/icons/SearchIcon';
 import theme from '@/constants/theme';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { useCallback, useState } from 'react';
-import { StyleProp, StyleSheet, TextInput, TextInputProps, TouchableOpacity, View, ViewStyle } from 'react-native';
+import {
+  Keyboard,
+  StyleProp,
+  StyleSheet,
+  TextInput,
+  TextInputProps,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+  ViewStyle
+} from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 export interface SearchbarProps extends TextInputProps {
@@ -38,44 +48,46 @@ const Searchbar = ({ variant = 'default', onSubmit, ViewStyle, iconColor, style,
   }));
 
   return (
-    <View style={[styles.searchbar, ViewStyle]}>
-      {variant === 'default' ? (
-        <TextInput
-          placeholder="검색어를 입력하세요."
-          placeholderTextColor={theme.colors.black[500]}
-          keyboardType="default"
-          returnKeyType="search"
-          value={value}
-          onChangeText={handleChangeText}
-          onSubmitEditing={handleSubmit}
-          style={[styles.textInput, style]}
-          {...props}
-        />
-      ) : (
-        <BottomSheetTextInput
-          placeholder="검색어를 입력하세요."
-          placeholderTextColor={theme.colors.black[500]}
-          keyboardType="default"
-          returnKeyType="search"
-          value={value}
-          onChangeText={handleChangeText}
-          onSubmitEditing={handleSubmit}
-          style={[styles.textInput, style]}
-          {...props}
-        />
-      )}
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <View style={[styles.searchbar, ViewStyle]}>
+        {variant === 'default' ? (
+          <TextInput
+            placeholder="검색어를 입력하세요."
+            placeholderTextColor={theme.colors.black[500]}
+            keyboardType="default"
+            returnKeyType="search"
+            value={value}
+            onChangeText={handleChangeText}
+            onSubmitEditing={handleSubmit}
+            style={[styles.textInput, style]}
+            {...props}
+          />
+        ) : (
+          <BottomSheetTextInput
+            placeholder="검색어를 입력하세요."
+            placeholderTextColor={theme.colors.black[500]}
+            keyboardType="default"
+            returnKeyType="search"
+            value={value}
+            onChangeText={handleChangeText}
+            onSubmitEditing={handleSubmit}
+            style={[styles.textInput, style]}
+            {...props}
+          />
+        )}
 
-      <View style={styles.iconContainer}>
-        <Animated.View style={animatedCloseButtonStyle}>
-          <TouchableOpacity onPress={handlePressReset}>
-            <CloseIcon width={28} height={28} color={theme.colors.black[500]} />
+        <View style={styles.iconContainer}>
+          <Animated.View style={animatedCloseButtonStyle}>
+            <TouchableOpacity onPress={handlePressReset}>
+              <CloseIcon width={28} height={28} color={theme.colors.black[500]} />
+            </TouchableOpacity>
+          </Animated.View>
+          <TouchableOpacity onPress={handleSubmit} activeOpacity={0.5}>
+            <SearchIcon width={24} height={24} color={iconColor || theme.colors.black[700]} />
           </TouchableOpacity>
-        </Animated.View>
-        <TouchableOpacity onPress={handleSubmit} activeOpacity={0.5}>
-          <SearchIcon width={24} height={24} color={iconColor || theme.colors.black[700]} />
-        </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 };
 

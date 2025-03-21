@@ -4,8 +4,6 @@ import { StyleSheet, View } from 'react-native';
 
 /**
  * 메인화면
- * TODO
- * [ ] 에러 바운더리
  */
 const Page = () => {
   const store = createStore();

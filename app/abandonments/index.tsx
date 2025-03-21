@@ -11,8 +11,6 @@ import { RefreshControl, StyleSheet, View } from 'react-native';
 
 /**
  * 공고 목록 페이지
- * TODO
- * [ ] 공고 스켈레톤 처리
  */
 const Layout = () => {
   const store = createStore();

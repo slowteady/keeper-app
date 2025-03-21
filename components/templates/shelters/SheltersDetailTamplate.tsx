@@ -6,6 +6,7 @@ import { StethoscopeIcon } from '@/components/atoms/icons/StethoscopeIcon';
 import { TelIcon } from '@/components/atoms/icons/TelIcon';
 import { TimeIcon } from '@/components/atoms/icons/TimeIcon';
 import Dropdown from '@/components/molecules/dropdown/Dropdown';
+import { CardSkeleton } from '@/components/molecules/placeholder/CardSkeleton';
 import { BottomSheetMenuData } from '@/components/organisms/bottomSheet/BottomSheet';
 import { AnimalCard } from '@/components/organisms/card/AnimalCard';
 import { ShelterMap } from '@/components/organisms/map/ShelterMap';
@@ -107,6 +108,7 @@ const SheltersDetailTamplate = ({
         scrollEventThrottle={40}
         numColumns={2}
         initialNumToRender={16}
+        refreshControl={refreshControl}
         ListHeaderComponent={
           <>
             <MapSection shelterData={shelterData} />
@@ -114,9 +116,21 @@ const SheltersDetailTamplate = ({
             <AbandonmentsFilterSection number={abandonmentsData?.total} />
           </>
         }
-        ListEmptyComponent={<Nodata />}
         ListFooterComponent={renderListFooter()}
-        refreshControl={refreshControl}
+        ListEmptyComponent={
+          isLoading.abandonments ? (
+            <>
+              {Array.from({ length: 2 }).map((_, idx) => (
+                <View key={idx} style={styles.skeltonContainer}>
+                  <CardSkeleton width={IMAGE_WIDTH} height={IMAGE_HEIGHT} />
+                  <CardSkeleton width={IMAGE_WIDTH} height={IMAGE_HEIGHT} />
+                </View>
+              ))}
+            </>
+          ) : (
+            <Nodata />
+          )
+        }
       />
       <ScrollFloatingButton visible={isButtonVisible} onPress={handlePress} />
     </>
@@ -452,5 +466,11 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     lineHeight: 22,
     color: theme.colors.black[500]
+  },
+  skeltonContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: CARD_GAP,
+    marginHorizontal: PADDING_HORIZONTAL
   }
 });

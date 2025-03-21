@@ -2,14 +2,13 @@ import { StyleSheet, View } from 'react-native';
 import { Skeleton } from './Skeleton';
 
 interface CardSkeletonProps {
-  size?: CardSkeltonSize;
+  width: number;
+  height: number;
 }
-type CardSkeltonSize = 'small';
-export const CardSkeleton = ({ size = 'small' }: CardSkeletonProps) => {
-  const { width, height } = getSize(size);
 
+export const CardSkeleton = ({ width, height }: CardSkeletonProps) => {
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { width }]}>
       <View style={{ width, height, marginBottom: 20 }}>
         <Skeleton style={[styles.skeleton, { borderRadius: 8 }]} />
       </View>
@@ -28,14 +27,6 @@ export const CardSkeleton = ({ size = 'small' }: CardSkeletonProps) => {
       </View>
     </View>
   );
-};
-
-const getSize = (size: CardSkeltonSize) => {
-  switch (size) {
-    case 'small': {
-      return { width: 220, height: 170 };
-    }
-  }
 };
 
 const styles = StyleSheet.create({

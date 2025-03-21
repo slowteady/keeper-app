@@ -93,8 +93,11 @@ const AbandonmentsTemplate = ({ data, onFetch, isLoading, refreshControl }: Aban
         ListEmptyComponent={
           isLoading ? (
             <>
-              {Array.from({ length: 8 }).map((_, idx) => (
-                <CardSkeleton key={idx} />
+              {Array.from({ length: 4 }).map((_, idx) => (
+                <View key={idx} style={styles.skeltonContainer}>
+                  <CardSkeleton width={IMAGE_WIDTH} height={IMAGE_HEIGHT} />
+                  <CardSkeleton width={IMAGE_WIDTH} height={IMAGE_HEIGHT} />
+                </View>
               ))}
             </>
           ) : (
@@ -239,5 +242,10 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     lineHeight: 22,
     color: theme.colors.black[500]
+  },
+  skeltonContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: CARD_GAP
   }
 });
