@@ -33,7 +33,7 @@ export const AnimalCard = <T,>({ data, width, height, size = 'medium' }: AnimalC
     if (!isLoaded) {
       timeoutId = setTimeout(() => {
         setIsError(true);
-      }, 5000);
+      }, 10000);
     }
 
     return () => clearTimeout(timeoutId);
@@ -44,7 +44,7 @@ export const AnimalCard = <T,>({ data, width, height, size = 'medium' }: AnimalC
   return (
     <View style={{ width }}>
       <View style={{ width, height, marginBottom: 20 }}>
-        {!isLoaded && !isError && <Skeleton />}
+        {!isLoaded && !isError && <Skeleton style={styles.skeleton} />}
         {uri && !isError ? (
           <ExpoImage
             source={{ uri }}
@@ -195,5 +195,10 @@ const styles = StyleSheet.create({
     color: theme.colors.black[900],
     fontWeight: '400',
     marginRight: 6
+  },
+  skeleton: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 8
   }
 });

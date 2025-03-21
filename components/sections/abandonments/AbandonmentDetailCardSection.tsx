@@ -5,7 +5,7 @@ import { Skeleton } from '@/components/molecules/placeholder/Skeleton';
 import ImageViewer from '@/components/molecules/viewer/ImageViewer';
 import theme from '@/constants/theme';
 import { Image } from 'expo-image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface AbandonmentDetailCardSectionProps {
@@ -13,12 +13,25 @@ interface AbandonmentDetailCardSectionProps {
 }
 const AbandonmentDetailCardSection = ({ data }: AbandonmentDetailCardSectionProps) => {
   const [isLoad, setIsLoad] = useState(false);
+  const [isError, setIsError] = useState(false);
   const [openImgViewer, setOpenImgViewer] = useState(false);
   const { title, uri, description } = data;
 
   const handlePressImage = () => {
     setOpenImgViewer((prev) => !prev);
   };
+
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+
+    if (!isLoad) {
+      timeoutId = setTimeout(() => {
+        setIsError(true);
+      }, 10000);
+    }
+
+    return () => clearTimeout(timeoutId);
+  }, [uri, isLoad]);
 
   return (
     <>
@@ -29,8 +42,8 @@ const AbandonmentDetailCardSection = ({ data }: AbandonmentDetailCardSectionProp
       </View>
 
       <View style={styles.imageContainer}>
-        {!isLoad && <Skeleton style={styles.image} />}
-        {uri ? (
+        {!isLoad && !isError && <Skeleton style={styles.skeleton} />}
+        {uri && !isError ? (
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={handlePressImage}
@@ -125,5 +138,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 16,
     top: 16
+  },
+  skeleton: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 10
   }
 });
