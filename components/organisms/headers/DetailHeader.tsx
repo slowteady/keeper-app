@@ -19,7 +19,7 @@ const DetailHeader = () => {
   };
   const handlePressHome = () => {
     rootNavigation.dispatch(StackActions.popToTop());
-    // router.replace('/');
+    router.replace('/');
   };
 
   return (
