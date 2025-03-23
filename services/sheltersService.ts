@@ -21,6 +21,8 @@ export interface GetShelterAbandonmentsParams {
 }
 export interface GetShelterSearchParams {
   search: string;
+  userLatitude: number;
+  userLongitude: number;
 }
 /**
  * 보호소 전체 조회

@@ -55,7 +55,19 @@ const Page = () => {
   }, [sheltersFetchData]);
 
   const handleSubmit = () => {
-    //
+    const search = methods.getValues('search');
+    if (search) {
+      mutate(
+        { search, userLatitude: initialLocation?.latitude || 0, userLongitude: initialLocation?.longitude || 0 },
+        {
+          onSuccess: ({ data }) => {
+            setSheltersData(data);
+          }
+        }
+      );
+    } else {
+      setSheltersData(sheltersFetchData);
+    }
   };
   const handleRefetch = useCallback(
     (params: CameraParams) => {
@@ -84,6 +96,8 @@ const Page = () => {
     [shelterCountData, sheltersData]
   );
 
+  const isLoading = sheltersLoading || searchPending;
+
   return (
     <FormProvider {...methods}>
       <View style={styles.container}>
@@ -95,7 +109,7 @@ const Page = () => {
           permissionStatus={permissionStatus}
           onInitMap={handleInitMap}
           ref={mapRef}
-          isLoading={sheltersLoading}
+          isLoading={isLoading}
         />
       </View>
     </FormProvider>

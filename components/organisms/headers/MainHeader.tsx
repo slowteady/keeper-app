@@ -4,11 +4,14 @@ import theme from '@/constants/theme';
 import { useLayout } from '@/hooks/useLayout';
 import { DrawerActions } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
-import { useNavigation } from 'expo-router';
+import { router, useNavigation } from 'expo-router';
 import { memo } from 'react';
-import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Platform, Pressable, StyleSheet, TouchableOpacity, View } from 'react-native';
 
-const MainHeader = memo(() => {
+interface MainHeaderProps {
+  useDrawer?: boolean;
+}
+const MainHeader = memo(({ useDrawer = true }: MainHeaderProps) => {
   const navigation = useNavigation();
   const { top } = useLayout();
 
@@ -16,16 +19,24 @@ const MainHeader = memo(() => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     navigation.dispatch(DrawerActions.openDrawer());
   };
+  const handlePress = () => {
+    router.replace('/');
+  };
 
   return (
     <View style={styles.container}>
       <View style={[styles.wrap, { paddingTop: top }]}>
-        <LogoIcon color={theme.colors.black[900]} />
-        <View style={styles.rightContainer}>
-          <TouchableOpacity onPress={handlePressMenu} activeOpacity={0.5}>
-            <MenuIcon />
-          </TouchableOpacity>
-        </View>
+        <Pressable onPress={handlePress}>
+          <LogoIcon color={theme.colors.black[900]} />
+        </Pressable>
+
+        {useDrawer && (
+          <View style={styles.rightContainer}>
+            <TouchableOpacity onPress={handlePressMenu} activeOpacity={0.5}>
+              <MenuIcon />
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
     </View>
   );

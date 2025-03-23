@@ -1,4 +1,4 @@
-import SheltersDetailTamplate from '@/components/templates/shelters/SheltersDetailTamplate';
+import SheltersDetailTemplate from '@/components/templates/shelters/SheltersDetailTemplate';
 import { SHELTER_ABANDONMENTS_QUERY_KEY, SHELTER_QUERY_KEY } from '@/constants/queryKeys';
 import theme from '@/constants/theme';
 import { useGetShelterAbandonmentsQuery, useGetShelterQuery } from '@/hooks/queries/useShelters';
@@ -65,7 +65,7 @@ const Page = () => {
     <>
       {shelterData && (
         <View style={styles.container}>
-          <SheltersDetailTamplate
+          <SheltersDetailTemplate
             shelterData={shelterData}
             abandonmentsData={abandonmentsData}
             isLoading={isLoading}

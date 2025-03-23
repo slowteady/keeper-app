@@ -5,7 +5,7 @@ export const useLayout = () => {
   const insetsTop = useSafeAreaInsets().top;
   const insetsBottom = useSafeAreaInsets().bottom;
 
-  let top;
+  let top = insetsTop;
   let bottom = insetsBottom;
 
   if (Platform.OS === 'ios') {

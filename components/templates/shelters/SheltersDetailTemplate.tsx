@@ -52,7 +52,7 @@ const PADDING_HORIZONTAL = 20;
 const CARD_GAP = 8;
 const IMAGE_WIDTH = (Dimensions.get('screen').width - 2 * PADDING_HORIZONTAL - CARD_GAP) / 2;
 const IMAGE_HEIGHT = IMAGE_WIDTH * 0.9;
-const SheltersDetailTamplate = ({
+const SheltersDetailTemplate = ({
   shelterData,
   abandonmentsData,
   isLoading,
@@ -137,7 +137,7 @@ const SheltersDetailTamplate = ({
   );
 };
 
-export default SheltersDetailTamplate;
+export default SheltersDetailTemplate;
 
 interface MapSectionProps {
   shelterData: ShelterValue;
@@ -189,9 +189,8 @@ const MapSection = ({ shelterData }: MapSectionProps) => {
 
       <ShelterDescription data={shelterData} />
       <View style={styles.buttonContainer}>
-        <Text style={styles.buttonTitleText}>보호소에 문의하기</Text>
         <TouchableOpacity style={styles.button} activeOpacity={0.5} onPress={handlePress}>
-          <Text style={styles.buttonText}>{tel}</Text>
+          <Text style={styles.buttonText}>보호소에 문의하기</Text>
         </TouchableOpacity>
       </View>
 
@@ -236,7 +235,6 @@ const ShelterDescription = ({ data }: ShelterDescriptionProps) => {
           </View>
         )}
       </View>
-      <View style={styles.shelterDivider} />
     </View>
   );
 };
@@ -356,7 +354,8 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    paddingVertical: 32,
+    paddingTop: 32,
+    paddingBottom: 40,
     gap: 10
   },
   flexWrap: {
@@ -373,7 +372,6 @@ const styles = StyleSheet.create({
     marginLeft: 20
   },
   buttonContainer: {
-    marginTop: 32,
     marginBottom: 48,
     paddingHorizontal: PADDING_HORIZONTAL
   },

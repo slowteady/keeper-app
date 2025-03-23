@@ -191,7 +191,11 @@ const MapSection = forwardRef<NaverMapViewRef, MapSectionProps>((props, ref) => 
           <Text style={styles.buttonText}>위치설정</Text>
         </TouchableOpacity>
       </View>
-      <Searchbar onSubmit={handleSubmitSearch} ViewStyle={{ marginBottom: 24 }} />
+      <Searchbar
+        onSubmit={handleSubmitSearch}
+        placeholder="보호소명 또는 주소로 검색"
+        ViewStyle={{ marginBottom: 24 }}
+      />
 
       <ShelterMap.DistanceBox
         hasLocationStatus={hasLocationStatus}
