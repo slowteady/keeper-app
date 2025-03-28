@@ -148,7 +148,11 @@ const FilterSection = () => {
       <View style={styles.buttonGroupWrap}>
         <ButtonGroup data={ABANDONMENTS_ANIMAL_TYPES} id={abandonmentsConfig.type} onChange={handleChangeType} />
       </View>
-      <Searchbar onSubmit={handleSubmit} ViewStyle={{ marginBottom: 32 }} />
+      <Searchbar
+        onSubmit={handleSubmit}
+        placeholder="품종 또는 지역을 입력해주세요."
+        ViewStyle={{ marginBottom: 32 }}
+      />
     </>
   );
 };

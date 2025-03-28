@@ -2,7 +2,10 @@ import { LogoEmblem } from '@/components/atoms/icons/LogoIcon';
 import theme from '@/constants/theme';
 import { StyleSheet, Text, View, ViewStyle } from 'react-native';
 
-const NoImage = ({ style }: Record<string, ViewStyle>) => {
+export interface NoImageProps {
+  style?: ViewStyle;
+}
+const NoImage = ({ style }: NoImageProps) => {
   return (
     <View style={[styles.image, styles.flex, { backgroundColor: theme.colors.background.default }, style]}>
       <Text style={styles.noImageText}>No Image</Text>

@@ -17,7 +17,7 @@ export const Skeleton = ({ style }: SkeletonProps) => {
   const animatedValue = useSharedValue(0);
 
   const animatedStyle = useAnimatedStyle(() => {
-    const opacity = interpolate(animatedValue.value, [0, 0.5, 1], [0.4, 0.7, 1]);
+    const opacity = interpolate(animatedValue.value, [0, 1], [0.2, 1]);
     return { opacity };
   });
 
@@ -31,6 +31,6 @@ export const Skeleton = ({ style }: SkeletonProps) => {
 const styles = StyleSheet.create({
   container: {
     overflow: 'hidden',
-    backgroundColor: theme.colors.black[500]
+    backgroundColor: theme.colors.white[700]
   }
 });

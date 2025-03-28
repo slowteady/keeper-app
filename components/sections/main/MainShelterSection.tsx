@@ -14,7 +14,7 @@ import { useRoute } from '@react-navigation/native';
 import * as Location from 'expo-location';
 import { router } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
-import { FlatList, ListRenderItemInfo, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, FlatList, ListRenderItemInfo, Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 const MainShelterSection = () => {
@@ -248,8 +248,11 @@ const styles = StyleSheet.create({
     marginBottom: 16
   },
   noDataContainer: {
-    paddingVertical: 34,
-    paddingHorizontal: 74,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: Dimensions.get('screen').width - 40,
+    height: 144,
     backgroundColor: theme.colors.white[900],
     borderRadius: 8
   },

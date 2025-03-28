@@ -193,7 +193,7 @@ const MapSection = forwardRef<NaverMapViewRef, MapSectionProps>((props, ref) => 
       </View>
       <Searchbar
         onSubmit={handleSubmitSearch}
-        placeholder="보호소명 또는 주소로 검색"
+        placeholder="보호소명 또는 주소로 검색해주세요."
         ViewStyle={{ marginBottom: 24 }}
       />
 

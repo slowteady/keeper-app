@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: '#D9D9D9',
     width: '100%',
-    height: Dimensions.get('screen').width * 1.2,
+    height: Dimensions.get('screen').width * 1.1,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center'

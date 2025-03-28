@@ -76,7 +76,7 @@ const Header = ({ onSubmit }: HeaderProps) => {
       <Searchbar
         variant="bottomsheet"
         onSubmit={onSubmit}
-        placeholder="예)공원로 322"
+        placeholder="예)강남구"
         onFocus={handleFocus}
         onBlur={handleBlur}
         ViewStyle={[styles.searchbar, searchbarStyle]}
@@ -116,8 +116,8 @@ const styles = StyleSheet.create({
     borderBottomColor: theme.colors.white[800]
   },
   listText: {
-    fontSize: 18,
-    lineHeight: 20,
+    fontSize: 16,
+    lineHeight: 18,
     color: theme.colors.black[800]
   },
   indicatorContainer: {
@@ -133,9 +133,9 @@ const styles = StyleSheet.create({
     height: 200
   },
   noDataText: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '400',
-    lineHeight: 16,
+    lineHeight: 17,
     color: theme.colors.black[500]
   }
 });

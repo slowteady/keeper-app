@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     color: theme.colors.black[800],
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '500',
     lineHeight: 17
   },

@@ -1,4 +1,4 @@
-import NoImage from '@/components/molecules/placeholder/NoImage';
+import NoImage, { NoImageProps } from '@/components/molecules/placeholder/NoImage';
 import { Skeleton } from '@/components/molecules/placeholder/Skeleton';
 import theme from '@/constants/theme';
 import { Image as ExpoImage } from 'expo-image';
@@ -12,7 +12,7 @@ export interface AnimalCardData<T> {
   description: { label: string; value: string }[];
   chips?: ({ sort: number } & BasicCardChipsValue<T>)[];
 }
-interface AnimalCardProps<T> {
+interface AnimalCardProps<T> extends NoImageProps {
   data: AnimalCardData<T>;
   width: number;
   height: number;
@@ -20,7 +20,7 @@ interface AnimalCardProps<T> {
 }
 type AnimalCardSize = 'small' | 'medium';
 
-export const AnimalCard = <T,>({ data, width, height, size = 'medium' }: AnimalCardProps<T>) => {
+export const AnimalCard = <T,>({ data, width, height, size = 'medium', style }: AnimalCardProps<T>) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isError, setIsError] = useState(false);
 
@@ -53,7 +53,7 @@ export const AnimalCard = <T,>({ data, width, height, size = 'medium' }: AnimalC
             style={styles.image}
           />
         ) : (
-          <NoImage />
+          <NoImage style={style} />
         )}
       </View>
       <Text numberOfLines={1} ellipsizeMode="tail" style={[styles.title, { ...titleStyle }]}>

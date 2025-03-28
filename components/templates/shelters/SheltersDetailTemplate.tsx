@@ -71,7 +71,13 @@ const SheltersDetailTemplate = ({
     ({ item }: ListRenderItemInfo<TransformedAbandonments>) => {
       return (
         <Pressable onPress={() => handlePressCard(item.id)}>
-          <AnimalCard data={item} width={IMAGE_WIDTH} height={IMAGE_HEIGHT} size="small" />
+          <AnimalCard
+            data={item}
+            width={IMAGE_WIDTH}
+            height={IMAGE_HEIGHT}
+            size="small"
+            style={{ backgroundColor: theme.colors.white[900] }}
+          />
         </Pressable>
       );
     },
@@ -460,9 +466,9 @@ const styles = StyleSheet.create({
     height: 200
   },
   noDataText: {
-    fontSize: 20,
+    fontSize: 17,
     fontWeight: '500',
-    lineHeight: 22,
+    lineHeight: 19,
     color: theme.colors.black[500]
   },
   skeltonContainer: {
