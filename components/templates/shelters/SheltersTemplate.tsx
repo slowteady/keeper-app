@@ -16,7 +16,7 @@ import * as Location from 'expo-location';
 import { router } from 'expo-router';
 import { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { FlatList, ListRenderItemInfo, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, FlatList, ListRenderItemInfo, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface SheltersTemplateProps {
   data: SheltersTemplateData;
@@ -264,8 +264,10 @@ const styles = StyleSheet.create({
     color: theme.colors.black[600]
   },
   noDataContainer: {
-    paddingVertical: 34,
-    paddingHorizontal: 74,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: Dimensions.get('screen').width - 40,
     backgroundColor: theme.colors.white[900],
     borderRadius: 8
   },

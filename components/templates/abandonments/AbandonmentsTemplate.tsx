@@ -53,7 +53,13 @@ const AbandonmentsTemplate = ({ data, onFetch, isLoading, refreshControl }: Aban
     ({ item }: ListRenderItemInfo<TransformedAbandonments>) => {
       return (
         <Pressable onPress={() => handlePressCard(item.id)}>
-          <AnimalCard data={item} width={IMAGE_WIDTH} height={IMAGE_HEIGHT} size="small" />
+          <AnimalCard
+            data={item}
+            width={IMAGE_WIDTH}
+            height={IMAGE_HEIGHT}
+            size="small"
+            style={{ backgroundColor: theme.colors.white[900] }}
+          />
         </Pressable>
       );
     },
