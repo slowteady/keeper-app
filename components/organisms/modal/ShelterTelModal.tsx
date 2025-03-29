@@ -1,5 +1,7 @@
+import * as Clipboard from 'expo-clipboard';
+import * as Linking from 'expo-linking';
 import { useCallback } from 'react';
-import { Linking } from 'react-native';
+import { Alert, Platform } from 'react-native';
 import { BasicModal } from './BasicModal';
 
 interface ShelterTelModalProps {
@@ -12,10 +14,38 @@ interface ShelterTelModalProps {
 const ShelterTelModal = ({ open, tel, onClose, name }: ShelterTelModalProps) => {
   const person = name || '담당자';
 
-  const handlePressContact = useCallback(() => {
-    const sanitizedNumber = tel.replace(/-/g, '');
-    Linking.openURL(`tel:${sanitizedNumber}`);
-  }, [tel]);
+  const handleCopy = useCallback(
+    async (tel: string) => {
+      onClose();
+      await Clipboard.setStringAsync(tel);
+      Alert.alert('', '전화번호를 복사했습니다.', [{ text: '확인' }]);
+    },
+    [onClose]
+  );
+
+  const handlePressContact = useCallback(async () => {
+    const sanitizedNumber = tel.replace(/[^0-9]/g, '');
+    const telLink = `tel:${sanitizedNumber}`;
+
+    try {
+      if (Platform.OS === 'android') {
+        await Linking.openURL(telLink).catch(async () => {
+          await handleCopy(sanitizedNumber);
+        });
+        onClose();
+      } else {
+        const supported = await Linking.canOpenURL(telLink);
+        if (supported) {
+          await Linking.openURL(telLink);
+          onClose();
+        } else {
+          await handleCopy(sanitizedNumber);
+        }
+      }
+    } catch {
+      await handleCopy(sanitizedNumber);
+    }
+  }, [handleCopy, onClose, tel]);
 
   return (
     <BasicModal open={open} onPressBackdrop={onClose} containerStyle={{ paddingTop: 32, paddingBottom: 16 }}>

@@ -15,6 +15,7 @@
       },
       "bundleIdentifier": "com.keeper.love",
       "infoPlist": {
+        "LSApplicationQueriesSchemes": ["tel"],
         "ITSAppUsesNonExemptEncryption": false
       }
     },
