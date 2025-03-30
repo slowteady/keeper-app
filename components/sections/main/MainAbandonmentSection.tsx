@@ -1,6 +1,6 @@
 import { TransformedAbandonments, transformAbandonments } from '@/business/abandonmentsBusiness';
 import FullViewButton from '@/components/atoms/button/FullViewButton';
-import { MenuArrowIcon } from '@/components/atoms/icons/ArrowIcon';
+import { RightArrow } from '@/components/atoms/icons/solid';
 import ButtonGroup from '@/components/molecules/button/ButtonGroup';
 import Dropdown from '@/components/molecules/dropdown/Dropdown';
 import { CardSkeleton } from '@/components/molecules/placeholder/CardSkeleton';
@@ -63,7 +63,7 @@ const MainAbandonmentSection = () => {
       <View style={styles.header}>
         <Pressable onPress={handlePressTitle} style={styles.titleWrap}>
           <Text style={styles.title}>전체공고</Text>
-          <MenuArrowIcon strokeWidth={2} />
+          <RightArrow width={11} height={18} color="#000" />
         </Pressable>
         <View style={{ marginTop: 12 }}>
           <Dropdown

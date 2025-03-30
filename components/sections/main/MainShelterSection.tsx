@@ -1,5 +1,6 @@
 import FullViewButton from '@/components/atoms/button/FullViewButton';
-import { DropDownArrowDownIcon, MenuArrowIcon } from '@/components/atoms/icons/ArrowIcon';
+import { DownArrow } from '@/components/atoms/icons/mini';
+import { RightArrow } from '@/components/atoms/icons/solid';
 import { Skeleton } from '@/components/molecules/placeholder/Skeleton';
 import MainShelterCard from '@/components/organisms/card/MainShelterCard';
 import { ShelterMap } from '@/components/organisms/map/ShelterMap';
@@ -95,12 +96,12 @@ const MainShelterSection = () => {
       <View style={styles.headerContainer}>
         <Pressable onPress={handlePressTitle} style={styles.titleWrap}>
           <Text style={styles.title}>보호소 찾기</Text>
-          <MenuArrowIcon strokeWidth={2} />
+          <RightArrow width={11} height={18} color="#000" />
         </Pressable>
 
         <Pressable style={styles.flex} onPress={handlePressTitle}>
           <Text style={styles.label}>전체보기</Text>
-          <DropDownArrowDownIcon color={theme.colors.black[500]} transform={[{ rotate: '-90deg' }]} />
+          <DownArrow width={10} height={6} color={theme.colors.black[500]} transform={[{ rotate: '-90deg' }]} />
         </Pressable>
       </View>
 

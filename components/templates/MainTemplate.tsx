@@ -7,7 +7,7 @@ import Constants from 'expo-constants';
 import { useCallback, useMemo } from 'react';
 import { FlatList, Linking, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
 import ScrollFloatingButton from '../atoms/button/ScrollFloatingButton';
-import { LogoIcon } from '../atoms/icons/LogoIcon';
+import { Logo } from '../atoms/icons/outline';
 import MainAbandonmentSection from '../sections/main/MainAbandonmentSection';
 import MainBannerSection from '../sections/main/MainBannerSection';
 import MainShelterSection from '../sections/main/MainShelterSection';
@@ -64,7 +64,7 @@ const Footer = () => {
 
   return (
     <View style={styles.footerContainer}>
-      <LogoIcon color={theme.colors.black[900]} />
+      <Logo width={96} height={30} color={theme.colors.black[900]} />
       <View style={styles.menuContainer}>
         <Pressable onPress={handleClickContact}>
           <Text style={styles.footerMenu}>contact us</Text>

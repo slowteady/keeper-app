@@ -1,4 +1,4 @@
-import { ArrowLeftIcon, ArrowRightIcon } from '@/components/atoms/icons/ArrowIcon';
+import { LeftLineArrow, RightLineArrow } from '@/components/atoms/icons/mini';
 import theme from '@/constants/theme';
 import { Image } from 'expo-image';
 import { forwardRef } from 'react';
@@ -43,11 +43,11 @@ const Controller = ({ currentIndex, max, onPress }: BasicCarouselControllerProps
   return (
     <View style={styles.controllerContainer}>
       <Pressable onPress={() => handlePress('prev')}>
-        <ArrowLeftIcon width={11} height={11} />
+        <LeftLineArrow width={11} height={11} />
       </Pressable>
       <Text style={styles.text}>{text}</Text>
       <Pressable onPress={() => handlePress('next')}>
-        <ArrowRightIcon width={11} height={11} />
+        <RightLineArrow width={11} height={11} />
       </Pressable>
     </View>
   );

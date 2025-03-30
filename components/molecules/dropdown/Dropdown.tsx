@@ -1,4 +1,4 @@
-import { DropDownArrowDownIcon } from '@/components/atoms/icons/ArrowIcon';
+import { DownArrow } from '@/components/atoms/icons/mini';
 import { BottomSheet, BottomSheetMenuData } from '@/components/organisms/bottomSheet/BottomSheet';
 import theme from '@/constants/theme';
 import { BottomSheetModal, BottomSheetModalProps } from '@gorhom/bottom-sheet';
@@ -32,7 +32,7 @@ const Dropdown = <T,>({ data, value, onChange, snapPoints, ...props }: DropdownP
     <>
       <TouchableOpacity activeOpacity={0.5} style={styles.container} onPress={handlePress} {...props}>
         <Text style={styles.label}>{matchedValue?.name}</Text>
-        <DropDownArrowDownIcon color={theme.colors.black[500]} />
+        <DownArrow width={10} height={6} color={theme.colors.black[500]} />
       </TouchableOpacity>
 
       <BottomSheet ref={bottomSheetModalRef} snapPoints={snapPoints} onAnimate={handleAnimate}>

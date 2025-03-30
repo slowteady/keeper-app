@@ -1,5 +1,4 @@
-import { LogoIcon } from '@/components/atoms/icons/LogoIcon';
-import { MenuIcon } from '@/components/atoms/icons/MenuIcon';
+import { Logo, Menu } from '@/components/atoms/icons/outline';
 import theme from '@/constants/theme';
 import { useLayout } from '@/hooks/useLayout';
 import { DrawerActions } from '@react-navigation/native';
@@ -27,13 +26,13 @@ const MainHeader = memo(({ useDrawer = true }: MainHeaderProps) => {
     <View style={styles.container}>
       <View style={[styles.wrap, { paddingTop: top }]}>
         <Pressable onPress={handlePress}>
-          <LogoIcon color={theme.colors.black[900]} />
+          <Logo width={96} height={30} color={theme.colors.black[900]} />
         </Pressable>
 
         {useDrawer && (
           <View style={styles.rightContainer}>
             <TouchableOpacity onPress={handlePressMenu} activeOpacity={0.5}>
-              <MenuIcon />
+              <Menu width={24} height={24} color={theme.colors.black[900]} />
             </TouchableOpacity>
           </View>
         )}
