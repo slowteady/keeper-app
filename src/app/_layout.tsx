@@ -66,8 +66,8 @@ const enableMocking = async () => {
     return;
   }
 
-  await import('../src/mocks/msw.polyfills');
-  const { server } = await import('../src/mocks/server');
+  await import('../mocks/msw.polyfills');
+  const { server } = await import('../mocks/server');
   server.listen({ onUnhandledRequest: 'bypass' });
 
   console.log('[MSW] Mock server started');
