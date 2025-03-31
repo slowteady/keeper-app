@@ -1,6 +1,7 @@
+import Button from '@/components/atoms/button/Button';
 import { Kakao } from '@/components/atoms/icons/etc';
 import theme from '@/constants/theme';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 const Page = () => {
   return (
@@ -11,19 +12,19 @@ const Page = () => {
       </View>
 
       <View style={styles.cFlex}>
-        <TouchableOpacity style={[styles.button, { backgroundColor: '#FEE500' }]} activeOpacity={0.6}>
+        <Button style={[styles.button, { backgroundColor: '#FEE500' }]}>
           <Kakao width={24} height={24} />
           <Text style={[styles.buttonText]}>Login with Kakao</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.button, { backgroundColor: '#03C75A' }]} activeOpacity={0.6}>
+        </Button>
+        <Button style={[styles.button, { backgroundColor: '#03C75A' }]}>
           <Text style={[styles.buttonText, { color: theme.colors.white[900] }]}>네이버로 시작하기</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.button, { backgroundColor: '#FFFFFF' }]} activeOpacity={0.6}>
+        </Button>
+        <Button style={[styles.button, { backgroundColor: '#FFFFFF' }]}>
           <Text style={[styles.buttonText, { color: theme.colors.black[900], opacity: 0.54 }]}>구글로 시작하기</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.button, { backgroundColor: '#000000' }]} activeOpacity={0.6}>
+        </Button>
+        <Button style={[styles.button, { backgroundColor: '#000000' }]}>
           <Text style={[styles.buttonText, { color: theme.colors.white[900] }]}>애플로 시작하기</Text>
-        </TouchableOpacity>
+        </Button>
       </View>
     </View>
   );

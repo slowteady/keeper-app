@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
-import { Platform, StyleSheet, TouchableOpacity } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { ScrollButton } from '../icons/etc';
+import Button from './Button';
 
 interface ScrollFloatingButtonProps {
   visible: boolean;
@@ -22,9 +23,9 @@ const ScrollFloatingButton = ({ onPress, visible }: ScrollFloatingButtonProps) =
 
   return (
     <Animated.View style={[styles.button, animatedStyle]}>
-      <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
+      <Button onPress={onPress}>
         <ScrollButton width={64} height={64} />
-      </TouchableOpacity>
+      </Button>
     </Animated.View>
   );
 };

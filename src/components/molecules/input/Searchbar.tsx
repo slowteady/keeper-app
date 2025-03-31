@@ -1,3 +1,4 @@
+import Button from '@/components/atoms/button/Button';
 import { Close } from '@/components/atoms/icons/outline';
 import { Search } from '@/components/atoms/icons/solid';
 import theme from '@/constants/theme';
@@ -9,7 +10,6 @@ import {
   StyleSheet,
   TextInput,
   TextInputProps,
-  TouchableOpacity,
   TouchableWithoutFeedback,
   View,
   ViewStyle
@@ -78,13 +78,13 @@ const Searchbar = ({ variant = 'default', onSubmit, ViewStyle, iconColor, style,
 
         <View style={styles.iconContainer}>
           <Animated.View style={animatedCloseButtonStyle}>
-            <TouchableOpacity onPress={handlePressReset}>
+            <Button onPress={handlePressReset}>
               <Close width={24} height={24} color={theme.colors.black[500]} />
-            </TouchableOpacity>
+            </Button>
           </Animated.View>
-          <TouchableOpacity onPress={handleSubmit} activeOpacity={0.5}>
+          <Button onPress={handleSubmit}>
             <Search width={24} height={24} color={iconColor || theme.colors.black[700]} />
-          </TouchableOpacity>
+          </Button>
         </View>
       </View>
     </TouchableWithoutFeedback>

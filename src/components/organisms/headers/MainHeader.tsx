@@ -1,3 +1,4 @@
+import Button from '@/components/atoms/button/Button';
 import { Logo, Menu } from '@/components/atoms/icons/outline';
 import theme from '@/constants/theme';
 import { useLayout } from '@/hooks/useLayout';
@@ -5,7 +6,7 @@ import { DrawerActions } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
 import { router, useNavigation } from 'expo-router';
 import { memo } from 'react';
-import { Platform, Pressable, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Platform, Pressable, StyleSheet, View } from 'react-native';
 
 interface MainHeaderProps {
   useDrawer?: boolean;
@@ -31,9 +32,9 @@ const MainHeader = memo(({ useDrawer = true }: MainHeaderProps) => {
 
         {useDrawer && (
           <View style={styles.rightContainer}>
-            <TouchableOpacity onPress={handlePressMenu} activeOpacity={0.5}>
+            <Button onPress={handlePressMenu}>
               <Menu width={24} height={24} color={theme.colors.black[900]} />
-            </TouchableOpacity>
+            </Button>
           </View>
         )}
       </View>

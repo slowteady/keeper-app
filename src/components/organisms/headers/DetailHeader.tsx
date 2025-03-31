@@ -1,10 +1,11 @@
+import Button from '@/components/atoms/button/Button';
 import { LeftLineArrow } from '@/components/atoms/icons/mini';
 import { Home } from '@/components/atoms/icons/outline';
 import theme from '@/constants/theme';
 import { useLayout } from '@/hooks/useLayout';
 import { StackActions } from '@react-navigation/native';
 import { router, useNavigationContainerRef } from 'expo-router';
-import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 
 const DetailHeader = () => {
   const rootNavigation = useNavigationContainerRef();
@@ -24,14 +25,14 @@ const DetailHeader = () => {
 
   return (
     <View style={[styles.container, { paddingTop: top }]}>
-      <TouchableOpacity onPress={handlePressBack} activeOpacity={0.5}>
+      <Button onPress={handlePressBack}>
         <LeftLineArrow width={24} height={24} />
-      </TouchableOpacity>
+      </Button>
 
       <View style={styles.rightContainer}>
-        <TouchableOpacity onPress={handlePressHome} activeOpacity={0.5}>
+        <Button onPress={handlePressHome}>
           <Home width={24} height={24} />
-        </TouchableOpacity>
+        </Button>
       </View>
     </View>
   );

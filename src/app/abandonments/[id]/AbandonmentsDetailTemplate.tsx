@@ -1,5 +1,6 @@
 import { TransformedAbandonmentDetail } from '@/business/abandonmentsBusiness';
 import { TransformedShelterValue } from '@/business/sheltersBusiness';
+import Button from '@/components/atoms/button/Button';
 import ShelterTelModal from '@/components/organisms/modal/ShelterTelModal';
 import AbandonmentDetailCardSection from '@/components/sections/abandonments/AbandonmentDetailCardSection';
 import AbandonmentDetailDescriptionSection from '@/components/sections/abandonments/AbandonmentDetailDescriptionSection';
@@ -7,7 +8,7 @@ import AbandonmentDetailInfoSection from '@/components/sections/abandonments/Aba
 import theme from '@/constants/theme';
 import { useLayout } from '@/hooks/useLayout';
 import { useCallback, useState } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 export interface AbandonmentsDetailTemplateProps {
   abandonment: TransformedAbandonmentDetail;
@@ -40,9 +41,9 @@ const AbandonmentsDetailTemplate = ({ abandonment, shelter }: AbandonmentsDetail
         </ScrollView>
 
         <View style={[styles.bottomWrap, { paddingBottom: bottom }]}>
-          <TouchableOpacity activeOpacity={0.5} onPress={handlePress} style={styles.fixedButton}>
+          <Button onPress={handlePress} style={styles.fixedButton}>
             <Text style={styles.buttonText}>보호소에 문의하기</Text>
-          </TouchableOpacity>
+          </Button>
         </View>
       </View>
 

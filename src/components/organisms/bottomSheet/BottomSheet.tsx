@@ -1,3 +1,4 @@
+import Button from '@/components/atoms/button/Button';
 import { Check } from '@/components/atoms/icons/solid';
 import theme from '@/constants/theme';
 import {
@@ -8,7 +9,7 @@ import {
   BottomSheetView
 } from '@gorhom/bottom-sheet';
 import { forwardRef, useCallback } from 'react';
-import { StyleSheet, Text, TextStyle, TouchableOpacity, ViewStyle } from 'react-native';
+import { StyleSheet, Text, TextStyle, ViewStyle } from 'react-native';
 
 export interface BottomSheetLayoutProps extends Omit<BottomSheetModalProps, 'children'> {
   containerStyle?: ViewStyle;
@@ -61,12 +62,12 @@ export const Menu = <T,>({ value, data, onPress, style, textStyle }: BottomSheet
     const isActive = item.value === value;
 
     return (
-      <TouchableOpacity key={key} activeOpacity={0.5} style={[styles.button, style]} onPress={() => onPress(item)}>
+      <Button key={key} style={[styles.button, style]} onPress={() => onPress(item)}>
         <Text style={[styles.text, { color: isActive ? theme.colors.black[800] : theme.colors.black[500] }, textStyle]}>
           {name}
         </Text>
         {isActive && <Check width={17} height={20} color={theme.colors.black[800]} />}
-      </TouchableOpacity>
+      </Button>
     );
   });
 };

@@ -1,11 +1,12 @@
+import Button, { ButtonProps } from '@/components/atoms/button/Button';
 import { DownArrow } from '@/components/atoms/icons/mini';
 import { BottomSheet, BottomSheetMenuData } from '@/components/organisms/bottomSheet/BottomSheet';
 import theme from '@/constants/theme';
 import { BottomSheetModal, BottomSheetModalProps } from '@gorhom/bottom-sheet';
 import { useRef } from 'react';
-import { StyleSheet, Text, TouchableOpacity, TouchableOpacityProps } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 
-export interface DropdownProps<T> extends TouchableOpacityProps {
+export interface DropdownProps<T> extends ButtonProps {
   data: BottomSheetMenuData<T>[];
   value: T;
   onChange: (value: BottomSheetMenuData<T>) => void;
@@ -30,10 +31,10 @@ const Dropdown = <T,>({ data, value, onChange, snapPoints, ...props }: DropdownP
 
   return (
     <>
-      <TouchableOpacity activeOpacity={0.5} style={styles.container} onPress={handlePress} {...props}>
+      <Button style={styles.container} onPress={handlePress} {...props}>
         <Text style={styles.label}>{matchedValue?.name}</Text>
         <DownArrow width={10} height={6} color={theme.colors.black[500]} />
-      </TouchableOpacity>
+      </Button>
 
       <BottomSheet ref={bottomSheetModalRef} snapPoints={snapPoints} onAnimate={handleAnimate}>
         <BottomSheet.Menu data={data} value={value} onPress={handleChange} />

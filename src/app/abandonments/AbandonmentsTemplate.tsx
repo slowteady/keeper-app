@@ -1,4 +1,5 @@
 import { TransformedAbandonments, transformAbandonments } from '@/business/abandonmentsBusiness';
+import Button from '@/components/atoms/button/Button';
 import ScrollFloatingButton from '@/components/atoms/button/ScrollFloatingButton';
 import ButtonGroup from '@/components/molecules/button/ButtonGroup';
 import Dropdown from '@/components/molecules/dropdown/Dropdown';
@@ -25,7 +26,6 @@ import {
   Pressable,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View
 } from 'react-native';
 
@@ -174,9 +174,9 @@ const MoreButtonSection = ({ onFetch, isLoading, page, total }: MoreButtonSectio
 
   return (
     <View style={styles.moreButtonContainer}>
-      <TouchableOpacity style={styles.moreButton} activeOpacity={0.5} onPress={onFetch} disabled={isLoading}>
+      <Button style={styles.moreButton} onPress={onFetch} disabled={isLoading}>
         {isLoading ? <ActivityIndicator size={16} /> : <Text style={styles.moreButtonText}>{text}</Text>}
-      </TouchableOpacity>
+      </Button>
     </View>
   );
 };

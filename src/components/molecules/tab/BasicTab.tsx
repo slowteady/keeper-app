@@ -1,6 +1,7 @@
+import Button from '@/components/atoms/button/Button';
 import theme from '@/constants/theme';
 import { useCallback, useMemo, useState } from 'react';
-import { LayoutChangeEvent, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { LayoutChangeEvent, StyleSheet, View } from 'react-native';
 import Animated, { interpolateColor, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 export interface BasicTabProps<T extends { label: string }> {
@@ -40,13 +41,9 @@ const BasicTab = <T extends { label: string }>({ category, value, onChange }: Ba
           const isActive = value.label === tab.label;
 
           return (
-            <TouchableOpacity
-              key={key}
-              style={[styles.tab, { width: tabWidth }]}
-              onPress={() => handlePress(tab, index)}
-            >
+            <Button key={key} style={[styles.tab, { width: tabWidth }]} onPress={() => handlePress(tab, index)}>
               <TabText isActive={isActive} value={tab.label} />
-            </TouchableOpacity>
+            </Button>
           );
         })}
         <Animated.View style={[styles.underline, animatedStyle, { width: tabWidth }]} />
