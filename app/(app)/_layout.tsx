@@ -1,5 +1,4 @@
-import { HeartIcon } from '@/components/atoms/icons/HeartIcon';
-import { LocationIcon } from '@/components/atoms/icons/LocationIcon';
+import { Heart, Location } from '@/components/atoms/icons/outline';
 import MainHeader from '@/components/organisms/headers/MainHeader';
 import theme from '@/constants/theme';
 import { useLayout } from '@/hooks/useLayout';
@@ -43,11 +42,11 @@ const MenuList = ({ ...props }: DrawerContentComponentProps) => {
   return (
     <View style={[styles.container, { top: headerTop }]}>
       <Pressable style={styles.menuWrap} onPress={() => handleRoute('/abandonments')}>
-        <HeartIcon width={24} height={24} />
+        <Heart width={24} height={24} />
         <Text style={styles.text}>입양공고</Text>
       </Pressable>
       <Pressable style={styles.menuWrap} onPress={() => handleRoute('/shelters')}>
-        <LocationIcon width={24} height={24} />
+        <Location width={24} height={24} />
         <Text style={styles.text}>보호소</Text>
       </Pressable>
     </View>

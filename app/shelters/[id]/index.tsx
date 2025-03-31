@@ -5,6 +5,7 @@ import { useGetShelterAbandonmentsQuery, useGetShelterQuery } from '@/hooks/quer
 import useRefreshing from '@/hooks/useRefreshing';
 import { abandonmentsFilterValueAtom } from '@/states/abandonments';
 import { useQueryClient } from '@tanstack/react-query';
+import * as Haptics from 'expo-haptics';
 import { useLocalSearchParams } from 'expo-router';
 import { createStore, Provider, useAtomValue } from 'jotai';
 import { useCallback, useMemo } from 'react';
@@ -40,8 +41,11 @@ const Page = () => {
   } = useGetShelterAbandonmentsQuery(Number(id), { size: 16, filter: filterValue.value });
   const queryClient = useQueryClient();
 
-  const handleFetch = useCallback(() => {
-    if (hasNextPage) fetchNextPage();
+  const handleFetch = useCallback(async () => {
+    if (hasNextPage) {
+      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      fetchNextPage();
+    }
   }, [fetchNextPage, hasNextPage]);
 
   const onRefreshCallback = useCallback(async () => {

@@ -5,6 +5,7 @@ import { useGetInfiniteAbandonmentsQuery } from '@/hooks/queries/useAbandonments
 import useRefreshing from '@/hooks/useRefreshing';
 import { abandonmentsAtom } from '@/states/abandonments';
 import { useQueryClient } from '@tanstack/react-query';
+import * as Haptics from 'expo-haptics';
 import { createStore, Provider, useAtomValue } from 'jotai';
 import { useCallback, useMemo } from 'react';
 import { RefreshControl, StyleSheet, View } from 'react-native';
@@ -38,8 +39,11 @@ const Page = () => {
     hasNextPage
   } = useGetInfiniteAbandonmentsQuery(param);
 
-  const handleFetch = useCallback(() => {
-    if (hasNextPage) fetchNextPage();
+  const handleFetch = useCallback(async () => {
+    if (hasNextPage) {
+      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      fetchNextPage();
+    }
   }, [fetchNextPage, hasNextPage]);
 
   const isLoading = useMemo(

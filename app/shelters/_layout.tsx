@@ -1,7 +1,7 @@
-import ErrorFallback from '@/app/ErrorFallback';
 import DetailHeader from '@/components/organisms/headers/DetailHeader';
 import { Stack } from 'expo-router';
 import ErrorBoundary from 'react-native-error-boundary';
+import ErrorFallback from '../ErrorFallback';
 
 const SheltersLayout = () => {
   return (
