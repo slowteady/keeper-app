@@ -1,6 +1,6 @@
-import MainTemplate from '@/components/templates/MainTemplate';
 import { createStore, Provider } from 'jotai';
 import { StyleSheet, View } from 'react-native';
+import MainTemplate from './MainTemplate';
 
 /**
  * 메인화면

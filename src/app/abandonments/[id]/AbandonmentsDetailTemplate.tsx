@@ -1,5 +1,5 @@
-import { TransformedAbandonmentDetail } from '@/businesses/abandonmentsBusiness';
-import { TransformedShelterValue } from '@/businesses/sheltersBusiness';
+import { TransformedAbandonmentDetail } from '@/business/abandonmentsBusiness';
+import { TransformedShelterValue } from '@/business/sheltersBusiness';
 import ShelterTelModal from '@/components/organisms/modal/ShelterTelModal';
 import AbandonmentDetailCardSection from '@/components/sections/abandonments/AbandonmentDetailCardSection';
 import AbandonmentDetailDescriptionSection from '@/components/sections/abandonments/AbandonmentDetailDescriptionSection';

@@ -1,4 +1,4 @@
-import AbandonmentsTemplate from '@/components/templates/abandonments/AbandonmentsTemplate';
+import AbandonmentsTemplate from '@/app/abandonments/AbandonmentsTemplate';
 import { ABANDONMENTS_QUERY_KEY } from '@/constants/queryKeys';
 import theme from '@/constants/theme';
 import { useGetInfiniteAbandonmentsQuery } from '@/hooks/queries/useAbandonments';

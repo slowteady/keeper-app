@@ -1,4 +1,4 @@
-import SheltersTemplate from '@/components/templates/shelters/SheltersTemplate';
+import SheltersTemplate from '@/app/shelters/SheltersTemplate';
 import { SHELTER_COUNT_QUERY_KEY } from '@/constants/queryKeys';
 import theme from '@/constants/theme';
 import { useGetShelterCountQuery, useGetShelterSearchMutation, useGetSheltersQuery } from '@/hooks/queries/useShelters';
@@ -14,8 +14,6 @@ import { StyleSheet, View } from 'react-native';
 
 /**
  * 보호소 목록 페이지
- * TODO
- * [ ] 보호소 검색 기능 구현
  */
 const Page = () => {
   const methods = useForm<GetShelterSearchParams>({ defaultValues: { search: '' } });

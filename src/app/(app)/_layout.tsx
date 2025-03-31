@@ -36,7 +36,7 @@ const MenuList = ({ ...props }: DrawerContentComponentProps) => {
 
   const handleRoute = (link: Route) => {
     props.navigation.closeDrawer();
-    router.push(link);
+    setTimeout(() => router.push(link), 500);
   };
 
   return (

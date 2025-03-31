@@ -1,6 +1,6 @@
+import AbandonmentsDetailTemplate from '@/app/abandonments/[id]/AbandonmentsDetailTemplate';
 import { transformAbandonmentDetail } from '@/business/abandonmentsBusiness';
 import { transformShelterData } from '@/business/sheltersBusiness';
-import AbandonmentsDetailTemplate from '@/components/templates/abandonments/AbandonmentsDetailTemplate';
 import theme from '@/constants/theme';
 import { useGetAbandonmentQuery } from '@/hooks/queries/useAbandonments';
 import { useGetShelterQuery } from '@/hooks/queries/useShelters';

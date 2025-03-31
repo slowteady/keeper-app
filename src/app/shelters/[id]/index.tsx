@@ -1,4 +1,3 @@
-import SheltersDetailTemplate from '@/components/templates/shelters/SheltersDetailTemplate';
 import { SHELTER_ABANDONMENTS_QUERY_KEY, SHELTER_QUERY_KEY } from '@/constants/queryKeys';
 import theme from '@/constants/theme';
 import { useGetShelterAbandonmentsQuery, useGetShelterQuery } from '@/hooks/queries/useShelters';
@@ -10,6 +9,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { createStore, Provider, useAtomValue } from 'jotai';
 import { useCallback, useMemo } from 'react';
 import { RefreshControl, StyleSheet, View } from 'react-native';
+import SheltersDetailTemplate from './SheltersDetailTemplate';
 
 /**
  * 보호소 상세 페이지
