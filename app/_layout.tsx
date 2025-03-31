@@ -29,7 +29,7 @@ export default function RootLayout() {
   useReactQueryDevTools(queryClient);
 
   const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/PretendardVariable.ttf')
+    SpaceMono: require('@/assets/fonts/PretendardVariable.ttf')
   });
 
   useEffect(() => {
@@ -66,8 +66,8 @@ const enableMocking = async () => {
     return;
   }
 
-  await import('../mocks/msw.polyfills');
-  const { server } = await import('../mocks/server');
+  await import('../src/mocks/msw.polyfills');
+  const { server } = await import('../src/mocks/server');
   server.listen({ onUnhandledRequest: 'bypass' });
 
   console.log('[MSW] Mock server started');
