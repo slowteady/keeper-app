@@ -26,12 +26,12 @@ const DetailHeader = () => {
   return (
     <View style={[styles.container, { paddingTop: top }]}>
       <Button onPress={handlePressBack}>
-        <LeftLineArrow width={24} height={24} />
+        <LeftLineArrow width={24} height={24} color={theme.colors.black[900]} />
       </Button>
 
       <View style={styles.rightContainer}>
         <Button onPress={handlePressHome}>
-          <Home width={24} height={24} />
+          <Home width={24} height={24} color={theme.colors.black[900]} />
         </Button>
       </View>
     </View>

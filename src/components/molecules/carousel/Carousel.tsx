@@ -43,11 +43,11 @@ const Controller = ({ currentIndex, max, onPress }: BasicCarouselControllerProps
   return (
     <View style={styles.controllerContainer}>
       <Pressable onPress={() => handlePress('prev')}>
-        <LeftLineArrow width={11} height={11} />
+        <LeftLineArrow width={11} height={11} color={theme.colors.black[900]} />
       </Pressable>
       <Text style={styles.text}>{text}</Text>
       <Pressable onPress={() => handlePress('next')}>
-        <RightLineArrow width={11} height={11} />
+        <RightLineArrow width={11} height={11} color={theme.colors.black[900]} />
       </Pressable>
     </View>
   );

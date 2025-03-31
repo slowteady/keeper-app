@@ -96,7 +96,7 @@ const MainShelterSection = () => {
       <View style={styles.headerContainer}>
         <Pressable onPress={handlePressTitle} style={styles.titleWrap}>
           <Text style={styles.title}>보호소 찾기</Text>
-          <RightArrow width={11} height={18} color="#000" />
+          <RightArrow width={11} height={18} color={theme.colors.black[900]} />
         </Pressable>
 
         <Pressable style={styles.flex} onPress={handlePressTitle}>
