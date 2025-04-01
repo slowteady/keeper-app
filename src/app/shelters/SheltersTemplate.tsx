@@ -281,7 +281,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: Dimensions.get('screen').width - 40,
     backgroundColor: theme.colors.white[900],
-    borderRadius: 8
+    borderRadius: 8,
+    height: 80
   },
   noDataText: {
     fontSize: 14,
