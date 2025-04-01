@@ -1,15 +1,6 @@
+import Button from '@/components/atoms/button/Button';
 import theme from '@/constants/theme';
-import {
-  Modal,
-  Pressable,
-  StyleProp,
-  StyleSheet,
-  Text,
-  TextProps,
-  TouchableOpacity,
-  View,
-  ViewStyle
-} from 'react-native';
+import { Modal, Pressable, StyleProp, StyleSheet, Text, TextProps, View, ViewStyle } from 'react-native';
 
 export interface BasicModalProps {
   open: boolean;
@@ -67,16 +58,16 @@ const Buttons = ({ onClose, onPress, PrimaryTextProps, SecondaryTextProps, style
 
   return (
     <View style={styles.buttonContainer}>
-      <TouchableOpacity style={[styles.closeButton, style]} onPress={onClose} activeOpacity={0.5}>
+      <Button style={[styles.closeButton, style]} onPress={onClose}>
         <Text style={[styles.buttonText, secondaryTextStyle]} {...secondary}>
           {secondaryChildren}
         </Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={[styles.primaryButton, style]} onPress={onPress} activeOpacity={0.5}>
+      </Button>
+      <Button style={[styles.primaryButton, style]} onPress={onPress}>
         <Text style={[styles.buttonText, primaryTextStyle]} {...primary}>
           {primaryChildren}
         </Text>
-      </TouchableOpacity>
+      </Button>
     </View>
   );
 };

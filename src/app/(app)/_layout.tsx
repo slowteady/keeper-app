@@ -42,15 +42,15 @@ const MenuList = ({ ...props }: DrawerContentComponentProps) => {
   return (
     <View style={[styles.container, { top: headerTop }]}>
       <Pressable style={styles.menuWrap} onPress={() => handleRoute('/abandonments')}>
-        <Heart width={24} height={24} />
+        <Heart width={24} height={24} color={theme.colors.black[900]} />
         <Text style={styles.text}>입양공고</Text>
       </Pressable>
       <Pressable style={styles.menuWrap} onPress={() => handleRoute('/shelters')}>
-        <Location width={24} height={24} />
+        <Location width={24} height={24} color={theme.colors.black[900]} />
         <Text style={styles.text}>보호소</Text>
       </Pressable>
       <Pressable style={styles.menuWrap} onPress={() => handleRoute('/login')}>
-        <Login width={24} height={24} />
+        <Login width={24} height={24} color={theme.colors.black[900]} />
         <Text style={styles.text}>로그인</Text>
       </Pressable>
     </View>

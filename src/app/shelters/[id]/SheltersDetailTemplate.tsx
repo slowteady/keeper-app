@@ -1,5 +1,6 @@
 import { transformAbandonments, TransformedAbandonments } from '@/business/abandonmentsBusiness';
 import { transformShelterData } from '@/business/sheltersBusiness';
+import Button from '@/components/atoms/button/Button';
 import ScrollFloatingButton from '@/components/atoms/button/ScrollFloatingButton';
 import Dropdown from '@/components/molecules/dropdown/Dropdown';
 import { CardSkeleton } from '@/components/molecules/placeholder/CardSkeleton';
@@ -30,7 +31,6 @@ import {
   Pressable,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View
 } from 'react-native';
 
@@ -192,9 +192,9 @@ const MapSection = ({ shelterData }: MapSectionProps) => {
 
       <ShelterDescription data={shelterData} />
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} activeOpacity={0.5} onPress={handlePress}>
+        <Button style={styles.button} onPress={handlePress}>
           <Text style={styles.buttonText}>보호소에 문의하기</Text>
-        </TouchableOpacity>
+        </Button>
       </View>
 
       <ShelterTelModal open={modalOpen} onClose={handleClose} tel={tel} name={name} />
@@ -300,9 +300,9 @@ const MoreButtonSection = ({ onFetch, isLoading, page, total }: MoreButtonSectio
 
   return (
     <View style={styles.moreButtonContainer}>
-      <TouchableOpacity style={styles.moreButton} activeOpacity={0.5} onPress={onFetch} disabled={isLoading}>
+      <Button style={styles.moreButton} onPress={onFetch} disabled={isLoading}>
         {isLoading ? <ActivityIndicator size={16} /> : <Text style={styles.moreButtonText}>{text}</Text>}
-      </TouchableOpacity>
+      </Button>
     </View>
   );
 };

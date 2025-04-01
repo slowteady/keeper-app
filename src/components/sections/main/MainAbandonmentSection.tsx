@@ -63,7 +63,7 @@ const MainAbandonmentSection = () => {
       <View style={styles.header}>
         <Pressable onPress={handlePressTitle} style={styles.titleWrap}>
           <Text style={styles.title}>전체공고</Text>
-          <RightArrow width={11} height={18} color="#000" />
+          <RightArrow width={11} height={18} color={theme.colors.black[900]} />
         </Pressable>
         <View style={{ marginTop: 12 }}>
           <Dropdown

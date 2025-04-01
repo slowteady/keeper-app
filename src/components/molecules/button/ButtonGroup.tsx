@@ -1,6 +1,7 @@
+import Button from '@/components/atoms/button/Button';
 import theme from '@/constants/theme';
 import { useEffect } from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import Animated, { interpolateColor, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 export interface ButtonGroupData<T> {
@@ -54,7 +55,7 @@ const AnimatedButton = ({ label, isSelected, onPress }: AnimatedButtonProps) => 
   });
 
   return (
-    <TouchableOpacity activeOpacity={0.7} onPress={onPress} style={styles.button}>
+    <Button onPress={onPress} style={styles.button}>
       <Animated.View
         style={[
           styles.buttonInner,
@@ -65,7 +66,7 @@ const AnimatedButton = ({ label, isSelected, onPress }: AnimatedButtonProps) => 
       >
         <Animated.Text style={[styles.label, animatedTextStyle]}>{label}</Animated.Text>
       </Animated.View>
-    </TouchableOpacity>
+    </Button>
   );
 };
 

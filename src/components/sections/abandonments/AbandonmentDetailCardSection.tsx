@@ -1,4 +1,5 @@
 import { TransformedAbandonmentDetail } from '@/businesses/abandonmentsBusiness';
+import Button from '@/components/atoms/button/Button';
 import { MoreImage } from '@/components/atoms/icons/outline';
 import NoImage from '@/components/molecules/placeholder/NoImage';
 import { Skeleton } from '@/components/molecules/placeholder/Skeleton';
@@ -6,7 +7,7 @@ import ImageViewer from '@/components/molecules/viewer/ImageViewer';
 import theme from '@/constants/theme';
 import { Image } from 'expo-image';
 import { useEffect, useState } from 'react';
-import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, StyleSheet, Text, View } from 'react-native';
 
 interface AbandonmentDetailCardSectionProps {
   data: TransformedAbandonmentDetail;
@@ -44,17 +45,12 @@ const AbandonmentDetailCardSection = ({ data }: AbandonmentDetailCardSectionProp
       <View style={styles.imageContainer}>
         {!isLoad && !isError && <Skeleton style={styles.skeleton} />}
         {uri && !isError ? (
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={handlePressImage}
-            disabled={!isLoad || !uri}
-            style={{ width: '100%', height: '100%' }}
-          >
+          <Button onPress={handlePressImage} disabled={!isLoad || !uri} style={{ width: '100%', height: '100%' }}>
             <Image source={{ uri }} onLoad={() => setIsLoad(true)} style={styles.image} contentFit="cover" />
             <View style={styles.iconWrap}>
               <MoreImage color={theme.colors.black[900]} />
             </View>
-          </TouchableOpacity>
+          </Button>
         ) : (
           <NoImage style={{ backgroundColor: theme.colors.white[800] }} />
         )}

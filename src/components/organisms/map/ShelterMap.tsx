@@ -1,3 +1,4 @@
+import Button from '@/components/atoms/button/Button';
 import theme from '@/constants/theme';
 import { useDebounce } from '@/hooks/useDebounce';
 import { CameraParams } from '@/types/map';
@@ -13,7 +14,7 @@ import { applicationId } from 'expo-application';
 import * as Haptics from 'expo-haptics';
 import { ActivityAction, startActivityAsync } from 'expo-intent-launcher';
 import { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
-import { Dimensions, Linking, Platform, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { Dimensions, Linking, Platform, StyleSheet, Text, View, ViewStyle } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 export interface ShelterMapProps extends NaverMapViewProps {
@@ -80,9 +81,9 @@ const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
 
             {isVisibleButton && (
               <Animated.View style={[styles.mapButton, animatedStyle]}>
-                <TouchableOpacity activeOpacity={0.5} onPress={handlePressRefetch}>
+                <Button onPress={handlePressRefetch}>
                   <Text style={styles.mapButtonText}>현 지도에서 검색</Text>
-                </TouchableOpacity>
+                </Button>
               </Animated.View>
             )}
           </>
@@ -166,9 +167,9 @@ const NoValidMap = () => {
   return (
     <View style={styles.reqContainer}>
       <Text style={styles.reqText}>사용자의 위치 설정을 켜주세요.</Text>
-      <TouchableOpacity activeOpacity={0.5} onPress={handlePressSetting} style={styles.settingButton}>
+      <Button onPress={handlePressSetting} style={styles.settingButton}>
         <Text style={styles.settingButtonText}>위치 설정 바로가기</Text>
-      </TouchableOpacity>
+      </Button>
     </View>
   );
 };

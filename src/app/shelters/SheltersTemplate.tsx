@@ -1,3 +1,4 @@
+import Button from '@/components/atoms/button/Button';
 import ScrollFloatingButton from '@/components/atoms/button/ScrollFloatingButton';
 import Searchbar from '@/components/molecules/input/Searchbar';
 import { Skeleton } from '@/components/molecules/placeholder/Skeleton';
@@ -16,7 +17,7 @@ import * as Location from 'expo-location';
 import { router } from 'expo-router';
 import { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { Dimensions, FlatList, ListRenderItemInfo, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, FlatList, ListRenderItemInfo, StyleSheet, Text, View } from 'react-native';
 
 interface SheltersTemplateProps {
   data: SheltersTemplateData;
@@ -158,7 +159,16 @@ interface MapSectionProps {
 }
 const MapSection = forwardRef<NaverMapViewRef, MapSectionProps>((props, ref) => {
   const { handleSubmit, setValue } = useFormContext<GetShelterSearchParams>();
-  const { data, camera, permissionStatus, onInitMap, onRefetch, onChange, onPressLocation, onSubmitSearch } = props;
+  const {
+    data,
+    camera,
+    permissionStatus = null,
+    onInitMap,
+    onRefetch,
+    onChange,
+    onPressLocation,
+    onSubmitSearch
+  } = props;
   const [selectedMarkerId, setSelectedMarkerId] = useState<number>();
 
   const handleRefetch = useCallback(
@@ -181,15 +191,17 @@ const MapSection = forwardRef<NaverMapViewRef, MapSectionProps>((props, ref) => 
     [handleSubmit, onSubmitSearch, setValue]
   );
 
+  if (permissionStatus === null) return null;
+
   const hasLocationStatus = permissionStatus?.status === Location.PermissionStatus.GRANTED;
 
   return (
     <>
       <View style={styles.titleWrap}>
         <Text style={styles.title}>보호소 찾기</Text>
-        <TouchableOpacity activeOpacity={0.8} style={styles.button} onPress={onPressLocation}>
+        <Button style={styles.button} onPress={onPressLocation}>
           <Text style={styles.buttonText}>위치설정</Text>
-        </TouchableOpacity>
+        </Button>
       </View>
       <Searchbar
         onSubmit={handleSubmitSearch}
