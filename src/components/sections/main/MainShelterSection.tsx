@@ -19,6 +19,8 @@ import { Dimensions, FlatList, ListRenderItemInfo, Pressable, StyleSheet, Text, 
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
+// TODO
+// [ ] 보호소 리스트 애니메이션 Fade로 구현
 const MainShelterSection = () => {
   const [enabled, setEnabled] = useState(false);
   const [selectedMarkerId, setSelectedMarkerId] = useState<number>();
@@ -106,30 +108,30 @@ const MainShelterSection = () => {
         </Pressable>
       </View>
 
-      <View style={{ paddingHorizontal: 20, flex: 1 }}>
+      <View style={{ paddingHorizontal: 20 }}>
         <ShelterMap.DistanceBox
           value={shelterCountData}
           hasLocationStatus={hasLocationStatus}
           style={{ marginBottom: 16 }}
         />
-        <View style={{ marginBottom: 20 }}>
-          <ShelterMap
-            ref={mapRef}
-            hasLocation={hasLocationStatus}
-            data={shelterData}
-            camera={camera}
-            onInitialized={handleInitMap}
-            onRefetch={handleRefetch}
-            onTapMarker={handleTapMarker}
-            selectedMarkerId={selectedMarkerId}
-            isShowCompass={false}
-            minZoom={10}
-          />
-        </View>
-        <Animated.View style={[{ marginBottom: 20 }, animatedListStyle]}>
-          <ShelterCardList data={shelterData} isLoading={isLoading} />
-        </Animated.View>
       </View>
+      <View style={{ paddingHorizontal: 20, marginBottom: 20 }}>
+        <ShelterMap
+          ref={mapRef}
+          hasLocation={hasLocationStatus}
+          data={shelterData}
+          camera={camera}
+          onInitialized={handleInitMap}
+          onRefetch={handleRefetch}
+          onTapMarker={handleTapMarker}
+          selectedMarkerId={selectedMarkerId}
+          isShowCompass={false}
+          minZoom={10}
+        />
+      </View>
+      <Animated.View style={[{ marginLeft: 20, marginBottom: 20 }, animatedListStyle]}>
+        <ShelterCardList data={shelterData} isLoading={isLoading} />
+      </Animated.View>
     </View>
   );
 };

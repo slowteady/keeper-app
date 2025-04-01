@@ -1,5 +1,6 @@
 import theme from '@/constants/theme';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import { RightArrow } from '../icons/outline';
 
 interface FullViewButtonProps {
@@ -8,12 +9,12 @@ interface FullViewButtonProps {
 
 const FullViewButton = ({ onPress }: FullViewButtonProps) => {
   return (
-    <Pressable onPress={onPress} style={styles.container}>
+    <TouchableOpacity onPress={onPress} style={styles.container} activeOpacity={1}>
       <View style={styles.arrowContainer}>
         <RightArrow width={26} height={26} color={theme.colors.black[400]} />
       </View>
       <Text style={styles.text}>전체보기</Text>
-    </Pressable>
+    </TouchableOpacity>
   );
 };
 
