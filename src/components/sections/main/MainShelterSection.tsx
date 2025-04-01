@@ -16,6 +16,7 @@ import * as Location from 'expo-location';
 import { router } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { Dimensions, FlatList, ListRenderItemInfo, Pressable, StyleSheet, Text, View } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 const MainShelterSection = () => {
@@ -152,9 +153,9 @@ const ShelterCardList = ({ data, isLoading }: ShelterCardListProps) => {
       const { name, address, tel } = item;
 
       return (
-        <Pressable onPress={() => handlePressCard(item.id)}>
+        <TouchableOpacity onPress={() => handlePressCard(item.id)} activeOpacity={1}>
           <MainShelterCard name={name} address={address} tel={tel} />
-        </Pressable>
+        </TouchableOpacity>
       );
     },
     [handlePressCard]
