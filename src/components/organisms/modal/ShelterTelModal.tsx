@@ -1,7 +1,7 @@
 import * as Clipboard from 'expo-clipboard';
 import * as Linking from 'expo-linking';
 import { useCallback } from 'react';
-import { Alert, Platform } from 'react-native';
+import { Alert } from 'react-native';
 import { BasicModal } from './BasicModal';
 
 interface ShelterTelModalProps {
@@ -28,20 +28,8 @@ const ShelterTelModal = ({ open, tel, onClose, name }: ShelterTelModalProps) => 
     const telLink = `tel:${sanitizedNumber}`;
 
     try {
-      if (Platform.OS === 'android') {
-        await Linking.openURL(telLink).catch(async () => {
-          await handleCopy(sanitizedNumber);
-        });
-        onClose();
-      } else {
-        const supported = await Linking.canOpenURL(telLink);
-        if (supported) {
-          await Linking.openURL(telLink);
-          onClose();
-        } else {
-          await handleCopy(sanitizedNumber);
-        }
-      }
+      await Linking.openURL(telLink);
+      onClose();
     } catch {
       await handleCopy(sanitizedNumber);
     }
