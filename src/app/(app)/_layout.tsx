@@ -1,4 +1,4 @@
-import { Heart, Location, Login } from '@/components/atoms/icons/outline';
+import { Heart, Location } from '@/components/atoms/icons/outline';
 import MainHeader from '@/components/organisms/headers/MainHeader';
 import theme from '@/constants/theme';
 import { useLayout } from '@/hooks/useLayout';
@@ -49,10 +49,10 @@ const MenuList = ({ ...props }: DrawerContentComponentProps) => {
         <Location width={24} height={24} color={theme.colors.black[900]} />
         <Text style={styles.text}>보호소</Text>
       </Pressable>
-      <Pressable style={styles.menuWrap} onPress={() => handleRoute('/login')}>
+      {/* <Pressable style={styles.menuWrap} onPress={() => handleRoute('/login')}>
         <Login width={24} height={24} color={theme.colors.black[900]} />
         <Text style={styles.text}>로그인</Text>
-      </Pressable>
+      </Pressable> */}
     </View>
   );
 };
