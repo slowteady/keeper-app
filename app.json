@@ -9,7 +9,7 @@
     "newArchEnabled": true,
     "ios": {
       "icon": "./src/assets/images/keeper-icon.png",
-      "supportsTablet": false,
+      "supportsTablet": true,
       "entitlements": {
         "aps-environment": "development"
       },
