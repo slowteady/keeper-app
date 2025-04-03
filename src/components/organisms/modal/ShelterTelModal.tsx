@@ -27,13 +27,12 @@ const ShelterTelModal = ({ open, tel, onClose, name }: ShelterTelModalProps) => 
     const sanitizedNumber = tel.replace(/[^0-9]/g, '').trim();
     const telLink = `tel:${sanitizedNumber}`;
 
-    if (Platform.OS === 'ios' && Platform.isPad) {
-      await handleCopy(sanitizedNumber);
-      onClose();
-      return;
-    }
-
     try {
+      if (Platform.OS === 'ios' && Platform.isPad) {
+        await handleCopy(sanitizedNumber);
+        return;
+      }
+
       await Linking.openURL(telLink);
       onClose();
     } catch {
