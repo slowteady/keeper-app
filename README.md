@@ -1,50 +1,38 @@
-# Welcome to your Expo app 👋
+# 🐾 KEEPER - 유기동물 입양 공고 앱
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+<p align="center">
+  <img src='./src/assets/images/keeper-icon.png' width='250' height='250'>
+</p>
 
-## Get started
+> 유기동물 입양에 관심 있는 사람들이 더 쉽고 빠르게 정보를 접할 수 있도록 도움을 주는 앱입니다.
 
-1. Install dependencies
+## 📱 앱 다운로드
 
-   ```bash
-   npm install
-   ```
+[![Download on the App Store](https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg)](https://apps.apple.com/kr/app/keeper-%EC%9C%A0%EA%B8%B0%EB%8F%99%EB%AC%BC-%EC%9E%85%EC%96%91%EC%9D%98-%EC%B2%AB%EA%B1%B8%EC%9D%8C/id6739178024)
+<!-- [![Get it on Google Play](https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png)](https://play.google.com/store/apps/details?id=com.example.keeper) -->
 
-2. Start the app
+> Android 버전은 현재 심사 중입니다.
 
-   ```bash
-    npx expo start
-   ```
+---
 
-In the output, you'll find options to open the app in a
+## 📌 개요
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- **프로젝트 기간**: 2024.05 ~
+- **팀 구성**: 총 3명 (디자이너, 백엔드 개발자, 프론트엔드 개발자)
+- **기여도**: 팀 구성, 기획, 앱 개발 및 스토어 배포 관리, 운영 (기여도 70%)
+- **마이그레이션 및 기능 구현을 이어 나가고 있습니다**
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+---
 
-## Get a fresh project
+## ✨ 주요 기능
 
-When you're ready, run:
+- 유기동물 입양 공고 리스트 및 상세 조회
+- 보호소 정보 확인 및 연락처 복사
+- 지역 및 동물 종류 필터링 기능
 
-```bash
-npm run reset-project
-```
+---
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## 🛠 기술 스택
 
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- **Frontend**: React Native, TypeScript, Jotai, TanStack Query
+- **Backend**: AWS, NestJS, MySQL
