@@ -16,7 +16,7 @@ import { AbandonmentValue } from '@/types/scheme/abandonments';
 import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import { useAtom, useAtomValue } from 'jotai';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { FlatList, ListRenderItemInfo, Pressable, StyleSheet, Text, View } from 'react-native';
 
 const MainAbandonmentSection = () => {
@@ -109,7 +109,14 @@ const AbandonmentCardList = ({
   isLoading,
   onPressMoreButton
 }: MainAbandonmentSectionCardListProps) => {
+  const flatListRef = useRef<FlatList | null>(null);
   const formattedAbandonmentData = transformAbandonments(data || [], filter);
+
+  useEffect(() => {
+    if (flatListRef.current) {
+      flatListRef.current.scrollToOffset({ animated: false, offset: 0 });
+    }
+  }, [data]);
 
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<TransformedAbandonments>) => {
@@ -124,6 +131,7 @@ const AbandonmentCardList = ({
 
   return (
     <FlatList
+      ref={flatListRef}
       data={formattedAbandonmentData}
       horizontal={true}
       renderItem={renderItem}

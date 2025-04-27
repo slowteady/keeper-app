@@ -153,12 +153,12 @@ const MapSection = ({ shelterData }: MapSectionProps) => {
 
   useEffect(() => {
     const hasLocationStatus = permissionStatus?.status === Location.PermissionStatus.GRANTED;
-    if (hasLocationStatus) {
+    if (hasLocationStatus && enabledMap) {
       const { latitude, longitude } = shelterData;
       mapRef.current?.setLocationTrackingMode('Follow');
-      setCamera({ latitude, longitude, zoom: 11 });
+      setCamera({ latitude, longitude, zoom: 10 });
     }
-  }, [mapRef, permissionStatus?.status, setCamera, shelterData]);
+  }, [enabledMap, mapRef, permissionStatus?.status, setCamera, shelterData]);
 
   const handleInitMap = () => {
     setEnabledMap(true);

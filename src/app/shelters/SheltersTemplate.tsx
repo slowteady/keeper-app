@@ -19,6 +19,8 @@ import { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'r
 import { useFormContext } from 'react-hook-form';
 import { Dimensions, FlatList, ListRenderItemInfo, StyleSheet, Text, View } from 'react-native';
 
+// TODO
+// [ ] 주소 검색 카카오로 변경하여 확장성 높이기
 interface SheltersTemplateProps {
   data: SheltersTemplateData;
   isLoading: boolean;

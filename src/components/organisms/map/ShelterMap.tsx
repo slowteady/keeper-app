@@ -166,9 +166,9 @@ const NoValidMap = () => {
 
   return (
     <View style={styles.reqContainer}>
-      <Text style={styles.reqText}>사용자의 위치 설정을 켜주세요.</Text>
+      <Text style={styles.reqText}>사용자의 위치설정을 켜주세요.</Text>
       <Button onPress={handlePressSetting} style={styles.settingButton}>
-        <Text style={styles.settingButtonText}>위치 설정 바로가기</Text>
+        <Text style={styles.settingButtonText}>위치설정 바로가기</Text>
       </Button>
     </View>
   );
