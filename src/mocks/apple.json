@@ -1,0 +1,16 @@
+{
+  "authorizationCode": "caa5fefa78d2c45cdba0eb79961496c5e.0.srqr.vJ0jQPq3qOT6L_Rhiazoow",
+  "email": "vbn0213@gmail.com",
+  "fullName": {
+    "familyName": "이",
+    "givenName": "용민",
+    "middleName": null,
+    "namePrefix": null,
+    "nameSuffix": null,
+    "nickname": null
+  },
+  "identityToken": "eyJraWQiOiJyczBNM2tPVjlwIiwiYWxnIjoiUlMyNTYifQ.eyJpc3MiOiJodHRwczovL2FwcGxlaWQuYXBwbGUuY29tIiwiYXVkIjoiaG9zdC5leHAuRXhwb25lbnQiLCJleHAiOjE3NDU4MDU4MzUsImlhdCI6MTc0NTcxOTQzNSwic3ViIjoiMDAwMTAxLmY3N2ZhNmVlM2NhZTQ4YTk5MmI3MmY0ODdkNjcxZWVlLjAyMDMiLCJjX2hhc2giOiJWZGMtVGN2YlJtcmE5LTJEZmZBS2hRIiwiZW1haWwiOiJ2Ym4wMjEzQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJhdXRoX3RpbWUiOjE3NDU3MTk0MzUsIm5vbmNlX3N1cHBvcnRlZCI6dHJ1ZSwicmVhbF91c2VyX3N0YXR1cyI6Mn0.vbEPWgP9QLKz3GAOKPeWP36aI4xTGp1aT1px0ij7xKrlkpTaFbouo97T2Kjve7-V6svoY7PNLp6eGRkiSxBk5N0m2V03ZcNiPTCeCMGN1vu-wYd38pN7i3gA1k4Bn8MpQnvyArGesMNqbhMZvKXZIyMs90OJSfYnregv-pqKHHpSY2vLrIa6ciG5vb7G4MvzewRMxYxP3b1aPni07XUd7oWjusD9cBcfoh-szVh5FHkAE62SenZF-gPKF5pG-24d3OxbSvXO-H1MHaHxLBG4P_ieXa5RIdvTTwb9SX-rrdLdYyCnPDmh5jCHDppCilpaTihsWD17ZWPaieDcnYBf0Q",
+  "realUserStatus": 2,
+  "state": null,
+  "user": "000101.f77fa6ee3cae48a992b72f487d671eee.0203"
+}

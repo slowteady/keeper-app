@@ -1,5 +1,4 @@
 import { buildQueryString } from '@/utils/queryUtils';
-import Constants from 'expo-constants';
 
 export interface GeocodeOptionalParams {
   /** 검색 결과 페이지 번호 (기본값: 1) */
@@ -20,13 +19,13 @@ export const getGeocode = async ({ query, params = {} }: GeocodeParams) => {
 
   const allParams = { query, ...params };
   const queryString = buildQueryString(allParams);
-  const baseUrl = Constants.expoConfig?.extra?.EXPO_PUBLIC_GEOCODE_URL;
+  const baseUrl = process.env.EXPO_PUBLIC_GEOCODE_URL;
   const url = `${baseUrl}?${queryString}`;
 
   const headers = {
     accept: 'application/json',
-    'X-NCP-APIGW-API-KEY-ID': Constants.expoConfig?.extra?.EXPO_PUBLIC_CLIENT_ID || '',
-    'X-NCP-APIGW-API-KEY': Constants.expoConfig?.extra?.EXPO_PUBLIC_SECRET_ID || ''
+    'X-NCP-APIGW-API-KEY-ID': process.env.EXPO_PUBLIC_CLIENT_ID || '',
+    'X-NCP-APIGW-API-KEY': process.env.EXPO_PUBLIC_SECRET_ID || ''
   };
 
   const config: RequestInit = {

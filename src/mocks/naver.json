@@ -1,0 +1,9 @@
+{
+  "isSuccess": true,
+  "successResponse": {
+    "accessToken": "AAAAN6iNI5TiZo-BXhRhVu6fYd2T2chQC4VwD9wW8Tn1m-5uSNsksFsNtPGSPanj3Po4dzIo3VOTM-TJyJEgWUwdzE8",
+    "expiresAtUnixSecondString": "1745741109",
+    "refreshToken": "R30RHjxSHPVisb6ZYT2RoiioROM0N8fFAyTOtFJomS3J0sZRha4G6Dxip2mhnhcOhL47WQ6wOoKcL5ECpXOBps8j083XdPuTCm6ez1cyPFS3Q4ie",
+    "tokenType": "bearer"
+  }
+}

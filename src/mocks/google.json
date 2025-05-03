@@ -1,0 +1,20 @@
+{
+  "data": {
+    "idToken": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjIzZjdhMzU4Mzc5NmY5NzEyOWU1NDE4ZjliMjEzNmZjYzBhOTY0NjIiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI2NjA5NTMyMDg1MTgtOGpoNWQxMTlobnRhMTlpN2EzazB0dDJuaGhmN2s5dmwuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI2NjA5NTMyMDg1MTgtOGpoNWQxMTlobnRhMTlpN2EzazB0dDJuaGhmN2s5dmwuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMDA5NzMzNDcwMDA5MjkxMTY3MzkiLCJlbWFpbCI6InZibjAyMTNAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImF0X2hhc2giOiI2Q2pKczNTMV9QUV9RS1VRNDl5ZklBIiwibm9uY2UiOiJaU3pJT1MxdlRQMXV3OVZBenB5MmxEeHk4b2xLV0JNMW5BdWNheFllWklvIiwibmFtZSI6ImFyY3RpYyIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NLUE1LVlhDLWxuRlNPaktiZGtzdG1QeFUxNEltVGFrcVE4OFRRVW1UZVZWOUN2blE9czk2LWMiLCJnaXZlbl9uYW1lIjoiYXJjdGljIiwiaWF0IjoxNzQ1NzM5NTYwLCJleHAiOjE3NDU3NDMxNjB9.VA04XkA9iO9CvvHQr__Pflft7irx1a_vWshm3LMOHP_yhIzo5Fa9847BvsYbjFxBVDRI6JvAKrzq-lsBq2ozVEcx6RWYNcc1dc3tWjuGjlwZEpZQvbcEr7mkvMmqfIKQEVkF3d_RqGeBJF_6WlaO7N0b5ult8FOhlvNoXsghShUA18eQ8Dq2HaoAI1ldRgyivZ3xFvkKm9hNQC0UoSoeDke7fFldK19wXi5OPqiSwoSHjeE0Whzeqxr7e776tx2ehUIG0wYo0argbd3WM8p_yEBe92lcylpFup20LszDu8GM1YlxMfysQMGAvudYqrEDJp0vNaSNNO5_o2vzxdXHqA",
+    "scopes": [
+      "openid",
+      "https://www.googleapis.com/auth/userinfo.email",
+      "https://www.googleapis.com/auth/userinfo.profile"
+    ],
+    "serverAuthCode": null,
+    "user": {
+      "email": "vbn0213@gmail.com",
+      "familyName": null,
+      "givenName": "arctic",
+      "id": "100973347000929116739",
+      "name": "arctic",
+      "photo": "https://lh3.googleusercontent.com/a/ACg8ocKPMKVXC-lnFSOjKbdkstmPxU14ImTakqQ88TQUmTeVV9CvnQ=s120"
+    }
+  },
+  "type": "success"
+}
