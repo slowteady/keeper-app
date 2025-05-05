@@ -40,7 +40,7 @@ const AnimatedButton = ({ label, isSelected, onPress }: AnimatedButtonProps) => 
   const progress = useSharedValue(isSelected ? 1 : 0);
 
   useEffect(() => {
-    progress.value = withTiming(isSelected ? 1 : 0, { duration: 100 });
+    progress.value = withTiming(isSelected ? 1 : 0, { duration: 200 });
   }, [isSelected, progress]);
 
   const animatedStyle = useAnimatedStyle(() => {
