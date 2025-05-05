@@ -5,5 +5,6 @@ export { default as Location } from './Location';
 export { default as Login } from './Login';
 export { default as Logo } from './Logo';
 export { default as Menu } from './Menu';
+export { default as Message } from './Message';
 export { default as MoreImage } from './MoreImage';
 export { default as RightArrow } from './RightArrow';
