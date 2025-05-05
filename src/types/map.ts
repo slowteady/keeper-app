@@ -49,3 +49,49 @@ export interface AddressElement {
   /** 코드 정보 (필요 시 사용) */
   code: string;
 }
+
+export interface KakaoAddressDocument {
+  address: {
+    address_name: string;
+    b_code: string;
+    h_code: string;
+    main_address_no: string;
+    mountain_yn: 'Y' | 'N';
+    region_1depth_name: string;
+    region_2depth_name: string;
+    region_3depth_h_name: string;
+    region_3depth_name: string;
+    sub_address_no: string;
+    x: string; // longitude as string
+    y: string; // latitude as string
+  };
+  address_name: string;
+  address_type: 'REGION' | 'ROAD' | string;
+  road_address: null | {
+    address_name: string;
+    region_1depth_name: string;
+    region_2depth_name: string;
+    region_3depth_name: string;
+    road_name: string;
+    underground_yn: 'Y' | 'N';
+    main_building_no: string;
+    sub_building_no: string;
+    building_name: string;
+    zone_no: string;
+    x: string;
+    y: string;
+  };
+  x: string;
+  y: string;
+}
+
+export interface KakaoGeocodeMeta {
+  is_end: boolean;
+  pageable_count: number;
+  total_count: number;
+}
+
+export interface KakaoGeocodeResponse {
+  documents: KakaoAddressDocument[];
+  meta: KakaoGeocodeMeta;
+}
