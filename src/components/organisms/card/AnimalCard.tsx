@@ -1,14 +1,15 @@
 import NoImage, { NoImageProps } from '@/components/molecules/placeholder/NoImage';
 import { Skeleton } from '@/components/molecules/placeholder/Skeleton';
 import theme from '@/constants/theme';
+import { AbandonmentValue } from '@/types/scheme/abandonments';
 import { Image as ExpoImage } from 'expo-image';
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 export interface AnimalCardData<T> {
-  id: number;
+  id: AbandonmentValue['id'];
   uri: string;
-  title: string;
+  title: AbandonmentValue['fullName'];
   description: { label: string; value: string }[];
   chips?: ({ sort: number } & BasicCardChipsValue<T>)[];
 }

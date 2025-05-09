@@ -7,7 +7,7 @@ export type TransformedAbandonments = ReturnType<typeof transformAbandonments>[n
 export const transformAbandonments = (data: AbandonmentValue[], filter?: AbandonmentsFilter) => {
   return data.map((item) => {
     const {
-      image,
+      images,
       neuterYn,
       weight,
       gender,
@@ -17,7 +17,7 @@ export const transformAbandonments = (data: AbandonmentValue[], filter?: Abandon
       noticeEndDt,
       orgName,
       happenPlace,
-      animalType
+      fullName
     } = item;
     const chipLabelParams: ChipLabelParams = {
       neuterYn,
@@ -35,38 +35,20 @@ export const transformAbandonments = (data: AbandonmentValue[], filter?: Abandon
     };
     const transformedDescription = transformDescription(descriptionParams);
     const transformedChipLabel = transformChipLabel(chipLabelParams);
-    const transformedTitle = transformTitle(specificType, animalType);
 
     return {
       ...item,
-      uri: image,
-      title: transformedTitle,
+      uri: images[0],
+      title: fullName,
       description: transformedDescription,
       chips: transformedChipLabel
     };
   });
 };
 
-const transformTitle = (specificType: string, animalType: string) => {
-  switch (animalType) {
-    case 'DOG': {
-      return `[강아지] ${specificType}`;
-    }
-    case 'CAT': {
-      return `[고양이] ${specificType}`;
-    }
-    case 'OTHER': {
-      return `[기타] ${specificType}`;
-    }
-    default: {
-      return `${specificType}`;
-    }
-  }
-};
-
 export type TransformedAbandonmentDetail = ReturnType<typeof transformAbandonmentDetail>;
 export const transformAbandonmentDetail = (data: AbandonmentValue) => {
-  const { image, specificType, noticeStartDt, noticeEndDt, orgName, happenPlace, animalType } = data;
+  const { images, specificType, noticeStartDt, noticeEndDt, orgName, happenPlace, fullName } = data;
   const descriptionParams: DescriptionParams = {
     specificType,
     noticeStartDt,
@@ -75,12 +57,11 @@ export const transformAbandonmentDetail = (data: AbandonmentValue) => {
     happenPlace
   };
   const transformedDescription = transformDescription(descriptionParams);
-  const transformedTitle = transformTitle(specificType, animalType);
 
   return {
     ...data,
-    uri: image,
-    title: transformedTitle,
+    uri: images[0],
+    title: fullName,
     description: transformedDescription
   };
 };
@@ -138,7 +119,7 @@ export const transformChipLabel = ({ neuterYn, filter, weight, gender, age }: Ch
   if (age) {
     data.push({
       id: 'AGE',
-      value: `${age}년생`,
+      value: age,
       sort: 4
     });
   }
@@ -146,7 +127,7 @@ export const transformChipLabel = ({ neuterYn, filter, weight, gender, age }: Ch
   if (weight) {
     data.push({
       id: 'WEIGHT',
-      value: `${weight}kg`,
+      value: weight,
       sort: 5
     });
   }

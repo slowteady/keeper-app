@@ -10,12 +10,12 @@ export interface AbandonmentValue {
   /**
    * 유기 동물 id
    */
-  id: number;
+  id: string;
 
   /**
    * 이미지
    */
-  image: string;
+  images: string[];
 
   /**
    * 동물 종류
@@ -28,9 +28,9 @@ export interface AbandonmentValue {
   specificType: string;
 
   /**
-   * 색깔
+   * 동물종류 + 믹스견
    */
-  color: string;
+  fullName: string;
 
   /**
    * 중성화 여부
@@ -41,6 +41,11 @@ export interface AbandonmentValue {
    * 특이 사항
    */
   specialMark: string;
+
+  /**
+   * 색깔
+   */
+  color: string;
 
   /**
    * 출생년도
@@ -63,6 +68,11 @@ export interface AbandonmentValue {
   happenPlace: string;
 
   /**
+   * 구조 일시
+   */
+  happenDt: string;
+
+  /**
    * 지역
    */
   orgName: string;
@@ -80,10 +90,30 @@ export interface AbandonmentValue {
   /**
    * 보호소 아이디
    */
-  shelterId: number;
+  shelterId: string;
 
   /**
    * 보호소 전화번호
    */
   careTel: string;
+
+  /**
+   * 공고 번호
+   */
+  noticeNo: string;
+
+  /**
+   * 칩 번호
+   */
+  rfid: string | null;
+
+  /**
+   * 백신 검사 여부
+   */
+  vaccinationCheck: string | null;
+
+  /**
+   * 건강 검진 여부
+   */
+  healthCheck: string | null;
 }
