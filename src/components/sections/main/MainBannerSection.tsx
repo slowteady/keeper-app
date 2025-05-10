@@ -39,7 +39,7 @@ const MainBannerSection = memo(() => {
         <Text style={styles.subTitle}>{'Spread the love through adoption.'}</Text>
       </View>
       <View style={styles.image}>
-        <Carousel initialPage={0} data={images} onPageScroll={handleChangeBanner} ref={carouselRef} />
+        <Carousel data={images} onPageScroll={handleChangeBanner} />
         <View style={styles.controllerContainer}>
           <Carousel.Controller currentIndex={currentIndex} max={images.length} onPress={handlePressIndicator} />
         </View>

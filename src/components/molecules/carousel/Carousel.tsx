@@ -1,31 +1,52 @@
 import { LeftLineArrow, RightLineArrow } from '@/components/atoms/icons/mini';
 import theme from '@/constants/theme';
 import { Image } from 'expo-image';
-import { forwardRef } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { forwardRef, useCallback, useRef, useState } from 'react';
+import { NativeSyntheticEvent, Pressable, StyleSheet, Text, View } from 'react-native';
 import PagerView, { PagerViewProps } from 'react-native-pager-view';
 
 export interface BasicCarouselProps extends PagerViewProps {
   data: string[];
   onChange?: (data: string) => void;
+  showIndicator?: boolean;
 }
 
 const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>((props, ref) => {
-  const { data } = props;
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const carouselRef = useRef<PagerView | null>(null);
+
+  const handleChange = useCallback((e: NativeSyntheticEvent<{ position: number }>) => {
+    const { position } = e.nativeEvent;
+    setCurrentIndex(position);
+  }, []);
+
+  const { data, showIndicator = false } = props;
 
   return (
-    <PagerView style={styles.container} ref={ref} {...props}>
-      {data.map((image, idx) => (
-        <Image
-          key={idx}
-          source={image}
-          contentFit="cover"
-          style={{ borderRadius: 10, width: '100%', height: '100%' }}
-        />
-      ))}
-    </PagerView>
+    <>
+      <PagerView style={styles.container} ref={carouselRef} onPageScroll={handleChange} initialPage={0} {...props}>
+        {data.map((image, idx) => (
+          <Image key={idx} source={image} contentFit="cover" style={styles.image} />
+        ))}
+      </PagerView>
+      {showIndicator && <Indicator currentIndex={currentIndex + 1} maxIndex={data.length} />}
+    </>
   );
 });
+
+export interface BasicCarouselIndicatorProps {
+  currentIndex: number;
+  maxIndex: number;
+}
+const Indicator = ({ currentIndex, maxIndex }: BasicCarouselIndicatorProps) => {
+  const text = `${currentIndex}/${maxIndex}`;
+
+  return (
+    <View style={styles.indicatorContainer}>
+      <Text style={styles.indicatorText}>{text}</Text>
+    </View>
+  );
+};
 
 export interface BasicCarouselControllerProps {
   currentIndex: number;
@@ -58,10 +79,8 @@ export const Carousel = Object.assign(BasicCarousel, {
 });
 
 const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    height: '100%'
-  },
+  container: { position: 'relative', width: '100%', height: '100%' },
+  image: { borderRadius: 10, width: '100%', height: '100%' },
   controllerContainer: {
     display: 'flex',
     flexDirection: 'row',
@@ -78,12 +97,18 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.white[900],
     opacity: 0.4
   },
-  text: {
-    fontSize: 12,
-    lineHeight: 14,
-    fontWeight: '400',
-    color: theme.colors.black[900]
-  }
+  text: { fontSize: 12, lineHeight: 14, fontWeight: '400', color: theme.colors.black[900] },
+  indicatorContainer: {
+    position: 'absolute',
+    bottom: 16,
+    right: 16,
+    borderRadius: 20,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    backgroundColor: theme.colors.white[900],
+    opacity: 0.4
+  },
+  indicatorText: { fontSize: 11, lineHeight: 13, fontWeight: '500', color: theme.colors.white[900] }
 });
 
 BasicCarousel.displayName = 'BasicCarousel';
