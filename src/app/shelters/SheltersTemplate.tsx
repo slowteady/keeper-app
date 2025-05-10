@@ -40,7 +40,6 @@ const SheltersTemplate = forwardRef<NaverMapViewRef, SheltersTemplateProps>((pro
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => [400], []);
   const { isButtonVisible, handlePress, handleScroll, flatListRef } = useScrollFloatingButton();
-  // const { mutateAsync, isPending } = useGeocodeMutation();
   const { mutateAsync, isPending } = useKakaoGeocodeMutation();
 
   useEffect(() => {
