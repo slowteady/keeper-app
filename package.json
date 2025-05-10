@@ -58,12 +58,12 @@
     "react-native-svg": "^15.10.1",
     "react-native-tab-view": "^4.0.12",
     "react-native-web": "~0.19.13",
-    "react-native-webview": "13.12.5"
+    "react-native-webview": "13.12.5",
+    "@faker-js/faker": "^9.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@dev-plugins/react-query": "^0.1.0",
-    "@faker-js/faker": "^9.3.0",
     "@svgr/cli": "^8.1.0",
     "@svgr/core": "^8.1.0",
     "@svgr/plugin-jsx": "^8.1.0",
