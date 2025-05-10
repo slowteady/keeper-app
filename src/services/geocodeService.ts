@@ -98,7 +98,7 @@ export const getKakaoGeocode = async ({ query, params = {} }: KakaoGeocodeParams
     if (!response.ok) {
       throw new Error(`HTTP ${response.status} ${response.statusText}`);
     }
-    console.log(response);
+    return await response.json();
   } catch (err) {
     console.error('getKakaoGeocode error:', err);
     if (err instanceof Error && err.name === 'AbortError') {

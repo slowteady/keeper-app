@@ -62,8 +62,8 @@ export interface KakaoAddressDocument {
     region_3depth_h_name: string;
     region_3depth_name: string;
     sub_address_no: string;
-    x: string; // longitude as string
-    y: string; // latitude as string
+    x: string;
+    y: string;
   };
   address_name: string;
   address_type: 'REGION' | 'ROAD' | string;
