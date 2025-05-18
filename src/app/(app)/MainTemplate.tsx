@@ -6,7 +6,6 @@ import MainBannerSection from 'components/sections/main/MainBannerSection';
 import MainShelterSection from 'components/sections/main/MainShelterSection';
 import { ABANDONMENTS_QUERY_KEY, SHELTER_QUERY_KEY } from 'constants/queryKeys';
 import theme from 'constants/theme';
-import Constants from 'expo-constants';
 import useRefreshing from 'hooks/useRefreshing';
 import useScrollFloatingButton from 'hooks/useScrollFloatingButton';
 import { useCallback, useMemo } from 'react';
@@ -58,7 +57,7 @@ export default MainTemplate;
 
 const Footer = () => {
   const handleClickContact = useCallback(() => {
-    const email = Constants.expoConfig?.extra?.EXPO_PUBLIC_DEVELOPER_EMAIL;
+    const email = process.env.EXPO_PUBLIC_DEVELOPER_EMAIL;
     Linking.openURL(`mailto:${email}`);
   }, []);
 

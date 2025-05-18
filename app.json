@@ -2,14 +2,14 @@
   "expo": {
     "name": "keeper",
     "slug": "keeper",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "orientation": "portrait",
     "scheme": "keeper",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "icon": "./src/assets/images/keeper-icon.png",
-      "supportsTablet": false,
+      "supportsTablet": true,
       "entitlements": {
         "aps-environment": "development"
       },
@@ -64,10 +64,6 @@
       "typedRoutes": true
     },
     "extra": {
-      "EXPO_PUBLIC_DEVELOPER_EMAIL": "ymlee.dev@gmail.com",
-      "EXPO_PUBLIC_CLIENT_ID": "rg0cm283cu",
-      "EXPO_PUBLIC_SECRET_ID": "uJ7EksxVsuemgpearWYtZxdOEtNxvMqOltBYNnYJ",
-      "EXPO_PUBLIC_GEOCODE_URL": "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode",
       "eas": {
         "projectId": "6a4a1356-b842-4472-b78e-e1bebffeb444"
       }

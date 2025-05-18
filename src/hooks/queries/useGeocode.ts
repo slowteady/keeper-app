@@ -1,13 +1,13 @@
+import { getKakaoGeocode, KakaoGeocodeParams } from '@/services/geocodeService';
+import { KakaoGeocodeResponse } from '@/types/map';
+import { UseMutationCustomOptions } from '@/types/utils';
 import { useMutation } from '@tanstack/react-query';
-import { GeocodeParams, getGeocode } from 'services/geocodeService';
-import { GeocodeResponse } from 'types/map';
-import { UseMutationCustomOptions } from 'types/utils';
 
-export const useGeocodeMutation = (
-  mutationOptions?: UseMutationCustomOptions<GeocodeResponse, Error, GeocodeParams>
+export const useKakaoGeocodeMutation = (
+  mutationOptions?: UseMutationCustomOptions<KakaoGeocodeResponse, Error, KakaoGeocodeParams>
 ) => {
-  return useMutation<GeocodeResponse, Error, GeocodeParams>({
-    mutationFn: (params) => getGeocode(params),
+  return useMutation<KakaoGeocodeResponse, Error, KakaoGeocodeParams>({
+    mutationFn: (params) => getKakaoGeocode(params),
     throwOnError: true,
     ...mutationOptions
   });
