@@ -1,23 +1,23 @@
-import Button from '@/components/atoms/button/Button';
-import ScrollFloatingButton from '@/components/atoms/button/ScrollFloatingButton';
-import Searchbar from '@/components/molecules/input/Searchbar';
-import { Skeleton } from '@/components/molecules/placeholder/Skeleton';
-import LocationBottomSheet from '@/components/organisms/bottomSheet/LocationBottomSheet';
-import ShelterCard from '@/components/organisms/card/ShelterCard';
-import { ShelterMap } from '@/components/organisms/map/ShelterMap';
-import theme from '@/constants/theme';
-import { useGeocodeMutation } from '@/hooks/queries/useGeocode';
-import useScrollFloatingButton from '@/hooks/useScrollFloatingButton';
-import { GetShelterSearchParams } from '@/services/sheltersService';
-import { Address, CameraParams } from '@/types/map';
-import { ShelterCountValue, ShelterValue } from '@/types/scheme/shelters';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { Camera, NaverMapViewRef } from '@mj-studio/react-native-naver-map';
+import Button from 'components/atoms/button/Button';
+import ScrollFloatingButton from 'components/molecules/button/ScrollFloatingButton';
+import Searchbar from 'components/molecules/input/Searchbar';
+import { Skeleton } from 'components/molecules/placeholder/Skeleton';
+import LocationBottomSheet from 'components/organisms/bottomSheet/LocationBottomSheet';
+import ShelterCard from 'components/organisms/card/ShelterCard';
+import { ShelterMap } from 'components/organisms/map/ShelterMap';
+import theme from 'constants/theme';
 import * as Location from 'expo-location';
 import { router } from 'expo-router';
+import { useGeocodeMutation } from 'hooks/queries/useGeocode';
+import useScrollFloatingButton from 'hooks/useScrollFloatingButton';
 import { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { Dimensions, FlatList, ListRenderItemInfo, StyleSheet, Text, View } from 'react-native';
+import { GetShelterSearchParams } from 'services/sheltersService';
+import { Address, CameraParams } from 'types/map';
+import { ShelterCountValue, ShelterValue } from 'types/scheme/shelters';
 
 // TODO
 // [ ] 주소 검색 카카오로 변경하여 확장성 높이기

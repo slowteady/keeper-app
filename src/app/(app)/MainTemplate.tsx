@@ -1,14 +1,14 @@
-import ScrollFloatingButton from '@/components/atoms/button/ScrollFloatingButton';
-import { Logo } from '@/components/atoms/icons/outline';
-import MainAbandonmentSection from '@/components/sections/main/MainAbandonmentSection';
-import MainBannerSection from '@/components/sections/main/MainBannerSection';
-import MainShelterSection from '@/components/sections/main/MainShelterSection';
-import { ABANDONMENTS_QUERY_KEY, SHELTER_QUERY_KEY } from '@/constants/queryKeys';
-import theme from '@/constants/theme';
-import useRefreshing from '@/hooks/useRefreshing';
-import useScrollFloatingButton from '@/hooks/useScrollFloatingButton';
 import { useQueryClient } from '@tanstack/react-query';
+import { Logo } from 'components/atoms/icons/outline';
+import ScrollFloatingButton from 'components/molecules/button/ScrollFloatingButton';
+import MainAbandonmentSection from 'components/sections/main/MainAbandonmentSection';
+import MainBannerSection from 'components/sections/main/MainBannerSection';
+import MainShelterSection from 'components/sections/main/MainShelterSection';
+import { ABANDONMENTS_QUERY_KEY, SHELTER_QUERY_KEY } from 'constants/queryKeys';
+import theme from 'constants/theme';
 import Constants from 'expo-constants';
+import useRefreshing from 'hooks/useRefreshing';
+import useScrollFloatingButton from 'hooks/useScrollFloatingButton';
 import { useCallback, useMemo } from 'react';
 import { FlatList, Linking, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
 

@@ -1,5 +1,5 @@
-import { buildQueryString } from '@/utils/queryUtils';
 import Constants from 'expo-constants';
+import { buildQueryString } from 'utils/queryUtils';
 
 export interface GeocodeOptionalParams {
   /** 검색 결과 페이지 번호 (기본값: 1) */

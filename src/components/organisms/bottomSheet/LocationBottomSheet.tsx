@@ -1,9 +1,9 @@
-import Searchbar from '@/components/molecules/input/Searchbar';
-import theme from '@/constants/theme';
-import { Address } from '@/types/map';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import Searchbar from 'components/molecules/input/Searchbar';
+import theme from 'constants/theme';
 import { forwardRef, useState } from 'react';
 import { ActivityIndicator, FlatList, ListRenderItemInfo, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Address } from 'types/map';
 import { BottomSheet, BottomSheetLayoutProps } from './BottomSheet';
 
 interface LocationBottomSheetProps extends BottomSheetLayoutProps {
