@@ -9,15 +9,14 @@ interface AbandonmentDetailInfoSectionProps {
 }
 const AbandonmentDetailInfoSection = ({ age, gender, weight }: AbandonmentDetailInfoSectionProps) => {
   const genderValue = gender === 'F' ? '여아' : gender === 'M' ? '남아' : '미상';
-  const weightValue = `${weight}kg`;
 
   const VALUE = useMemo(
     () => [
       { label: '나이', value: age },
       { label: '성별', value: genderValue },
-      { label: '크기/몸무게', value: weightValue }
+      { label: '크기/몸무게', value: weight }
     ],
-    [age, genderValue, weightValue]
+    [age, genderValue, weight]
   );
 
   return (
@@ -29,10 +28,7 @@ const AbandonmentDetailInfoSection = ({ age, gender, weight }: AbandonmentDetail
           <View key={key} style={styles.wrap}>
             <Text style={styles.label}>{label}</Text>
             <View style={styles.box}>
-              <Text style={styles.value}>
-                {value}
-                {label === '나이' && <Text style={styles.subValue}> 년생</Text>}
-              </Text>
+              <Text style={styles.value}>{value}</Text>
             </View>
           </View>
         );

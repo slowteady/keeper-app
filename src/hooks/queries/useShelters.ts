@@ -11,7 +11,7 @@ import {
   GetSheltersParams
 } from '@/services/sheltersService';
 import { ApiResponse } from '@/types/common';
-import { AbandonmentData } from '@/types/scheme/abandonments';
+import { AbandonmentData, AbandonmentValue } from '@/types/scheme/abandonments';
 import { ShelterCountValue, ShelterValue } from '@/types/scheme/shelters';
 import { UseInfiniteQueryCustomOptions, UseMutationCustomOptions, UseQueryCustomOptions } from '@/types/utils';
 import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
@@ -39,7 +39,7 @@ export const useGetSheltersQuery = (
  * @param queryOptions
  */
 export const useGetShelterQuery = (
-  id: number,
+  id: AbandonmentValue['shelterId'],
   queryOptions?: UseQueryCustomOptions<ApiResponse<ShelterValue>, Error, ShelterValue>
 ) => {
   return useQuery<ApiResponse<ShelterValue>, Error, ShelterValue>({
