@@ -13,8 +13,8 @@ import { StyleSheet, View } from 'react-native';
  */
 const Page = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { data: abandonmentData } = useGetAbandonmentQuery(Number(id));
-  const { data: shelterData } = useGetShelterQuery(abandonmentData?.shelterId || 0, {
+  const { data: abandonmentData } = useGetAbandonmentQuery(id);
+  const { data: shelterData } = useGetShelterQuery(abandonmentData?.shelterId || '', {
     enabled: Boolean(abandonmentData?.shelterId)
   });
 

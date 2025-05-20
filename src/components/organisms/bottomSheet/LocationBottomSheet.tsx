@@ -1,6 +1,6 @@
 import Searchbar from '@/components/molecules/input/Searchbar';
 import theme from '@/constants/theme';
-import { Address } from '@/types/map';
+import { KakaoAddressDocument } from '@/types/map';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { forwardRef, useState } from 'react';
 import { ActivityIndicator, FlatList, ListRenderItemInfo, Pressable, StyleSheet, Text, View } from 'react-native';
@@ -8,19 +8,19 @@ import { BottomSheet, BottomSheetLayoutProps } from './BottomSheet';
 
 interface LocationBottomSheetProps extends BottomSheetLayoutProps {
   onSubmit: (value: string) => void;
-  onPressAddress: (value: Address) => void;
-  addresses?: Address[];
+  onPressAddress: (value: KakaoAddressDocument) => void;
+  addresses?: KakaoAddressDocument[];
   isPending?: boolean;
 }
 const LocationBottomSheet = forwardRef<BottomSheetModal, LocationBottomSheetProps>((props, ref) => {
   const { onSubmit, onPressAddress, addresses, isPending, ...rest } = props;
 
-  const renderItem = ({ item }: ListRenderItemInfo<Address>) => {
-    const { roadAddress } = item;
+  const renderItem = ({ item }: ListRenderItemInfo<KakaoAddressDocument>) => {
+    const { address_name } = item;
 
     return (
       <Pressable style={styles.listButton} onPress={() => onPressAddress(item)}>
-        <Text style={styles.listText}>{roadAddress}</Text>
+        <Text style={styles.listText}>{address_name}</Text>
       </Pressable>
     );
   };
@@ -40,7 +40,7 @@ const LocationBottomSheet = forwardRef<BottomSheetModal, LocationBottomSheetProp
         </View>
       ) : (
         <FlatList
-          keyExtractor={({ roadAddress }, idx) => `${roadAddress}-${idx}`}
+          keyExtractor={({ address_name }, idx) => `${address_name}-${idx}`}
           showsVerticalScrollIndicator
           data={addresses}
           renderItem={renderItem}

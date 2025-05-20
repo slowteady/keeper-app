@@ -12,7 +12,7 @@ import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
  * @returns
  */
 export const useGetAbandonmentQuery = (
-  id: number,
+  id: AbandonmentValue['id'],
   queryOptions?: UseQueryCustomOptions<ApiResponse<AbandonmentValue>, Error, AbandonmentValue>
 ) => {
   return useQuery<ApiResponse<AbandonmentValue>, Error, AbandonmentValue>({

@@ -29,12 +29,20 @@ export interface GetAbandonmentsParams {
    */
   filter: AbandonmentsFilter;
 }
+const BASE_URL = `/v2/abandonments`;
+
+/**
+ * 공고 전체 조회
+ */
 export const getAbandonments = async (params: GetAbandonmentsParams): Promise<ApiResponse<AbandonmentData>> => {
-  const endpoint = '/abandonments';
+  const endpoint = BASE_URL;
   return publicApi({ endpoint, params, options: { method: 'GET' } });
 };
 
-export const getAbandonment = async (id: number): Promise<ApiResponse<AbandonmentValue>> => {
-  const endpoint = `/abandonments/${id}`;
+/**
+ * 공고 상세 조회
+ */
+export const getAbandonment = async (id: AbandonmentValue['id']): Promise<ApiResponse<AbandonmentValue>> => {
+  const endpoint = `${BASE_URL}/${id}`;
   return publicApi({ endpoint });
 };
