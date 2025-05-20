@@ -12,9 +12,22 @@ import {
   isAvailableAsync,
   signInAsync
 } from 'expo-apple-authentication';
-import { StyleSheet, Text, View } from 'react-native';
+import * as Clipboard from 'expo-clipboard';
+import { useState } from 'react';
+import { Alert, StyleSheet, Text, TextInput, View } from 'react-native';
 
 const Page = () => {
+  const [response, setResponse] = useState('');
+  const handleChange = (res: object) => {
+    const text = JSON.stringify(res, null, 2);
+    setResponse(text);
+  };
+
+  const handlePress = async () => {
+    await Clipboard.setStringAsync(response || '');
+    Alert.alert('', '복사 완료', [{ text: '확인' }]);
+  };
+
   return (
     <View style={styles.container}>
       <View style={[styles.cFlex, { marginBottom: 48 }]}>
@@ -23,10 +36,24 @@ const Page = () => {
       </View>
 
       <View style={styles.cFlex}>
-        <KakaoButton />
-        <NaverButton />
-        <GoogleButton />
-        <AppleButton />
+        <KakaoButton onChange={(res) => handleChange(res)} />
+        <NaverButton onChange={(res) => handleChange(res)} />
+        <GoogleButton onChange={(res) => handleChange(res)} />
+        <AppleButton onChange={(res) => handleChange(res)} />
+      </View>
+
+      <View style={{ marginTop: 40 }}>
+        <TextInput
+          value={response}
+          multiline
+          editable={false}
+          scrollEnabled
+          textAlignVertical="top"
+          style={{ borderWidth: 1, maxHeight: 200, marginBottom: 20 }}
+        />
+        <Button onPress={handlePress} style={[styles.button, { backgroundColor: theme.colors.success.main }]}>
+          <Text>복사</Text>
+        </Button>
       </View>
     </View>
   );
@@ -34,11 +61,10 @@ const Page = () => {
 
 export default Page;
 
-const KakaoButton = () => {
+const KakaoButton = ({ onChange }: { onChange: (res: any) => void }) => {
   const handlePress = async () => {
     const response = await login();
-    console.log('🔥 / handlePress / response:', response);
-    // NOTE:  비즈니스 로직 구현
+    onChange(response);
   };
 
   return (
@@ -51,11 +77,10 @@ const KakaoButton = () => {
   );
 };
 
-const NaverButton = () => {
+const NaverButton = ({ onChange }: { onChange: (res: any) => void }) => {
   const handlePress = async () => {
     const response = await NaverLogin.login();
-    console.log('🔥 / handlePress / response:', response);
-    // NOTE: 비즈니스 로직 구현
+    onChange(response);
   };
 
   return (
@@ -68,14 +93,13 @@ const NaverButton = () => {
   );
 };
 
-const GoogleButton = () => {
+const GoogleButton = ({ onChange }: { onChange: (res: any) => void }) => {
   const handlePress = async () => {
     const isAvailable = await GoogleSignin.hasPlayServices();
     if (!isAvailable) return null;
 
     const response = await GoogleSignin.signIn();
-    console.log('🔥 / handlePress / response:', response);
-    // NOTE:  비즈니스 로직 구현
+    onChange(response);
   };
 
   return (
@@ -88,7 +112,7 @@ const GoogleButton = () => {
   );
 };
 
-const AppleButton = () => {
+const AppleButton = ({ onChange }: { onChange: (res: any) => void }) => {
   const handlePress = async () => {
     const isAvailable = await isAvailableAsync();
     if (!isAvailable) return null;
@@ -96,7 +120,7 @@ const AppleButton = () => {
     const response = await signInAsync({
       requestedScopes: [AppleAuthenticationScope.FULL_NAME, AppleAuthenticationScope.EMAIL]
     });
-    // NOTE:  비즈니스 로직 구현
+    onChange(response);
   };
 
   return (
