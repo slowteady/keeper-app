@@ -6,10 +6,10 @@ import LocationBottomSheet from '@/components/organisms/bottomSheet/LocationBott
 import ShelterCard from '@/components/organisms/card/ShelterCard';
 import { ShelterMap } from '@/components/organisms/map/ShelterMap';
 import theme from '@/constants/theme';
-import { useGeocodeMutation } from '@/hooks/queries/useGeocode';
+import { useKakaoGeocodeMutation } from '@/hooks/queries/useGeocode';
 import useScrollFloatingButton from '@/hooks/useScrollFloatingButton';
 import { GetShelterSearchParams } from '@/services/sheltersService';
-import { Address, CameraParams } from '@/types/map';
+import { CameraParams, KakaoAddressDocument } from '@/types/map';
 import { ShelterCountValue, ShelterValue } from '@/types/scheme/shelters';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { Camera, NaverMapViewRef } from '@mj-studio/react-native-naver-map';
@@ -19,8 +19,6 @@ import { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'r
 import { useFormContext } from 'react-hook-form';
 import { Dimensions, FlatList, ListRenderItemInfo, StyleSheet, Text, View } from 'react-native';
 
-// TODO
-// [ ] 주소 검색 카카오로 변경하여 확장성 높이기
 interface SheltersTemplateProps {
   data: SheltersTemplateData;
   isLoading: boolean;
@@ -37,12 +35,12 @@ interface SheltersTemplateData {
 const PADDING_HORIZONTAL = 20;
 const SheltersTemplate = forwardRef<NaverMapViewRef, SheltersTemplateProps>((props, ref) => {
   const { data, isLoading, camera, permissionStatus, onSubmitSearch, onRefetch, onInitMap } = props;
-  const [addresses, setAddresses] = useState<Address[]>();
+  const [addresses, setAddresses] = useState<KakaoAddressDocument[]>();
   const [shelterValues, setShelterValues] = useState<ShelterValue[]>([]);
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => [400], []);
   const { isButtonVisible, handlePress, handleScroll, flatListRef } = useScrollFloatingButton();
-  const { mutateAsync, isPending } = useGeocodeMutation();
+  const { mutateAsync, isPending } = useKakaoGeocodeMutation();
 
   useEffect(() => {
     if (data.sheltersData) {
@@ -64,13 +62,12 @@ const SheltersTemplate = forwardRef<NaverMapViewRef, SheltersTemplateProps>((pro
   }, []);
   const handleSubmitGeocode = async (value: string) => {
     try {
-      const response = await mutateAsync({ query: value });
-      const addresses = response.addresses;
-      setAddresses(addresses);
+      const { documents } = await mutateAsync({ query: value });
+      setAddresses(documents);
     } catch {}
   };
   const handlePressAddress = useCallback(
-    (item: Address) => {
+    (item: KakaoAddressDocument) => {
       if (ref && 'current' in ref && ref.current) {
         const { x, y } = item;
         ref.current.animateCameraTo({ longitude: Number(x), latitude: Number(y) });

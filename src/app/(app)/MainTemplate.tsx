@@ -8,7 +8,6 @@ import theme from '@/constants/theme';
 import useRefreshing from '@/hooks/useRefreshing';
 import useScrollFloatingButton from '@/hooks/useScrollFloatingButton';
 import { useQueryClient } from '@tanstack/react-query';
-import Constants from 'expo-constants';
 import { useCallback, useMemo } from 'react';
 import { FlatList, Linking, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
 
@@ -58,7 +57,7 @@ export default MainTemplate;
 
 const Footer = () => {
   const handleClickContact = useCallback(() => {
-    const email = Constants.expoConfig?.extra?.EXPO_PUBLIC_DEVELOPER_EMAIL;
+    const email = process.env.EXPO_PUBLIC_DEVELOPER_EMAIL;
     Linking.openURL(`mailto:${email}`);
   }, []);
 
