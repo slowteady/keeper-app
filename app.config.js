@@ -4,7 +4,7 @@ export default () => ({
   expo: {
     name: 'keeper',
     slug: 'keeper',
-    version: '1.0.3',
+    version: '1.3.1',
     orientation: 'portrait',
     scheme: 'keeper',
     userInterfaceStyle: 'automatic',
@@ -15,7 +15,13 @@ export default () => ({
       supportsTablet: true,
       entitlements: { 'aps-environment': 'development' },
       bundleIdentifier: 'com.keeper.love',
-      infoPlist: { ITSAppUsesNonExemptEncryption: false, CFBundleURLTypes: [{ CFBundleURLSchemes: [iosUrlScheme] }] }
+      infoPlist: {
+        ITSAppUsesNonExemptEncryption: false,
+        CFBundleURLTypes: [{ CFBundleURLSchemes: [iosUrlScheme] }],
+        NSAppTransportSecurity: {
+          NSAllowsArbitraryLoads: true
+        }
+      }
     },
     android: {
       package: 'com.keeper.love',
