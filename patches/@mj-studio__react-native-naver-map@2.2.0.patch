@@ -1,0 +1,31 @@
+diff --git a/android/src/main/java/com/mjstudio/reactnativenavermap/mapview/RNCNaverMapViewWrapper.kt b/android/src/main/java/com/mjstudio/reactnativenavermap/mapview/RNCNaverMapViewWrapper.kt
+index a330cbb4facab6676d4766dee33688d323c7495c..750d8f05352858e607337a01532ff2102bf9c718 100644
+--- a/android/src/main/java/com/mjstudio/reactnativenavermap/mapview/RNCNaverMapViewWrapper.kt
++++ b/android/src/main/java/com/mjstudio/reactnativenavermap/mapview/RNCNaverMapViewWrapper.kt
+@@ -6,6 +6,7 @@ import android.view.Choreographer
+ import android.view.Choreographer.FrameCallback
+ import android.view.View
+ import android.widget.FrameLayout
++import android.view.MotionEvent
+ import com.facebook.react.bridge.LifecycleEventListener
+ import com.facebook.react.uimanager.ThemedReactContext
+ import com.naver.maps.map.MapView
+@@ -26,6 +27,18 @@ class RNCNaverMapViewWrapper(
+     addView(mapView)
+   }
+ 
++  override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
++    when (ev.action) {
++      MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
++        this.parent?.requestDisallowInterceptTouchEvent(true)
++      }
++      MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
++        this.parent?.requestDisallowInterceptTouchEvent(false)
++      }
++    }
++    return super.dispatchTouchEvent(ev)
++  }
++
+   override fun onAttachedToWindow() {
+     super.onAttachedToWindow()
+     mapView?.run {

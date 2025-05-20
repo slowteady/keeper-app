@@ -1,7 +1,7 @@
-diff --git a/node_modules/react-native-pager-view/ios/Fabric/RNCPagerViewComponentView.mm b/node_modules/react-native-pager-view/ios/Fabric/RNCPagerViewComponentView.mm
-index 652a5c1..067f92e 100644
---- a/node_modules/react-native-pager-view/ios/Fabric/RNCPagerViewComponentView.mm
-+++ b/node_modules/react-native-pager-view/ios/Fabric/RNCPagerViewComponentView.mm
+diff --git a/ios/Fabric/RNCPagerViewComponentView.mm b/ios/Fabric/RNCPagerViewComponentView.mm
+index 652a5c123100e7010011f07649517aa9e0cbc554..00942c04729556d4f6be223c9a6ded9ccc4870a8 100644
+--- a/ios/Fabric/RNCPagerViewComponentView.mm
++++ b/ios/Fabric/RNCPagerViewComponentView.mm
 @@ -14,9 +14,7 @@
  
  using namespace facebook::react;
@@ -13,7 +13,7 @@ index 652a5c1..067f92e 100644
  
  @end
  
-@@ -73,11 +71,6 @@ - (instancetype)initWithFrame:(CGRect)frame
+@@ -73,10 +71,6 @@ - (instancetype)initWithFrame:(CGRect)frame
          _destinationIndex = -1;
          _layoutDirection = @"ltr";
          _overdrag = NO;
@@ -21,11 +21,10 @@ index 652a5c1..067f92e 100644
 -        self.panGestureRecognizer = panGestureRecognizer;
 -        panGestureRecognizer.delegate = self;
 -        [self addGestureRecognizer: panGestureRecognizer];
--
+ 
      }
      
-     return self;
-@@ -420,30 +413,6 @@ + (ComponentDescriptorProvider)componentDescriptorProvider
+@@ -420,30 +414,6 @@ + (ComponentDescriptorProvider)componentDescriptorProvider
      return concreteComponentDescriptorProvider<RNCViewPagerComponentDescriptor>();
  }
  
@@ -56,10 +55,10 @@ index 652a5c1..067f92e 100644
  @end
  
  Class<RCTComponentViewProtocol> RNCViewPagerCls(void)
-diff --git a/node_modules/react-native-pager-view/ios/RNCPagerView.m b/node_modules/react-native-pager-view/ios/RNCPagerView.m
-index 507b45d..4253edc 100644
---- a/node_modules/react-native-pager-view/ios/RNCPagerView.m
-+++ b/node_modules/react-native-pager-view/ios/RNCPagerView.m
+diff --git a/ios/RNCPagerView.m b/ios/RNCPagerView.m
+index 507b45d83686759fe59346b7c458b6c3d91bd37a..4253edc9acd8edee7e70e43275fa6589a6737455 100644
+--- a/ios/RNCPagerView.m
++++ b/ios/RNCPagerView.m
 @@ -8,9 +8,7 @@
  #import "RCTOnPageSelected.h"
  #import <math.h>
