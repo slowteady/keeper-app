@@ -1,3 +1,5 @@
+import 'dotenv/config';
+
 const iosUrlScheme = process.env.EXPO_PUBLIC_GOOGLE_URL_SCHEME;
 
 export default () => ({
