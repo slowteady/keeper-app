@@ -11,11 +11,8 @@ export function calcMapRadiusKm(region: {
   latitudeDelta: number;
   longitudeDelta: number;
 }): number {
-  // 위도 1도는 약 111km
-  const kmPerLat = 111;
-
-  // 경도 1도는 약 111 * cos(위도) km
-  const kmPerLng = 111 * Math.cos((region.latitude * Math.PI) / 180);
+  const kmPerLat = 0.8 * 111;
+  const kmPerLng = 0.8 * 111 * Math.cos((region.latitude * Math.PI) / 180);
 
   // region 내 delta 값(도 단위)을 km로 환산
   const deltaLatKm = region.latitudeDelta * kmPerLat;
