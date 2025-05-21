@@ -101,7 +101,6 @@ interface MainAbandonmentSectionCardListProps {
 }
 const CARD_GAP = 18;
 const IMAGE_WIDTH = 220;
-const IMAGE_HEIGHT = 170;
 const AbandonmentCardList = ({
   data,
   filter,
@@ -122,7 +121,7 @@ const AbandonmentCardList = ({
     ({ item }: ListRenderItemInfo<TransformedAbandonments>) => {
       return (
         <Pressable onPress={() => onPress(item)}>
-          <AnimalCard data={item} width={IMAGE_WIDTH} height={IMAGE_HEIGHT} />
+          <AnimalCard data={item} width={IMAGE_WIDTH} />
         </Pressable>
       );
     },
@@ -150,7 +149,7 @@ const AbandonmentCardList = ({
         isLoading ? (
           <>
             {Array.from({ length: 4 }).map((_, idx) => (
-              <CardSkeleton key={idx} width={IMAGE_WIDTH} height={IMAGE_HEIGHT} />
+              <CardSkeleton key={idx} width={IMAGE_WIDTH} />
             ))}
           </>
         ) : (
@@ -221,7 +220,7 @@ const styles = StyleSheet.create({
   },
   noDataBox: {
     width: IMAGE_WIDTH,
-    height: IMAGE_HEIGHT,
+    aspectRatio: 5 / 4,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',

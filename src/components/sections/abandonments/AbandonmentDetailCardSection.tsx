@@ -1,4 +1,4 @@
-import { TransformedAbandonmentDetail } from '@/businesses/abandonmentsBusiness';
+import { TransformedAbandonmentDetail } from '@/business/abandonmentsBusiness';
 import Button from '@/components/atoms/button/Button';
 import { MoreImage } from '@/components/atoms/icons/outline';
 import NoImage from '@/components/molecules/placeholder/NoImage';
@@ -74,8 +74,6 @@ const AbandonmentDetailCardSection = ({ data }: AbandonmentDetailCardSectionProp
 export default AbandonmentDetailCardSection;
 
 const PADDING_HORIZONTAL = 20;
-const imgWidth = Dimensions.get('screen').width - PADDING_HORIZONTAL * 2;
-const imgHeight = imgWidth * 0.8;
 const styles = StyleSheet.create({
   titleWrap: {
     display: 'flex',
@@ -88,8 +86,8 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     position: 'relative',
-    width: imgWidth,
-    height: imgHeight,
+    width: Dimensions.get('screen').width - PADDING_HORIZONTAL * 2,
+    aspectRatio: 5 / 4,
     marginBottom: 28
   },
   image: {

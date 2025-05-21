@@ -50,8 +50,6 @@ const MainBannerSection = memo(() => {
 
 export default MainBannerSection;
 
-const width = Dimensions.get('screen').width - 40;
-const height = width * 1.1;
 const styles = StyleSheet.create({
   container: {
     backgroundColor: theme.colors.background.default,
@@ -76,8 +74,8 @@ const styles = StyleSheet.create({
     color: theme.colors.black[900]
   },
   image: {
-    width,
-    height,
+    width: Dimensions.get('screen').width - 40,
+    aspectRatio: 4 / 5,
     position: 'relative'
   },
   suspense: {

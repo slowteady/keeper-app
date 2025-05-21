@@ -14,7 +14,7 @@ import { applicationId } from 'expo-application';
 import * as Haptics from 'expo-haptics';
 import { ActivityAction, startActivityAsync } from 'expo-intent-launcher';
 import { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
-import { Dimensions, Linking, Platform, StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { Linking, Platform, StyleSheet, Text, View, ViewStyle } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 export interface ShelterMapProps extends NaverMapViewProps {
@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: '#D9D9D9',
     width: '100%',
-    height: Dimensions.get('screen').width * 1.1,
+    aspectRatio: 4 / 5,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center'
