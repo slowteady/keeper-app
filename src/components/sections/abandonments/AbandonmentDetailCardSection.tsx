@@ -1,38 +1,13 @@
 import { TransformedAbandonmentDetail } from '@/business/abandonmentsBusiness';
-import Button from '@/components/atoms/button/Button';
-import { MoreImage } from '@/components/atoms/icons/outline';
-import NoImage from '@/components/molecules/placeholder/NoImage';
-import { Skeleton } from '@/components/molecules/placeholder/Skeleton';
-import ImageViewer from '@/components/molecules/viewer/ImageViewer';
+import { Carousel } from '@/components/molecules/carousel/Carousel';
 import theme from '@/constants/theme';
-import { Image } from 'expo-image';
-import { useEffect, useState } from 'react';
 import { Dimensions, StyleSheet, Text, View } from 'react-native';
 
 interface AbandonmentDetailCardSectionProps {
   data: TransformedAbandonmentDetail;
 }
 const AbandonmentDetailCardSection = ({ data }: AbandonmentDetailCardSectionProps) => {
-  const [isLoad, setIsLoad] = useState(false);
-  const [isError, setIsError] = useState(false);
-  const [openImgViewer, setOpenImgViewer] = useState(false);
-  const { title, uri, description } = data;
-
-  const handlePressImage = () => {
-    setOpenImgViewer((prev) => !prev);
-  };
-
-  useEffect(() => {
-    let timeoutId: NodeJS.Timeout;
-
-    if (!isLoad) {
-      timeoutId = setTimeout(() => {
-        setIsError(true);
-      }, 10000);
-    }
-
-    return () => clearTimeout(timeoutId);
-  }, [uri, isLoad]);
+  const { title, images, description } = data;
 
   return (
     <>
@@ -43,17 +18,7 @@ const AbandonmentDetailCardSection = ({ data }: AbandonmentDetailCardSectionProp
       </View>
 
       <View style={styles.imageContainer}>
-        {!isLoad && !isError && <Skeleton style={styles.skeleton} />}
-        {uri && !isError ? (
-          <Button onPress={handlePressImage} disabled={!isLoad || !uri} style={{ width: '100%', height: '100%' }}>
-            <Image source={{ uri }} onLoad={() => setIsLoad(true)} style={styles.image} contentFit="cover" />
-            <View style={styles.iconWrap}>
-              <MoreImage color={theme.colors.black[900]} />
-            </View>
-          </Button>
-        ) : (
-          <NoImage style={{ backgroundColor: theme.colors.white[800] }} />
-        )}
+        <Carousel data={images} showIndicator showImageViewer />
       </View>
 
       {description.map(({ label, value }, idx) => {
@@ -65,8 +30,6 @@ const AbandonmentDetailCardSection = ({ data }: AbandonmentDetailCardSectionProp
           </View>
         );
       })}
-
-      <ImageViewer open={openImgViewer} onClose={() => setOpenImgViewer((prev) => !prev)} image={uri} />
     </>
   );
 };
