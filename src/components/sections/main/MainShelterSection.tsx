@@ -17,7 +17,7 @@ import { router } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { Dimensions, FlatList, ListRenderItemInfo, Pressable, StyleSheet, Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 // TODO
 // [ ] 보호소 리스트 애니메이션 Fade로 구현
@@ -26,7 +26,8 @@ const MainShelterSection = () => {
   const [selectedMarkerId, setSelectedMarkerId] = useState<number>();
   const [shelterData, setShelterData] = useState<ShelterValue[]>([]);
   const { camera, setCamera, distance, setDistance, initialLocation, mapRef, permissionStatus } = useMapInit();
-  const scale = useSharedValue(1);
+  const opacity = useSharedValue(1);
+  const translateY = useSharedValue(0);
   const { name } = useRoute();
 
   const { data: sheltersData, isLoading } = useGetSheltersQuery(
@@ -81,15 +82,24 @@ const MainShelterSection = () => {
     setDistance(radius);
   };
   const handleTapMarker = (data: ShelterValue) => {
+    opacity.value = withTiming(0, { duration: 100 });
+    translateY.value = withTiming(50, { duration: 300 });
+
+    setTimeout(() => {
+      opacity.value = withTiming(1, { duration: 300 });
+      translateY.value = withTiming(0, {
+        duration: 300,
+        easing: Easing.out(Easing.exp)
+      });
+    }, 200);
+
     setSelectedMarkerId(data.id);
     setShelterData((prev) => [data, ...prev.filter((item) => item.id !== data.id)]);
-    scale.value = withTiming(0.7, { duration: 100 }, () => {
-      scale.value = withTiming(1, { duration: 100 });
-    });
   };
 
   const animatedListStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }]
+    opacity: opacity.value,
+    transform: [{ translateY: translateY.value }]
   }));
 
   const hasLocationStatus = permissionStatus?.status === Location.PermissionStatus.GRANTED;

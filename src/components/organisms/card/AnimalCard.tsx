@@ -16,12 +16,11 @@ export interface AnimalCardData<T> {
 interface AnimalCardProps<T> extends NoImageProps {
   data: AnimalCardData<T>;
   width: number;
-  height: number;
   size?: AnimalCardSize;
 }
 type AnimalCardSize = 'small' | 'medium';
 
-export const AnimalCard = <T,>({ data, width, height, size = 'medium', style }: AnimalCardProps<T>) => {
+export const AnimalCard = <T,>({ data, width, size = 'medium', style }: AnimalCardProps<T>) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isError, setIsError] = useState(false);
 
@@ -44,7 +43,7 @@ export const AnimalCard = <T,>({ data, width, height, size = 'medium', style }: 
 
   return (
     <View style={{ width }}>
-      <View style={{ width, height, marginBottom: 20 }}>
+      <View style={{ width, marginBottom: 20 }}>
         {!isLoaded && !isError && <Skeleton style={styles.skeleton} />}
         {uri && !isError ? (
           <ExpoImage
@@ -125,6 +124,8 @@ const Chips = <T,>({ data, size }: BasicCardChipsProps<T>) => {
   );
 };
 
+// TODO
+// [ ] 접종, 검진 데이터 응답되는 것 확인 후 칩 추가
 const getChipStyle = (variant?: ChipVariant) => {
   const { error, success, notice, white, black } = theme.colors;
 
@@ -154,7 +155,7 @@ const styles = StyleSheet.create({
   image: {
     borderRadius: 8,
     width: '100%',
-    height: '100%'
+    aspectRatio: 5 / 4
   },
   title: {
     color: theme.colors.black[900],

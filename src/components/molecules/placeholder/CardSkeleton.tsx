@@ -3,13 +3,12 @@ import { Skeleton } from './Skeleton';
 
 interface CardSkeletonProps {
   width: number;
-  height: number;
 }
 
-export const CardSkeleton = ({ width, height }: CardSkeletonProps) => {
+export const CardSkeleton = ({ width }: CardSkeletonProps) => {
   return (
     <View style={[styles.container, { width }]}>
-      <View style={{ width, height, marginBottom: 20 }}>
+      <View style={{ width, aspectRatio: 5 / 4, marginBottom: 20 }}>
         <Skeleton style={[styles.skeleton, { borderRadius: 8 }]} />
       </View>
       <View style={styles.title}>

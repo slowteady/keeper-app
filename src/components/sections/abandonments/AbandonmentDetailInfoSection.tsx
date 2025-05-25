@@ -28,7 +28,10 @@ const AbandonmentDetailInfoSection = ({ age, gender, weight }: AbandonmentDetail
           <View key={key} style={styles.wrap}>
             <Text style={styles.label}>{label}</Text>
             <View style={styles.box}>
-              <Text style={styles.value}>{value}</Text>
+              <Text style={styles.value}>
+                {value}
+                {label === '나이' && <Text style={styles.subValue}> 년생</Text>}
+              </Text>
             </View>
           </View>
         );
