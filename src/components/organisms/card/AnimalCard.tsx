@@ -124,6 +124,8 @@ const Chips = <T,>({ data, size }: BasicCardChipsProps<T>) => {
   );
 };
 
+// TODO
+// [ ] 접종, 검진 데이터 응답되는 것 확인 후 칩 추가
 const getChipStyle = (variant?: ChipVariant) => {
   const { error, success, notice, white, black } = theme.colors;
 

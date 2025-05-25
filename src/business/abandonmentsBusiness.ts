@@ -48,7 +48,7 @@ export const transformAbandonments = (data: AbandonmentValue[], filter?: Abandon
 
 export type TransformedAbandonmentDetail = ReturnType<typeof transformAbandonmentDetail>;
 export const transformAbandonmentDetail = (data: AbandonmentValue) => {
-  const { images, specificType, noticeStartDt, noticeEndDt, orgName, happenPlace, fullName, age, weight } = data;
+  const { specificType, noticeStartDt, noticeEndDt, orgName, happenPlace, fullName, age, weight } = data;
   const descriptionParams: DescriptionParams = {
     specificType,
     noticeStartDt,
@@ -57,12 +57,11 @@ export const transformAbandonmentDetail = (data: AbandonmentValue) => {
     happenPlace
   };
   const transformedDescription = transformDescription(descriptionParams);
-  const convertedAge = `${age.substring(0, 4).replace(/[^0-9]/g, '')}년생`;
+  const convertedAge = `${age.substring(0, 4).replace(/[^0-9]/g, '')}`;
   const convertedWeight = `${parseFloat(weight)}kg`;
 
   return {
     ...data,
-    uri: images[0],
     age: convertedAge,
     weight: convertedWeight,
     title: fullName,
