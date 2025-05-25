@@ -53,7 +53,9 @@ export const AnimalCard = <T,>({ data, width, size = 'medium', style }: AnimalCa
             style={styles.image}
           />
         ) : (
-          <NoImage style={style} />
+          <View style={styles.image}>
+            <NoImage style={style} />
+          </View>
         )}
       </View>
       <Text numberOfLines={1} ellipsizeMode="tail" style={[styles.title, { ...titleStyle }]}>
