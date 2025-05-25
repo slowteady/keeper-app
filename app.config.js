@@ -27,7 +27,6 @@ export default () => ({
     },
     android: {
       package: 'com.keeper.love',
-      usesCleartextTraffic: true,
       adaptiveIcon: { foregroundImage: './src/assets/images/keeper-android-icon.png' },
       permissions: ['android.permission.ACCESS_COARSE_LOCATION', 'android.permission.ACCESS_FINE_LOCATION']
     },
@@ -51,6 +50,7 @@ export default () => ({
         'expo-build-properties',
         {
           android: {
+            usesCleartextTraffic: true,
             extraMavenRepos: [
               'https://repository.map.naver.com/archive/maven',
               'https://devrepo.kakao.com/nexus/content/groups/public/'
