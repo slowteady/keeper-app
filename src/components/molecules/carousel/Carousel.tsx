@@ -86,13 +86,13 @@ const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>(
             </Fragment>
           ))}
         </PagerView>
-        {showIndicator && <Indicator currentIndex={currentIndex + 1} maxIndex={data.length} />}
+        {showIndicator && <Indicator currentIndex={currentIndex} maxIndex={data.length} />}
         {openImgViewer && (
           <ImageViewer
             open={openImgViewer}
             onClose={() => setOpenImgViewer(false)}
             images={data}
-            defaultIndex={currentIndex + 1}
+            defaultIndex={currentIndex}
           />
         )}
       </>
@@ -105,7 +105,7 @@ export interface BasicCarouselIndicatorProps {
   maxIndex: number;
 }
 const Indicator = ({ currentIndex, maxIndex }: BasicCarouselIndicatorProps) => {
-  const text = `${currentIndex}/${maxIndex}`;
+  const text = `${currentIndex + 1}/${maxIndex}`;
 
   return (
     <View style={styles.indicatorContainer}>

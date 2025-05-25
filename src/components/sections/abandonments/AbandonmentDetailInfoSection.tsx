@@ -74,13 +74,13 @@ const styles = StyleSheet.create({
   value: {
     fontSize: 17,
     fontWeight: '600',
-    lineHeight: 19,
+    lineHeight: 22,
     color: theme.colors.black[800]
   },
   subValue: {
     color: theme.colors.black[600],
     fontSize: 12,
     fontWeight: '400',
-    lineHeight: 14
+    lineHeight: 18
   }
 });
