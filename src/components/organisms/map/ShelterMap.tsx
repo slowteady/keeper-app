@@ -185,6 +185,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: '#D9D9D9',
     width: '100%',
+    height: undefined,
     aspectRatio: 4 / 5,
     display: 'flex',
     alignItems: 'center',

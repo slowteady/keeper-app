@@ -8,7 +8,7 @@ interface CardSkeletonProps {
 export const CardSkeleton = ({ width }: CardSkeletonProps) => {
   return (
     <View style={[styles.container, { width }]}>
-      <View style={{ width, aspectRatio: 5 / 4, marginBottom: 20 }}>
+      <View style={[styles.skeletonWrap, { width }]}>
         <Skeleton style={[styles.skeleton, { borderRadius: 8 }]} />
       </View>
       <View style={styles.title}>
@@ -32,6 +32,11 @@ const styles = StyleSheet.create({
   container: {
     display: 'flex',
     flexDirection: 'column'
+  },
+  skeletonWrap: {
+    height: undefined,
+    aspectRatio: 5 / 4,
+    marginBottom: 20
   },
   skeleton: {
     width: '100%',

@@ -6,7 +6,7 @@ export default () => ({
   expo: {
     name: 'keeper',
     slug: 'keeper',
-    version: '1.3.4',
+    version: '1.3.5',
     orientation: 'portrait',
     scheme: 'keeper',
     userInterfaceStyle: 'automatic',
@@ -27,6 +27,7 @@ export default () => ({
     },
     android: {
       package: 'com.keeper.love',
+      usesCleartextTraffic: true,
       adaptiveIcon: { foregroundImage: './src/assets/images/keeper-android-icon.png' },
       permissions: ['android.permission.ACCESS_COARSE_LOCATION', 'android.permission.ACCESS_FINE_LOCATION']
     },

@@ -104,6 +104,7 @@ const styles = StyleSheet.create({
   imageWrap: {
     position: 'relative',
     width: '100%',
+    height: undefined,
     aspectRatio: 9 / 16,
     backgroundColor: theme.colors.black[900],
     borderRadius: 14,

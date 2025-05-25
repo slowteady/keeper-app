@@ -220,6 +220,7 @@ const styles = StyleSheet.create({
   },
   noDataBox: {
     width: IMAGE_WIDTH,
+    height: undefined,
     aspectRatio: 5 / 4,
     display: 'flex',
     alignItems: 'center',

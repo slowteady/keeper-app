@@ -155,6 +155,7 @@ const styles = StyleSheet.create({
   image: {
     borderRadius: 8,
     width: '100%',
+    height: undefined,
     aspectRatio: 5 / 4
   },
   title: {
