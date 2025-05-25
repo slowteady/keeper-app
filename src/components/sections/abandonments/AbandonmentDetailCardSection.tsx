@@ -51,6 +51,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     width: Dimensions.get('screen').width - PADDING_HORIZONTAL * 2,
     aspectRatio: 5 / 4,
+    height: undefined,
     marginBottom: 28
   },
   image: {

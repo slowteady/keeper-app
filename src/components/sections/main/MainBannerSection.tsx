@@ -76,6 +76,7 @@ const styles = StyleSheet.create({
   image: {
     width: Dimensions.get('screen').width - 40,
     aspectRatio: 4 / 5,
+    height: undefined,
     position: 'relative'
   },
   suspense: {
