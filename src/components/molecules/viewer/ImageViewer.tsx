@@ -15,7 +15,7 @@ interface ImageViewerProps {
 }
 
 const ImageViewer = ({ open, onClose, images, defaultIndex }: ImageViewerProps) => {
-  const [currentIndex, setCurrentIndex] = useState(defaultIndex);
+  const [currentIndex, setCurrentIndex] = useState<number>(defaultIndex);
   const carouselRef = useRef<PagerView | null>(null);
   const scale = useSharedValue(1);
 
@@ -46,7 +46,7 @@ const ImageViewer = ({ open, onClose, images, defaultIndex }: ImageViewerProps) 
           <PagerView
             ref={carouselRef}
             style={styles.pagerViewContainer}
-            initialPage={defaultIndex - 1}
+            initialPage={defaultIndex}
             onPageScroll={handlePageScroll}
           >
             {images.map((image, index) => (
@@ -61,7 +61,7 @@ const ImageViewer = ({ open, onClose, images, defaultIndex }: ImageViewerProps) 
           </Button>
         </View>
 
-        <Indicator currentIndex={currentIndex + 1} maxIndex={images.length} onPress={handlePress} />
+        <Indicator currentIndex={currentIndex} maxIndex={images.length} onPress={handlePress} />
       </View>
     </Modal>
   );
@@ -75,7 +75,7 @@ interface IndicatorProps {
   onPress: (type: 'prev' | 'next') => void;
 }
 const Indicator = ({ currentIndex, maxIndex, onPress }: IndicatorProps) => {
-  const text = `${currentIndex}/${maxIndex}`;
+  const text = `${currentIndex + 1}/${maxIndex}`;
 
   return (
     <View style={styles.indicatorContainer}>
