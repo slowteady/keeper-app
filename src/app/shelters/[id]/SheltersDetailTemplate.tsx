@@ -48,7 +48,6 @@ interface ShelterDetailTemplateLoading {
 const PADDING_HORIZONTAL = 20;
 const CARD_GAP = 8;
 const IMAGE_WIDTH = (Dimensions.get('screen').width - 2 * PADDING_HORIZONTAL - CARD_GAP) / 2;
-const IMAGE_HEIGHT = IMAGE_WIDTH * 0.9;
 const SheltersDetailTemplate = ({
   shelterData,
   abandonmentsData,
@@ -60,7 +59,7 @@ const SheltersDetailTemplate = ({
   const { bottom } = useLayout();
   const { isButtonVisible, handlePress, handleScroll, flatListRef } = useScrollFloatingButton();
 
-  const handlePressCard = useCallback((id: number) => {
+  const handlePressCard = useCallback((id: string) => {
     router.push({ pathname: '/abandonments/[id]', params: { id } });
   }, []);
 
@@ -71,7 +70,6 @@ const SheltersDetailTemplate = ({
           <AnimalCard
             data={item}
             width={IMAGE_WIDTH}
-            height={IMAGE_HEIGHT}
             size="small"
             style={{ backgroundColor: theme.colors.white[900] }}
           />
@@ -125,8 +123,8 @@ const SheltersDetailTemplate = ({
             <>
               {Array.from({ length: 2 }).map((_, idx) => (
                 <View key={idx} style={styles.skeltonContainer}>
-                  <CardSkeleton width={IMAGE_WIDTH} height={IMAGE_HEIGHT} />
-                  <CardSkeleton width={IMAGE_WIDTH} height={IMAGE_HEIGHT} />
+                  <CardSkeleton width={IMAGE_WIDTH} />
+                  <CardSkeleton width={IMAGE_WIDTH} />
                 </View>
               ))}
             </>

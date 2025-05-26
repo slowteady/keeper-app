@@ -6,7 +6,6 @@ import { Modal, NativeSyntheticEvent, StyleSheet, Text, View } from 'react-nativ
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import PagerView from 'react-native-pager-view';
 import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
-
 interface ImageViewerProps {
   open: boolean;
   onClose: () => void;
@@ -42,6 +41,10 @@ const ImageViewer = ({ open, onClose, images, defaultIndex }: ImageViewerProps) 
   return (
     <Modal visible={open} transparent={true} animationType="fade">
       <View style={styles.background}>
+        <Button style={[styles.iconButton, { alignSelf: 'flex-end', marginBottom: 8 }]} onPress={onClose}>
+          <Close width={18} height={18} color={theme.colors.white[900]} />
+        </Button>
+
         <View style={styles.imageWrap}>
           <PagerView
             ref={carouselRef}
@@ -55,10 +58,6 @@ const ImageViewer = ({ open, onClose, images, defaultIndex }: ImageViewerProps) 
               </GestureDetector>
             ))}
           </PagerView>
-
-          <Button style={styles.iconButton} onPress={onClose}>
-            <Close width={18} height={18} color={theme.colors.white[900]} />
-          </Button>
         </View>
 
         <Indicator currentIndex={currentIndex} maxIndex={images.length} onPress={handlePress} />
@@ -112,12 +111,9 @@ const styles = StyleSheet.create({
   },
   image: { width: '100%', height: '100%' },
   iconButton: {
-    position: 'absolute',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    top: -50,
-    right: 0,
     width: 42,
     height: 42,
     borderRadius: 99,

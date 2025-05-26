@@ -8,7 +8,7 @@ export const useKakaoGeocodeMutation = (
 ) => {
   return useMutation<KakaoGeocodeResponse, Error, KakaoGeocodeParams>({
     mutationFn: (params) => getKakaoGeocode(params),
-    throwOnError: true,
+    throwOnError: (error) => error instanceof TypeError,
     ...mutationOptions
   });
 };

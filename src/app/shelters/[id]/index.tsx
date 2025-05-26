@@ -30,7 +30,7 @@ const Page = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
   const filterValue = useAtomValue(abandonmentsFilterValueAtom);
 
-  const { data: shelterData, isLoading: isShelterLoading } = useGetShelterQuery(Number(id), { enabled: !!id });
+  const { data: shelterData, isLoading: isShelterLoading } = useGetShelterQuery(id, { enabled: !!id });
   const {
     data: abandonmentsData,
     isLoading: isAbandonmentsLoading,

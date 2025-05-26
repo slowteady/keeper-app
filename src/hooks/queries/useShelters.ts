@@ -27,7 +27,7 @@ export const useGetSheltersQuery = (
   return useQuery<ApiResponse<ShelterValue[]>, Error, ShelterValue[]>({
     queryKey: [SHELTER_QUERY_KEY, params],
     queryFn: () => getShelters(params),
-    throwOnError: true,
+    throwOnError: (error) => error instanceof TypeError,
     select: (data) => data.data,
     ...queryOptions
   });
@@ -45,7 +45,7 @@ export const useGetShelterQuery = (
   return useQuery<ApiResponse<ShelterValue>, Error, ShelterValue>({
     queryKey: [SHELTER_QUERY_KEY, id],
     queryFn: () => getShelter(id),
-    throwOnError: true,
+    throwOnError: (error) => error instanceof TypeError,
     select: (data) => data.data,
     ...queryOptions
   });
@@ -64,6 +64,7 @@ export const useGetShelterCountQuery = (
     queryKey: [SHELTER_COUNT_QUERY_KEY, params],
     queryFn: () => getShelterCounts(params),
     select: (data) => data.data,
+    throwOnError: (error) => error instanceof TypeError,
     ...queryOptions
   });
 };
@@ -81,7 +82,7 @@ export const useGetShelterAbandonmentsQuery = (
 ) => {
   return useInfiniteQuery({
     initialPageParam: 0,
-    throwOnError: true,
+    throwOnError: (error) => error instanceof TypeError,
     queryKey: [SHELTER_ABANDONMENTS_QUERY_KEY, params],
     queryFn: ({ pageParam }) => getShelterAbandonments(id, { ...params, page: pageParam }),
     getNextPageParam: (lastPage) => {
@@ -105,7 +106,7 @@ export const useGetShelterSearchMutation = (
 ) => {
   return useMutation<ApiResponse<ShelterValue[]>, Error, GetShelterSearchParams>({
     mutationFn: (params) => getShelterSearch(params),
-    throwOnError: true,
+    throwOnError: (error) => error instanceof TypeError,
     ...mutationOptions
   });
 };
