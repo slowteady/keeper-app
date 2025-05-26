@@ -53,7 +53,7 @@ const ImageViewer = ({ open, onClose, images, defaultIndex }: ImageViewerProps) 
             onPageScroll={handlePageScroll}
           >
             {images.map((image, index) => (
-              <GestureDetector key={index} gesture={pinchGesture}>
+              <GestureDetector key={image + index} gesture={pinchGesture}>
                 <Animated.Image source={{ uri: image }} style={[styles.image, animatedStyle]} resizeMode="contain" />
               </GestureDetector>
             ))}
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 20,
-    height: '100%'
+    flex: 1
   },
   imageWrap: {
     position: 'relative',
