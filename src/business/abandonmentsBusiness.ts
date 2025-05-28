@@ -130,7 +130,7 @@ export const transformChipLabel = ({ neuterYn, filter, weight, gender, age }: Ch
   }
 
   if (weight) {
-    const convertedWeight = `${parseFloat(weight)}kg`;
+    const convertedWeight = `${parseFloat(weight).toFixed(1)}kg`;
 
     data.push({
       id: 'WEIGHT',
