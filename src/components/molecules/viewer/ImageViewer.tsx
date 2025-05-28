@@ -1,11 +1,13 @@
 import Button from '@/components/atoms/button/Button';
 import { Close, LeftArrow, RightArrow } from '@/components/atoms/icons/outline';
 import theme from '@/constants/theme';
+import { useLayout } from '@/hooks/useLayout';
 import { useCallback, useRef, useState } from 'react';
 import { Modal, NativeSyntheticEvent, StyleSheet, Text, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import PagerView from 'react-native-pager-view';
 import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
+
 interface ImageViewerProps {
   open: boolean;
   onClose: () => void;
@@ -17,6 +19,7 @@ const ImageViewer = ({ open, onClose, images, defaultIndex }: ImageViewerProps) 
   const [currentIndex, setCurrentIndex] = useState<number>(defaultIndex);
   const carouselRef = useRef<PagerView | null>(null);
   const scale = useSharedValue(1);
+  const { top, bottom } = useLayout();
 
   const handlePress = useCallback(
     (type: 'prev' | 'next') => {
@@ -40,7 +43,7 @@ const ImageViewer = ({ open, onClose, images, defaultIndex }: ImageViewerProps) 
 
   return (
     <Modal visible={open} transparent={true} animationType="fade">
-      <View style={styles.background}>
+      <View style={[styles.background, { paddingTop: top }]}>
         <Button style={[styles.iconButton, { alignSelf: 'flex-end', marginBottom: 8 }]} onPress={onClose}>
           <Close width={18} height={18} color={theme.colors.white[900]} />
         </Button>
@@ -60,7 +63,9 @@ const ImageViewer = ({ open, onClose, images, defaultIndex }: ImageViewerProps) 
           </PagerView>
         </View>
 
-        <Indicator currentIndex={currentIndex} maxIndex={images.length} onPress={handlePress} />
+        <View style={{ marginBottom: bottom }}>
+          <Indicator currentIndex={currentIndex} maxIndex={images.length} onPress={handlePress} />
+        </View>
       </View>
     </Modal>
   );
@@ -129,13 +134,13 @@ const styles = StyleSheet.create({
   },
   indexContainer: {
     borderRadius: 20,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     backgroundColor: 'rgba(0, 0, 0, 0.5)'
   },
   indexText: {
-    fontSize: 11,
-    lineHeight: 13,
+    fontSize: 12,
+    lineHeight: 14,
     fontWeight: '500',
     color: theme.colors.white[900]
   }

@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background.default,
     paddingHorizontal: 20,
     paddingTop: 40,
-    paddingBottom: 48
+    paddingBottom: 56
   },
   labelContainer: {
     paddingBottom: 32
@@ -79,18 +79,10 @@ const styles = StyleSheet.create({
     height: undefined,
     position: 'relative'
   },
-  suspense: {
-    backgroundColor: theme.colors.white[900],
-    borderRadius: 10,
-    height: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
   controllerContainer: {
     position: 'absolute',
-    bottom: 16,
-    left: 16
+    alignSelf: 'center',
+    bottom: 16
   }
 });
 
