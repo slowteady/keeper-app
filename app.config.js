@@ -6,7 +6,7 @@ export default () => ({
   expo: {
     name: 'keeper',
     slug: 'keeper',
-    version: '1.3.8',
+    version: '1.3.9',
     orientation: 'portrait',
     scheme: 'keeper',
     userInterfaceStyle: 'automatic',
