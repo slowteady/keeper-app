@@ -1,12 +1,12 @@
 import Button from '@/components/atoms/button/Button';
 import { Close, LeftArrow, RightArrow } from '@/components/atoms/icons/outline';
 import theme from '@/constants/theme';
-import { useLayout } from '@/hooks/useLayout';
 import { useCallback, useRef, useState } from 'react';
 import { Modal, NativeSyntheticEvent, StyleSheet, Text, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import PagerView from 'react-native-pager-view';
 import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface ImageViewerProps {
   open: boolean;
@@ -19,7 +19,6 @@ const ImageViewer = ({ open, onClose, images, defaultIndex }: ImageViewerProps) 
   const [currentIndex, setCurrentIndex] = useState<number>(defaultIndex);
   const carouselRef = useRef<PagerView | null>(null);
   const scale = useSharedValue(1);
-  const { top, bottom } = useLayout();
 
   const handlePress = useCallback(
     (type: 'prev' | 'next') => {
@@ -43,29 +42,29 @@ const ImageViewer = ({ open, onClose, images, defaultIndex }: ImageViewerProps) 
 
   return (
     <Modal visible={open} transparent={true} animationType="fade">
-      <View style={[styles.background, { paddingTop: top }]}>
-        <Button style={[styles.iconButton, { alignSelf: 'flex-end', marginBottom: 8 }]} onPress={onClose}>
-          <Close width={18} height={18} color={theme.colors.white[900]} />
-        </Button>
+      <View style={[styles.background]}>
+        <SafeAreaView edges={['top', 'bottom']} style={{ flex: 1, alignSelf: 'flex-end' }}>
+          <Button style={[styles.iconButton, { alignSelf: 'flex-end', marginBottom: 8 }]} onPress={onClose}>
+            <Close width={18} height={18} color={theme.colors.white[900]} />
+          </Button>
 
-        <View style={styles.imageWrap}>
-          <PagerView
-            ref={carouselRef}
-            style={styles.pagerViewContainer}
-            initialPage={defaultIndex}
-            onPageScroll={handlePageScroll}
-          >
-            {images.map((image, index) => (
-              <GestureDetector key={image + index} gesture={pinchGesture}>
-                <Animated.Image source={{ uri: image }} style={[styles.image, animatedStyle]} resizeMode="contain" />
-              </GestureDetector>
-            ))}
-          </PagerView>
-        </View>
+          <View style={styles.imageWrap}>
+            <PagerView
+              ref={carouselRef}
+              style={styles.pagerViewContainer}
+              initialPage={defaultIndex}
+              onPageScroll={handlePageScroll}
+            >
+              {images.map((image, index) => (
+                <GestureDetector key={image + index} gesture={pinchGesture}>
+                  <Animated.Image source={{ uri: image }} style={[styles.image, animatedStyle]} resizeMode="contain" />
+                </GestureDetector>
+              ))}
+            </PagerView>
+          </View>
 
-        <View style={{ marginBottom: bottom }}>
           <Indicator currentIndex={currentIndex} maxIndex={images.length} onPress={handlePress} />
-        </View>
+        </SafeAreaView>
       </View>
     </Modal>
   );

@@ -1,9 +1,11 @@
-import { Platform } from 'react-native';
+import { Dimensions, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export const useLayout = () => {
   const insetsTop = useSafeAreaInsets().top;
   const insetsBottom = useSafeAreaInsets().bottom;
+  const deviceHeight = Dimensions.get('screen').height;
+  const windowHeight = Dimensions.get('window').height;
 
   let top = insetsTop;
   let bottom = insetsBottom;
@@ -16,5 +18,5 @@ export const useLayout = () => {
     bottom = 20;
   }
 
-  return { top, bottom };
+  return { top, bottom, deviceHeight, windowHeight };
 };
