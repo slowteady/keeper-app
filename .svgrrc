@@ -1,0 +1,16 @@
+{
+  "typescript": true,
+  "native": true,
+  "icon": true,
+  "svgo": true,
+  "svgoConfig": {
+    "plugins": [
+      {
+        "name": "removeAttrs",
+        "params": {
+          "attrs": ["svg:xmlns"]
+        }
+      }
+    ]
+  }
+}
