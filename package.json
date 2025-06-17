@@ -2,7 +2,7 @@
   "name": "keeper",
   "main": "expo-router/entry",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.3.9",
   "scripts": {
     "postinstall": "patch-package",
     "dev": "expo start --dev-client",
@@ -12,6 +12,7 @@
     "prebuild": "expo prebuild",
     "build:ios": "eas build --profile production --platform ios",
     "build:android": "eas build --profile production --platform android",
+    "update:production": "eas update:publish --branch production --message \"Publish to Production\"",
     "lint": "expo lint",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "clean": "rm -rf pnpm-lock.yaml ios android node_modules .expo build",
@@ -62,7 +63,8 @@
     "@react-native-google-signin/google-signin": "^13.2.0",
     "@react-native-kakao/core": "^2.3.0",
     "@react-native-kakao/user": "^2.3.0",
-    "@react-native-seoul/naver-login": "^4.1.2"
+    "@react-native-seoul/naver-login": "^4.1.2",
+    "expo-updates": "~0.27.4"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

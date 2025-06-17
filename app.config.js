@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import { version as pkgVersion } from './package.json';
 
 const iosUrlScheme = process.env.EXPO_PUBLIC_GOOGLE_URL_SCHEME;
 
@@ -6,7 +7,7 @@ export default () => ({
   expo: {
     name: 'keeper',
     slug: 'keeper',
-    version: '1.3.9',
+    version: pkgVersion,
     orientation: 'portrait',
     scheme: 'keeper',
     userInterfaceStyle: 'automatic',
@@ -70,6 +71,12 @@ export default () => ({
       ['@react-native-google-signin/google-signin', { iosUrlScheme }]
     ],
     experiments: { typedRoutes: true },
-    extra: { eas: { projectId: '6a4a1356-b842-4472-b78e-e1bebffeb444' } }
+    extra: { eas: { projectId: '6a4a1356-b842-4472-b78e-e1bebffeb444' } },
+    updates: {
+      url: 'https://u.expo.dev/6a4a1356-b842-4472-b78e-e1bebffeb444'
+    },
+    runtimeVersion: {
+      policy: 'appVersion'
+    }
   }
 });
