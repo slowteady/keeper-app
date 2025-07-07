@@ -1,9 +1,9 @@
-import AbandonmentsDetailTemplate from '@/app/abandonments/[id]/AbandonmentsDetailTemplate';
-import { transformAbandonmentDetail } from '@/business/abandonmentsBusiness';
-import { transformShelterData } from '@/business/sheltersBusiness';
-import theme from '@/constants/theme';
-import { useGetAbandonmentQuery } from '@/hooks/queries/useAbandonments';
-import { useGetShelterQuery } from '@/hooks/queries/useShelters';
+import { transformAbandonmentDetail } from '@/domains/animal/business/announcement.business';
+import { AbandonmentsDetailTemplate } from '@/domains/animal/components/templates/AbandonmentsDetailTemplate';
+import { useGetAbandonmentQuery } from '@/domains/animal/queries/announcement.queries';
+import { transformShelterData } from '@/domains/shelter/business/shelter.business';
+import { useGetShelterQuery } from '@/domains/shelter/queries/shelter.queries';
+import { theme } from '@/shared/constants/theme.constants';
 import { useLocalSearchParams } from 'expo-router';
 import { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';

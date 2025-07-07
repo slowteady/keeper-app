@@ -1,6 +1,8 @@
-import Button from '@/components/atoms/button/Button';
-import { Google, Kakao, Naver } from '@/components/atoms/icons/etc';
-import theme from '@/constants/theme';
+import { useLoginMutation } from '@/domains/auth/queries/auth.queries';
+import { Button } from '@/shared/components/atoms/Button';
+import { Google, Kakao, Naver } from '@/shared/components/atoms/icons/etc';
+import { theme } from '@/shared/constants/theme.constants';
+import { saveAccessToken, saveRefreshToken } from '@/shared/utils/token.utils';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { login } from '@react-native-kakao/user';
 import NaverLogin from '@react-native-seoul/naver-login';
@@ -12,21 +14,63 @@ import {
   isAvailableAsync,
   signInAsync
 } from 'expo-apple-authentication';
-import * as Clipboard from 'expo-clipboard';
-import { useState } from 'react';
-import { Alert, StyleSheet, Text, TextInput, View } from 'react-native';
+import { router } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { Alert, StyleSheet, Text, View } from 'react-native';
 
 const Page = () => {
-  const [response, setResponse] = useState('');
-  const handleChange = (res: object) => {
-    const text = JSON.stringify(res, null, 2);
-    setResponse(text);
+  const [appleAvailable, setAppleAvailable] = useState<boolean | null>(null);
+  const [googleAvailable, setGoogleAvailable] = useState<boolean | null>(null);
+  const { mutate } = useLoginMutation();
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const [appleAvailable, googleAvailable] = await Promise.all([
+          isAvailableAsync(),
+          GoogleSignin.hasPlayServices()
+        ]);
+        setAppleAvailable(appleAvailable);
+        setGoogleAvailable(googleAvailable);
+      } catch {
+        setAppleAvailable(false);
+        setGoogleAvailable(false);
+      }
+    })();
+  }, []);
+
+  const handleLogin = (category: LoginCategory, token: string) => {
+    mutate(
+      { socialType: category, token },
+      {
+        onSuccess: async ({ data: resultData }) => {
+          const { data } = resultData;
+          const { accessToken, refreshToken } = data;
+
+          await saveAccessToken(accessToken);
+          await saveRefreshToken(refreshToken);
+          Alert.alert(
+            '로그인 성공',
+            `이메일: ${data.email}, 이름: ${data.name}`,
+            [
+              {
+                text: '확인', // 버튼 텍스트
+                onPress: () => router.dismissAll() // 눌렀을 때 실행
+              }
+            ],
+            { cancelable: false } // 외부 탭으로 닫기 방지
+          );
+        },
+        onError: () => {
+          Alert.alert('로그인 실패', '다시 시도해주세요.');
+        }
+      }
+    );
   };
 
-  const handlePress = async () => {
-    await Clipboard.setStringAsync(response || '');
-    Alert.alert('', '복사 완료', [{ text: '확인' }]);
-  };
+  if (appleAvailable === null || googleAvailable === null) {
+    return null;
+  }
 
   return (
     <View style={styles.container}>
@@ -36,24 +80,10 @@ const Page = () => {
       </View>
 
       <View style={styles.cFlex}>
-        <KakaoButton onChange={(res) => handleChange(res)} />
-        <NaverButton onChange={(res) => handleChange(res)} />
-        <GoogleButton onChange={(res) => handleChange(res)} />
-        <AppleButton onChange={(res) => handleChange(res)} />
-      </View>
-
-      <View style={{ marginTop: 40 }}>
-        <TextInput
-          value={response}
-          multiline
-          editable={false}
-          scrollEnabled
-          textAlignVertical="top"
-          style={{ borderWidth: 1, maxHeight: 200, marginBottom: 20 }}
-        />
-        <Button onPress={handlePress} style={[styles.button, { backgroundColor: theme.colors.success.main }]}>
-          <Text>복사</Text>
-        </Button>
+        <KakaoButton onResponse={handleLogin} />
+        <NaverButton onResponse={handleLogin} />
+        {googleAvailable && <GoogleButton onResponse={handleLogin} />}
+        {appleAvailable && <AppleButton onResponse={handleLogin} />}
       </View>
     </View>
   );
@@ -61,10 +91,24 @@ const Page = () => {
 
 export default Page;
 
-const KakaoButton = ({ onChange }: { onChange: (res: any) => void }) => {
+type LoginCategory = 'GOOGLE' | 'APPLE' | 'KAKAO' | 'NAVER';
+interface ButtonProps {
+  onResponse: (category: LoginCategory, token: string) => void;
+}
+const KakaoButton = ({ onResponse }: ButtonProps) => {
   const handlePress = async () => {
-    const response = await login();
-    onChange(response);
+    try {
+      const response = await login();
+      if (response.idToken) {
+        onResponse('KAKAO', response.accessToken);
+      } else {
+        Alert.alert('Kakao 로그인 에러', '디시 시도해주세요');
+      }
+    } catch (error) {
+      if (error) {
+        Alert.alert('Kakao 로그인 에러', '디시 시도해주세요');
+      }
+    }
   };
 
   return (
@@ -72,15 +116,25 @@ const KakaoButton = ({ onChange }: { onChange: (res: any) => void }) => {
       <View style={styles.iconWrap}>
         <Kakao width={22} height={22} color={theme.colors.black[900]} />
       </View>
-      <Text style={[styles.buttonText]}>Login with Kakao</Text>
+      <Text style={[styles.buttonText]}>Kakao로 로그인</Text>
     </Button>
   );
 };
 
-const NaverButton = ({ onChange }: { onChange: (res: any) => void }) => {
+const NaverButton = ({ onResponse }: ButtonProps) => {
   const handlePress = async () => {
-    const response = await NaverLogin.login();
-    onChange(response);
+    try {
+      const response = await NaverLogin.login();
+      if (response.successResponse) {
+        onResponse('NAVER', response.successResponse.accessToken);
+      } else {
+        Alert.alert('Naver 로그인 에러', '디시 시도해주세요');
+      }
+    } catch (error) {
+      if (error) {
+        Alert.alert('Naver 로그인 에러', '디시 시도해주세요');
+      }
+    }
   };
 
   return (
@@ -88,18 +142,27 @@ const NaverButton = ({ onChange }: { onChange: (res: any) => void }) => {
       <View style={styles.iconWrap}>
         <Naver width={22} height={22} />
       </View>
-      <Text style={[styles.buttonText, { color: theme.colors.white[900] }]}>Login with Naver</Text>
+      <Text style={[styles.buttonText, { color: theme.colors.white[900] }]}>Naver로 로그인</Text>
     </Button>
   );
 };
 
-const GoogleButton = ({ onChange }: { onChange: (res: any) => void }) => {
+const GoogleButton = ({ onResponse }: ButtonProps) => {
   const handlePress = async () => {
-    const isAvailable = await GoogleSignin.hasPlayServices();
-    if (!isAvailable) return null;
+    try {
+      const response = await GoogleSignin.signIn();
 
-    const response = await GoogleSignin.signIn();
-    onChange(response);
+      if (response.type === 'success' && response.data.idToken) {
+        console.log(response.data.idToken);
+        onResponse('GOOGLE', response.data.idToken);
+      } else {
+        Alert.alert('Google 로그인 에러', '디시 시도해주세요');
+      }
+    } catch (error) {
+      if (error) {
+        Alert.alert('Google 로그인 에러', '디시 시도해주세요');
+      }
+    }
   };
 
   return (
@@ -107,20 +170,27 @@ const GoogleButton = ({ onChange }: { onChange: (res: any) => void }) => {
       <View style={styles.iconWrap}>
         <Google width={22} height={22} />
       </View>
-      <Text style={[styles.buttonText, { color: theme.colors.black[900], opacity: 0.54 }]}>Sign in with Google</Text>
+      <Text style={[styles.buttonText, { color: theme.colors.black[900], opacity: 0.54 }]}>Google로 로그인</Text>
     </Button>
   );
 };
 
-const AppleButton = ({ onChange }: { onChange: (res: any) => void }) => {
+const AppleButton = ({ onResponse }: ButtonProps) => {
   const handlePress = async () => {
-    const isAvailable = await isAvailableAsync();
-    if (!isAvailable) return null;
-
-    const response = await signInAsync({
-      requestedScopes: [AppleAuthenticationScope.FULL_NAME, AppleAuthenticationScope.EMAIL]
-    });
-    onChange(response);
+    try {
+      const response = await signInAsync({
+        requestedScopes: [AppleAuthenticationScope.FULL_NAME, AppleAuthenticationScope.EMAIL]
+      });
+      if (response.identityToken) {
+        onResponse('APPLE', response.identityToken);
+      } else {
+        Alert.alert('Apple 로그인 에러', '디시 시도해주세요');
+      }
+    } catch (error) {
+      if (error) {
+        Alert.alert('Apple 로그인 에러', '디시 시도해주세요');
+      }
+    }
   };
 
   return (
@@ -176,7 +246,7 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 16,
     fontWeight: '600',
-    lineHeight: 18,
+    lineHeight: 24,
     marginLeft: 18,
     flex: 1
   },

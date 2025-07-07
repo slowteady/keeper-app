@@ -1,7 +1,7 @@
-import { Heart, Location } from '@/components/atoms/icons/outline';
-import MainHeader from '@/components/organisms/headers/MainHeader';
-import theme from '@/constants/theme';
-import { useLayout } from '@/hooks/useLayout';
+import { Heart, Location } from '@/shared/components/atoms/icons/outline';
+import { MainHeader } from '@/shared/components/organisms/MainHeader';
+import { theme } from '@/shared/constants/theme.constants';
+import { useLayout } from '@/shared/hooks/useLayout';
 import { DrawerContentComponentProps } from '@react-navigation/drawer';
 import { Route, router } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';

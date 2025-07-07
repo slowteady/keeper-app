@@ -1,10 +1,12 @@
+import { authApi } from '@/shared/utils/instance.util';
+import { setupInterceptor } from '@/shared/utils/interceptors.utils';
 import { useReactQueryDevTools } from '@dev-plugins/react-query';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { initializeKakaoSDK } from '@react-native-kakao/core';
 import NaverLogin from '@react-native-seoul/naver-login';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import dayjs from 'dayjs';
+import { extend } from 'dayjs';
 import 'dayjs/locale/ko';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import 'expo-dev-client';
@@ -41,7 +43,8 @@ export default function RootLayout() {
       if (loaded) {
         await new Promise((resolve) => setTimeout(resolve, 1000));
         await SplashScreen.hideAsync();
-        dayjs.extend(customParseFormat);
+        extend(customParseFormat);
+        setupInterceptor(authApi);
 
         const kakaoNativeAppKey = process.env.EXPO_PUBLIC_KAKAO_NATIVE_KEY || '';
         initializeKakaoSDK(kakaoNativeAppKey);
@@ -50,6 +53,7 @@ export default function RootLayout() {
         const consumerSecret = process.env.EXPO_PUBLIC_NAVER_CLIENT_SECRET || '';
         const appName = process.env.EXPO_PUBLIC_NAVER_APP_NAME || '';
         const serviceUrlSchemeIOS = process.env.EXPO_PUBLIC_NAVER_URL_SCHEME || '';
+
         NaverLogin.initialize({
           appName,
           consumerKey,
@@ -58,8 +62,10 @@ export default function RootLayout() {
           disableNaverAppAuthIOS: true
         });
 
-        const iosClientId = process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID || '';
+        const iosClientId = process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID || '';
+        const webClientId = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID || '';
         GoogleSignin.configure({
+          webClientId,
           iosClientId
         });
       }
@@ -89,8 +95,8 @@ const enableMocking = async () => {
     return;
   }
 
-  await import('../mocks/msw.polyfills');
-  const { server } = await import('../mocks/server');
+  await import('../shared/mocks/msw.polyfills');
+  const { server } = await import('../shared/mocks/server');
   server.listen({ onUnhandledRequest: 'bypass' });
 
   console.log('[MSW] Mock server started');
