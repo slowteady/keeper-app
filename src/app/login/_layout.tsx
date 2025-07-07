@@ -1,4 +1,4 @@
-import DetailHeader from '@/components/organisms/headers/DetailHeader';
+import { DetailHeader } from '@/shared/components/organisms/DetailHeader';
 import { Stack } from 'expo-router';
 import ErrorBoundary from 'react-native-error-boundary';
 import ErrorFallback from '../ErrorFallback';

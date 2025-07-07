@@ -1,5 +1,8 @@
 module.exports = [
+  'expo-font',
+  'expo-web-browser',
   'expo-router',
+  'expo-apple-authentication',
   [
     'expo-splash-screen',
     {
@@ -35,5 +38,13 @@ module.exports = [
     }
   ],
   ['@react-native-seoul/naver-login', { urlScheme: 'keeper' }],
-  ['@react-native-google-signin/google-signin', { iosUrlScheme: process.env.EXPO_PUBLIC_GOOGLE_URL_SCHEME }]
+  ['@react-native-google-signin/google-signin', { iosUrlScheme: process.env.EXPO_PUBLIC_GOOGLE_URL_IOS_SCHEME }],
+  [
+    'expo-secure-store',
+    {
+      usesNonExemptEncryption: false,
+      configureAndroidBackup: true,
+      faceIDPermission: 'Keeper가 안전한 저장소를 사용할 수 있도록 허용해 주세요.'
+    }
+  ]
 ];

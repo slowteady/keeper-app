@@ -7,7 +7,7 @@ module.exports = {
   bundleIdentifier: 'com.keeper.love',
   infoPlist: {
     ITSAppUsesNonExemptEncryption: false,
-    CFBundleURLTypes: [{ CFBundleURLSchemes: [process.env.EXPO_PUBLIC_GOOGLE_URL_SCHEME] }],
+    CFBundleURLTypes: [{ CFBundleURLSchemes: [process.env.EXPO_PUBLIC_GOOGLE_URL_IOS_SCHEME] }],
     NSAppTransportSecurity: {
       NSAllowsArbitraryLoads: true
     }

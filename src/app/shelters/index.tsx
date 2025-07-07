@@ -1,12 +1,16 @@
-import SheltersTemplate from '@/app/shelters/SheltersTemplate';
-import { SHELTER_COUNT_QUERY_KEY } from '@/constants/queryKeys';
-import theme from '@/constants/theme';
-import { useGetShelterCountQuery, useGetShelterSearchMutation, useGetSheltersQuery } from '@/hooks/queries/useShelters';
-import { useMapInit } from '@/hooks/useMapInit';
-import { GetShelterSearchParams } from '@/services/sheltersService';
-import { CameraParams } from '@/types/map';
-import { ShelterValue } from '@/types/scheme/shelters';
-import { calcMapRadiusKm } from '@/utils/mapUtils';
+import { SheltersTemplate } from '@/domains/shelter/components/templates/SheltersTemplate';
+import {
+  useGetShelterCountQuery,
+  useGetShelterSearchMutation,
+  useGetSheltersQuery
+} from '@/domains/shelter/queries/shelter.queries';
+import { GetShelterSearchParams } from '@/domains/shelter/services/shelter.services';
+import { ShelterValue } from '@/domains/shelter/types/shelter.types';
+import { SHELTER_COUNT_QUERY_KEY } from '@/shared/constants/queryKey.constants';
+import { theme } from '@/shared/constants/theme.constants';
+import { useMapInit } from '@/shared/hooks/useMapInit';
+import { CameraParams } from '@/shared/types/map.types';
+import { calcMapRadiusKm } from '@/shared/utils/map.utils';
 import { useRoute } from '@react-navigation/native';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';

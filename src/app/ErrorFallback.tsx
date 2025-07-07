@@ -1,6 +1,6 @@
-import Button from '@/components/atoms/button/Button';
-import MainHeader from '@/components/organisms/headers/MainHeader';
-import theme from '@/constants/theme';
+import { Button } from '@/shared/components/atoms/Button';
+import { MainHeader } from '@/shared/components/organisms/MainHeader';
+import { theme } from '@/shared/constants/theme.constants';
 import { Image } from 'expo-image';
 import { StyleSheet, Text, View } from 'react-native';
 

@@ -1,8 +1,8 @@
-import { SHELTER_ABANDONMENTS_QUERY_KEY, SHELTER_QUERY_KEY } from '@/constants/queryKeys';
-import theme from '@/constants/theme';
-import { useGetShelterAbandonmentsQuery, useGetShelterQuery } from '@/hooks/queries/useShelters';
-import useRefreshing from '@/hooks/useRefreshing';
-import { abandonmentsFilterValueAtom } from '@/states/abandonments';
+import { announcementFilterValueAtom } from '@/domains/animal/stores/announcement.stores';
+import { useGetShelterAbandonmentsQuery, useGetShelterQuery } from '@/domains/shelter/queries/shelter.queries';
+import { SHELTER_ABANDONMENTS_QUERY_KEY, SHELTER_QUERY_KEY } from '@/shared/constants/queryKey.constants';
+import { theme } from '@/shared/constants/theme.constants';
+import { useRefreshing } from '@/shared/hooks/useRefreshing';
 import { useQueryClient } from '@tanstack/react-query';
 import * as Haptics from 'expo-haptics';
 import { useLocalSearchParams } from 'expo-router';
@@ -28,7 +28,7 @@ export default Layout;
 
 const Page = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const filterValue = useAtomValue(abandonmentsFilterValueAtom);
+  const filterValue = useAtomValue(announcementFilterValueAtom);
 
   const { data: shelterData, isLoading: isShelterLoading } = useGetShelterQuery(id, { enabled: !!id });
   const {
