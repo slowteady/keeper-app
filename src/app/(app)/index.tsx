@@ -1,5 +1,7 @@
 import { MainTemplate } from '@/domains/animal/components/templates/MainTemplate';
+import { useAppReview } from '@/shared/hooks/useAppReview';
 import { createStore, Provider } from 'jotai';
+import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 /**
@@ -7,6 +9,14 @@ import { StyleSheet, View } from 'react-native';
  */
 const Page = () => {
   const store = createStore();
+  const requestReview = useAppReview(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      requestReview();
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [requestReview]);
 
   return (
     <Provider store={store}>
