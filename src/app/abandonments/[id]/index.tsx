@@ -4,6 +4,7 @@ import { useGetAbandonmentQuery } from '@/domains/animal/queries/announcement.qu
 import { transformShelterData } from '@/domains/shelter/business/shelter.business';
 import { useGetShelterQuery } from '@/domains/shelter/queries/shelter.queries';
 import { theme } from '@/shared/constants/theme.constants';
+import { useAppReview } from '@/shared/hooks/useAppReview';
 import { useLocalSearchParams } from 'expo-router';
 import { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
@@ -13,6 +14,7 @@ import { StyleSheet, View } from 'react-native';
  */
 const Page = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
+  useAppReview(true);
   const { data: abandonmentData } = useGetAbandonmentQuery(id);
   const { data: shelterData } = useGetShelterQuery(abandonmentData?.shelterId || '', {
     enabled: Boolean(abandonmentData?.shelterId)
