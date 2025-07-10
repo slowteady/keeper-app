@@ -8,6 +8,7 @@ import { Button } from '@/shared/components/atoms/Button';
 import { ScrollFloatingButton } from '@/shared/components/atoms/ScrollFloatingButton';
 import { CardSkeleton } from '@/shared/components/molecules/CardSkeleton';
 import { Dropdown } from '@/shared/components/molecules/Dropdown';
+import { AnimalCard } from '@/shared/components/organisms/AnimalCard';
 import { BottomSheetMenuData } from '@/shared/components/organisms/BottomSheet';
 import { ShelterMap } from '@/shared/components/organisms/ShelterMap';
 import { ShelterTelModal } from '@/shared/components/organisms/ShelterTelModal';

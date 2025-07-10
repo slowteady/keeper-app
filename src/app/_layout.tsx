@@ -90,14 +90,14 @@ export default function RootLayout() {
   );
 }
 
-const enableMocking = async () => {
-  if (!__DEV__) {
-    return;
-  }
+// const enableMocking = async () => {
+//   if (!__DEV__) {
+//     return;
+//   }
 
-  await import('../shared/mocks/msw.polyfills');
-  const { server } = await import('../shared/mocks/server');
-  server.listen({ onUnhandledRequest: 'bypass' });
+//   await import('../shared/mocks/msw.polyfills');
+//   const { server } = await import('../shared/mocks/server');
+//   server.listen({ onUnhandledRequest: 'bypass' });
 
-  console.log('[MSW] Mock server started');
-};
+//   console.log('[MSW] Mock server started');
+// };

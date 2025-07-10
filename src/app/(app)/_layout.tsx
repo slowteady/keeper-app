@@ -1,4 +1,5 @@
-import { Heart, Location } from '@/shared/components/atoms/icons/outline';
+import { Chat } from '@/components/atoms/icons/outline';
+import { Heart, Location, Login } from '@/shared/components/atoms/icons/outline';
 import { MainHeader } from '@/shared/components/organisms/MainHeader';
 import { theme } from '@/shared/constants/theme.constants';
 import { useLayout } from '@/shared/hooks/useLayout';
@@ -49,10 +50,14 @@ const MenuList = ({ ...props }: DrawerContentComponentProps) => {
         <Location width={24} height={24} color={theme.colors.black[900]} />
         <Text style={styles.text}>보호소</Text>
       </Pressable>
-      {/* <Pressable style={styles.menuWrap} onPress={() => handleRoute('/login')}>
+      <Pressable style={styles.menuWrap} onPress={() => handleRoute('/login')}>
         <Login width={24} height={24} color={theme.colors.black[900]} />
         <Text style={styles.text}>로그인</Text>
-      </Pressable> */}
+      </Pressable>
+      <Pressable style={styles.menuWrap} onPress={() => handleRoute('/community')}>
+        <Chat width={24} height={24} color={theme.colors.black[900]} />
+        <Text style={styles.text}>커뮤니티</Text>
+      </Pressable>
     </View>
   );
 };

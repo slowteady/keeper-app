@@ -1,10 +1,6 @@
-import { StyleSheet, TouchableOpacity, TouchableOpacityProps } from 'react-native';
+import { TouchableOpacity, TouchableOpacityProps } from 'react-native';
 
-export interface ButtonProps extends TouchableOpacityProps {
-  //
-}
-
-export const Button = ({ children, ...props }: ButtonProps) => {
+export const Button = ({ children, ...props }: TouchableOpacityProps) => {
   return (
     <TouchableOpacity activeOpacity={0.7} {...props}>
       {children}
@@ -12,4 +8,4 @@ export const Button = ({ children, ...props }: ButtonProps) => {
   );
 };
 
-const styles = StyleSheet.create({});
+// const styles = StyleSheet.create({});
