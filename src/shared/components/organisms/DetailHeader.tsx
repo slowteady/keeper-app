@@ -7,7 +7,11 @@ import { router, useNavigationContainerRef } from 'expo-router';
 import { Platform, StyleSheet, View } from 'react-native';
 import { Button } from '../atoms/Button';
 
-export const DetailHeader = () => {
+export interface DetailHeaderProps {
+  rightHeader?: React.ReactNode;
+}
+
+export const DetailHeader = ({ rightHeader }: DetailHeaderProps) => {
   const rootNavigation = useNavigationContainerRef();
   const { top } = useLayout();
 
@@ -30,9 +34,11 @@ export const DetailHeader = () => {
       </Button>
 
       <View style={styles.rightContainer}>
-        <Button onPress={handlePressHome}>
-          <Home width={24} height={24} color={theme.colors.black[900]} />
-        </Button>
+        {rightHeader || (
+          <Button onPress={handlePressHome}>
+            <Home width={24} height={24} color={theme.colors.black[900]} />
+          </Button>
+        )}
       </View>
     </View>
   );
@@ -44,7 +50,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
     paddingBottom: 16,
     backgroundColor: theme.colors.background.default,
     borderBottomWidth: 1,
