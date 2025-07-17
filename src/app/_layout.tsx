@@ -14,10 +14,11 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import AnimatedSplash from './AnimatedSplash';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -33,47 +34,56 @@ export default function RootLayout() {
 
   useReactQueryDevTools(queryClient);
 
-  const [loaded] = useFonts({
+  const [fontLoaded] = useFonts({
     SpaceMono: require('@/assets/fonts/PretendardVariable.ttf')
   });
 
+  const [isAppReady, setAppReady] = useState(false);
+  const [isAnimationDone, setAnimationDone] = useState(false);
+
   useEffect(() => {
-    (async () => {
-      // await enableMocking();
-      if (loaded) {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        await SplashScreen.hideAsync();
-        extend(customParseFormat);
-        setupInterceptor(authApi);
+    const init = async () => {
+      if (!fontLoaded) return;
 
-        const kakaoNativeAppKey = process.env.EXPO_PUBLIC_KAKAO_NATIVE_KEY || '';
-        initializeKakaoSDK(kakaoNativeAppKey);
+      extend(customParseFormat);
+      setupInterceptor(authApi);
 
-        const consumerKey = process.env.EXPO_PUBLIC_NAVER_CLIENT_ID || '';
-        const consumerSecret = process.env.EXPO_PUBLIC_NAVER_CLIENT_SECRET || '';
-        const appName = process.env.EXPO_PUBLIC_NAVER_APP_NAME || '';
-        const serviceUrlSchemeIOS = process.env.EXPO_PUBLIC_NAVER_URL_SCHEME || '';
+      const kakaoNativeAppKey = process.env.EXPO_PUBLIC_KAKAO_NATIVE_KEY || '';
+      const consumerKey = process.env.EXPO_PUBLIC_NAVER_CLIENT_ID || '';
+      const consumerSecret = process.env.EXPO_PUBLIC_NAVER_CLIENT_SECRET || '';
+      const appName = process.env.EXPO_PUBLIC_NAVER_APP_NAME || '';
+      const serviceUrlSchemeIOS = process.env.EXPO_PUBLIC_NAVER_URL_SCHEME || '';
+      const iosClientId = process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID || '';
+      const webClientId = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID || '';
 
-        NaverLogin.initialize({
-          appName,
-          consumerKey,
-          consumerSecret,
-          serviceUrlSchemeIOS,
-          disableNaverAppAuthIOS: true
-        });
+      initializeKakaoSDK(kakaoNativeAppKey);
+      NaverLogin.initialize({
+        appName,
+        consumerKey,
+        consumerSecret,
+        serviceUrlSchemeIOS,
+        disableNaverAppAuthIOS: true
+      });
+      GoogleSignin.configure({ webClientId, iosClientId });
 
-        const iosClientId = process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID || '';
-        const webClientId = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID || '';
-        GoogleSignin.configure({
-          webClientId,
-          iosClientId
-        });
-      }
-    })();
-  }, [loaded]);
+      setAppReady(true);
+    };
 
-  if (!loaded) {
+    init();
+  }, [fontLoaded]);
+
+  useEffect(() => {
+    if (isAppReady) {
+      SplashScreen.hideAsync();
+    }
+  }, [isAppReady, isAnimationDone]);
+
+  if (!isAppReady) {
     return null;
+  }
+
+  if (!isAnimationDone) {
+    return <AnimatedSplash onFinish={() => setAnimationDone(true)} />;
   }
 
   return (
