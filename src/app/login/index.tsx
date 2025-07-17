@@ -45,21 +45,16 @@ const Page = () => {
       {
         onSuccess: async ({ data: resultData }) => {
           const { data } = resultData;
-          const { accessToken, refreshToken } = data;
+          const { accessToken, refreshToken, isNew } = data;
+
+          if (!isNew) {
+            router.push({ pathname: '/login/signup', params: { accessToken, refreshToken } });
+            return;
+          }
 
           await saveAccessToken(accessToken);
           await saveRefreshToken(refreshToken);
-          Alert.alert(
-            '로그인 성공',
-            `이메일: ${data.email}, 이름: ${data.name}`,
-            [
-              {
-                text: '확인', // 버튼 텍스트
-                onPress: () => router.dismissAll() // 눌렀을 때 실행
-              }
-            ],
-            { cancelable: false } // 외부 탭으로 닫기 방지
-          );
+          router.replace('/');
         },
         onError: () => {
           Alert.alert('로그인 실패', '다시 시도해주세요.');
@@ -102,11 +97,11 @@ const KakaoButton = ({ onResponse }: ButtonProps) => {
       if (response.idToken) {
         onResponse('KAKAO', response.accessToken);
       } else {
-        Alert.alert('Kakao 로그인 에러', '디시 시도해주세요');
+        Alert.alert('로그인 실패', '디시 시도해주세요');
       }
     } catch (error) {
       if (error) {
-        Alert.alert('Kakao 로그인 에러', '디시 시도해주세요');
+        Alert.alert('로그인 실패', '디시 시도해주세요');
       }
     }
   };
@@ -128,11 +123,11 @@ const NaverButton = ({ onResponse }: ButtonProps) => {
       if (response.successResponse) {
         onResponse('NAVER', response.successResponse.accessToken);
       } else {
-        Alert.alert('Naver 로그인 에러', '디시 시도해주세요');
+        Alert.alert('로그인 실패', '디시 시도해주세요');
       }
     } catch (error) {
       if (error) {
-        Alert.alert('Naver 로그인 에러', '디시 시도해주세요');
+        Alert.alert('로그인 실패', '디시 시도해주세요');
       }
     }
   };
@@ -152,15 +147,14 @@ const GoogleButton = ({ onResponse }: ButtonProps) => {
     try {
       const response = await GoogleSignin.signIn();
 
-      if (response.type === 'success' && response.data.idToken) {
-        console.log(response.data.idToken);
+      if (response.data?.idToken) {
         onResponse('GOOGLE', response.data.idToken);
       } else {
-        Alert.alert('Google 로그인 에러', '디시 시도해주세요');
+        Alert.alert('로그인 실패', '디시 시도해주세요');
       }
     } catch (error) {
       if (error) {
-        Alert.alert('Google 로그인 에러', '디시 시도해주세요');
+        Alert.alert('로그인 실패', '디시 시도해주세요');
       }
     }
   };
@@ -181,14 +175,15 @@ const AppleButton = ({ onResponse }: ButtonProps) => {
       const response = await signInAsync({
         requestedScopes: [AppleAuthenticationScope.FULL_NAME, AppleAuthenticationScope.EMAIL]
       });
+
       if (response.identityToken) {
         onResponse('APPLE', response.identityToken);
       } else {
-        Alert.alert('Apple 로그인 에러', '디시 시도해주세요');
+        Alert.alert('로그인 실패', '디시 시도해주세요');
       }
     } catch (error) {
       if (error) {
-        Alert.alert('Apple 로그인 에러', '디시 시도해주세요');
+        Alert.alert('로그인 실패', '디시 시도해주세요');
       }
     }
   };
