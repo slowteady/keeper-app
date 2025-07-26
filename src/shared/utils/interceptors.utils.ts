@@ -1,4 +1,4 @@
-import { getToken } from '@/domains/auth/services/auth.services';
+import { getTokens } from '@/domains/auth';
 import { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
 import { router } from 'expo-router';
 import { deleteToken, getAccessToken, getRefreshToken, saveAccessToken, saveRefreshToken } from './token.utils';
@@ -29,7 +29,7 @@ export const setupInterceptor = (authApi: AxiosInstance) => {
         const refreshToken = await getRefreshToken();
         if (!refreshToken) throw new Error();
 
-        const { data } = await getToken(refreshToken);
+        const { data } = await getTokens(refreshToken);
         const { accessToken, refreshToken: newRefreshToken } = data.data;
         if (!accessToken || !newRefreshToken) throw new Error();
 

@@ -1,4 +1,5 @@
 import { useLoginMutation } from '@/domains/auth/queries/auth.queries';
+import { SocialLoginType } from '@/domains/auth/types/auth';
 import { Button } from '@/shared/components/atoms/Button';
 import { Google, Kakao, Naver } from '@/shared/components/atoms/icons/etc';
 import { theme } from '@/shared/constants/theme.constants';
@@ -21,7 +22,7 @@ import { Alert, StyleSheet, Text, View } from 'react-native';
 const Page = () => {
   const [appleAvailable, setAppleAvailable] = useState<boolean | null>(null);
   const [googleAvailable, setGoogleAvailable] = useState<boolean | null>(null);
-  const { mutate } = useLoginMutation();
+  const { mutate: loginMutate } = useLoginMutation();
 
   useEffect(() => {
     (async () => {
@@ -39,22 +40,25 @@ const Page = () => {
     })();
   }, []);
 
-  const handleLogin = (category: LoginCategory, token: string) => {
-    mutate(
-      { socialType: category, token },
+  const handleLogin = (socialType: SocialLoginType, token: string) => {
+    loginMutate(
+      { socialType, token },
       {
         onSuccess: async ({ data: resultData }) => {
           const { data } = resultData;
-          const { accessToken, refreshToken, isNew } = data;
+          const { accessToken, refreshToken, socialId, isNew } = data;
 
-          if (!isNew) {
-            router.push({ pathname: '/login/signup', params: { accessToken, refreshToken } });
+          if (isNew) {
+            router.push({ pathname: '/login/signup', params: { socialType, socialId } });
             return;
           }
 
           await saveAccessToken(accessToken);
           await saveRefreshToken(refreshToken);
-          router.replace('/');
+          router.dismissAll();
+
+          // TODO
+          // [ ] 로그인 후처리 토스트
         },
         onError: () => {
           Alert.alert('로그인 실패', '다시 시도해주세요.');
@@ -86,13 +90,18 @@ const Page = () => {
 
 export default Page;
 
-type LoginCategory = 'GOOGLE' | 'APPLE' | 'KAKAO' | 'NAVER';
 interface ButtonProps {
-  onResponse: (category: LoginCategory, token: string) => void;
+  onResponse: (category: SocialLoginType, token: string) => void;
 }
+
 const KakaoButton = ({ onResponse }: ButtonProps) => {
+  const [isLoading, setIsLoading] = useState(false);
+
   const handlePress = async () => {
     try {
+      if (isLoading) return;
+      setIsLoading(true);
+
       const response = await login();
       if (response.idToken) {
         onResponse('KAKAO', response.accessToken);
@@ -103,6 +112,8 @@ const KakaoButton = ({ onResponse }: ButtonProps) => {
       if (error) {
         Alert.alert('로그인 실패', '디시 시도해주세요');
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -117,8 +128,13 @@ const KakaoButton = ({ onResponse }: ButtonProps) => {
 };
 
 const NaverButton = ({ onResponse }: ButtonProps) => {
+  const [isLoading, setIsLoading] = useState(false);
+
   const handlePress = async () => {
     try {
+      if (isLoading) return;
+      setIsLoading(true);
+
       const response = await NaverLogin.login();
       if (response.successResponse) {
         onResponse('NAVER', response.successResponse.accessToken);
@@ -129,6 +145,8 @@ const NaverButton = ({ onResponse }: ButtonProps) => {
       if (error) {
         Alert.alert('로그인 실패', '디시 시도해주세요');
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -143,8 +161,13 @@ const NaverButton = ({ onResponse }: ButtonProps) => {
 };
 
 const GoogleButton = ({ onResponse }: ButtonProps) => {
+  const [isLoading, setIsLoading] = useState(false);
+
   const handlePress = async () => {
     try {
+      if (isLoading) return;
+      setIsLoading(true);
+
       const response = await GoogleSignin.signIn();
 
       if (response.data?.idToken) {
@@ -156,6 +179,8 @@ const GoogleButton = ({ onResponse }: ButtonProps) => {
       if (error) {
         Alert.alert('로그인 실패', '디시 시도해주세요');
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -170,8 +195,13 @@ const GoogleButton = ({ onResponse }: ButtonProps) => {
 };
 
 const AppleButton = ({ onResponse }: ButtonProps) => {
+  const [isLoading, setIsLoading] = useState(false);
+
   const handlePress = async () => {
     try {
+      if (isLoading) return;
+      setIsLoading(true);
+
       const response = await signInAsync({
         requestedScopes: [AppleAuthenticationScope.FULL_NAME, AppleAuthenticationScope.EMAIL]
       });
@@ -185,6 +215,8 @@ const AppleButton = ({ onResponse }: ButtonProps) => {
       if (error) {
         Alert.alert('로그인 실패', '디시 시도해주세요');
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 

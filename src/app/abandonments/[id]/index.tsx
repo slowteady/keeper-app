@@ -14,7 +14,7 @@ import { StyleSheet, View } from 'react-native';
  */
 const Page = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
-  useAppReview(true);
+  useAppReview();
   const { data: abandonmentData } = useGetAbandonmentQuery(id);
   const { data: shelterData } = useGetShelterQuery(abandonmentData?.shelterId || '', {
     enabled: Boolean(abandonmentData?.shelterId)

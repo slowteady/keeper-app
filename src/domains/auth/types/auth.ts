@@ -1,4 +1,4 @@
-export interface LoginData {
+export interface LoginDataSchema {
   socialId: string;
   name: string;
   nickname: string;
@@ -8,8 +8,8 @@ export interface LoginData {
   refreshToken: string;
   isNew: boolean;
 }
-
-export interface RefreshData {
+export interface RefreshDataSchema {
   accessToken: string;
   refreshToken: string;
 }
+export type SocialLoginType = 'GOOGLE' | 'APPLE' | 'KAKAO' | 'NAVER';
