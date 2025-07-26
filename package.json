@@ -17,7 +17,7 @@
     "lint": "expo lint",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "clean": "rm -rf pnpm-lock.yaml ios android node_modules .expo build",
-    "svgr": "svgr --config-file .svgrrc --typescript --native --icon --out-dir src/components/atoms/icons src/assets/icons"
+    "icon": "svgr --config-file .svgrrc --typescript --native --icon --out-dir src/components/atoms/icons src/assets/icons"
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "^5",
@@ -29,6 +29,7 @@
     "@react-navigation/bottom-tabs": "^7.0.0",
     "@react-navigation/drawer": "^7.1.1",
     "@react-navigation/native": "^7.0.0",
+    "@tamagui/config": "1.132.11",
     "@tanstack/react-query": "^5.62.7",
     "axios": "^1.10.0",
     "dayjs": "^1.11.13",
@@ -70,7 +71,8 @@
     "react-native-svg": "15.11.2",
     "react-native-tab-view": "^4.1.2",
     "react-native-web": "~0.20.0",
-    "react-native-webview": "13.13.5"
+    "react-native-webview": "13.13.5",
+    "tamagui": "1.132.11"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
