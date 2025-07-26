@@ -1,16 +1,12 @@
-import Constants, { ExecutionEnvironment } from 'expo-constants';
 import * as StoreReview from 'expo-store-review';
 import { useEffect, useRef } from 'react';
 import { Linking } from 'react-native';
 
 /**
  * 앱 리뷰 모달 출력 훅
- * @param triggerImmediately 마운트 후에 즉각적으로 발동 시킬지 여부
- * @returns
  */
-export const useAppReview = (triggerImmediately = false) => {
+export const useAppReview = () => {
   const hasPrompted = useRef(false);
-  const isProduction = Constants.executionEnvironment === ExecutionEnvironment.Standalone;
 
   const promptReview = async () => {
     if (hasPrompted.current) return;
@@ -32,12 +28,10 @@ export const useAppReview = (triggerImmediately = false) => {
   };
 
   useEffect(() => {
-    if (!isProduction) return;
+    if (__DEV__) return;
 
-    if (triggerImmediately) {
-      promptReview();
-    }
-  }, [triggerImmediately]);
+    promptReview();
+  }, []);
 
   return promptReview;
 };
