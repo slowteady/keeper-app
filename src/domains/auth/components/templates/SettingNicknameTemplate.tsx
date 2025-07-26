@@ -1,50 +1,133 @@
 import { SignupForm } from '@/app/login/signup';
-import { Button } from '@/shared/components/atoms/Button';
-import { theme } from '@/shared/constants/theme.constants';
-import { useFormContext } from 'react-hook-form';
-import { StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { KeyboardView, TextField } from '@/shared';
+import { Button } from '@/shared/components/_atoms/Button';
+import { useDebounceValue } from '@/shared/hooks/useDebounce';
+import { useEffect, useState } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
+import { Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Spinner, styled, Text, XStack, YStack } from 'tamagui';
+import { useCheckNicknameMutation } from '../../queries/auth.queries';
 
-interface SettingNicknameTemplateProps {
+export interface SettingNicknameTemplateProps {
   onSubmit: (values: SignupForm) => void;
+  isPending?: boolean;
 }
+type NicknameStatus = {
+  status: 'default' | 'success' | 'error';
+  message: string;
+};
+export const SettingNicknameTemplate = ({ onSubmit, isPending = false }: SettingNicknameTemplateProps) => {
+  const [isComplete, setIsComplete] = useState(false);
+  const [nicknameState, setNicknameState] = useState<NicknameStatus>({
+    status: 'default',
+    message: '*기호, 특수문자 제외 8자 가능'
+  });
 
-const SettingNicknameTemplate = ({ onSubmit }: SettingNicknameTemplateProps) => {
   const { setValue, handleSubmit } = useFormContext<SignupForm>();
+  const nickname = useWatch({ name: 'nickname' });
+  const { bottom } = useSafeAreaInsets();
+  const debouncedNickname = useDebounceValue(nickname, 1000);
+
+  const { mutate, isPending: isNicknameCheckPending } = useCheckNicknameMutation();
+
+  const handleChangeNickname = (text: string) => {
+    const filtered = text.replace(/[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z0-9]/g, '');
+    setValue('nickname', filtered);
+
+    if (nicknameState.status !== 'default' || debouncedNickname === '') {
+      setNicknameState({
+        status: 'default',
+        message: '*기호, 특수문자 제외 8자 가능'
+      });
+    }
+
+    setIsComplete(false);
+  };
+
+  useEffect(() => {
+    if (debouncedNickname === '') return;
+
+    mutate(
+      { nickname: debouncedNickname },
+      {
+        onSuccess: (response) => {
+          const isDuplicated = response.data.data;
+
+          if (isDuplicated) {
+            setIsComplete(false);
+            setNicknameState({
+              status: 'error',
+              message: '*사용할 수 없는 닉네임입니다.'
+            });
+          } else {
+            setNicknameState({
+              status: 'success',
+              message: '*사용 가능한 닉네임입니다.'
+            });
+
+            setIsComplete(true);
+          }
+        }
+      }
+    );
+  }, [debouncedNickname, mutate]);
+
+  const helperText = isNicknameCheckPending ? (
+    <XStack mt="$3">
+      <Spinner size="small" color="$primaryMain" />
+    </XStack>
+  ) : (
+    nicknameState.message
+  );
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* <View style={styles.container}> */}
-      <View style={styles.subContainer}>
-        <Text style={styles.titleText}>{'어떤 닉네임으로\n불러드릴까요?'}</Text>
-      </View>
-      {/* </View> */}
+    <KeyboardView>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <Container pb={bottom}>
+          <SubContainer>
+            <Title>{'어떤 닉네임으로\n불러드릴까요?'}</Title>
+            <CustomTextField
+              value={nickname}
+              placeholder="닉네임"
+              returnKeyType="done"
+              submitBehavior="blurAndSubmit"
+              returnKeyLabel="완료"
+              status={nicknameState.status}
+              helperText={helperText}
+              maxLength={8}
+              onChangeText={handleChangeNickname}
+            />
+          </SubContainer>
 
-      <Button style={styles.button} onPress={handleSubmit(onSubmit)}>
-        <Text style={styles.buttonText}>등록하기</Text>
-      </Button>
-    </SafeAreaView>
+          <Button disabled={!isComplete || isPending} onPress={handleSubmit(onSubmit)} isLoading={isPending}>
+            등록하기
+          </Button>
+        </Container>
+      </TouchableWithoutFeedback>
+    </KeyboardView>
   );
 };
 
-export default SettingNicknameTemplate;
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background.default },
-  subContainer: { paddingTop: 48, flex: 1 },
-  titleText: { fontSize: 26, lineHeight: 32, fontWeight: 600 },
-  button: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 20,
-    backgroundColor: theme.colors.primary.main,
-    borderRadius: 10
-  },
-  buttonText: {
-    fontSize: 15,
-    fontWeight: '600',
-    lineHeight: 17,
-    color: theme.colors.black[900]
-  }
+const Container = styled(YStack, {
+  flex: 1,
+  px: '$5',
+  bg: '$backgroundDefault'
+});
+const SubContainer = styled(YStack, {
+  flex: 1,
+  pt: '$8'
+});
+const Title = styled(Text, {
+  fontSize: 26,
+  lineHeight: 36,
+  fontWeight: '$6',
+  mb: '$8'
+});
+const CustomTextField = styled(TextField, {
+  size: '$4',
+  placeholderTextColor: '$black500',
+  fontWeight: '$4',
+  fontSize: 15,
+  rounded: '$3'
 });

@@ -1,6 +1,6 @@
 import { ShelterCountValue, ShelterValue } from '@/domains/shelter/types/shelter.types';
 import { theme } from '@/shared/constants/theme.constants';
-import { useDebounce } from '@/shared/hooks/useDebounce';
+import { useDebounceFunc } from '@/shared/hooks/useDebounce';
 import { CameraParams } from '@/shared/types/map.types';
 import { isCameraChanged } from '@/shared/utils/map.utils';
 import {
@@ -39,7 +39,7 @@ const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
       opacity: scale.value
     }));
 
-    const handleChangeCamera = useDebounce((params: CameraParams) => {
+    const handleChangeCamera = useDebounceFunc((params: CameraParams) => {
       if (cameraRef.current && !isCameraChanged(cameraRef.current, params)) {
         return;
       }
