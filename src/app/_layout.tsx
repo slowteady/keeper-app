@@ -1,3 +1,4 @@
+import { Toast } from '@/shared';
 import { authApi } from '@/shared/utils/instance.util';
 import { setupInterceptor } from '@/shared/utils/interceptors.utils';
 import { useReactQueryDevTools } from '@dev-plugins/react-query';
@@ -5,6 +6,7 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { initializeKakaoSDK } from '@react-native-kakao/core';
 import NaverLogin from '@react-native-seoul/naver-login';
+import { ToastProvider } from '@tamagui/toast';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { extend } from 'dayjs';
 import 'dayjs/locale/ko';
@@ -95,12 +97,15 @@ export default function RootLayout() {
     <TamaguiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <GestureHandlerRootView style={{ flex: 1 }}>
-          <BottomSheetModalProvider>
-            <SafeAreaProvider>
-              <StatusBar style="dark" />
-              <Stack screenOptions={{ headerShown: false }} />
-            </SafeAreaProvider>
-          </BottomSheetModalProvider>
+          <ToastProvider native={false} swipeDirection="up">
+            <Toast />
+            <BottomSheetModalProvider>
+              <SafeAreaProvider>
+                <StatusBar style="dark" />
+                <Stack screenOptions={{ headerShown: false }} />
+              </SafeAreaProvider>
+            </BottomSheetModalProvider>
+          </ToastProvider>
         </GestureHandlerRootView>
       </QueryClientProvider>
     </TamaguiProvider>
