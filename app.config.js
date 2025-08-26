@@ -14,7 +14,7 @@ export default () => ({
     scheme: 'keeper',
     userInterfaceStyle: 'automatic',
     newArchEnabled: true,
-    ios: iosConfig,
+    ios: { ...iosConfig, bundleIdentifier: 'com.keeper.love' },
     android: androidConfig,
     plugins,
     experiments: { typedRoutes: true },

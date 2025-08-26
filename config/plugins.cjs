@@ -40,7 +40,7 @@ module.exports = [
       ios: { handleKakaoOpenUrl: true }
     }
   ],
-  ['@react-native-seoul/naver-login', { urlScheme: 'keeper' }],
+  ['@react-native-seoul/naver-login', { urlScheme: process.env.EXPO_PUBLIC_NAVER_URL_SCHEME }],
   ['@react-native-google-signin/google-signin', { iosUrlScheme: process.env.EXPO_PUBLIC_GOOGLE_URL_IOS_SCHEME }],
   [
     'expo-secure-store',
