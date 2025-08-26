@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Platform, StyleSheet } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+
 import { Button } from './Button';
 import { ScrollButton } from './icons/etc';
 

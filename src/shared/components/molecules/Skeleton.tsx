@@ -1,4 +1,3 @@
-import { theme } from '@/shared/constants/theme.constants';
 import { useEffect } from 'react';
 import { StyleProp, StyleSheet, ViewStyle } from 'react-native';
 import Animated, {
@@ -8,6 +7,8 @@ import Animated, {
   withRepeat,
   withTiming
 } from 'react-native-reanimated';
+
+import { theme } from '@/shared/constants/theme.constants';
 
 export interface SkeletonProps {
   style?: StyleProp<ViewStyle>;

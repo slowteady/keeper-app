@@ -1,10 +1,12 @@
+import { StackActions } from '@react-navigation/native';
+import { router, useNavigationContainerRef } from 'expo-router';
+import { Platform, StyleSheet, View } from 'react-native';
+
 import { LeftLineArrow } from '@/shared/components/atoms/icons/mini';
 import { Home } from '@/shared/components/atoms/icons/outline';
 import { theme } from '@/shared/constants/theme.constants';
 import { useLayout } from '@/shared/hooks/useLayout';
-import { StackActions } from '@react-navigation/native';
-import { router, useNavigationContainerRef } from 'expo-router';
-import { Platform, StyleSheet, View } from 'react-native';
+
 import { Button } from '../atoms/Button';
 
 export interface DetailHeaderProps {

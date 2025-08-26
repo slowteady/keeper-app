@@ -1,3 +1,7 @@
+import { useQueryClient } from '@tanstack/react-query';
+import { useCallback, useMemo } from 'react';
+import { FlatList, Linking, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
+
 import { MainShelterSection } from '@/domains/shelter/components/organisms/MainShelterSection';
 import { Logo } from '@/shared/components/atoms/icons/outline';
 import { ScrollFloatingButton } from '@/shared/components/atoms/ScrollFloatingButton';
@@ -5,9 +9,7 @@ import { ABANDONMENTS_QUERY_KEY, SHELTER_QUERY_KEY } from '@/shared/constants/qu
 import { theme } from '@/shared/constants/theme.constants';
 import { useRefreshing } from '@/shared/hooks/useRefreshing';
 import { useScrollFloatingButton } from '@/shared/hooks/useScrollFloatingButton';
-import { useQueryClient } from '@tanstack/react-query';
-import { useCallback, useMemo } from 'react';
-import { FlatList, Linking, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
+
 import { MainAbandonmentSection } from '../organisms/MainAbandonmentSection';
 import { MainBannerSection } from '../organisms/MainBannerSection';
 

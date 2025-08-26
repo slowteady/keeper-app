@@ -1,12 +1,7 @@
-import { useLoginMutation } from '@/domains/auth/queries/auth.queries';
-import { SocialLoginType } from '@/domains/auth/types/auth';
-import { Button } from '@/shared/components/atoms/Button';
-import { Google, Kakao, Naver } from '@/shared/components/atoms/icons/etc';
-import { theme } from '@/shared/constants/theme.constants';
-import { saveAccessToken, saveRefreshToken } from '@/shared/utils/token.utils';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { login } from '@react-native-kakao/user';
 import NaverLogin from '@react-native-seoul/naver-login';
+import { useToastController } from '@tamagui/toast';
 import {
   AppleAuthenticationButton,
   AppleAuthenticationButtonStyle,
@@ -16,12 +11,24 @@ import {
   signInAsync
 } from 'expo-apple-authentication';
 import { router } from 'expo-router';
+import { useSetAtom } from 'jotai';
 import { useEffect, useState } from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+
+import { useLoginMutation } from '@/domains/auth/services';
+import { userAtom } from '@/domains/auth/stores';
+import { SocialLoginType } from '@/domains/auth/types/auth.types';
+import { Button } from '@/shared/components/atoms/Button';
+import { Google, Kakao, Naver } from '@/shared/components/atoms/icons/etc';
+import { theme } from '@/shared/constants/theme.constants';
+import { saveAccessToken, saveRefreshToken } from '@/shared/utils/token.utils';
 
 const Page = () => {
   const [appleAvailable, setAppleAvailable] = useState<boolean | null>(null);
   const [googleAvailable, setGoogleAvailable] = useState<boolean | null>(null);
+  const setUser = useSetAtom(userAtom);
+  const { show } = useToastController();
+
   const { mutate: loginMutate } = useLoginMutation();
 
   useEffect(() => {
@@ -46,7 +53,7 @@ const Page = () => {
       {
         onSuccess: async ({ data: resultData }) => {
           const { data } = resultData;
-          const { accessToken, refreshToken, socialId, isNew } = data;
+          const { accessToken, refreshToken, socialId, isNew, ...user } = data;
 
           if (isNew) {
             router.push({ pathname: '/login/signup', params: { socialType, socialId } });
@@ -55,13 +62,17 @@ const Page = () => {
 
           await saveAccessToken(accessToken);
           await saveRefreshToken(refreshToken);
-          router.dismissAll();
+          setUser(user);
+          show('로그인 되었어요.', { customData: { status: 'success' } });
 
-          // TODO
-          // [ ] 로그인 후처리 토스트
+          if (router.canDismiss()) {
+            router.dismissAll();
+          } else {
+            router.replace('/');
+          }
         },
         onError: () => {
-          Alert.alert('로그인 실패', '다시 시도해주세요.');
+          show('로그인에 실패했어요. 다시 시도해주세요.', { customData: { status: 'fail' } });
         }
       }
     );
@@ -103,15 +114,11 @@ const KakaoButton = ({ onResponse }: ButtonProps) => {
       setIsLoading(true);
 
       const response = await login();
-      if (response.idToken) {
-        onResponse('KAKAO', response.accessToken);
-      } else {
-        Alert.alert('로그인 실패', '디시 시도해주세요');
-      }
+      if (!response.idToken) return;
+
+      onResponse('KAKAO', response.accessToken);
     } catch (error) {
-      if (error) {
-        Alert.alert('로그인 실패', '디시 시도해주세요');
-      }
+      console.error(error);
     } finally {
       setIsLoading(false);
     }
@@ -136,15 +143,11 @@ const NaverButton = ({ onResponse }: ButtonProps) => {
       setIsLoading(true);
 
       const response = await NaverLogin.login();
-      if (response.successResponse) {
-        onResponse('NAVER', response.successResponse.accessToken);
-      } else {
-        Alert.alert('로그인 실패', '디시 시도해주세요');
-      }
+      if (!response.successResponse) return;
+
+      onResponse('NAVER', response.successResponse.accessToken);
     } catch (error) {
-      if (error) {
-        Alert.alert('로그인 실패', '디시 시도해주세요');
-      }
+      console.error(error);
     } finally {
       setIsLoading(false);
     }
@@ -169,16 +172,11 @@ const GoogleButton = ({ onResponse }: ButtonProps) => {
       setIsLoading(true);
 
       const response = await GoogleSignin.signIn();
+      if (!response.data?.idToken) return;
 
-      if (response.data?.idToken) {
-        onResponse('GOOGLE', response.data.idToken);
-      } else {
-        Alert.alert('로그인 실패', '디시 시도해주세요');
-      }
+      onResponse('GOOGLE', response.data.idToken);
     } catch (error) {
-      if (error) {
-        Alert.alert('로그인 실패', '디시 시도해주세요');
-      }
+      console.error(error);
     } finally {
       setIsLoading(false);
     }
@@ -205,16 +203,11 @@ const AppleButton = ({ onResponse }: ButtonProps) => {
       const response = await signInAsync({
         requestedScopes: [AppleAuthenticationScope.FULL_NAME, AppleAuthenticationScope.EMAIL]
       });
+      if (!response.identityToken) return;
 
-      if (response.identityToken) {
-        onResponse('APPLE', response.identityToken);
-      } else {
-        Alert.alert('로그인 실패', '디시 시도해주세요');
-      }
+      onResponse('APPLE', response.identityToken);
     } catch (error) {
-      if (error) {
-        Alert.alert('로그인 실패', '디시 시도해주세요');
-      }
+      console.error(error);
     } finally {
       setIsLoading(false);
     }

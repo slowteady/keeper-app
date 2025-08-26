@@ -1,6 +1,7 @@
+import { StyleSheet, Text, View, ViewStyle } from 'react-native';
+
 import { Paw } from '@/shared/components/atoms/icons/solid';
 import { theme } from '@/shared/constants/theme.constants';
-import { StyleSheet, Text, View, ViewStyle } from 'react-native';
 
 export interface NoImageProps {
   style?: ViewStyle;

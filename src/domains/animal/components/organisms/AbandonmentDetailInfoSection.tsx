@@ -1,6 +1,7 @@
-import { theme } from '@/shared/constants/theme.constants';
 import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+
+import { theme } from '@/shared/constants/theme.constants';
 
 export interface AbandonmentDetailInfoSectionProps {
   age: string;

@@ -1,8 +1,10 @@
-import { theme } from '@/shared/constants/theme.constants';
-import { KakaoAddressDocument } from '@/shared/types/map.types';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { forwardRef, useState } from 'react';
 import { ActivityIndicator, FlatList, ListRenderItemInfo, Pressable, StyleSheet, Text, View } from 'react-native';
+
+import { theme } from '@/shared/constants/theme.constants';
+import { KakaoAddressDocument } from '@/shared/types/map.types';
+
 import { Searchbar } from '../molecules/Searchbar';
 import { BottomSheet, BottomSheetLayoutProps } from './BottomSheet';
 

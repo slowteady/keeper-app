@@ -1,5 +1,7 @@
-import { theme } from '@/shared/constants/theme.constants';
 import { Modal, Pressable, StyleProp, StyleSheet, Text, TextProps, View, ViewStyle } from 'react-native';
+
+import { theme } from '@/shared/constants/theme.constants';
+
 import { Button } from '../atoms/Button';
 
 export interface BasicModalProps {

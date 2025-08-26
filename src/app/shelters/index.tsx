@@ -1,3 +1,8 @@
+import { useRoute } from '@react-navigation/native';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { StyleSheet, View } from 'react-native';
+
 import { SheltersTemplate } from '@/domains/shelter/components/templates/SheltersTemplate';
 import {
   useGetShelterCountQuery,
@@ -11,10 +16,6 @@ import { theme } from '@/shared/constants/theme.constants';
 import { useMapInit } from '@/shared/hooks/useMapInit';
 import { CameraParams } from '@/shared/types/map.types';
 import { calcMapRadiusKm } from '@/shared/utils/map.utils';
-import { useRoute } from '@react-navigation/native';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import { StyleSheet, View } from 'react-native';
 
 /**
  * 보호소 목록 페이지

@@ -44,6 +44,6 @@ export const getRefreshToken = async () => {
 /**
  * 토큰 삭제
  */
-export const deleteToken = async () => {
+export const removeToken = async () => {
   await Promise.all([deleteItemAsync(ACCESS_TOKEN_KEY), deleteItemAsync(REFRESH_TOKEN_KEY)]);
 };

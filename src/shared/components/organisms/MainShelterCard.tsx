@@ -1,5 +1,6 @@
-import { theme } from '@/shared/constants/theme.constants';
 import { StyleSheet, Text, View } from 'react-native';
+
+import { theme } from '@/shared/constants/theme.constants';
 
 export interface MainShelterCardProps {
   name: string;

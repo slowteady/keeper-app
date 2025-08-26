@@ -1,4 +1,5 @@
 import { atom } from 'jotai';
+
 import { ANNOUNCEMENT_FILTERS } from '../constants/announcement.constants';
 import { AnimalType } from '../types/animal.types';
 import { AnnouncementFilter } from '../types/announcement.types';

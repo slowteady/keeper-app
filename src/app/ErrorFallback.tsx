@@ -1,8 +1,9 @@
+import { Image } from 'expo-image';
+import { StyleSheet, Text, View } from 'react-native';
+
 import { Button } from '@/shared/components/atoms/Button';
 import { MainHeader } from '@/shared/components/organisms/MainHeader';
 import { theme } from '@/shared/constants/theme.constants';
-import { Image } from 'expo-image';
-import { StyleSheet, Text, View } from 'react-native';
 
 interface ErrorFallbackProps {
   error: Error;

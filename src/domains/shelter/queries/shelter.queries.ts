@@ -1,3 +1,5 @@
+import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
+
 import { AnnouncementData, AnnouncementValue } from '@/domains/animal/types/announcement.types';
 import {
   SHELTER_ABANDONMENTS_QUERY_KEY,
@@ -10,7 +12,7 @@ import {
   UseMutationCustomOptions,
   UseQueryCustomOptions
 } from '@/shared/types/util.types';
-import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
+
 import {
   getShelter,
   getShelterAbandonments,

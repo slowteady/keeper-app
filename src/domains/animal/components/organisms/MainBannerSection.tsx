@@ -1,8 +1,9 @@
-import { Carousel } from '@/shared/components/molecules/Carousel';
-import { theme } from '@/shared/constants/theme.constants';
 import { memo, useCallback, useRef, useState } from 'react';
 import { Dimensions, NativeSyntheticEvent, StyleSheet, Text, View } from 'react-native';
 import PagerView from 'react-native-pager-view';
+
+import { Carousel } from '@/shared/components/molecules/Carousel';
+import { theme } from '@/shared/constants/theme.constants';
 
 export const MainBannerSection = memo(() => {
   const images = [

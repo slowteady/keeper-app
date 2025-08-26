@@ -1,5 +1,6 @@
 import { ApiResponse } from '@/shared/types/global.types';
 import { publicApi } from '@/shared/utils/instance.util';
+
 import { AnimalType } from '../types/animal.types';
 import { AnnouncementData, AnnouncementFilter, AnnouncementValue } from '../types/announcement.types';
 

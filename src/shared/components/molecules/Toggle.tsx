@@ -1,4 +1,3 @@
-import { theme } from '@/shared/constants/theme.constants';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { Pressable, StyleProp, StyleSheet, TextStyle, View, ViewProps } from 'react-native';
 import Animated, {
@@ -8,6 +7,8 @@ import Animated, {
   useSharedValue,
   withTiming
 } from 'react-native-reanimated';
+
+import { theme } from '@/shared/constants/theme.constants';
 
 export interface ToggleCompleteProps<T> {
   items: ToggleItemsProps<T>['items'];

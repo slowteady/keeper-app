@@ -1,6 +1,6 @@
 import * as React from 'react';
-import Svg, { G, Path, Defs, ClipPath, Rect } from 'react-native-svg';
 import type { SvgProps } from 'react-native-svg';
+import Svg, { ClipPath, Defs, G, Path, Rect } from 'react-native-svg';
 const SvgPencil = (props: SvgProps) => (
   <Svg width={24} height={24} viewBox="0 0 20 20" fill="none" {...props}>
     <G clipPath="url(#clip0_811_9051)">

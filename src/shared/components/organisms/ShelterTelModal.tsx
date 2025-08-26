@@ -2,6 +2,7 @@ import * as Clipboard from 'expo-clipboard';
 import * as Linking from 'expo-linking';
 import { useCallback } from 'react';
 import { Alert, Platform } from 'react-native';
+
 import { BasicModal } from './BasicModal';
 
 export interface ShelterTelModalProps {

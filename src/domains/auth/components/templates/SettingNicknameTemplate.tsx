@@ -1,13 +1,15 @@
-import { SignupForm } from '@/app/login/signup';
-import { KeyboardView, TextField } from '@/shared';
-import { Button } from '@/shared/components/_atoms/Button';
-import { useDebounceValue } from '@/shared/hooks/useDebounce';
 import { useEffect, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Spinner, styled, Text, XStack, YStack } from 'tamagui';
-import { useCheckNicknameMutation } from '../../queries/auth.queries';
+
+import { SignupForm } from '@/app/login/signup';
+import { KeyboardView, TextField } from '@/shared/components';
+import { Button } from '@/shared/components/_atoms/Button';
+import { useDebounceValue } from '@/shared/hooks/useDebounce';
+
+import { useCheckNicknameMutation } from '../../services';
 
 export interface SettingNicknameTemplateProps {
   onSubmit: (values: SignupForm) => void;
@@ -29,7 +31,7 @@ export const SettingNicknameTemplate = ({ onSubmit, isPending = false }: Setting
   const { bottom } = useSafeAreaInsets();
   const debouncedNickname = useDebounceValue(nickname, 1000);
 
-  const { mutate, isPending: isNicknameCheckPending } = useCheckNicknameMutation();
+  const { mutate: nicknameCheckMutate, isPending: isNicknameCheckPending } = useCheckNicknameMutation();
 
   const handleChangeNickname = (text: string) => {
     const filtered = text.replace(/[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z0-9]/g, '');
@@ -48,7 +50,7 @@ export const SettingNicknameTemplate = ({ onSubmit, isPending = false }: Setting
   useEffect(() => {
     if (debouncedNickname === '') return;
 
-    mutate(
+    nicknameCheckMutate(
       { nickname: debouncedNickname },
       {
         onSuccess: (response) => {
@@ -71,7 +73,7 @@ export const SettingNicknameTemplate = ({ onSubmit, isPending = false }: Setting
         }
       }
     );
-  }, [debouncedNickname, mutate]);
+  }, [debouncedNickname, nicknameCheckMutate]);
 
   const helperText = isNicknameCheckPending ? (
     <XStack mt="$3">

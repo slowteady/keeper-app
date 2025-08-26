@@ -1,6 +1,8 @@
+import { Dimensions, StyleSheet, Text, View } from 'react-native';
+
 import { Carousel } from '@/shared/components/molecules/Carousel';
 import { theme } from '@/shared/constants/theme.constants';
-import { Dimensions, StyleSheet, Text, View } from 'react-native';
+
 import { TransformedAbandonmentDetail } from '../../business/announcement.business';
 
 export interface AbandonmentDetailCardSectionProps {

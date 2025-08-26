@@ -1,6 +1,7 @@
-import { MainTemplate } from '@/domains/animal/components/templates/MainTemplate';
 import { createStore, Provider } from 'jotai';
 import { StyleSheet, View } from 'react-native';
+
+import { MainTemplate } from '@/domains/animal/components/templates/MainTemplate';
 
 /**
  * 메인화면

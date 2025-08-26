@@ -1,8 +1,3 @@
-import { ShelterCountValue, ShelterValue } from '@/domains/shelter/types/shelter.types';
-import { theme } from '@/shared/constants/theme.constants';
-import { useDebounceFunc } from '@/shared/hooks/useDebounce';
-import { CameraParams } from '@/shared/types/map.types';
-import { isCameraChanged } from '@/shared/utils/map.utils';
 import {
   NaverMapMarkerOverlay,
   NaverMapView,
@@ -15,6 +10,13 @@ import { ActivityAction, startActivityAsync } from 'expo-intent-launcher';
 import { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
 import { Linking, Platform, StyleSheet, Text, View, ViewStyle } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+
+import { ShelterCountValue, ShelterValue } from '@/domains/shelter/types/shelter.types';
+import { theme } from '@/shared/constants/theme.constants';
+import { useDebounceFunc } from '@/shared/hooks/useDebounce';
+import { CameraParams } from '@/shared/types/map.types';
+import { isCameraChanged } from '@/shared/utils/map.utils';
+
 import { Button } from '../atoms/Button';
 
 export interface ShelterMapProps extends NaverMapViewProps {

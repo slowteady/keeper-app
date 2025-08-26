@@ -1,6 +1,3 @@
-import { Close } from '@/shared/components/atoms/icons/outline';
-import { Search } from '@/shared/components/atoms/icons/solid';
-import { theme } from '@/shared/constants/theme.constants';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { useCallback, useState } from 'react';
 import {
@@ -14,6 +11,11 @@ import {
   ViewStyle
 } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+
+import { Close } from '@/shared/components/atoms/icons/outline';
+import { Search } from '@/shared/components/atoms/icons/solid';
+import { theme } from '@/shared/constants/theme.constants';
+
 import { Button } from '../atoms/Button';
 
 export interface SearchbarProps extends TextInputProps {

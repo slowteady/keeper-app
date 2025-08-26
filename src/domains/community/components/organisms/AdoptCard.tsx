@@ -1,6 +1,7 @@
+import { Dimensions, Pressable, StyleSheet, Text, View } from 'react-native';
+
 import { Carousel } from '@/shared/components/molecules/Carousel';
 import { theme } from '@/shared/constants/theme.constants';
-import { Dimensions, Pressable, StyleSheet, Text, View } from 'react-native';
 
 export interface AdoptCardProps {
   value: any;

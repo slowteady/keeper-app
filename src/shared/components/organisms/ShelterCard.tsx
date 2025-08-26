@@ -1,6 +1,7 @@
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+
 import { ShelterValue } from '@/domains/shelter/types/shelter.types';
 import { theme } from '@/shared/constants/theme.constants';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 export interface ShelterCardProps {
   data: ShelterValue;

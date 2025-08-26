@@ -1,14 +1,15 @@
+import { useQueryClient } from '@tanstack/react-query';
+import * as Haptics from 'expo-haptics';
+import { createStore, Provider, useAtomValue } from 'jotai';
+import { useCallback, useMemo } from 'react';
+import { RefreshControl, StyleSheet, View } from 'react-native';
+
 import { AbandonmentsTemplate } from '@/domains/animal/components/templates/AbandonmentsTemplate';
 import { useGetInfiniteAbandonmentsQuery } from '@/domains/animal/queries/announcement.queries';
 import { announcementAtom } from '@/domains/animal/stores/announcement.stores';
 import { ABANDONMENTS_QUERY_KEY } from '@/shared/constants/queryKey.constants';
 import { theme } from '@/shared/constants/theme.constants';
 import { useRefreshing } from '@/shared/hooks/useRefreshing';
-import { useQueryClient } from '@tanstack/react-query';
-import * as Haptics from 'expo-haptics';
-import { createStore, Provider, useAtomValue } from 'jotai';
-import { useCallback, useMemo } from 'react';
-import { RefreshControl, StyleSheet, View } from 'react-native';
 
 /**
  * 공고 목록 페이지

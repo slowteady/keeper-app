@@ -1,6 +1,7 @@
 import { AnnouncementFilter, AnnouncementValue } from '@/domains/animal/types/announcement.types';
 import { ApiResponse } from '@/shared/types/global.types';
 import { publicApi } from '@/shared/utils/instance.util';
+
 import { ShelterCountValue, ShelterValue } from '../types/shelter.types';
 
 export interface GetSheltersParams {

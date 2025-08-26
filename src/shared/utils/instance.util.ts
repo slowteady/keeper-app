@@ -1,4 +1,5 @@
 import axios from 'axios';
+
 import { buildQueryString } from './query.utils';
 
 export interface PublicApiParams {

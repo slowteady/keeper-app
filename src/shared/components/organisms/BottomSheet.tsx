@@ -1,5 +1,3 @@
-import { Check } from '@/shared/components/atoms/icons/solid';
-import { theme } from '@/shared/constants/theme.constants';
 import {
   BottomSheetBackdrop,
   BottomSheetBackdropProps,
@@ -9,6 +7,10 @@ import {
 } from '@gorhom/bottom-sheet';
 import { forwardRef, useCallback } from 'react';
 import { StyleSheet, Text, TextStyle, ViewStyle } from 'react-native';
+
+import { Check } from '@/shared/components/atoms/icons/solid';
+import { theme } from '@/shared/constants/theme.constants';
+
 import { Button } from '../atoms/Button';
 
 export interface BottomSheetLayoutProps extends Omit<BottomSheetModalProps, 'children'> {

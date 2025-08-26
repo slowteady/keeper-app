@@ -1,8 +1,10 @@
-import { AnnouncementValue } from '@/domains/animal/types/announcement.types';
-import { theme } from '@/shared/constants/theme.constants';
 import { Image as ExpoImage } from 'expo-image';
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+
+import { AnnouncementValue } from '@/domains/animal/types/announcement.types';
+import { theme } from '@/shared/constants/theme.constants';
+
 import { NoImage, NoImageProps } from '../molecules/NoImage';
 import { Skeleton } from '../molecules/Skeleton';
 

@@ -1,9 +1,11 @@
+import { Stack } from 'expo-router';
+import ErrorBoundary from 'react-native-error-boundary';
+
 import { Pencil } from '@/components/atoms/icons/outline';
 import { Button } from '@/shared/components/atoms/Button';
 import { DetailHeader } from '@/shared/components/organisms/DetailHeader';
 import { theme } from '@/shared/constants/theme.constants';
-import { Stack } from 'expo-router';
-import ErrorBoundary from 'react-native-error-boundary';
+
 import ErrorFallback from '../ErrorFallback';
 
 const CommunityLayout = () => {

@@ -1,7 +1,8 @@
-import { RightArrow } from '@/shared/components/atoms/icons/solid';
-import { theme } from '@/shared/constants/theme.constants';
 import { StyleSheet, Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+
+import { RightArrow } from '@/shared/components/atoms/icons/solid';
+import { theme } from '@/shared/constants/theme.constants';
 
 export interface FullViewButtonProps {
   onPress: () => void;

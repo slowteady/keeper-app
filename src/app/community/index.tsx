@@ -1,10 +1,11 @@
+import { createStore, Provider } from 'jotai';
+import { useState } from 'react';
+import { SceneMap } from 'react-native-tab-view';
+
 import { CommunityAdoptTemplate } from '@/domains/community/components/templates/CommunityAdoptTemplate';
 import { CommunityLifeTemplate } from '@/domains/community/components/templates/CommunityLifeTemplate';
 import { CommunityQnATemplate } from '@/domains/community/components/templates/CommunityQnATemplate';
 import { Tab } from '@/shared/components/molecules/Tab';
-import { createStore, Provider } from 'jotai';
-import { useState } from 'react';
-import { SceneMap } from 'react-native-tab-view';
 
 /**
  * 커뮤니티 목록 페이지

@@ -1,10 +1,12 @@
+import { useCallback, useState } from 'react';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+
 import { TransformedShelterValue } from '@/domains/shelter/business/shelter.business';
 import { Button } from '@/shared/components/atoms/Button';
 import { ShelterTelModal } from '@/shared/components/organisms/ShelterTelModal';
 import { theme } from '@/shared/constants/theme.constants';
 import { useLayout } from '@/shared/hooks/useLayout';
-import { useCallback, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+
 import { TransformedAbandonmentDetail } from '../../business/announcement.business';
 import { AbandonmentDetailCardSection } from '../organisms/AbandonmentDetailCardSection';
 import { AbandonmentDetailDescriptionSection } from '../organisms/AbandonmentDetailDescriptionSection';

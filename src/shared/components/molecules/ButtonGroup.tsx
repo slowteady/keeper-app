@@ -1,7 +1,9 @@
-import { theme } from '@/shared/constants/theme.constants';
 import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, { interpolateColor, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+
+import { theme } from '@/shared/constants/theme.constants';
+
 import { Button } from '../atoms/Button';
 
 export interface ButtonGroupData<T> {

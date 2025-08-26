@@ -1,7 +1,9 @@
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+
 import { ABANDONMENT_QUERY_KEY, ABANDONMENTS_QUERY_KEY } from '@/shared/constants/queryKey.constants';
 import { ApiResponse } from '@/shared/types/global.types';
 import { UseInfiniteQueryCustomOptions, UseQueryCustomOptions } from '@/shared/types/util.types';
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+
 import { getAbandonment, getAbandonments, GetAbandonmentsParams } from '../services/announce.services';
 import { AnnouncementData, AnnouncementValue } from '../types/announcement.types';
 

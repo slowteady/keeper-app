@@ -1,6 +1,7 @@
-import { theme } from '@/shared/constants/theme.constants';
 import { Dimensions, StyleSheet } from 'react-native';
 import { Route, TabBar, TabBarItem, TabView, TabViewProps } from 'react-native-tab-view';
+
+import { theme } from '@/shared/constants/theme.constants';
 
 export const Tab = <T extends Route>(props: TabViewProps<T>) => {
   const width = Dimensions.get('screen').width;

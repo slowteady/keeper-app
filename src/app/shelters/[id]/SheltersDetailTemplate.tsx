@@ -1,3 +1,20 @@
+import { NaverMapView } from '@mj-studio/react-native-naver-map';
+import { Image } from 'expo-image';
+import * as Location from 'expo-location';
+import { router } from 'expo-router';
+import { useAtomValue, useSetAtom } from 'jotai';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  ActivityIndicator,
+  Dimensions,
+  FlatList,
+  ListRenderItemInfo,
+  Pressable,
+  StyleSheet,
+  Text,
+  View
+} from 'react-native';
+
 import { transformAbandonments, TransformedAbandonments } from '@/domains/animal/business/announcement.business';
 import { ANNOUNCEMENT_FILTERS } from '@/domains/animal/constants/announcement.constants';
 import { announcementAtom, announcementFilterValueAtom } from '@/domains/animal/stores/announcement.stores';
@@ -16,22 +33,6 @@ import { theme } from '@/shared/constants/theme.constants';
 import { useLayout } from '@/shared/hooks/useLayout';
 import { useMapInit } from '@/shared/hooks/useMapInit';
 import { useScrollFloatingButton } from '@/shared/hooks/useScrollFloatingButton';
-import { NaverMapView } from '@mj-studio/react-native-naver-map';
-import { Image } from 'expo-image';
-import * as Location from 'expo-location';
-import { router } from 'expo-router';
-import { useAtomValue, useSetAtom } from 'jotai';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  ActivityIndicator,
-  Dimensions,
-  FlatList,
-  ListRenderItemInfo,
-  Pressable,
-  StyleSheet,
-  Text,
-  View
-} from 'react-native';
 
 interface SheltersDetailTemplateProps {
   shelterData: ShelterValue;

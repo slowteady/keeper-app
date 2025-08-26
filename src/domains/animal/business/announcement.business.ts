@@ -1,5 +1,7 @@
-import { ChipVariant } from '@/shared/components/organisms/AnimalCard';
 import dayjs from 'dayjs';
+
+import { ChipVariant } from '@/shared/components/organisms/AnimalCard';
+
 import { AnnouncementChipId, AnnouncementFilter, AnnouncementValue } from '../types/announcement.types';
 
 export type TransformedAbandonments = ReturnType<typeof transformAbandonments>[number];

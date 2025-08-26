@@ -5,6 +5,6 @@ export const handleError = (error: unknown, msg: string): Error => {
     console.error(`${msg}: ${error.message}`);
     throw error;
   }
-  console.error(msg);
+  console.error(error);
   throw error;
 };

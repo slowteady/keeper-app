@@ -1,6 +1,8 @@
-import { DetailHeader } from '@/shared/components/organisms/DetailHeader';
 import { Stack } from 'expo-router';
 import ErrorBoundary from 'react-native-error-boundary';
+
+import { DetailHeader } from '@/shared/components/organisms/DetailHeader';
+
 import ErrorFallback from '../ErrorFallback';
 
 const AbandonmentsLayout = () => {

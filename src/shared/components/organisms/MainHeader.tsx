@@ -1,11 +1,13 @@
-import { Logo, Menu } from '@/shared/components/atoms/icons/outline';
-import { theme } from '@/shared/constants/theme.constants';
-import { useLayout } from '@/shared/hooks/useLayout';
 import { DrawerActions } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
 import { router, useNavigation } from 'expo-router';
 import { memo } from 'react';
 import { Platform, Pressable, StyleSheet, View } from 'react-native';
+
+import { Logo, Menu } from '@/shared/components/atoms/icons/outline';
+import { theme } from '@/shared/constants/theme.constants';
+import { useLayout } from '@/shared/hooks/useLayout';
+
 import { Button } from '../atoms/Button';
 
 export interface MainHeaderProps {

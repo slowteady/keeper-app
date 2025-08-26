@@ -1,7 +1,8 @@
-import { theme } from '@/shared/constants/theme.constants';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+
+import { theme } from '@/shared/constants/theme.constants';
 
 export interface AbandonmentDetailDescriptionSectionProps {
   specialMark: string;

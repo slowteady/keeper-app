@@ -21,7 +21,6 @@ export const Toast = () => {
         duration={toast.duration || 2000}
         enterStyle={{ opacity: 0, transform: [{ translateY: 0 }] }}
         exitStyle={{ opacity: 0, transform: [{ translateY: 0 }] }}
-        transform={[{ translateY: top }]}
         viewportName={toast.viewportName}
       >
         {hasStatus && <AnimatedIcon status={toast.customData?.status} />}
@@ -29,14 +28,12 @@ export const Toast = () => {
         {toast.message && <TamaguiToast.Description>{toast.message}</TamaguiToast.Description>}
       </StyledToast>
 
-      <ToastViewport right={right} left={left} px={20} />
+      <ToastViewport right={right} left={left} top={top} px={20} />
     </>
   );
 };
 
 const AnimatedIcon = ({ status }: { status?: 'success' | 'fail' }) => {
-  if (!status) return null;
-
   const getProps = useCallback((status: 'success' | 'fail') => {
     if (status === 'success') {
       return {
@@ -51,11 +48,12 @@ const AnimatedIcon = ({ status }: { status?: 'success' | 'fail' }) => {
     }
   }, []);
 
+  if (!status) return null;
+
   return <LottieView autoPlay loop={false} {...getProps(status)} />;
 };
 
 const StyledToast = styled(TamaguiToast, {
-  animation: '200ms',
   opacity: 1,
   scale: 1,
   height: 48,

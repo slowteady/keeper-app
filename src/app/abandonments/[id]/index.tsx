@@ -1,3 +1,7 @@
+import { useLocalSearchParams } from 'expo-router';
+import { useMemo } from 'react';
+import { StyleSheet, View } from 'react-native';
+
 import { transformAbandonmentDetail } from '@/domains/animal/business/announcement.business';
 import { AbandonmentsDetailTemplate } from '@/domains/animal/components/templates/AbandonmentsDetailTemplate';
 import { useGetAbandonmentQuery } from '@/domains/animal/queries/announcement.queries';
@@ -5,9 +9,6 @@ import { transformShelterData } from '@/domains/shelter/business/shelter.busines
 import { useGetShelterQuery } from '@/domains/shelter/queries/shelter.queries';
 import { theme } from '@/shared/constants/theme.constants';
 import { useAppReview } from '@/shared/hooks/useAppReview';
-import { useLocalSearchParams } from 'expo-router';
-import { useMemo } from 'react';
-import { StyleSheet, View } from 'react-native';
 
 /**
  * 공고 상세 페이지

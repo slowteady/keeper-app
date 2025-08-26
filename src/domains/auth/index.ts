@@ -1,4 +1,14 @@
+// Components
 export * from './components';
-export * from './queries';
+
+// Hooks
+export { useAuth } from './hooks/useAuth';
+
+// Services
 export * from './services';
+
+// Stores
+export * from './stores';
+
+// Types
 export * from './types';

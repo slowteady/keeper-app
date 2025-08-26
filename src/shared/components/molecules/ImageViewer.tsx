@@ -1,11 +1,13 @@
-import { Close, LeftArrow, RightArrow } from '@/shared/components/atoms/icons/outline';
-import { theme } from '@/shared/constants/theme.constants';
-import { useLayout } from '@/shared/hooks/useLayout';
 import { useCallback, useRef, useState } from 'react';
 import { Modal, NativeSyntheticEvent, StyleSheet, Text, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import PagerView from 'react-native-pager-view';
 import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
+
+import { Close, LeftArrow, RightArrow } from '@/shared/components/atoms/icons/outline';
+import { theme } from '@/shared/constants/theme.constants';
+import { useLayout } from '@/shared/hooks/useLayout';
+
 import { Button } from '../atoms/Button';
 
 export interface ImageViewerProps {

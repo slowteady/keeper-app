@@ -1,7 +1,9 @@
-import { getTokens } from '@/domains/auth';
 import { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
 import { router } from 'expo-router';
-import { deleteToken, getAccessToken, getRefreshToken, saveAccessToken, saveRefreshToken } from './token.utils';
+
+import { getTokens } from '@/domains/auth/services';
+
+import { getAccessToken, getRefreshToken, removeToken, saveAccessToken, saveRefreshToken } from './token.utils';
 
 export const setupInterceptor = (authApi: AxiosInstance) => {
   authApi.interceptors.request.use(
@@ -43,7 +45,7 @@ export const setupInterceptor = (authApi: AxiosInstance) => {
 
         return authApi(originalRequest);
       } catch (error) {
-        await deleteToken();
+        await removeToken();
         router.replace('/login');
         return Promise.reject(error);
       }

@@ -1,10 +1,12 @@
-import { LeftLineArrow, RightLineArrow } from '@/shared/components/atoms/icons/mini';
-import { MoreImage } from '@/shared/components/atoms/icons/outline';
-import { theme } from '@/shared/constants/theme.constants';
 import { Image } from 'expo-image';
 import { forwardRef, useCallback, useRef, useState } from 'react';
 import { NativeSyntheticEvent, Pressable, StyleSheet, Text, View } from 'react-native';
 import PagerView, { PagerViewProps } from 'react-native-pager-view';
+
+import { LeftLineArrow, RightLineArrow } from '@/shared/components/atoms/icons/mini';
+import { MoreImage } from '@/shared/components/atoms/icons/outline';
+import { theme } from '@/shared/constants/theme.constants';
+
 import { Button } from '../atoms/Button';
 import { ImageViewer } from './ImageViewer';
 import { NoImage } from './NoImage';

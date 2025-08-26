@@ -1,5 +1,6 @@
-import { theme } from '@/shared/constants/theme.constants';
 import { StyleSheet, TouchableOpacity, TouchableOpacityProps } from 'react-native';
+
+import { theme } from '@/shared/constants/theme.constants';
 
 export const Button = ({ children, disabled = false, style, ...props }: TouchableOpacityProps) => {
   return (

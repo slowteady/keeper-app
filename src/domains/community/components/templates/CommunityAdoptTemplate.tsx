@@ -1,13 +1,15 @@
+import * as Haptics from 'expo-haptics';
+import { useAtom } from 'jotai';
+import { useCallback } from 'react';
+import { FlatList, ListRenderItemInfo, StyleSheet, View } from 'react-native';
+
 import { ANNOUNCEMENT_ANIMAL_TYPES } from '@/domains/animal/constants/announcement.constants';
 import { announcementAtom } from '@/domains/animal/stores/announcement.stores';
 import { AnimalType } from '@/domains/animal/types/animal.types';
 import { ButtonGroup } from '@/shared/components/molecules/ButtonGroup';
 import { Searchbar } from '@/shared/components/molecules/Searchbar';
 import { theme } from '@/shared/constants/theme.constants';
-import * as Haptics from 'expo-haptics';
-import { useAtom } from 'jotai';
-import { useCallback } from 'react';
-import { FlatList, ListRenderItemInfo, StyleSheet, View } from 'react-native';
+
 import { AdoptCard } from '../organisms/AdoptCard';
 
 export const CommunityAdoptTemplate = () => {

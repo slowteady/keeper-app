@@ -1,3 +1,11 @@
+import { useRoute } from '@react-navigation/native';
+import * as Location from 'expo-location';
+import { router } from 'expo-router';
+import { useCallback, useEffect, useState } from 'react';
+import { Dimensions, FlatList, ListRenderItemInfo, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable as GesturePressable } from 'react-native-gesture-handler';
+import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+
 import { FullViewButton } from '@/shared/components/atoms/FullViewButton';
 import { DownArrow } from '@/shared/components/atoms/icons/mini';
 import { RightArrow } from '@/shared/components/atoms/icons/solid';
@@ -9,13 +17,7 @@ import { theme } from '@/shared/constants/theme.constants';
 import { useMapInit } from '@/shared/hooks/useMapInit';
 import { CameraParams } from '@/shared/types/map.types';
 import { calcMapRadiusKm } from '@/shared/utils/map.utils';
-import { useRoute } from '@react-navigation/native';
-import * as Location from 'expo-location';
-import { router } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
-import { Dimensions, FlatList, ListRenderItemInfo, Pressable, StyleSheet, Text, View } from 'react-native';
-import { Pressable as GesturePressable } from 'react-native-gesture-handler';
-import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+
 import { useGetShelterCountQuery, useGetSheltersQuery } from '../../queries/shelter.queries';
 import { ShelterValue } from '../../types/shelter.types';
 

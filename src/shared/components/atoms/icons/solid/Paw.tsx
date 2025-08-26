@@ -1,6 +1,6 @@
 import * as React from 'react';
-import Svg, { Path, Ellipse } from 'react-native-svg';
 import type { SvgProps } from 'react-native-svg';
+import Svg, { Ellipse,Path } from 'react-native-svg';
 const SvgPaw = (props: SvgProps) => (
   <Svg width={24} height={24} viewBox="0 0 23 22" fill="none" {...props}>
     <Path
