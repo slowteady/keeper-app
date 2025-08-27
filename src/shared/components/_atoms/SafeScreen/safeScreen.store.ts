@@ -1,12 +1,14 @@
 import { atom } from 'jotai';
 import { atomWithReset } from 'jotai/utils';
+import { ViewProps } from 'tamagui';
 
 export interface SafeScreenConfig {
-  useSafeArea: boolean;
-  safeTop: boolean;
-  safeBottom: boolean;
+  useSafeArea?: boolean;
+  safeTop?: boolean;
+  safeBottom?: boolean;
   customTopPadding?: number;
   customBottomPadding?: number;
+  ContainerProps?: ViewProps;
 }
 
 const defaultConfig: SafeScreenConfig = {
@@ -14,7 +16,8 @@ const defaultConfig: SafeScreenConfig = {
   safeTop: true,
   safeBottom: true,
   customTopPadding: undefined,
-  customBottomPadding: undefined
+  customBottomPadding: undefined,
+  ContainerProps: {}
 };
 
 export const safeScreenAtom = atomWithReset<SafeScreenConfig>(defaultConfig);

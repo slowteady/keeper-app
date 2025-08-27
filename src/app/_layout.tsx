@@ -41,10 +41,6 @@ import AnimatedSplash from './AnimatedSplash';
  */
 SplashScreen.preventAutoHideAsync();
 
-export const linking = {
-  prefixes: ['keeper://']
-};
-
 export default function RootLayout() {
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -116,17 +112,17 @@ export default function RootLayout() {
   return (
     <TamaguiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <ToastProvider native={false} swipeDirection="up">
-            <Toast />
-            <BottomSheetModalProvider>
-              <SafeAreaProvider>
+        <BottomSheetModalProvider>
+          <SafeAreaProvider>
+            <ToastProvider native={false} swipeDirection="up">
+              <GestureHandlerRootView style={{ flex: 1 }}>
                 <StatusBar style="dark" />
+                <Toast />
                 <Stack screenOptions={{ headerShown: false }} />
-              </SafeAreaProvider>
-            </BottomSheetModalProvider>
-          </ToastProvider>
-        </GestureHandlerRootView>
+              </GestureHandlerRootView>
+            </ToastProvider>
+          </SafeAreaProvider>
+        </BottomSheetModalProvider>
       </QueryClientProvider>
     </TamaguiProvider>
   );

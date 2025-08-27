@@ -1,4 +1,4 @@
-import { YStackProps } from 'tamagui';
+import { ViewProps, YStackProps } from 'tamagui';
 
 export interface SafeScreenProps extends YStackProps {
   children: React.ReactNode;
@@ -22,4 +22,6 @@ export interface SafeScreenProps extends YStackProps {
    * SafeArea 하단 패딩
    */
   customBottomPadding?: number;
+
+  ContainerProps?: ViewProps;
 }

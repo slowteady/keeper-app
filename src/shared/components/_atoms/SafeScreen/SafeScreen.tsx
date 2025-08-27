@@ -1,11 +1,11 @@
 // src/shared/components/_atoms/SafeScreen/SafeScreen.tsx
-import { View } from 'react-native';
-import { YStack } from 'tamagui';
+import { useAtomValue } from 'jotai';
+import { View, YStack } from 'tamagui';
 
 import { useLayout } from '@/shared/hooks/useLayout';
-import { useAtomValue } from 'jotai';
-import { SafeScreenProps } from './SafeScreen.types';
+
 import { safeScreenAtom } from './safeScreen.store';
+import { SafeScreenProps } from './SafeScreen.types';
 
 export const SafeScreen = ({
   children,
@@ -14,6 +14,7 @@ export const SafeScreen = ({
   isSafeBottom: propSafeBottom,
   customTopPadding,
   customBottomPadding,
+  ContainerProps,
   ...props
 }: SafeScreenProps) => {
   const layout = useLayout();
@@ -35,7 +36,7 @@ export const SafeScreen = ({
   const bottomPadding = safeBottom ? (customBottomPadding ?? layout.bottom) : 0;
 
   return (
-    <View style={{ flex: 1, paddingTop: topPadding, paddingBottom: bottomPadding }}>
+    <View bg="$white900" flex={1} pt={topPadding} pb={bottomPadding} {...ContainerProps}>
       <YStack flex={1} {...props}>
         {children}
       </YStack>
