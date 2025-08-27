@@ -20,6 +20,7 @@ const HeaderContainer = styled(YStack, {
   bg: '$white900',
   px: 20,
   pb: 10,
+  z: 1000,
 
   variants: {
     showShadow: {

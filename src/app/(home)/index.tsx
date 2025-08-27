@@ -1,30 +1,52 @@
 import { DrawerActions } from '@react-navigation/native';
+import { useQueryClient } from '@tanstack/react-query';
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { useNavigation } from 'expo-router';
-import { createStore, Provider } from 'jotai';
+import { useMemo } from 'react';
 import { Pressable } from 'react-native';
-import { useTheme, View } from 'tamagui';
+import { useTheme } from 'tamagui';
 
-import { MainTemplate } from '@/domains/animal/components/templates/MainTemplate';
-import { Header } from '@/shared/components';
+import { Header } from '@/shared/components/_molecules';
+import { HomeAdoptSection, HomeBannerSection, HomeFooter, HomeShelterSection } from '@/shared/components/_organisms';
+import { HomeTemplate } from '@/shared/components/_templates';
 import { Logo, Menu } from '@/shared/components/atoms/icons/outline';
+import { ADOPT_NOTICES_QUERY_KEY, SHELTER_QUERY_KEY } from '@/shared/constants';
 import { useLayout } from '@/shared/hooks';
 
 /**
- * 메인화면
+ * 메인 페이지
  */
 const Page = () => {
-  const store = createStore();
   const { top } = useLayout();
+  const queryClient = useQueryClient();
+
+  const handleRequest = async () => {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: [ADOPT_NOTICES_QUERY_KEY] }),
+      queryClient.invalidateQueries({ queryKey: [SHELTER_QUERY_KEY] })
+    ]);
+  };
+
+  const homeSections = useMemo(
+    () => [
+      { id: 'banner', Component: <HomeBannerSection /> },
+      { id: 'adopt', Component: <HomeAdoptSection /> },
+      { id: 'shelter', Component: <HomeShelterSection /> }
+    ],
+    []
+  );
 
   return (
-    <Provider store={store}>
+    <>
       <Header left={<HeaderLeft />} right={<HeaderRight />} ContainerProps={{ pt: top }} />
 
-      <View flex={1}>
-        <MainTemplate />
-      </View>
-    </Provider>
+      <HomeTemplate
+        data={homeSections}
+        renderItem={({ item }) => <>{item.Component}</>}
+        onRefresh={handleRequest}
+        ListFooterComponent={<HomeFooter />}
+      />
+    </>
   );
 };
 

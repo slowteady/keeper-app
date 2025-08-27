@@ -8,6 +8,7 @@ import {
   FlatList,
   ListRenderItemInfo,
   Pressable,
+  RefreshControlProps,
   StyleSheet,
   Text,
   View
@@ -25,7 +26,7 @@ import { theme } from '@/shared/constants/theme.constants';
 import { useScrollFloatingButton } from '@/shared/hooks/useScrollFloatingButton';
 
 import { transformAbandonments, TransformedAbandonments } from '../../business/announcement.business';
-import { ANNOUNCEMENT_ANIMAL_TYPES, ANNOUNCEMENT_FILTERS } from '../../constants/announcement.constants';
+import { ADOPT_ANIMAL_TYPES, ADOPT_FILTERS } from '../../constants';
 import { announcementAtom, announcementFilterValueAtom } from '../../stores/announcement.stores';
 import { AnimalType } from '../../types/animal.types';
 import { AnnouncementData, AnnouncementFilter } from '../../types/announcement.types';
@@ -34,7 +35,7 @@ interface AbandonmentsTemplateProps {
   data?: AnnouncementData;
   onFetch: () => void;
   isLoading: boolean;
-  refreshControl: React.ReactElement;
+  refreshControl: React.ReactElement<RefreshControlProps>;
 }
 const PADDING_HORIZONTAL = 20;
 const CARD_GAP = 8;
@@ -46,7 +47,7 @@ export const AbandonmentsTemplate = ({ data, onFetch, isLoading, refreshControl 
   const transformedAbandonments = transformAbandonments(value, filterValue.value);
 
   const handlePressCard = useCallback((id: string) => {
-    router.push({ pathname: '/abandonments/[id]', params: { id } });
+    router.push({ pathname: '/adopt/[id]', params: { id } });
   }, []);
 
   const renderItem = useCallback(
@@ -141,7 +142,7 @@ const FilterSection = () => {
         <Text style={styles.title}>전체공고</Text>
         <View style={{ marginTop: 12 }}>
           <Dropdown
-            data={ANNOUNCEMENT_FILTERS}
+            data={ADOPT_FILTERS}
             value={filterValue.value}
             onChange={handlePressFilter}
             snapPoints={snapPoints}
@@ -149,7 +150,7 @@ const FilterSection = () => {
         </View>
       </View>
       <View style={styles.buttonGroupWrap}>
-        <ButtonGroup data={ANNOUNCEMENT_ANIMAL_TYPES} id={abandonmentsConfig.type} onChange={handleChangeType} />
+        <ButtonGroup data={ADOPT_ANIMAL_TYPES} id={abandonmentsConfig.type} onChange={handleChangeType} />
       </View>
       <Searchbar
         onSubmit={handleSubmit}

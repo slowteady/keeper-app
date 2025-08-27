@@ -11,7 +11,7 @@ import { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
 import { Linking, Platform, StyleSheet, Text, View, ViewStyle } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
-import { ShelterCountValue, ShelterValue } from '@/domains/shelter/types/shelter.types';
+import { ShelterCountDto, ShelterDto } from '@/domains/shelter/types/shelter.types';
 import { theme } from '@/shared/constants/theme.constants';
 import { useDebounceFunc } from '@/shared/hooks/useDebounce';
 import { CameraParams } from '@/shared/types/map.types';
@@ -21,15 +21,15 @@ import { Button } from '../atoms/Button';
 
 export interface ShelterMapProps extends NaverMapViewProps {
   hasLocation: boolean;
-  data?: ShelterValue[];
+  data?: ShelterDto[];
   onRefetch: (params?: CameraParams) => void;
-  onTapMarker?: (data: ShelterValue) => void;
+  onTapMarker?: (data: ShelterDto) => void;
   selectedMarkerId?: number;
 }
 const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
   ({ hasLocation, data, onRefetch, onTapMarker, selectedMarkerId, ...props }, ref) => {
     const [isVisibleButton, setIsVisibleButton] = useState(false);
-    const cameraRef = useRef<CameraParams>();
+    const cameraRef = useRef<CameraParams | null>(null);
     const scale = useSharedValue(0);
 
     useEffect(() => {
@@ -52,10 +52,10 @@ const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
     const handlePressRefetch = async () => {
       await Haptics.selectionAsync();
       setIsVisibleButton(false);
-      onRefetch(cameraRef.current);
+      onRefetch(cameraRef.current ?? undefined);
     };
     const handleTapMarker = useCallback(
-      (data: ShelterValue) => {
+      (data: ShelterDto) => {
         if (ref && 'current' in ref && ref.current) {
           ref?.current?.animateCameraTo({ latitude: data.latitude, longitude: data.longitude });
           onTapMarker?.(data);
@@ -98,7 +98,7 @@ const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
 );
 
 export interface ShelterMapDistanceBoxProps {
-  value?: ShelterCountValue[];
+  value?: ShelterCountDto[];
   hasLocationStatus: boolean;
   style?: ViewStyle;
 }
@@ -124,8 +124,8 @@ const DistanceBox = ({ value, hasLocationStatus, style }: ShelterMapDistanceBoxP
 };
 
 interface ShelterMapMarkerProps {
-  data: ShelterValue;
-  onTap?: (data: ShelterValue) => void;
+  data: ShelterDto;
+  onTap?: (data: ShelterDto) => void;
   isSelectedId?: number;
 }
 const MARKER_DEFAULT_ZINDEX = 200000;

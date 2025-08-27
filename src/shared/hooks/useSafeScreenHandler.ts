@@ -1,7 +1,8 @@
 import { useSetAtom } from 'jotai';
 import { useResetAtom } from 'jotai/utils';
 import { useEffect } from 'react';
-import { safeScreenAtom, SafeScreenConfig, updateSafeScreenAtom } from '../components';
+
+import { safeScreenAtom, SafeScreenConfig, updateSafeScreenAtom } from '../components/_atoms';
 
 export const useSafeScreenHandler = (config: Partial<SafeScreenConfig>) => {
   const updateSafeScreen = useSetAtom(updateSafeScreenAtom);

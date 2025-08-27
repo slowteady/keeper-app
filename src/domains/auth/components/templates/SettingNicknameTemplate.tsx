@@ -4,9 +4,10 @@ import { Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Spinner, styled, Text, XStack, YStack } from 'tamagui';
 
-import { SignupForm } from '@/app/login/signup';
-import { KeyboardView, TextField } from '@/shared/components';
+import { SignupForm } from '@/app/(home)/(public)/login/signup';
+import { TextField } from '@/shared/components/_atoms';
 import { Button } from '@/shared/components/_atoms/Button';
+import { KeyboardView } from '@/shared/components/_molecules';
 import { useDebounceValue } from '@/shared/hooks/useDebounce';
 
 import { useCheckNicknameMutation } from '../../services';

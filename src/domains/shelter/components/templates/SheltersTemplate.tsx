@@ -18,8 +18,7 @@ import { useScrollFloatingButton } from '@/shared/hooks/useScrollFloatingButton'
 import { CameraParams, KakaoAddressDocument } from '@/shared/types/map.types';
 
 import { useKakaoGeocodeMutation } from '../../queries/geocode.queries';
-import { GetShelterSearchParams } from '../../services/shelter.services';
-import { ShelterCountValue, ShelterValue } from '../../types/shelter.types';
+import { ShelterCountDto, ShelterDto, ShelterSearchParams } from '../../types/shelter.types';
 
 interface SheltersTemplateProps {
   data: SheltersTemplateData;
@@ -31,14 +30,14 @@ interface SheltersTemplateProps {
   camera?: Camera;
 }
 interface SheltersTemplateData {
-  sheltersData?: ShelterValue[];
-  shelterCountData?: ShelterCountValue[];
+  sheltersData?: ShelterDto[];
+  shelterCountData?: ShelterCountDto[];
 }
 const PADDING_HORIZONTAL = 20;
-export const SheltersTemplate = forwardRef<NaverMapViewRef, SheltersTemplateProps>((props, ref) => {
+const SheltersTemplate = forwardRef<NaverMapViewRef, SheltersTemplateProps>((props, ref) => {
   const { data, isLoading, camera, permissionStatus, onSubmitSearch, onRefetch, onInitMap } = props;
   const [addresses, setAddresses] = useState<KakaoAddressDocument[]>();
-  const [shelterValues, setShelterValues] = useState<ShelterValue[]>([]);
+  const [shelterValues, setShelterValues] = useState<ShelterDto[]>([]);
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => [400], []);
   const { isButtonVisible, handlePress, handleScroll, flatListRef } = useScrollFloatingButton();
@@ -51,7 +50,7 @@ export const SheltersTemplate = forwardRef<NaverMapViewRef, SheltersTemplateProp
   }, [data.sheltersData]);
 
   const handlePressCard = useCallback((id: number) => {
-    router.push({ pathname: '/shelters/[id]', params: { id } });
+    router.push({ pathname: '/shelter/[id]', params: { id } });
   }, []);
   const handlePressLocation = () => {
     bottomSheetModalRef.current?.present();
@@ -79,12 +78,12 @@ export const SheltersTemplate = forwardRef<NaverMapViewRef, SheltersTemplateProp
     },
     [ref]
   );
-  const handleShelterValues = (data: ShelterValue) => {
+  const handleShelterValues = (data: ShelterDto) => {
     setShelterValues((prev) => [data, ...prev]);
   };
 
   const renderItem = useCallback(
-    ({ item }: ListRenderItemInfo<ShelterValue>) => {
+    ({ item }: ListRenderItemInfo<ShelterDto>) => {
       return <ShelterCard onPress={handlePressCard} data={item} />;
     },
     [handlePressCard]
@@ -146,18 +145,20 @@ export const SheltersTemplate = forwardRef<NaverMapViewRef, SheltersTemplateProp
   );
 });
 
+export default SheltersTemplate;
+
 interface MapSectionProps {
   data: SheltersTemplateData;
   permissionStatus: Location.LocationPermissionResponse | null;
   onInitMap: () => void;
-  onChange: (data: ShelterValue) => void;
+  onChange: (data: ShelterDto) => void;
   onRefetch: (params: CameraParams) => void;
   onPressLocation: () => void;
   onSubmitSearch: () => void;
   camera?: Camera;
 }
 const MapSection = forwardRef<NaverMapViewRef, MapSectionProps>((props, ref) => {
-  const { handleSubmit, setValue } = useFormContext<GetShelterSearchParams>();
+  const { handleSubmit, setValue } = useFormContext<ShelterSearchParams>();
   const {
     data,
     camera,
@@ -178,7 +179,7 @@ const MapSection = forwardRef<NaverMapViewRef, MapSectionProps>((props, ref) => 
     },
     [onRefetch]
   );
-  const handleTapMarker = (data: ShelterValue) => {
+  const handleTapMarker = (data: ShelterDto) => {
     setSelectedMarkerId(data.id);
     onChange(data);
   };

@@ -1,13 +1,13 @@
 import { formatTimeAMPM } from '@/shared/utils/format.utils';
 
-import { ShelterValue } from '../types/shelter.types';
+import { ShelterDto } from '../types/shelter.types';
 
 /**
  * 보호소 바텀시트 데이터로 변환
  * @param data
  */
 export type TransformedShelterValue = ReturnType<typeof transformShelterData>;
-export const transformShelterData = (data: ShelterValue) => {
+export const transformShelterData = (data: ShelterDto) => {
   const {
     address,
     weekdayOpenTime,

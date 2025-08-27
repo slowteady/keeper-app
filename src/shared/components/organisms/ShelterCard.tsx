@@ -1,10 +1,10 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { ShelterValue } from '@/domains/shelter/types/shelter.types';
+import { ShelterDto } from '@/domains/shelter/types/shelter.types';
 import { theme } from '@/shared/constants/theme.constants';
 
 export interface ShelterCardProps {
-  data: ShelterValue;
+  data: ShelterDto;
   onPress: (id: number) => void;
 }
 export const ShelterCard = ({ data, onPress }: ShelterCardProps) => {
@@ -18,7 +18,7 @@ export const ShelterCard = ({ data, onPress }: ShelterCardProps) => {
 };
 
 interface ShrinkCardProps {
-  data: ShelterValue;
+  data: ShelterDto;
 }
 const ShrinkCard = ({ data }: ShrinkCardProps) => {
   const { name, distance, address } = data;

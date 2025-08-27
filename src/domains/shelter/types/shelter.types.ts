@@ -1,78 +1,91 @@
-export interface ShelterValue {
+import { AdoptFilter } from '@/domains/animal';
+
+/**
+ * 동물보호센터유형
+ * - ANIMAL_HOSPITAL: 동물병원
+ * - CORPORATION: 기타 동물보호 기관
+ */
+export type ShelterDivision = 'ANIMAL_HOSPITAL' | 'CORPORATION';
+export interface ShelterDto {
   /**
    * 보호소 아이디
    */
   id: number;
-
   /**
    * 보호소 이름
    */
   name: string;
-
   /**
    * 보호소 주소
    */
   address: string;
-
   /**
    * 보호소 전화번호
    */
   tel: string;
-
   /**
    * 위도
    */
   latitude: number;
-
   /**
    * 경도
    */
   longitude: number;
-
   /**
    * 동물보호센터유형
    */
   division?: ShelterDivision;
-
   /**
    * 수의사 인원수
    */
   veterinarianCount?: number;
-
   /**
    * 사양관리사 인원수
    */
   caretakerCount?: number;
-
   /**
    * 평일운영시작시간
    */
   weekdayOpenTime: string;
-
   /**
    * 평일운영종료시간
    */
   weekdayCloseTime: string;
-
   /**
    * 주말운영시작시간
    */
   weekendOpenTime: string;
-
   /**
    * 주말운영종료시간
    */
   weekendCloseTime: string;
-
   /**
    * 내 위치 기준으로 보호소 거리
    */
   distance: number;
 }
-
-export interface ShelterCountValue {
+export interface ShelterCountDto {
   distance: number;
   count: number;
 }
-
-export type ShelterDivision = 'ANIMAL_HOSPITAL' | 'CORPORATION';
+export interface SheltersParams {
+  latitude: number;
+  longitude: number;
+  distance: number;
+  userLatitude: number;
+  userLongitude: number;
+}
+export interface ShelterCountsParams {
+  latitude: number;
+  longitude: number;
+}
+export interface ShelterAdoptNoticesParams {
+  size: number;
+  page?: number;
+  filter: AdoptFilter;
+}
+export interface ShelterSearchParams {
+  search: string;
+  userLatitude: number;
+  userLongitude: number;
+}

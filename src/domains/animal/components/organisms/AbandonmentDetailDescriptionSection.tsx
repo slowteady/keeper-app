@@ -28,7 +28,7 @@ export const AbandonmentDetailDescriptionSection = ({
     if (!id) return;
 
     router.push({
-      pathname: '/shelters/[id]',
+      pathname: '/shelter/[id]',
       params: { id }
     });
   };

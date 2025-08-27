@@ -34,7 +34,7 @@ const AnimatedSplash = ({ onFinish }: AnimatedSplashProps) => {
     }, 3000);
 
     return () => clearTimeout(timeout);
-  }, []);
+  }, [containerOpacity, logoMarginTop, onFinish, puppyTop]);
 
   return (
     <Animated.View style={[styles.container, animatedContainerStyle]}>

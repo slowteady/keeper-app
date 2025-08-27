@@ -1,9 +1,7 @@
-export interface LoginDataSchema {
+import { UserDto } from './user.types';
+
+export interface LoginDataDto extends UserDto {
   socialId: string;
-  name: string;
-  nickname: string;
-  email: string;
-  image: string;
   accessToken: string;
   refreshToken: string;
   isNew: boolean;

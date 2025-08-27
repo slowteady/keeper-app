@@ -2,16 +2,19 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { AxiosError, AxiosResponse } from 'axios';
 
 import { USER_QUERY_KEY } from '@/shared/constants';
-import { ApiResponse } from '@/shared/types/global.types';
+import { ApiResponse } from '@/shared/types';
 import { UseMutationCustomOptions, UseQueryCustomOptions } from '@/shared/types/util.types';
 import { handleError } from '@/shared/utils/error.utils';
 import { api, authApi } from '@/shared/utils/instance.util';
 
-import { User } from '../types';
-import { CheckNicknameBody, LoginDataSchema, LoginParams, RefreshDataSchema, SignUpBody } from '../types/auth.types';
+import { UserDto } from '../types';
+import { CheckNicknameBody, LoginDataDto, LoginParams, RefreshDataSchema, SignUpBody } from '../types/auth.types';
 
 const BASE_URL = `/auth`;
 
+/**
+ * 토큰 갱신
+ */
 export const getTokens = async (token: string): Promise<AxiosResponse<ApiResponse<RefreshDataSchema>, AxiosError>> => {
   try {
     const endpoint = `${BASE_URL}/refresh`;
@@ -23,7 +26,10 @@ export const getTokens = async (token: string): Promise<AxiosResponse<ApiRespons
   }
 };
 
-export const login = async (params: LoginParams): Promise<AxiosResponse<ApiResponse<LoginDataSchema>, AxiosError>> => {
+/**
+ * 로그인
+ */
+export const login = async (params: LoginParams): Promise<AxiosResponse<ApiResponse<LoginDataDto>, AxiosError>> => {
   try {
     const endpoint = `${BASE_URL}/login`;
 
@@ -33,7 +39,7 @@ export const login = async (params: LoginParams): Promise<AxiosResponse<ApiRespo
   }
 };
 export const useLoginMutation = (
-  queryOptions?: UseMutationCustomOptions<AxiosResponse<ApiResponse<LoginDataSchema>>, AxiosError, LoginParams>
+  queryOptions?: UseMutationCustomOptions<AxiosResponse<ApiResponse<LoginDataDto>>, AxiosError, LoginParams>
 ) => {
   return useMutation({
     mutationFn: (params) => login(params),
@@ -42,6 +48,9 @@ export const useLoginMutation = (
   });
 };
 
+/**
+ * 닉네임 중복 체크
+ */
 export const checkNickname = async (
   body: CheckNicknameBody
 ): Promise<AxiosResponse<ApiResponse<boolean>, AxiosError>> => {
@@ -63,7 +72,10 @@ export const useCheckNicknameMutation = (
   });
 };
 
-export const signUp = async (body: SignUpBody): Promise<AxiosResponse<ApiResponse<LoginDataSchema>, AxiosError>> => {
+/**
+ * 회원가입
+ */
+export const signUp = async (body: SignUpBody): Promise<AxiosResponse<ApiResponse<LoginDataDto>, AxiosError>> => {
   try {
     const endpoint = `${BASE_URL}/signup`;
 
@@ -73,7 +85,7 @@ export const signUp = async (body: SignUpBody): Promise<AxiosResponse<ApiRespons
   }
 };
 export const useSignUpMutation = (
-  options?: UseMutationCustomOptions<AxiosResponse<ApiResponse<LoginDataSchema>>, AxiosError, SignUpBody>
+  options?: UseMutationCustomOptions<AxiosResponse<ApiResponse<LoginDataDto>>, AxiosError, SignUpBody>
 ) => {
   return useMutation({
     mutationFn: (body) => signUp(body),
@@ -82,6 +94,9 @@ export const useSignUpMutation = (
   });
 };
 
+/**
+ * 로그아웃
+ */
 export const logout = async (): Promise<AxiosResponse<ApiResponse<boolean>, AxiosError>> => {
   try {
     const endpoint = `${BASE_URL}/logout`;
@@ -101,6 +116,9 @@ export const useLogoutMutation = (
   });
 };
 
+/**
+ * 회원 탈퇴
+ */
 export const deleteUser = async (): Promise<AxiosResponse<ApiResponse<boolean>, AxiosError>> => {
   try {
     const endpoint = `${BASE_URL}/me`;
@@ -120,7 +138,10 @@ export const useDeleteUserMutation = (
   });
 };
 
-const getUser = async (): Promise<AxiosResponse<ApiResponse<User>, AxiosError>> => {
+/**
+ * 유저 조회
+ */
+const getUser = async (): Promise<AxiosResponse<ApiResponse<UserDto>, AxiosError>> => {
   try {
     const endpoint = `${BASE_URL}/me`;
 
@@ -130,7 +151,7 @@ const getUser = async (): Promise<AxiosResponse<ApiResponse<User>, AxiosError>> 
   }
 };
 export const useGetUserQuery = (
-  options?: UseQueryCustomOptions<AxiosResponse<ApiResponse<User>>, AxiosError, ApiResponse<User>>
+  options?: UseQueryCustomOptions<AxiosResponse<ApiResponse<UserDto>>, AxiosError, ApiResponse<UserDto>>
 ) => {
   return useQuery({
     queryKey: [USER_QUERY_KEY],

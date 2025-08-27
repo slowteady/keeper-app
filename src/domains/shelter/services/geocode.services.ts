@@ -1,5 +1,3 @@
-import { buildQueryString } from '@/shared/utils/query.utils';
-
 export interface KakaoGeocodeOptionalParams {
   /** 페이지 번호 (1~45, 기본 1) */
   page?: number;
@@ -52,4 +50,10 @@ export const getKakaoGeocode = async ({ query, params = {} }: KakaoGeocodeParams
   } finally {
     clearTimeout(timeoutId);
   }
+};
+
+const buildQueryString = (params: Record<string, any>) => {
+  return Object.entries(params)
+    .map(([key, value]) => `${key}=${value}`)
+    .join('&');
 };

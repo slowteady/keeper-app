@@ -30,7 +30,7 @@ export const AbandonmentsDetailTemplate = ({ abandonment, shelter }: Abandonment
   return (
     <>
       <View style={styles.container}>
-        <ScrollView decelerationRate="fast" bounces>
+        <ScrollView decelerationRate="fast">
           <View style={{ paddingHorizontal: 20, marginBottom: 20 }}>
             <AbandonmentDetailCardSection data={abandonment} />
           </View>
@@ -57,7 +57,8 @@ export const AbandonmentsDetailTemplate = ({ abandonment, shelter }: Abandonment
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background.default
+    backgroundColor: theme.colors.background.default,
+    position: 'relative'
   },
   bottomWrap: {
     paddingTop: 10,

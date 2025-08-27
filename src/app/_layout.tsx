@@ -7,21 +7,24 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { initializeKakaoSDK } from '@react-native-kakao/core';
 import NaverLogin from '@react-native-seoul/naver-login';
+import { DrawerContentComponentProps } from '@react-navigation/drawer';
 import { ToastProvider } from '@tamagui/toast';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { extend } from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useFonts } from 'expo-font';
-import { router, Stack } from 'expo-router';
+import { router } from 'expo-router';
+import { Drawer } from 'expo-router/drawer';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { Linking } from 'react-native';
+import { Dimensions, Linking } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { TamaguiProvider } from 'tamagui';
 
-import { Toast } from '@/shared/components';
+import { DrawerMenus } from '@/domains/category';
+import { Toast } from '@/shared/components/_molecules';
 import { authApi } from '@/shared/utils/instance.util';
 import { setupInterceptor } from '@/shared/utils/interceptors.utils';
 
@@ -30,15 +33,19 @@ import AnimatedSplash from './AnimatedSplash';
 
 /**
  * TODO
- * [ ] 라우팅 다시 구현
+ * [x] 라우팅 다시 구현
+ * [x] 기존에 데이터 요청 로직들 axios instance로 변경 및 리팩토링
  * [ ] 로그인, 비로그인 구분하여 파일 경로 구현
- * [ ] 기존에 데이터 요청 로직들 axios instance로 변경 및 리팩토링
  * [ ] 로거 유틸 함수 추가
  * [ ] 에러바운더리 설정
  * [ ] 커뮤니티 ui 구현
+ * [ ] 버튼 ui fix하기
  * [ ] DDD에 맞게 컴포넌트 분리
  * [ ] tamagui에 맞게 컴포넌트 리팩토링
+ * [ ] FlatList -> FlashList로 전환
  */
+const DRAWER_WIDTH = (Dimensions.get('window').width * 2) / 3;
+
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -46,6 +53,13 @@ export default function RootLayout() {
     defaultOptions: {
       queries: {
         refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        refetchOnReconnect: false,
+        retry: false,
+        gcTime: 1000 * 60 * 5,
+        staleTime: 1000 * 60 * 2
+      },
+      mutations: {
         retry: false
       }
     }
@@ -94,7 +108,6 @@ export default function RootLayout() {
       SplashScreen.hideAsync();
     }
   }, [isAppReady, isAnimationDone]);
-
   useEffect(() => {
     const sub = Linking.addEventListener('url', ({ url }) => {
       if (url.includes('thirdPartyLoginResult')) {
@@ -112,17 +125,27 @@ export default function RootLayout() {
   return (
     <TamaguiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <BottomSheetModalProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
           <SafeAreaProvider>
-            <ToastProvider native={false} swipeDirection="up">
-              <GestureHandlerRootView style={{ flex: 1 }}>
+            <BottomSheetModalProvider>
+              <ToastProvider native={false} swipeDirection="up">
                 <StatusBar style="dark" />
                 <Toast />
-                <Stack screenOptions={{ headerShown: false }} />
-              </GestureHandlerRootView>
-            </ToastProvider>
+                <Drawer
+                  drawerContent={(props: DrawerContentComponentProps) => <DrawerMenus {...props} />}
+                  screenOptions={{
+                    drawerPosition: 'right',
+                    drawerType: 'front',
+                    drawerStyle: { width: DRAWER_WIDTH },
+                    headerShown: false
+                  }}
+                >
+                  <Drawer.Screen name="(home)" />
+                </Drawer>
+              </ToastProvider>
+            </BottomSheetModalProvider>
           </SafeAreaProvider>
-        </BottomSheetModalProvider>
+        </GestureHandlerRootView>
       </QueryClientProvider>
     </TamaguiProvider>
   );

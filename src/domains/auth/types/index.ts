@@ -1,9 +1,9 @@
 export type {
   CheckNicknameBody,
-  LoginDataSchema,
+  LoginDataDto as LoginDataSchema,
   LoginParams,
   RefreshDataSchema,
   SignUpBody,
   SocialLoginType
 } from './auth.types';
-export type { UserDto as User } from './user.types';
+export type { UserDto } from './user.types';

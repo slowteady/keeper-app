@@ -14,18 +14,18 @@ import { MainShelterCard } from '@/shared/components/organisms/MainShelterCard';
 import { ShelterMap } from '@/shared/components/organisms/ShelterMap';
 import { SHELTER_COUNT_QUERY_KEY } from '@/shared/constants/queryKey.constants';
 import { theme } from '@/shared/constants/theme.constants';
-import { useMapInit } from '@/shared/hooks/useMapInit';
+import { useMap } from '@/shared/hooks/useMap';
 import { CameraParams } from '@/shared/types/map.types';
 import { calcMapRadiusKm } from '@/shared/utils/map.utils';
 
-import { useGetShelterCountQuery, useGetSheltersQuery } from '../../queries/shelter.queries';
-import { ShelterValue } from '../../types/shelter.types';
+import { useGetShelterCountsQuery, useGetSheltersQuery } from '../../services/shelter.services';
+import { ShelterDto } from '../../types/shelter.types';
 
 export const MainShelterSection = () => {
   const [enabled, setEnabled] = useState(false);
   const [selectedMarkerId, setSelectedMarkerId] = useState<number>();
-  const [shelterData, setShelterData] = useState<ShelterValue[]>([]);
-  const { camera, setCamera, distance, setDistance, initialLocation, mapRef, permissionStatus } = useMapInit();
+  const [shelterData, setShelterData] = useState<ShelterDto[]>([]);
+  const { camera, setCamera, distance, setDistance, initialLocation, mapRef, permissionStatus } = useMap();
   const opacity = useSharedValue(1);
   const translateY = useSharedValue(0);
   const { name } = useRoute();
@@ -40,14 +40,14 @@ export const MainShelterSection = () => {
     },
     {
       select: ({ data }) => {
-        return data.sort((a, b) => a.distance - b.distance);
+        return data.data.sort((a, b) => a.distance - b.distance);
       },
       enabled: !!camera && enabled,
       staleTime: 1000 * 60 * 60
     }
   );
 
-  const { data: shelterCountData } = useGetShelterCountQuery(
+  const { data: shelterCountData } = useGetShelterCountsQuery(
     {
       latitude: initialLocation?.latitude || 0,
       longitude: initialLocation?.longitude || 0
@@ -64,7 +64,7 @@ export const MainShelterSection = () => {
     setEnabled(true);
   };
   const handlePressTitle = () => {
-    router.push('/shelters');
+    router.push('/shelter');
   };
   const handleRefetch = (params?: CameraParams) => {
     if (!params) return null;
@@ -81,7 +81,7 @@ export const MainShelterSection = () => {
     });
     setDistance(radius);
   };
-  const handleTapMarker = (data: ShelterValue) => {
+  const handleTapMarker = (data: ShelterDto) => {
     opacity.value = withTiming(0, { duration: 100 });
     translateY.value = withTiming(50, { duration: 300 });
 
@@ -147,19 +147,19 @@ export const MainShelterSection = () => {
 };
 
 interface ShelterCardListProps {
-  data: ShelterValue[];
+  data: ShelterDto[];
   isLoading: boolean;
 }
 const ShelterCardList = ({ data, isLoading }: ShelterCardListProps) => {
   const handlePressCard = useCallback((id: number) => {
-    router.push({ pathname: '/shelters/[id]', params: { id } });
+    router.push({ pathname: '/shelter/[id]', params: { id } });
   }, []);
   const handlePress = useCallback(() => {
-    router.push('/shelters');
+    router.push('/shelter');
   }, []);
 
   const renderItem = useCallback(
-    ({ item }: ListRenderItemInfo<ShelterValue>) => {
+    ({ item }: ListRenderItemInfo<ShelterDto>) => {
       const { name, address, tel } = item;
 
       return (

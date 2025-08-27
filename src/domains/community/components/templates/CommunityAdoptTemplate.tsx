@@ -3,7 +3,7 @@ import { useAtom } from 'jotai';
 import { useCallback } from 'react';
 import { FlatList, ListRenderItemInfo, StyleSheet, View } from 'react-native';
 
-import { ANNOUNCEMENT_ANIMAL_TYPES } from '@/domains/animal/constants/announcement.constants';
+import { ADOPT_ANIMAL_TYPES } from '@/domains/animal';
 import { announcementAtom } from '@/domains/animal/stores/announcement.stores';
 import { AnimalType } from '@/domains/animal/types/animal.types';
 import { ButtonGroup } from '@/shared/components/molecules/ButtonGroup';
@@ -47,7 +47,7 @@ export const CommunityAdoptTemplate = () => {
       ListHeaderComponent={
         <>
           <View style={styles.buttonGroupWrap}>
-            <ButtonGroup data={ANNOUNCEMENT_ANIMAL_TYPES} id={abandonmentsConfig.type} onChange={handleChangeType} />
+            <ButtonGroup data={ADOPT_ANIMAL_TYPES} id={abandonmentsConfig.type} onChange={handleChangeType} />
           </View>
           <Searchbar onSubmit={handleSubmit} placeholder="검색해주세요." />
         </>

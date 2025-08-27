@@ -1,6 +1,6 @@
 import { atom } from 'jotai';
 
-import { ANNOUNCEMENT_FILTERS } from '../constants/announcement.constants';
+import { ADOPT_FILTERS } from '../constants';
 import { AnimalType } from '../types/animal.types';
 import { AnnouncementFilter } from '../types/announcement.types';
 
@@ -17,5 +17,5 @@ export const announcementAtom = atom<AnnouncementState>({
 
 export const announcementFilterValueAtom = atom((get) => {
   const { filter } = get(announcementAtom);
-  return ANNOUNCEMENT_FILTERS.find((item) => item.value === filter) || ANNOUNCEMENT_FILTERS[0];
+  return ADOPT_FILTERS.find((item) => item.value === filter) || ADOPT_FILTERS[0];
 });

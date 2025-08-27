@@ -17,7 +17,7 @@
     "lint": "expo lint",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "clean": "rm -rf pnpm-lock.yaml ios android node_modules .expo build",
-    "icon": "svgr --config-file .svgrrc --typescript --native --icon --out-dir src/components/atoms/icons src/assets/icons"
+    "icon": "svgr --config-file .svgrrc --typescript --native --icon --out-dir src/shared/components/_atoms/icons src/assets/icons"
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "^5",

@@ -3,7 +3,7 @@ import { Pressable } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { GetProps, Input, styled, Text, useTheme, XStack } from 'tamagui';
 
-import { CircleX } from '@/components/atoms/icons/outline';
+import { CircleX } from '../icons/outline';
 
 export interface TextFieldProps extends GetProps<typeof CustomTextField> {
   helperText?: React.ReactNode;
