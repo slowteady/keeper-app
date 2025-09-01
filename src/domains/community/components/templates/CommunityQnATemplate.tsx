@@ -1,6 +1,6 @@
 import { Text, View } from 'react-native';
 
-export const CommunityQnATemplate = () => {
+const CommunityQnATemplate = () => {
   return (
     <View>
       <Text>QnATemplate</Text>
@@ -8,4 +8,4 @@ export const CommunityQnATemplate = () => {
   );
 };
 
-// const styles = StyleSheet.create({});
+export default CommunityQnATemplate;

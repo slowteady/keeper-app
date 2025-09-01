@@ -8,7 +8,7 @@ import { Pencil } from '@/shared/components/_atoms/icons/outline';
 import { Header } from '@/shared/components/_molecules';
 
 const CommunityLayout = () => {
-  return <Stack screenOptions={{ header: () => <WriteHeader /> }}></Stack>;
+  return <Stack screenOptions={{ header: () => <WriteHeader /> }} />;
 };
 
 export default CommunityLayout;

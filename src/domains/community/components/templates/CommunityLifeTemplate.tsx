@@ -1,6 +1,6 @@
 import { Text, View } from 'react-native';
 
-export const CommunityLifeTemplate = () => {
+const CommunityLifeTemplate = () => {
   return (
     <View>
       <Text>LifeTemplate</Text>
@@ -8,4 +8,4 @@ export const CommunityLifeTemplate = () => {
   );
 };
 
-// const styles = StyleSheet.create({});
+export default CommunityLifeTemplate;

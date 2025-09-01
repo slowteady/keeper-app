@@ -1,36 +1,29 @@
-import { createStore, Provider } from 'jotai';
 import { useState } from 'react';
 import { SceneMap } from 'react-native-tab-view';
 
-import { CommunityAdoptTemplate } from '@/domains/community/components/templates/CommunityAdoptTemplate';
-import { CommunityLifeTemplate } from '@/domains/community/components/templates/CommunityLifeTemplate';
-import { CommunityQnATemplate } from '@/domains/community/components/templates/CommunityQnATemplate';
+import { CommunityAdoptTemplate, CommunityLifeTemplate, CommunityQnATemplate } from '@/domains/community';
 import { Tab } from '@/shared/components/molecules/Tab';
 
 /**
  * 커뮤니티 목록 페이지
  */
 const ROUTES = [
-  { key: 'first', title: '개인입양' },
-  { key: 'second', title: '입양생활' },
-  { key: 'third', title: '질문' }
+  { key: 'adopt', title: '개인입양' },
+  { key: 'life', title: '입양생활' },
+  { key: 'qna', title: '질문' }
 ];
 
 const renderScene = SceneMap({
-  first: CommunityAdoptTemplate,
-  second: CommunityLifeTemplate,
-  third: CommunityQnATemplate
+  adopt: CommunityAdoptTemplate,
+  life: CommunityLifeTemplate,
+  qna: CommunityQnATemplate
 });
 
 const Page = () => {
   const [index, setIndex] = useState(0);
-  const store = createStore();
+  console.log('🔥 / Page / index:', index);
 
-  return (
-    <Provider store={store}>
-      <Tab onIndexChange={setIndex} navigationState={{ index, routes: ROUTES }} renderScene={renderScene} />
-    </Provider>
-  );
+  return <Tab onIndexChange={setIndex} navigationState={{ index, routes: ROUTES }} renderScene={renderScene} />;
 };
 
 export default Page;
