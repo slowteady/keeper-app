@@ -1,8 +1,9 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
-import { usePathname } from 'expo-router';
+import { useNavigation, usePathname } from 'expo-router';
 import { useAtomValue } from 'jotai';
-import { useCallback, useMemo } from 'react';
+import { useResetAtom } from 'jotai/utils';
+import { useCallback, useEffect, useMemo } from 'react';
 import { RefreshControl } from 'react-native';
 import { styled, View } from 'tamagui';
 
@@ -17,8 +18,10 @@ import { useRefreshing } from '@/shared/hooks';
 const Page = () => {
   const pathname = usePathname();
   const adoptFilter = useAtomValue(adoptFilterAtomFamily(pathname));
+  const resetFilter = useResetAtom(adoptFilterAtomFamily(pathname));
 
   const param = useMemo(() => ({ ...adoptFilter, size: 16 }), [adoptFilter]);
+  const navigation = useNavigation();
   const queryClient = useQueryClient();
 
   const {
@@ -37,16 +40,23 @@ const Page = () => {
     }
   }, [fetchNextPage, hasNextPage]);
 
-  const isLoading = useMemo(
-    () => isFetchLoading || isFetching || isFetchingNextPage,
-    [isFetchLoading, isFetching, isFetchingNextPage]
-  );
-
   const onRefreshCallback = useCallback(async () => {
     await Promise.all([queryClient.invalidateQueries({ queryKey: [ADOPT_NOTICES_QUERY_KEY, param] })]);
   }, [param, queryClient]);
 
   const { refreshing, handleRefresh } = useRefreshing(onRefreshCallback);
+
+  useEffect(() => {
+    const unsub = navigation.addListener('beforeRemove', () => {
+      resetFilter();
+    });
+    return unsub;
+  }, [navigation, resetFilter]);
+
+  const isLoading = useMemo(
+    () => isFetchLoading || isFetching || isFetchingNextPage,
+    [isFetchLoading, isFetching, isFetchingNextPage]
+  );
 
   return (
     <Container>

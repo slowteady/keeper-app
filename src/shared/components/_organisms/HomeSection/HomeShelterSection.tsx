@@ -12,9 +12,9 @@ import { useMap } from '@/shared/hooks';
 import { CameraParams } from '@/shared/types';
 import { calcMapRadiusKm } from '@/shared/utils';
 
+import { ViewAllButton } from '../../_atoms';
 import { DownArrow } from '../../_atoms/icons/mini';
 import { RightArrow } from '../../_atoms/icons/solid';
-import { FullViewButton } from '../../atoms/FullViewButton';
 import { MainShelterCard } from '../../organisms/MainShelterCard';
 import { ShelterMap } from '../../organisms/ShelterMap';
 
@@ -164,7 +164,7 @@ const HomeShelterSection = () => {
           scrollEventThrottle={40}
           nestedScrollEnabled
           snapToInterval={CARD_WIDTH + CARD_GAP}
-          ListFooterComponent={() => <FullViewButton onPress={handlePressTitle} />}
+          ListFooterComponent={() => <ViewAllButton onPress={handlePressTitle} />}
           ListFooterComponentStyle={[styles.flex, { paddingHorizontal: 20 }]}
           contentContainerStyle={{ gap: CARD_GAP }}
           ListEmptyComponent={

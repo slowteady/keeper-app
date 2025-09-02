@@ -6,7 +6,7 @@ import { Dimensions, FlatList, ListRenderItemInfo, Pressable, StyleSheet, Text, 
 import { Pressable as GesturePressable } from 'react-native-gesture-handler';
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
-import { FullViewButton } from '@/shared/components/atoms/FullViewButton';
+import { ViewAllButton } from '@/shared/components/_atoms';
 import { DownArrow } from '@/shared/components/atoms/icons/mini';
 import { RightArrow } from '@/shared/components/atoms/icons/solid';
 import { Skeleton } from '@/shared/components/molecules/Skeleton';
@@ -183,7 +183,7 @@ const ShelterCardList = ({ data, isLoading }: ShelterCardListProps) => {
       nestedScrollEnabled={true}
       renderItem={renderItem}
       snapToInterval={270 + 16}
-      ListFooterComponent={() => <FullViewButton onPress={handlePress} />}
+      ListFooterComponent={() => <ViewAllButton onPress={handlePress} />}
       ListFooterComponentStyle={[styles.flex, { paddingHorizontal: 20 }]}
       ListEmptyComponent={
         isLoading ? (

@@ -15,8 +15,8 @@ import {
 } from '@/domains/animal';
 import { transformAbandonments, TransformedAbandonments } from '@/domains/animal/business/announcement.business';
 
+import { ViewAllButton } from '../../_atoms';
 import { RightArrow } from '../../_atoms/icons/solid';
-import { FullViewButton } from '../../atoms/FullViewButton';
 import { ButtonGroup } from '../../molecules/ButtonGroup';
 import { CardSkeleton } from '../../molecules/CardSkeleton';
 import { Dropdown } from '../../molecules/Dropdown';
@@ -118,7 +118,7 @@ const HomeAdoptSection = () => {
           decelerationRate="fast"
           snapToInterval={IMAGE_WIDTH + CARD_GAP}
           contentContainerStyle={{ gap: CARD_GAP, paddingBottom: 8 }}
-          ListFooterComponent={<FullViewButton onPress={handlePressTitle} />}
+          ListFooterComponent={<ViewAllButton onPress={handlePressTitle} />}
           ListFooterComponentStyle={styles.dropdownWrap}
           ListEmptyComponent={
             isLoading ? (

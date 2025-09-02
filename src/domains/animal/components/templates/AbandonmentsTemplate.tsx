@@ -1,5 +1,5 @@
 import * as Haptics from 'expo-haptics';
-import { router } from 'expo-router';
+import { router, usePathname } from 'expo-router';
 import { useAtom, useAtomValue } from 'jotai';
 import { useCallback, useMemo } from 'react';
 import {
@@ -14,9 +14,9 @@ import {
   View
 } from 'react-native';
 
+import { ButtonGroup } from '@/shared/components/_molecules/ButtonGroup';
 import { Button } from '@/shared/components/atoms/Button';
 import { ScrollFloatingButton } from '@/shared/components/atoms/ScrollFloatingButton';
-import { ButtonGroup } from '@/shared/components/molecules/ButtonGroup';
 import { CardSkeleton } from '@/shared/components/molecules/CardSkeleton';
 import { Dropdown } from '@/shared/components/molecules/Dropdown';
 import { Searchbar } from '@/shared/components/molecules/Searchbar';
@@ -27,7 +27,7 @@ import { useScrollFloatingButton } from '@/shared/hooks/useScrollFloatingButton'
 
 import { transformAbandonments, TransformedAbandonments } from '../../business/announcement.business';
 import { ADOPT_ANIMAL_TYPES, ADOPT_FILTERS } from '../../constants';
-import { announcementAtom, announcementFilterValueAtom } from '../../stores/announcement.stores';
+import { adoptFilterAtomFamily } from '../../stores';
 import { AnimalType } from '../../types/animal.types';
 import { AnnouncementData, AnnouncementFilter } from '../../types/announcement.types';
 
@@ -41,10 +41,12 @@ const PADDING_HORIZONTAL = 20;
 const CARD_GAP = 8;
 const IMAGE_WIDTH = (Dimensions.get('screen').width - 2 * PADDING_HORIZONTAL - CARD_GAP) / 2;
 export const AbandonmentsTemplate = ({ data, onFetch, isLoading, refreshControl }: AbandonmentsTemplateProps) => {
-  const filterValue = useAtomValue(announcementFilterValueAtom);
+  const pathname = usePathname();
+  const adoptFilter = useAtomValue(adoptFilterAtomFamily(pathname));
+
   const { isButtonVisible, handlePress, handleScroll, flatListRef } = useScrollFloatingButton();
   const { has_next, page, total, value = [] } = data || {};
-  const transformedAbandonments = transformAbandonments(value, filterValue.value);
+  const transformedAbandonments = transformAbandonments(value, adoptFilter.filter);
 
   const handlePressCard = useCallback((id: string) => {
     router.push({ pathname: '/adopt/[id]', params: { id } });
@@ -117,23 +119,23 @@ export const AbandonmentsTemplate = ({ data, onFetch, isLoading, refreshControl 
 };
 
 const FilterSection = () => {
-  const filterValue = useAtomValue(announcementFilterValueAtom);
-  const [abandonmentsConfig, setAbandonmentsConfig] = useAtom(announcementAtom);
+  const pathname = usePathname();
+  const [adoptFilter, setAdoptFilter] = useAtom(adoptFilterAtomFamily(pathname));
   const snapPoints = useMemo(() => [200], []);
 
   const handleSubmit = (text: string) => {
-    setAbandonmentsConfig((prev) => ({ ...prev, search: text }));
+    setAdoptFilter((prev) => ({ ...prev, search: text }));
   };
   const handleChangeType = (id: AnimalType) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setAbandonmentsConfig((prev) => ({ ...prev, type: id }));
+    setAdoptFilter((prev) => ({ ...prev, animalType: id }));
   };
   const handlePressFilter = useCallback(
     (data: BottomSheetMenuData<AnnouncementFilter>) => {
       const { value } = data;
-      setAbandonmentsConfig((prev) => ({ ...prev, filter: value }));
+      setAdoptFilter((prev) => ({ ...prev, filter: value }));
     },
-    [setAbandonmentsConfig]
+    [setAdoptFilter]
   );
 
   return (
@@ -143,14 +145,14 @@ const FilterSection = () => {
         <View style={{ marginTop: 12 }}>
           <Dropdown
             data={ADOPT_FILTERS}
-            value={filterValue.value}
+            value={adoptFilter.filter}
             onChange={handlePressFilter}
             snapPoints={snapPoints}
           />
         </View>
       </View>
       <View style={styles.buttonGroupWrap}>
-        <ButtonGroup data={ADOPT_ANIMAL_TYPES} id={abandonmentsConfig.type} onChange={handleChangeType} />
+        <ButtonGroup data={ADOPT_ANIMAL_TYPES} id={adoptFilter.animalType} onChange={handleChangeType} />
       </View>
       <Searchbar
         onSubmit={handleSubmit}
