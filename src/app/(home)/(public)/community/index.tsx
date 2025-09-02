@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { SceneMap } from 'react-native-tab-view';
 import { styled, View } from 'tamagui';
 
-import { CommunityAdoptTemplate, CommunityLifeTemplate, CommunityQnATemplate } from '@/domains/community';
+import { CommunityAdoptPage, CommunityLifePage, CommunityQnAPage } from '@/domains/community';
 import { Tab } from '@/shared/components/_molecules/Tab';
 
 /**
@@ -15,9 +15,9 @@ const ROUTES = [
 ];
 
 const renderScene = SceneMap({
-  adopt: CommunityAdoptTemplate,
-  life: CommunityLifeTemplate,
-  qna: CommunityQnATemplate
+  adopt: CommunityAdoptPage,
+  life: CommunityLifePage,
+  qna: CommunityQnAPage
 });
 
 const Page = () => {

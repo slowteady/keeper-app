@@ -8,3 +8,9 @@ export const COMMUNITY_SUB_MENU = [
   { id: 'INFO', label: '정보 & 팁' },
   { id: 'QA', label: 'Q & A' }
 ] as const;
+export const COMMUNITY_LIST_FILTER = [
+  { id: 'NEW', label: '최신순' },
+  { id: 'LIKE', label: '인기순' },
+  { id: 'COMMENT', label: '댓글순' },
+  { id: 'VIEW', label: '조회순' }
+] as const;

@@ -1,15 +1,32 @@
 import { useAtom } from 'jotai';
 import { useCallback } from 'react';
-import { styled, XStack, YStack } from 'tamagui';
+import { GestureResponderEvent } from 'react-native';
+import { useTheme, XStack } from 'tamagui';
 
 import { ADOPT_ANIMAL_TYPES, AnimalType } from '@/domains/animal';
 import { ChipButton } from '@/shared/components/_atoms/ChipButton/ChipButton';
+import { DownArrow } from '@/shared/components/_atoms/icons/mini';
 import { ButtonGroup } from '@/shared/components/_molecules/ButtonGroup';
 
+import { COMMUNITY_LIST_FILTER } from '../../constants';
 import { communityAdoptFilterAtom } from '../../stores';
 
+// TODO
+// [ ] 바텀시트 전역적으로 다룰 수 있게 리팩토링
+// [ ] 리스트 카드 완성
+// [ ] FlashList로 구현
+// [ ] mock 데이터 삽입
+
 const CommunityAdoptTemplate = () => {
+  return <FilterSection />;
+};
+
+export default CommunityAdoptTemplate;
+
+const FilterSection = () => {
   const [adoptFilter, setAdoptFilter] = useAtom(communityAdoptFilterAtom);
+
+  const { black500 } = useTheme();
 
   const handleChangeAnimalType = useCallback(
     (id: AnimalType) => {
@@ -17,22 +34,29 @@ const CommunityAdoptTemplate = () => {
     },
     [setAdoptFilter]
   );
+  const handleChangeFilter = useCallback((filter: 'LOCATION' | 'PROMO') => {}, []);
+  const handlePressFilter = useCallback((event: GestureResponderEvent) => {}, []);
+
+  const filterText = COMMUNITY_LIST_FILTER.find((filter) => filter.id === adoptFilter.filter)?.label || '';
 
   return (
-    <Container>
+    <>
       <ButtonGroup data={ADOPT_ANIMAL_TYPES} id={adoptFilter.animalType} onChange={handleChangeAnimalType} />
-      <XStack mt={16}>
-        <ChipButton toggleOnPress>강아지</ChipButton>
+
+      <XStack mt={16} gap={6}>
+        <ChipButton toggleOnPress onPress={() => handleChangeFilter('LOCATION')}>
+          내 근처
+        </ChipButton>
+        <ChipButton toggleOnPress onPress={() => handleChangeFilter('PROMO')}>
+          입양홍보
+        </ChipButton>
+        <ChipButton
+          onPress={handlePressFilter}
+          right={<DownArrow width={12} height={12} color={black500.val} style={{ marginLeft: 4 }} />}
+        >
+          {filterText}
+        </ChipButton>
       </XStack>
-    </Container>
+    </>
   );
 };
-
-export default CommunityAdoptTemplate;
-
-const Container = styled(YStack, {
-  flex: 1,
-  bg: '$backgroundDefault',
-  px: 20,
-  py: 16
-});
