@@ -71,7 +71,7 @@ export const Tab = <T extends Route>(props: TabViewProps<T>) => {
   return (
     <TabView
       initialLayout={{ width }}
-      swipeEnabled={true} // 스와이프 활성화
+      swipeEnabled={true}
       renderTabBar={(tabBarProps) => (
         <CustomTabBar
           navigationState={tabBarProps.navigationState}

@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { SceneMap } from 'react-native-tab-view';
+import { styled, View } from 'tamagui';
 
 import { CommunityAdoptTemplate, CommunityLifeTemplate, CommunityQnATemplate } from '@/domains/community';
-import { Tab } from '@/shared/components/molecules/Tab';
+import { Tab } from '@/shared/components/_molecules/Tab';
 
 /**
  * 커뮤니티 목록 페이지
@@ -21,9 +22,17 @@ const renderScene = SceneMap({
 
 const Page = () => {
   const [index, setIndex] = useState(0);
-  console.log('🔥 / Page / index:', index);
 
-  return <Tab onIndexChange={setIndex} navigationState={{ index, routes: ROUTES }} renderScene={renderScene} />;
+  return (
+    <Container>
+      <Tab onIndexChange={setIndex} navigationState={{ index, routes: ROUTES }} renderScene={renderScene} />
+    </Container>
+  );
 };
 
 export default Page;
+
+const Container = styled(View, {
+  bg: '$backgroundDefault',
+  flex: 1
+});
