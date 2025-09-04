@@ -8,13 +8,13 @@ export const BottomSheetMenu = <T,>({ data, value, onPress }: BottomSheetMenuPro
   const { black800, black500 } = useTheme();
 
   return data.map((item, idx) => {
-    const { name } = item;
-    const key = `${name}-${idx}`;
-    const isActive = item.value === value;
+    const { label } = item;
+    const key = `${label}-${idx}`;
+    const isActive = item.id === value;
 
     return (
       <Pressable key={key} style={[styles.button]} onPress={() => onPress(item)}>
-        <StyledText style={[{ color: isActive ? black800.val : black500.val }]}>{name}</StyledText>
+        <StyledText style={[{ color: isActive ? black800.val : black500.val }]}>{label}</StyledText>
         {isActive && <Check width={17} height={20} color={black800.val} />}
       </Pressable>
     );

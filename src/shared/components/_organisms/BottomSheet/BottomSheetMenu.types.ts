@@ -1,6 +1,6 @@
 export interface BottomSheetMenuData<T> {
-  value: T;
-  name: string;
+  id: T;
+  label: string;
 }
 export interface BottomSheetMenuProps<T> {
   data: BottomSheetMenuData<T>[];

@@ -45,7 +45,9 @@ export const BottomSheetProvider = ({ children }: { children: React.ReactNode })
           index={1}
           snapPoints={snapPoints}
           animationConfigs={{ duration: 100 }}
-          backdropComponent={(props) => <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} />}
+          backdropComponent={(props) => (
+            <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} pressBehavior={'close'} />
+          )}
           handleIndicatorStyle={{ width: 48, borderRadius: 30, backgroundColor: white800.val }}
           backgroundStyle={{ borderTopLeftRadius: 20, borderTopRightRadius: 20 }}
           style={{ paddingHorizontal: 24 }}
