@@ -18,7 +18,11 @@ export interface SignupForm {
   nickname: string;
 }
 const Page = () => {
-  const { socialType, socialId } = useLocalSearchParams<{ socialType: SocialLoginType; socialId: string }>();
+  const { socialType, socialId, redirect } = useLocalSearchParams<{
+    socialType: SocialLoginType;
+    socialId: string;
+    redirect?: string;
+  }>();
   const setUser = useSetAtom(userAtom);
   const [prevent, setPrevent] = useState(true);
 
@@ -62,7 +66,11 @@ const Page = () => {
         setUser({ id, email, image, name, nickname });
         show('회원가입이 완료되었어요.', { customData: { status: 'success' } });
 
-        router.replace('/');
+        if (redirect && redirect !== '/login') {
+          router.replace(redirect as any);
+        } else {
+          router.replace('/');
+        }
       }
     } catch {
       show('회원가입에 실패했어요. 다시 시도해주세요.', { customData: { status: 'fail' } });

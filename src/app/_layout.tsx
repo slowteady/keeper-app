@@ -3,7 +3,6 @@ import 'expo-dev-client';
 import 'react-native-reanimated';
 
 import { useReactQueryDevTools } from '@dev-plugins/react-query';
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { initializeKakaoSDK } from '@react-native-kakao/core';
 import NaverLogin from '@react-native-seoul/naver-login';
@@ -25,6 +24,8 @@ import { TamaguiProvider } from 'tamagui';
 
 import { DrawerMenus } from '@/domains/category';
 import { Toast } from '@/shared/components/_molecules';
+import { BottomSheetProvider } from '@/shared/components/_organisms/BottomSheet';
+import { ModalProvider } from '@/shared/components/_organisms/Modal';
 import { authApi } from '@/shared/utils/instance.util';
 import { setupInterceptor } from '@/shared/utils/interceptors.utils';
 
@@ -127,23 +128,25 @@ export default function RootLayout() {
       <QueryClientProvider client={queryClient}>
         <GestureHandlerRootView style={{ flex: 1 }}>
           <SafeAreaProvider>
-            <BottomSheetModalProvider>
-              <ToastProvider native={false} swipeDirection="up">
-                <StatusBar style="dark" />
-                <Toast />
-                <Drawer
-                  drawerContent={(props: DrawerContentComponentProps) => <DrawerMenus {...props} />}
-                  screenOptions={{
-                    drawerPosition: 'right',
-                    drawerType: 'front',
-                    drawerStyle: { width: DRAWER_WIDTH },
-                    headerShown: false
-                  }}
-                >
-                  <Drawer.Screen name="(home)" />
-                </Drawer>
-              </ToastProvider>
-            </BottomSheetModalProvider>
+            <BottomSheetProvider>
+              <ModalProvider>
+                <ToastProvider native={false} swipeDirection="up">
+                  <StatusBar style="dark" />
+                  <Toast />
+                  <Drawer
+                    drawerContent={(props: DrawerContentComponentProps) => <DrawerMenus {...props} />}
+                    screenOptions={{
+                      drawerPosition: 'right',
+                      drawerType: 'front',
+                      drawerStyle: { width: DRAWER_WIDTH },
+                      headerShown: false
+                    }}
+                  >
+                    <Drawer.Screen name="(home)" />
+                  </Drawer>
+                </ToastProvider>
+              </ModalProvider>
+            </BottomSheetProvider>
           </SafeAreaProvider>
         </GestureHandlerRootView>
       </QueryClientProvider>

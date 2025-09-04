@@ -10,7 +10,7 @@ import {
   isAvailableAsync,
   signInAsync
 } from 'expo-apple-authentication';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useSetAtom } from 'jotai';
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -28,6 +28,7 @@ const Page = () => {
   const [googleAvailable, setGoogleAvailable] = useState<boolean | null>(null);
   const setUser = useSetAtom(userAtom);
   const { show } = useToastController();
+  const { redirect } = useLocalSearchParams<{ redirect?: string }>();
 
   const { mutate: loginMutate } = useLoginMutation();
 
@@ -56,7 +57,10 @@ const Page = () => {
           const { accessToken, refreshToken, socialId, isNew, ...user } = data;
 
           if (isNew) {
-            router.push({ pathname: '/login/signup', params: { socialType, socialId } });
+            router.push({
+              pathname: '/login/signup',
+              params: { socialType, socialId, redirect }
+            });
             return;
           }
 
@@ -65,7 +69,9 @@ const Page = () => {
           setUser(user);
           show('로그인 되었어요.', { customData: { status: 'success' } });
 
-          if (router.canDismiss()) {
+          if (redirect && redirect !== '/login') {
+            router.replace(redirect as any);
+          } else if (router.canDismiss()) {
             router.dismissAll();
           } else {
             router.replace('/');

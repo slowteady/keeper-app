@@ -12,7 +12,7 @@ import { COMMUNITY_LIST_FILTER } from '../../constants';
 import { communityAdoptFilterAtom } from '../../stores';
 
 // TODO
-// [ ] 바텀시트 전역적으로 다룰 수 있게 리팩토링
+// [ ] 바텀시트, 모달 전역적으로 다룰 수 있게 리팩토링, 테스트 필요
 // [ ] 리스트 카드 완성
 // [ ] FlashList로 구현
 // [ ] mock 데이터 삽입

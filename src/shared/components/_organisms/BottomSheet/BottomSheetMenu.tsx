@@ -1,0 +1,37 @@
+import { Pressable, StyleSheet } from 'react-native';
+import { styled, Text, useTheme } from 'tamagui';
+
+import { Check } from '../../_atoms/icons/solid';
+import { BottomSheetMenuProps } from './BottomSheetMenu.types';
+
+export const BottomSheetMenu = <T,>({ data, value, onPress }: BottomSheetMenuProps<T>) => {
+  const { black800, black500 } = useTheme();
+
+  return data.map((item, idx) => {
+    const { name } = item;
+    const key = `${name}-${idx}`;
+    const isActive = item.value === value;
+
+    return (
+      <Pressable key={key} style={[styles.button]} onPress={() => onPress(item)}>
+        <StyledText style={[{ color: isActive ? black800.val : black500.val }]}>{name}</StyledText>
+        {isActive && <Check width={17} height={20} color={black800.val} />}
+      </Pressable>
+    );
+  });
+};
+
+const StyledText = styled(Text, {
+  fontSize: 17,
+  fontWeight: '500',
+  lineHeight: 19
+});
+
+const styles = StyleSheet.create({
+  button: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 16
+  }
+});
