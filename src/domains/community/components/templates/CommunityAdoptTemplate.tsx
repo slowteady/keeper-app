@@ -1,3 +1,4 @@
+import { BottomSheetView } from '@gorhom/bottom-sheet';
 import { useAtom } from 'jotai';
 import { useCallback } from 'react';
 import { GestureResponderEvent } from 'react-native';
@@ -7,6 +8,7 @@ import { ADOPT_ANIMAL_TYPES, AnimalType } from '@/domains/animal';
 import { ChipButton } from '@/shared/components/_atoms/ChipButton/ChipButton';
 import { DownArrow } from '@/shared/components/_atoms/icons/mini';
 import { ButtonGroup } from '@/shared/components/_molecules/ButtonGroup';
+import { BottomSheetMenu, useBottomSheet } from '@/shared/components/_organisms/BottomSheet';
 
 import { COMMUNITY_LIST_FILTER } from '../../constants';
 import { communityAdoptFilterAtom } from '../../stores';
@@ -26,6 +28,7 @@ export default CommunityAdoptTemplate;
 const FilterSection = () => {
   const [adoptFilter, setAdoptFilter] = useAtom(communityAdoptFilterAtom);
 
+  const { present, dismiss } = useBottomSheet();
   const { black500 } = useTheme();
 
   const handleChangeAnimalType = useCallback(
@@ -35,7 +38,24 @@ const FilterSection = () => {
     [setAdoptFilter]
   );
   const handleChangeFilter = useCallback((filter: 'LOCATION' | 'PROMO') => {}, []);
-  const handlePressFilter = useCallback((event: GestureResponderEvent) => {}, []);
+  const handlePressFilter = useCallback(
+    (event: GestureResponderEvent) => {
+      present(
+        <BottomSheetView>
+          <BottomSheetMenu
+            data={COMMUNITY_LIST_FILTER}
+            value={adoptFilter.filter}
+            onPress={(data) => {
+              setAdoptFilter((prev) => ({ ...prev, filter: data.id }));
+              dismiss();
+            }}
+          />
+        </BottomSheetView>,
+        { snapPoints: [300] }
+      );
+    },
+    [adoptFilter.filter, dismiss, present, setAdoptFilter]
+  );
 
   const filterText = COMMUNITY_LIST_FILTER.find((filter) => filter.id === adoptFilter.filter)?.label || '';
 
