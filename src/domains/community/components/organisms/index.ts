@@ -1,1 +1,2 @@
-export * from './AdoptCard';
+export * from './CommunityAdoptCard';
+export * from './CommunityAdoptList';

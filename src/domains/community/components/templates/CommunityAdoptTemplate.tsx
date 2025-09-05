@@ -12,20 +12,20 @@ import { BottomSheetMenu, useBottomSheet } from '@/shared/components/_organisms/
 
 import { COMMUNITY_LIST_FILTER } from '../../constants';
 import { communityAdoptFilterAtom } from '../../stores';
+import { CommunityAdoptList } from '../organisms';
 
 // TODO
-// [ ] 바텀시트, 모달 전역적으로 다룰 수 있게 리팩토링, 테스트 필요
 // [ ] 리스트 카드 완성
-// [ ] FlashList로 구현
 // [ ] mock 데이터 삽입
 
-const CommunityAdoptTemplate = () => {
-  return <FilterSection />;
-};
+interface CommunityAdoptTemplateProps {
+  data: {
+    user: { image: string; nickname: string };
+    displayTime: string;
+  }[];
+}
 
-export default CommunityAdoptTemplate;
-
-const FilterSection = () => {
+export const CommunityAdoptTemplate = ({ data }: CommunityAdoptTemplateProps) => {
   const [adoptFilter, setAdoptFilter] = useAtom(communityAdoptFilterAtom);
 
   const { present, dismiss } = useBottomSheet();
@@ -77,6 +77,8 @@ const FilterSection = () => {
           {filterText}
         </ChipButton>
       </XStack>
+
+      <CommunityAdoptList data={data} />
     </>
   );
 };

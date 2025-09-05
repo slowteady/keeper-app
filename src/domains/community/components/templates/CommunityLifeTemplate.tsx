@@ -1,11 +1,9 @@
 import { Text, View } from 'react-native';
 
-const CommunityLifeTemplate = () => {
+export const CommunityLifeTemplate = () => {
   return (
     <View>
       <Text>CommunityLifeTemplate</Text>
     </View>
   );
 };
-
-export default CommunityLifeTemplate;
