@@ -41,7 +41,7 @@ const SheltersTemplate = forwardRef<NaverMapViewRef, SheltersTemplateProps>((pro
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => [400], []);
   const { isButtonVisible, handlePress, handleScroll, flatListRef } = useScrollFloatingButton();
-  const { mutateAsync, isPending } = useKakaoGeocodeMutation();
+  const { mutateAsync: geocodeMutate, isPending } = useKakaoGeocodeMutation();
 
   useEffect(() => {
     if (data.sheltersData) {
@@ -63,7 +63,8 @@ const SheltersTemplate = forwardRef<NaverMapViewRef, SheltersTemplateProps>((pro
   }, []);
   const handleSubmitGeocode = async (value: string) => {
     try {
-      const { documents } = await mutateAsync({ query: value });
+      const { data } = await geocodeMutate({ query: value });
+      const { documents } = data;
       setAddresses(documents);
     } catch {}
   };

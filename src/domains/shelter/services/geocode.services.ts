@@ -1,3 +1,7 @@
+import { KakaoGeocodeResponse } from '@/shared/types';
+import { _publicApi, handleLogging } from '@/shared/utils';
+import { AxiosError, AxiosResponse } from 'axios';
+
 export interface KakaoGeocodeOptionalParams {
   /** 페이지 번호 (1~45, 기본 1) */
   page?: number;
@@ -13,10 +17,10 @@ export interface KakaoGeocodeParams {
   params?: KakaoGeocodeOptionalParams;
 }
 
-export const getKakaoGeocode = async ({ query, params = {} }: KakaoGeocodeParams): Promise<any> => {
-  const controller = new AbortController();
-  const { signal } = controller;
-
+export const getKakaoGeocode = async ({
+  query,
+  params = {}
+}: KakaoGeocodeParams): Promise<AxiosResponse<KakaoGeocodeResponse, AxiosError>> => {
   const allParams = { query, ...params };
   const queryString = buildQueryString(allParams);
   const baseUrl = process.env.EXPO_PUBLIC_KAKAO_LOCAL_URL;
@@ -27,28 +31,11 @@ export const getKakaoGeocode = async ({ query, params = {} }: KakaoGeocodeParams
     Authorization: `KakaoAK ${restApiKey}`
   };
 
-  const config: RequestInit = {
-    method: 'GET',
-    headers,
-    signal
-  };
-
-  const timeoutId = setTimeout(() => controller.abort(), 5000);
-
   try {
-    const response = await fetch(url, config);
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status} ${response.statusText}`);
-    }
-    return await response.json();
+    return await _publicApi.get(url, { headers });
   } catch (err) {
-    console.error('getKakaoGeocode error:', err);
-    if (err instanceof Error && err.name === 'AbortError') {
-      throw new Error('Request timed out');
-    }
+    handleLogging(err, 'getKakaoGeocode');
     throw err;
-  } finally {
-    clearTimeout(timeoutId);
   }
 };
 
