@@ -1,6 +1,8 @@
 export { default as Chat } from './Chat';
 export { default as CircleX } from './CircleX';
 export { default as Close } from './Close';
+export { default as Comment } from './Comment';
+export { default as Eye } from './Eye';
 export { default as Heart } from './Heart';
 export { default as Home } from './Home';
 export { default as LeftArrow } from './LeftArrow';

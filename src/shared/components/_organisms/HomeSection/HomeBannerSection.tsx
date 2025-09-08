@@ -3,7 +3,7 @@ import { Dimensions, NativeSyntheticEvent } from 'react-native';
 import PagerView from 'react-native-pager-view';
 import { styled, Text, View } from 'tamagui';
 
-import { Carousel } from '../../molecules/Carousel';
+import { Carousel } from '../../_molecules';
 
 const IMAGES = [
   require('@/assets/images/banner1.png'),

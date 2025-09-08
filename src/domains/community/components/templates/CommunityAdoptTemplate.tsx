@@ -2,7 +2,7 @@ import { BottomSheetView } from '@gorhom/bottom-sheet';
 import { useAtom } from 'jotai';
 import { useCallback } from 'react';
 import { GestureResponderEvent } from 'react-native';
-import { useTheme, XStack } from 'tamagui';
+import { useTheme, View, XStack } from 'tamagui';
 
 import { ADOPT_ANIMAL_TYPES, AnimalType } from '@/domains/animal';
 import { ChipButton } from '@/shared/components/_atoms/ChipButton/ChipButton';
@@ -13,10 +13,6 @@ import { BottomSheetMenu, useBottomSheet } from '@/shared/components/_organisms/
 import { COMMUNITY_LIST_FILTER } from '../../constants';
 import { communityAdoptFilterAtom } from '../../stores';
 import { CommunityAdoptCardData, CommunityAdoptList } from '../organisms';
-
-// TODO
-// [ ] 리스트 카드 완성
-// [ ] mock 데이터 삽입
 
 interface CommunityAdoptTemplateProps {
   data: CommunityAdoptCardData[];
@@ -56,29 +52,34 @@ export const CommunityAdoptTemplate = ({ data }: CommunityAdoptTemplateProps) =>
   const handlePressUser = useCallback((item: CommunityAdoptCardData) => {
     // TODO: 유저 프로필 페이지로 이동
   }, []);
+  const handlePressCard = useCallback((id: string) => {
+    // TODO: 게시글 상세 페이지로 이동
+  }, []);
 
   const filterText = COMMUNITY_LIST_FILTER.find((filter) => filter.id === adoptFilter.filter)?.label || '';
 
   return (
     <>
-      <ButtonGroup data={ADOPT_ANIMAL_TYPES} id={adoptFilter.animalType} onChange={handleChangeAnimalType} />
+      <View px={20}>
+        <ButtonGroup data={ADOPT_ANIMAL_TYPES} id={adoptFilter.animalType} onChange={handleChangeAnimalType} />
 
-      <XStack mt={16} gap={6}>
-        <ChipButton toggleOnPress onPress={() => handleChangeFilter('LOCATION')}>
-          내 근처
-        </ChipButton>
-        <ChipButton toggleOnPress onPress={() => handleChangeFilter('PROMO')}>
-          입양홍보
-        </ChipButton>
-        <ChipButton
-          onPress={handlePressFilter}
-          right={<DownArrow width={12} height={12} color={black500.val} style={{ marginLeft: 4 }} />}
-        >
-          {filterText}
-        </ChipButton>
-      </XStack>
+        <XStack my={16} gap={6}>
+          <ChipButton toggleOnPress onPress={() => handleChangeFilter('LOCATION')}>
+            내 근처
+          </ChipButton>
+          <ChipButton toggleOnPress onPress={() => handleChangeFilter('PROMO')}>
+            입양홍보
+          </ChipButton>
+          <ChipButton
+            onPress={handlePressFilter}
+            right={<DownArrow width={12} height={12} color={black500.val} style={{ marginLeft: 4 }} />}
+          >
+            {filterText}
+          </ChipButton>
+        </XStack>
+      </View>
 
-      <CommunityAdoptList data={data} onPressUser={handlePressUser} />
+      <CommunityAdoptList data={data} onPressUser={handlePressUser} onPressCard={handlePressCard} />
     </>
   );
 };

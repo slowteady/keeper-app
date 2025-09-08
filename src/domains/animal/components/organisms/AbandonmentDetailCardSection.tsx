@@ -1,6 +1,6 @@
 import { Dimensions, StyleSheet, Text, View } from 'react-native';
 
-import { Carousel } from '@/shared/components/molecules/Carousel';
+import { Carousel } from '@/shared/components/_molecules';
 import { theme } from '@/shared/constants/theme.constants';
 
 import { TransformedAbandonmentDetail } from '../../business/announcement.business';

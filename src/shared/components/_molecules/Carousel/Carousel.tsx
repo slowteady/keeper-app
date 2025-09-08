@@ -1,23 +1,17 @@
 import { Image } from 'expo-image';
 import { forwardRef, useCallback, useRef, useState } from 'react';
-import { NativeSyntheticEvent, Pressable, StyleSheet, Text, View } from 'react-native';
-import PagerView, { PagerViewProps } from 'react-native-pager-view';
+import { NativeSyntheticEvent, Pressable, StyleSheet } from 'react-native';
+import PagerView from 'react-native-pager-view';
+import { styled, Text, useTheme, View, XStack } from 'tamagui';
 
+import { Button } from '@/shared/components/atoms/Button';
 import { LeftLineArrow, RightLineArrow } from '@/shared/components/atoms/icons/mini';
 import { MoreImage } from '@/shared/components/atoms/icons/outline';
-import { theme } from '@/shared/constants/theme.constants';
+import { ImageViewer } from '@/shared/components/molecules/ImageViewer';
+import { NoImage } from '@/shared/components/molecules/NoImage';
+import { Skeleton } from '@/shared/components/molecules/Skeleton';
 
-import { Button } from '../atoms/Button';
-import { ImageViewer } from './ImageViewer';
-import { NoImage } from './NoImage';
-import { Skeleton } from './Skeleton';
-
-export interface BasicCarouselProps extends PagerViewProps {
-  data: string[];
-  onChange?: (data: string) => void;
-  showIndicator?: boolean;
-  showImageViewer?: boolean;
-}
+import { BasicCarouselProps } from './Carousel.types';
 
 const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>(
   ({ data, showIndicator = false, showImageViewer = false, ...props }, ref) => {
@@ -25,7 +19,9 @@ const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>(
     const [isError, setIsError] = useState(data.map(() => false));
     const [openImgViewer, setOpenImgViewer] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
+
     const carouselRef = useRef<PagerView | null>(null);
+    const { black900, white800 } = useTheme();
 
     const handleChange = useCallback((e: NativeSyntheticEvent<{ position: number }>) => {
       const { position } = e.nativeEvent;
@@ -61,9 +57,9 @@ const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>(
             onError={() => handleErrorImage(idx)}
             style={styles.image}
           />
-          <View style={styles.iconWrap}>
-            <MoreImage color={theme.colors.black[900]} />
-          </View>
+          <IconWrap>
+            <MoreImage color={black900.val} />
+          </IconWrap>
         </Button>
       ) : (
         <Image
@@ -83,7 +79,7 @@ const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>(
           {data.map((image, idx) => (
             <View key={image + idx}>
               {!isLoaded[idx] && <Skeleton style={styles.skeleton} />}
-              {isError[idx] && <NoImage style={{ backgroundColor: theme.colors.white[800] }} />}
+              {isError[idx] && <NoImage style={{ backgroundColor: white800.val }} />}
               {renderImage(image, idx)}
             </View>
           ))}
@@ -110,9 +106,9 @@ const Indicator = ({ currentIndex, maxIndex }: BasicCarouselIndicatorProps) => {
   const text = `${currentIndex + 1}/${maxIndex}`;
 
   return (
-    <View style={styles.indicatorContainer}>
-      <Text style={styles.indicatorText}>{text}</Text>
-    </View>
+    <IndicatorContainer>
+      <IndicatorText>{text}</IndicatorText>
+    </IndicatorContainer>
   );
 };
 
@@ -122,6 +118,8 @@ export interface BasicCarouselControllerProps {
   onPress: (type: 'prev' | 'next') => void;
 }
 const Controller = ({ currentIndex, max, onPress }: BasicCarouselControllerProps) => {
+  const { black900 } = useTheme();
+
   const minCount = currentIndex + 1;
   const text = `${minCount}/${max}`;
 
@@ -130,15 +128,15 @@ const Controller = ({ currentIndex, max, onPress }: BasicCarouselControllerProps
   };
 
   return (
-    <View style={styles.controllerContainer}>
+    <ControllerContainer>
       <Pressable onPress={() => handlePress('prev')}>
-        <LeftLineArrow width={11} height={11} color={theme.colors.black[900]} />
+        <LeftLineArrow width={11} height={11} color={black900.val} />
       </Pressable>
-      <Text style={styles.text}>{text}</Text>
+      <ControllerText>{text}</ControllerText>
       <Pressable onPress={() => handlePress('next')}>
-        <RightLineArrow width={11} height={11} color={theme.colors.black[900]} />
+        <RightLineArrow width={11} height={11} color={black900.val} />
       </Pressable>
-    </View>
+    </ControllerContainer>
   );
 };
 
@@ -146,47 +144,56 @@ export const Carousel = Object.assign(BasicCarousel, {
   Controller
 });
 
+const ControllerContainer = styled(XStack, {
+  gap: 4,
+  items: 'center',
+  justify: 'space-between',
+  rounded: 40,
+  borderColor: '$black900',
+  borderWidth: 0.5,
+  borderStyle: 'solid',
+  self: 'baseline',
+  px: 10,
+  py: 8,
+  bg: '$white900',
+  opacity: 0.4
+});
+const ControllerText = styled(Text, {
+  fontSize: 12,
+  lineHeight: 14,
+  fontWeight: '400',
+  color: '$black900'
+});
+const IndicatorContainer = styled(View, {
+  position: 'absolute',
+  b: 16,
+  r: 16,
+  rounded: 20,
+  px: 8,
+  py: 4,
+  bg: 'rgba(0, 0, 0, 0.5)'
+});
+const IndicatorText = styled(Text, {
+  fontSize: 11,
+  lineHeight: 13,
+  fontWeight: '500',
+  color: '$white900'
+});
+const IconWrap = styled(View, {
+  position: 'absolute',
+  r: 16,
+  t: 16
+});
+
 const styles = StyleSheet.create({
   container: { position: 'relative', width: '100%', height: '100%' },
   image: { borderRadius: 10, width: '100%', height: '100%' },
-  controllerContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    gap: 4,
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderRadius: 40,
-    borderColor: theme.colors.black[900],
-    borderWidth: 0.5,
-    borderStyle: 'solid',
-    alignSelf: 'baseline',
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    backgroundColor: theme.colors.white[900],
-    opacity: 0.4
-  },
-  text: { fontSize: 12, lineHeight: 14, fontWeight: '400', color: theme.colors.black[900] },
-  indicatorContainer: {
-    position: 'absolute',
-    bottom: 16,
-    right: 16,
-    borderRadius: 20,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)'
-  },
-  indicatorText: { fontSize: 11, lineHeight: 13, fontWeight: '500', color: theme.colors.white[900] },
   skeleton: {
     position: 'absolute',
     top: 0,
     width: '100%',
     height: '100%',
     borderRadius: 10
-  },
-  iconWrap: {
-    position: 'absolute',
-    right: 16,
-    top: 16
   }
 });
 
