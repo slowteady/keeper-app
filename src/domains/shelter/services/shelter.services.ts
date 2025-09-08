@@ -10,7 +10,6 @@ import {
   UseMutationCustomOptions,
   UseQueryCustomOptions
 } from '@/shared/types';
-import { handleError } from '@/shared/utils';
 import { _publicApi } from '@/shared/utils/instance.util';
 
 import {
@@ -30,13 +29,9 @@ const BASE_URL = `/v2/shelters`;
 const newGetShelters = async (
   params: SheltersParams
 ): Promise<AxiosResponse<ApiResponse<ShelterDto[]>, AxiosError>> => {
-  try {
-    const endpoint = `${BASE_URL}`;
+  const endpoint = `${BASE_URL}`;
 
-    return await _publicApi.get(endpoint, { params });
-  } catch (error) {
-    throw handleError(error, 'getShelters');
-  }
+  return await _publicApi.get(endpoint, { params });
 };
 export const useGetSheltersQuery = (
   params: SheltersParams,
@@ -54,13 +49,9 @@ export const useGetSheltersQuery = (
  * 보호소 상세 조회
  */
 const newGetShelter = async (id: string): Promise<AxiosResponse<ApiResponse<ShelterDto>, AxiosError>> => {
-  try {
-    const endpoint = `${BASE_URL}/${id}`;
+  const endpoint = `${BASE_URL}/${id}`;
 
-    return await _publicApi.get(endpoint);
-  } catch (error) {
-    throw handleError(error, 'getShelter');
-  }
+  return await _publicApi.get(endpoint);
 };
 export const useGetShelterQuery = (
   id: string,
@@ -80,14 +71,10 @@ export const useGetShelterQuery = (
 const newGetShelterCounts = async (
   params: ShelterCountsParams
 ): Promise<AxiosResponse<ApiResponse<ShelterCountDto[]>, AxiosError>> => {
-  try {
-    const endpoint = `${BASE_URL}/nearby/count`;
-    const distances = '1,5,10,30';
+  const endpoint = `${BASE_URL}/nearby/count`;
+  const distances = '1,5,10,30';
 
-    return await _publicApi.get(endpoint, { params: { ...params, distances } });
-  } catch (error) {
-    throw handleError(error, 'getShelterCounts');
-  }
+  return await _publicApi.get(endpoint, { params: { ...params, distances } });
 };
 export const useGetShelterCountsQuery = (
   params: ShelterCountsParams,
@@ -112,13 +99,9 @@ const newGetShelterAdoptNotices = async (
   id: number,
   params: ShelterAdoptNoticesParams
 ): Promise<AxiosResponse<ApiResponse<AdoptResponse>, AxiosError>> => {
-  try {
-    const endpoint = `${BASE_URL}/${id}/abandonments`;
+  const endpoint = `${BASE_URL}/${id}/abandonments`;
 
-    return await _publicApi.get(endpoint, { params });
-  } catch (error) {
-    throw handleError(error, 'getShelterAdoptNotices');
-  }
+  return await _publicApi.get(endpoint, { params });
 };
 export const useGetShelterAdoptNoticesQuery = (
   id: number,
@@ -152,13 +135,9 @@ export const useGetShelterAdoptNoticesQuery = (
 export const newGetShelterSearch = async (
   params: ShelterSearchParams
 ): Promise<AxiosResponse<ApiResponse<ShelterDto[]>, AxiosError>> => {
-  try {
-    const endpoint = `${BASE_URL}/search`;
+  const endpoint = `${BASE_URL}/search`;
 
-    return await _publicApi.get(endpoint, { params });
-  } catch (error) {
-    throw handleError(error, 'getShelterSearch');
-  }
+  return await _publicApi.get(endpoint, { params });
 };
 export const useGetShelterSearchMutation = (
   options?: UseMutationCustomOptions<

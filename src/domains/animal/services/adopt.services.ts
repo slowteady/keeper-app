@@ -3,7 +3,7 @@ import { AxiosError, AxiosResponse } from 'axios';
 
 import { ADOPT_NOTICE_QUERY_KEY, ADOPT_NOTICES_QUERY_KEY } from '@/shared/constants';
 import { ApiResponse, UseInfiniteQueryCustomOptions, UseQueryCustomOptions } from '@/shared/types';
-import { _publicApi, handleError } from '@/shared/utils';
+import { _publicApi } from '@/shared/utils';
 
 import { AdoptDto, AdoptParams, AdoptResponse } from '../types/adopt.types';
 
@@ -13,11 +13,7 @@ const BASE_URL = `v2/abandonments`;
  * 입양공고 전체 조회
  */
 const getAdoptNotices = async (params: AdoptParams): Promise<AxiosResponse<ApiResponse<AdoptResponse>, AxiosError>> => {
-  try {
-    return await _publicApi.get(BASE_URL, { params });
-  } catch (error) {
-    throw handleError(error, 'getAdoptNotice');
-  }
+  return await _publicApi.get(BASE_URL, { params });
 };
 export const useGetAdoptNoticesQuery = (
   params: AdoptParams,
@@ -48,13 +44,9 @@ export const useGetAdoptNoticesQuery = (
  * 입양공고 상세 조회
  */
 const getAdoptNotice = async (id: string): Promise<AxiosResponse<ApiResponse<AdoptDto>, AxiosError>> => {
-  try {
-    const endpoint = `${BASE_URL}/${id}`;
+  const endpoint = `${BASE_URL}/${id}`;
 
-    return await _publicApi.get(endpoint);
-  } catch (error) {
-    throw handleError(error, 'getAdoptNotice');
-  }
+  return await _publicApi.get(endpoint);
 };
 export const useGetAdoptNoticeQuery = (
   id: string,
