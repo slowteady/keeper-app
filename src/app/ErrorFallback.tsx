@@ -2,28 +2,21 @@ import { Image } from 'expo-image';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { Button } from '@/shared/components/atoms/Button';
-import { MainHeader } from '@/shared/components/organisms/MainHeader';
 import { theme } from '@/shared/constants/theme.constants';
 
 interface ErrorFallbackProps {
-  error: Error;
+  error: unknown;
   resetError: () => void;
 }
 
 const ErrorFallback = ({ error, resetError }: ErrorFallbackProps) => {
-  const handleRetry = () => {
-    resetError();
-  };
-
   return (
     <View style={{ flex: 1 }}>
-      <MainHeader useDrawer={false} />
-
       <View style={styles.container}>
         <Image source={require('@/assets/images/error.png')} style={styles.image} contentFit="contain" />
         <Text style={styles.titleText}>인터넷이 연결되어 있지 않아요</Text>
         <Text style={styles.descriptionText}>{`Wi-fi 또는 셀룰러 데이터 연결을 확인한 후\n다시 시도해 주세요.`}</Text>
-        <Button style={styles.button} onPress={handleRetry}>
+        <Button style={styles.button} onPress={resetError}>
           <Text style={styles.buttonText}>다시시도</Text>
         </Button>
       </View>

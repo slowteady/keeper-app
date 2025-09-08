@@ -30,7 +30,7 @@ yarn-error.*
 *.pem
 
 # local env files
-.env
+.env*
 
 # typescript
 *.tsbuildinfo
@@ -39,3 +39,4 @@ app-example
 android/
 ios/
 service-account.json
+.env.local

@@ -21,6 +21,7 @@ import { SocialLoginType } from '@/domains/auth/types/auth.types';
 import { Button } from '@/shared/components/atoms/Button';
 import { Google, Kakao, Naver } from '@/shared/components/atoms/icons/etc';
 import { theme } from '@/shared/constants/theme.constants';
+import { setUserContext } from '@/shared/utils';
 import { saveAccessToken, saveRefreshToken } from '@/shared/utils/token.utils';
 
 const Page = () => {
@@ -67,6 +68,7 @@ const Page = () => {
           await saveAccessToken(accessToken);
           await saveRefreshToken(refreshToken);
           setUser(user);
+          setUserContext(user);
           show('로그인 되었어요.', { customData: { status: 'success' } });
 
           if (redirect && redirect !== '/login') {

@@ -49,5 +49,14 @@ module.exports = [
       configureAndroidBackup: true,
       faceIDPermission: 'Keeper가 안전한 저장소를 사용할 수 있도록 허용해 주세요.'
     }
+  ],
+  [
+    '@sentry/react-native/expo',
+    {
+      url: 'https://sentry.io/',
+      note: 'Use SENTRY_AUTH_TOKEN env to authenticate with Sentry.',
+      project: 'keeper',
+      organization: 'candykim'
+    }
   ]
 ];

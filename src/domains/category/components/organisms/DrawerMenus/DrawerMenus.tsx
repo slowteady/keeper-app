@@ -11,7 +11,7 @@ import { useDeleteUserMutation, useLogoutMutation, userAtom } from '@/domains/au
 import { Button } from '@/shared/components/_atoms';
 import { Chat, Heart, Location, Login } from '@/shared/components/_atoms/icons/outline';
 import { useLayout } from '@/shared/hooks';
-import { removeToken } from '@/shared/utils';
+import { clearUserContext, removeToken } from '@/shared/utils';
 
 // TODO
 // [ ] Drawer -> 바텀 네비게이션으로 변경
@@ -62,6 +62,7 @@ export const DrawerMenus = ({ ...props }: DrawerContentComponentProps) => {
 
         await removeToken();
         resetUser();
+        clearUserContext();
         show(successMessage, { customData: { status: 'success' } });
 
         props.navigation.closeDrawer();
