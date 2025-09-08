@@ -1,21 +1,20 @@
-import dayjs from 'dayjs';
-import { useAtomValue } from 'jotai';
 import { useMemo } from 'react';
 import { styled, YStack } from 'tamagui';
 
-import { userAtom } from '@/domains/auth';
-
+import { formatTimeAgo } from '@/shared/utils';
+import { fakerKO } from '@faker-js/faker';
 import { CommunityAdoptTemplate } from '../templates';
 
 export const CommunityAdoptPage = () => {
-  const { image: userImage, nickname } = useAtomValue(userAtom);
-
   const adoptListValue = useMemo(() => {
     return Array.from({ length: 50 }, (_, id) => ({
-      user: { image: userImage, nickname },
-      displayTime: id / 2 === 0 ? dayjs().format('YYYY-MM-DD HH:mm:ss') : `2025-01-02 12:00:00`
-    }));
-  }, [userImage, nickname]);
+      user: { image: fakerKO.image.avatar(), nickname: fakerKO.person.fullName() },
+      displayTime: id === 1 ? formatTimeAgo(fakerKO.date.recent()) : formatTimeAgo(fakerKO.date.past()),
+      title: fakerKO.book.title(),
+      content: fakerKO.lorem.text(),
+      tags: [fakerKO.animal.dog(), fakerKO.animal.cat(), fakerKO.animal.bird(), fakerKO.animal.fish()]
+    })).sort((a, b) => new Date(b.displayTime).getTime() - new Date(a.displayTime).getTime());
+  }, []);
 
   return (
     <Container>
@@ -26,7 +25,6 @@ export const CommunityAdoptPage = () => {
 
 const Container = styled(YStack, {
   flex: 1,
-  bg: '$backgroundDefault',
   px: 20,
   py: 16
 });

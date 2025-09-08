@@ -1,19 +1,17 @@
 import { FlashList } from '@shopify/flash-list';
 
-import { CommunityAdoptCard } from './CommunityAdoptCard';
+import { CommunityAdoptCard, CommunityAdoptCardData } from './CommunityAdoptCard';
 
 interface CommunityAdoptListProps {
-  data: {
-    user: { image: string; nickname: string };
-    displayTime: string;
-  }[];
+  data: CommunityAdoptCardData[];
+  onPressUser: (item: CommunityAdoptCardData) => void;
 }
 
-export const CommunityAdoptList = ({ data }: CommunityAdoptListProps) => {
+export const CommunityAdoptList = ({ data, onPressUser }: CommunityAdoptListProps) => {
   return (
     <FlashList
       data={data}
-      renderItem={({ item }) => <CommunityAdoptCard {...item} onPressUser={() => {}} />}
+      renderItem={({ item }) => <CommunityAdoptCard {...item} onPressUser={() => onPressUser(item)} />}
       ListEmptyComponent={<></>}
       contentContainerStyle={{ paddingVertical: 24 }}
     />

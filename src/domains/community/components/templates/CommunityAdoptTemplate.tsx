@@ -12,17 +12,14 @@ import { BottomSheetMenu, useBottomSheet } from '@/shared/components/_organisms/
 
 import { COMMUNITY_LIST_FILTER } from '../../constants';
 import { communityAdoptFilterAtom } from '../../stores';
-import { CommunityAdoptList } from '../organisms';
+import { CommunityAdoptCardData, CommunityAdoptList } from '../organisms';
 
 // TODO
 // [ ] 리스트 카드 완성
 // [ ] mock 데이터 삽입
 
 interface CommunityAdoptTemplateProps {
-  data: {
-    user: { image: string; nickname: string };
-    displayTime: string;
-  }[];
+  data: CommunityAdoptCardData[];
 }
 
 export const CommunityAdoptTemplate = ({ data }: CommunityAdoptTemplateProps) => {
@@ -56,6 +53,9 @@ export const CommunityAdoptTemplate = ({ data }: CommunityAdoptTemplateProps) =>
     },
     [adoptFilter.filter, dismiss, present, setAdoptFilter]
   );
+  const handlePressUser = useCallback((item: CommunityAdoptCardData) => {
+    // TODO: 유저 프로필 페이지로 이동
+  }, []);
 
   const filterText = COMMUNITY_LIST_FILTER.find((filter) => filter.id === adoptFilter.filter)?.label || '';
 
@@ -78,7 +78,7 @@ export const CommunityAdoptTemplate = ({ data }: CommunityAdoptTemplateProps) =>
         </ChipButton>
       </XStack>
 
-      <CommunityAdoptList data={data} />
+      <CommunityAdoptList data={data} onPressUser={handlePressUser} />
     </>
   );
 };

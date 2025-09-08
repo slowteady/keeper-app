@@ -33,6 +33,6 @@ const Page = () => {
 export default Page;
 
 const Container = styled(View, {
-  bg: '$backgroundDefault',
+  bg: '$white900',
   flex: 1
 });

@@ -59,7 +59,7 @@ const Page = () => {
 
           if (isNew) {
             router.push({
-              pathname: '/login/signup',
+              pathname: '/signup',
               params: { socialType, socialId, redirect }
             });
             return;

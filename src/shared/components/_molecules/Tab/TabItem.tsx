@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
-import { StyleSheet } from 'react-native';
+import { Pressable, StyleSheet } from 'react-native';
 import Animated, { interpolate, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { Route } from 'react-native-tab-view';
-import { Button, styled, Text, useTheme, View, XStack } from 'tamagui';
+import { styled, Text, useTheme, View, XStack } from 'tamagui';
 
 import { TabItemProps } from './TabItem.types';
 
@@ -48,9 +48,9 @@ export const TabItem = <T extends Route>({
           const key = `${route.key}-${idx}`;
 
           return (
-            <StyledButton key={key} onPress={() => onIndexChange(idx)}>
+            <Pressable key={key} onPress={() => onIndexChange(idx)} style={styles.button}>
               <StyledText style={{ color: isActive ? activeColor : inactiveColor }}>{route.title}</StyledText>
-            </StyledButton>
+            </Pressable>
           );
         })}
       </TabContainer>
@@ -64,7 +64,6 @@ export const TabItem = <T extends Route>({
 
 const Container = styled(View, {
   position: 'relative',
-  bg: '$backgroundDefault',
   borderBottomWidth: 3,
   borderBottomColor: '$white600',
   height: TAB_BAR_HEIGHT
@@ -72,11 +71,6 @@ const Container = styled(View, {
 const TabContainer = styled(XStack, {
   items: 'center',
   height: '100%'
-});
-const StyledButton = styled(Button, {
-  flex: 1,
-  items: 'center',
-  justify: 'center'
 });
 const StyledText = styled(Text, {
   fontSize: 17,
@@ -97,5 +91,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     height: 3,
     position: 'absolute'
+  },
+  button: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 });
