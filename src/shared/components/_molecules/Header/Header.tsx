@@ -1,7 +1,14 @@
+import { ReactNode } from 'react';
 import { Platform } from 'react-native';
-import { styled, XStack, YStack } from 'tamagui';
+import { StackProps, styled, XStack, YStack } from 'tamagui';
 
-import { HeaderProps } from './Header.types';
+export interface HeaderProps {
+  showShadow?: boolean;
+  ContainerProps?: StackProps;
+  left?: ReactNode;
+  center?: ReactNode;
+  right?: ReactNode;
+}
 
 export const Header = ({ showShadow = true, ContainerProps, left, center, right }: HeaderProps) => {
   return (

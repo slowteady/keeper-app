@@ -1,2 +1,2 @@
-export { Header } from './Header';
-export type { HeaderProps } from './Header.types';
+export * from './Header';
+export * from './PublicHeader';
