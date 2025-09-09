@@ -74,9 +74,9 @@ const Page = () => {
           show('로그인 되었어요.', { customData: { status: 'success' } });
 
           if (redirect && redirect !== '/login') {
-            router.replace(redirect as any);
+            router.dismissTo(redirect as any);
           } else if (router.canDismiss()) {
-            router.dismissAll();
+            router.dismissTo('/');
           } else {
             router.replace('/');
           }

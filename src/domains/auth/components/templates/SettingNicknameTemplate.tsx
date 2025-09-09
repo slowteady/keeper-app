@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { Keyboard, TouchableWithoutFeedback } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Spinner, styled, Text, XStack, YStack } from 'tamagui';
 
 import { SignupForm } from '@/app/(home)/(public)/signup';
 import { TextField } from '@/shared/components/_atoms';
 import { Button } from '@/shared/components/_atoms/Button';
 import { KeyboardView } from '@/shared/components/_molecules';
+import { useLayout } from '@/shared/hooks';
 import { useDebounceValue } from '@/shared/hooks/useDebounce';
+
 import { useCheckNicknameMutation } from '../../services';
 
 export interface SettingNicknameTemplateProps {
@@ -28,7 +29,7 @@ export const SettingNicknameTemplate = ({ onSubmit, isPending = false }: Setting
 
   const { setValue, handleSubmit } = useFormContext<SignupForm>();
   const nickname = useWatch({ name: 'nickname' });
-  const { bottom } = useSafeAreaInsets();
+  const { bottom } = useLayout();
   const debouncedNickname = useDebounceValue(nickname, 1000);
 
   const { mutate: nicknameCheckMutate, isPending: isNicknameCheckPending } = useCheckNicknameMutation();
@@ -113,8 +114,7 @@ export const SettingNicknameTemplate = ({ onSubmit, isPending = false }: Setting
 
 const Container = styled(YStack, {
   flex: 1,
-  px: '$5',
-  bg: '$backgroundDefault'
+  px: '$5'
 });
 const SubContainer = styled(YStack, {
   flex: 1,

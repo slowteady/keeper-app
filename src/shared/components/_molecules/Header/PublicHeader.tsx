@@ -14,12 +14,8 @@ export const PublicHeader = () => {
     if (router.canGoBack()) {
       router.back();
     } else {
-      router.replace('/');
+      router.dismissTo('/');
     }
-  }, []);
-  const handlePressHome = useCallback(() => {
-    router.replace('/');
-    router.dismissAll();
   }, []);
 
   const left = (
@@ -28,7 +24,7 @@ export const PublicHeader = () => {
     </Pressable>
   );
   const right = (
-    <Pressable onPress={handlePressHome}>
+    <Pressable onPress={() => router.dismissTo('/')}>
       <Home width={24} height={30} color={black900.val} />
     </Pressable>
   );

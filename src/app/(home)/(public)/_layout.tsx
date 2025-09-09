@@ -5,7 +5,7 @@ import { PublicHeader } from '@/shared/components/_molecules';
 
 const PublicLayout = () => {
   return (
-    <SafeScreen isSafeBottom={false}>
+    <SafeScreen>
       <Stack screenOptions={{ header: () => <PublicHeader /> }}>
         <Stack.Screen name="community" options={{ headerShown: false }} />
       </Stack>

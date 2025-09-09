@@ -1,19 +1,34 @@
 // src/shared/components/_atoms/SafeScreen/SafeScreen.tsx
 import { useAtomValue } from 'jotai';
-import { View, YStack } from 'tamagui';
+import { View, ViewProps, YStack, YStackProps } from 'tamagui';
 
 import { useLayout } from '@/shared/hooks/useLayout';
 
 import { safeScreenAtom } from './safeScreen.store';
-import { SafeScreenProps } from './SafeScreen.types';
+
+export interface SafeScreenProps extends YStackProps {
+  children: React.ReactNode;
+  /**
+   * SafeArea 사용 여부
+   */
+  useSafeArea?: boolean;
+  /**
+   * SafeArea 상단 사용 여부
+   */
+  isSafeTop?: boolean;
+  /**
+   * SafeArea 상단 패딩
+   */
+  customTopPadding?: number;
+
+  ContainerProps?: ViewProps;
+}
 
 export const SafeScreen = ({
   children,
   useSafeArea: propUseSafeArea = true,
   isSafeTop: propSafeTop = true,
-  isSafeBottom: propSafeBottom = true,
   customTopPadding,
-  customBottomPadding,
   ContainerProps,
   ...props
 }: SafeScreenProps) => {
@@ -22,7 +37,7 @@ export const SafeScreen = ({
 
   const useSafeArea = atomConfig.useSafeArea ?? propUseSafeArea;
   const safeTop = atomConfig.safeTop ?? propSafeTop;
-  const safeBottom = atomConfig.safeBottom ?? propSafeBottom;
+  const containerProps = atomConfig.ContainerProps ?? ContainerProps;
 
   if (!useSafeArea) {
     return (
@@ -33,10 +48,9 @@ export const SafeScreen = ({
   }
 
   const topPadding = safeTop ? (customTopPadding ?? layout.top) : 0;
-  const bottomPadding = safeBottom ? (customBottomPadding ?? layout.bottom) : 0;
 
   return (
-    <View bg="$white900" flex={1} pt={topPadding} pb={bottomPadding} {...ContainerProps}>
+    <View bg="$white900" flex={1} pt={topPadding} {...containerProps}>
       <YStack flex={1} {...props}>
         {children}
       </YStack>
