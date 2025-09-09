@@ -21,13 +21,15 @@ import { SocialLoginType } from '@/domains/auth/types/auth.types';
 import { Button } from '@/shared/components/atoms/Button';
 import { Google, Kakao, Naver } from '@/shared/components/atoms/icons/etc';
 import { theme } from '@/shared/constants/theme.constants';
-import { setUserContext } from '@/shared/utils';
+import { logger, setUserContext } from '@/shared/utils';
 import { saveAccessToken, saveRefreshToken } from '@/shared/utils/token.utils';
 
 const Page = () => {
+  const setUser = useSetAtom(userAtom);
+
   const [appleAvailable, setAppleAvailable] = useState<boolean | null>(null);
   const [googleAvailable, setGoogleAvailable] = useState<boolean | null>(null);
-  const setUser = useSetAtom(userAtom);
+
   const { show } = useToastController();
   const { redirect } = useLocalSearchParams<{ redirect?: string }>();
 
@@ -126,7 +128,7 @@ const KakaoButton = ({ onResponse }: ButtonProps) => {
 
       onResponse('KAKAO', response.accessToken);
     } catch (error) {
-      console.error(error);
+      logger.error(error);
     } finally {
       setIsLoading(false);
     }
@@ -155,7 +157,7 @@ const NaverButton = ({ onResponse }: ButtonProps) => {
 
       onResponse('NAVER', response.successResponse.accessToken);
     } catch (error) {
-      console.error(error);
+      logger.error(error);
     } finally {
       setIsLoading(false);
     }
@@ -184,7 +186,7 @@ const GoogleButton = ({ onResponse }: ButtonProps) => {
 
       onResponse('GOOGLE', response.data.idToken);
     } catch (error) {
-      console.error(error);
+      logger.error(error);
     } finally {
       setIsLoading(false);
     }
@@ -215,7 +217,7 @@ const AppleButton = ({ onResponse }: ButtonProps) => {
 
       onResponse('APPLE', response.identityToken);
     } catch (error) {
-      console.error(error);
+      logger.error(error);
     } finally {
       setIsLoading(false);
     }

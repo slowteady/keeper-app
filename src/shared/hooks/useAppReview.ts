@@ -2,6 +2,8 @@ import * as StoreReview from 'expo-store-review';
 import { useEffect, useRef } from 'react';
 import { Linking } from 'react-native';
 
+import { logger } from '../utils';
+
 /**
  * 앱 리뷰 모달 출력 훅
  */
@@ -23,7 +25,7 @@ export const useAppReview = () => {
         }
       }
     } catch (error) {
-      console.warn('App Review failed:', error);
+      logger.warn('App Review failed:', error);
     }
   };
 
