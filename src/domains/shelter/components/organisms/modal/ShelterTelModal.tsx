@@ -1,9 +1,10 @@
+import { useToastController } from '@tamagui/toast';
 import * as Clipboard from 'expo-clipboard';
 import * as Linking from 'expo-linking';
 import { useCallback } from 'react';
-import { Alert, Platform } from 'react-native';
+import { Platform } from 'react-native';
 
-import { BasicModal } from './BasicModal';
+import { BasicModal } from '@/shared/components/organisms/BasicModal';
 
 export interface ShelterTelModalProps {
   open: boolean;
@@ -13,15 +14,17 @@ export interface ShelterTelModalProps {
 }
 
 export const ShelterTelModal = ({ open, tel, onClose, name }: ShelterTelModalProps) => {
+  const { show } = useToastController();
+
   const person = name || '담당자';
 
   const handleCopy = useCallback(
     async (tel: string) => {
       onClose();
       await Clipboard.setStringAsync(tel);
-      Alert.alert('', '전화번호를 복사했습니다.', [{ text: '확인' }]);
+      show('전화번호를 복사했어요.', { customData: { status: 'success' } });
     },
-    [onClose]
+    [onClose, show]
   );
 
   const handlePressContact = useCallback(async () => {

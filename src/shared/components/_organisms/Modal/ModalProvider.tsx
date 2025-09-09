@@ -1,13 +1,21 @@
 import { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
-import { Modal } from 'react-native';
+import { Modal, Pressable, StyleSheet } from 'react-native';
 
-import { ModalContextType, OpenOptions } from './ModalProvider.types';
+export type OpenOptions = {
+  onDismiss?: () => void;
+};
+export type ModalContextType = {
+  open: (node: React.ReactNode, opts?: OpenOptions) => void;
+  update: (node: React.ReactNode) => void;
+  close: () => void;
+};
 
 const ModalContext = createContext<ModalContextType | null>(null);
 
 export const ModalProvider = ({ children }: { children: React.ReactNode }) => {
   const [visible, setVisible] = useState(false);
   const [content, setContent] = useState<React.ReactNode>(null);
+
   const onDismissRef = useRef<(() => void) | undefined>(undefined);
 
   const open = useCallback((node: React.ReactNode, opts?: OpenOptions) => {
@@ -24,7 +32,9 @@ export const ModalProvider = ({ children }: { children: React.ReactNode }) => {
     <ModalContext.Provider value={value}>
       {children}
       <Modal animationType="fade" visible={visible} onRequestClose={close} transparent>
-        {content}
+        <Pressable style={styles.overlay} onPress={close}>
+          {content}
+        </Pressable>
       </Modal>
     </ModalContext.Provider>
   );
@@ -35,3 +45,12 @@ export const useModal = () => {
   if (!ctx) throw new Error('useModal must be used within <ModalProvider>');
   return ctx;
 };
+
+const styles = StyleSheet.create({
+  overlay: {
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1
+  }
+});
