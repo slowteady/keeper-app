@@ -6,6 +6,7 @@ import { useReactQueryDevTools } from '@dev-plugins/react-query';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { initializeKakaoSDK } from '@react-native-kakao/core';
 import NaverLogin from '@react-native-seoul/naver-login';
+import { DrawerContentComponentProps } from '@react-navigation/drawer';
 import * as Sentry from '@sentry/react-native';
 import { ToastProvider } from '@tamagui/toast';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -13,6 +14,7 @@ import { extend } from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useFonts } from 'expo-font';
 import { router } from 'expo-router';
+import { Drawer } from 'expo-router/drawer';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
@@ -21,16 +23,14 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { TamaguiProvider } from 'tamagui';
 
+import { DrawerMenus } from '@/domains/category';
 import { Toast } from '@/shared/components/_molecules';
 import { BottomSheetProvider } from '@/shared/components/_organisms/BottomSheet';
 import { ModalProvider } from '@/shared/components/_organisms/Modal';
+import { throwToErrorBoundary } from '@/shared/utils';
 import { authApi } from '@/shared/utils/instance.util';
 import { setupInterceptor } from '@/shared/utils/interceptors.utils';
 
-import { DrawerMenus } from '@/domains/category';
-import { throwToErrorBoundary } from '@/shared/utils';
-import { DrawerContentComponentProps } from '@react-navigation/drawer';
-import { Drawer } from 'expo-router/drawer';
 import { config } from '../../tamagui.config';
 import AnimatedSplash from './AnimatedSplash';
 import ErrorFallback from './ErrorFallback';
@@ -41,8 +41,8 @@ import ErrorFallback from './ErrorFallback';
  * [x] 기존에 데이터 요청 로직들 axios instance로 변경 및 리팩토링
  * [x] 로거 유틸 함수 추가
  * [x] 에러바운더리 설정
+ * [x] 로그인, 비로그인 구분하여 파일 경로 구현
  * [ ] 커뮤니티 ui 구현
- * [ ] 로그인, 비로그인 구분하여 파일 경로 구현
  * [ ] DDD에 맞게 컴포넌트 분리
  * [ ] tamagui에 맞게 컴포넌트 리팩토링
  * [ ] FlatList -> FlashList로 전환

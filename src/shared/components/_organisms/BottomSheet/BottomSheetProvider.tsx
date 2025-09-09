@@ -2,7 +2,18 @@ import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from 
 import { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { useTheme } from 'tamagui';
 
-import { BottomSheetContextType, PresentOptions } from './BottomSheetProvider.types';
+export type PresentOptions = {
+  snapPoints?: (string | number)[];
+  onDismiss?: () => void;
+};
+
+export type BottomSheetContextType = {
+  present: (node: React.ReactNode, opts?: PresentOptions) => void;
+  update: (node: React.ReactNode) => void;
+  dismiss: () => void;
+  setSnapPoints: (pts: (string | number)[]) => void;
+  ref: React.RefObject<BottomSheetModal | null>;
+};
 
 const BottomSheetContext = createContext<BottomSheetContextType | null>(null);
 

@@ -27,8 +27,8 @@ interface MenuItem {
 const MENU_ITEMS: MenuItem[] = [
   { icon: Heart, label: '입양공고', route: '/adopt' },
   { icon: Location, label: '보호소', route: '/shelter' },
-  { icon: Login, label: '로그인', route: '/login' },
-  { icon: Chat, label: '커뮤니티', route: '/community' }
+  { icon: Chat, label: '커뮤니티', route: '/community' },
+  { icon: Login, label: '로그인', route: '/login' }
 ];
 
 export const DrawerMenus = ({ ...props }: DrawerContentComponentProps) => {
@@ -74,14 +74,18 @@ export const DrawerMenus = ({ ...props }: DrawerContentComponentProps) => {
     [deleteUserMutate, logoutMutate, props.navigation, resetUser, show]
   );
 
-  const renderMenuItem = ({ icon: Icon, label, route }: MenuItem) => (
-    <Pressable key={label} onPress={() => handleRoute(route)}>
-      <XStack items="center" gap={20}>
-        <Icon width={24} height={24} color={black900.val} />
-        <StyledText>{label}</StyledText>
-      </XStack>
-    </Pressable>
-  );
+  const renderMenuItem = ({ icon: Icon, label, route }: MenuItem) => {
+    if (route === '/login' && user.id) return null;
+
+    return (
+      <Pressable key={label} onPress={() => handleRoute(route)}>
+        <XStack items="center" gap={20}>
+          <Icon width={24} height={24} color={black900.val} />
+          <StyledText>{label}</StyledText>
+        </XStack>
+      </Pressable>
+    );
+  };
 
   const userText = `로그인 된 유저: ${user.nickname}`;
   const headerTop = top + 39;
@@ -92,15 +96,21 @@ export const DrawerMenus = ({ ...props }: DrawerContentComponentProps) => {
         {MENU_ITEMS.map(renderMenuItem)}
       </YStack>
 
-      <YStack pb={bottom} gap={12}>
-        <StyledText>{userText}</StyledText>
-        <Button onPress={() => handlePress('logout')} disabled={isLogoutPending} isLoading={isLogoutPending}>
-          로그아웃
-        </Button>
-        <Button onPress={() => handlePress('withdraw')} disabled={isDeleteUserPending} isLoading={isDeleteUserPending}>
-          회원탈퇴
-        </Button>
-      </YStack>
+      {user.id && (
+        <YStack pb={bottom} gap={12}>
+          <StyledText>{userText}</StyledText>
+          <Button onPress={() => handlePress('logout')} disabled={isLogoutPending} isLoading={isLogoutPending}>
+            로그아웃
+          </Button>
+          <Button
+            onPress={() => handlePress('withdraw')}
+            disabled={isDeleteUserPending}
+            isLoading={isDeleteUserPending}
+          >
+            회원탈퇴
+          </Button>
+        </YStack>
+      )}
     </YStack>
   );
 };

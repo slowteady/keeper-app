@@ -2,7 +2,16 @@ import { Pressable, StyleSheet } from 'react-native';
 import { styled, Text, useTheme } from 'tamagui';
 
 import { Check } from '../../_atoms/icons/solid';
-import { BottomSheetMenuProps } from './BottomSheetMenu.types';
+
+export interface BottomSheetMenuData<T> {
+  id: T;
+  label: string;
+}
+export interface BottomSheetMenuProps<T> {
+  data: BottomSheetMenuData<T>[];
+  value: T;
+  onPress: (data: BottomSheetMenuData<T>) => void;
+}
 
 export const BottomSheetMenu = <T,>({ data, value, onPress }: BottomSheetMenuProps<T>) => {
   const { black800, black500 } = useTheme();

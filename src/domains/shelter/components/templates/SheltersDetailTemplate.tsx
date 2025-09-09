@@ -16,9 +16,10 @@ import {
   View
 } from 'react-native';
 
-import { ADOPT_FILTERS, AdoptResponse } from '@/domains/animal';
 import { transformAbandonments, TransformedAbandonments } from '@/domains/animal/business/announcement.business';
+import { ADOPT_FILTERS } from '@/domains/animal/constants';
 import { announcementAtom, announcementFilterValueAtom } from '@/domains/animal/stores/announcement.stores';
+import { AdoptResponse } from '@/domains/animal/types';
 import { AnnouncementFilter } from '@/domains/animal/types/announcement.types';
 import { transformShelterData } from '@/domains/shelter/business/shelter.business';
 import { ShelterDto } from '@/domains/shelter/types/shelter.types';
@@ -29,11 +30,12 @@ import { Dropdown } from '@/shared/components/molecules/Dropdown';
 import { AnimalCard } from '@/shared/components/organisms/AnimalCard';
 import { BottomSheetMenuData } from '@/shared/components/organisms/BottomSheet';
 import { ShelterMap } from '@/shared/components/organisms/ShelterMap';
-import { ShelterTelModal } from '@/shared/components/organisms/ShelterTelModal';
 import { theme } from '@/shared/constants/theme.constants';
 import { useLayout } from '@/shared/hooks/useLayout';
 import { useMap } from '@/shared/hooks/useMap';
 import { useScrollFloatingButton } from '@/shared/hooks/useScrollFloatingButton';
+
+import { ShelterTelModal } from '../organisms';
 
 interface SheltersDetailTemplateProps {
   shelterData: ShelterDto;

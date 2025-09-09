@@ -1,5 +1,4 @@
 import { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
-import { router } from 'expo-router';
 
 import { getTokens } from '@/domains/auth/services';
 
@@ -47,7 +46,6 @@ export const setupInterceptor = (authApi: AxiosInstance) => {
         return authApi(originalRequest);
       } catch (error) {
         await removeToken();
-        router.replace('/login');
         return Promise.reject(error);
       }
     }
