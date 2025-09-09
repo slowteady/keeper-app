@@ -6,10 +6,11 @@ import { Chip } from '@/shared/components/_atoms';
 import { AnimatedHeart } from '@/shared/components/_atoms/icons/animated';
 import { Comment, Eye, LikeHeart } from '@/shared/components/_atoms/icons/outline';
 import { Carousel } from '@/shared/components/_molecules';
+import { useLoginRequired } from '@/shared/hooks';
 
 export interface CommunityAdoptCardData {
   id: string;
-  user: { image: string; nickname: string };
+  user: { id: string; image: string; nickname: string };
   title: string;
   content: string;
   displayTime: string;
@@ -19,8 +20,10 @@ export interface CommunityAdoptCardData {
   counts: { like: number; comment: number; view: number };
 }
 export interface CommunityAdoptCardProps extends CommunityAdoptCardData {
-  onPressUser: (user: { image: string; nickname: string }) => void;
+  onPressUser: (user: CommunityAdoptCardData['user']) => void;
   onPressCard: (id: string) => void;
+  onPressLike: (id: string) => void;
+  isLoading?: boolean;
 }
 
 export const CommunityAdoptCard = ({
@@ -34,9 +37,12 @@ export const CommunityAdoptCard = ({
   content,
   tags,
   images,
-  counts
+  counts,
+  onPressLike,
+  isLoading
 }: CommunityAdoptCardProps) => {
   const { black500 } = useTheme();
+  const { isLoggedInSync } = useLoginRequired();
 
   const handlePressUser = useCallback(() => {
     onPressUser(user);
@@ -44,6 +50,9 @@ export const CommunityAdoptCard = ({
   const handlePressCard = useCallback(() => {
     onPressCard(id);
   }, [onPressCard, id]);
+  const handlePressLike = useCallback(() => {
+    onPressLike(id);
+  }, [id, onPressLike]);
 
   const hasTags = tags.length > 0;
 
@@ -63,7 +72,7 @@ export const CommunityAdoptCard = ({
           </Text>
         </XStack>
 
-        <AnimatedHeart isLiked={isLiked} />
+        <AnimatedHeart isLiked={isLiked} onPress={handlePressLike} disabled={!isLoggedInSync()} loading={isLoading} />
       </XStack>
 
       <StyledTitle mb={16}>{title}</StyledTitle>

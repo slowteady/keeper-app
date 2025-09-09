@@ -9,6 +9,7 @@ import { ChipButton } from '@/shared/components/_atoms/ChipButton/ChipButton';
 import { DownArrow } from '@/shared/components/_atoms/icons/mini';
 import { ButtonGroup } from '@/shared/components/_molecules/ButtonGroup';
 import { BottomSheetMenu, useBottomSheet } from '@/shared/components/_organisms/BottomSheet';
+import { useLoginRequired } from '@/shared/hooks';
 
 import { COMMUNITY_LIST_FILTER } from '../../constants';
 import { communityAdoptFilterAtom } from '../../stores';
@@ -16,11 +17,13 @@ import { CommunityAdoptCardData, CommunityAdoptList } from '../organisms';
 
 interface CommunityAdoptTemplateProps {
   data: CommunityAdoptCardData[];
+  isLoading?: boolean;
 }
 
-export const CommunityAdoptTemplate = ({ data }: CommunityAdoptTemplateProps) => {
+export const CommunityAdoptTemplate = ({ data, isLoading }: CommunityAdoptTemplateProps) => {
   const [adoptFilter, setAdoptFilter] = useAtom(communityAdoptFilterAtom);
 
+  const { requireLogin } = useLoginRequired();
   const { present, dismiss } = useBottomSheet();
   const { black500 } = useTheme();
 
@@ -49,12 +52,19 @@ export const CommunityAdoptTemplate = ({ data }: CommunityAdoptTemplateProps) =>
     },
     [adoptFilter.filter, dismiss, present, setAdoptFilter]
   );
-  const handlePressUser = useCallback((item: CommunityAdoptCardData) => {
+  const handlePressUser = useCallback((item: CommunityAdoptCardData['user']) => {
     // TODO: 유저 프로필 페이지로 이동
   }, []);
   const handlePressCard = useCallback((id: string) => {
     // TODO: 게시글 상세 페이지로 이동
   }, []);
+  const handlePressLike = useCallback(
+    (id: string) => {
+      // TODO: 좋아요 처리
+      requireLogin(() => {});
+    },
+    [requireLogin]
+  );
 
   const filterText = COMMUNITY_LIST_FILTER.find((filter) => filter.id === adoptFilter.filter)?.label || '';
 
@@ -79,7 +89,13 @@ export const CommunityAdoptTemplate = ({ data }: CommunityAdoptTemplateProps) =>
         </XStack>
       </View>
 
-      <CommunityAdoptList data={data} onPressUser={handlePressUser} onPressCard={handlePressCard} />
+      <CommunityAdoptList
+        data={data}
+        onPressUser={handlePressUser}
+        onPressCard={handlePressCard}
+        onPressLike={handlePressLike}
+        isLoading={isLoading}
+      />
     </>
   );
 };
