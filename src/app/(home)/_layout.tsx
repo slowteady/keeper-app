@@ -1,7 +1,11 @@
 import { Stack } from 'expo-router';
 
-const Layout = () => {
+import { useAuth } from '@/domains/auth';
+
+const HomeLayout = () => {
+  useAuth();
+
   return <Stack screenOptions={{ headerShown: false }} />;
 };
 
-export default Layout;
+export default HomeLayout;
