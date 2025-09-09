@@ -9,9 +9,9 @@ import { SafeScreenProps } from './SafeScreen.types';
 
 export const SafeScreen = ({
   children,
-  useSafeArea: propUseSafeArea,
-  isSafeTop: propSafeTop,
-  isSafeBottom: propSafeBottom,
+  useSafeArea: propUseSafeArea = true,
+  isSafeTop: propSafeTop = true,
+  isSafeBottom: propSafeBottom = true,
   customTopPadding,
   customBottomPadding,
   ContainerProps,
@@ -20,9 +20,9 @@ export const SafeScreen = ({
   const layout = useLayout();
   const atomConfig = useAtomValue(safeScreenAtom);
 
-  const useSafeArea = propUseSafeArea ?? atomConfig.useSafeArea;
-  const safeTop = propSafeTop ?? atomConfig.safeTop;
-  const safeBottom = propSafeBottom ?? atomConfig.safeBottom;
+  const useSafeArea = atomConfig.useSafeArea ?? propUseSafeArea;
+  const safeTop = atomConfig.safeTop ?? propSafeTop;
+  const safeBottom = atomConfig.safeBottom ?? propSafeBottom;
 
   if (!useSafeArea) {
     return (

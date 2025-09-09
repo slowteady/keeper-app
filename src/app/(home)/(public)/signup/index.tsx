@@ -5,13 +5,14 @@ import { usePreventRemove } from '@react-navigation/native';
 import { useToastController } from '@tamagui/toast';
 import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import { useSetAtom } from 'jotai';
-import { useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import { SettingNicknameTemplate } from '@/domains/auth/components';
 import { useSignUpMutation } from '@/domains/auth/services';
 import { userAtom } from '@/domains/auth/stores';
 import { SocialLoginType } from '@/domains/auth/types/auth.types';
+import { safeScreenAtom } from '@/shared/components/_atoms';
 import { removeToken, saveAccessToken, saveRefreshToken } from '@/shared/utils/token.utils';
 
 export interface SignupForm {
@@ -24,6 +25,8 @@ const Page = () => {
     redirect?: string;
   }>();
   const setUser = useSetAtom(userAtom);
+  const setSafeScreen = useSetAtom(safeScreenAtom);
+
   const [prevent, setPrevent] = useState(true);
 
   const { show } = useToastController();
@@ -88,6 +91,14 @@ const Page = () => {
       }
     })();
   });
+
+  useLayoutEffect(() => {
+    setSafeScreen({ safeBottom: true });
+
+    return () => {
+      setSafeScreen({ safeBottom: false });
+    };
+  }, [setSafeScreen]);
 
   return (
     <FormProvider {...methods}>
