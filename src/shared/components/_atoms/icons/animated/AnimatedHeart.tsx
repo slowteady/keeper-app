@@ -10,11 +10,20 @@ export interface AnimatedHeartProps extends Omit<SvgProps, 'onPress'> {
   isLiked?: boolean;
   onPress?: (liked: boolean) => void;
   size?: number;
+  disabled?: boolean;
+  loading?: boolean;
 }
 
 const LikeHeart = Animated.createAnimatedComponent(Path);
 
-export const AnimatedHeart = ({ isLiked = false, onPress, size = 24, ...props }: AnimatedHeartProps) => {
+export const AnimatedHeart = ({
+  isLiked = false,
+  onPress,
+  size = 24,
+  disabled = true,
+  loading = false,
+  ...props
+}: AnimatedHeartProps) => {
   const [liked, setLiked] = useState(isLiked);
   const { primaryMain, black500 } = useTheme();
 
@@ -25,6 +34,11 @@ export const AnimatedHeart = ({ isLiked = false, onPress, size = 24, ...props }:
   }, [liked, fillProgress]);
 
   const handlePress = async () => {
+    if (disabled || loading) {
+      onPress?.(liked);
+      return;
+    }
+
     const newLiked = !liked;
     if (newLiked) await impactAsync(ImpactFeedbackStyle.Medium);
 
