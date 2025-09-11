@@ -40,8 +40,9 @@ export const ChipGroup = <T extends boolean = false>({
         (onChange as ChipGroupOnChange<true>)?.(newValues);
       } else {
         // 단일 선택
-        const newValue = value === optionValue ? '' : optionValue;
-        (onChange as ChipGroupOnChange<false>)?.(newValue);
+        if (value !== optionValue) {
+          (onChange as ChipGroupOnChange<false>)?.(optionValue);
+        }
       }
     },
     [value, onChange, multiple]
