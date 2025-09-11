@@ -1,2 +1,3 @@
 export * from './Chip';
-export * from './Chip.types';
+export * from './ChipButton';
+export * from './ChipGroup';

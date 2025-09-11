@@ -5,7 +5,7 @@ import { GestureResponderEvent } from 'react-native';
 import { useTheme, View, XStack } from 'tamagui';
 
 import { ADOPT_ANIMAL_TYPES, AnimalType } from '@/domains/animal';
-import { ChipButton } from '@/shared/components/_atoms/ChipButton/ChipButton';
+import { ChipButton } from '@/shared/components/_atoms/Chip/ChipButton';
 import { DownArrow } from '@/shared/components/_atoms/icons/mini';
 import { ButtonGroup } from '@/shared/components/_molecules/ButtonGroup';
 import { BottomSheetMenu, useBottomSheet } from '@/shared/components/_organisms/BottomSheet';
@@ -74,10 +74,10 @@ export const CommunityAdoptTemplate = ({ data, isLoading }: CommunityAdoptTempla
         <ButtonGroup data={ADOPT_ANIMAL_TYPES} id={adoptFilter.animalType} onChange={handleChangeAnimalType} />
 
         <XStack my={16} gap={6}>
-          <ChipButton toggleOnPress onPress={() => handleChangeFilter('LOCATION')}>
+          <ChipButton isPressable onPress={() => handleChangeFilter('LOCATION')}>
             내 근처
           </ChipButton>
-          <ChipButton toggleOnPress onPress={() => handleChangeFilter('PROMO')}>
+          <ChipButton isPressable onPress={() => handleChangeFilter('PROMO')}>
             입양홍보
           </ChipButton>
           <ChipButton

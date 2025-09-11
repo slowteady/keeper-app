@@ -1,3 +1,5 @@
+import { ChipOption } from '@/shared/components/_atoms';
+
 export const ADOPT_SUB_MENU = [
   { id: 'ALL', label: '전체공고' },
   { id: 'NEAR_DEADLINE', label: '마감임박 공고' },
@@ -13,4 +15,9 @@ export const COMMUNITY_LIST_FILTER = [
   { id: 'LIKE', label: '인기순' },
   { id: 'COMMENT', label: '댓글순' },
   { id: 'VIEW', label: '조회순' }
+];
+export const COMMUNITY_WRITE_CATEGORY_OPTIONS: ChipOption[] = [
+  { value: 'DOG', label: '강아지' },
+  { value: 'CAT', label: '고양이' },
+  { value: 'OTHER', label: '기타' }
 ];

@@ -1,12 +1,11 @@
-import { styled, Text, View } from 'tamagui';
+import { styled, View } from 'tamagui';
 
-// TODO
-// [ ] write page ui 구현
+import { CommunityWriteTemplate } from '@/domains/community';
 
 const Page = () => {
   return (
     <Container>
-      <Text>WritePage</Text>
+      <CommunityWriteTemplate />
     </Container>
   );
 };

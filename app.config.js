@@ -1,4 +1,5 @@
 import 'dotenv/config';
+
 import { version as pkgVersion } from './package.json';
 
 const iosConfig = require('./config/ios.cjs');

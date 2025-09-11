@@ -30,7 +30,8 @@ const WriteHeader = () => {
     }
   }, []);
   const handlePressWrite = async () => {
-    await requireLogin(() => router.push('/community/write'));
+    // await requireLogin(() => router.push('/community/write'));
+    router.push('/community/write');
   };
 
   const left = (

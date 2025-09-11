@@ -1,5 +1,10 @@
 import { styled, Text, View } from 'tamagui';
-import { ChipProps } from './Chip.types';
+
+export interface ChipProps {
+  size?: 'small' | 'medium';
+  theme?: 'default';
+  text: string;
+}
 
 export const Chip = ({ size = 'small', theme = 'default', text }: ChipProps) => {
   return (
