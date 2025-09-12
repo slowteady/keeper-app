@@ -3,6 +3,12 @@ import { Pressable, PressableProps, StyleSheet } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { SizableText, Spinner, styled, useTheme } from 'tamagui';
 
+export const BUTTON_HEIGHT = {
+  small: 40,
+  medium: 55,
+  large: 60
+};
+
 export interface ButtonProps extends PressableProps {
   size?: 'small' | 'medium' | 'large';
   color?: 'primary';
@@ -51,13 +57,13 @@ export const Button = ({
 const getStyles = (theme: any, size: 'small' | 'medium' | 'large', color: 'primary') => {
   const sizes = {
     small: {
-      height: 40
+      height: BUTTON_HEIGHT.small
     },
     medium: {
-      height: 55
+      height: BUTTON_HEIGHT.medium
     },
     large: {
-      height: 60
+      height: BUTTON_HEIGHT.large
     }
   };
 

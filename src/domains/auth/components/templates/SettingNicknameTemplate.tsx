@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { Spinner, styled, Text, XStack, YStack } from 'tamagui';
 
 import { SignupForm } from '@/app/(home)/(public)/signup';
 import { TextField } from '@/shared/components/_atoms';
-import { Button } from '@/shared/components/_atoms/Button';
-import { KeyboardView } from '@/shared/components/_molecules';
+import { Button, BUTTON_HEIGHT } from '@/shared/components/_atoms/Button';
 import { useLayout } from '@/shared/hooks';
 import { useDebounceValue } from '@/shared/hooks/useDebounce';
 
@@ -85,7 +85,7 @@ export const SettingNicknameTemplate = ({ onSubmit, isPending = false }: Setting
   );
 
   return (
-    <KeyboardView>
+    <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={bottom + BUTTON_HEIGHT.small} style={{ flex: 1 }}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <Container pb={bottom}>
           <SubContainer>
@@ -108,7 +108,7 @@ export const SettingNicknameTemplate = ({ onSubmit, isPending = false }: Setting
           </Button>
         </Container>
       </TouchableWithoutFeedback>
-    </KeyboardView>
+    </KeyboardAvoidingView>
   );
 };
 

@@ -20,6 +20,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { Dimensions, Linking } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { TamaguiProvider } from 'tamagui';
 
@@ -144,27 +145,29 @@ const RootLayout = () => {
       >
         <QueryClientProvider client={queryClient}>
           <GestureHandlerRootView style={{ flex: 1 }}>
-            <SafeAreaProvider>
-              <BottomSheetProvider>
-                <ModalProvider>
-                  <ToastProvider native={false} swipeDirection="up">
-                    <StatusBar style="dark" />
-                    <Toast />
-                    <Drawer
-                      drawerContent={(props: DrawerContentComponentProps) => <DrawerMenus {...props} />}
-                      screenOptions={{
-                        drawerPosition: 'right',
-                        drawerType: 'front',
-                        drawerStyle: { width: DRAWER_WIDTH },
-                        headerShown: false
-                      }}
-                    >
-                      <Drawer.Screen name="(home)" />
-                    </Drawer>
-                  </ToastProvider>
-                </ModalProvider>
-              </BottomSheetProvider>
-            </SafeAreaProvider>
+            <KeyboardProvider>
+              <SafeAreaProvider>
+                <BottomSheetProvider>
+                  <ModalProvider>
+                    <ToastProvider native={false} swipeDirection="up">
+                      <StatusBar style="dark" />
+                      <Toast />
+                      <Drawer
+                        drawerContent={(props: DrawerContentComponentProps) => <DrawerMenus {...props} />}
+                        screenOptions={{
+                          drawerPosition: 'right',
+                          drawerType: 'front',
+                          drawerStyle: { width: DRAWER_WIDTH },
+                          headerShown: false
+                        }}
+                      >
+                        <Drawer.Screen name="(home)" />
+                      </Drawer>
+                    </ToastProvider>
+                  </ModalProvider>
+                </BottomSheetProvider>
+              </SafeAreaProvider>
+            </KeyboardProvider>
           </GestureHandlerRootView>
         </QueryClientProvider>
       </Sentry.ErrorBoundary>
