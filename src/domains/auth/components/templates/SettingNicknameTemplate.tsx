@@ -100,6 +100,7 @@ export const SettingNicknameTemplate = ({ onSubmit, isPending = false }: Setting
               helperText={helperText}
               maxLength={8}
               onChangeText={handleChangeNickname}
+              onPressReset={() => setValue('nickname', '')}
             />
           </SubContainer>
 

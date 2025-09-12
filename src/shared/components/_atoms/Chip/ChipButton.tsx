@@ -71,7 +71,7 @@ const getChipStyles = (variant: 'primary' | 'secondary', size: ChipButtonSize, i
       paddingHorizontal: 14,
       fontSize: 14,
       lineHeight: 16,
-      fontWeight: '400'
+      fontWeight: '500'
     },
     medium: {
       paddingVertical: 10,
