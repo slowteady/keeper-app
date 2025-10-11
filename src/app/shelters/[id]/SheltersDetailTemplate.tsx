@@ -1,22 +1,20 @@
-import { transformAbandonments, TransformedAbandonments } from '@/business/abandonmentsBusiness';
-import { transformShelterData } from '@/business/sheltersBusiness';
-import Button from '@/components/atoms/button/Button';
-import ScrollFloatingButton from '@/components/atoms/button/ScrollFloatingButton';
-import Dropdown from '@/components/molecules/dropdown/Dropdown';
-import { CardSkeleton } from '@/components/molecules/placeholder/CardSkeleton';
-import { BottomSheetMenuData } from '@/components/organisms/bottomSheet/BottomSheet';
-import { AnimalCard } from '@/components/organisms/card/AnimalCard';
-import { ShelterMap } from '@/components/organisms/map/ShelterMap';
-import ShelterTelModal from '@/components/organisms/modal/ShelterTelModal';
-import { ABANDONMENTS_FILTERS } from '@/constants/config';
-import theme from '@/constants/theme';
-import { useLayout } from '@/hooks/useLayout';
-import { useMapInit } from '@/hooks/useMapInit';
-import useScrollFloatingButton from '@/hooks/useScrollFloatingButton';
-import { abandonmentsAtom, abandonmentsFilterValueAtom } from '@/states/abandonments';
-import { AbandonmentsFilter } from '@/types/abandonments';
-import { AbandonmentData } from '@/types/scheme/abandonments';
-import { ShelterValue } from '@/types/scheme/shelters';
+import { transformAbandonments, TransformedAbandonments } from '@/domains/animal/business/announcement.business';
+import { ANNOUNCEMENT_FILTERS } from '@/domains/animal/constants/announcement.constants';
+import { announcementAtom, announcementFilterValueAtom } from '@/domains/animal/stores/announcement.stores';
+import { AnnouncementData, AnnouncementFilter } from '@/domains/animal/types/announcement.types';
+import { transformShelterData } from '@/domains/shelter/business/shelter.business';
+import { ShelterValue } from '@/domains/shelter/types/shelter.types';
+import { Button } from '@/shared/components/atoms/Button';
+import { ScrollFloatingButton } from '@/shared/components/atoms/ScrollFloatingButton';
+import { CardSkeleton } from '@/shared/components/molecules/CardSkeleton';
+import { Dropdown } from '@/shared/components/molecules/Dropdown';
+import { BottomSheetMenuData } from '@/shared/components/organisms/BottomSheet';
+import { ShelterMap } from '@/shared/components/organisms/ShelterMap';
+import { ShelterTelModal } from '@/shared/components/organisms/ShelterTelModal';
+import { theme } from '@/shared/constants/theme.constants';
+import { useLayout } from '@/shared/hooks/useLayout';
+import { useMapInit } from '@/shared/hooks/useMapInit';
+import { useScrollFloatingButton } from '@/shared/hooks/useScrollFloatingButton';
 import { NaverMapView } from '@mj-studio/react-native-naver-map';
 import { Image } from 'expo-image';
 import * as Location from 'expo-location';
@@ -36,7 +34,7 @@ import {
 
 interface SheltersDetailTemplateProps {
   shelterData: ShelterValue;
-  abandonmentsData?: AbandonmentData;
+  abandonmentsData?: AnnouncementData;
   isLoading: ShelterDetailTemplateLoading;
   onFetch: () => void;
   refreshControl: React.ReactElement;
@@ -55,7 +53,7 @@ const SheltersDetailTemplate = ({
   onFetch,
   refreshControl
 }: SheltersDetailTemplateProps) => {
-  const filterValue = useAtomValue(abandonmentsFilterValueAtom);
+  const filterValue = useAtomValue(announcementFilterValueAtom);
   const { bottom } = useLayout();
   const { isButtonVisible, handlePress, handleScroll, flatListRef } = useScrollFloatingButton();
 
@@ -260,12 +258,12 @@ interface AbandonmentsFilterProps {
   number?: number;
 }
 const AbandonmentsFilterSection = ({ number = 0 }: AbandonmentsFilterProps) => {
-  const filterValue = useAtomValue(abandonmentsFilterValueAtom);
-  const setFilterValue = useSetAtom(abandonmentsAtom);
+  const filterValue = useAtomValue(announcementFilterValueAtom);
+  const setFilterValue = useSetAtom(announcementAtom);
   const snapPoints = useMemo(() => [200], []);
 
   const handleChangeFilter = useCallback(
-    ({ value }: BottomSheetMenuData<AbandonmentsFilter>) => {
+    ({ value }: BottomSheetMenuData<AnnouncementFilter>) => {
       setFilterValue((prev) => ({ ...prev, filter: value }));
     },
     [setFilterValue]
@@ -278,7 +276,7 @@ const AbandonmentsFilterSection = ({ number = 0 }: AbandonmentsFilterProps) => {
         <Text style={styles.filterText}>{number}마리</Text>
       </View>
       <Dropdown
-        data={ABANDONMENTS_FILTERS}
+        data={ANNOUNCEMENT_FILTERS}
         value={filterValue.value}
         onChange={handleChangeFilter}
         snapPoints={snapPoints}

@@ -1,9 +1,9 @@
-import AbandonmentsTemplate from '@/app/abandonments/AbandonmentsTemplate';
-import { ABANDONMENTS_QUERY_KEY } from '@/constants/queryKeys';
-import theme from '@/constants/theme';
-import { useGetInfiniteAbandonmentsQuery } from '@/hooks/queries/useAbandonments';
-import useRefreshing from '@/hooks/useRefreshing';
-import { abandonmentsAtom } from '@/states/abandonments';
+import { AbandonmentsTemplate } from '@/domains/animal/components/templates/AbandonmentsTemplate';
+import { useGetInfiniteAbandonmentsQuery } from '@/domains/animal/queries/announcement.queries';
+import { announcementAtom } from '@/domains/animal/stores/announcement.stores';
+import { ABANDONMENTS_QUERY_KEY } from '@/shared/constants/queryKey.constants';
+import { theme } from '@/shared/constants/theme.constants';
+import { useRefreshing } from '@/shared/hooks/useRefreshing';
 import { useQueryClient } from '@tanstack/react-query';
 import * as Haptics from 'expo-haptics';
 import { createStore, Provider, useAtomValue } from 'jotai';
@@ -26,7 +26,7 @@ const Layout = () => {
 export default Layout;
 
 const Page = () => {
-  const { type, filter, search } = useAtomValue(abandonmentsAtom);
+  const { type, filter, search } = useAtomValue(announcementAtom);
   const param = useMemo(() => ({ animalType: type, filter, search, size: 16 }), [filter, search, type]);
 
   const queryClient = useQueryClient();
