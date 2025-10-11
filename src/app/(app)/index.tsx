@@ -114,6 +114,7 @@ const styles = StyleSheet.create({
     marginBottom: 16
   },
   description: {
+    letterSpacing: -0.25,
     fontSize: 14,
     lineHeight: 22,
     color: '#7E7E7E',
