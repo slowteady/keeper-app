@@ -1,0 +1,16 @@
+export { default as Chat } from './Chat';
+export { default as CircleX } from './CircleX';
+export { default as Close } from './Close';
+export { default as Comment } from './Comment';
+export { default as Eye } from './Eye';
+export { default as Heart } from './Heart';
+export { default as Home } from './Home';
+export { default as LeftArrow } from './LeftArrow';
+export { default as LikeHeart } from './LikeHeart';
+export { default as Location } from './Location';
+export { default as Login } from './Login';
+export { default as Logo } from './Logo';
+export { default as Menu } from './Menu';
+export { default as MoreImage } from './MoreImage';
+export { default as Pencil } from './Pencil';
+export { default as RightArrow } from './RightArrow';
