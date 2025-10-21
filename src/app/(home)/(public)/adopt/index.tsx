@@ -9,8 +9,7 @@ import { styled, View } from 'tamagui';
 
 import { adoptFilterAtomFamily, useGetAdoptNoticesQuery } from '@/domains/animal';
 import { AbandonmentsTemplate } from '@/domains/animal/components/templates/AbandonmentsTemplate';
-import { ADOPT_NOTICES_QUERY_KEY } from '@/shared/constants';
-import { useRefreshing } from '@/shared/hooks';
+import { ADOPT_NOTICES_QUERY_KEY, useRefreshing } from '@/shared';
 
 /**
  * 입양 공고 목록 페이지
@@ -73,6 +72,6 @@ const Page = () => {
 export default Page;
 
 const Container = styled(View, {
-  bg: '$backgroundDefault',
+  bg: '$pageBackground',
   flex: 1
 });

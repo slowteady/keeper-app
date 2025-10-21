@@ -2,11 +2,11 @@ import { BottomSheetModal, BottomSheetModalProps } from '@gorhom/bottom-sheet';
 import { useRef } from 'react';
 import { StyleSheet, Text } from 'react-native';
 
-import { theme } from '@/shared/model/constants';
+import { theme } from '@/shared';
 import { DownArrow } from '@/shared/ui/icons/mini';
 
 import { Button, ButtonProps } from '../button';
-import { BottomSheet, BottomSheetMenu, BottomSheetMenuData } from '../display';
+import { BottomSheet, BottomSheetMenu, BottomSheetMenuData } from '../data-display';
 
 export interface DropdownProps<T> extends ButtonProps {
   data: BottomSheetMenuData<T>[];

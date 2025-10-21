@@ -3,7 +3,7 @@ import { useSetAtom } from 'jotai';
 import { useResetAtom } from 'jotai/utils';
 import { useEffect, useState } from 'react';
 
-import { getAccessToken, removeToken, throwToErrorBoundary } from '@/shared/utils';
+import { getAccessToken, removeToken, throwToErrorBoundary } from '@/shared';
 
 import { useGetUserQuery } from '../services/auth.services';
 import { userAtom } from '../stores';

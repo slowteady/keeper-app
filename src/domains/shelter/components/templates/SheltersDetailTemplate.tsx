@@ -1,7 +1,7 @@
 import { NaverMapView } from '@mj-studio/react-native-naver-map';
 import { Image } from 'expo-image';
 import * as Location from 'expo-location';
-import { router } from 'expo-router';
+import { router, usePathname } from 'expo-router';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
@@ -16,24 +16,25 @@ import {
   View
 } from 'react-native';
 
+import { adoptFilterAtomFamily } from '@/domains/animal';
 import { transformAbandonments, TransformedAbandonments } from '@/domains/animal/business/announcement.business';
 import { ADOPT_FILTERS } from '@/domains/animal/constants';
-import { announcementAtom, announcementFilterValueAtom } from '@/domains/animal/stores/announcement.stores';
-import { AdoptResponse } from '@/domains/animal/types';
-import { AnnouncementFilter } from '@/domains/animal/types/announcement.types';
+import { AdoptFilter, AdoptResponse } from '@/domains/animal/types';
 import { transformShelterData } from '@/domains/shelter/business/shelter.business';
 import { ShelterDto } from '@/domains/shelter/types/shelter.types';
-import { Button } from '@/shared/components/atoms/Button';
-import { ScrollFloatingButton } from '@/shared/components/atoms/ScrollFloatingButton';
-import { CardSkeleton } from '@/shared/components/molecules/CardSkeleton';
-import { Dropdown } from '@/shared/components/molecules/Dropdown';
-import { AnimalCard } from '@/shared/components/organisms/AnimalCard';
-import { BottomSheetMenuData } from '@/shared/components/organisms/BottomSheet';
-import { ShelterMap } from '@/shared/components/organisms/ShelterMap';
-import { theme } from '@/shared/constants/theme.constants';
-import { useLayout } from '@/shared/hooks/useLayout';
-import { useMap } from '@/shared/hooks/useMap';
-import { useScrollFloatingButton } from '@/shared/hooks/useScrollFloatingButton';
+import {
+  AnimalCard,
+  BottomSheetMenuData,
+  Button,
+  CardSkeleton,
+  Dropdown,
+  ScrollFloatingButton,
+  ShelterMap,
+  theme,
+  useLayout,
+  useMap,
+  useScrollFloatingButton
+} from '@/shared';
 
 import { ShelterTelModal } from '../organisms';
 
@@ -58,7 +59,9 @@ const SheltersDetailTemplate = ({
   onFetch,
   refreshControl
 }: SheltersDetailTemplateProps) => {
-  const filterValue = useAtomValue(announcementFilterValueAtom);
+  const pathname = usePathname();
+  const adoptFilter = useAtomValue(adoptFilterAtomFamily(pathname));
+
   const { bottom } = useLayout();
   const { isButtonVisible, handlePress, handleScroll, flatListRef } = useScrollFloatingButton();
 
@@ -95,7 +98,7 @@ const SheltersDetailTemplate = ({
     );
   }, [adoptData, isLoading, onFetch]);
 
-  const transformedAbandonments = transformAbandonments(adoptData?.value || [], filterValue.value);
+  const transformedAbandonments = transformAbandonments(adoptData?.value || [], adoptFilter.filter);
 
   return (
     <>
@@ -263,15 +266,16 @@ interface AbandonmentsFilterProps {
   number?: number;
 }
 const AbandonmentsFilterSection = ({ number = 0 }: AbandonmentsFilterProps) => {
-  const filterValue = useAtomValue(announcementFilterValueAtom);
-  const setFilterValue = useSetAtom(announcementAtom);
+  const pathname = usePathname();
+  const adoptFilter = useAtomValue(adoptFilterAtomFamily(pathname));
+  const setAdoptFilter = useSetAtom(adoptFilterAtomFamily(pathname));
   const snapPoints = useMemo(() => [200], []);
 
   const handleChangeFilter = useCallback(
-    ({ value }: BottomSheetMenuData<AnnouncementFilter>) => {
-      setFilterValue((prev) => ({ ...prev, filter: value }));
+    ({ id }: BottomSheetMenuData<AdoptFilter>) => {
+      setAdoptFilter((prev) => ({ ...prev, filter: id }));
     },
-    [setFilterValue]
+    [setAdoptFilter]
   );
 
   return (
@@ -280,7 +284,7 @@ const AbandonmentsFilterSection = ({ number = 0 }: AbandonmentsFilterProps) => {
         <Text style={styles.filterTitle}>보호중인 아이들</Text>
         <Text style={styles.filterText}>{number}마리</Text>
       </View>
-      <Dropdown data={ADOPT_FILTERS} value={filterValue.value} onChange={handleChangeFilter} snapPoints={snapPoints} />
+      <Dropdown data={ADOPT_FILTERS} value={adoptFilter.filter} onChange={handleChangeFilter} snapPoints={snapPoints} />
     </View>
   );
 };

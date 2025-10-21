@@ -1,4 +1,4 @@
-import { formatTimeAMPM } from '@/shared/utils/format.utils';
+import { formatTimeAMPM } from '@/shared';
 
 import { ShelterDto } from '../types/shelter.types';
 

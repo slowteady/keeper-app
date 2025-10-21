@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, ViewStyle } from 'react-native';
 
-import { theme } from '@/shared/model/constants';
+import { theme } from '@/shared';
 
 import { Paw } from '../icons/solid';
 

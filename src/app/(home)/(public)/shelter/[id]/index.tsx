@@ -8,8 +8,7 @@ import { styled, View } from 'tamagui';
 
 import { adoptFilterAtomFamily } from '@/domains/animal';
 import { SheltersDetailTemplate, useGetShelterAdoptNoticesQuery, useGetShelterQuery } from '@/domains/shelter';
-import { SHELTER_ADOPT_NOTICES_QUERY_KEY, SHELTER_QUERY_KEY } from '@/shared/constants';
-import { useRefreshing } from '@/shared/hooks';
+import { SHELTER_ADOPT_NOTICES_QUERY_KEY, SHELTER_QUERY_KEY, useRefreshing } from '@/shared';
 
 const Page = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -67,6 +66,6 @@ const Page = () => {
 export default Page;
 
 const Container = styled(View, {
-  bg: '$backgroundDefault',
+  bg: '$pageBackground',
   flex: 1
 });

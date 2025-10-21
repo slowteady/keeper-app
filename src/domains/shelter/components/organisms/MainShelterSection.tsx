@@ -6,17 +6,19 @@ import { Dimensions, FlatList, ListRenderItemInfo, Pressable, StyleSheet, Text, 
 import { Pressable as GesturePressable } from 'react-native-gesture-handler';
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
-import { ViewAllButton } from '@/shared/components/_atoms';
-import { DownArrow } from '@/shared/components/atoms/icons/mini';
-import { RightArrow } from '@/shared/components/atoms/icons/solid';
-import { Skeleton } from '@/shared/components/molecules/Skeleton';
-import { MainShelterCard } from '@/shared/components/organisms/MainShelterCard';
-import { ShelterMap } from '@/shared/components/organisms/ShelterMap';
-import { SHELTER_COUNT_QUERY_KEY } from '@/shared/constants/queryKey.constants';
-import { theme } from '@/shared/constants/theme.constants';
-import { useMap } from '@/shared/hooks/useMap';
-import { CameraParams } from '@/shared/types/map.types';
-import { calcMapRadiusKm } from '@/shared/utils/map.utils';
+import {
+  calcMapRadiusKm,
+  CameraParams,
+  MainShelterCard,
+  SHELTER_COUNT_QUERY_KEY,
+  ShelterMap,
+  Skeleton,
+  theme,
+  useMap,
+  ViewAllButton
+} from '@/shared';
+import { DownArrow } from '@/shared/ui/icons/mini';
+import { RightArrow } from '@/shared/ui/icons/solid';
 
 import { useGetShelterCountsQuery, useGetSheltersQuery } from '../../services/shelter.services';
 import { ShelterDto } from '../../types/shelter.types';

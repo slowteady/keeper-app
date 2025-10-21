@@ -6,8 +6,7 @@ import { GestureResponderEvent } from 'react-native';
 import { styled, useTheme, View, XStack, YStack } from 'tamagui';
 
 import { ADOPT_ANIMAL_TYPES, AnimalType } from '@/domains/animal';
-import { AdoptCard, AdoptCardSchema, COMMUNITY_LIST_FILTER } from '@/entities/community';
-import { adoptListValue } from '@/entities/community/model/mock';
+import { AdoptCard, AdoptCardSchema, adoptListValue, COMMUNITY_LIST_FILTER } from '@/entities';
 import { communityAdoptFilterAtom } from '@/features';
 import { BottomSheetMenu, ButtonGroup, ChipButton, useBottomSheet, useLoginRequired } from '@/shared';
 import { DownArrow } from '@/shared/ui/icons/mini';

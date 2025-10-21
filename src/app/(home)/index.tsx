@@ -6,12 +6,18 @@ import { useMemo } from 'react';
 import { Pressable } from 'react-native';
 import { useTheme } from 'tamagui';
 
-import { Header } from '@/shared/components/_molecules';
-import { HomeAdoptSection, HomeBannerSection, HomeFooter, HomeShelterSection } from '@/shared/components/_organisms';
-import { HomeTemplate } from '@/shared/components/_templates';
-import { Logo, Menu } from '@/shared/components/atoms/icons/outline';
-import { ADOPT_NOTICES_QUERY_KEY, SHELTER_QUERY_KEY } from '@/shared/constants';
-import { useLayout } from '@/shared/hooks';
+import {
+  ADOPT_NOTICES_QUERY_KEY,
+  Header,
+  HomeAdoptSection,
+  HomeBannerSection,
+  HomeFooter,
+  HomeShelterSection,
+  HomeTemplate,
+  SHELTER_QUERY_KEY,
+  useLayout
+} from '@/shared';
+import { Logo, Menu } from '@/shared/ui/icons/outline';
 
 /**
  * 메인 페이지

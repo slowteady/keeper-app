@@ -1,6 +1,6 @@
 import { Stack } from 'expo-router';
 
-import { PublicHeader } from '@/shared/components/_molecules';
+import { PublicHeader } from '@/shared';
 
 const CommunityWriteLayout = () => {
   return <Stack screenOptions={{ header: () => <PublicHeader /> }} />;

@@ -14,15 +14,13 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useSetAtom } from 'jotai';
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { styled } from 'tamagui';
 
 import { useLoginMutation } from '@/domains/auth/services';
 import { userAtom } from '@/domains/auth/stores';
 import { SocialLoginType } from '@/domains/auth/types/auth.types';
-import { Button } from '@/shared/components/atoms/Button';
-import { Google, Kakao, Naver } from '@/shared/components/atoms/icons/etc';
-import { theme } from '@/shared/constants/theme.constants';
-import { logger, setUserContext } from '@/shared/utils';
-import { saveAccessToken, saveRefreshToken } from '@/shared/utils/token.utils';
+import { Button, logger, saveAccessToken, saveRefreshToken, setUserContext, theme } from '@/shared';
+import { Google, Kakao, Naver } from '@/shared/ui/icons/etc';
 
 const Page = () => {
   const setUser = useSetAtom(userAtom);
@@ -93,8 +91,8 @@ const Page = () => {
   }
 
   return (
-    <View style={styles.container}>
-      <View style={[styles.cFlex, { marginBottom: 48 }]}>
+    <Container>
+      <View style={[styles.cFlex, { marginBottom: 40 }]}>
         <Text style={styles.title}>Social Login</Text>
         <Text style={styles.subTitle}>소셜로그인으로 Keeper와 함께하세요.</Text>
       </View>
@@ -105,7 +103,7 @@ const Page = () => {
         {googleAvailable && <GoogleButton onResponse={handleLogin} />}
         {appleAvailable && <AppleButton onResponse={handleLogin} />}
       </View>
-    </View>
+    </Container>
   );
 };
 
@@ -193,7 +191,10 @@ const GoogleButton = ({ onResponse }: ButtonProps) => {
   };
 
   return (
-    <Button style={[styles.button, { backgroundColor: '#FFFFFF' }]} onPress={handlePress}>
+    <Button
+      style={[styles.button, { backgroundColor: '#FFFFFF', borderColor: '#D9D9D9', borderWidth: 1 }]}
+      onPress={handlePress}
+    >
       <View style={styles.iconWrap}>
         <Google width={22} height={22} />
       </View>
@@ -234,23 +235,23 @@ const AppleButton = ({ onResponse }: ButtonProps) => {
   );
 };
 
+const Container = styled(View, {
+  flex: 1,
+  bg: '$pageBackground',
+  pt: 48,
+  px: 20
+});
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.background.default,
-    paddingTop: 56,
-    paddingHorizontal: 20
-  },
   cFlex: {
     display: 'flex',
     flexDirection: 'column',
-    gap: 12,
-    alignItems: 'center'
+    gap: 12
   },
   title: {
-    fontSize: 24,
+    fontSize: 26,
     lineHeight: 28,
-    fontWeight: '500',
+    fontWeight: '600',
     color: theme.colors.black[900]
   },
   subTitle: {

@@ -8,7 +8,7 @@ import Animated, {
   withTiming
 } from 'react-native-reanimated';
 
-import { theme } from '@/shared/model/constants';
+import { theme } from '@/shared';
 
 export interface SkeletonProps {
   style?: StyleProp<ViewStyle>;

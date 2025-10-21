@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 
-import { ChipVariant } from '@/shared/components/organisms/AnimalCard';
+import { ChipVariant } from '@/shared';
 
 import { AnnouncementChipId, AnnouncementFilter, AnnouncementValue } from '../types/announcement.types';
 
@@ -150,19 +150,12 @@ interface DescriptionParams {
   orgName: string;
   happenPlace: string;
 }
-export const transformDescription = ({
-  noticeStartDt,
-  noticeEndDt,
-  specificType,
-  orgName,
-  happenPlace
-}: DescriptionParams) => {
+export const transformDescription = ({ noticeStartDt, noticeEndDt, orgName, happenPlace }: DescriptionParams) => {
   const startDt = dayjs(noticeStartDt).format('YY.MM.DD');
   const endDt = dayjs(noticeEndDt).format('YY.MM.DD');
 
   return [
     { label: '공고기간', value: `${startDt}-${endDt}` },
-    { label: '품종', value: specificType },
     { label: '지역', value: orgName },
     { label: '구조장소', value: happenPlace }
   ];

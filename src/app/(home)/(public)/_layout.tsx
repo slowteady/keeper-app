@@ -1,7 +1,6 @@
 import { Stack } from 'expo-router';
 
-import { SafeScreen } from '@/shared/components/_atoms';
-import { PublicHeader } from '@/shared/components/_molecules';
+import { PublicHeader, SafeScreen } from '@/shared';
 
 const PublicLayout = () => {
   return (

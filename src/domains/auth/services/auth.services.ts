@@ -1,10 +1,14 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { AxiosError, AxiosResponse } from 'axios';
 
-import { USER_QUERY_KEY } from '@/shared/constants';
-import { ApiResponse } from '@/shared/types';
-import { UseMutationCustomOptions, UseQueryCustomOptions } from '@/shared/types/util.types';
-import { _publicApi, authApi } from '@/shared/utils/instance.util';
+import {
+  _publicApi,
+  ApiResponse,
+  authApi,
+  UseMutationCustomOptions,
+  UseQueryCustomOptions,
+  USER_QUERY_KEY
+} from '@/shared';
 
 import { UserDto } from '../types';
 import { CheckNicknameBody, LoginDataDto, LoginParams, RefreshDataSchema, SignUpBody } from '../types/auth.types';

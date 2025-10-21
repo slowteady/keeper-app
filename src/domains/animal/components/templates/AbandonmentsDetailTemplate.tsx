@@ -1,16 +1,16 @@
 import { useCallback, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { ShelterTelModal } from '@/domains/shelter';
 import { TransformedShelterValue } from '@/domains/shelter/business/shelter.business';
-import { Button } from '@/shared/components/atoms/Button';
-import { theme } from '@/shared/constants/theme.constants';
-import { useLayout } from '@/shared/hooks/useLayout';
+import { ShelterTelModal } from '@/domains/shelter/components/organisms/modal';
+import { Button, theme, useLayout } from '@/shared';
 
 import { TransformedAbandonmentDetail } from '../../business/announcement.business';
-import { AbandonmentDetailCardSection } from '../organisms/AbandonmentDetailCardSection';
-import { AbandonmentDetailDescriptionSection } from '../organisms/AbandonmentDetailDescriptionSection';
-import { AbandonmentDetailInfoSection } from '../organisms/AbandonmentDetailInfoSection';
+import {
+  AbandonmentDetailCardSection,
+  AbandonmentDetailDescriptionSection,
+  AbandonmentDetailInfoSection
+} from '../organisms';
 
 export interface AbandonmentsDetailTemplateProps {
   abandonment: TransformedAbandonmentDetail;
@@ -56,17 +56,14 @@ export const AbandonmentsDetailTemplate = ({ abandonment, shelter }: Abandonment
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: theme.colors.background.default,
-    position: 'relative'
+    flex: 1
   },
   bottomWrap: {
     paddingTop: 10,
     paddingHorizontal: 20,
     width: '100%',
     position: 'fixed',
-    bottom: 0,
-    backgroundColor: theme.colors.background.default
+    bottom: 0
   },
   fixedButton: {
     display: 'flex',

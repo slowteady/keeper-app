@@ -14,16 +14,18 @@ import {
   View
 } from 'react-native';
 
-import { ButtonGroup } from '@/shared/components/_molecules/ButtonGroup';
-import { Button } from '@/shared/components/atoms/Button';
-import { ScrollFloatingButton } from '@/shared/components/atoms/ScrollFloatingButton';
-import { CardSkeleton } from '@/shared/components/molecules/CardSkeleton';
-import { Dropdown } from '@/shared/components/molecules/Dropdown';
-import { Searchbar } from '@/shared/components/molecules/Searchbar';
-import { AnimalCard } from '@/shared/components/organisms/AnimalCard';
-import { BottomSheetMenuData } from '@/shared/components/organisms/BottomSheet';
-import { theme } from '@/shared/constants/theme.constants';
-import { useScrollFloatingButton } from '@/shared/hooks/useScrollFloatingButton';
+import {
+  AnimalCard,
+  BottomSheetMenuData,
+  Button,
+  ButtonGroup,
+  CardSkeleton,
+  Dropdown,
+  ScrollFloatingButton,
+  Searchbar,
+  useScrollFloatingButton
+} from '@/shared';
+import { theme } from '@/shared/model/constants';
 
 import { transformAbandonments, TransformedAbandonments } from '../../business/announcement.business';
 import { ADOPT_ANIMAL_TYPES, ADOPT_FILTERS } from '../../constants';
@@ -132,8 +134,8 @@ const FilterSection = () => {
   };
   const handlePressFilter = useCallback(
     (data: BottomSheetMenuData<AnnouncementFilter>) => {
-      const { value } = data;
-      setAdoptFilter((prev) => ({ ...prev, filter: value }));
+      const { id } = data;
+      setAdoptFilter((prev) => ({ ...prev, filter: id }));
     },
     [setAdoptFilter]
   );

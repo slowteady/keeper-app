@@ -6,8 +6,8 @@ import { AnimalType } from './animal.types';
  */
 export type AdoptFilter = 'NEW' | 'NEAR_DEADLINE';
 export interface AdoptFilterValue {
-  value: AdoptFilter;
-  name: '마감임박공고' | '신규공고';
+  id: AdoptFilter;
+  label: '마감임박공고' | '신규공고';
 }
 export type AdoptChipId =
   | 'NEAR_DEADLINE'

@@ -1,6 +1,6 @@
-import { KakaoGeocodeResponse } from '@/shared/types';
-import { _publicApi, handleLogging } from '@/shared/utils';
 import { AxiosError, AxiosResponse } from 'axios';
+
+import { _publicApi, handleLogging, KakaoGeocodeResponse } from '@/shared';
 
 export interface KakaoGeocodeOptionalParams {
   /** 페이지 번호 (1~45, 기본 1) */

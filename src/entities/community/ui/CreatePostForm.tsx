@@ -136,12 +136,12 @@ export const CreatePostForm = ({ form }: CreatePostFormProps) => {
 
         <Divider my={16} />
 
-        <YStack px={20} py={32}>
+        {/* <YStack px={20} py={32}>
           <XStack items="center" justify="space-between" mb={16}>
             <Text fontWeight="$6" fontSize={17}>
               커뮤니티 가이드라인을 준수합니다.
             </Text>
-            {/* <Checkbox size="$4" checked={true} /> */}
+            <Checkbox size="$4" checked={true} />
           </XStack>
 
           <Text fontSize={14} lineHeight={20} fontWeight="$4" color="$black600" mb={16} letterSpacing={-0.25}>
@@ -150,8 +150,8 @@ export const CreatePostForm = ({ form }: CreatePostFormProps) => {
             }
           </Text>
 
-          {/* <Chip text="가이드라인 보기" size="medium" /> */}
-        </YStack>
+          <Chip text="가이드라인 보기" size="medium" />
+        </YStack> */}
       </Form>
     </>
   );

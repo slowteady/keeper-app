@@ -8,10 +8,8 @@ import { Pressable } from 'react-native';
 import { styled, Text, useTheme, XStack, YStack } from 'tamagui';
 
 import { useDeleteUserMutation, useLogoutMutation, userAtom } from '@/domains/auth';
-import { Button } from '@/shared/components/_atoms';
-import { Chat, Heart, Location, Login } from '@/shared/components/_atoms/icons/outline';
-import { useLayout } from '@/shared/hooks';
-import { clearUserContext, removeToken } from '@/shared/utils';
+import { Button, clearUserContext, removeToken, useLayout } from '@/shared';
+import { Chat, Heart, Location, Login } from '@/shared/ui/icons/outline';
 
 // TODO
 // [ ] Drawer -> 바텀 네비게이션으로 변경

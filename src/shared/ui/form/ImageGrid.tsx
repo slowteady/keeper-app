@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Image, Pressable, StyleSheet } from 'react-native';
 import { Spinner, styled, XStack, XStackProps, YStack } from 'tamagui';
 
-import { ImageViewer } from '../display/ImageViewer';
+import { ImageViewer } from '../data-display/ImageViewer';
 import { Close } from '../icons/outline';
 
 export interface ImageSelectorProps {

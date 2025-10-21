@@ -1,8 +1,8 @@
 import { AdoptFilterValue, AnimalType } from '../types';
 
 export const ADOPT_FILTERS: AdoptFilterValue[] = [
-  { value: 'NEAR_DEADLINE', name: '마감임박공고' },
-  { value: 'NEW', name: '신규공고' }
+  { id: 'NEAR_DEADLINE', label: '마감임박공고' },
+  { id: 'NEW', label: '신규공고' }
 ] as const;
 export const ADOPT_ANIMAL_TYPES: { id: AnimalType; label: string }[] = [
   { id: 'ALL', label: '전체' },

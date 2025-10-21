@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
-import { theme } from '@/shared/model/constants';
+import { theme } from '@/shared';
 
 import { Button } from '../button';
 import { Close } from '../icons/outline';

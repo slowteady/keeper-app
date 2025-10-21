@@ -2,15 +2,13 @@ import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
 import { AxiosError, AxiosResponse } from 'axios';
 
 import { AdoptResponse } from '@/domains/animal';
-import { SHELTER_COUNT_QUERY_KEY, SHELTER_QUERY_KEY } from '@/shared/constants';
-import { SHELTER_ADOPT_NOTICES_QUERY_KEY } from '@/shared/constants/queryKey.constants';
+import { _publicApi, SHELTER_ADOPT_NOTICES_QUERY_KEY, SHELTER_COUNT_QUERY_KEY, SHELTER_QUERY_KEY } from '@/shared';
 import {
   ApiResponse,
   UseInfiniteQueryCustomOptions,
   UseMutationCustomOptions,
   UseQueryCustomOptions
 } from '@/shared/types';
-import { _publicApi } from '@/shared/utils/instance.util';
 
 import {
   ShelterAdoptNoticesParams,

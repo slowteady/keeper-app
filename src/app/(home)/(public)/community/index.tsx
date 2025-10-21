@@ -2,12 +2,9 @@ import { useState } from 'react';
 import { SceneMap } from 'react-native-tab-view';
 import { styled, View } from 'tamagui';
 
-import { CommunityAdoptPage, CommunityLifePage, CommunityQnAPage } from '@/domains/community';
-import { Tab } from '@/shared/components/_molecules/Tab';
+import { Tab } from '@/shared';
+import { AdoptTab, LifeTab, QnATab } from '@/widgets';
 
-/**
- * 커뮤니티 목록 페이지
- */
 const ROUTES = [
   { key: 'adopt', title: '개인입양' },
   { key: 'life', title: '입양생활' },
@@ -15,9 +12,9 @@ const ROUTES = [
 ];
 
 const renderScene = SceneMap({
-  adopt: CommunityAdoptPage,
-  life: CommunityLifePage,
-  qna: CommunityQnAPage
+  adopt: AdoptTab,
+  life: LifeTab,
+  qna: QnATab
 });
 
 const Page = () => {
@@ -33,6 +30,6 @@ const Page = () => {
 export default Page;
 
 const Container = styled(View, {
-  bg: '$white900',
+  bg: '$pageBackground',
   flex: 1
 });

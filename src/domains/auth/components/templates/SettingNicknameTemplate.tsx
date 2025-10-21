@@ -5,22 +5,19 @@ import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { Spinner, styled, Text, XStack, YStack } from 'tamagui';
 
 import { SignupForm } from '@/app/(home)/(public)/signup';
-import { TextField } from '@/shared/components/_atoms';
-import { Button, BUTTON_HEIGHT } from '@/shared/components/_atoms/Button';
-import { useLayout } from '@/shared/hooks';
-import { useDebounceValue } from '@/shared/hooks/useDebounce';
+import { Button, BUTTON_HEIGHT, TextField, useDebounceValue, useLayout } from '@/shared';
 
 import { useCheckNicknameMutation } from '../../services';
 
 export interface SettingNicknameTemplateProps {
   onSubmit: (values: SignupForm) => void;
-  isPending?: boolean;
 }
 type NicknameStatus = {
   status: 'default' | 'success' | 'error';
   message: string;
 };
-export const SettingNicknameTemplate = ({ onSubmit, isPending = false }: SettingNicknameTemplateProps) => {
+export const SettingNicknameTemplate = ({ onSubmit }: SettingNicknameTemplateProps) => {
+  const [isChecking, setIsChecking] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const [nicknameState, setNicknameState] = useState<NicknameStatus>({
     status: 'default',
@@ -30,13 +27,16 @@ export const SettingNicknameTemplate = ({ onSubmit, isPending = false }: Setting
   const { setValue, handleSubmit } = useFormContext<SignupForm>();
   const nickname = useWatch({ name: 'nickname' });
   const { bottom } = useLayout();
+
   const debouncedNickname = useDebounceValue(nickname, 1000);
 
-  const { mutate: nicknameCheckMutate, isPending: isNicknameCheckPending } = useCheckNicknameMutation();
+  const { mutate: nicknameCheckMutate } = useCheckNicknameMutation();
 
   const handleChangeNickname = (text: string) => {
     const filtered = text.replace(/[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z0-9]/g, '');
     setValue('nickname', filtered);
+
+    setIsChecking(true);
 
     if (nicknameState.status !== 'default' || debouncedNickname === '') {
       setNicknameState({
@@ -49,7 +49,10 @@ export const SettingNicknameTemplate = ({ onSubmit, isPending = false }: Setting
   };
 
   useEffect(() => {
-    if (debouncedNickname === '') return;
+    if (debouncedNickname === '') {
+      setIsChecking(false);
+      return;
+    }
 
     nicknameCheckMutate(
       { nickname: debouncedNickname },
@@ -61,22 +64,25 @@ export const SettingNicknameTemplate = ({ onSubmit, isPending = false }: Setting
             setIsComplete(false);
             setNicknameState({
               status: 'error',
-              message: '*사용할 수 없는 닉네임입니다.'
+              message: '*사용할 수 없는 닉네임이에요.'
             });
           } else {
             setNicknameState({
               status: 'success',
-              message: '*사용 가능한 닉네임입니다.'
+              message: '*사용가능한 닉네임이예요.'
             });
 
             setIsComplete(true);
           }
+        },
+        onSettled: () => {
+          setIsChecking(false);
         }
       }
     );
   }, [debouncedNickname, nicknameCheckMutate]);
 
-  const helperText = isNicknameCheckPending ? (
+  const helperText = isChecking ? (
     <XStack mt="$3">
       <Spinner size="small" color="$primaryMain" />
     </XStack>
@@ -104,7 +110,7 @@ export const SettingNicknameTemplate = ({ onSubmit, isPending = false }: Setting
             />
           </SubContainer>
 
-          <Button disabled={!isComplete || isPending} onPress={handleSubmit(onSubmit)} isLoading={isPending}>
+          <Button disabled={!isComplete || isChecking} onPress={handleSubmit(onSubmit)} isLoading={isChecking}>
             등록하기
           </Button>
         </Container>
@@ -115,22 +121,23 @@ export const SettingNicknameTemplate = ({ onSubmit, isPending = false }: Setting
 
 const Container = styled(YStack, {
   flex: 1,
-  px: '$5'
+  px: '$5',
+  bg: '$pageBackground'
 });
 const SubContainer = styled(YStack, {
   flex: 1,
-  pt: '$8'
+  pt: 48
 });
 const Title = styled(Text, {
   fontSize: 26,
   lineHeight: 36,
   fontWeight: '$6',
-  mb: '$8'
+  mb: 32
 });
 const CustomTextField = styled(TextField, {
-  size: '$4',
   placeholderTextColor: '$black500',
   fontWeight: '$4',
   fontSize: 15,
-  rounded: '$3'
+  rounded: '$3',
+  variant: 'fill'
 });

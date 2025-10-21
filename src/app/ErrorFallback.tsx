@@ -1,8 +1,7 @@
 import { Image } from 'expo-image';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { Button } from '@/shared/components/atoms/Button';
-import { theme } from '@/shared/constants/theme.constants';
+import { Button, theme } from '@/shared';
 
 interface ErrorFallbackProps {
   error: unknown;

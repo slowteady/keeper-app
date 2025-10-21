@@ -25,29 +25,12 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { TamaguiProvider } from 'tamagui';
 
 import { DrawerMenus } from '@/domains/category';
-import { Toast } from '@/shared/components/_molecules';
-import { BottomSheetProvider } from '@/shared/components/_organisms/BottomSheet';
-import { ModalProvider } from '@/shared/components/_organisms/Modal';
-import { throwToErrorBoundary } from '@/shared/utils';
-import { authApi } from '@/shared/utils/instance.util';
-import { setupInterceptor } from '@/shared/utils/interceptors.utils';
+import { authApi, BottomSheetProvider, ModalProvider, setupInterceptor, throwToErrorBoundary, Toast } from '@/shared';
 
 import { config } from '../../tamagui.config';
 import AnimatedSplash from './AnimatedSplash';
 import ErrorFallback from './ErrorFallback';
 
-/**
- * TODO
- * [x] 라우팅 다시 구현
- * [x] 기존에 데이터 요청 로직들 axios instance로 변경 및 리팩토링
- * [x] 로거 유틸 함수 추가
- * [x] 에러바운더리 설정
- * [x] 로그인, 비로그인 구분하여 파일 경로 구현
- * [ ] 커뮤니티 ui 구현
- * [ ] DDD에 맞게 컴포넌트 분리
- * [ ] tamagui에 맞게 컴포넌트 리팩토링
- * [ ] FlatList -> FlashList로 전환
- */
 const DRAWER_WIDTH = (Dimensions.get('window').width * 2) / 3;
 
 SplashScreen.preventAutoHideAsync();

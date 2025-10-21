@@ -46,6 +46,7 @@ export const config = createTamagui({
   tokens: {
     ...defaultConfig.tokens,
     color: {
+      pageBackground: '#FFFFFF',
       white600: '#D3D9D5',
       white700: '#E7E7E7',
       white800: '#E9ECEA',

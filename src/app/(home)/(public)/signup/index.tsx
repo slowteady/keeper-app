@@ -12,7 +12,7 @@ import { SettingNicknameTemplate } from '@/domains/auth/components';
 import { useSignUpMutation } from '@/domains/auth/services';
 import { userAtom } from '@/domains/auth/stores';
 import { SocialLoginType } from '@/domains/auth/types/auth.types';
-import { removeToken, saveAccessToken, saveRefreshToken } from '@/shared/utils/token.utils';
+import { removeToken, saveAccessToken, saveRefreshToken } from '@/shared';
 
 export interface SignupForm {
   nickname: string;
@@ -31,7 +31,7 @@ const Page = () => {
   const methods = useForm<SignupForm>({ defaultValues: { nickname: '' } });
   const navigation = useNavigation();
 
-  const { mutateAsync: signupMutate, isPending } = useSignUpMutation();
+  const { mutateAsync: signupMutate } = useSignUpMutation();
 
   const handleSocialLogout = async () => {
     switch (socialType) {
@@ -92,7 +92,7 @@ const Page = () => {
 
   return (
     <FormProvider {...methods}>
-      <SettingNicknameTemplate onSubmit={handleSubmitSignup} isPending={isPending} />
+      <SettingNicknameTemplate onSubmit={handleSubmitSignup} />
     </FormProvider>
   );
 };

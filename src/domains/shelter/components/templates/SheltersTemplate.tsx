@@ -6,16 +6,11 @@ import { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'r
 import { useFormContext } from 'react-hook-form';
 import { Dimensions, FlatList, ListRenderItemInfo, StyleSheet, Text, View } from 'react-native';
 
-import { Button } from '@/shared/components/atoms/Button';
-import { ScrollFloatingButton } from '@/shared/components/atoms/ScrollFloatingButton';
-import { Searchbar } from '@/shared/components/molecules/Searchbar';
-import { Skeleton } from '@/shared/components/molecules/Skeleton';
-import { LocationBottomSheet } from '@/shared/components/organisms/LocationBottomSheet';
-import { ShelterCard } from '@/shared/components/organisms/ShelterCard';
-import { ShelterMap } from '@/shared/components/organisms/ShelterMap';
-import { theme } from '@/shared/constants/theme.constants';
-import { useScrollFloatingButton } from '@/shared/hooks/useScrollFloatingButton';
-import { CameraParams, KakaoAddressDocument } from '@/shared/types/map.types';
+import { Button, LocationBottomSheet, ScrollFloatingButton, Skeleton, theme, useScrollFloatingButton } from '@/shared';
+import { CameraParams, KakaoAddressDocument } from '@/shared/model/types/map.types';
+import { ShelterCard } from '@/shared/ui/data-display/ShelterCard';
+import { ShelterMap } from '@/shared/ui/data-display/ShelterMap';
+import { Searchbar } from '@/shared/ui/form/Searchbar';
 
 import { useKakaoGeocodeMutation } from '../../queries/geocode.queries';
 import { ShelterCountDto, ShelterDto, ShelterSearchParams } from '../../types/shelter.types';
@@ -200,7 +195,7 @@ const MapSection = forwardRef<NaverMapViewRef, MapSectionProps>((props, ref) => 
     <>
       <View style={styles.titleWrap}>
         <Text style={styles.title}>보호소 찾기</Text>
-        <Button style={styles.button} onPress={onPressLocation}>
+        <Button variant="ghost" style={styles.button} onPress={onPressLocation}>
           <Text style={styles.buttonText}>위치설정</Text>
         </Button>
       </View>

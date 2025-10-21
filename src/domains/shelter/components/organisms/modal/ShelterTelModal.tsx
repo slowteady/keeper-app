@@ -4,7 +4,7 @@ import * as Linking from 'expo-linking';
 import { useCallback } from 'react';
 import { Platform } from 'react-native';
 
-import { BasicModal } from '@/shared/components/organisms/BasicModal';
+import { BasicModal } from '@/shared';
 
 export interface ShelterTelModalProps {
   open: boolean;

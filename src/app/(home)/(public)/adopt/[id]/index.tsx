@@ -7,13 +7,14 @@ import { transformAbandonmentDetail } from '@/domains/animal/business/announceme
 import { AbandonmentsDetailTemplate } from '@/domains/animal/components/templates/AbandonmentsDetailTemplate';
 import { transformShelterData } from '@/domains/shelter/business/shelter.business';
 import { useGetShelterQuery } from '@/domains/shelter/services';
-import { useAppReview } from '@/shared/hooks';
+import { useAppReview } from '@/shared';
 
 /**
  * 입양 공고 상세 페이지
  */
 const Page = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
+
   useAppReview();
   const { data: abandonmentData } = useGetAdoptNoticeQuery(id);
   const { data: shelterData } = useGetShelterQuery(abandonmentData?.shelterId || '', {
@@ -38,6 +39,6 @@ const Page = () => {
 export default Page;
 
 const Container = styled(View, {
-  bg: '$backgroundDefault',
+  bg: '$pageBackground',
   flex: 1
 });

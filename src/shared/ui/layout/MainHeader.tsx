@@ -5,7 +5,7 @@ import { memo } from 'react';
 import { Platform, Pressable, StyleSheet, View } from 'react-native';
 
 import { useLayout } from '@/shared';
-import { theme } from '@/shared/model/constants';
+import { theme } from '@/shared';
 
 import { Button } from '../button';
 import { Logo, Menu } from '../icons/outline';

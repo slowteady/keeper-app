@@ -10,9 +10,7 @@ import {
   useGetShelterSearchMutation,
   useGetSheltersQuery
 } from '@/domains/shelter';
-import { useMap } from '@/shared/hooks';
-import { CameraParams } from '@/shared/types';
-import { calcMapRadiusKm } from '@/shared/utils';
+import { calcMapRadiusKm, CameraParams, useMap } from '@/shared';
 
 /**
  * 보호소 목록 페이지
@@ -115,6 +113,6 @@ const Page = () => {
 export default Page;
 
 const Container = styled(View, {
-  bg: '$backgroundDefault',
+  bg: '$pageBackground',
   flex: 1
 });

@@ -1,9 +1,14 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { AxiosError, AxiosResponse } from 'axios';
 
-import { ADOPT_NOTICE_QUERY_KEY, ADOPT_NOTICES_QUERY_KEY } from '@/shared/constants';
-import { ApiResponse, UseInfiniteQueryCustomOptions, UseQueryCustomOptions } from '@/shared/types';
-import { _publicApi } from '@/shared/utils';
+import {
+  _publicApi,
+  ADOPT_NOTICE_QUERY_KEY,
+  ADOPT_NOTICES_QUERY_KEY,
+  ApiResponse,
+  UseInfiniteQueryCustomOptions,
+  UseQueryCustomOptions
+} from '@/shared';
 
 import { AdoptDto, AdoptParams, AdoptResponse } from '../types/adopt.types';
 

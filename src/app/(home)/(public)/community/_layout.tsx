@@ -3,10 +3,9 @@ import { useCallback } from 'react';
 import { Pressable } from 'react-native';
 import { useTheme } from 'tamagui';
 
-import { LeftLineArrow } from '@/shared/components/_atoms/icons/mini';
-import { Pencil } from '@/shared/components/_atoms/icons/outline';
-import { Header } from '@/shared/components/_molecules';
-import { useLoginRequired } from '@/shared/hooks';
+import { Header, useLoginRequired } from '@/shared';
+import { LeftLineArrow } from '@/shared/ui/icons/mini';
+import { Pencil } from '@/shared/ui/icons/outline';
 
 const CommunityLayout = () => {
   return (
@@ -41,7 +40,7 @@ const WriteHeader = () => {
   );
   const right = (
     <Pressable onPress={handlePressWrite}>
-      <Pencil width={24} height={24} color={black800.val} />
+      <Pencil width={22} height={22} color={black800.val} />
     </Pressable>
   );
 
