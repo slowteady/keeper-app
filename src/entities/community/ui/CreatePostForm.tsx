@@ -1,5 +1,5 @@
 import { UseFormReturn } from 'react-hook-form';
-import { Accordion, Form, styled, Text, View, XStack, YStack } from 'tamagui';
+import { Accordion, Form, Paragraph, Square, styled, Text, useTheme, View, YStack } from 'tamagui';
 
 import { DownArrow } from '@/shared/ui/icons/mini';
 
@@ -8,10 +8,14 @@ import { ContactSelectField, LabelImageSelector, LabelTextArea, LabelTextField, 
 
 export interface CreatePostFormProps {
   form: UseFormReturn<TCreatePostDto>;
+  onPressWeight: () => void;
+  onPressAge: () => void;
+  onPressKind: () => void;
 }
 
-export const CreatePostForm = ({ form }: CreatePostFormProps) => {
-  const { control, setValue } = form;
+export const CreatePostForm = ({ form, onPressWeight, onPressAge, onPressKind }: CreatePostFormProps) => {
+  const { black500 } = useTheme();
+  const { control } = form;
 
   return (
     <>
@@ -21,7 +25,7 @@ export const CreatePostForm = ({ form }: CreatePostFormProps) => {
       </YStack>
 
       <Form>
-        <YStack px={20} gap={16} mb={40}>
+        <YStack px={20} gap={16}>
           <OptionSelectField name="animalType" control={control} label="분류" required />
           <OptionSelectField name="gender" control={control} label="성별" required />
           <OptionSelectField name="neuterYn" control={control} label="중성화 여부" required />
@@ -32,26 +36,36 @@ export const CreatePostForm = ({ form }: CreatePostFormProps) => {
             required
             name="weight"
             control={control}
-            placeholder="예)5kg"
+            placeholder="몸무게를 선택해주세요."
             keyboardType="numeric"
             right={<Text color="$black500">kg</Text>}
             maxLength={2}
-            onChangeText={(text) => {
-              const filtered = text.replace(/[^0-9]/g, '').slice(0, 2);
-              setValue('weight', filtered);
-            }}
-            onPressReset={() => setValue('weight', '')}
+            value={form.watch('weight')}
+            onPress={onPressWeight}
+            disabled={true}
           />
-          <LabelTextField name="location" control={control} label="지역" required placeholder="예)서울특별시" />
+          <LabelTextField name="location" control={control} label="지역" required placeholder="지역을 추가해주세요." />
           <LabelTextField
             name="age"
             control={control}
             label="나이"
             required
             right={<Text color="$black500">년생</Text>}
-            placeholder="예)2025년생"
+            placeholder="나이를 선택해주세요."
+            value={form.watch('age')}
+            onPress={onPressAge}
+            disabled={true}
           />
-          <LabelTextField name="specificType" control={control} label="품종" required placeholder="예)말티즈" />
+          <LabelTextField
+            name="specificType"
+            control={control}
+            label="품종"
+            required
+            placeholder="품종을 선택해주세요."
+            value={form.watch('specificType')}
+            onPress={onPressKind}
+            disabled={true}
+          />
           <LabelTextArea
             name="specialMark"
             control={control}
@@ -74,67 +88,71 @@ export const CreatePostForm = ({ form }: CreatePostFormProps) => {
           />
           <ContactSelectField control={control} label="연락 정보" required />
           <LabelImageSelector name="images" control={control} label="이미지 첨부(최대 10장)" required max={10} />
+
+          <Divider mt={12} />
         </YStack>
 
-        <Divider my={16} />
-
-        <YStack px={20}>
+        <YStack px={20} my={40}>
           <YStack mb={20}>
             <OptionalTitle>필수 정보를 모두 체크하셨나요?</OptionalTitle>
             <OptionalDescription>더 많은 관심을 위해 세부정보도 작어보세요.</OptionalDescription>
           </YStack>
 
           <Accordion type="single" collapsible>
-            <Accordion.Item value="optional">
-              <Accordion.Trigger asChild>
-                <ToggleButton>
-                  <ToggleButtonText>펼쳐보기</ToggleButtonText>
-                  <DownArrow width={20} height={20} color="#BEBEBE" />
-                </ToggleButton>
-              </Accordion.Trigger>
+            <Accordion.Item value="optional-section">
+              <Accordion.Header>
+                <AccordionTrigger>
+                  {({ open }: { open: boolean }) => (
+                    <>
+                      <Paragraph fontSize={14} fontWeight="500" flex={1} color="#7E7E7E">
+                        펼쳐보기
+                      </Paragraph>
+                      <Square animation="quick" rotate={open ? '180deg' : '0deg'}>
+                        <DownArrow width={14} height={14} color={black500.val} />
+                      </Square>
+                    </>
+                  )}
+                </AccordionTrigger>
+              </Accordion.Header>
 
-              <Accordion.Content>
-                <YStack gap={16} pt={16}>
-                  <LabelTextArea
-                    name="likes"
-                    control={control}
-                    label="좋아해요"
-                    rows={3}
-                    minH={70}
-                    maxLength={100}
-                    placeholder="예) 산책과 드라이브를 좋아해요."
-                  />
-
-                  <LabelTextArea
-                    name="dislikes"
-                    control={control}
-                    label="싫어해요"
-                    rows={3}
-                    minH={70}
-                    maxLength={100}
-                    placeholder="예) 모르는 사람은 무서워해요."
-                  />
-
-                  <LabelTextArea
-                    name="health"
-                    control={control}
-                    label="아파요"
-                    rows={3}
-                    minH={70}
-                    maxLength={100}
-                    placeholder="예) 피부병이 있어서 하루에 두 번 연고를 발라줘야해요."
-                  />
-
-                  <LabelTextField name="relatedLink" control={control} label="관련 링크" placeholder="URL" />
-
-                  <LabelTextField name="rfid" control={control} label="RFID" placeholder="예)1234-5678-910" />
-                </YStack>
+              <Accordion.Content bg="transparent" p={0}>
+                <Accordion.HeightAnimator animation="quick" exitStyle={{ opacity: 0, height: 0 }}>
+                  <YStack gap={16} pt={16}>
+                    <LabelTextArea
+                      name="likes"
+                      control={control}
+                      label="좋아해요"
+                      rows={3}
+                      minH={70}
+                      maxLength={100}
+                      placeholder="예) 산책과 드라이브를 좋아해요."
+                    />
+                    <LabelTextArea
+                      name="dislikes"
+                      control={control}
+                      label="싫어해요"
+                      rows={3}
+                      minH={70}
+                      maxLength={100}
+                      placeholder="예) 모르는 사람은 무서워해요."
+                    />
+                    <LabelTextArea
+                      name="health"
+                      control={control}
+                      label="아파요"
+                      rows={3}
+                      minH={70}
+                      maxLength={100}
+                      placeholder="예) 피부병이 있어서 하루에 두 번 연고를 발라줘야해요."
+                    />
+                    <LabelTextField name="relatedLink" control={control} label="관련 링크" placeholder="URL" />
+                    {/* <LabelTextField name="rfid" control={control} label="RFID" placeholder="예)1234-5678-910" /> */}
+                  </YStack>
+                </Accordion.HeightAnimator>
               </Accordion.Content>
             </Accordion.Item>
           </Accordion>
         </YStack>
-
-        <Divider my={16} />
 
         {/* <YStack px={20} py={32}>
           <XStack items="center" justify="space-between" mb={16}>
@@ -190,22 +208,13 @@ const OptionalDescription = styled(Text, {
   fontWeight: '$4',
   color: '$black500'
 });
-const ToggleButton = styled(XStack, {
+const AccordionTrigger = styled(Accordion.Trigger, {
+  px: 16,
+  py: 12,
+  rounded: 4,
+  borderWidth: 1,
+  borderColor: '$white800',
+  flexDirection: 'row',
   items: 'center',
-  justify: 'space-between',
-  bg: '$backgroundDefault',
-  px: 20,
-  py: 16,
-  rounded: 8,
-  gap: 8,
-  pressStyle: {
-    opacity: 0.8
-  }
-});
-const ToggleButtonText = styled(Text, {
-  fontSize: 14,
-  lineHeight: 20,
-  fontWeight: '$4',
-  color: '$black500',
-  flex: 1
+  justify: 'space-between'
 });

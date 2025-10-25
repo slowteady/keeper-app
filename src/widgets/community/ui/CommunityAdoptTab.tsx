@@ -11,7 +11,7 @@ import { communityAdoptFilterAtom } from '@/features';
 import { BottomSheetMenu, ButtonGroup, ChipButton, useBottomSheet, useLoginRequired } from '@/shared';
 import { DownArrow } from '@/shared/ui/icons/mini';
 
-export const AdoptTab = () => {
+export const CommunityAdoptTab = () => {
   const [adoptFilter, setAdoptFilter] = useAtom(communityAdoptFilterAtom);
 
   const { requireLogin } = useLoginRequired();
@@ -24,7 +24,9 @@ export const AdoptTab = () => {
     },
     [setAdoptFilter]
   );
+
   const handleChangeFilter = useCallback((filter: 'LOCATION' | 'PROMO') => {}, []);
+
   const handlePressFilter = useCallback(
     (event: GestureResponderEvent) => {
       present(
@@ -43,12 +45,15 @@ export const AdoptTab = () => {
     },
     [adoptFilter.filter, dismiss, present, setAdoptFilter]
   );
+
   const handlePressUser = useCallback((item: AdoptCardSchema['user']) => {
     // TODO: 유저 프로필 페이지로 이동
   }, []);
+
   const handlePressCard = useCallback((id: string) => {
     // TODO: 게시글 상세 페이지로 이동
   }, []);
+
   const handlePressLike = useCallback(
     (id: string) => {
       // TODO: 좋아요 처리

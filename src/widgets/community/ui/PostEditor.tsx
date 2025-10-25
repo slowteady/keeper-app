@@ -8,7 +8,11 @@ export const PostEditor = () => {
   const { bottom } = useLayout();
 
   return (
-    <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={bottom + BUTTON_HEIGHT.large} style={{ flex: 1 }}>
+    <KeyboardAvoidingView
+      behavior="padding"
+      keyboardVerticalOffset={bottom + BUTTON_HEIGHT.large + 20}
+      style={{ flex: 1 }}
+    >
       <Container>
         <CreatePost />
       </Container>

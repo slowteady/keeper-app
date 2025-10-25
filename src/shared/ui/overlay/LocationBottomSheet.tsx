@@ -5,8 +5,8 @@ import { ActivityIndicator, FlatList, ListRenderItemInfo, Pressable, StyleSheet,
 import { theme } from '@/shared';
 import { KakaoAddressDocument } from '@/shared/model/types';
 
+import { BottomSheet, BottomSheetLayoutProps } from '../data-display/BottomSheet';
 import { Searchbar } from '../form';
-import { BottomSheet, BottomSheetLayoutProps } from './BottomSheet';
 
 export interface LocationBottomSheetProps extends BottomSheetLayoutProps {
   onSubmit: (value: string) => void;

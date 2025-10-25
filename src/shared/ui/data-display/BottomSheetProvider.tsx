@@ -53,7 +53,6 @@ export const BottomSheetProvider = ({ children }: { children: React.ReactNode })
 
         <BottomSheetModal
           ref={sheetRef}
-          index={1}
           snapPoints={snapPoints}
           animationConfigs={{ duration: 100 }}
           backdropComponent={(props) => (
@@ -67,6 +66,7 @@ export const BottomSheetProvider = ({ children }: { children: React.ReactNode })
             onDismissRef.current = undefined;
             setContent(null);
           }}
+          enableDynamicSizing={false}
         >
           {content}
         </BottomSheetModal>

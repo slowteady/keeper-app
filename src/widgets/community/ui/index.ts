@@ -1,4 +1,4 @@
-export * from './AdoptTab';
-export * from './LifeTab';
+export * from './CommunityAdoptTab';
+export * from './CommunityLifeTab';
+export * from './CommunityQnATab';
 export * from './PostEditor';
-export * from './QnATab';

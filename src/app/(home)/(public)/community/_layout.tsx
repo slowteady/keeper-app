@@ -38,6 +38,7 @@ const WriteHeader = () => {
       <LeftLineArrow width={24} height={24} color={black900.val} />
     </Pressable>
   );
+
   const right = (
     <Pressable onPress={handlePressWrite}>
       <Pencil width={22} height={22} color={black800.val} />

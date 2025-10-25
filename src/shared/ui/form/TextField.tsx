@@ -53,11 +53,13 @@ export const TextField = ({
           {...props}
         />
 
-        <Animated.View style={[animatedCloseButtonStyle]}>
-          <Pressable onPress={onPressReset} style={{ paddingHorizontal: 16 }}>
-            <CircleX width={16} height={16} color={black500.val} />
-          </Pressable>
-        </Animated.View>
+        {onPressReset && (
+          <Animated.View style={[animatedCloseButtonStyle]}>
+            <Pressable onPress={onPressReset} style={{ paddingHorizontal: 16 }}>
+              <CircleX width={16} height={16} color={black500.val} />
+            </Pressable>
+          </Animated.View>
+        )}
 
         {right && <RightElementWrapper>{right}</RightElementWrapper>}
       </Container>

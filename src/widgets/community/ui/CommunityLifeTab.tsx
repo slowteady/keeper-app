@@ -1,6 +1,6 @@
 import { Text, View } from 'react-native';
 
-export const LifeTab = () => {
+export const CommunityLifeTab = () => {
   return (
     <View>
       <Text>CommunityLifePage</Text>

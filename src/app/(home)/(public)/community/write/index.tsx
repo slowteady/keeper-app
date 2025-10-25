@@ -1,6 +1,6 @@
 import { styled, View } from 'tamagui';
 
-import { PostEditor } from '@/widgets/community';
+import { PostEditor } from '@/widgets';
 
 const Page = () => {
   return (

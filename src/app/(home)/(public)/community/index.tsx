@@ -3,7 +3,7 @@ import { SceneMap } from 'react-native-tab-view';
 import { styled, View } from 'tamagui';
 
 import { Tab } from '@/shared';
-import { AdoptTab, LifeTab, QnATab } from '@/widgets';
+import { CommunityAdoptTab, CommunityLifeTab, CommunityQnATab } from '@/widgets';
 
 const ROUTES = [
   { key: 'adopt', title: '개인입양' },
@@ -12,9 +12,9 @@ const ROUTES = [
 ];
 
 const renderScene = SceneMap({
-  adopt: AdoptTab,
-  life: LifeTab,
-  qna: QnATab
+  adopt: CommunityAdoptTab,
+  life: CommunityLifeTab,
+  qna: CommunityQnATab
 });
 
 const Page = () => {

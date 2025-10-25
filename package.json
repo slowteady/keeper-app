@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "^5",
+    "@hookform/resolvers": "^5.2.2",
     "@mj-studio/react-native-naver-map": "2.5.4",
     "@react-native-google-signin/google-signin": "13.2.0",
     "@react-native-kakao/core": "2.4.0",

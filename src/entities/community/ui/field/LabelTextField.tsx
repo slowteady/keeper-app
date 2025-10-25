@@ -13,14 +13,14 @@ export interface LabelTextFieldProps extends TextFieldProps {
   control: Control<TCreatePostDto>;
 }
 
-export const LabelTextField = ({ label, required, name, control, ...props }: LabelTextFieldProps) => {
+export const LabelTextField = ({ label, required, name, value, control, ...props }: LabelTextFieldProps) => {
   return (
     <YStack>
       <FieldLabel title={label} required={required} />
       <Controller
         name={name}
         control={control}
-        render={({ field }) => <TextField variant="fill" {...field} {...props} />}
+        render={({ field }) => <TextField variant="fill" {...field} value={value} {...props} />}
       />
     </YStack>
   );

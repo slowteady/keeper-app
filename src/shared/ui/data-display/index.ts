@@ -12,7 +12,6 @@ export * from './HomeFooter';
 export * from './HomeShelterSection';
 export * from './HomeTemplate';
 export * from './ImageViewer';
-export * from './LocationBottomSheet';
 export * from './MainShelterCard';
 export * from './ModalButtons';
 export * from './ModalProvider';
