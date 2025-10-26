@@ -1,3 +1,5 @@
+export * from './BottomNavigation';
+export * from './BottomNavigationProvider';
 export * from './Header';
 export * from './MainHeader';
 export * from './PublicHeader';

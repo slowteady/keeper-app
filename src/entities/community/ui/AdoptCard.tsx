@@ -17,6 +17,7 @@ export interface AdoptCardSchema {
   images: string[];
   counts: { like: number; comment: number; view: number };
 }
+
 export interface AdoptCardProps extends AdoptCardSchema {
   onPressUser: (user: AdoptCardSchema['user']) => void;
   onPressCard: (id: string) => void;

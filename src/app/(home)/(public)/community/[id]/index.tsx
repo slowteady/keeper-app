@@ -2,9 +2,9 @@ import { styled, Text, View } from 'tamagui';
 
 const Page = () => {
   return (
-    <View>
+    <Container>
       <Text>CommunityDetailPage</Text>
-    </View>
+    </Container>
   );
 };
 

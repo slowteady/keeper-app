@@ -14,8 +14,7 @@ import {
   HomeFooter,
   HomeShelterSection,
   HomeTemplate,
-  SHELTER_QUERY_KEY,
-  useLayout
+  SHELTER_QUERY_KEY
 } from '@/shared';
 import { Logo, Menu } from '@/shared/ui/icons/outline';
 
@@ -23,7 +22,6 @@ import { Logo, Menu } from '@/shared/ui/icons/outline';
  * 메인 페이지
  */
 const Page = () => {
-  const { top } = useLayout();
   const queryClient = useQueryClient();
 
   const handleRequest = async () => {
@@ -44,7 +42,7 @@ const Page = () => {
 
   return (
     <>
-      <Header left={<HeaderLeft />} right={<HeaderRight />} ContainerProps={{ pt: top }} />
+      <Header left={<HeaderLeft />} right={<HeaderRight />} />
 
       <HomeTemplate
         data={homeSections}

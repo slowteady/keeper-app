@@ -2,6 +2,8 @@ import { ReactNode } from 'react';
 import { Platform } from 'react-native';
 import { StackProps, styled, XStack, YStack } from 'tamagui';
 
+import { useLayout } from '@/shared';
+
 export interface HeaderProps {
   showShadow?: boolean;
   ContainerProps?: StackProps;
@@ -11,8 +13,10 @@ export interface HeaderProps {
 }
 
 export const Header = ({ showShadow = true, ContainerProps, left, center, right }: HeaderProps) => {
+  const { top } = useLayout();
+
   return (
-    <HeaderContainer showShadow={showShadow} {...ContainerProps}>
+    <HeaderContainer showShadow={showShadow} pt={top} {...ContainerProps}>
       <RowContainer>
         {left && left}
         {center && center}

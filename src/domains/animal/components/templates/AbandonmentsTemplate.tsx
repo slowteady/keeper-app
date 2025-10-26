@@ -16,6 +16,7 @@ import {
 
 import {
   AnimalCard,
+  TAnimalType,
   BottomSheetMenuData,
   Button,
   ButtonGroup,
@@ -23,14 +24,13 @@ import {
   Dropdown,
   ScrollFloatingButton,
   Searchbar,
+  theme,
   useScrollFloatingButton
 } from '@/shared';
-import { theme } from '@/shared/model/constants';
 
 import { transformAbandonments, TransformedAbandonments } from '../../business/announcement.business';
 import { ADOPT_ANIMAL_TYPES, ADOPT_FILTERS } from '../../constants';
 import { adoptFilterAtomFamily } from '../../stores';
-import { AnimalType } from '../../types/animal.types';
 import { AnnouncementData, AnnouncementFilter } from '../../types/announcement.types';
 
 interface AbandonmentsTemplateProps {
@@ -128,7 +128,7 @@ const FilterSection = () => {
   const handleSubmit = (text: string) => {
     setAdoptFilter((prev) => ({ ...prev, search: text }));
   };
-  const handleChangeType = (id: AnimalType) => {
+  const handleChangeType = (id: TAnimalType) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setAdoptFilter((prev) => ({ ...prev, animalType: id }));
   };

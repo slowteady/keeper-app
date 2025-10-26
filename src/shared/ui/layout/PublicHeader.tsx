@@ -23,6 +23,7 @@ export const PublicHeader = () => {
       <LeftLineArrow width={24} height={30} color={black900.val} />
     </Pressable>
   );
+
   const right = (
     <Pressable onPress={() => router.dismissTo('/')}>
       <Home width={28} height={28} color={black900.val} />

@@ -1,11 +1,11 @@
 import { styled, View } from 'tamagui';
 
-import { PostEditor } from '@/widgets';
+import { CreatePost } from '@/features';
 
 const Page = () => {
   return (
     <Container>
-      <PostEditor />
+      <CreatePost />
     </Container>
   );
 };
@@ -13,6 +13,6 @@ const Page = () => {
 export default Page;
 
 const Container = styled(View, {
-  bg: '$white900',
+  bg: '$pageBackground',
   flex: 1
 });

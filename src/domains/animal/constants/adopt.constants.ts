@@ -1,10 +1,13 @@
-import { AdoptFilterValue, AnimalType } from '../types';
+import { TAnimalType } from '@/shared';
+
+import { AdoptFilterValue } from '../types';
 
 export const ADOPT_FILTERS: AdoptFilterValue[] = [
   { id: 'NEAR_DEADLINE', label: '마감임박공고' },
   { id: 'NEW', label: '신규공고' }
 ] as const;
-export const ADOPT_ANIMAL_TYPES: { id: AnimalType; label: string }[] = [
+
+export const ADOPT_ANIMAL_TYPES: { id: TAnimalType; label: string }[] = [
   { id: 'ALL', label: '전체' },
   { id: 'DOG', label: '강아지' },
   { id: 'CAT', label: '고양이' },

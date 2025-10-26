@@ -1,6 +1,7 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { AxiosError, AxiosResponse } from 'axios';
 
+import { TAdoptBaseDto, TAdoptParamsDto, TAdoptResponseDto } from '@/entities';
 import {
   _publicApi,
   ADOPT_NOTICE_QUERY_KEY,
@@ -10,22 +11,22 @@ import {
   UseQueryCustomOptions
 } from '@/shared';
 
-import { AdoptDto, AdoptParams, AdoptResponse } from '../types/adopt.types';
-
 const BASE_URL = `v2/abandonments`;
 
 /**
  * 입양공고 전체 조회
  */
-const getAdoptNotices = async (params: AdoptParams): Promise<AxiosResponse<ApiResponse<AdoptResponse>, AxiosError>> => {
+const getAdoptNotices = async (
+  params: TAdoptParamsDto
+): Promise<AxiosResponse<ApiResponse<TAdoptResponseDto>, AxiosError>> => {
   return await _publicApi.get(BASE_URL, { params });
 };
 export const useGetAdoptNoticesQuery = (
-  params: AdoptParams,
+  params: TAdoptParamsDto,
   options?: UseInfiniteQueryCustomOptions<
-    AxiosResponse<ApiResponse<AdoptResponse>, AxiosError>,
+    AxiosResponse<ApiResponse<TAdoptResponseDto>, AxiosError>,
     AxiosError,
-    AdoptResponse
+    TAdoptResponseDto
   >
 ) => {
   return useInfiniteQuery({
@@ -48,14 +49,14 @@ export const useGetAdoptNoticesQuery = (
 /**
  * 입양공고 상세 조회
  */
-const getAdoptNotice = async (id: string): Promise<AxiosResponse<ApiResponse<AdoptDto>, AxiosError>> => {
+const getAdoptNotice = async (id: string): Promise<AxiosResponse<ApiResponse<TAdoptBaseDto>, AxiosError>> => {
   const endpoint = `${BASE_URL}/${id}`;
 
   return await _publicApi.get(endpoint);
 };
 export const useGetAdoptNoticeQuery = (
   id: string,
-  options?: UseQueryCustomOptions<AxiosResponse<ApiResponse<AdoptDto>, AxiosError>, AxiosError, AdoptDto>
+  options?: UseQueryCustomOptions<AxiosResponse<ApiResponse<TAdoptBaseDto>, AxiosError>, AxiosError, TAdoptBaseDto>
 ) => {
   return useQuery({
     queryKey: [ADOPT_NOTICE_QUERY_KEY, id],

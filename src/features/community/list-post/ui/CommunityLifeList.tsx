@@ -1,9 +1,9 @@
 import { Text, View } from 'react-native';
 
-export const CommunityQnATab = () => {
+export const CommunityLifeList = () => {
   return (
     <View>
-      <Text>CommunityQnAPage</Text>
+      <Text>CommunityLifePage</Text>
     </View>
   );
 };
