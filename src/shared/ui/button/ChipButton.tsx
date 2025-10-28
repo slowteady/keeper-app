@@ -69,11 +69,12 @@ const getChipStyles = (variant: 'primary' | 'secondary', size: ChipButtonSize, i
 
   const sizeStyles = {
     small: {
-      paddingVertical: 8,
+      paddingVertical: 10,
       paddingHorizontal: 14,
       fontSize: 14,
       lineHeight: 16,
-      fontWeight: '600'
+      fontWeight: '600',
+      minWidth: 54
     },
     medium: {
       paddingVertical: 10,
@@ -100,7 +101,7 @@ const getChipStyles = (variant: 'primary' | 'secondary', size: ChipButtonSize, i
     secondary: {
       backgroundColor: isSelected ? colors.blackMain.val : 'transparent',
       borderColor: isSelected ? colors.blackMain.val : colors.white600.val,
-      color: isSelected ? colors.white900.val : colors.white600.val
+      color: isSelected ? colors.white900.val : colors.black500.val
     }
   };
 

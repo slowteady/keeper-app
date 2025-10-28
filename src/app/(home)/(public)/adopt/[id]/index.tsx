@@ -7,7 +7,6 @@ import { transformAbandonmentDetail } from '@/domains/animal/business/announceme
 import { AbandonmentsDetailTemplate } from '@/domains/animal/components/templates/AbandonmentsDetailTemplate';
 import { transformShelterData } from '@/domains/shelter/business/shelter.business';
 import { useGetShelterQuery } from '@/domains/shelter/services';
-import { useAppReview } from '@/shared';
 
 /**
  * 입양 공고 상세 페이지
@@ -15,7 +14,7 @@ import { useAppReview } from '@/shared';
 const Page = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
 
-  useAppReview();
+  // useAppReview();
   const { data: abandonmentData } = useGetAdoptNoticeQuery(id);
   const { data: shelterData } = useGetShelterQuery(abandonmentData?.shelterId || '', {
     enabled: Boolean(abandonmentData?.shelterId)

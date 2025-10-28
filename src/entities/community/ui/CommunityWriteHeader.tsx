@@ -7,7 +7,7 @@ import { Header } from '@/shared';
 import { LeftLineArrow } from '@/shared/ui/icons/mini';
 import { Pencil } from '@/shared/ui/icons/outline';
 
-export const WriteHeader = () => {
+export const CommunityWriteHeader = () => {
   const { black900, black800 } = useTheme();
   // const { requireLogin } = useLoginRequired();
 

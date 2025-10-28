@@ -14,13 +14,17 @@ export interface LabelTextFieldProps extends TextFieldProps {
 }
 
 export const LabelTextField = ({ label, required, name, value, control, ...props }: LabelTextFieldProps) => {
+  const hasValue = !!value;
+
   return (
     <YStack>
       <FieldLabel title={label} required={required} />
       <Controller
         name={name}
         control={control}
-        render={({ field }) => <TextField variant="fill" {...field} value={value} {...props} />}
+        render={({ field }) => (
+          <TextField variant="fill" {...field} value={value} style={{ fontWeight: hasValue ? 500 : 400 }} {...props} />
+        )}
       />
     </YStack>
   );

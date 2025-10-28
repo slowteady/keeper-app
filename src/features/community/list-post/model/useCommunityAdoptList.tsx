@@ -3,7 +3,7 @@ import { router } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { GestureResponderEvent } from 'react-native';
 
-import { AdoptCardSchema, adoptListValue, COMMUNITY_LIST_FILTER } from '@/entities';
+import { adoptListValue, COMMUNITY_LIST_FILTER } from '@/entities';
 import { BottomSheetMenu, TAnimalTypeSchema, useBottomSheet, useLoginRequired } from '@/shared';
 
 export interface CommunityFilterSchema {
@@ -48,10 +48,6 @@ export const useCommunityAdoptList = () => {
     [adoptFilter.filter, dismiss, present, setAdoptFilter]
   );
 
-  const handlePressUser = useCallback((item: AdoptCardSchema['user']) => {
-    // TODO: 유저 프로필 페이지로 이동
-  }, []);
-
   const handlePressCard = useCallback((id: string) => {
     router.push({ pathname: '/community/[id]', params: { id } });
   }, []);
@@ -71,12 +67,11 @@ export const useCommunityAdoptList = () => {
       adoptFilter
     },
     actions: {
-      onChangeAnimalType: handleChangeAnimalType,
-      onChangeFilter: handleChangeFilter,
-      onPressFilter: handlePressFilter,
-      onPressUser: handlePressUser,
-      onPressCard: handlePressCard,
-      onPressLike: handlePressLike
+      handleChangeAnimalType,
+      handleChangeFilter,
+      handlePressFilter,
+      handlePressLike,
+      moveDetailPage: handlePressCard
     },
     data: { adoptListData }
   };

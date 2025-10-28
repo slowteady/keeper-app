@@ -86,7 +86,7 @@ export const CreatePostForm = ({ form, onPressWeight, onPressAge, onPressKind }:
             minH={130}
             placeholder="예)성격, 특별한 사연 등을 자유롭게 적어주세요."
           />
-          <ContactSelectField control={control} label="연락 정보" required />
+          <ContactSelectField control={control} label="연락 정보 (중복가능)" required />
           <LabelImageSelector name="images" control={control} label="이미지 첨부(최대 10장)" required max={10} />
 
           <Divider mt={12} />
@@ -216,5 +216,6 @@ const AccordionTrigger = styled(Accordion.Trigger, {
   borderColor: '$white800',
   flexDirection: 'row',
   items: 'center',
-  justify: 'space-between'
+  justify: 'space-between',
+  bg: '#F7F7F7'
 });

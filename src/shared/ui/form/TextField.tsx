@@ -50,6 +50,7 @@ export const TextField = ({
           value={value}
           onChangeText={onChangeText}
           pointerEvents={disabled ? 'none' : 'auto'}
+          height={48}
           {...props}
         />
 

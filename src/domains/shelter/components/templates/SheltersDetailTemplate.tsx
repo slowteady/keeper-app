@@ -407,7 +407,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 20,
     backgroundColor: theme.colors.primary.main,
-    borderRadius: 10
+    borderRadius: 14
   },
   buttonText: {
     fontSize: 15,

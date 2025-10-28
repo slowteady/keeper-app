@@ -1,10 +1,10 @@
 import { Stack } from 'expo-router';
 
-import { WriteHeader } from '@/entities';
+import { CommunityWriteHeader } from '@/entities';
 
 const CommunityLayout = () => {
   return (
-    <Stack screenOptions={{ header: () => <WriteHeader /> }}>
+    <Stack screenOptions={{ header: () => <CommunityWriteHeader /> }}>
       <Stack.Screen name="write" options={{ headerShown: false }} />
       <Stack.Screen name="[id]" options={{ headerShown: false }} />
     </Stack>

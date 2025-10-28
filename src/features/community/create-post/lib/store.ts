@@ -1,10 +1,10 @@
 import { atomWithReset } from 'jotai/utils';
 
 import { COMMUNITY_LIST_FILTER } from '@/entities';
-import { TAnimalType } from '@/shared';
+import { TAnimalTypeSchema } from '@/shared';
 
-export interface CommunityFilterSchema {
-  animalType: TAnimalType;
+interface CommunityFilterSchema {
+  animalType: TAnimalTypeSchema;
   filter: (typeof COMMUNITY_LIST_FILTER)[number]['id'];
 }
 

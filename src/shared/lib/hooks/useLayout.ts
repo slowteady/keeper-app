@@ -1,8 +1,8 @@
 import { Dimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-const MIN_BOTTOM = 10;
-const MAX_BOTTOM = 20;
+const MIN_BOTTOM = 20;
+const MAX_BOTTOM = 30;
 
 export const useLayout = () => {
   const insetsTop = useSafeAreaInsets().top;

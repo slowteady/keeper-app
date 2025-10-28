@@ -113,8 +113,8 @@ const LoadingOverlay = styled(YStack, {
   z: 1
 });
 const RemoveButtonBackground = styled(YStack, {
-  width: 24,
-  height: 24,
+  width: 22,
+  height: 22,
   rounded: 12,
   bg: '#454545',
   items: 'center',
@@ -162,8 +162,8 @@ const styles = StyleSheet.create({
   },
   removeButton: {
     position: 'absolute',
-    top: 6,
-    right: 6,
+    top: 4,
+    right: 4,
     zIndex: 2
   },
   addButton: {

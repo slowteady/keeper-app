@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: theme.colors.black[900],
-    fontWeight: '500',
+    fontWeight: '700',
     marginBottom: 20
   },
   chipsBlockContainer: {
@@ -193,13 +193,13 @@ const styles = StyleSheet.create({
   label: {
     flexShrink: 0,
     color: theme.colors.black[600],
-    fontWeight: '400',
+    fontWeight: '500',
     minWidth: 57
   },
   text: {
     flex: 1,
     color: theme.colors.black[900],
-    fontWeight: '400',
+    fontWeight: '500',
     marginRight: 6
   },
   skeleton: {

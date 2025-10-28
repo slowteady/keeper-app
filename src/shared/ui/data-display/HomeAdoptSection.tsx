@@ -13,7 +13,7 @@ import {
   useGetAdoptNoticesQuery
 } from '@/domains/animal';
 import { transformAbandonments, TransformedAbandonments } from '@/domains/animal/business/announcement.business';
-import { AnimalCard, BottomSheetMenuData, ButtonGroup, CardSkeleton, TAnimalType, ViewAllButton } from '@/shared';
+import { AnimalCard, BottomSheetMenuData, ButtonGroup, CardSkeleton, TAnimalTypeSchema, ViewAllButton } from '@/shared';
 
 import { Dropdown } from '../form/Dropdown';
 
@@ -55,7 +55,7 @@ export const HomeAdoptSection = () => {
   );
 
   const handleChangeType = useCallback(
-    async (id: TAnimalType) => {
+    async (id: TAnimalTypeSchema) => {
       await impactAsync(ImpactFeedbackStyle.Light);
       setAdoptFilter((prev) => ({ ...prev, animalType: id }));
     },

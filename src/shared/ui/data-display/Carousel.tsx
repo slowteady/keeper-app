@@ -79,7 +79,14 @@ const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>(
 
     return (
       <>
-        <PagerView style={styles.container} ref={carouselRef} onPageScroll={handleChange} initialPage={0} {...props}>
+        <PagerView
+          style={styles.container}
+          ref={carouselRef}
+          onPageScroll={handleChange}
+          initialPage={0}
+          pageMargin={24}
+          {...props}
+        >
           {data.map((image, idx) => (
             <View key={image + idx}>
               {!isLoaded[idx] && <Skeleton style={styles.skeleton} />}

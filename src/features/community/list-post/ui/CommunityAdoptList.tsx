@@ -11,10 +11,9 @@ export const CommunityAdoptList = () => {
   const { black500 } = useTheme();
 
   const { state, actions, data } = useCommunityAdoptList();
-  const { adoptFilter } = state;
-  const { onChangeAnimalType, onPressFilter, onPressUser, onPressCard, onPressLike } = actions;
+  const { handleChangeAnimalType, handlePressFilter, moveDetailPage, handlePressLike } = actions;
 
-  const filterText = COMMUNITY_LIST_FILTER.find((filter) => filter.id === adoptFilter.filter)?.label || '';
+  const filterText = COMMUNITY_LIST_FILTER.find((filter) => filter.id === state.adoptFilter.filter)?.label || '';
 
   return (
     <Container>
@@ -24,9 +23,8 @@ export const CommunityAdoptList = () => {
           <View px={20} py={32}>
             <AdoptCard
               {...item}
-              onPressUser={() => onPressUser(item.user)}
-              onPressCard={() => onPressCard(item.id)}
-              onPressLike={() => onPressLike(item.id)}
+              onPressCard={() => moveDetailPage(item.id)}
+              onPressLike={() => handlePressLike(item.id)}
               isLoading={false}
             />
           </View>
@@ -36,7 +34,11 @@ export const CommunityAdoptList = () => {
         ItemSeparatorComponent={() => <Divider />}
         ListHeaderComponent={
           <View px={20}>
-            <ButtonGroup data={ADOPT_ANIMAL_TYPES} id={adoptFilter.animalType} onChange={onChangeAnimalType} />
+            <ButtonGroup
+              data={ADOPT_ANIMAL_TYPES}
+              id={state.adoptFilter.animalType}
+              onChange={handleChangeAnimalType}
+            />
 
             <XStack mt={16} gap={4}>
               {/* <ChipButton isPressable onPress={() => handleChangeFilter('LOCATION')}>
@@ -46,7 +48,7 @@ export const CommunityAdoptList = () => {
                 입양홍보
               </ChipButton> */}
               <ChipButton
-                onPress={onPressFilter}
+                onPress={handlePressFilter}
                 right={<DownArrow width={12} height={12} color={black500.val} style={{ marginLeft: 4 }} />}
               >
                 {filterText}

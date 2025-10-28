@@ -13,7 +13,7 @@ export interface LabelImageSelectorProps extends Omit<ImageSelectorProps, 'value
   control: Control<TCreatePostDto>;
 }
 
-const IMAGE_BOX_SIZE = 64;
+const IMAGE_BOX_SIZE = 72;
 
 export const LabelImageSelector = ({ label, required, name, control, max = 10, ...props }: LabelImageSelectorProps) => {
   return (

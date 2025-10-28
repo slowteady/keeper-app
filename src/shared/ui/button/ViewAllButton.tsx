@@ -29,9 +29,9 @@ const ArrowWrap = styled(View, {
 const StyledText = styled(Text, {
   fontSize: 15,
   lineHeight: 17,
-  fontWeight: '400',
+  fontWeight: '500',
   text: 'center',
-  color: '$black700'
+  color: '$black600'
 });
 
 const styles = StyleSheet.create({

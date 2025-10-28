@@ -16,15 +16,17 @@ const AnimatedSplash = ({ onFinish }: AnimatedSplashProps) => {
   const animatedContainerStyle = useAnimatedStyle(() => ({
     opacity: containerOpacity.value
   }));
+
   const animatedLogoStyle = useAnimatedStyle(() => ({
     marginTop: logoMarginTop.value
   }));
+
   const animatedPuppyStyle = useAnimatedStyle(() => ({
     top: puppyTop.value
   }));
 
   useEffect(() => {
-    logoMarginTop.value = withTiming(60, { duration: 300 });
+    logoMarginTop.value = withTiming(44, { duration: 300 });
     puppyTop.value = withTiming(-100, { duration: 300 });
 
     const timeout = setTimeout(() => {
