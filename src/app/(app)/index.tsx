@@ -1,9 +1,9 @@
 import { MainTemplate } from '@/domains/animal/components/templates/MainTemplate';
-import { theme } from '@/shared/constants/theme.constants';
-import { createStore, Provider } from 'jotai';
 import { BasicModal } from '@/shared/components/organisms/BasicModal';
+import { theme } from '@/shared/constants/theme.constants';
 import * as Linking from 'expo-linking';
 import * as SecureStore from 'expo-secure-store';
+import { createStore, Provider } from 'jotai';
 import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -17,7 +17,7 @@ const Page = () => {
     <Provider store={store}>
       <View style={styles.container}>
         <MainTemplate />
-        <DataCenterNoticeModal />
+        {/* <DataCenterNoticeModal /> */}
       </View>
     </Provider>
   );
