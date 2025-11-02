@@ -1,3 +1,4 @@
 export * from './create-post';
-export * from './detail-post';
-export * from './list-post';
+export * from './filter-posts';
+export * from './like-post';
+export * from './share-post';

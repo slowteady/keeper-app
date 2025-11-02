@@ -2,10 +2,10 @@ import { Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { KeyboardAvoidingView, KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { styled, View } from 'tamagui';
 
-import { CreatePostForm } from '@/entities';
 import { Button, BUTTON_HEIGHT, useLayout } from '@/shared';
 
 import { useCreatePost } from '../model';
+import { CreatePostForm } from './CreatePostForm';
 
 export const CreatePost = () => {
   const { bottom } = useLayout();

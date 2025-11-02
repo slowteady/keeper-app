@@ -1,9 +1,12 @@
 import { z } from 'zod';
 
-import { AnimalTypeSchema } from '@/shared/model/types/schemas/animal';
-
+// 필터 종류
 export const AdoptFilterSchema = z.enum(['NEW', 'NEAR_DEADLINE']);
 export type TAdoptFilterSchema = z.infer<typeof AdoptFilterSchema>;
+
+// 동물 종류
+export const AnimalTypeSchema = z.enum(['DOG', 'CAT', 'OTHER', 'ALL']);
+export type TAnimalTypeSchema = z.infer<typeof AnimalTypeSchema>;
 
 // 성별
 export const GenderSchema = z.enum(['M', 'F', 'NONE']);
@@ -11,11 +14,15 @@ export type TGenderSchema = z.infer<typeof GenderSchema>;
 
 // 중성화 여부
 export const NeuterYnSchema = z.enum(['Y', 'N', 'NONE']);
-export type TNesterYnSchema = z.infer<typeof NeuterYnSchema>;
+export type TNeuterYnSchema = z.infer<typeof NeuterYnSchema>;
 
 // 백신 검사 여부
 export const VaccinationCheckSchema = z.enum(['NOT', 'FIRST', 'SECOND', 'THIRD', 'NONE']);
 export type TVaccinationCheckSchema = z.infer<typeof VaccinationCheckSchema>;
+
+// 건강 검진 여부
+export const HealthCheckSchema = z.enum(['Y', 'N', 'NONE']);
+export type THealthCheckSchema = z.infer<typeof HealthCheckSchema>;
 
 export const AdoptBaseDto = z.object({
   id: z.string(), // 공고 id
@@ -39,7 +46,7 @@ export const AdoptBaseDto = z.object({
   noticeNo: z.string(), // 공고 번호
   rfid: z.string().nullable(), // 칩 번호
   vaccinationCheck: VaccinationCheckSchema, // 백신 검사 여부
-  healthCheck: z.string().nullable() // 건강 검진 여부
+  healthCheck: HealthCheckSchema // 건강 검진 여부
 });
 export type TAdoptBaseDto = z.infer<typeof AdoptBaseDto>;
 

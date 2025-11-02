@@ -1,6 +1,6 @@
 import { Stack } from 'expo-router';
 
-import { CommunityWriteHeader } from '@/entities';
+import { CommunityWriteHeader } from '@/widgets';
 
 const CommunityLayout = () => {
   return (

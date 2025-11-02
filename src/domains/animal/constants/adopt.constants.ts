@@ -1,4 +1,4 @@
-import { TAnimalType } from '@/shared';
+import { ADOPT_ANIMAL } from '@/shared';
 
 import { AdoptFilterValue } from '../types';
 
@@ -7,9 +7,5 @@ export const ADOPT_FILTERS: AdoptFilterValue[] = [
   { id: 'NEW', label: '신규공고' }
 ] as const;
 
-export const ADOPT_ANIMAL_TYPES: { id: TAnimalType; label: string }[] = [
-  { id: 'ALL', label: '전체' },
-  { id: 'DOG', label: '강아지' },
-  { id: 'CAT', label: '고양이' },
-  { id: 'OTHER', label: '기타' }
-] as const;
+// Re-export from shared for backward compatibility
+export { ADOPT_ANIMAL as ADOPT_ANIMAL_TYPES };

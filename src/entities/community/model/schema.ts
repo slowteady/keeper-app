@@ -1,7 +1,12 @@
 import { z } from 'zod';
 
-import { AdoptBaseDto, GenderSchema, NeuterYnSchema, VaccinationCheckSchema } from '@/entities/adopt';
-import { AnimalTypeSchema } from '@/shared';
+import {
+  AnimalTypeSchema,
+  GenderSchema,
+  HealthCheckSchema,
+  NeuterYnSchema,
+  VaccinationCheckSchema
+} from '@/entities/adopt';
 
 import { CREATE_POST_OPTIONS } from './constant';
 
@@ -10,6 +15,7 @@ export const ProtectionTypeSchema = z.enum(['TEMPORARY', 'ADOPTION', 'BOTH']);
 export type TProtectionTypeSchema = z.infer<typeof ProtectionTypeSchema>;
 
 export const CreatePostDto = z.object({
+  title: z.string().min(0, '제목을 입력해주세요.'),
   images: z.array(z.string()).min(1, '최소 1장의 이미지를 업로드해주세요.'),
   specificType: z.string().min(0, '품종을 입력해주세요.'),
   animalType: AnimalTypeSchema,
@@ -38,7 +44,28 @@ export const CreatePostDto = z.object({
 });
 export type TCreatePostDto = z.infer<typeof CreatePostDto>;
 
-export const DetailPostDto = AdoptBaseDto.extend({
-  id: z.string() // 게시물 id,
+export const DetailPostDto = z.object({
+  id: z.number(),
+  user: z.object({
+    id: z.string(),
+    image: z.string(),
+    nickname: z.string()
+  }),
+  displayTime: z.string(),
+  title: z.string(),
+  images: z.array(z.string()),
+  tags: z.array(z.string()),
+  content: z.string(),
+  age: z.string(),
+  gender: z.string(),
+  weight: z.string(),
+  healthCheck: HealthCheckSchema,
+  neuterYn: NeuterYnSchema,
+  vaccinationCheck: VaccinationCheckSchema,
+  specialMark: z.string(),
+  likes: z.string(),
+  dislikes: z.string(),
+  health: z.string(),
+  relatedLink: z.string()
 });
 export type TDetailPostDto = z.infer<typeof DetailPostDto>;

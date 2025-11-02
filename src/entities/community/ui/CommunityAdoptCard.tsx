@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { Dimensions } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import { Avatar, styled, Text, useTheme, View, XStack } from 'tamagui';
+import { Avatar, styled, Text, TextProps, useTheme, View, XStack } from 'tamagui';
 
 import { Carousel, Chip, useLoginRequired } from '@/shared';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
@@ -135,8 +135,8 @@ export const CommunityAdoptCardHeart = ({ isLiked, onPress, disabled, loading }:
   return <AnimatedHeart isLiked={isLiked} onPress={onPress} disabled={disabled} loading={loading} size={22} />;
 };
 
-export const CommunityAdoptCardTitle = ({ title }: { title: string }) => {
-  return <StyledTitle>{title}</StyledTitle>;
+export const CommunityAdoptCardTitle = ({ title, ...props }: { title: string } & TextProps) => {
+  return <StyledTitle {...props}>{title}</StyledTitle>;
 };
 
 export const CommunityAdoptCardTags = ({ tags }: { tags: string[] }) => {

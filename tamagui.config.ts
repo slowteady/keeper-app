@@ -50,6 +50,7 @@ export const config = createTamagui({
       white600: '#D3D9D5',
       white700: '#E7E7E7',
       white800: '#E9ECEA',
+      white850: '#F7F7F7',
       white900: '#FFF',
       blackMain: '#000000',
       black400: '#C1C4C2',

@@ -1,9 +1,13 @@
-import { styled, Text, View } from 'tamagui';
+import { styled, View } from 'tamagui';
+
+import { CommunityAdoptDetailFeed, useCommunityAdoptDetailFeed } from '@/widgets';
 
 const Page = () => {
+  const vm = useCommunityAdoptDetailFeed();
+
   return (
     <Container>
-      <Text>CommunityDetailPage</Text>
+      <CommunityAdoptDetailFeed vm={vm} />
     </Container>
   );
 };
