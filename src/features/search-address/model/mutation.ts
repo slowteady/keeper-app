@@ -1,13 +1,13 @@
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError, AxiosResponse } from 'axios';
 
-import { KakaoGeocodeResponseDto } from '@/features/search-address';
 import { UseMutationCustomOptions } from '@/shared';
 
-import { getKakaoGeocode, KakaoGeocodeParams } from '../services/geocode.services';
+import { getKakaoGeocode } from '../api';
+import { KakaoGeocodeParamsDto, KakaoGeocodeResponseDto } from './schema';
 
 export const useKakaoGeocodeMutation = (
-  mutationOptions?: UseMutationCustomOptions<AxiosResponse<KakaoGeocodeResponseDto>, AxiosError, KakaoGeocodeParams>
+  mutationOptions?: UseMutationCustomOptions<AxiosResponse<KakaoGeocodeResponseDto>, AxiosError, KakaoGeocodeParamsDto>
 ) => {
   return useMutation({
     mutationFn: (params) => getKakaoGeocode(params),

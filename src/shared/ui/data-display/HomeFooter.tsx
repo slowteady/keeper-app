@@ -27,7 +27,7 @@ export const HomeFooter = () => {
 };
 
 const Container = styled(YStack, {
-  bg: '$backgroundDefault',
+  bg: '$white850',
   px: 20,
   py: 40
 });

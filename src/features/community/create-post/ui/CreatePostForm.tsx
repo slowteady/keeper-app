@@ -1,14 +1,8 @@
 import { UseFormReturn } from 'react-hook-form';
 import { Accordion, Form, Paragraph, Square, styled, Text, useTheme, View, YStack } from 'tamagui';
 
+import { ContactSelectField, LabelImageSelector, LabelTextArea, LabelTextField, OptionSelectField } from '@/entities';
 import { TCreatePostDto } from '@/entities/community';
-import {
-  ContactSelectField,
-  LabelImageSelector,
-  LabelTextArea,
-  LabelTextField,
-  OptionSelectField
-} from '@/entities/community/ui/field';
 import { DownArrow } from '@/shared/ui/icons/mini';
 
 export interface CreatePostFormProps {
@@ -16,9 +10,16 @@ export interface CreatePostFormProps {
   onPressWeight: () => void;
   onPressAge: () => void;
   onPressKind: () => void;
+  onPressLocation: () => void;
 }
 
-export const CreatePostForm = ({ form, onPressWeight, onPressAge, onPressKind }: CreatePostFormProps) => {
+export const CreatePostForm = ({
+  form,
+  onPressWeight,
+  onPressAge,
+  onPressKind,
+  onPressLocation
+}: CreatePostFormProps) => {
   const { black500 } = useTheme();
   const { control } = form;
 
@@ -33,7 +34,8 @@ export const CreatePostForm = ({ form, onPressWeight, onPressAge, onPressKind }:
         <YStack px={20} gap={16}>
           <OptionSelectField name="animalType" control={control} label="분류" required />
           <OptionSelectField name="gender" control={control} label="성별" required />
-          <OptionSelectField name="neuterYn" control={control} label="중성화 여부" required />
+          <OptionSelectField name="neuterYn" control={control} label="중성화" required />
+          <OptionSelectField name="healthCheck" control={control} label="건강검진" required />
           <OptionSelectField name="protectionType" control={control} label="보호 유형" required />
           <OptionSelectField name="vaccinationCheck" control={control} label="예방접종" required />
           <LabelTextField
@@ -42,14 +44,22 @@ export const CreatePostForm = ({ form, onPressWeight, onPressAge, onPressKind }:
             name="weight"
             control={control}
             placeholder="몸무게를 선택해주세요."
-            keyboardType="numeric"
             right={<Text color="$black500">kg</Text>}
             maxLength={2}
             value={form.watch('weight')}
             onPress={onPressWeight}
-            disabled={true}
+            disabled
           />
-          <LabelTextField name="location" control={control} label="지역" required placeholder="지역을 추가해주세요." />
+          <LabelTextField
+            name="location"
+            control={control}
+            label="지역"
+            required
+            placeholder="지역을 추가해주세요."
+            value={form.watch('location')}
+            onPress={onPressLocation}
+            disabled
+          />
           <LabelTextField
             name="age"
             control={control}
@@ -59,7 +69,7 @@ export const CreatePostForm = ({ form, onPressWeight, onPressAge, onPressKind }:
             placeholder="나이를 선택해주세요."
             value={form.watch('age')}
             onPress={onPressAge}
-            disabled={true}
+            disabled
           />
           <LabelTextField
             name="specificType"
@@ -69,7 +79,7 @@ export const CreatePostForm = ({ form, onPressWeight, onPressAge, onPressKind }:
             placeholder="품종을 선택해주세요."
             value={form.watch('specificType')}
             onPress={onPressKind}
-            disabled={true}
+            disabled
           />
           <LabelTextArea
             name="title"
@@ -82,7 +92,7 @@ export const CreatePostForm = ({ form, onPressWeight, onPressAge, onPressKind }:
             placeholder="예)말랑말랑 댕댕이의 가족이 되어주세요 :)"
           />
           <LabelTextArea
-            name="introduction"
+            name="content"
             control={control}
             label="소개글"
             required
@@ -161,7 +171,6 @@ export const CreatePostForm = ({ form, onPressWeight, onPressAge, onPressKind }:
                       placeholder="예) 피부병이 있어서 하루에 두 번 연고를 발라줘야해요."
                     />
                     <LabelTextField name="relatedLink" control={control} label="관련 링크" placeholder="URL" />
-                    {/* <LabelTextField name="rfid" control={control} label="RFID" placeholder="예)1234-5678-910" /> */}
                   </YStack>
                 </Accordion.HeightAnimator>
               </Accordion.Content>
@@ -215,13 +224,15 @@ const OptionalTitle = styled(Text, {
   lineHeight: 24,
   fontWeight: 600,
   color: '$blackMain',
-  mb: 8
+  mb: 8,
+  letterSpacing: -0.25
 });
 const OptionalDescription = styled(Text, {
   fontSize: 14,
   lineHeight: 20,
   fontWeight: '$4',
-  color: '$black500'
+  color: '$black500',
+  letterSpacing: -0.25
 });
 const AccordionTrigger = styled(Accordion.Trigger, {
   px: 16,

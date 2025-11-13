@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { Dimensions } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import { Avatar, styled, Text, TextProps, useTheme, View, XStack } from 'tamagui';
+import { Avatar, styled, Text, TextProps, useTheme, View, XStack, XStackProps } from 'tamagui';
 
 import { Carousel, Chip, useLoginRequired } from '@/shared';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
@@ -139,9 +139,9 @@ export const CommunityAdoptCardTitle = ({ title, ...props }: { title: string } &
   return <StyledTitle {...props}>{title}</StyledTitle>;
 };
 
-export const CommunityAdoptCardTags = ({ tags }: { tags: string[] }) => {
+export const CommunityAdoptCardTags = ({ tags, ...props }: { tags: string[] } & XStackProps) => {
   return (
-    <XStack gap={6} flexWrap="wrap" mb={16}>
+    <XStack gap={6} flexWrap="wrap" mb={16} {...props}>
       {tags.map((tag, idx) => (
         <Chip key={`${tag}-${idx}`} text={tag} />
       ))}
@@ -167,12 +167,13 @@ const StyledAvatar = styled(Avatar, {
 });
 const StyledTitle = styled(Text, {
   fontSize: 20,
-  lineHeight: 26,
+  lineHeight: 28,
   fontWeight: 600,
   color: '$black800',
   numberOfLines: 1,
   ellipsizeMode: 'tail',
-  mb: 12
+  mb: 12,
+  letterSpacing: -0.25
 });
 const StyledContent = styled(Text, {
   fontSize: 15,

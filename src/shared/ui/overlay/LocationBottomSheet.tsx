@@ -2,22 +2,22 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { forwardRef, useState } from 'react';
 import { ActivityIndicator, FlatList, ListRenderItemInfo, Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { KakaoAddressDocumentDto } from '@/features/search-address';
 import { theme } from '@/shared';
-import { KakaoAddressDocument } from '@/shared/model/types';
 
 import { BottomSheet, BottomSheetLayoutProps } from '../data-display/BottomSheet';
 import { Searchbar } from '../form';
 
 export interface LocationBottomSheetProps extends BottomSheetLayoutProps {
   onSubmit: (value: string) => void;
-  onPressAddress: (value: KakaoAddressDocument) => void;
-  addresses?: KakaoAddressDocument[];
+  onPressAddress: (value: KakaoAddressDocumentDto) => void;
+  addresses?: KakaoAddressDocumentDto[];
   isPending?: boolean;
 }
 export const LocationBottomSheet = forwardRef<BottomSheetModal, LocationBottomSheetProps>((props, ref) => {
   const { onSubmit, onPressAddress, addresses, isPending, ...rest } = props;
 
-  const renderItem = ({ item }: ListRenderItemInfo<KakaoAddressDocument>) => {
+  const renderItem = ({ item }: ListRenderItemInfo<KakaoAddressDocumentDto>) => {
     const { address_name } = item;
 
     return (

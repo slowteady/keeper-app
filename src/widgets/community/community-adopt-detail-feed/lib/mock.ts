@@ -8,7 +8,7 @@ export const detailPostValue = (): TDetailPostDto => {
     id: fakerKO.number.int({ min: 1, max: 1000000 }),
     user: { id: fakerKO.string.uuid(), image: fakerKO.image.avatar(), nickname: fakerKO.person.fullName() },
     displayTime: formatTimeAgo(fakerKO.date.recent()),
-    title: fakerKO.lorem.paragraph(),
+    title: fakerKO.lorem.sentences(2),
     images: Array.from({ length: 5 }, () => fakerKO.image.avatar()),
     tags: [fakerKO.animal.dog(), fakerKO.animal.cat(), fakerKO.animal.bird(), fakerKO.animal.lion()],
     content: fakerKO.lorem.text(),

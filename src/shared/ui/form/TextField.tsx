@@ -86,7 +86,7 @@ const Container = styled(XStack, {
         bg: '$white900'
       },
       fill: {
-        bg: '$backgroundDefault'
+        bg: '#F7F7F7'
       }
     }
   } as const,

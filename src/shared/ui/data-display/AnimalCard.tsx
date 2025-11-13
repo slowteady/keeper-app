@@ -40,11 +40,13 @@ export const AnimalCard = <T,>({ data, width, size = 'medium', style }: AnimalCa
     return () => clearTimeout(timeoutId);
   }, [uri, isLoaded]);
 
-  const titleStyle = size === 'small' ? { fontSize: 18, lineHeight: 20 } : { fontSize: 20, lineHeight: 22 };
+  const titleStyle =
+    size === 'small' ? { fontSize: 18, lineHeight: 20, marginBottom: 14 } : { fontSize: 20, lineHeight: 22 };
+  const marginStyle = size === 'small' ? { marginBottom: 16 } : { marginBottom: 20 };
 
   return (
     <View style={{ width }}>
-      <View style={{ width, marginBottom: 20 }}>
+      <View style={{ width, ...marginStyle }}>
         {!isLoaded && !isError && <Skeleton style={styles.skeleton} />}
         {uri && !isError ? (
           <ExpoImage
@@ -62,7 +64,7 @@ export const AnimalCard = <T,>({ data, width, size = 'medium', style }: AnimalCa
       <Text numberOfLines={1} ellipsizeMode="tail" style={[styles.title, { ...titleStyle }]}>
         {title}
       </Text>
-      <View style={[styles.descriptionContainer]}>
+      <View style={[styles.descriptionContainer, marginStyle]}>
         <Descriptions data={description} size={size} />
       </View>
       {sortedChips && <Chips data={sortedChips} size={size} />}
@@ -181,7 +183,6 @@ const styles = StyleSheet.create({
   },
   descriptionContainer: {
     display: 'flex',
-    marginBottom: 20,
     gap: 10
   },
   descriptionWrap: {
@@ -198,7 +199,7 @@ const styles = StyleSheet.create({
   },
   text: {
     flex: 1,
-    color: theme.colors.black[900],
+    color: theme.colors.black[700],
     fontWeight: '500',
     marginRight: 6
   },

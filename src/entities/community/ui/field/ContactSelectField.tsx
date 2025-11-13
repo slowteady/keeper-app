@@ -56,7 +56,7 @@ export const ContactSelectField = ({ control, label, required }: ContactSelectFi
             />
 
             {field.value.length > 0 && (
-              <YStack gap={12} mt={12}>
+              <YStack gap={10} mt={12}>
                 {field.value.map((item, idx) => (
                   <TextField
                     key={`${item.type}-${idx}`}

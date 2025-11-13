@@ -11,7 +11,7 @@ import { useCommunityAdoptFeed } from '../model/useCommunityAdoptFeed';
 export const CommunityAdoptFeed = () => {
   const { black500 } = useTheme();
 
-  const { toggleLike, isLiking } = useLikePost();
+  const { toggleLike } = useLikePost();
   const { filter, handleChangeAnimalType, handlePressFilter } = usePostFilter();
 
   const { data, actions } = useCommunityAdoptFeed();
@@ -22,15 +22,11 @@ export const CommunityAdoptFeed = () => {
   return (
     <Container>
       <FlashList
+        keyExtractor={({ id }) => id}
         data={data.adoptListData}
         renderItem={({ item }) => (
           <View px={20} py={32}>
-            <AdoptCard
-              {...item}
-              onPressCard={() => moveDetailPage(item.id)}
-              onPressLike={() => toggleLike(item.id)}
-              isLoading={isLiking}
-            />
+            <AdoptCard {...item} onPressCard={() => moveDetailPage(item.id)} onPressLike={() => toggleLike(item.id)} />
           </View>
         )}
         ListEmptyComponent={<></>}

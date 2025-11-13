@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 6,
+    borderRadius: 8,
     paddingVertical: 11,
     borderWidth: 1
   },

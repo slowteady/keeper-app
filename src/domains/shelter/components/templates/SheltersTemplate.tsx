@@ -6,8 +6,9 @@ import { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'r
 import { useFormContext } from 'react-hook-form';
 import { Dimensions, FlatList, ListRenderItemInfo, StyleSheet, Text, View } from 'react-native';
 
+import { KakaoAddressDocumentDto } from '@/features/search-address';
 import { Button, LocationBottomSheet, ScrollFloatingButton, Skeleton, theme, useScrollFloatingButton } from '@/shared';
-import { CameraParams, KakaoAddressDocument } from '@/shared/model/types/map.types';
+import { CameraParams } from '@/shared/model/types/map.types';
 import { ShelterCard } from '@/shared/ui/data-display/ShelterCard';
 import { ShelterMap } from '@/shared/ui/data-display/ShelterMap';
 import { Searchbar } from '@/shared/ui/form/Searchbar';
@@ -31,7 +32,7 @@ interface SheltersTemplateData {
 const PADDING_HORIZONTAL = 20;
 const SheltersTemplate = forwardRef<NaverMapViewRef, SheltersTemplateProps>((props, ref) => {
   const { data, isLoading, camera, permissionStatus, onSubmitSearch, onRefetch, onInitMap } = props;
-  const [addresses, setAddresses] = useState<KakaoAddressDocument[]>();
+  const [addresses, setAddresses] = useState<KakaoAddressDocumentDto[]>();
   const [shelterValues, setShelterValues] = useState<ShelterDto[]>([]);
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => [400], []);
@@ -64,7 +65,7 @@ const SheltersTemplate = forwardRef<NaverMapViewRef, SheltersTemplateProps>((pro
     } catch {}
   };
   const handlePressAddress = useCallback(
-    (item: KakaoAddressDocument) => {
+    (item: KakaoAddressDocumentDto) => {
       if (ref && 'current' in ref && ref.current) {
         const { x, y } = item;
         ref.current.animateCameraTo({ longitude: Number(x), latitude: Number(y) });

@@ -89,19 +89,19 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     width: '80%',
-    borderRadius: 14,
+    borderRadius: 18,
     backgroundColor: theme.colors.white[900],
     paddingHorizontal: 20
   },
   title: {
     color: theme.colors.black[800],
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '600',
-    lineHeight: 18
+    lineHeight: 19
   },
   description: {
     color: theme.colors.black[500],
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '400',
     lineHeight: 19
   },
@@ -124,9 +124,9 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: theme.colors.black[800],
-    fontSize: 14,
-    fontWeight: '600',
-    lineHeight: 16,
+    fontSize: 15,
+    fontWeight: '700',
+    lineHeight: 17,
     textAlign: 'center'
   }
 });

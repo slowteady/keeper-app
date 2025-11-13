@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { styled } from 'tamagui';
 
 import { TransformedShelterValue } from '@/domains/shelter/business/shelter.business';
 import { ShelterTelModal } from '@/domains/shelter/components/organisms/modal';
@@ -34,11 +35,11 @@ export const AbandonmentsDetailTemplate = ({ abandonment, shelter }: Abandonment
           <View style={{ paddingHorizontal: 20, marginBottom: 20 }}>
             <AbandonmentDetailCardSection data={abandonment} />
           </View>
-          <View style={styles.divider} />
+          <Divider />
           <View style={{ paddingHorizontal: 20, paddingTop: 36, paddingBottom: 48 }}>
             <AbandonmentDetailInfoSection age={age} gender={gender} weight={weight} />
           </View>
-          <View style={styles.divider} />
+          <Divider />
           <AbandonmentDetailDescriptionSection specialMark={specialMark} neuterYn={neuterYn} shelter={shelter} />
         </ScrollView>
 
@@ -53,6 +54,11 @@ export const AbandonmentsDetailTemplate = ({ abandonment, shelter }: Abandonment
     </>
   );
 };
+
+const Divider = styled(View, {
+  height: 8,
+  bg: '$white850'
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -79,9 +85,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 18,
     textAlign: 'center'
-  },
-  divider: {
-    height: 8,
-    backgroundColor: theme.colors.white[800]
   }
 });

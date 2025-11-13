@@ -356,14 +356,14 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     fontWeight: '600',
     color: theme.colors.black[800],
-    marginBottom: 24
+    marginBottom: 12
   },
   shelterDescriptionContainer: {
     paddingHorizontal: PADDING_HORIZONTAL
   },
   shelterDivider: {
     height: 1,
-    backgroundColor: theme.colors.black[500]
+    backgroundColor: theme.colors.white[800]
   },
   divider: {
     height: 8,
@@ -373,7 +373,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    paddingTop: 32,
+    paddingTop: 24,
     paddingBottom: 40,
     gap: 10
   },

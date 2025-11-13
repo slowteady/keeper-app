@@ -107,6 +107,7 @@ const RootLayout = () => {
       SplashScreen.hideAsync();
     }
   }, [isAppReady, isAnimationDone]);
+
   useEffect(() => {
     const sub = Linking.addEventListener('url', ({ url }) => {
       if (url.includes('thirdPartyLoginResult')) {

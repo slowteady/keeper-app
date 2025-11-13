@@ -1,5 +1,7 @@
 import { styled, Text, YStack } from 'tamagui';
 
+import { Link } from '@/shared';
+
 export interface CommunityDetailDescriptionSectionProps {
   specialMark: string;
   likes: string;
@@ -35,7 +37,7 @@ export const CommunityDetailDescriptionSection = ({
       </Wrap>
       <Wrap>
         <Label>관련 링크</Label>
-        <Description>{relatedLink}</Description>
+        <Link url={relatedLink} text="원문 링크" />
       </Wrap>
     </Container>
   );
@@ -45,7 +47,7 @@ const Container = styled(YStack, {
   gap: 24
 });
 const Wrap = styled(YStack, {
-  gap: 4
+  gap: 8
 });
 const Label = styled(Text, {
   fontSize: 18,
@@ -55,7 +57,8 @@ const Label = styled(Text, {
 });
 const Description = styled(Text, {
   fontSize: 16,
-  lineHeight: 21,
-  fontWeight: 500,
-  color: '#707070'
+  lineHeight: 23,
+  fontWeight: 400,
+  color: '#707070',
+  letterSpacing: -0.25
 });

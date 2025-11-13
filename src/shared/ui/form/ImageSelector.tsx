@@ -123,7 +123,7 @@ const RemoveButtonBackground = styled(YStack, {
 const AddButton = styled(YStack, {
   width: '100%',
   height: '100%',
-  rounded: '$4',
+  rounded: 10,
   borderWidth: 1,
   borderStyle: 'solid',
   borderColor: '$white600',
@@ -142,13 +142,13 @@ const PlusVertical = styled(YStack, {
   position: 'absolute',
   width: 2,
   height: 16,
-  bg: '$black400'
+  bg: '$black500'
 });
 const PlusHorizontal = styled(YStack, {
   position: 'absolute',
   width: 16,
   height: 2,
-  bg: '$black400'
+  bg: '$black500'
 });
 
 const styles = StyleSheet.create({

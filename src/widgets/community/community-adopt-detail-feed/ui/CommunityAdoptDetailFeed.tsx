@@ -1,11 +1,12 @@
 import { useMemo } from 'react';
-import { ScrollView, styled, View } from 'tamagui';
+import { ScrollView, styled, View, YStack } from 'tamagui';
 
 import {
   CommunityDetailDescriptionSection,
   CommunityDetailInfoSection,
   CommunityDetailOverviewSection
 } from '@/entities';
+import { Button } from '@/shared';
 
 import { getSectionData } from '../lib';
 import { useCommunityAdoptDetailFeed } from '../model';
@@ -20,19 +21,22 @@ export const CommunityAdoptDetailFeed = ({ vm }: CommunityAdoptDetailFeedProps) 
 
   return (
     <Container>
-      <View px={20}>
+      <View px={20} mb={32}>
         <CommunityDetailOverviewSection
           {...sections.overviewData}
           onPressLike={actions.toggleLike}
           onPressShare={(id) => actions.sharePost({ id })}
         />
       </View>
-      <Divider mb={24} />
-      <View px={20} mb={32}>
+      <Divider mb={32} />
+      <YStack px={20} mb={40}>
         <CommunityDetailInfoSection {...sections.infoData} />
-      </View>
+      </YStack>
       <View px={20} mb={32}>
         <CommunityDetailDescriptionSection {...sections.descriptionData} />
+      </View>
+      <View px={20} mb={32}>
+        <Button onPress={actions.callToUser}>연락하기</Button>
       </View>
     </Container>
   );
@@ -43,6 +47,6 @@ const Container = styled(ScrollView, {
   py: 24
 });
 const Divider = styled(View, {
-  height: 4,
+  height: 8,
   bg: '$white850'
 });

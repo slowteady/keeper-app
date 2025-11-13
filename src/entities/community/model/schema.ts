@@ -14,18 +14,19 @@ import { CREATE_POST_OPTIONS } from './constant';
 export const ProtectionTypeSchema = z.enum(['TEMPORARY', 'ADOPTION', 'BOTH']);
 export type TProtectionTypeSchema = z.infer<typeof ProtectionTypeSchema>;
 
-export const CreatePostDto = z.object({
+export const CreatePostSchema = z.object({
   title: z.string().min(0, '제목을 입력해주세요.'),
-  images: z.array(z.string()).min(1, '최소 1장의 이미지를 업로드해주세요.'),
-  specificType: z.string().min(0, '품종을 입력해주세요.'),
   animalType: AnimalTypeSchema,
+  specificType: z.string().min(0, '품종을 입력해주세요.'),
+  images: z.array(z.string()).min(1, '최소 1장의 이미지를 업로드해주세요.'),
   gender: GenderSchema,
   neuterYn: NeuterYnSchema,
+  healthCheck: HealthCheckSchema,
   age: z.string().min(0, '나이를 입력해주세요.'),
   weight: z.string().min(0, '몸무게를 입력해주세요.'),
   location: z.string().min(0, '지역을 입력해주세요.'),
   specialMark: z.string().min(0, '특징을 입력해주세요.'),
-  introduction: z.string().min(0, '소개글을 입력해주세요.'),
+  content: z.string().min(0, '소개글을 입력해주세요.'),
   contact: z
     .array(
       z.object({
@@ -42,9 +43,9 @@ export const CreatePostDto = z.object({
   protectionType: ProtectionTypeSchema,
   vaccinationCheck: VaccinationCheckSchema
 });
-export type TCreatePostDto = z.infer<typeof CreatePostDto>;
+export type TCreatePostDto = z.infer<typeof CreatePostSchema>;
 
-export const DetailPostDto = z.object({
+export const DetailPostSchema = z.object({
   id: z.number(),
   user: z.object({
     id: z.string(),
@@ -68,4 +69,4 @@ export const DetailPostDto = z.object({
   health: z.string(),
   relatedLink: z.string()
 });
-export type TDetailPostDto = z.infer<typeof DetailPostDto>;
+export type TDetailPostDto = z.infer<typeof DetailPostSchema>;

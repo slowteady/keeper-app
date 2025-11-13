@@ -16,7 +16,6 @@ import {
 
 import {
   AnimalCard,
-  TAnimalType,
   BottomSheetMenuData,
   Button,
   ButtonGroup,
@@ -24,6 +23,7 @@ import {
   Dropdown,
   ScrollFloatingButton,
   Searchbar,
+  TAnimalType,
   theme,
   useScrollFloatingButton
 } from '@/shared';
@@ -95,7 +95,7 @@ export const AbandonmentsTemplate = ({ data, onFetch, isLoading, refreshControl 
         scrollEventThrottle={40}
         showsVerticalScrollIndicator={false}
         refreshControl={refreshControl}
-        columnWrapperStyle={{ gap: CARD_GAP, marginBottom: 40, justifyContent: 'space-between' }}
+        columnWrapperStyle={{ gap: CARD_GAP, marginBottom: 32, justifyContent: 'space-between' }}
         contentContainerStyle={{ paddingHorizontal: PADDING_HORIZONTAL }}
         style={styles.container}
         ListHeaderComponent={<FilterSection />}

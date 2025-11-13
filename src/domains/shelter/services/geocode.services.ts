@@ -1,6 +1,7 @@
 import { AxiosError, AxiosResponse } from 'axios';
 
-import { _publicApi, handleLogging, KakaoGeocodeResponse } from '@/shared';
+import { KakaoGeocodeResponseDto } from '@/features/search-address';
+import { _publicApi, handleLogging } from '@/shared';
 
 export interface KakaoGeocodeOptionalParams {
   /** 페이지 번호 (1~45, 기본 1) */
@@ -20,7 +21,7 @@ export interface KakaoGeocodeParams {
 export const getKakaoGeocode = async ({
   query,
   params = {}
-}: KakaoGeocodeParams): Promise<AxiosResponse<KakaoGeocodeResponse, AxiosError>> => {
+}: KakaoGeocodeParams): Promise<AxiosResponse<KakaoGeocodeResponseDto, AxiosError>> => {
   const allParams = { query, ...params };
   const queryString = buildQueryString(allParams);
   const baseUrl = process.env.EXPO_PUBLIC_KAKAO_LOCAL_URL;

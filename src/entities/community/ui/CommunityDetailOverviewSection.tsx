@@ -1,6 +1,6 @@
 import { Share } from '@tamagui/lucide-icons';
 import { Pressable } from 'react-native';
-import { GetThemeValueForKey, styled, Text, useTheme, XStack, YStack } from 'tamagui';
+import { GetThemeValueForKey, styled, Text, useTheme, XStack } from 'tamagui';
 
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
@@ -39,7 +39,7 @@ export const CommunityDetailOverviewSection = ({
   const { white600 } = useTheme();
 
   return (
-    <YStack>
+    <>
       <HeaderWrapper mb={14}>
         <CommunityAdoptCardHeader image={image} nickname={nickname} displayTime={displayTime} />
         <XStack gap={16} items="center">
@@ -49,11 +49,11 @@ export const CommunityDetailOverviewSection = ({
           </Pressable>
         </XStack>
       </HeaderWrapper>
-      <CommunityAdoptCardTitle title={title} numberOfLines={2} mb={16} />
+      <CommunityAdoptCardTitle title={title} numberOfLines={undefined} mb={16} />
       <CommunityAdoptCardCarousel images={images} />
-      <CommunityAdoptCardTags tags={tags} />
-      <Content mb={32}>{content}</Content>
-    </YStack>
+      <CommunityAdoptCardTags tags={tags} mb={20} />
+      <Content>{content}</Content>
+    </>
   );
 };
 
@@ -63,7 +63,8 @@ const HeaderWrapper = styled(XStack, {
 });
 const Content = styled(Text, {
   fontSize: 15,
-  lineHeight: 21,
-  fontWeight: 500,
-  color: '$black800'
+  lineHeight: 23,
+  fontWeight: 400,
+  color: '$black800',
+  letterSpacing: -0.25
 });

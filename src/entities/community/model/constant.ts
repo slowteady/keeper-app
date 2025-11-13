@@ -18,6 +18,11 @@ export const CREATE_POST_OPTIONS = {
     { value: 'N', label: 'X' },
     { value: 'NONE', label: '정보없음' }
   ] as const satisfies ChipOption[],
+  healthCheck: [
+    { value: 'Y', label: 'O' },
+    { value: 'N', label: 'X' },
+    { value: 'NONE', label: '정보없음' }
+  ] as const satisfies ChipOption[],
   protectionType: [
     { value: 'TEMPORARY', label: '임시보호' },
     { value: 'ADOPTION', label: '입양' },
@@ -42,6 +47,7 @@ export const CREATE_POST_DEFAULT_VALUES: TCreatePostDto = {
   animalType: CREATE_POST_OPTIONS.animalType[0].value,
   gender: CREATE_POST_OPTIONS.gender[0].value,
   neuterYn: CREATE_POST_OPTIONS.neuterYn[0].value,
+  healthCheck: CREATE_POST_OPTIONS.healthCheck[0].value,
   protectionType: CREATE_POST_OPTIONS.protectionType[0].value,
   vaccinationCheck: CREATE_POST_OPTIONS.vaccinationCheck[0].value,
   weight: '',
@@ -49,7 +55,7 @@ export const CREATE_POST_DEFAULT_VALUES: TCreatePostDto = {
   age: '',
   specificType: '',
   specialMark: '',
-  introduction: '',
+  content: '',
   contact: [{ type: CREATE_POST_OPTIONS.contact[0].value, value: '' }],
   images: [],
   // 선택 입력 필드
