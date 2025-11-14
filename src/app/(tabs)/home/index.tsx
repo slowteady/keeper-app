@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { useTheme } from 'tamagui';
+import { styled, useTheme, View } from 'tamagui';
 
 import {
   ADOPT_NOTICES_QUERY_KEY,
@@ -37,7 +37,7 @@ const Page = () => {
   );
 
   return (
-    <>
+    <Container>
       <Header left={<HeaderLeft />} />
 
       <HomeTemplate
@@ -46,7 +46,7 @@ const Page = () => {
         onRefresh={handleRequest}
         ListFooterComponent={<HomeFooter />}
       />
-    </>
+    </Container>
   );
 };
 
@@ -57,3 +57,7 @@ const HeaderLeft = () => {
 
   return <Logo width={96} height={30} color={black900.val} />;
 };
+
+const Container = styled(View, {
+  flex: 1
+});
