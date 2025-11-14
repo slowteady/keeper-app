@@ -6,6 +6,7 @@ export { default as Eye } from './Eye';
 export { default as Heart } from './Heart';
 export { default as Home2 } from './Home2';
 export { default as Home } from './Home';
+export { default as Indicator } from './Indicator';
 export { default as LeftArrow } from './LeftArrow';
 export { default as LikeHeart } from './LikeHeart';
 export { default as Location } from './Location';
