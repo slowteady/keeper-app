@@ -6,32 +6,27 @@ import { useReactQueryDevTools } from '@dev-plugins/react-query';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { initializeKakaoSDK } from '@react-native-kakao/core';
 import NaverLogin from '@react-native-seoul/naver-login';
-import { DrawerContentComponentProps } from '@react-navigation/drawer';
 import * as Sentry from '@sentry/react-native';
 import { ToastProvider } from '@tamagui/toast';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { extend } from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useFonts } from 'expo-font';
-import { router } from 'expo-router';
-import { Drawer } from 'expo-router/drawer';
+import { router, Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { Dimensions, Linking } from 'react-native';
+import { Linking } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { TamaguiProvider } from 'tamagui';
 
-import { DrawerMenus } from '@/domains/category';
 import { authApi, BottomSheetProvider, ModalProvider, setupInterceptor, throwToErrorBoundary, Toast } from '@/shared';
 
 import { config } from '../../tamagui.config';
 import AnimatedSplash from './AnimatedSplash';
 import ErrorFallback from './ErrorFallback';
-
-const DRAWER_WIDTH = (Dimensions.get('window').width * 2) / 3;
 
 SplashScreen.preventAutoHideAsync();
 
@@ -136,17 +131,11 @@ const RootLayout = () => {
                     <ToastProvider native={false} swipeDirection="up">
                       <StatusBar style="dark" />
                       <Toast />
-                      <Drawer
-                        drawerContent={(props: DrawerContentComponentProps) => <DrawerMenus {...props} />}
-                        screenOptions={{
-                          drawerPosition: 'right',
-                          drawerType: 'front',
-                          drawerStyle: { width: DRAWER_WIDTH },
-                          headerShown: false
-                        }}
-                      >
-                        <Drawer.Screen name="(home)" />
-                      </Drawer>
+                      <Stack screenOptions={{ headerShown: false }}>
+                        <Stack.Screen name="index" options={{ headerShown: false }} />
+                        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+                      </Stack>
                     </ToastProvider>
                   </ModalProvider>
                 </BottomSheetProvider>

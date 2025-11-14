@@ -4,7 +4,7 @@ import { Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { Spinner, styled, Text, XStack, YStack } from 'tamagui';
 
-import { SignupForm } from '@/app/(home)/(public)/signup';
+import { SignupForm } from '@/app/(auth)/signup';
 import { Button, BUTTON_HEIGHT, TextField, useDebounceValue, useLayout } from '@/shared';
 
 import { useCheckNicknameMutation } from '../../services';

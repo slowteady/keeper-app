@@ -1,9 +1,5 @@
-import { DrawerActions } from '@react-navigation/native';
 import { useQueryClient } from '@tanstack/react-query';
-import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
-import { useNavigation } from 'expo-router';
 import { useMemo } from 'react';
-import { Pressable } from 'react-native';
 import { useTheme } from 'tamagui';
 
 import {
@@ -16,7 +12,7 @@ import {
   HomeTemplate,
   SHELTER_QUERY_KEY
 } from '@/shared';
-import { Logo, Menu } from '@/shared/ui/icons/outline';
+import { Logo } from '@/shared/ui/icons/outline';
 
 /**
  * 메인 페이지
@@ -42,7 +38,7 @@ const Page = () => {
 
   return (
     <>
-      <Header left={<HeaderLeft />} right={<HeaderRight />} />
+      <Header left={<HeaderLeft />} />
 
       <HomeTemplate
         data={homeSections}
@@ -60,20 +56,4 @@ const HeaderLeft = () => {
   const { black900 } = useTheme();
 
   return <Logo width={96} height={30} color={black900.val} />;
-};
-
-const HeaderRight = () => {
-  const navigation = useNavigation();
-  const { black900 } = useTheme();
-
-  const handlePressDrawer = async () => {
-    await impactAsync(ImpactFeedbackStyle.Medium);
-    navigation.dispatch(DrawerActions.openDrawer());
-  };
-
-  return (
-    <Pressable onPress={handlePressDrawer}>
-      <Menu width={24} height={24} color={black900.val} />
-    </Pressable>
-  );
 };
