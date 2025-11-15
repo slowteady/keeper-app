@@ -14,7 +14,7 @@ export const PublicHeader = () => {
     if (router.canGoBack()) {
       router.back();
     } else {
-      router.dismissTo('/');
+      router.replace('/');
     }
   }, []);
 
@@ -25,7 +25,7 @@ export const PublicHeader = () => {
   );
 
   const right = (
-    <Pressable onPress={() => router.dismissTo('/')}>
+    <Pressable onPress={() => router.replace('/')}>
       <Home width={28} height={28} color={black900.val} />
     </Pressable>
   );

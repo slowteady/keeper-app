@@ -1,7 +1,12 @@
-import { View } from 'tamagui';
+import { styled, View } from 'tamagui';
 
 const Page = () => {
-  return <View />;
+  return <Container />;
 };
 
 export default Page;
+
+const Container = styled(View, {
+  flex: 1,
+  bg: '$pageBackground'
+});

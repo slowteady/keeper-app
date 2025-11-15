@@ -1,10 +1,9 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { styled, useTheme, View } from 'tamagui';
+import { styled, View } from 'tamagui';
 
 import {
   ADOPT_NOTICES_QUERY_KEY,
-  Header,
   HomeAdoptSection,
   HomeBannerSection,
   HomeFooter,
@@ -12,7 +11,6 @@ import {
   HomeTemplate,
   SHELTER_QUERY_KEY
 } from '@/shared';
-import { Logo } from '@/shared/ui/icons/outline';
 
 /**
  * 메인 페이지
@@ -38,8 +36,6 @@ const Page = () => {
 
   return (
     <Container>
-      <Header left={<HeaderLeft />} />
-
       <HomeTemplate
         data={homeSections}
         renderItem={({ item }) => <>{item.Component}</>}
@@ -51,12 +47,6 @@ const Page = () => {
 };
 
 export default Page;
-
-const HeaderLeft = () => {
-  const { black900 } = useTheme();
-
-  return <Logo width={96} height={30} color={black900.val} />;
-};
 
 const Container = styled(View, {
   flex: 1

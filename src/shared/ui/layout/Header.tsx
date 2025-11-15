@@ -8,18 +8,17 @@ export interface HeaderProps {
   showShadow?: boolean;
   ContainerProps?: StackProps;
   left?: ReactNode;
-  center?: ReactNode;
   right?: ReactNode;
 }
 
-export const Header = ({ showShadow = true, ContainerProps, left, center, right }: HeaderProps) => {
+export const Header = ({ showShadow = true, ContainerProps, left, right }: HeaderProps) => {
   const { top } = useLayout();
 
   return (
     <HeaderContainer showShadow={showShadow} pt={top} {...ContainerProps}>
       <RowContainer>
         {left && left}
-        {center && center}
+        <Spacer />
         {right && right}
       </RowContainer>
     </HeaderContainer>
@@ -56,7 +55,12 @@ const HeaderContainer = styled(YStack, {
     showShadow: true
   }
 });
+
 const RowContainer = styled(XStack, {
-  items: 'center',
-  justify: 'space-between'
+  width: '100%',
+  items: 'center'
+});
+
+const Spacer = styled(XStack, {
+  flex: 1
 });

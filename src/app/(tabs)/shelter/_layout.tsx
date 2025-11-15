@@ -1,28 +1,14 @@
 import { Stack } from 'expo-router';
 
+import { LogoHeader } from '@/shared';
+
 const ShelterLayout = () => {
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false
-      }}
-    >
-      <Stack.Screen
-        name="index"
-        options={{
-          title: '내위치'
-        }}
-      />
-      <Stack.Screen
-        name="[id]"
-        options={{
-          title: '보호소 상세',
-          presentation: 'card'
-        }}
-      />
+    <Stack screenOptions={{ header: () => <LogoHeader /> }}>
+      <Stack.Screen name="index" />
+      <Stack.Screen name="[id]" options={{ headerShown: false }} />
     </Stack>
   );
 };
 
 export default ShelterLayout;
-
