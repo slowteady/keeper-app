@@ -3,14 +3,14 @@ import { Text, XStack, YStack } from 'tamagui';
 
 import { ImageSelector, ImageSelectorProps } from '@/shared';
 
-import { TCreatePostDto } from '../../model';
+import { CommunityAdoptFormDto } from '../../model';
 import { FieldLabel } from './FieldLabel';
 
 export interface LabelImageSelectorProps extends Omit<ImageSelectorProps, 'value' | 'onChange'> {
   label: string;
   required?: boolean;
-  name: keyof TCreatePostDto;
-  control: Control<TCreatePostDto>;
+  name: keyof CommunityAdoptFormDto;
+  control: Control<CommunityAdoptFormDto>;
 }
 
 const IMAGE_BOX_SIZE = 72;

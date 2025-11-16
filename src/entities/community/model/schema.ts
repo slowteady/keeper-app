@@ -14,7 +14,7 @@ import { CREATE_POST_OPTIONS } from './constant';
 export const ProtectionTypeSchema = z.enum(['TEMPORARY', 'ADOPTION', 'BOTH']);
 export type TProtectionTypeSchema = z.infer<typeof ProtectionTypeSchema>;
 
-export const CreatePostSchema = z.object({
+export const CommunityAdoptFormSchema = z.object({
   title: z.string().min(0, '제목을 입력해주세요.'),
   animalType: AnimalTypeSchema,
   specificType: z.string().min(0, '품종을 입력해주세요.'),
@@ -43,9 +43,9 @@ export const CreatePostSchema = z.object({
   protectionType: ProtectionTypeSchema,
   vaccinationCheck: VaccinationCheckSchema
 });
-export type TCreatePostDto = z.infer<typeof CreatePostSchema>;
+export type CommunityAdoptFormDto = z.infer<typeof CommunityAdoptFormSchema>;
 
-export const DetailPostSchema = z.object({
+export const CommunityAdoptDetailSchema = z.object({
   id: z.number(),
   user: z.object({
     id: z.string(),
@@ -67,6 +67,32 @@ export const DetailPostSchema = z.object({
   likes: z.string(),
   dislikes: z.string(),
   health: z.string(),
-  relatedLink: z.string()
+  relatedLink: z.string(),
+  counts: z.object({
+    like: z.number(),
+    view: z.number(),
+    comment: z.number()
+  })
 });
-export type TDetailPostDto = z.infer<typeof DetailPostSchema>;
+export type TDetailPostDto = z.infer<typeof CommunityAdoptDetailSchema>;
+
+export const CommunityAdoptListSchema = z.object({
+  id: z.string(),
+  user: z.object({
+    id: z.string(),
+    image: z.string(),
+    nickname: z.string()
+  }),
+  displayTime: z.string(),
+  title: z.string(),
+  images: z.array(z.string()),
+  tags: z.array(z.string()),
+  content: z.string(),
+  counts: z.object({
+    like: z.number(),
+    view: z.number(),
+    comment: z.number()
+  }),
+  isLiked: z.boolean()
+});
+export type CommunityAdoptListDto = z.infer<typeof CommunityAdoptListSchema>;

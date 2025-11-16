@@ -3,13 +3,13 @@ import { YStack } from 'tamagui';
 
 import { ChipGroup, TextField } from '@/shared';
 
-import { CREATE_POST_OPTIONS, TCreatePostDto } from '../../model';
+import { CommunityAdoptFormDto, CREATE_POST_OPTIONS } from '../../model';
 import { FieldLabel } from './FieldLabel';
 
 export interface ContactSelectFieldProps {
   label: string;
   required?: boolean;
-  control: Control<TCreatePostDto>;
+  control: Control<CommunityAdoptFormDto>;
 }
 
 export const ContactSelectField = ({ control, label, required }: ContactSelectFieldProps) => {
@@ -30,7 +30,7 @@ export const ContactSelectField = ({ control, label, required }: ContactSelectFi
             const existingItem = field.value.find((item) => item.type === type);
             return existingItem || { type, value: '' };
           });
-          field.onChange(updatedContact as TCreatePostDto['contact']);
+          field.onChange(updatedContact as CommunityAdoptFormDto['contact']);
         };
 
         const handleValueChange = (type: string, value: string) => {

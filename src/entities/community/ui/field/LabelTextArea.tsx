@@ -3,14 +3,14 @@ import { Text, TextAreaProps, XStack, YStack } from 'tamagui';
 
 import { TextArea } from '@/shared';
 
-import { TCreatePostDto } from '../../model';
+import { CommunityAdoptFormDto } from '../../model';
 import { FieldLabel } from './FieldLabel';
 
 export interface LabelTextAreaProps extends TextAreaProps {
   label: string;
   required?: boolean;
-  name: keyof TCreatePostDto;
-  control: Control<TCreatePostDto>;
+  name: keyof CommunityAdoptFormDto;
+  control: Control<CommunityAdoptFormDto>;
 }
 
 export const LabelTextArea = ({ label, required, name, control, ...props }: LabelTextAreaProps) => {

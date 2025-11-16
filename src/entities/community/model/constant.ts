@@ -1,6 +1,12 @@
 import { ChipOption } from '@/shared';
 
-import { TCreatePostDto } from './schema';
+import { CommunityAdoptFormDto } from './schema';
+
+export const COMMUNITY_ROUTES = [
+  { key: 'adopt', title: '개인입양' },
+  { key: 'life', title: '입양생활' },
+  { key: 'qna', title: '질문' }
+];
 
 export const CREATE_POST_OPTIONS = {
   animalType: [
@@ -42,7 +48,7 @@ export const CREATE_POST_OPTIONS = {
   ] as const satisfies ChipOption[]
 } as const;
 
-export const CREATE_POST_DEFAULT_VALUES: TCreatePostDto = {
+export const CREATE_POST_DEFAULT_VALUES: CommunityAdoptFormDto = {
   title: '',
   animalType: CREATE_POST_OPTIONS.animalType[0].value,
   gender: CREATE_POST_OPTIONS.gender[0].value,

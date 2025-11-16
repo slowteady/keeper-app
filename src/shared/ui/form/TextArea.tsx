@@ -1,23 +1,34 @@
 import { styled, TextArea as TamaguiTextArea } from 'tamagui';
 
+export type TextAreaSize = 'medium' | 'large';
+
 export const TextArea = styled(TamaguiTextArea, {
   flex: 1,
-  borderWidth: 0,
-  rounded: '$3',
-  placeholderTextColor: '$black500',
-  fontSize: 15,
-  fontWeight: '$4',
   variants: {
-    variant: {
-      default: {
-        bg: '$white900'
+    size: {
+      medium: {
+        fontSize: 15,
+        fontWeight: 500,
+        lineHeight: 20,
+        height: 48,
+        rounded: 8
       },
+      large: {
+        fontSize: 16,
+        fontWeight: 600,
+        height: 60
+      }
+    },
+    variant: {
       fill: {
-        bg: '$backgroundDefault'
+        bg: '$white850',
+        borderWidth: 0,
+        placeholderTextColor: '$black500'
       }
     }
   } as const,
   defaultVariants: {
-    variant: 'default'
+    variant: 'fill',
+    size: 'medium'
   }
 });

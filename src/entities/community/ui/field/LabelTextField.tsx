@@ -3,14 +3,14 @@ import { YStack } from 'tamagui';
 
 import { TextField, TextFieldProps } from '@/shared';
 
-import { TCreatePostDto } from '../../model';
+import { CommunityAdoptFormDto } from '../../model';
 import { FieldLabel } from './FieldLabel';
 
 export interface LabelTextFieldProps extends TextFieldProps {
   label: string;
   required?: boolean;
-  name: keyof TCreatePostDto;
-  control: Control<TCreatePostDto>;
+  name: keyof CommunityAdoptFormDto;
+  control: Control<CommunityAdoptFormDto>;
 }
 
 export const LabelTextField = ({ label, required, name, value, control, ...props }: LabelTextFieldProps) => {

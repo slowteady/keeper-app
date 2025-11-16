@@ -3,7 +3,7 @@ import { YStack } from 'tamagui';
 
 import { ChipGroup } from '@/shared';
 
-import { CREATE_POST_OPTIONS, TCreatePostDto } from '../../model';
+import { CREATE_POST_OPTIONS, CommunityAdoptFormDto } from '../../model';
 import { FieldLabel } from './FieldLabel';
 
 type OptionFieldName = keyof typeof CREATE_POST_OPTIONS;
@@ -12,13 +12,13 @@ export interface OptionSelectFieldProps {
   label: string;
   required?: boolean;
   name: OptionFieldName;
-  control: Control<TCreatePostDto>;
+  control: Control<CommunityAdoptFormDto>;
 }
 
 export const OptionSelectField = ({ name, control, label, required }: OptionSelectFieldProps) => {
   return (
     <Controller
-      name={name as FieldPath<TCreatePostDto>}
+      name={name as FieldPath<CommunityAdoptFormDto>}
       control={control}
       render={({ field }) => (
         <YStack>

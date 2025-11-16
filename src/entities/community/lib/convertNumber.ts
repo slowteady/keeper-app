@@ -1,4 +1,4 @@
-export const convertNumber = (number: number) => {
+export const convertCountOver999 = (number: number) => {
   if (number > 999) {
     return '999+';
   }

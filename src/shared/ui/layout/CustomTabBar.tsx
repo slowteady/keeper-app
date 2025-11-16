@@ -1,9 +1,9 @@
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import * as Haptics from 'expo-haptics';
-import { useEffect } from 'react';
+import { memo, useCallback, useEffect } from 'react';
 import { LayoutChangeEvent } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
-import { styled, Text, useTheme, XStack, YStack } from 'tamagui';
+import { styled, Text, XStack, YStack } from 'tamagui';
 
 import { MENU_ITEMS } from '@/shared/model';
 
@@ -11,9 +11,7 @@ import { Indicator } from '../icons/outline';
 
 const INDICATOR_WIDTH = 70;
 
-export const CustomTabBar = ({ state, navigation, insets }: BottomTabBarProps) => {
-  const theme = useTheme();
-
+export const CustomTabBar = memo(({ state, navigation, insets }: BottomTabBarProps) => {
   const indicatorIndex = useSharedValue(state.index);
   const tabWidth = useSharedValue(0);
 
@@ -26,13 +24,10 @@ export const CustomTabBar = ({ state, navigation, insets }: BottomTabBarProps) =
     });
   }, [state.index, indicatorIndex]);
 
-  const onTabsLayout = (e: LayoutChangeEvent) => {
-    const width = e.nativeEvent.layout.width;
-    tabWidth.value = width / MENU_ITEMS.length;
-  };
-
   const animatedIndicatorStyle = useAnimatedStyle(() => {
-    if (tabWidth.value === 0) return {};
+    if (tabWidth.value === 0) {
+      return {};
+    }
 
     const centerX = (indicatorIndex.value + 0.5) * tabWidth.value;
     const x = centerX - INDICATOR_WIDTH / 2;
@@ -42,7 +37,15 @@ export const CustomTabBar = ({ state, navigation, insets }: BottomTabBarProps) =
     };
   });
 
-  const handlePress = (route: any, index: number) => {
+  const calculateLayout = useCallback(
+    (e: LayoutChangeEvent) => {
+      const width = e.nativeEvent.layout.width;
+      tabWidth.value = width / MENU_ITEMS.length;
+    },
+    [tabWidth]
+  );
+
+  const navigateToPage = (route: any, index: number) => {
     const event = navigation.emit({
       type: 'tabPress',
       target: route.key,
@@ -51,20 +54,27 @@ export const CustomTabBar = ({ state, navigation, insets }: BottomTabBarProps) =
 
     if (!event.defaultPrevented && state.index !== index) {
       Haptics.selectionAsync();
+      indicatorIndex.value = withSpring(index, {
+        damping: 20,
+        stiffness: 200,
+        mass: 0.8,
+        overshootClamping: true
+      });
+
       navigation.navigate(route.name);
     }
   };
 
   return (
     <Container pb={insets.bottom}>
-      <TabItemWrapper onLayout={onTabsLayout}>
+      <TabItemWrapper onLayout={calculateLayout}>
         <XStack>
           {MENU_ITEMS.map((item, index) => {
             const route = state.routes[index];
             const isActive = state.index === index;
 
             return (
-              <TabItemContainer key={route.key} onPress={() => handlePress(route, index)}>
+              <TabItemContainer key={route.key} onPress={() => navigateToPage(route, index)}>
                 <TabItemInner>
                   <item.icon width={24} height={24} />
                   <TabLabel>{item.label}</TabLabel>
@@ -82,7 +92,7 @@ export const CustomTabBar = ({ state, navigation, insets }: BottomTabBarProps) =
       </TabItemWrapper>
     </Container>
   );
-};
+});
 
 const Container = styled(XStack, {
   bg: '$white900'
@@ -104,7 +114,7 @@ const TabItemContainer = styled(YStack, {
   flex: 1,
   items: 'center',
   justify: 'center',
-  pressStyle: { scale: 0.9 }
+  pressStyle: { scale: 0.95 }
 });
 
 const TabItemInner = styled(YStack, {
@@ -119,3 +129,5 @@ const TabLabel = styled(Text, {
   lineHeight: 13,
   fontWeight: '600'
 });
+
+CustomTabBar.displayName = 'CustomTabBar';

@@ -54,9 +54,9 @@ const getStyles = (
   disabled: boolean
 ) => {
   const sizes = {
-    small: { height: BUTTON_HEIGHT.small },
-    medium: { height: BUTTON_HEIGHT.medium },
-    large: { height: BUTTON_HEIGHT.large }
+    small: { minHeight: BUTTON_HEIGHT.small },
+    medium: { minHeight: BUTTON_HEIGHT.medium },
+    large: { minHeight: BUTTON_HEIGHT.large }
   };
 
   const getColorStyles = (variant: 'default' | 'ghost', color: 'primary' | 'secondary', disabled: boolean) => {

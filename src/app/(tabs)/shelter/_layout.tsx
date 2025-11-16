@@ -6,7 +6,6 @@ const ShelterLayout = () => {
   return (
     <Stack screenOptions={{ header: () => <LogoHeader /> }}>
       <Stack.Screen name="index" />
-      <Stack.Screen name="[id]" options={{ headerShown: false }} />
     </Stack>
   );
 };

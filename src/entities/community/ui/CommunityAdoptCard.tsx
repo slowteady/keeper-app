@@ -1,33 +1,22 @@
 import { useCallback } from 'react';
 import { Dimensions } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import { Avatar, styled, Text, TextProps, useTheme, View, XStack, XStackProps } from 'tamagui';
+import { styled, Text, TextProps, View, XStack, XStackProps } from 'tamagui';
 
 import { Carousel, Chip, useLoginRequired } from '@/shared';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
-import { Comment, Eye, LikeHeart } from '@/shared/ui/icons/outline';
 
-import { convertNumber } from '../lib';
+import { CommunityAdoptListDto } from '../model';
+import { CommunityAdoptCardHeader } from './CommunityAdoptCardHeader';
+import { CommunityAdoptCardStats } from './CommunityAdoptCardStats';
 
-export interface AdoptCardSchema {
-  id: string;
-  user: { id: string; image: string; nickname: string };
-  title: string;
-  content: string;
-  displayTime: string;
-  isLiked?: boolean;
-  tags: string[];
-  images: string[];
-  counts: { like: number; comment: number; view: number };
-}
-
-export interface AdoptCardProps extends AdoptCardSchema {
+export interface CommunityAdoptCardProps extends CommunityAdoptListDto {
   onPressCard: (id: string) => void;
   onPressLike: (id: string) => void;
   isLoading?: boolean;
 }
 
-export const AdoptCard = ({
+export const CommunityAdoptCard = ({
   id,
   user,
   onPressCard,
@@ -40,8 +29,7 @@ export const AdoptCard = ({
   counts,
   onPressLike,
   isLoading = false
-}: AdoptCardProps) => {
-  const { black500 } = useTheme();
+}: CommunityAdoptCardProps) => {
   const { isLoggedInSync } = useLoginRequired();
 
   const tap = Gesture.Tap()
@@ -79,48 +67,10 @@ export const AdoptCard = ({
         <CommunityAdoptCardTitle title={title} />
         <CommunityAdoptCardContent content={content} />
         {hasTags && <CommunityAdoptCardTags tags={tags} />}
-
         <CommunityAdoptCardCarousel images={images} />
-
-        <XStack gap={4}>
-          <XStack items="center" gap={2}>
-            <Comment width={12} height={12} color={black500.val} />
-            <StyledText>{convertNumber(counts.comment)}</StyledText>
-          </XStack>
-          <XStack items="center" gap={2}>
-            <LikeHeart width={12} height={12} color={black500.val} strokeWidth={1.5} />
-            <StyledText>{convertNumber(counts.like)}</StyledText>
-          </XStack>
-          <XStack items="center" gap={2}>
-            <Eye width={12} height={12} color={black500.val} />
-            <StyledText>{convertNumber(counts.view)}</StyledText>
-          </XStack>
-        </XStack>
+        <CommunityAdoptCardStats comment={counts.comment} like={counts.like} view={counts.view} />
       </View>
     </GestureDetector>
-  );
-};
-
-export interface CommunityAdoptCardHeaderProps {
-  image: string;
-  nickname: string;
-  displayTime: string;
-}
-
-export const CommunityAdoptCardHeader = ({ image, nickname, displayTime }: CommunityAdoptCardHeaderProps) => {
-  return (
-    <XStack items="center">
-      <StyledAvatar>
-        <Avatar.Image source={{ uri: image }} />
-        <Avatar.Fallback backgroundColor="$black400" />
-      </StyledAvatar>
-      <Text fontSize={14} fontWeight={600} ml={10} color="#707070">
-        {nickname}
-      </Text>
-      <Text fontSize={14} fontWeight={500} ml={4} letterSpacing={-0.25} color="$black400">
-        {displayTime}
-      </Text>
-    </XStack>
   );
 };
 
@@ -161,10 +111,6 @@ export const CommunityAdoptCardCarousel = ({ images }: { images: string[] }) => 
   );
 };
 
-const StyledAvatar = styled(Avatar, {
-  size: 32,
-  rounded: 4
-});
 const StyledTitle = styled(Text, {
   fontSize: 20,
   lineHeight: 28,
@@ -188,10 +134,4 @@ const CarouselWrap = styled(View, {
   width: Dimensions.get('screen').width - 40,
   aspectRatio: 5 / 4,
   position: 'relative'
-});
-const StyledText = styled(Text, {
-  fontSize: 12,
-  lineHeight: 14,
-  fontWeight: 400,
-  color: '$black500'
 });
