@@ -7,7 +7,7 @@ import { useFormContext } from 'react-hook-form';
 import { Dimensions, FlatList, ListRenderItemInfo, StyleSheet, Text, View } from 'react-native';
 
 import { KakaoAddressDocumentDto } from '@/features/search-address';
-import { Button, LocationBottomSheet, ScrollFloatingButton, Skeleton, theme, useScrollFloatingButton } from '@/shared';
+import { Button, LocationBottomSheet, ScrollUpButton, Skeleton, theme, useScrollUpButton } from '@/shared';
 import { CameraParams } from '@/shared/model/types/map.types';
 import { ShelterCard } from '@/shared/ui/data-display/ShelterCard';
 import { ShelterMap } from '@/shared/ui/data-display/ShelterMap';
@@ -36,7 +36,7 @@ const SheltersTemplate = forwardRef<NaverMapViewRef, SheltersTemplateProps>((pro
   const [shelterValues, setShelterValues] = useState<ShelterDto[]>([]);
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => [400], []);
-  const { isButtonVisible, handlePress, handleScroll, flatListRef } = useScrollFloatingButton();
+  const { isButtonVisible, handlePress, handleScroll, flatListRef } = useScrollUpButton();
   const { mutateAsync: geocodeMutate, isPending } = useKakaoGeocodeMutation();
 
   useEffect(() => {
@@ -128,7 +128,7 @@ const SheltersTemplate = forwardRef<NaverMapViewRef, SheltersTemplateProps>((pro
           )
         }
       />
-      <ScrollFloatingButton visible={isButtonVisible} onPress={handlePress} />
+      <ScrollUpButton visible={isButtonVisible} onPress={handlePress} />
       <LocationBottomSheet
         addresses={addresses}
         snapPoints={snapPoints}

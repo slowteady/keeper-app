@@ -1,7 +1,9 @@
 import { useCallback, useMemo, useState } from 'react';
 
 import { CommentSortOrderDto } from '@/entities';
-import { detailPostValue, getSectionData, useLikePost, useSharePost } from '@/features';
+import { useLikePost } from '../../like-feed';
+import { useSharePost } from '../../share-feed';
+import { detailPostValue, getSectionData } from '../lib';
 
 export const useCommunityAdoptDetailFeed = () => {
   const [sortOrder, setSortOrder] = useState<CommentSortOrderDto>('LATEST');

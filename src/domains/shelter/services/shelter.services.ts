@@ -2,7 +2,7 @@ import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
 import { AxiosError, AxiosResponse } from 'axios';
 
 import { AdoptResponse } from '@/domains/animal';
-import { _publicApi, SHELTER_ADOPT_NOTICES_QUERY_KEY, SHELTER_COUNT_QUERY_KEY, SHELTER_QUERY_KEY } from '@/shared';
+import { publicApi, SHELTER_ADOPT_NOTICES_QUERY_KEY, SHELTER_COUNT_QUERY_KEY, SHELTER_QUERY_KEY } from '@/shared';
 import {
   ApiResponse,
   UseInfiniteQueryCustomOptions,
@@ -29,7 +29,7 @@ const newGetShelters = async (
 ): Promise<AxiosResponse<ApiResponse<ShelterDto[]>, AxiosError>> => {
   const endpoint = `${BASE_URL}`;
 
-  return await _publicApi.get(endpoint, { params });
+  return await publicApi.get(endpoint, { params });
 };
 export const useGetSheltersQuery = (
   params: SheltersParams,
@@ -49,7 +49,7 @@ export const useGetSheltersQuery = (
 const newGetShelter = async (id: string): Promise<AxiosResponse<ApiResponse<ShelterDto>, AxiosError>> => {
   const endpoint = `${BASE_URL}/${id}`;
 
-  return await _publicApi.get(endpoint);
+  return await publicApi.get(endpoint);
 };
 export const useGetShelterQuery = (
   id: string,
@@ -72,7 +72,7 @@ const newGetShelterCounts = async (
   const endpoint = `${BASE_URL}/nearby/count`;
   const distances = '1,5,10,30';
 
-  return await _publicApi.get(endpoint, { params: { ...params, distances } });
+  return await publicApi.get(endpoint, { params: { ...params, distances } });
 };
 export const useGetShelterCountsQuery = (
   params: ShelterCountsParams,
@@ -99,7 +99,7 @@ const newGetShelterAdoptNotices = async (
 ): Promise<AxiosResponse<ApiResponse<AdoptResponse>, AxiosError>> => {
   const endpoint = `${BASE_URL}/${id}/abandonments`;
 
-  return await _publicApi.get(endpoint, { params });
+  return await publicApi.get(endpoint, { params });
 };
 export const useGetShelterAdoptNoticesQuery = (
   id: number,
@@ -135,7 +135,7 @@ export const newGetShelterSearch = async (
 ): Promise<AxiosResponse<ApiResponse<ShelterDto[]>, AxiosError>> => {
   const endpoint = `${BASE_URL}/search`;
 
-  return await _publicApi.get(endpoint, { params });
+  return await publicApi.get(endpoint, { params });
 };
 export const useGetShelterSearchMutation = (
   options?: UseMutationCustomOptions<

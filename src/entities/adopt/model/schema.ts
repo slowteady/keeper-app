@@ -2,29 +2,29 @@ import { z } from 'zod';
 
 // 필터 종류
 export const AdoptFilterSchema = z.enum(['NEW', 'NEAR_DEADLINE']);
-export type TAdoptFilterSchema = z.infer<typeof AdoptFilterSchema>;
+export type AdoptFilterDto = z.infer<typeof AdoptFilterSchema>;
 
 // 동물 종류
 export const AnimalTypeSchema = z.enum(['DOG', 'CAT', 'OTHER', 'ALL']);
-export type TAnimalTypeSchema = z.infer<typeof AnimalTypeSchema>;
+export type AnimalTypeDto = z.infer<typeof AnimalTypeSchema>;
 
 // 성별
 export const GenderSchema = z.enum(['M', 'F', 'NONE']);
-export type TGenderSchema = z.infer<typeof GenderSchema>;
+export type GenderDto = z.infer<typeof GenderSchema>;
 
 // 중성화 여부
 export const NeuterYnSchema = z.enum(['Y', 'N', 'NONE']);
-export type TNeuterYnSchema = z.infer<typeof NeuterYnSchema>;
+export type NeuterYnDto = z.infer<typeof NeuterYnSchema>;
 
 // 백신 검사 여부
 export const VaccinationCheckSchema = z.enum(['NOT', 'FIRST', 'SECOND', 'THIRD', 'NONE']);
-export type TVaccinationCheckSchema = z.infer<typeof VaccinationCheckSchema>;
+export type VaccinationCheckDto = z.infer<typeof VaccinationCheckSchema>;
 
 // 건강 검진 여부
 export const HealthCheckSchema = z.enum(['Y', 'N', 'NONE']);
-export type THealthCheckSchema = z.infer<typeof HealthCheckSchema>;
+export type HealthCheckDto = z.infer<typeof HealthCheckSchema>;
 
-export const AdoptBaseDto = z.object({
+export const AdoptDataSchema = z.object({
   id: z.string(), // 공고 id
   images: z.array(z.string()), // 이미지
   animalType: AnimalTypeSchema, // 동물 종류
@@ -48,21 +48,22 @@ export const AdoptBaseDto = z.object({
   vaccinationCheck: VaccinationCheckSchema, // 백신 검사 여부
   healthCheck: HealthCheckSchema // 건강 검진 여부
 });
-export type TAdoptBaseDto = z.infer<typeof AdoptBaseDto>;
+export type AdoptDataDto = z.infer<typeof AdoptDataSchema>;
 
-export const AdoptResponseDto = z.object({
+export const AdoptResponseSchema = z.object({
   total: z.number(),
   page: z.number(),
   size: z.number(),
   has_next: z.boolean(),
-  value: z.array(AdoptBaseDto)
+  value: z.array(AdoptDataSchema)
 });
-export type TAdoptResponseDto = z.infer<typeof AdoptResponseDto>;
+export type AdoptResponseDto = z.infer<typeof AdoptResponseSchema>;
 
-export const AdoptParamsDto = z.object({
+export const AdoptParamsSchema = z.object({
+  filter: AdoptFilterSchema,
+  animalType: AnimalTypeSchema,
   size: z.number(),
   page: z.number().optional(),
-  search: z.string().optional(),
-  filter: AdoptFilterSchema
+  search: z.string().optional()
 });
-export type TAdoptParamsDto = z.infer<typeof AdoptParamsDto>;
+export type AdoptParamsDto = z.infer<typeof AdoptParamsSchema>;

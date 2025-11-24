@@ -4,8 +4,7 @@ import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import PagerView from 'react-native-pager-view';
 import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 
-import { useLayout } from '@/shared';
-import { theme } from '@/shared';
+import { theme, useLayout } from '@/shared';
 
 import { Button } from '../button';
 import { Close, LeftArrow, RightArrow } from '../icons/outline';

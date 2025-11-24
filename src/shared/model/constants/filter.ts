@@ -1,6 +1,6 @@
-import { TAnimalTypeSchema } from '@/entities/adopt/model/schema';
+import { AnimalTypeDto } from '@/entities/adopt/model/schema';
 
-export const ADOPT_ANIMAL: { id: TAnimalTypeSchema; label: string }[] = [
+export const ADOPT_ANIMAL_FILTER: { id: AnimalTypeDto; label: string }[] = [
   { id: 'ALL', label: '전체' },
   { id: 'DOG', label: '강아지' },
   { id: 'CAT', label: '고양이' },

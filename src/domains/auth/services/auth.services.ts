@@ -2,9 +2,9 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { AxiosError, AxiosResponse } from 'axios';
 
 import {
-  _publicApi,
   ApiResponse,
   authApi,
+  publicApi,
   UseMutationCustomOptions,
   UseQueryCustomOptions,
   USER_QUERY_KEY
@@ -22,7 +22,7 @@ export const getTokens = async (token: string): Promise<AxiosResponse<ApiRespons
   const endpoint = `${BASE_URL}/refresh`;
   const body = { refreshToken: token };
 
-  return await _publicApi.post(endpoint, body);
+  return await publicApi.post(endpoint, body);
 };
 
 /**
@@ -31,7 +31,7 @@ export const getTokens = async (token: string): Promise<AxiosResponse<ApiRespons
 export const login = async (params: LoginParams): Promise<AxiosResponse<ApiResponse<LoginDataDto>, AxiosError>> => {
   const endpoint = `${BASE_URL}/login`;
 
-  return await _publicApi.post(endpoint, params);
+  return await publicApi.post(endpoint, params);
 };
 export const useLoginMutation = (
   queryOptions?: UseMutationCustomOptions<AxiosResponse<ApiResponse<LoginDataDto>>, AxiosError, LoginParams>
@@ -50,7 +50,7 @@ export const checkNickname = async (
 ): Promise<AxiosResponse<ApiResponse<boolean>, AxiosError>> => {
   const endpoint = `${BASE_URL}/check-nickname`;
 
-  return await _publicApi.post(endpoint, body);
+  return await publicApi.post(endpoint, body);
 };
 export const useCheckNicknameMutation = (
   options?: UseMutationCustomOptions<AxiosResponse<ApiResponse<boolean>>, AxiosError, CheckNicknameBody>
@@ -67,7 +67,7 @@ export const useCheckNicknameMutation = (
 export const signUp = async (body: SignUpBody): Promise<AxiosResponse<ApiResponse<LoginDataDto>, AxiosError>> => {
   const endpoint = `${BASE_URL}/signup`;
 
-  return await _publicApi.post(endpoint, body);
+  return await publicApi.post(endpoint, body);
 };
 export const useSignUpMutation = (
   options?: UseMutationCustomOptions<AxiosResponse<ApiResponse<LoginDataDto>>, AxiosError, SignUpBody>

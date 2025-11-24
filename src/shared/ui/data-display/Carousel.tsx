@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { forwardRef, useCallback, useRef, useState } from 'react';
+import { forwardRef, useCallback, useState } from 'react';
 import { NativeSyntheticEvent, Pressable, StyleSheet } from 'react-native';
 import PagerView, { PagerViewProps } from 'react-native-pager-view';
 import { styled, Text, useTheme, View, XStack } from 'tamagui';
@@ -24,13 +24,13 @@ const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>(
     const [openImgViewer, setOpenImgViewer] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
 
-    const carouselRef = useRef<PagerView | null>(null);
     const { black900, white800 } = useTheme();
 
     const handleChange = useCallback((e: NativeSyntheticEvent<{ position: number }>) => {
       const { position } = e.nativeEvent;
       setCurrentIndex(position);
     }, []);
+
     const handleLoadImage = useCallback((idx: number) => {
       setIsLoaded((prev) => {
         const newLoaded = [...prev];
@@ -38,6 +38,7 @@ const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>(
         return newLoaded;
       });
     }, []);
+
     const handleErrorImage = useCallback((idx: number) => {
       setIsError((prev) => {
         const newError = [...prev];
@@ -81,7 +82,7 @@ const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>(
       <>
         <PagerView
           style={styles.container}
-          ref={carouselRef}
+          ref={ref}
           onPageScroll={handleChange}
           initialPage={0}
           pageMargin={24}
@@ -168,12 +169,14 @@ const ControllerContainer = styled(XStack, {
   py: 8,
   bg: 'rgba(255, 255, 255, 0.5)'
 });
+
 const ControllerText = styled(Text, {
   fontSize: 12,
   lineHeight: 14,
   fontWeight: '400',
   color: '$black900'
 });
+
 const IndicatorContainer = styled(View, {
   position: 'absolute',
   b: 16,
@@ -183,12 +186,14 @@ const IndicatorContainer = styled(View, {
   py: 4,
   bg: 'rgba(0, 0, 0, 0.5)'
 });
+
 const IndicatorText = styled(Text, {
   fontSize: 11,
   lineHeight: 13,
   fontWeight: '500',
   color: '$white900'
 });
+
 const IconWrap = styled(View, {
   position: 'absolute',
   r: 16,

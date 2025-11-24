@@ -1,12 +1,12 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { AxiosError, AxiosResponse } from 'axios';
 
-import { TAdoptBaseDto, TAdoptParamsDto, TAdoptResponseDto } from '@/entities';
+import { AdoptDataDto, AdoptParamsDto, AdoptResponseDto } from '@/entities';
 import {
-  _publicApi,
   ADOPT_NOTICE_QUERY_KEY,
   ADOPT_NOTICES_QUERY_KEY,
   ApiResponse,
+  publicApi,
   UseInfiniteQueryCustomOptions,
   UseQueryCustomOptions
 } from '@/shared';
@@ -17,16 +17,16 @@ const BASE_URL = `v2/abandonments`;
  * 입양공고 전체 조회
  */
 const getAdoptNotices = async (
-  params: TAdoptParamsDto
-): Promise<AxiosResponse<ApiResponse<TAdoptResponseDto>, AxiosError>> => {
-  return await _publicApi.get(BASE_URL, { params });
+  params: AdoptParamsDto
+): Promise<AxiosResponse<ApiResponse<AdoptResponseDto>, AxiosError>> => {
+  return await publicApi.get(BASE_URL, { params });
 };
 export const useGetAdoptNoticesQuery = (
-  params: TAdoptParamsDto,
+  params: AdoptParamsDto,
   options?: UseInfiniteQueryCustomOptions<
-    AxiosResponse<ApiResponse<TAdoptResponseDto>, AxiosError>,
+    AxiosResponse<ApiResponse<AdoptResponseDto>, AxiosError>,
     AxiosError,
-    TAdoptResponseDto
+    AdoptResponseDto
   >
 ) => {
   return useInfiniteQuery({
@@ -49,14 +49,14 @@ export const useGetAdoptNoticesQuery = (
 /**
  * 입양공고 상세 조회
  */
-const getAdoptNotice = async (id: string): Promise<AxiosResponse<ApiResponse<TAdoptBaseDto>, AxiosError>> => {
+const getAdoptNotice = async (id: string): Promise<AxiosResponse<ApiResponse<AdoptDataDto>, AxiosError>> => {
   const endpoint = `${BASE_URL}/${id}`;
 
-  return await _publicApi.get(endpoint);
+  return await publicApi.get(endpoint);
 };
 export const useGetAdoptNoticeQuery = (
   id: string,
-  options?: UseQueryCustomOptions<AxiosResponse<ApiResponse<TAdoptBaseDto>, AxiosError>, AxiosError, TAdoptBaseDto>
+  options?: UseQueryCustomOptions<AxiosResponse<ApiResponse<AdoptDataDto>, AxiosError>, AxiosError, AdoptDataDto>
 ) => {
   return useQuery({
     queryKey: [ADOPT_NOTICE_QUERY_KEY, id],

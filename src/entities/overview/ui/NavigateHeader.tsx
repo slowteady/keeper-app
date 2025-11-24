@@ -1,11 +1,10 @@
+import { HeaderLayout } from '@/shared';
+import { LeftLineArrow } from '@/shared/ui/icons/mini';
+import { Home } from '@/shared/ui/icons/outline';
 import { router } from 'expo-router';
 import { useCallback } from 'react';
 import { Pressable } from 'react-native';
 import { useTheme } from 'tamagui';
-
-import { LeftLineArrow } from '../icons/mini';
-import { Home } from '../icons/outline';
-import { HeaderLayout } from './HeaderLayout';
 
 export const NavigateHeader = () => {
   const { black900 } = useTheme();

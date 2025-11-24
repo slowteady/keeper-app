@@ -9,7 +9,7 @@ export const api = axios.create({
 });
 
 export const authApi = api.create();
-export const _publicApi = api.create();
+export const publicApi = api.create();
 export const kakaoApi = api.create({
   baseURL: process.env.EXPO_PUBLIC_KAKAO_LOCAL_URL,
   headers: {

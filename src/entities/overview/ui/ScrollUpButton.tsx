@@ -2,15 +2,15 @@ import { useEffect } from 'react';
 import { Platform, StyleSheet } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
-import { ScrollButton } from '../icons/etc';
-import { Button } from './Button';
+import { Button } from '@/shared/ui/button';
+import { ScrollButton } from '@/shared/ui/icons/etc';
 
-export interface ScrollFloatingButtonProps {
+export interface ScrollUpButtonProps {
   visible: boolean;
   onPress: () => void;
 }
 
-export const ScrollFloatingButton = ({ onPress, visible }: ScrollFloatingButtonProps) => {
+export const ScrollUpButton = ({ onPress, visible }: ScrollUpButtonProps) => {
   const scale = useSharedValue(0);
 
   useEffect(() => {

@@ -13,7 +13,7 @@ export const CreatePost = () => {
 
   const { form, actions } = useCreatePost();
 
-  const bottomSheet = useLocationBottomSheet((selectedAddress) => {
+  const locationBottomSheet = useLocationBottomSheet((selectedAddress) => {
     form.setValue('location', selectedAddress.address.address_name);
   });
 
@@ -38,7 +38,7 @@ export const CreatePost = () => {
                 onPressWeight={actions.openWeightSelector}
                 onPressAge={actions.openAgeSelector}
                 onPressKind={actions.openKindSelector}
-                onPressLocation={bottomSheet.actions.openBottomSheet}
+                onPressLocation={locationBottomSheet.actions.openBottomSheet}
               />
             </TouchableWithoutFeedback>
           </KeyboardAwareScrollView>
@@ -51,7 +51,14 @@ export const CreatePost = () => {
         </Container>
       </KeyboardAvoidingView>
 
-      <NewLocationBottomSheet vm={bottomSheet} />
+      <NewLocationBottomSheet
+        ref={locationBottomSheet.ref}
+        addresses={locationBottomSheet.state.searchedAddresses || []}
+        onDismiss={locationBottomSheet.actions.dismiss}
+        onSearch={locationBottomSheet.actions.submitGeocode}
+        onSelectAddress={locationBottomSheet.actions.getAddress}
+        isPending={locationBottomSheet.state.isPending}
+      />
     </>
   );
 };

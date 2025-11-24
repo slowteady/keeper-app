@@ -1,7 +1,5 @@
-import { Pressable, StyleSheet } from 'react-native';
-import { styled, Text, useTheme, View } from 'tamagui';
-
-import { RightArrow } from '../icons/solid';
+import { RightArrow } from '@/shared/ui/icons/outline';
+import { styled, Text, useTheme, View, YStack } from 'tamagui';
 
 export interface ViewAllButtonProps {
   onPress: () => void;
@@ -11,14 +9,20 @@ export const ViewAllButton = ({ onPress }: ViewAllButtonProps) => {
   const { black400 } = useTheme();
 
   return (
-    <Pressable onPress={onPress} style={styles.button}>
+    <Container onPress={onPress}>
       <ArrowWrap>
         <RightArrow width={26} height={26} color={black400.val} />
       </ArrowWrap>
       <StyledText>전체보기</StyledText>
-    </Pressable>
+    </Container>
   );
 };
+
+const Container = styled(YStack, {
+  justify: 'center',
+  items: 'center',
+  gap: 10
+});
 
 const ArrowWrap = styled(View, {
   bg: '$white800',
@@ -26,20 +30,11 @@ const ArrowWrap = styled(View, {
   opacity: 0.7,
   p: 12
 });
+
 const StyledText = styled(Text, {
   fontSize: 15,
   lineHeight: 17,
   fontWeight: '500',
   text: 'center',
   color: '$black600'
-});
-
-const styles = StyleSheet.create({
-  button: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 10
-  }
 });

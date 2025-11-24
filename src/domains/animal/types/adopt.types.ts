@@ -1,4 +1,4 @@
-import { TAdoptBaseDto } from '@/entities';
+import { AdoptDataDto } from '@/entities';
 
 /**
  * - NEW: 최신순
@@ -25,5 +25,5 @@ export interface AdoptResponse {
   page: number;
   size: number;
   has_next: boolean;
-  value: TAdoptBaseDto[];
+  value: AdoptDataDto[];
 }

@@ -21,11 +21,11 @@ import {
   ButtonGroup,
   CardSkeleton,
   Dropdown,
-  ScrollFloatingButton,
+  ScrollUpButton,
   Searchbar,
   TAnimalType,
   theme,
-  useScrollFloatingButton
+  useScrollUpButton
 } from '@/shared';
 
 import { transformAbandonments, TransformedAbandonments } from '../../business/announcement.business';
@@ -46,7 +46,7 @@ export const AbandonmentsTemplate = ({ data, onFetch, isLoading, refreshControl 
   const pathname = usePathname();
   const adoptFilter = useAtomValue(adoptFilterAtomFamily(pathname));
 
-  const { isButtonVisible, handlePress, handleScroll, flatListRef } = useScrollFloatingButton();
+  const { isButtonVisible, handlePress, handleScroll, flatListRef } = useScrollUpButton();
   const { has_next, page, total, value = [] } = data || {};
   const transformedAbandonments = transformAbandonments(value, adoptFilter.filter);
 
@@ -115,7 +115,7 @@ export const AbandonmentsTemplate = ({ data, onFetch, isLoading, refreshControl 
           )
         }
       />
-      <ScrollFloatingButton visible={isButtonVisible} onPress={handlePress} />
+      <ScrollUpButton visible={isButtonVisible} onPress={handlePress} />
     </>
   );
 };

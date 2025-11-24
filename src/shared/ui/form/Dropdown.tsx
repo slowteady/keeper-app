@@ -1,11 +1,10 @@
 import { BottomSheetModal, BottomSheetModalProps } from '@gorhom/bottom-sheet';
-import { useRef } from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { useCallback, useRef } from 'react';
 
-import { theme } from '@/shared';
 import { DownArrow } from '@/shared/ui/icons/mini';
 
-import { Button, ButtonProps } from '../button';
+import { styled, Text, useTheme, XStack } from 'tamagui';
+import { ButtonProps } from '../button';
 import { BottomSheet, BottomSheetMenu, BottomSheetMenuData } from '../data-display';
 
 export interface DropdownProps<T> extends ButtonProps {
@@ -16,16 +15,17 @@ export interface DropdownProps<T> extends ButtonProps {
 }
 
 export const Dropdown = <T,>({ data, value, onChange, snapPoints, ...props }: DropdownProps<T>) => {
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const { black500 } = useTheme();
+  const ref = useRef<BottomSheetModal>(null);
 
-  const handlePress = () => {
-    bottomSheetModalRef.current?.present();
-  };
-  const handleAnimate = (fromIndex: number, toIndex: number) => {
-    if (toIndex === -1) bottomSheetModalRef.current?.dismiss();
-  };
-  const handleChange = (data: BottomSheetMenuData<T>) => {
-    bottomSheetModalRef.current?.dismiss();
+  const handlePress = () => ref.current?.present();
+
+  const dismiss = useCallback(() => {
+    if (ref.current) ref.current.dismiss();
+  }, [ref]);
+
+  const pressMenu = (data: BottomSheetMenuData<T>) => {
+    ref.current?.dismiss();
     onChange(data);
   };
 
@@ -33,29 +33,21 @@ export const Dropdown = <T,>({ data, value, onChange, snapPoints, ...props }: Dr
 
   return (
     <>
-      <Button variant="ghost" style={styles.container} onPress={handlePress} {...props}>
-        <Text style={styles.label}>{matchedValue?.label}</Text>
-        <DownArrow width={10} height={6} color={theme.colors.black[500]} />
-      </Button>
+      <Container onPress={handlePress}>
+        <Text fontSize={15} fontWeight="500" lineHeight={21} color="$black500">
+          {matchedValue?.label}
+        </Text>
+        <DownArrow width={10} height={6} color={black500.val} />
+      </Container>
 
-      <BottomSheet ref={bottomSheetModalRef} snapPoints={snapPoints} onAnimate={handleAnimate}>
-        <BottomSheetMenu data={data} value={value} onPress={handleChange} />
+      <BottomSheet ref={ref} snapPoints={snapPoints} onDismiss={dismiss}>
+        <BottomSheetMenu data={data} value={value} onPress={pressMenu} />
       </BottomSheet>
     </>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4
-  },
-  label: {
-    color: theme.colors.black[500],
-    fontSize: 15,
-    fontWeight: '500',
-    lineHeight: 21
-  }
+const Container = styled(XStack, {
+  items: 'center',
+  gap: 4
 });

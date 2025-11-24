@@ -6,12 +6,11 @@ import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-na
 import { styled, Text, XStack, YStack } from 'tamagui';
 
 import { MENU_ITEMS } from '@/shared/model';
-
-import { Indicator } from '../icons/outline';
+import { Indicator } from '@/shared/ui/icons/outline';
 
 const INDICATOR_WIDTH = 70;
 
-export const CustomTabBar = memo(({ state, navigation, insets }: BottomTabBarProps) => {
+export const BottomNavigation = memo(({ state, navigation, insets }: BottomTabBarProps) => {
   const indicatorIndex = useSharedValue(state.index);
   const tabWidth = useSharedValue(0);
 
@@ -130,4 +129,4 @@ const TabLabel = styled(Text, {
   fontWeight: '600'
 });
 
-CustomTabBar.displayName = 'CustomTabBar';
+BottomNavigation.displayName = 'BottomNavigation';

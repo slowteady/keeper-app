@@ -1,47 +1,69 @@
+import { ScrollUpButton, useScrollUpButton } from '@/entities';
+import { ADOPT_NOTICES_QUERY_KEY, SHELTER_QUERY_KEY, useRefreshing } from '@/shared';
+import { HomeAdoptSection, HomeBannerSection, HomeFooterSection, HomeShelterSection } from '@/widgets';
+import { FlashList } from '@shopify/flash-list';
 import { useQueryClient } from '@tanstack/react-query';
 import { useMemo } from 'react';
+import { RefreshControl } from 'react-native';
 import { styled, View } from 'tamagui';
 
-import {
-  ADOPT_NOTICES_QUERY_KEY,
-  HomeAdoptSection,
-  HomeBannerSection,
-  HomeFooter,
-  HomeShelterSection,
-  HomeTemplate,
-  SHELTER_QUERY_KEY
-} from '@/shared';
+const IMAGES = [require('@/assets/images/banner1.png'), require('@/assets/images/banner2.png')];
 
-/**
- * 메인 페이지
- */
 const Page = () => {
   const queryClient = useQueryClient();
+  const { isButtonVisible, handlePressButton, handleScroll, scrollRef } = useScrollUpButton();
 
-  const handleRequest = async () => {
+  const refetchQueries = async () => {
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: [ADOPT_NOTICES_QUERY_KEY] }),
       queryClient.invalidateQueries({ queryKey: [SHELTER_QUERY_KEY] })
     ]);
   };
 
-  const homeSections = useMemo(
-    () => [
-      { id: 'banner', Component: <HomeBannerSection /> },
-      { id: 'adopt', Component: <HomeAdoptSection /> },
-      { id: 'shelter', Component: <HomeShelterSection /> }
-    ],
-    []
-  );
+  const { refreshing, handleRefresh } = useRefreshing(refetchQueries);
+
+  const sections = useMemo(() => {
+    return [
+      {
+        id: 'banner',
+        Component: (
+          <View px={20} pt={24} pb={40}>
+            <HomeBannerSection images={IMAGES} />
+          </View>
+        )
+      },
+      {
+        id: 'adopt',
+        Component: (
+          <View pb={40}>
+            <HomeAdoptSection />
+          </View>
+        )
+      },
+      {
+        id: 'shelter',
+        Component: (
+          <View pb={80}>
+            <HomeShelterSection />
+          </View>
+        )
+      }
+    ];
+  }, []);
 
   return (
     <Container>
-      <HomeTemplate
-        data={homeSections}
-        renderItem={({ item }) => <>{item.Component}</>}
-        onRefresh={handleRequest}
-        ListFooterComponent={<HomeFooter />}
+      <FlashList
+        ref={scrollRef}
+        data={sections}
+        onScroll={handleScroll}
+        renderItem={({ item }) => item.Component}
+        keyExtractor={({ id }) => id}
+        getItemType={(item) => item.id}
+        ListFooterComponent={<HomeFooterSection />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
       />
+      <ScrollUpButton visible={isButtonVisible} onPress={handlePressButton} />
     </Container>
   );
 };
@@ -49,5 +71,6 @@ const Page = () => {
 export default Page;
 
 const Container = styled(View, {
-  flex: 1
+  flex: 1,
+  bg: '$white900'
 });

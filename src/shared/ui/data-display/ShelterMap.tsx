@@ -12,10 +12,9 @@ import { Linking, Platform, StyleSheet, Text, View, ViewStyle } from 'react-nati
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 import { ShelterCountDto, ShelterDto } from '@/domains/shelter/types/shelter.types';
-import { useDebounceFunc } from '@/shared';
-import { theme } from '@/shared';
-import { CameraParams } from '@/shared/model/types/map.types';
+import { theme, useDebounceFunc } from '@/shared';
 import { isCameraChanged } from '@/shared/lib/utils/map.utils';
+import { CameraParams } from '@/shared/model/types/map.types';
 
 import { Button } from '../button';
 

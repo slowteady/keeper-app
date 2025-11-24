@@ -23,7 +23,7 @@ import { RightArrow } from '@/shared/ui/icons/solid';
 import { useGetShelterCountsQuery, useGetSheltersQuery } from '../../services/shelter.services';
 import { ShelterDto } from '../../types/shelter.types';
 
-export const MainShelterSection = () => {
+export const HomeShelterSection = () => {
   const [enabled, setEnabled] = useState(false);
   const [selectedMarkerId, setSelectedMarkerId] = useState<number>();
   const [shelterData, setShelterData] = useState<ShelterDto[]>([]);

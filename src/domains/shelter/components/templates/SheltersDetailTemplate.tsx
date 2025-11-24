@@ -28,12 +28,12 @@ import {
   Button,
   CardSkeleton,
   Dropdown,
-  ScrollFloatingButton,
+  ScrollUpButton,
   ShelterMap,
   theme,
   useLayout,
   useMap,
-  useScrollFloatingButton
+  useScrollUpButton
 } from '@/shared';
 
 import { ShelterTelModal } from '../organisms';
@@ -63,7 +63,7 @@ const SheltersDetailTemplate = ({
   const adoptFilter = useAtomValue(adoptFilterAtomFamily(pathname));
 
   const { bottom } = useLayout();
-  const { isButtonVisible, handlePress, handleScroll, flatListRef } = useScrollFloatingButton();
+  const { isButtonVisible, handlePress, handleScroll, flatListRef } = useScrollUpButton();
 
   const handlePressCard = useCallback((id: string) => {
     router.push({ pathname: '/adopt/[id]', params: { id } });
@@ -139,7 +139,7 @@ const SheltersDetailTemplate = ({
           )
         }
       />
-      <ScrollFloatingButton visible={isButtonVisible} onPress={handlePress} />
+      <ScrollUpButton visible={isButtonVisible} onPress={handlePress} />
     </>
   );
 };

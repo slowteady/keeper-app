@@ -1,6 +1,6 @@
-import { adoptListValue } from '@/features';
 import { router } from 'expo-router';
 import { useCallback } from 'react';
+import { adoptListValue } from '../lib';
 
 export const useCommunityAdoptFeed = () => {
   const navigateDetailPage = useCallback((id: string) => {

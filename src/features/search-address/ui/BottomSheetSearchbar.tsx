@@ -87,6 +87,7 @@ const Container = styled(XStack, {
   justify: 'space-between',
   borderWidth: 1
 });
+
 const Input = styled(BottomSheetTextInput, {
   style: {
     flex: 1,
@@ -96,6 +97,7 @@ const Input = styled(BottomSheetTextInput, {
     lineHeight: 20
   }
 });
+
 const IconContainer = styled(XStack, {
   items: 'center',
   gap: 10,

@@ -2,11 +2,12 @@ import { BottomSheetView } from '@gorhom/bottom-sheet';
 import { useCallback, useState } from 'react';
 import { GestureResponderEvent } from 'react-native';
 
+import { AnimalTypeDto } from '@/entities';
 import { COMMUNITY_LIST_FILTER } from '@/entities/community';
-import { BottomSheetMenu, TAnimalTypeSchema, useBottomSheet } from '@/shared';
+import { BottomSheetMenu, useBottomSheet } from '@/shared';
 
 export interface CommunityFilterSchema {
-  animalType: TAnimalTypeSchema;
+  animalType: AnimalTypeDto;
   filter: (typeof COMMUNITY_LIST_FILTER)[number]['id'];
 }
 
@@ -19,7 +20,7 @@ export const usePostFilter = () => {
   const { present, dismiss } = useBottomSheet();
 
   const handleChangeAnimalType = useCallback(
-    (id: TAnimalTypeSchema) => {
+    (id: AnimalTypeDto) => {
       setFilter((prev) => ({ ...prev, animalType: id }));
     },
     [setFilter]

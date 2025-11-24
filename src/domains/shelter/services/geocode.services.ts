@@ -1,7 +1,7 @@
 import { AxiosError, AxiosResponse } from 'axios';
 
 import { KakaoGeocodeResponseDto } from '@/features/search-address';
-import { _publicApi, handleLogging } from '@/shared';
+import { handleLogging, publicApi } from '@/shared';
 
 export interface KakaoGeocodeOptionalParams {
   /** 페이지 번호 (1~45, 기본 1) */
@@ -33,7 +33,7 @@ export const getKakaoGeocode = async ({
   };
 
   try {
-    return await _publicApi.get(url, { headers });
+    return await publicApi.get(url, { headers });
   } catch (err) {
     handleLogging(err, 'getKakaoGeocode');
     throw err;

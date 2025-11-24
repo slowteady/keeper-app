@@ -3,7 +3,7 @@ import { styled, useTheme, View, XStack, YStack } from 'tamagui';
 
 import { COMMUNITY_LIST_FILTER, CommunityAdoptCard } from '@/entities';
 import { useCommunityAdoptFeed, useLikePost, usePostFilter } from '@/features';
-import { ADOPT_ANIMAL, ButtonGroup, ChipButton } from '@/shared';
+import { ADOPT_ANIMAL_FILTER, ButtonGroup, ChipButton } from '@/shared';
 import { DownArrow } from '@/shared/ui/icons/mini';
 
 export const CommunityAdoptFeed = () => {
@@ -27,7 +27,7 @@ export const CommunityAdoptFeed = () => {
         ListEmptyComponent={<></>}
         ListHeaderComponent={
           <View px={20}>
-            <ButtonGroup data={ADOPT_ANIMAL} id={filter.animalType} onChange={handleChangeAnimalType} />
+            <ButtonGroup data={ADOPT_ANIMAL_FILTER} id={filter.animalType} onChange={handleChangeAnimalType} />
 
             <XStack mt={16} gap={4}>
               <ChipButton

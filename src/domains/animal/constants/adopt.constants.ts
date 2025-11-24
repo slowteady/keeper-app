@@ -1,4 +1,4 @@
-import { ADOPT_ANIMAL } from '@/shared';
+import { ADOPT_ANIMAL_FILTER } from '@/shared';
 
 import { AdoptFilterValue } from '../types';
 
@@ -8,4 +8,4 @@ export const ADOPT_FILTERS: AdoptFilterValue[] = [
 ] as const;
 
 // Re-export from shared for backward compatibility
-export { ADOPT_ANIMAL as ADOPT_ANIMAL_TYPES };
+export { ADOPT_ANIMAL_FILTER as ADOPT_ANIMAL_TYPES };
