@@ -15,6 +15,7 @@ import {
   Text,
   View
 } from 'react-native';
+import { YStack } from 'tamagui';
 
 import { adoptFilterAtomFamily } from '@/domains/animal';
 import { transformAbandonments, TransformedAbandonments } from '@/domains/animal/business/announcement.business';
@@ -26,7 +27,7 @@ import {
   AnimalCard,
   BottomSheetMenuData,
   Button,
-  CardSkeleton,
+  AdoptCardSkeleton,
   Dropdown,
   ScrollUpButton,
   ShelterMap,
@@ -119,7 +120,6 @@ const SheltersDetailTemplate = ({
         ListHeaderComponent={
           <>
             <MapSection shelterData={shelterData} />
-            <View style={styles.divider} />
             <AbandonmentsFilterSection number={adoptData?.total} />
           </>
         }
@@ -129,8 +129,8 @@ const SheltersDetailTemplate = ({
             <View>
               {Array.from({ length: 2 }).map((_, idx) => (
                 <View key={idx} style={styles.skeltonContainer}>
-                  <CardSkeleton width={IMAGE_WIDTH} />
-                  <CardSkeleton width={IMAGE_WIDTH} />
+                  <AdoptCardSkeleton width={IMAGE_WIDTH} />
+                  <AdoptCardSkeleton width={IMAGE_WIDTH} />
                 </View>
               ))}
             </View>
@@ -175,7 +175,7 @@ const MapSection = ({ shelterData }: MapSectionProps) => {
   };
 
   return (
-    <>
+    <YStack mb={40}>
       <View style={styles.titleWrap}>
         <Text style={styles.title} numberOfLines={2} ellipsizeMode="tail">
           {name}
@@ -202,7 +202,7 @@ const MapSection = ({ shelterData }: MapSectionProps) => {
       </View>
 
       <ShelterTelModal open={modalOpen} onClose={handleClose} tel={tel} name={name} />
-    </>
+    </YStack>
   );
 };
 
@@ -215,7 +215,6 @@ const ShelterDescription = ({ data }: ShelterDescriptionProps) => {
   return (
     <View style={styles.shelterDescriptionContainer}>
       <Text style={styles.shelterTitleText}>보호소 운영정보</Text>
-      <View style={styles.shelterDivider} />
       <View style={styles.shelterDescriptionWrap}>
         {time && (
           <View style={styles.flexWrap}>
@@ -356,7 +355,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     fontWeight: '600',
     color: theme.colors.black[800],
-    marginBottom: 12
+    marginBottom: 20
   },
   shelterDescriptionContainer: {
     paddingHorizontal: PADDING_HORIZONTAL
@@ -365,16 +364,11 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: theme.colors.white[800]
   },
-  divider: {
-    height: 8,
-    backgroundColor: theme.colors.white[800]
-  },
   shelterDescriptionWrap: {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    paddingTop: 24,
-    paddingBottom: 40,
+    paddingBottom: 32,
     gap: 10
   },
   flexWrap: {
@@ -385,13 +379,12 @@ const styles = StyleSheet.create({
   descriptionText: {
     flex: 1,
     fontSize: 14,
-    lineHeight: 24,
+    lineHeight: 20,
     fontWeight: '400',
     color: theme.colors.black[700],
     marginLeft: 20
   },
   buttonContainer: {
-    marginBottom: 48,
     paddingHorizontal: PADDING_HORIZONTAL
   },
   buttonTitleText: {
@@ -410,7 +403,7 @@ const styles = StyleSheet.create({
     borderRadius: 14
   },
   buttonText: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '600',
     lineHeight: 17,
     color: theme.colors.black[900]
@@ -421,7 +414,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: PADDING_HORIZONTAL,
-    marginTop: 56,
     marginBottom: 24
   },
   filterWrap: {
@@ -430,7 +422,7 @@ const styles = StyleSheet.create({
     gap: 6
   },
   filterTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '600',
     lineHeight: 22,
     color: theme.colors.black[800]
@@ -476,7 +468,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    height: 200
+    height: 260
   },
   noDataText: {
     fontSize: 17,

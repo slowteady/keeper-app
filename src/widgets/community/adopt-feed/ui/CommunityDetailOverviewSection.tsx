@@ -1,6 +1,5 @@
-import { Share } from '@tamagui/lucide-icons';
 import { Pressable } from 'react-native';
-import { GetThemeValueForKey, styled, Text, useTheme, XStack } from 'tamagui';
+import { styled, Text, useTheme, XStack } from 'tamagui';
 
 import {
   CommunityAdoptCardCarousel,
@@ -9,6 +8,7 @@ import {
   CommunityAdoptCardTitle
 } from '@/entities';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
+import { Share } from '@/shared/ui/icons/outline';
 
 export interface CommunityDetailOverviewSectionProps {
   id: number;
@@ -39,17 +39,18 @@ export const CommunityDetailOverviewSection = ({
 
   return (
     <>
-      <HeaderWrapper mb={14}>
+      <HeaderWrapper mb={16}>
         <CommunityAdoptCardHeader image={image} nickname={nickname} displayTime={displayTime} />
-        <XStack gap={16} items="center">
+        <XStack gap={20} items="center">
           <AnimatedHeart onPress={onPressLike} />
           <Pressable hitSlop={8} onPress={() => onPressShare(id)}>
-            <Share size={22} color={white600.val as GetThemeValueForKey<'color'>} />
+            <Share width={22} height={22} color={white600.val} />
           </Pressable>
         </XStack>
       </HeaderWrapper>
+
       <CommunityAdoptCardTitle title={title} numberOfLines={undefined} mb={16} />
-      <CommunityAdoptCardCarousel images={images} />
+      <CommunityAdoptCardCarousel images={images} mb={16} />
       <CommunityAdoptCardTags tags={tags} mb={20} />
       <Content>{content}</Content>
     </>

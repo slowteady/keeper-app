@@ -1,9 +1,10 @@
-import { ADOPT_LIST_FILTER, useGetAdoptNoticesQuery } from '@/entities';
-import { mapToAdopt } from '@/features';
-import { ADOPT_ANIMAL_FILTER, parseQueryParam } from '@/shared';
 import { FlashListRef } from '@shopify/flash-list';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useMemo, useRef } from 'react';
+
+import { ADOPT_LIST_FILTER, useGetAdoptNoticesQuery } from '@/entities';
+import { mapToAdopt } from '@/features';
+import { ADOPT_ANIMAL_FILTER, parseQueryParam } from '@/shared';
 
 export type AdoptItem = ReturnType<typeof mapToAdopt>[number];
 

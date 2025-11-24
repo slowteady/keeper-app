@@ -51,10 +51,10 @@ export const useLoginRequired = () => {
 
         const modalContent = (
           <ModalContainer>
-            <Text mb={12} fontSize={16} fontWeight="600" color="$black800">
+            <Text mb={12} fontSize={17} fontWeight="600" color="$black800">
               로그인이 필요해요
             </Text>
-            <Text mb={32} fontSize={13} fontWeight="400" color="$black500">
+            <Text mb={32} fontSize={14} fontWeight="400" color="$black500">
               로그인 후 이용해주세요
             </Text>
             <ModalButtons
@@ -97,6 +97,6 @@ const ModalContainer = styled(YStack, {
   px: 20,
   pt: 32,
   pb: 16,
-  items: 'center',
+  items: 'flex-start',
   justify: 'center'
 });

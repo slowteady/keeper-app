@@ -1,49 +1,23 @@
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import * as Haptics from 'expo-haptics';
-import { memo, useCallback, useEffect } from 'react';
-import { LayoutChangeEvent } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import { memo } from 'react';
 import { styled, Text, XStack, YStack } from 'tamagui';
 
 import { MENU_ITEMS } from '@/shared/model';
-import { Indicator } from '@/shared/ui/icons/outline';
-
-const INDICATOR_WIDTH = 70;
+import {
+  ActiveHeart,
+  ActiveHome2,
+  ActiveLocation,
+  ActiveMessage,
+  ActiveUser,
+  Heart,
+  Home2,
+  Location,
+  Message,
+  User
+} from '@/shared/ui/icons/outline';
 
 export const BottomNavigation = memo(({ state, navigation, insets }: BottomTabBarProps) => {
-  const indicatorIndex = useSharedValue(state.index);
-  const tabWidth = useSharedValue(0);
-
-  useEffect(() => {
-    indicatorIndex.value = withSpring(state.index, {
-      damping: 20,
-      stiffness: 200,
-      mass: 0.8,
-      overshootClamping: true
-    });
-  }, [state.index, indicatorIndex]);
-
-  const animatedIndicatorStyle = useAnimatedStyle(() => {
-    if (tabWidth.value === 0) {
-      return {};
-    }
-
-    const centerX = (indicatorIndex.value + 0.5) * tabWidth.value;
-    const x = centerX - INDICATOR_WIDTH / 2;
-
-    return {
-      transform: [{ translateX: x }]
-    };
-  });
-
-  const calculateLayout = useCallback(
-    (e: LayoutChangeEvent) => {
-      const width = e.nativeEvent.layout.width;
-      tabWidth.value = width / MENU_ITEMS.length;
-    },
-    [tabWidth]
-  );
-
   const navigateToPage = (route: any, index: number) => {
     const event = navigation.emit({
       type: 'tabPress',
@@ -53,20 +27,26 @@ export const BottomNavigation = memo(({ state, navigation, insets }: BottomTabBa
 
     if (!event.defaultPrevented && state.index !== index) {
       Haptics.selectionAsync();
-      indicatorIndex.value = withSpring(index, {
-        damping: 20,
-        stiffness: 200,
-        mass: 0.8,
-        overshootClamping: true
-      });
-
       navigation.navigate(route.name);
     }
   };
 
+  const iconMap = {
+    home: AnimatedHomeIcon,
+    adopt: AnimatedHeartIcon,
+    shelter: AnimatedLocationIcon,
+    community: AnimatedMessageIcon,
+    profile: AnimatedUserIcon
+  } as const;
+
+  const renderIcon = (name: string, isActive: boolean) => {
+    const IconComponent = iconMap[name as keyof typeof iconMap];
+    return IconComponent ? <IconComponent isActive={isActive} /> : null;
+  };
+
   return (
     <Container pb={insets.bottom}>
-      <TabItemWrapper onLayout={calculateLayout}>
+      <TabItemWrapper>
         <XStack>
           {MENU_ITEMS.map((item, index) => {
             const route = state.routes[index];
@@ -75,22 +55,46 @@ export const BottomNavigation = memo(({ state, navigation, insets }: BottomTabBa
             return (
               <TabItemContainer key={route.key} onPress={() => navigateToPage(route, index)}>
                 <TabItemInner>
-                  <item.icon width={24} height={24} />
+                  {renderIcon(item.name, isActive)}
                   <TabLabel>{item.label}</TabLabel>
                 </TabItemInner>
               </TabItemContainer>
             );
           })}
         </XStack>
-
-        <Animated.View
-          style={[{ position: 'absolute', bottom: 0, left: 0, width: INDICATOR_WIDTH }, animatedIndicatorStyle]}
-        >
-          <Indicator width={INDICATOR_WIDTH} height={20} />
-        </Animated.View>
       </TabItemWrapper>
     </Container>
   );
+});
+
+const AnimatedHomeIcon = memo(({ isActive }: { isActive: boolean }) => {
+  const size = { width: 24, height: 24 } as const;
+
+  return isActive ? <ActiveHome2 {...size} /> : <Home2 {...size} />;
+});
+
+const AnimatedHeartIcon = memo(({ isActive }: { isActive: boolean }) => {
+  const size = { width: 26, height: 26 } as const;
+
+  return isActive ? <ActiveHeart {...size} /> : <Heart {...size} />;
+});
+
+const AnimatedLocationIcon = memo(({ isActive }: { isActive: boolean }) => {
+  const size = { width: 28, height: 28 } as const;
+
+  return isActive ? <ActiveLocation {...size} /> : <Location {...size} />;
+});
+
+const AnimatedMessageIcon = memo(({ isActive }: { isActive: boolean }) => {
+  const size = { width: 24, height: 24 } as const;
+
+  return isActive ? <ActiveMessage {...size} /> : <Message {...size} />;
+});
+
+const AnimatedUserIcon = memo(({ isActive }: { isActive: boolean }) => {
+  const size = { width: 26, height: 26 } as const;
+
+  return isActive ? <ActiveUser {...size} /> : <User {...size} />;
 });
 
 const Container = styled(XStack, {
@@ -99,7 +103,7 @@ const Container = styled(XStack, {
 
 const TabItemWrapper = styled(YStack, {
   flex: 1,
-  py: 12,
+  pt: 12,
   borderTopWidth: 1,
   borderLeftWidth: 1,
   borderRightWidth: 1,
@@ -129,4 +133,9 @@ const TabLabel = styled(Text, {
   fontWeight: '600'
 });
 
-BottomNavigation.displayName = 'BottomNavigation';
+BottomNavigation.displayName = 'CustomTabBar';
+AnimatedHomeIcon.displayName = 'AnimatedHomeIcon';
+AnimatedHeartIcon.displayName = 'AnimatedHeartIcon';
+AnimatedLocationIcon.displayName = 'AnimatedLocationIcon';
+AnimatedMessageIcon.displayName = 'AnimatedMessageIcon';
+AnimatedUserIcon.displayName = 'AnimatedUserIcon';

@@ -1,4 +1,4 @@
-import { Linking, Pressable } from 'react-native';
+import { Linking } from 'react-native';
 import { styled, Text, View, YStack } from 'tamagui';
 
 export interface LinkProps {
@@ -8,20 +8,18 @@ export interface LinkProps {
 
 export const Link = ({ url, text }: LinkProps) => {
   return (
-    <Pressable onPress={() => Linking.openURL(url)}>
+    <View onPress={() => Linking.openURL(url)} hitSlop={12}>
       <YStack self="flex-start" gap={0.5}>
-        <LinkText>{text}</LinkText>
+        <Text fontSize={16} fontWeight="400" color="#707070">
+          {text}
+        </Text>
+
         <Divider />
       </YStack>
-    </Pressable>
+    </View>
   );
 };
 
-const LinkText = styled(Text, {
-  fontSize: 16,
-  fontWeight: 400,
-  color: '$black800'
-});
 const Divider = styled(View, {
   height: 1,
   bg: '#707070'

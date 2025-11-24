@@ -11,11 +11,6 @@ import { useDeleteUserMutation, useLogoutMutation, userAtom } from '@/domains/au
 import { Button, clearUserContext, removeToken, useLayout } from '@/shared';
 import { Chat, Heart, Location, Login } from '@/shared/ui/icons/outline';
 
-// TODO
-// [ ] Drawer -> 바텀 네비게이션으로 변경
-// [ ] 로그아웃 -> 로그인 페이지로 인계 안되도록 수정
-// [ ] 회원탈퇴 -> 로그인 페이지로 인계 안되도록 수정
-
 interface MenuItem {
   icon: React.ComponentType<{ width: number; height: number; color: string }>;
   label: string;

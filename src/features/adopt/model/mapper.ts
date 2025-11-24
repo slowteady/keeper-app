@@ -1,5 +1,6 @@
-import { AdoptCardChipVariant, AdoptDataDto, AdoptFilterDto } from '@/entities';
 import dayjs from 'dayjs';
+
+import { AdoptCardChipVariant, AdoptDataDto, AdoptFilterDto } from '@/entities';
 
 export const mapToAdopt = (data: AdoptDataDto[], filter?: AdoptFilterDto) => {
   return data.map((item) => {
@@ -11,7 +12,7 @@ export const mapToAdopt = (data: AdoptDataDto[], filter?: AdoptFilterDto) => {
     return {
       ...item,
       uri: images[0],
-      title: fullName,
+      title: fullName.replace('[개]', '[강아지]'),
       chips,
       description: descriptions
     };

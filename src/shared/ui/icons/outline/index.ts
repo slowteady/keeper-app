@@ -1,3 +1,8 @@
+export { default as ActiveHeart } from './ActiveHeart';
+export { default as ActiveHome2 } from './ActiveHome2';
+export { default as ActiveLocation } from './ActiveLocation';
+export { default as ActiveMessage } from './ActiveMessage';
+export { default as ActiveUser } from './ActiveUser';
 export { default as Chat } from './Chat';
 export { default as CircleX } from './CircleX';
 export { default as Close } from './Close';
@@ -18,4 +23,5 @@ export { default as Message } from './Message';
 export { default as MoreImage } from './MoreImage';
 export { default as Pencil } from './Pencil';
 export { default as RightArrow } from './RightArrow';
+export { default as Share } from './Share';
 export { default as User } from './User';

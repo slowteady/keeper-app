@@ -1,8 +1,9 @@
-import { Carousel } from '@/shared';
 import { useCallback, useRef, useState } from 'react';
 import { Dimensions, NativeSyntheticEvent } from 'react-native';
 import PagerView from 'react-native-pager-view';
 import { styled, View } from 'tamagui';
+
+import { Carousel } from '@/shared';
 
 export interface HomeBannerSectionProps {
   images: string[];

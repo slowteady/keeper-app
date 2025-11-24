@@ -14,26 +14,33 @@ export const CommunityAdoptCardStats = ({ comment, like, view }: CommunityAdoptC
   const { black500 } = useTheme();
 
   return (
-    <XStack gap={4}>
-      <XStack items="center" gap={2}>
+    <XStack gap={6}>
+      <IconWrapper>
         <Comment width={12} height={12} color={black500.val} />
         <StyledText>{convertCountOver999(comment)}</StyledText>
-      </XStack>
-      <XStack items="center" gap={2}>
+      </IconWrapper>
+
+      <IconWrapper>
         <LikeHeart width={12} height={12} color={black500.val} />
         <StyledText>{convertCountOver999(like)}</StyledText>
-      </XStack>
-      <XStack items="center" gap={2}>
-        <Eye width={12} height={12} color={black500.val} />
+      </IconWrapper>
+
+      <IconWrapper>
+        <Eye width={14} height={14} color={black500.val} />
         <StyledText>{convertCountOver999(view)}</StyledText>
-      </XStack>
+      </IconWrapper>
     </XStack>
   );
 };
 
+const IconWrapper = styled(XStack, {
+  items: 'center',
+  gap: 3
+});
+
 const StyledText = styled(Text, {
-  fontSize: 12,
-  lineHeight: 14,
+  fontSize: 13,
+  lineHeight: 15,
   fontWeight: 400,
   color: '$black500'
 });

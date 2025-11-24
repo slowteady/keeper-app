@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { Dimensions } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import { styled, Text, TextProps, View, XStack, XStackProps } from 'tamagui';
+import { styled, Text, TextProps, View, ViewProps, XStack, XStackProps } from 'tamagui';
 
 import { Carousel, Chip, useLoginRequired } from '@/shared';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
@@ -67,7 +67,7 @@ export const CommunityAdoptCard = ({
         <CommunityAdoptCardTitle title={title} />
         <CommunityAdoptCardContent content={content} />
         {hasTags && <CommunityAdoptCardTags tags={tags} />}
-        <CommunityAdoptCardCarousel images={images} />
+        <CommunityAdoptCardCarousel images={images} mb={12} />
         <CommunityAdoptCardStats comment={counts.comment} like={counts.like} view={counts.view} />
       </View>
     </GestureDetector>
@@ -103,9 +103,9 @@ export const CommunityAdoptCardContent = ({ content }: { content: string }) => {
   return <StyledContent>{content}</StyledContent>;
 };
 
-export const CommunityAdoptCardCarousel = ({ images }: { images: string[] }) => {
+export const CommunityAdoptCardCarousel = ({ images, ...props }: { images: string[] } & ViewProps) => {
   return (
-    <CarouselWrap mb={12}>
+    <CarouselWrap {...props}>
       <Carousel data={images} showIndicator />
     </CarouselWrap>
   );
@@ -113,7 +113,7 @@ export const CommunityAdoptCardCarousel = ({ images }: { images: string[] }) => 
 
 const StyledTitle = styled(Text, {
   fontSize: 20,
-  lineHeight: 28,
+  lineHeight: 30,
   fontWeight: 600,
   color: '$black800',
   numberOfLines: 1,

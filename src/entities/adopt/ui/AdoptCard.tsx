@@ -1,8 +1,9 @@
-import { NoImage, Skeleton } from '@/shared';
 import { Image } from 'expo-image';
 import { useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
+
+import { NoImage, Skeleton } from '@/shared';
 
 export interface AdoptCardProps {
   uri: string;

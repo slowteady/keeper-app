@@ -1,9 +1,11 @@
-import { ADOPT_CARD_IMAGE_SIZES, ADOPT_LIST_FILTER, AdoptCard } from '@/entities';
-import { ViewAllButton } from '@/features';
-import { ADOPT_ANIMAL_FILTER, ButtonGroup, CardSkeleton, Dropdown } from '@/shared';
 import { FlashList, ListRenderItemInfo } from '@shopify/flash-list';
 import { useCallback } from 'react';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
+
+import { ADOPT_CARD_IMAGE_SIZES, ADOPT_LIST_FILTER, AdoptCard, AdoptCardSkeleton } from '@/entities';
+import { ViewAllButton } from '@/features';
+import { ADOPT_ANIMAL_FILTER, ButtonGroup, Dropdown } from '@/shared';
+
 import { AdoptItem, useHomeAdoptSection } from '../model';
 
 export const HomeAdoptSection = () => {
@@ -49,8 +51,8 @@ export const HomeAdoptSection = () => {
           horizontal
           decelerationRate="fast"
           showsHorizontalScrollIndicator={false}
-          ItemSeparatorComponent={() => <View style={{ width: 18 }} />}
-          style={{ paddingLeft: 20, minHeight: 390 }}
+          ItemSeparatorComponent={() => <View width={18} />}
+          style={{ paddingLeft: 20 }}
           ListEmptyComponent={<EmptyComponent isLoading={flags.isLoading} />}
           ListFooterComponent={<ViewAllButton onPress={actions.goList} />}
           ListFooterComponentStyle={{ alignItems: 'center', justifyContent: 'center', paddingHorizontal: 40 }}
@@ -63,8 +65,8 @@ export const HomeAdoptSection = () => {
 const EmptyComponent = ({ isLoading }: { isLoading: boolean }) => {
   return isLoading ? (
     <XStack gap={18}>
-      {Array.from({ length: 4 }).map((_, idx) => (
-        <CardSkeleton key={idx} width={ADOPT_CARD_IMAGE_SIZES.medium} />
+      {Array.from({ length: 2 }).map((_, idx) => (
+        <AdoptCardSkeleton key={`adopt-card-skeleton-${idx}`} width={ADOPT_CARD_IMAGE_SIZES.medium} />
       ))}
     </XStack>
   ) : (

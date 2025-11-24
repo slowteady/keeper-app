@@ -19,7 +19,7 @@ import {
   BottomSheetMenuData,
   Button,
   ButtonGroup,
-  CardSkeleton,
+  AdoptCardSkeleton,
   Dropdown,
   ScrollUpButton,
   Searchbar,
@@ -105,8 +105,8 @@ export const AbandonmentsTemplate = ({ data, onFetch, isLoading, refreshControl 
             <View>
               {Array.from({ length: 4 }).map((_, idx) => (
                 <View key={idx} style={styles.skeltonContainer}>
-                  <CardSkeleton width={IMAGE_WIDTH} />
-                  <CardSkeleton width={IMAGE_WIDTH} />
+                  <AdoptCardSkeleton width={IMAGE_WIDTH} />
+                  <AdoptCardSkeleton width={IMAGE_WIDTH} />
                 </View>
               ))}
             </View>

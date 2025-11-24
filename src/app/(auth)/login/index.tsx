@@ -93,7 +93,7 @@ const Page = () => {
   return (
     <Container>
       <View style={[styles.cFlex, { marginBottom: 40 }]}>
-        <Text style={styles.title}>Social Login</Text>
+        <Text style={styles.title}>social login</Text>
         <Text style={styles.subTitle}>소셜로그인으로 Keeper와 함께하세요.</Text>
       </View>
 
@@ -236,7 +236,6 @@ const AppleButton = ({ onResponse }: ButtonProps) => {
 };
 
 const Container = styled(View, {
-  flex: 1,
   bg: '$pageBackground',
   pt: 48,
   px: 20
@@ -258,7 +257,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 17,
     fontWeight: '400',
-    color: theme.colors.black[600]
+    color: theme.colors.black[500]
   },
   button: {
     position: 'relative',

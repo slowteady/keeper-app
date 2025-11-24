@@ -9,7 +9,7 @@ export const TextArea = styled(TamaguiTextArea, {
       medium: {
         fontSize: 15,
         fontWeight: 500,
-        lineHeight: 20,
+        lineHeight: 23,
         height: 48,
         rounded: 8
       },

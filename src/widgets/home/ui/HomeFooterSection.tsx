@@ -1,6 +1,7 @@
-import { Logo } from '@/shared/ui/icons/outline';
 import { Linking } from 'react-native';
 import { styled, Text, useTheme, View, YStack } from 'tamagui';
+
+import { Logo } from '@/shared/ui/icons/outline';
 
 export const HomeFooterSection = () => {
   const { black900 } = useTheme();
@@ -15,7 +16,7 @@ export const HomeFooterSection = () => {
       <Logo width={96} height={30} color={black900.val} />
 
       <YStack mt={20} mb={40} gap={12}>
-        <View onPress={handlePressContact}>
+        <View onPress={handlePressContact} hitSlop={12}>
           <Text fontSize={14} lineHeight={16} fontWeight="400">
             contact us
           </Text>

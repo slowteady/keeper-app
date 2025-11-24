@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: theme.colors.black[900],
-    fontWeight: '700',
+    fontWeight: '600',
     marginBottom: 20
   },
   chipsBlockContainer: {

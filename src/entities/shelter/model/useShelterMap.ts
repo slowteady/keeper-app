@@ -3,7 +3,7 @@ import * as Location from 'expo-location';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState } from 'react-native';
 
-export const useMap = (readOnly?: boolean) => {
+export const useShelterMap = (readOnly?: boolean) => {
   const [camera, setCamera] = useState<Camera>();
   const [distance, setDistance] = useState(7);
   const [initialLocation, setInitialLocation] = useState<Camera>();

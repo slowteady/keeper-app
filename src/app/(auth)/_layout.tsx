@@ -1,17 +1,14 @@
 import { Stack } from 'expo-router';
 
+import { NavigateHeader } from '@/shared';
+
 const AuthLayout = () => {
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false
-      }}
-    >
-      <Stack.Screen name="login/index" options={{ title: '로그인' }} />
-      <Stack.Screen name="signup/index" options={{ title: '회원가입' }} />
+    <Stack screenOptions={{ header: () => <NavigateHeader /> }}>
+      <Stack.Screen name="login" />
+      <Stack.Screen name="signup" />
     </Stack>
   );
 };
 
 export default AuthLayout;
-

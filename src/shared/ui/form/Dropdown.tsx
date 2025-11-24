@@ -1,20 +1,19 @@
 import { BottomSheetModal, BottomSheetModalProps } from '@gorhom/bottom-sheet';
 import { useCallback, useRef } from 'react';
+import { styled, Text, useTheme, XStack } from 'tamagui';
 
 import { DownArrow } from '@/shared/ui/icons/mini';
 
-import { styled, Text, useTheme, XStack } from 'tamagui';
-import { ButtonProps } from '../button';
 import { BottomSheet, BottomSheetMenu, BottomSheetMenuData } from '../data-display';
 
-export interface DropdownProps<T> extends ButtonProps {
+export interface DropdownProps<T> {
   data: BottomSheetMenuData<T>[];
   value: T;
   onChange: (value: BottomSheetMenuData<T>) => void;
   snapPoints: BottomSheetModalProps['snapPoints'];
 }
 
-export const Dropdown = <T,>({ data, value, onChange, snapPoints, ...props }: DropdownProps<T>) => {
+export const Dropdown = <T,>({ data, value, onChange, snapPoints }: DropdownProps<T>) => {
   const { black500 } = useTheme();
   const ref = useRef<BottomSheetModal>(null);
 
@@ -33,7 +32,7 @@ export const Dropdown = <T,>({ data, value, onChange, snapPoints, ...props }: Dr
 
   return (
     <>
-      <Container onPress={handlePress}>
+      <Container onPress={handlePress} hitSlop={12}>
         <Text fontSize={15} fontWeight="500" lineHeight={21} color="$black500">
           {matchedValue?.label}
         </Text>

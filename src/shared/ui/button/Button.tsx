@@ -3,7 +3,7 @@ import { Pressable, PressableProps, StyleProp, StyleSheet, ViewStyle } from 'rea
 import { Spinner, Text, useTheme } from 'tamagui';
 
 export const BUTTON_HEIGHT = {
-  small: 44,
+  small: 48,
   medium: 55,
   large: 60
 };

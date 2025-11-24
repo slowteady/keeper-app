@@ -37,5 +37,5 @@ export const formatTimeAgo = (date: string | Date): string => {
   }
 
   // 2일 이상이면 날짜로 출력
-  return target.format('YYYY-MM-DD');
+  return target.format('YYYY.MM.DD');
 };

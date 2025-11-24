@@ -15,8 +15,7 @@ import { ShelterCountDto, ShelterDto } from '@/domains/shelter/types/shelter.typ
 import { theme, useDebounceFunc } from '@/shared';
 import { isCameraChanged } from '@/shared/lib/utils/map.utils';
 import { CameraParams } from '@/shared/model/types/map.types';
-
-import { Button } from '../button';
+import { Button } from '@/shared/ui/button';
 
 export interface ShelterMapProps extends NaverMapViewProps {
   hasLocation: boolean;
@@ -25,6 +24,7 @@ export interface ShelterMapProps extends NaverMapViewProps {
   onTapMarker?: (data: ShelterDto) => void;
   selectedMarkerId?: number;
 }
+
 const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
   ({ hasLocation, data, onRefetch, onTapMarker, selectedMarkerId, ...props }, ref) => {
     const [isVisibleButton, setIsVisibleButton] = useState(false);
@@ -40,7 +40,7 @@ const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
       opacity: scale.value
     }));
 
-    const handleChangeCamera = useDebounceFunc((params: CameraParams) => {
+    const moveCamera = useDebounceFunc((params: CameraParams) => {
       if (cameraRef.current && !isCameraChanged(cameraRef.current, params)) {
         return;
       }
@@ -48,11 +48,13 @@ const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
       setIsVisibleButton(true);
       cameraRef.current = params;
     }, 500);
-    const handlePressRefetch = async () => {
-      await Haptics.selectionAsync();
+
+    const handlePressRefetch = useCallback(() => {
+      Haptics.selectionAsync();
       setIsVisibleButton(false);
       onRefetch(cameraRef.current ?? undefined);
-    };
+    }, [onRefetch]);
+
     const handleTapMarker = useCallback(
       (data: ShelterDto) => {
         if (ref && 'current' in ref && ref.current) {
@@ -69,7 +71,7 @@ const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
           <>
             <NaverMapView
               ref={ref}
-              onCameraChanged={handleChangeCamera}
+              onCameraChanged={moveCamera}
               isExtentBoundedInKorea
               animationDuration={500}
               style={styles.mapContainer}
@@ -177,7 +179,6 @@ const NoValidMap = () => {
 
 export const ShelterMap = Object.assign(Map, {
   DistanceBox,
-  NoValidMap,
   Marker
 });
 

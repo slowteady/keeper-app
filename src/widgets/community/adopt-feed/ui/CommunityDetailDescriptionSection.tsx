@@ -59,7 +59,7 @@ const Label = styled(Text, {
 });
 
 const Description = styled(Text, {
-  fontSize: 16,
+  fontSize: 15,
   lineHeight: 23,
   fontWeight: 400,
   color: '#707070',

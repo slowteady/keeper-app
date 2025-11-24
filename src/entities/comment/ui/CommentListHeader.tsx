@@ -24,7 +24,7 @@ export const CommentListHeader = ({ commentCount = 0, sortOrder, onChangeSortOrd
           </Text>
         </XStack>
 
-        <XStack items="center" gap={8}>
+        <XStack items="center" gap={10}>
           <SortText active={isLatest} onPress={() => onChangeSortOrder('LATEST')}>
             최신순
           </SortText>

@@ -10,7 +10,7 @@ import { KakaoAddressDocumentDto } from '@/features/search-address';
 import { Button, LocationBottomSheet, ScrollUpButton, Skeleton, theme, useScrollUpButton } from '@/shared';
 import { CameraParams } from '@/shared/model/types/map.types';
 import { ShelterCard } from '@/shared/ui/data-display/ShelterCard';
-import { ShelterMap } from '@/shared/ui/data-display/ShelterMap';
+import { ShelterMap } from '@/entities/shelter/ui/ShelterMap';
 import { Searchbar } from '@/shared/ui/form/Searchbar';
 
 import { useKakaoGeocodeMutation } from '../../queries/geocode.queries';
@@ -262,14 +262,14 @@ const styles = StyleSheet.create({
   button: {
     borderRadius: 50,
     borderWidth: 1,
-    borderColor: theme.colors.black[500],
+    borderColor: theme.colors.white[600],
     paddingHorizontal: 12,
     paddingVertical: 8
   },
   buttonText: {
     fontSize: 14,
     lineHeight: 16,
-    fontWeight: '400',
+    fontWeight: '500',
     color: theme.colors.black[600]
   },
   noDataContainer: {

@@ -28,8 +28,8 @@ const Container = styled(View, {
 });
 
 const EmptyText = styled(Text, {
-  fontSize: 14,
-  lineHeight: 20,
+  fontSize: 15,
+  lineHeight: 23,
   color: '$black500',
   fontWeight: 500,
   text: 'center'
