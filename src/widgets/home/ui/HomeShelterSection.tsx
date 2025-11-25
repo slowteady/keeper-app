@@ -5,8 +5,7 @@ import Animated from 'react-native-reanimated';
 import { styled, Text, useTheme, View, XStack } from 'tamagui';
 
 import { DistanceIndicator, HOME_SHELTER_CARD_SIZE, HomeShelterCard, ShelterDto, ShelterMap } from '@/entities';
-import { ViewAllButton } from '@/features';
-import { Skeleton } from '@/shared';
+import { Skeleton, ViewAllButton } from '@/shared';
 import { DownArrow } from '@/shared/ui/icons/mini';
 
 import { useHomeShelterSection } from '../model';

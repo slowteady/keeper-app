@@ -1,5 +1,5 @@
 import { ScrollUpButton, useScrollUpButton } from '@/entities';
-import { ADOPT_NOTICES_QUERY_KEY, SHELTER_QUERY_KEY, useRefreshing } from '@/shared';
+import { ADOPTS_QUERY_KEY, SHELTER_QUERY_KEY, useRefreshing } from '@/shared';
 import { HomeAdoptSection, HomeBannerSection, HomeFooterSection, HomeShelterSection } from '@/widgets';
 import { FlashList } from '@shopify/flash-list';
 import { useQueryClient } from '@tanstack/react-query';
@@ -15,7 +15,7 @@ const Page = () => {
 
   const refetchQueries = async () => {
     await Promise.all([
-      queryClient.invalidateQueries({ queryKey: [ADOPT_NOTICES_QUERY_KEY] }),
+      queryClient.invalidateQueries({ queryKey: [ADOPTS_QUERY_KEY] }),
       queryClient.invalidateQueries({ queryKey: [SHELTER_QUERY_KEY] })
     ]);
   };

@@ -1,65 +1,31 @@
-import { useQueryClient } from '@tanstack/react-query';
-import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
-import { useNavigation, usePathname } from 'expo-router';
-import { useAtomValue } from 'jotai';
-import { useResetAtom } from 'jotai/utils';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback } from 'react';
 import { styled, View } from 'tamagui';
 
-import { adoptFilterAtomFamily, useGetAdoptNoticesQuery } from '@/domains/animal';
-import { ADOPT_NOTICES_QUERY_KEY, useRefreshing } from '@/shared';
+import { useAdoptList } from '@/features';
+import { ShowMoreButton } from '@/shared';
+import { AdoptList } from '@/widgets';
+
+const LIST_SIZE = 16;
 
 const Page = () => {
-  const pathname = usePathname();
-  const adoptFilter = useAtomValue(adoptFilterAtomFamily(pathname));
-  const resetFilter = useResetAtom(adoptFilterAtomFamily(pathname));
+  const { refs, state, data, actions, flags } = useAdoptList({ size: LIST_SIZE });
 
-  const param = useMemo(() => ({ ...adoptFilter, size: 16 }), [adoptFilter]);
-  const navigation = useNavigation();
-  const queryClient = useQueryClient();
+  const fetchNextPage = useCallback(() => {
+    actions.fetchNextPage();
+  }, []);
 
-  const {
-    data,
-    isLoading: isFetchLoading,
-    isFetching,
-    isFetchingNextPage,
-    fetchNextPage,
-    hasNextPage
-  } = useGetAdoptNoticesQuery(param);
-
-  const handleFetch = useCallback(async () => {
-    if (hasNextPage) {
-      await impactAsync(ImpactFeedbackStyle.Medium);
-      fetchNextPage();
-    }
-  }, [fetchNextPage, hasNextPage]);
-
-  const onRefreshCallback = useCallback(async () => {
-    await Promise.all([queryClient.invalidateQueries({ queryKey: [ADOPT_NOTICES_QUERY_KEY, param] })]);
-  }, [param, queryClient]);
-
-  const { refreshing, handleRefresh } = useRefreshing(onRefreshCallback);
-
-  useEffect(() => {
-    const unsub = navigation.addListener('beforeRemove', () => {
-      resetFilter();
-    });
-    return unsub;
-  }, [navigation, resetFilter]);
-
-  const isLoading = useMemo(
-    () => isFetchLoading || isFetching || isFetchingNextPage,
-    [isFetchLoading, isFetching, isFetchingNextPage]
-  );
+  const currentPage = (data.originalData?.page ?? 0) + 1;
+  const totalPage = Math.ceil((data.originalData?.total || 0) / LIST_SIZE);
+  const text = `더보기 ${currentPage}/${totalPage}`;
 
   return (
     <Container>
-      {/* <AbandonmentsTemplate
-        data={data}
-        onFetch={handleFetch}
-        isLoading={isLoading}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
-      /> */}
+      <AdoptList
+        data={data.convertedData}
+        isLoading={flags.isLoading}
+        onRefreshCallback={actions.executeRefresh}
+        footer={<ShowMoreButton text={text} onPress={fetchNextPage} isLoading={flags.isFetchingNextPage} />}
+      />
     </Container>
   );
 };

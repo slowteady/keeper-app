@@ -3,8 +3,8 @@ import { AxiosError, AxiosResponse } from 'axios';
 
 import { AdoptDataDto, AdoptParamsDto, AdoptResponseDto } from '@/entities';
 import {
-  ADOPT_NOTICE_QUERY_KEY,
-  ADOPT_NOTICES_QUERY_KEY,
+  ADOPT_QUERY_KEY,
+  ADOPTS_QUERY_KEY,
   ApiResponse,
   publicApi,
   UseInfiniteQueryCustomOptions,
@@ -30,7 +30,7 @@ export const useGetAdoptNoticesQuery = (
   >
 ) => {
   return useInfiniteQuery({
-    queryKey: [ADOPT_NOTICES_QUERY_KEY, params],
+    queryKey: [ADOPTS_QUERY_KEY, params],
     queryFn: ({ pageParam }) => getAdoptNotices({ ...params, page: pageParam }),
     initialPageParam: 0,
     getNextPageParam: (lastPage) => {
@@ -59,7 +59,7 @@ export const useGetAdoptNoticeQuery = (
   options?: UseQueryCustomOptions<AxiosResponse<ApiResponse<AdoptDataDto>, AxiosError>, AxiosError, AdoptDataDto>
 ) => {
   return useQuery({
-    queryKey: [ADOPT_NOTICE_QUERY_KEY, id],
+    queryKey: [ADOPT_QUERY_KEY, id],
     queryFn: () => getAdoptNotice(id),
     select: (data) => data.data.data,
     ...options

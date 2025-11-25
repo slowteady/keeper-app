@@ -2,10 +2,9 @@ import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { AxiosError, AxiosResponse } from 'axios';
 
 import { AdoptDataDto, AdoptParamsDto, AdoptResponseDto } from '@/entities';
-import { mapToAdopt } from '@/features';
 import {
-  ADOPT_NOTICE_QUERY_KEY,
-  ADOPT_NOTICES_QUERY_KEY,
+  ADOPT_QUERY_KEY,
+  ADOPTS_QUERY_KEY,
   ApiResponse,
   publicApi,
   UseInfiniteQueryCustomOptions,
@@ -14,52 +13,46 @@ import {
 
 const BASE_URL = `v2/abandonments`;
 
-/**
- * 입양공고 전체 조회
- */
-const getAdoptNotices = async (
-  params: AdoptParamsDto
-): Promise<AxiosResponse<ApiResponse<AdoptResponseDto>, AxiosError>> => {
+const getAdopts = async (params: AdoptParamsDto): Promise<AxiosResponse<ApiResponse<AdoptResponseDto>, AxiosError>> => {
   return await publicApi.get(BASE_URL, { params });
 };
-export const useGetAdoptNoticesQuery = (
+export const useGetAdopts = (
   params: AdoptParamsDto,
   options?: UseInfiniteQueryCustomOptions<
     AxiosResponse<ApiResponse<AdoptResponseDto>, AxiosError>,
     AxiosError,
-    ReturnType<typeof mapToAdopt>
+    AdoptResponseDto
   >
 ) => {
   return useInfiniteQuery({
-    queryKey: [ADOPT_NOTICES_QUERY_KEY, params],
-    queryFn: ({ pageParam }) => getAdoptNotices({ ...params, page: pageParam }),
+    queryKey: [ADOPTS_QUERY_KEY, params],
+    queryFn: ({ pageParam }) => getAdopts({ ...params, page: pageParam }),
     initialPageParam: 0,
     getNextPageParam: (lastPage) => {
       return lastPage.data.data.has_next ? lastPage.data.data.page + 1 : undefined;
     },
     select: (data) => {
+      const lastPage = data.pages[data.pages.length - 1].data.data;
       const allData = data.pages.flatMap((page) => page.data.data.value);
-      return mapToAdopt(allData, params.filter);
+
+      return { ...lastPage, value: allData };
     },
     ...options
   });
 };
 
-/**
- * 입양공고 상세 조회
- */
-const getAdoptNotice = async (id: string): Promise<AxiosResponse<ApiResponse<AdoptDataDto>, AxiosError>> => {
+const getAdopt = async (id: string): Promise<AxiosResponse<ApiResponse<AdoptDataDto>, AxiosError>> => {
   const endpoint = `${BASE_URL}/${id}`;
 
   return await publicApi.get(endpoint);
 };
-export const useGetAdoptNoticeQuery = (
+export const useGetAdopt = (
   id: string,
   options?: UseQueryCustomOptions<AxiosResponse<ApiResponse<AdoptDataDto>, AxiosError>, AxiosError, AdoptDataDto>
 ) => {
   return useQuery({
-    queryKey: [ADOPT_NOTICE_QUERY_KEY, id],
-    queryFn: () => getAdoptNotice(id),
+    queryKey: [ADOPT_QUERY_KEY, id],
+    queryFn: () => getAdopt(id),
     select: (data) => data.data.data,
     ...options
   });

@@ -1,5 +1,6 @@
-import { RightArrow } from '@/shared/ui/icons/outline';
 import { styled, Text, useTheme, View, YStack } from 'tamagui';
+
+import { RightArrow } from '@/shared/ui/icons/outline';
 
 export interface ViewAllButtonProps {
   onPress: () => void;
