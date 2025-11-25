@@ -4,16 +4,11 @@ import { useNavigation, usePathname } from 'expo-router';
 import { useAtomValue } from 'jotai';
 import { useResetAtom } from 'jotai/utils';
 import { useCallback, useEffect, useMemo } from 'react';
-import { RefreshControl } from 'react-native';
 import { styled, View } from 'tamagui';
 
 import { adoptFilterAtomFamily, useGetAdoptNoticesQuery } from '@/domains/animal';
-import { AbandonmentsTemplate } from '@/domains/animal/components/templates/AbandonmentsTemplate';
 import { ADOPT_NOTICES_QUERY_KEY, useRefreshing } from '@/shared';
 
-/**
- * 입양 공고 목록 페이지
- */
 const Page = () => {
   const pathname = usePathname();
   const adoptFilter = useAtomValue(adoptFilterAtomFamily(pathname));
@@ -59,12 +54,12 @@ const Page = () => {
 
   return (
     <Container>
-      <AbandonmentsTemplate
+      {/* <AbandonmentsTemplate
         data={data}
         onFetch={handleFetch}
         isLoading={isLoading}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
-      />
+      /> */}
     </Container>
   );
 };

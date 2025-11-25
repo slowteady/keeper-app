@@ -3,6 +3,7 @@ export { default as ActiveHome2 } from './ActiveHome2';
 export { default as ActiveLocation } from './ActiveLocation';
 export { default as ActiveMessage } from './ActiveMessage';
 export { default as ActiveUser } from './ActiveUser';
+export { default as Cancel } from './Cancel';
 export { default as Chat } from './Chat';
 export { default as CircleX } from './CircleX';
 export { default as Close } from './Close';

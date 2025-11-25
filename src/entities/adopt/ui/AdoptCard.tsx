@@ -50,7 +50,7 @@ export const AdoptCard = ({ uri, title, description, chips, size = 'medium' }: A
         <AdoptCardDescriptions data={description} size={size} />
       </DescriptionContainer>
 
-      {hasChips && <AdoptCardChips data={chips} size={size} />}
+      {hasChips && <AdoptCardChips data={chips} />}
     </Container>
   );
 };
@@ -71,10 +71,9 @@ export const AdoptCardDescriptions = ({ data, size = 'medium' }: AdoptCardDescri
 
 export interface AdoptCardChipsProps {
   data: { id: string; value: string; variant?: AdoptCardChipVariant }[];
-  size?: keyof typeof ADOPT_CARD_IMAGE_SIZES;
 }
 export type AdoptCardChipVariant = 'error' | 'success' | 'notice' | 'default';
-export const AdoptCardChips = ({ data, size = 'medium' }: AdoptCardChipsProps) => {
+export const AdoptCardChips = ({ data }: AdoptCardChipsProps) => {
   return (
     <ChipContainer gap={4}>
       {data.map(({ id, value, variant = 'default' }, idx) => (
