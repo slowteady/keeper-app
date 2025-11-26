@@ -14,7 +14,7 @@ export const HomeAdoptSection = () => {
 
     return (
       <View onPress={() => actions.goDetail(item.id)}>
-        <AdoptCard uri={uri} title={title} description={description} chips={chips} />
+        <AdoptCard horizontal uri={uri} title={title} description={description} chips={chips} />
       </View>
     );
   }, []);
@@ -49,6 +49,7 @@ export const HomeAdoptSection = () => {
         decelerationRate="fast"
         showsHorizontalScrollIndicator={false}
         ItemSeparatorComponent={() => <View width={18} />}
+        contentContainerStyle={{ flexGrow: 1 }}
         style={{ paddingLeft: 20 }}
         ListEmptyComponent={<EmptyComponent isLoading={flags.isLoading} />}
         ListFooterComponent={<ViewAllButton onPress={actions.goList} />}
@@ -66,7 +67,9 @@ const EmptyComponent = ({ isLoading }: { isLoading: boolean }) => {
       ))}
     </XStack>
   ) : (
-    <AdoptNodata />
+    <View flex={1} items="center" justify="center">
+      <AdoptNodata />
+    </View>
   );
 };
 

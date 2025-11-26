@@ -3,7 +3,7 @@ import { styled, View } from 'tamagui';
 
 import { useAdoptList } from '@/features';
 import { ShowMoreButton } from '@/shared';
-import { AdoptList } from '@/widgets';
+import { AdoptList, AdoptListHeaderSection } from '@/widgets';
 
 const LIST_SIZE = 16;
 
@@ -12,7 +12,7 @@ const Page = () => {
 
   const fetchNextPage = useCallback(() => {
     actions.fetchNextPage();
-  }, []);
+  }, [actions]);
 
   const currentPage = (data.originalData?.page ?? 0) + 1;
   const totalPage = Math.ceil((data.originalData?.total || 0) / LIST_SIZE);
@@ -21,10 +21,28 @@ const Page = () => {
   return (
     <Container>
       <AdoptList
+        ref={refs.listRef}
         data={data.convertedData}
         isLoading={flags.isLoading}
         onRefreshCallback={actions.executeRefresh}
-        footer={<ShowMoreButton text={text} onPress={fetchNextPage} isLoading={flags.isFetchingNextPage} />}
+        header={
+          <View mt={32}>
+            <AdoptListHeaderSection
+              filterValue={state.selectedFilter}
+              animalType={state.selectedType}
+              onChangeFilter={actions.changeFilter}
+              onChangeAnimalType={actions.changeType}
+              onSearch={actions.changeSearch}
+            />
+          </View>
+        }
+        footer={
+          flags.hasNextPage ? (
+            <View mb={24} justify="center">
+              <ShowMoreButton text={text} onPress={fetchNextPage} isLoading={flags.isFetchingNextPage} />
+            </View>
+          ) : undefined
+        }
       />
     </Container>
   );

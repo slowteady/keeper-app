@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import { useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { Dimensions, StyleSheet } from 'react-native';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
 import { NoImage, Skeleton } from '@/shared';
@@ -10,18 +10,19 @@ export interface AdoptCardProps {
   title: string;
   description: AdoptCardDescriptionsProps['data'];
   chips?: AdoptCardChipsProps['data'];
-  size?: keyof typeof ADOPT_CARD_IMAGE_SIZES;
+  horizontal?: boolean;
 }
 
 export const ADOPT_CARD_IMAGE_SIZES = {
-  small: 180,
+  small: (Dimensions.get('window').width - 48) / 2, // 2컬럼 기준 양쪽 20패딩 제외한 너비, 카드 간 8패딩 제외한 너비
   medium: 220
 } as const;
 
-export const AdoptCard = ({ uri, title, description, chips, size = 'medium' }: AdoptCardProps) => {
+export const AdoptCard = ({ uri, title, description, chips, horizontal = false }: AdoptCardProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isError, setIsError] = useState(false);
 
+  const size = horizontal ? 'medium' : 'small';
   const hasChips = chips && chips.length > 0;
 
   return (
@@ -32,6 +33,7 @@ export const AdoptCard = ({ uri, title, description, chips, size = 'medium' }: A
         )}
         {uri && !isError ? (
           <Image
+            key={uri}
             source={{ uri }}
             onLoad={() => setIsLoaded(true)}
             onError={() => setIsError(true)}

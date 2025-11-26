@@ -13,7 +13,7 @@ export type AdoptItem = ReturnType<typeof mapToAdopt>[number];
 
 export const useAdoptList = (queryParams?: Partial<AdoptParamsDto>) => {
   const router = useRouter();
-  const params = useLocalSearchParams<{ filter?: string; type?: string }>();
+  const params = useLocalSearchParams<{ filter?: string; type?: string; search?: string }>();
   const listRef = useRef<FlashListRef<AdoptItem>>(null);
   const queryClient = useQueryClient();
 
@@ -27,6 +27,8 @@ export const useAdoptList = (queryParams?: Partial<AdoptParamsDto>) => {
     [params.type]
   );
 
+  const selectedSearch = useMemo(() => params.search, [params.search]);
+
   const {
     data,
     isLoading,
@@ -37,6 +39,7 @@ export const useAdoptList = (queryParams?: Partial<AdoptParamsDto>) => {
   } = useGetAdopts({
     filter: selectedFilter,
     animalType: selectedType,
+    search: selectedSearch,
     size: 20,
     ...queryParams
   });
@@ -54,6 +57,8 @@ export const useAdoptList = (queryParams?: Partial<AdoptParamsDto>) => {
 
   const changeType = (id: string) => router.setParams({ type: id });
 
+  const changeSearch = (text: string) => router.setParams({ search: text });
+
   const goDetail = (id: string) => router.push({ pathname: '/adopt/[id]', params: { id } });
 
   const goList = () => router.push('/adopt');
@@ -70,10 +75,10 @@ export const useAdoptList = (queryParams?: Partial<AdoptParamsDto>) => {
   }, [fetchNextPageQuery, hasNextPage]);
 
   return {
-    state: { selectedFilter, selectedType },
+    state: { selectedFilter, selectedType, selectedSearch },
     refs: { listRef },
     data: { originalData: data, convertedData },
-    flags: { isLoading, isFetching, isFetchingNextPage },
-    actions: { changeFilter, changeType, goDetail, goList, executeRefresh, fetchNextPage }
+    flags: { isLoading, isFetching, isFetchingNextPage, hasNextPage },
+    actions: { changeFilter, changeType, changeSearch, goDetail, goList, executeRefresh, fetchNextPage }
   };
 };
