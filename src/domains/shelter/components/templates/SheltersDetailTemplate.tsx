@@ -22,7 +22,7 @@ import { ADOPT_FILTERS } from '@/domains/animal/constants';
 import { AdoptFilter, AdoptResponse } from '@/domains/animal/types';
 import { transformShelterData } from '@/domains/shelter/business/shelter.business';
 import { ShelterDto } from '@/domains/shelter/types/shelter.types';
-import { AdoptItem, mapToAdopt } from '@/features';
+import { AdoptItem, mapToAdoptList } from '@/features';
 import {
   AdoptCardSkeleton,
   AnimalCard,
@@ -99,7 +99,7 @@ const SheltersDetailTemplate = ({
     );
   }, [adoptData, isLoading, onFetch]);
 
-  const transformedAbandonments = mapToAdopt(adoptData?.value || [], adoptFilter.filter);
+  const transformedAbandonments = mapToAdoptList(adoptData?.value || [], adoptFilter.filter);
 
   return (
     <>

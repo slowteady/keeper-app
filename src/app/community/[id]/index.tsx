@@ -8,7 +8,7 @@ import { Button, useLayout } from '@/shared';
 import {
   CommentSection,
   CommunityDetailDescriptionSection,
-  CommunityDetailInfoSection,
+  AdoptDetailInfoSection,
   CommunityDetailOverviewSection
 } from '@/widgets';
 
@@ -30,7 +30,7 @@ const Page = () => {
         </View>
         <Divider mb={32} />
         <YStack px={20} mb={40}>
-          <CommunityDetailInfoSection {...data.sections.infoData} />
+          <AdoptDetailInfoSection {...data.sections.infoData} />
         </YStack>
         <View px={20} mb={32}>
           <CommunityDetailDescriptionSection {...data.sections.descriptionData} />

@@ -1,1 +1,1 @@
-export { SettingNicknameTemplate, type SettingNicknameTemplateProps } from './SettingNicknameTemplate';
+export * from './SettingNicknameTemplate';

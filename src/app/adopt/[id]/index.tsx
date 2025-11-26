@@ -1,36 +1,47 @@
-import { useLocalSearchParams } from 'expo-router';
-import { useMemo } from 'react';
-import { styled, View } from 'tamagui';
+import { ScrollView, styled, View } from 'tamagui';
 
-import { useGetAdoptNoticeQuery } from '@/domains/animal';
-import { transformAbandonmentDetail } from '@/domains/animal/business/announcement.business';
-import { AbandonmentsDetailTemplate } from '@/domains/animal/components/templates/AbandonmentsDetailTemplate';
-import { transformShelterData } from '@/domains/shelter/business/shelter.business';
-import { useGetShelterQuery } from '@/domains/shelter/services';
+import { useAdopt } from '@/features';
+import { useLayout } from '@/shared';
+import { AdoptDetailDescriptionSection, AdoptDetailInfoSection, AdoptDetailOverviewSection } from '@/widgets';
 
-/**
- * 입양 공고 상세 페이지
- */
 const Page = () => {
-  const { id } = useLocalSearchParams<{ id: string }>();
-
-  // useAppReview();
-  const { data: abandonmentData } = useGetAdoptNoticeQuery(id);
-  const { data: shelterData } = useGetShelterQuery(abandonmentData?.shelterId || '', {
-    enabled: Boolean(abandonmentData?.shelterId)
-  });
-
-  const transformedAbandonmentDetailData = useMemo(
-    () => abandonmentData && transformAbandonmentDetail(abandonmentData),
-    [abandonmentData]
-  );
-  const transformedShelterData = useMemo(() => shelterData && transformShelterData(shelterData), [shelterData]);
+  const { data, actions } = useAdopt();
+  const { bottom } = useLayout();
+  // const { data: shelterData } = useGetShelterQuery(abandonmentData?.shelterId || '', {
+  //   enabled: Boolean(abandonmentData?.shelterId)
+  // });
+  // const transformedShelterData = useMemo(() => shelterData && transformShelterData(shelterData), [shelterData]);
+  if (!data) return null;
 
   return (
     <Container>
-      {transformedAbandonmentDetailData && (
-        <AbandonmentsDetailTemplate abandonment={transformedAbandonmentDetailData} shelter={transformedShelterData} />
-      )}
+      <ScrollView decelerationRate="fast" pt={40}>
+        <View mb={20} px={20}>
+          <AdoptDetailOverviewSection title={data.title} images={data.images} description={data.description} />
+        </View>
+
+        <Divider mb={36} />
+
+        <View px={20} pb={32}>
+          <AdoptDetailInfoSection
+            age={data.age}
+            gender={data.gender}
+            weight={data.weight}
+            healthCheck={data.healthCheck}
+            neuterYn={data.neuterYn}
+            vaccinationCheck={data.vaccinationCheck}
+          />
+        </View>
+
+        <View px={20} pb={40}>
+          <AdoptDetailDescriptionSection
+            specialMark={data.specialMark}
+            neuterYn={data.neuterYn}
+            // shelter={data.shelter}
+            onPressShelter={actions.goShelterDetail}
+          />
+        </View>
+      </ScrollView>
     </Container>
   );
 };
@@ -40,4 +51,9 @@ export default Page;
 const Container = styled(View, {
   bg: '$pageBackground',
   flex: 1
+});
+
+const Divider = styled(View, {
+  height: 8,
+  bg: '$white850'
 });

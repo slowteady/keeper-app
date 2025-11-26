@@ -3,7 +3,7 @@ import { XStack } from 'tamagui';
 
 import { InfoItem, StatusList } from '@/shared';
 
-export interface CommunityDetailInfoSectionProps {
+export interface AdoptDetailInfoSectionProps {
   age: string;
   gender: string;
   weight: string;
@@ -12,14 +12,14 @@ export interface CommunityDetailInfoSectionProps {
   vaccinationCheck: string;
 }
 
-export const CommunityDetailInfoSection = ({
+export const AdoptDetailInfoSection = ({
   age,
   gender,
   weight,
   healthCheck,
   neuterYn,
   vaccinationCheck
-}: CommunityDetailInfoSectionProps) => {
+}: AdoptDetailInfoSectionProps) => {
   const statusList = useMemo(
     () => [
       { label: '중성화', status: neuterYn },

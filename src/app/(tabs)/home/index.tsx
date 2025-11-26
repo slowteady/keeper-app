@@ -1,11 +1,11 @@
-import { ScrollUpButton, useScrollUpButton } from '@/entities';
-import { ADOPTS_QUERY_KEY, SHELTER_QUERY_KEY, useRefreshing } from '@/shared';
-import { HomeAdoptSection, HomeBannerSection, HomeFooterSection, HomeShelterSection } from '@/widgets';
 import { FlashList } from '@shopify/flash-list';
 import { useQueryClient } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { RefreshControl } from 'react-native';
 import { styled, View } from 'tamagui';
+
+import { ADOPTS_QUERY_KEY, ScrollUpButton, SHELTER_QUERY_KEY, useRefreshing, useScrollUpButton } from '@/shared';
+import { HomeAdoptSection, HomeBannerSection, HomeFooterSection, HomeShelterSection } from '@/widgets';
 
 const IMAGES = [require('@/assets/images/banner1.png'), require('@/assets/images/banner2.png')];
 

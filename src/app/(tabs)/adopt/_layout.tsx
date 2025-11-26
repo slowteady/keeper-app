@@ -1,6 +1,6 @@
 import { Stack } from 'expo-router';
 
-import { LogoHeader } from '@/entities';
+import { LogoHeader } from '@/shared';
 
 const AdoptLayout = () => {
   return (

@@ -25,6 +25,7 @@ const Page = () => {
         data={data.convertedData}
         isLoading={flags.isLoading}
         onRefreshCallback={actions.executeRefresh}
+        onPressItem={actions.goDetail}
         header={
           <View mt={32}>
             <AdoptListHeaderSection

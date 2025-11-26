@@ -5,6 +5,7 @@ import PagerView from 'react-native-pager-view';
 export interface HomeBannerSectionProps {
   images: string[];
 }
+
 export const useHomeBannerSection = ({ images }: HomeBannerSectionProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const carouselRef = useRef<PagerView | null>(null);

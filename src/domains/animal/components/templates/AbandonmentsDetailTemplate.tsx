@@ -7,11 +7,6 @@ import { ShelterTelModal } from '@/domains/shelter/components/organisms/modal';
 import { Button, theme, useLayout } from '@/shared';
 
 import { TransformedAbandonmentDetail } from '../../business/announcement.business';
-import {
-  AbandonmentDetailCardSection,
-  AbandonmentDetailDescriptionSection,
-  AbandonmentDetailInfoSection
-} from '../organisms';
 
 export interface AbandonmentsDetailTemplateProps {
   abandonment: TransformedAbandonmentDetail;
@@ -33,14 +28,14 @@ export const AbandonmentsDetailTemplate = ({ abandonment, shelter }: Abandonment
       <View style={styles.container}>
         <ScrollView decelerationRate="fast">
           <View style={{ paddingHorizontal: 20, marginBottom: 20 }}>
-            <AbandonmentDetailCardSection data={abandonment} />
+            {/* <AdoptDetailOverviewSection data={abandonment} /> */}
           </View>
           <Divider />
           <View style={{ paddingHorizontal: 20, paddingTop: 36, paddingBottom: 48 }}>
-            <AbandonmentDetailInfoSection age={age} gender={gender} weight={weight} />
+            {/* <AbandonmentDetailInfoSection age={age} gender={gender} weight={weight} /> */}
           </View>
           <Divider />
-          <AbandonmentDetailDescriptionSection specialMark={specialMark} neuterYn={neuterYn} shelter={shelter} />
+          {/* <AbandonmentDetailDescriptionSection specialMark={specialMark} neuterYn={neuterYn} shelter={shelter} /> */}
         </ScrollView>
 
         <View style={[styles.bottomWrap, { paddingBottom: bottom }]}>

@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 
 import { AdoptCardChipVariant, AdoptDataDto, AdoptFilterDto } from '@/entities';
 
-export const mapToAdopt = (data: AdoptDataDto[], filter?: AdoptFilterDto) => {
+export const mapToAdoptList = (data: AdoptDataDto[], filter?: AdoptFilterDto) => {
   return data.map((item) => {
     const { neuterYn, age, weight, gender, happenPlace, images, orgName, noticeStartDt, noticeEndDt, fullName } = item;
 
@@ -12,11 +12,29 @@ export const mapToAdopt = (data: AdoptDataDto[], filter?: AdoptFilterDto) => {
     return {
       ...item,
       uri: images[0],
-      title: fullName.replace('[개]', '[강아지]'),
+      title: convertFullName(fullName),
       chips,
       description: descriptions
     };
   });
+};
+
+export const mapToAdopt = (data: AdoptDataDto) => {
+  const { age, weight, happenPlace, orgName, noticeStartDt, noticeEndDt, fullName, gender } = data;
+
+  const convertedWeight = formatWeight(weight);
+  const convertedAge = `${age.substring(0, 4).replace(/[^0-9]/g, '')}`;
+  const convertedDescriptions = convertDescription({ noticeStartDt, noticeEndDt, orgName, happenPlace });
+  const convertedGender = convertGenderLabel(gender);
+
+  return {
+    ...data,
+    title: convertFullName(fullName),
+    age: convertedAge,
+    gender: convertedGender,
+    weight: convertedWeight,
+    description: convertedDescriptions
+  };
 };
 
 interface ChipLabelParams {
@@ -48,7 +66,7 @@ const convertChipLabel = ({ neuterYn, weight, gender, age, filter }: ChipLabelPa
   // 3) 성별
   chips.push({
     id: 'GENDER',
-    value: getGenderLabel(gender),
+    value: convertGenderLabel(gender),
     sort: 3
   });
 
@@ -90,7 +108,7 @@ const FILTER_CHIP_MAP = {
   }
 };
 
-const getGenderLabel = (gender?: string) => {
+const convertGenderLabel = (gender?: AdoptDataDto['gender']) => {
   if (gender === 'F') return '여아';
   if (gender === 'M') return '남아';
   return '미상';
@@ -104,9 +122,9 @@ const formatAge = (age?: string) => {
 };
 
 const formatWeight = (weight?: string) => {
-  if (!weight) return null;
+  if (!weight) return '';
   const num = parseFloat(weight);
-  if (Number.isNaN(num)) return null;
+  if (Number.isNaN(num)) return '';
   const cleaned = num.toFixed(1).replace(/\.0$/, '');
   return `${cleaned}kg`;
 };
@@ -126,4 +144,8 @@ const convertDescription = ({ noticeStartDt, noticeEndDt, orgName, happenPlace }
     { label: '지역', value: orgName },
     { label: '구조장소', value: happenPlace }
   ];
+};
+
+const convertFullName = (fullName: AdoptDataDto['fullName']) => {
+  return fullName.replace('[개]', '[강아지]');
 };

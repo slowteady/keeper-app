@@ -25,7 +25,7 @@ export const AdoptListHeaderSection = ({
     <>
       <TitleContainer mb={24}>
         <Text fontSize={32} lineHeight={34} fontWeight="500" color="$black900">
-          전체 공고
+          전체공고
         </Text>
         <View mt={12}>
           <Dropdown

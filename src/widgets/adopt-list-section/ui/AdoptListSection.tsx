@@ -12,23 +12,27 @@ export interface AdoptListSectionProps {
   header?: React.ReactElement;
   footer?: React.ReactElement;
   onRefreshCallback: () => Promise<void>;
+  onPressItem: (id: string) => void;
   isLoading?: boolean;
   style?: FlashListProps<AdoptItem>['style'];
 }
 
 export const AdoptListSection = forwardRef<FlashListRef<AdoptItem>, AdoptListSectionProps>(
-  ({ data, header, footer, onRefreshCallback, isLoading = false, style }: AdoptListSectionProps, ref) => {
+  ({ data, header, footer, onRefreshCallback, onPressItem, isLoading = false, style }: AdoptListSectionProps, ref) => {
     const { refreshing, handleRefresh } = useRefreshing(onRefreshCallback);
 
-    const renderItem = useCallback(({ item, index }: ListRenderItemInfo<AdoptItem>) => {
-      const isLeft = index % 2 === 0;
+    const renderItem = useCallback(
+      ({ item, index }: ListRenderItemInfo<AdoptItem>) => {
+        const isLeft = index % 2 === 0;
 
-      return (
-        <View pl={isLeft ? 0 : 4} pr={isLeft ? 4 : 0} mb={32}>
-          <AdoptCard uri={item.uri} title={item.title} description={item.description} chips={item.chips} />
-        </View>
-      );
-    }, []);
+        return (
+          <View pl={isLeft ? 0 : 4} pr={isLeft ? 4 : 0} mb={32} onPress={() => onPressItem(item.id)}>
+            <AdoptCard uri={item.uri} title={item.title} description={item.description} chips={item.chips} />
+          </View>
+        );
+      },
+      [onPressItem]
+    );
 
     return (
       <FlashList

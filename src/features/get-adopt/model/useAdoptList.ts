@@ -7,9 +7,9 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { ADOPT_LIST_FILTER, AdoptParamsDto, useGetAdopts } from '@/entities';
 import { ADOPT_ANIMAL_FILTER, ADOPTS_QUERY_KEY, parseQueryParam } from '@/shared';
 
-import { mapToAdopt } from './mapper';
+import { mapToAdoptList } from './mapper';
 
-export type AdoptItem = ReturnType<typeof mapToAdopt>[number];
+export type AdoptItem = ReturnType<typeof mapToAdoptList>[number];
 
 export const useAdoptList = (queryParams?: Partial<AdoptParamsDto>) => {
   const router = useRouter();
@@ -46,7 +46,7 @@ export const useAdoptList = (queryParams?: Partial<AdoptParamsDto>) => {
 
   const convertedData = useMemo(() => {
     if (!data) return [];
-    return mapToAdopt(data.value, selectedFilter);
+    return mapToAdoptList(data.value, selectedFilter);
   }, [data, selectedFilter]);
 
   useEffect(() => {
