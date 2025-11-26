@@ -18,16 +18,16 @@ import {
 import { YStack } from 'tamagui';
 
 import { adoptFilterAtomFamily } from '@/domains/animal';
-import { transformAbandonments, TransformedAbandonments } from '@/domains/animal/business/announcement.business';
 import { ADOPT_FILTERS } from '@/domains/animal/constants';
 import { AdoptFilter, AdoptResponse } from '@/domains/animal/types';
 import { transformShelterData } from '@/domains/shelter/business/shelter.business';
 import { ShelterDto } from '@/domains/shelter/types/shelter.types';
+import { AdoptItem, mapToAdopt } from '@/features';
 import {
+  AdoptCardSkeleton,
   AnimalCard,
   BottomSheetMenuData,
   Button,
-  AdoptCardSkeleton,
   Dropdown,
   ScrollUpButton,
   ShelterMap,
@@ -71,7 +71,7 @@ const SheltersDetailTemplate = ({
   }, []);
 
   const renderItem = useCallback(
-    ({ item }: ListRenderItemInfo<TransformedAbandonments>) => {
+    ({ item }: ListRenderItemInfo<AdoptItem>) => {
       return (
         <Pressable onPress={() => handlePressCard(item.id)}>
           <AnimalCard
@@ -99,7 +99,7 @@ const SheltersDetailTemplate = ({
     );
   }, [adoptData, isLoading, onFetch]);
 
-  const transformedAbandonments = transformAbandonments(adoptData?.value || [], adoptFilter.filter);
+  const transformedAbandonments = mapToAdopt(adoptData?.value || [], adoptFilter.filter);
 
   return (
     <>

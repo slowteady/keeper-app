@@ -3,7 +3,7 @@ import { styled, View } from 'tamagui';
 
 import { useAdoptList } from '@/features';
 import { ShowMoreButton } from '@/shared';
-import { AdoptList, AdoptListHeaderSection } from '@/widgets';
+import { AdoptListHeaderSection, AdoptListSection } from '@/widgets';
 
 const LIST_SIZE = 16;
 
@@ -20,7 +20,7 @@ const Page = () => {
 
   return (
     <Container>
-      <AdoptList
+      <AdoptListSection
         ref={refs.listRef}
         data={data.convertedData}
         isLoading={flags.isLoading}

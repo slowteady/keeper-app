@@ -1,8 +1,9 @@
 import { useCallback, useMemo, useState } from 'react';
 
 import { CommentSortOrderDto } from '@/entities';
+
+import { useSharePost } from '../../community/share-feed';
 import { useLikePost } from '../../like-feed';
-import { useSharePost } from '../../share-feed';
 import { detailPostValue, getSectionData } from '../lib';
 
 export const useCommunityAdoptDetailFeed = () => {

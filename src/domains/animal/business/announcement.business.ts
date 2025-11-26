@@ -1,51 +1,6 @@
 import dayjs from 'dayjs';
 
-import { ChipVariant } from '@/shared';
-
-import { AnnouncementChipId, AnnouncementFilter, AnnouncementValue } from '../types/announcement.types';
-
-export type TransformedAbandonments = ReturnType<typeof transformAbandonments>[number];
-export const transformAbandonments = (data: AnnouncementValue[], filter?: AnnouncementFilter) => {
-  return data.map((item) => {
-    const {
-      images,
-      neuterYn,
-      weight,
-      gender,
-      age,
-      specificType,
-      noticeStartDt,
-      noticeEndDt,
-      orgName,
-      happenPlace,
-      fullName
-    } = item;
-    const chipLabelParams: ChipLabelParams = {
-      neuterYn,
-      weight,
-      gender,
-      age,
-      filter
-    };
-    const descriptionParams: DescriptionParams = {
-      specificType,
-      noticeStartDt,
-      noticeEndDt,
-      orgName,
-      happenPlace
-    };
-    const transformedDescription = transformDescription(descriptionParams);
-    const transformedChipLabel = transformChipLabel(chipLabelParams);
-
-    return {
-      ...item,
-      uri: images[0],
-      title: fullName,
-      description: transformedDescription,
-      chips: transformedChipLabel
-    };
-  });
-};
+import { AnnouncementValue } from '../types/announcement.types';
 
 export type TransformedAbandonmentDetail = ReturnType<typeof transformAbandonmentDetail>;
 export const transformAbandonmentDetail = (data: AnnouncementValue) => {
@@ -68,79 +23,6 @@ export const transformAbandonmentDetail = (data: AnnouncementValue) => {
     title: fullName,
     description: transformedDescription
   };
-};
-
-interface ChipLabelParams {
-  neuterYn: string;
-  weight: string;
-  gender: string;
-  age: string;
-  filter?: AnnouncementFilter;
-}
-export const transformChipLabel = ({ neuterYn, filter, weight, gender, age }: ChipLabelParams) => {
-  let data: {
-    id: AnnouncementChipId;
-    value: string;
-    sort: number;
-    variant?: ChipVariant;
-  }[] = [];
-
-  switch (filter) {
-    case 'NEAR_DEADLINE':
-      data.push({
-        id: 'NEAR_DEADLINE',
-        value: '안락사 위기',
-        sort: 1,
-        variant: 'error'
-      });
-      break;
-    case 'NEW':
-      data.push({
-        id: 'NEW',
-        value: '신규',
-        sort: 1,
-        variant: 'success'
-      });
-      break;
-  }
-
-  if (neuterYn === 'Y') {
-    data.push({
-      id: 'NEUTER',
-      value: '중성화',
-      sort: 2,
-      variant: 'notice'
-    });
-  }
-
-  const genderLabel = gender === 'F' ? '여아' : gender === 'M' ? '남아' : '미상';
-  data.push({
-    id: 'GENDER',
-    value: genderLabel,
-    sort: 3
-  });
-
-  if (age) {
-    const convertedAge = `${age.substring(0, 4).replace(/[^0-9]/g, '')}년생`;
-
-    data.push({
-      id: 'AGE',
-      value: convertedAge,
-      sort: 4
-    });
-  }
-
-  if (weight) {
-    const convertedWeight = parseFloat(weight).toFixed(1).replace(/\.0$/, '') + 'kg';
-
-    data.push({
-      id: 'WEIGHT',
-      value: convertedWeight,
-      sort: 5
-    });
-  }
-
-  return data;
 };
 
 interface DescriptionParams {

@@ -2,7 +2,7 @@ import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch } from 'react-hook-form';
 
-import { CREATE_POST_DEFAULT_VALUES, CommunityAdoptFormSchema, CommunityAdoptFormDto } from '@/entities';
+import { CommunityAdoptFormDto, CommunityAdoptFormSchema, CREATE_POST_DEFAULT_VALUES } from '@/entities';
 import { BottomSheetMenu, useBottomSheet } from '@/shared';
 
 import { makeFormOptions } from '../lib/makeFormOptions';

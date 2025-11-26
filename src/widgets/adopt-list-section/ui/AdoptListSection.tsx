@@ -7,7 +7,7 @@ import { ADOPT_CARD_IMAGE_SIZES, AdoptCard, AdoptCardSkeleton, AdoptNodata } fro
 import { AdoptItem } from '@/features';
 import { useRefreshing } from '@/shared';
 
-export interface AdoptListProps {
+export interface AdoptListSectionProps {
   data: AdoptItem[];
   header?: React.ReactElement;
   footer?: React.ReactElement;
@@ -16,8 +16,8 @@ export interface AdoptListProps {
   style?: FlashListProps<AdoptItem>['style'];
 }
 
-export const AdoptList = forwardRef<FlashListRef<AdoptItem>, AdoptListProps>(
-  ({ data, header, footer, onRefreshCallback, isLoading = false, style }: AdoptListProps, ref) => {
+export const AdoptListSection = forwardRef<FlashListRef<AdoptItem>, AdoptListSectionProps>(
+  ({ data, header, footer, onRefreshCallback, isLoading = false, style }: AdoptListSectionProps, ref) => {
     const { refreshing, handleRefresh } = useRefreshing(onRefreshCallback);
 
     const renderItem = useCallback(({ item, index }: ListRenderItemInfo<AdoptItem>) => {
@@ -64,4 +64,4 @@ const EmptyComponent = ({ isLoading }: { isLoading: boolean }) => {
   );
 };
 
-AdoptList.displayName = 'AdoptList';
+AdoptListSection.displayName = 'AdoptListSection';

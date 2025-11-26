@@ -1,3 +1,4 @@
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { FlashList, ListRenderItemInfo } from '@shopify/flash-list';
 import { forwardRef, useCallback, useMemo } from 'react';
 import { ActivityIndicator } from 'react-native';
@@ -5,7 +6,6 @@ import { styled, Text, View, XStack } from 'tamagui';
 
 import { BottomSheet } from '@/shared';
 
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { KakaoAddressDocumentDto } from '../model';
 import { BottomSheetSearchbar } from './BottomSheetSearchbar';
 

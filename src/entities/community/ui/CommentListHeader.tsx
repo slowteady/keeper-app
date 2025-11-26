@@ -1,6 +1,6 @@
 import { styled, Text, XStack, YStack } from 'tamagui';
 
-import { CommentSortOrderDto } from '../model';
+import { CommentSortOrderDto } from '@/entities/comment/model';
 
 export interface CommentListHeaderProps {
   commentCount: number;

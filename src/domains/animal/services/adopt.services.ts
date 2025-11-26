@@ -1,50 +1,10 @@
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { AxiosError, AxiosResponse } from 'axios';
 
-import { AdoptDataDto, AdoptParamsDto, AdoptResponseDto } from '@/entities';
-import {
-  ADOPT_QUERY_KEY,
-  ADOPTS_QUERY_KEY,
-  ApiResponse,
-  publicApi,
-  UseInfiniteQueryCustomOptions,
-  UseQueryCustomOptions
-} from '@/shared';
+import { AdoptDataDto } from '@/entities';
+import { ADOPT_QUERY_KEY, ApiResponse, publicApi, UseQueryCustomOptions } from '@/shared';
 
 const BASE_URL = `v2/abandonments`;
-
-/**
- * 입양공고 전체 조회
- */
-const getAdoptNotices = async (
-  params: AdoptParamsDto
-): Promise<AxiosResponse<ApiResponse<AdoptResponseDto>, AxiosError>> => {
-  return await publicApi.get(BASE_URL, { params });
-};
-export const useGetAdoptNoticesQuery = (
-  params: AdoptParamsDto,
-  options?: UseInfiniteQueryCustomOptions<
-    AxiosResponse<ApiResponse<AdoptResponseDto>, AxiosError>,
-    AxiosError,
-    AdoptResponseDto
-  >
-) => {
-  return useInfiniteQuery({
-    queryKey: [ADOPTS_QUERY_KEY, params],
-    queryFn: ({ pageParam }) => getAdoptNotices({ ...params, page: pageParam }),
-    initialPageParam: 0,
-    getNextPageParam: (lastPage) => {
-      return lastPage.data.data.has_next ? lastPage.data.data.page + 1 : undefined;
-    },
-    select: (data) => {
-      const lastPage = data.pages[data.pages.length - 1].data.data;
-      const allData = data.pages.flatMap((page) => page.data.data.value);
-
-      return { ...lastPage, value: allData };
-    },
-    ...options
-  });
-};
 
 /**
  * 입양공고 상세 조회
