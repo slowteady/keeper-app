@@ -2,7 +2,7 @@ import { PermissionStatus } from 'expo-location';
 import { useCallback, useEffect, useState } from 'react';
 import { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
-import { ShelterDto, useGetShelterCountsQuery, useGetSheltersQuery, useShelterMap } from '@/entities';
+import { ShelterDto, useGetShelterCounts, useGetShelters, useShelterMap } from '@/entities';
 import { calcMapRadiusKm, CameraParams } from '@/shared';
 
 export const useHomeShelterSection = () => {
@@ -15,7 +15,7 @@ export const useHomeShelterSection = () => {
 
   const { camera, setCamera, distance, setDistance, initialLocation, mapRef, permissionStatus } = useShelterMap();
 
-  const { data: shelters, isLoading } = useGetSheltersQuery(
+  const { data: shelters, isLoading } = useGetShelters(
     {
       latitude: camera?.latitude || 0,
       longitude: camera?.longitude || 0,
@@ -26,7 +26,7 @@ export const useHomeShelterSection = () => {
     { enabled: !!camera && enabled }
   );
 
-  const { data: shelterCounts } = useGetShelterCountsQuery(
+  const { data: shelterCounts } = useGetShelterCounts(
     {
       latitude: initialLocation?.latitude || 0,
       longitude: initialLocation?.longitude || 0

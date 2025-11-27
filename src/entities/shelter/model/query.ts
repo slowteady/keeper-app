@@ -1,16 +1,29 @@
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { AxiosError, AxiosResponse } from 'axios';
 
-import { ApiResponse, publicApi, SHELTER_COUNT_QUERY_KEY, SHELTER_QUERY_KEY, UseQueryCustomOptions } from '@/shared';
+import { AdoptResponseDto } from '@/entities/adopt';
+import {
+  ApiResponse,
+  publicApi,
+  SHELTER_ADOPTS_QUERY_KEY,
+  SHELTER_COUNTS_QUERY_KEY,
+  SHELTER_QUERY_KEY,
+  SHELTERS_QUERY_KEY,
+  UseInfiniteQueryCustomOptions,
+  UseQueryCustomOptions
+} from '@/shared';
 
-import { ShelterCountDto, ShelterCountsParamsDto, ShelterDto, SheltersParamsDto } from './schema';
+import {
+  ShelterAdoptParamsDto,
+  ShelterCountDto,
+  ShelterCountsParamsDto,
+  ShelterDto,
+  SheltersParamsDto
+} from './schema';
 
 const BASE_URL = `/v2/shelters`;
 
-/**
- * 주변 보호소 갯수 조회
- */
-const newGetShelterCounts = async (
+const getShelterCounts = async (
   params: ShelterCountsParamsDto
 ): Promise<AxiosResponse<ApiResponse<ShelterCountDto[]>, AxiosError>> => {
   const endpoint = `${BASE_URL}/nearby/count`;
@@ -18,7 +31,7 @@ const newGetShelterCounts = async (
 
   return await publicApi.get(endpoint, { params: { ...params, distances } });
 };
-export const useGetShelterCountsQuery = (
+export const useGetShelterCounts = (
   params: ShelterCountsParamsDto,
   options?: UseQueryCustomOptions<
     AxiosResponse<ApiResponse<ShelterCountDto[]>, AxiosError>,
@@ -27,32 +40,74 @@ export const useGetShelterCountsQuery = (
   >
 ) => {
   return useQuery({
-    queryKey: [SHELTER_COUNT_QUERY_KEY, params],
-    queryFn: () => newGetShelterCounts(params),
+    queryKey: [SHELTER_COUNTS_QUERY_KEY, params],
+    queryFn: () => getShelterCounts(params),
     select: (data) => data.data.data,
     ...options
   });
 };
 
-/**
- * 보호소 전체 조회
- */
-const newGetShelters = async (
+const getShelters = async (
   params: SheltersParamsDto
 ): Promise<AxiosResponse<ApiResponse<ShelterDto[]>, AxiosError>> => {
   const endpoint = `${BASE_URL}`;
 
   return await publicApi.get(endpoint, { params });
 };
-export const useGetSheltersQuery = (
+export const useGetShelters = (
   params: SheltersParamsDto,
   options?: UseQueryCustomOptions<AxiosResponse<ApiResponse<ShelterDto[]>, AxiosError>, AxiosError, ShelterDto[]>
 ) => {
   return useQuery({
-    queryKey: [SHELTER_QUERY_KEY, params],
-    queryFn: () => newGetShelters(params),
+    queryKey: [SHELTERS_QUERY_KEY, params],
+    queryFn: () => getShelters(params),
     select: (data) => {
       return data.data.data.sort((a, b) => a.distance - b.distance);
+    },
+    ...options
+  });
+};
+
+const getShelter = async (id: string): Promise<AxiosResponse<ApiResponse<ShelterDto>, AxiosError>> => {
+  const endpoint = `${BASE_URL}/${id}`;
+
+  return await publicApi.get(endpoint);
+};
+export const useGetShelter = (
+  id: string,
+  options?: UseQueryCustomOptions<AxiosResponse<ApiResponse<ShelterDto>, AxiosError>, AxiosError, ShelterDto>
+) => {
+  return useQuery({
+    queryKey: [SHELTER_QUERY_KEY, id],
+    queryFn: () => getShelter(id),
+    select: (data) => data.data.data,
+    ...options
+  });
+};
+
+const getShelterAdopts = async (
+  id: string,
+  params: ShelterAdoptParamsDto
+): Promise<AxiosResponse<ApiResponse<AdoptResponseDto>, AxiosError>> => {
+  const endpoint = `${BASE_URL}/${id}/abandonments`;
+
+  return await publicApi.get(endpoint, { params });
+};
+export const useGetShelterAdopts = (
+  id: string,
+  params: ShelterAdoptParamsDto,
+  options?: UseInfiniteQueryCustomOptions<
+    AxiosResponse<ApiResponse<AdoptResponseDto>, AxiosError>,
+    AxiosError,
+    AdoptResponseDto
+  >
+) => {
+  return useInfiniteQuery({
+    queryKey: [SHELTER_ADOPTS_QUERY_KEY, id, params],
+    queryFn: ({ pageParam = 0 }) => getShelterAdopts(id, { ...params, page: pageParam }),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => {
+      return lastPage.data.data.has_next ? lastPage.data.data.page + 1 : undefined;
     },
     ...options
   });

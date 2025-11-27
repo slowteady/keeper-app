@@ -1,8 +1,7 @@
 import { Image } from 'expo-image';
-import { StyleSheet } from 'react-native';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
-import { Link, theme } from '@/shared';
+import { Link } from '@/shared';
 
 export interface Shelter {
   id: number;
@@ -14,17 +13,10 @@ export interface Shelter {
 
 export interface AdoptDetailDescriptionSectionProps {
   specialMark: string;
-  neuterYn: string;
   shelter?: Shelter;
-  onPressShelter: (shelterId: number) => void;
 }
 
-export const AdoptDetailDescriptionSection = ({
-  specialMark,
-  neuterYn,
-  shelter,
-  onPressShelter
-}: AdoptDetailDescriptionSectionProps) => {
+export const AdoptDetailDescriptionSection = ({ specialMark, shelter }: AdoptDetailDescriptionSectionProps) => {
   const { id, time, person, address, name } = shelter || {};
 
   const hasShelter = !!name;
@@ -86,56 +78,4 @@ const Description = styled(Text, {
   fontWeight: '500',
   lineHeight: 18,
   color: '#7E7E7E'
-});
-
-const styles = StyleSheet.create({
-  pointBox: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    paddingVertical: 24
-  },
-  labelWrap: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    minWidth: 110,
-    paddingHorizontal: 20
-  },
-  label: {
-    fontSize: 17,
-    fontWeight: '500',
-    lineHeight: 24,
-    color: theme.colors.black[800]
-  },
-  shelterText: {
-    flex: 1,
-    fontSize: 16,
-    lineHeight: 22,
-    fontWeight: '600',
-    flexShrink: 1,
-    paddingRight: 10,
-    color: theme.colors.black[700],
-    textDecorationLine: 'underline'
-  },
-  description: {
-    flex: 1,
-    fontSize: 16,
-    fontWeight: '400',
-    lineHeight: 22,
-    color: theme.colors.black[700],
-    flexShrink: 1,
-    paddingRight: 24
-  },
-  divider: {
-    borderWidth: theme.hairline,
-    borderColor: theme.colors.white[600]
-  },
-  shelter: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 8,
-    flex: 1
-  }
 });

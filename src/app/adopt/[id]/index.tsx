@@ -1,12 +1,10 @@
 import { ScrollView, styled, View } from 'tamagui';
 
 import { useAdopt } from '@/features';
-import { useLayout } from '@/shared';
 import { AdoptDetailDescriptionSection, AdoptDetailInfoSection, AdoptDetailOverviewSection } from '@/widgets';
 
 const Page = () => {
-  const { data, actions } = useAdopt();
-  const { bottom } = useLayout();
+  const { data } = useAdopt();
   // const { data: shelterData } = useGetShelterQuery(abandonmentData?.shelterId || '', {
   //   enabled: Boolean(abandonmentData?.shelterId)
   // });
@@ -36,9 +34,7 @@ const Page = () => {
         <View px={20} pb={40}>
           <AdoptDetailDescriptionSection
             specialMark={data.specialMark}
-            neuterYn={data.neuterYn}
             // shelter={data.shelter}
-            onPressShelter={actions.goShelterDetail}
           />
         </View>
       </ScrollView>

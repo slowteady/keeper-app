@@ -1,5 +1,5 @@
-import { router, useLocalSearchParams } from 'expo-router';
-import { useCallback, useMemo } from 'react';
+import { useLocalSearchParams } from 'expo-router';
+import { useMemo } from 'react';
 
 import { useGetAdopt } from '@/entities';
 
@@ -12,12 +12,7 @@ export const useAdopt = () => {
 
   const convertedData = useMemo(() => adoptData && mapToAdopt(adoptData), [adoptData]);
 
-  const goShelterDetail = useCallback((id: number) => {
-    router.push({ pathname: '/shelter/[id]', params: { id } });
-  }, []);
-
   return {
-    data: convertedData,
-    actions: { goShelterDetail }
+    data: convertedData
   };
 };

@@ -25,6 +25,7 @@ export const AdoptDetailOverviewSection = ({ title, images, description }: Adopt
       <YStack gap={16}>
         {description.map(({ label, value }, idx) => {
           const key = `${label}-${idx}`;
+
           return (
             <XStack key={key} gap={16} items="center">
               <Text fontSize={15} fontWeight="400" lineHeight={21} color="$black600" minW={70} self="flex-start">
