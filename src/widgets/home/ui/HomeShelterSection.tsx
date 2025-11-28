@@ -4,15 +4,21 @@ import { useCallback } from 'react';
 import Animated from 'react-native-reanimated';
 import { styled, Text, useTheme, View, XStack } from 'tamagui';
 
-import { DistanceIndicator, HOME_SHELTER_CARD_SIZE, HomeShelterCard, ShelterDto, ShelterMap } from '@/entities';
-import { useHomeShelterSection } from '@/features';
+import {
+  DistanceIndicator,
+  HOME_SHELTER_CARD_SIZE,
+  HomeShelterCard,
+  ShelterDto,
+  ShelterMap,
+  useShelterMap
+} from '@/entities';
 import { Skeleton, ViewAllButton } from '@/shared';
 import { DownArrow } from '@/shared/ui/icons/mini';
 
 const SHELTER_CARD_MIN_HEIGHT = 144;
 
 export const HomeShelterSection = () => {
-  const { data, refs, state, actions, flags, styles } = useHomeShelterSection();
+  const { data, refs, state, actions, flags, styles } = useShelterMap();
 
   const { black500 } = useTheme();
 

@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 
-import { AdoptCardChipVariant, AdoptDataDto, AdoptFilterDto } from '@/entities';
+import { AdoptCardChipVariant } from '../ui';
+import { AdoptDataDto, AdoptFilterDto } from './schema';
 
 export const mapToAdoptList = (data: AdoptDataDto[], filter?: AdoptFilterDto) => {
   return data.map((item) => {

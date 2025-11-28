@@ -7,12 +7,12 @@ import { Button } from '@/shared';
 import { Close } from '@/shared/ui/icons/outline';
 import { Search } from '@/shared/ui/icons/solid';
 
-export interface BottomSheetSearchbarProps {
+export interface BottomSheetSearchInputProps {
   onSubmit: (text: string) => void;
   placeholder?: string;
 }
 
-export const BottomSheetSearchbar = ({ onSubmit, placeholder }: BottomSheetSearchbarProps) => {
+export const BottomSheetSearchInput = ({ onSubmit, placeholder }: BottomSheetSearchInputProps) => {
   const [isFocus, setIsFocus] = useState(false);
   const [value, setValue] = useState('');
 

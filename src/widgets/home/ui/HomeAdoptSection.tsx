@@ -2,8 +2,15 @@ import { FlashList, ListRenderItemInfo } from '@shopify/flash-list';
 import { useCallback } from 'react';
 import { styled, Text, View, XStack } from 'tamagui';
 
-import { ADOPT_CARD_IMAGE_SIZES, ADOPT_LIST_FILTER, AdoptCard, AdoptCardSkeleton, AdoptNodata } from '@/entities';
-import { AdoptItem, useAdoptList } from '@/features';
+import {
+  ADOPT_CARD_IMAGE_SIZES,
+  ADOPT_LIST_FILTER,
+  AdoptCard,
+  AdoptCardSkeleton,
+  AdoptItem,
+  AdoptNodata,
+  useAdoptList
+} from '@/entities';
 import { ADOPT_ANIMAL_FILTER, ButtonGroup, Dropdown, ViewAllButton } from '@/shared';
 
 export const HomeAdoptSection = () => {

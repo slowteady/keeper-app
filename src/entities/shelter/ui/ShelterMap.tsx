@@ -14,7 +14,7 @@ import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-na
 import { ShelterCountDto, ShelterDto } from '@/domains/shelter/types/shelter.types';
 import { theme, useDebounceFunc } from '@/shared';
 import { isCameraChanged } from '@/shared/lib/utils/map.utils';
-import { CameraParams } from '@/shared/model/types/map.types';
+import { CameraParams } from '@/shared/model';
 import { Button } from '@/shared/ui/button';
 
 export interface ShelterMapProps extends NaverMapViewProps {

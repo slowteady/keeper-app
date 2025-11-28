@@ -50,7 +50,9 @@ export const useAdoptList = (queryParams?: Partial<AdoptParamsDto>) => {
   }, [data, selectedFilter]);
 
   useEffect(() => {
-    if (listRef.current) listRef.current.scrollToOffset({ animated: false, offset: 0 });
+    if (listRef.current) {
+      listRef.current.scrollToOffset({ animated: false, offset: 0 });
+    }
   }, [selectedFilter, selectedType]);
 
   const changeFilter = (id: string) => router.setParams({ filter: id });

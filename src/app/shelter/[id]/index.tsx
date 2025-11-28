@@ -8,7 +8,7 @@ import { styled, View } from 'tamagui';
 
 import { adoptFilterAtomFamily } from '@/domains/animal';
 import { SheltersDetailTemplate, useGetShelterAdoptNoticesQuery, useGetShelterQuery } from '@/domains/shelter';
-import { SHELTER_ADOPT_NOTICES_QUERY_KEY, SHELTER_QUERY_KEY, useRefreshing } from '@/shared';
+import { SHELTER_ADOPTS_QUERY_KEY, SHELTER_QUERY_KEY, useRefreshing } from '@/shared';
 
 const Page = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -34,7 +34,7 @@ const Page = () => {
   }, [fetchNextPage, hasNextPage]);
   const onRefreshCallback = useCallback(async () => {
     await Promise.all([
-      queryClient.invalidateQueries({ queryKey: [SHELTER_ADOPT_NOTICES_QUERY_KEY] }),
+      queryClient.invalidateQueries({ queryKey: [SHELTER_ADOPTS_QUERY_KEY] }),
       queryClient.invalidateQueries({ queryKey: [SHELTER_QUERY_KEY] })
     ]);
   }, [queryClient]);

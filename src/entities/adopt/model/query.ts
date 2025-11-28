@@ -1,4 +1,4 @@
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { AxiosError, AxiosResponse } from 'axios';
 
 import { AdoptDataDto, AdoptParamsDto, AdoptResponseDto } from '@/entities';
@@ -8,7 +8,7 @@ import {
   ApiResponse,
   publicApi,
   UseInfiniteQueryCustomOptions,
-  UseQueryCustomOptions
+  UseSuspenseQueryCustomOptions
 } from '@/shared';
 
 const BASE_URL = `v2/abandonments`;
@@ -48,9 +48,13 @@ const getAdopt = async (id: string): Promise<AxiosResponse<ApiResponse<AdoptData
 };
 export const useGetAdopt = (
   id: string,
-  options?: UseQueryCustomOptions<AxiosResponse<ApiResponse<AdoptDataDto>, AxiosError>, AxiosError, AdoptDataDto>
+  options?: UseSuspenseQueryCustomOptions<
+    AxiosResponse<ApiResponse<AdoptDataDto>, AxiosError>,
+    AxiosError,
+    AdoptDataDto
+  >
 ) => {
-  return useQuery({
+  return useSuspenseQuery({
     queryKey: [ADOPT_QUERY_KEY, id],
     queryFn: () => getAdopt(id),
     select: (data) => data.data.data,

@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { styled, View } from 'tamagui';
 
-import { useAdoptList } from '@/features';
+import { useAdoptList } from '@/entities';
 import { ShowMoreButton } from '@/shared';
 import { AdoptListHeaderSection, AdoptListSection } from '@/widgets';
 

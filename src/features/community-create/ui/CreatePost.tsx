@@ -2,7 +2,7 @@ import { Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { KeyboardAvoidingView, KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { styled, View } from 'tamagui';
 
-import { NewLocationBottomSheet, useLocationBottomSheet } from '@/features/search-address';
+import { LocationBottomSheet, useLocationBottomSheet } from '@/features/search-address';
 import { Button, BUTTON_HEIGHT, useLayout } from '@/shared';
 
 import { useCreatePost } from '../model';
@@ -51,7 +51,7 @@ export const CreatePost = () => {
         </Container>
       </KeyboardAvoidingView>
 
-      <NewLocationBottomSheet
+      <LocationBottomSheet
         ref={locationBottomSheet.ref}
         addresses={locationBottomSheet.state.searchedAddresses || []}
         onDismiss={locationBottomSheet.actions.dismiss}

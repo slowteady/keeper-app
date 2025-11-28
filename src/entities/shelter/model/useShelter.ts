@@ -1,13 +1,20 @@
-import { useLocalSearchParams } from 'expo-router';
+import { useMemo } from 'react';
 
+import { mapToShelter } from './mapper';
 import { useGetShelter } from './query';
 
-export const useShelter = (id: string) => {
-  const params = useLocalSearchParams<{ id: string }>();
+export interface UseShelterProps {
+  id: string;
+  enabled?: boolean;
+}
 
-  const { data: shelterData, isLoading } = useGetShelter(id || params.id, { enabled: !!id || !!params.id });
+export const useShelter = ({ id, enabled }: UseShelterProps) => {
+  const { data: shelterData, isLoading } = useGetShelter(id, { enabled: enabled || !!id });
+
+  const shelter = useMemo(() => shelterData && mapToShelter(shelterData), [shelterData]);
 
   return {
-    data: shelterData
+    data: shelter,
+    flags: { isLoading }
   };
 };

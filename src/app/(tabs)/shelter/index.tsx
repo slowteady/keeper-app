@@ -1,4 +1,7 @@
+import { FlashList } from '@shopify/flash-list';
 import { styled, View } from 'tamagui';
+
+import { ShelterListHeaderSection, ShelterMapSection } from '@/widgets';
 
 /**
  * 보호소 목록 페이지
@@ -80,22 +83,44 @@ const Page = () => {
 
   // const isLoading = sheltersLoading || isSearchLoading;
 
+  // <FormProvider {...methods}>
+  //     <SheltersTemplate
+  //       data={data}
+  //       camera={camera}
+  //       onRefetch={handleRefetch}
+  //       onSubmitSearch={handleSubmit}
+  //       permissionStatus={permissionStatus}
+  //       onInitMap={() => setMapEnabled(true)}
+  //       ref={mapRef}
+  //       isLoading={isLoading}
+  //     />
+  // </FormProvider>
+
   return (
-    <></>
-    // <FormProvider {...methods}>
-    //   <Container>
-    //     <SheltersTemplate
-    //       data={data}
-    //       camera={camera}
-    //       onRefetch={handleRefetch}
-    //       onSubmitSearch={handleSubmit}
-    //       permissionStatus={permissionStatus}
-    //       onInitMap={() => setMapEnabled(true)}
-    //       ref={mapRef}
-    //       isLoading={isLoading}
-    //     />
-    //   </Container>
-    // </FormProvider>
+    <Container>
+      <FlashList
+        data={[]}
+        renderItem={() => <View />}
+        ListHeaderComponent={
+          <>
+            <View px={20}>
+              <ShelterListHeaderSection onSubmitSearch={() => {}} onPressLocation={() => {}} />
+            </View>
+            <ShelterMapSection />
+          </>
+        }
+        contentContainerStyle={{ paddingVertical: 32 }}
+      />
+
+      {/*TODO: LocationBottomSheet 추가 */}
+      {/* <LocationBottomSheet
+        addresses={[]}
+        onDismiss={() => {}}
+        onSearch={() => {}}
+        onSelectAddress={() => {}}
+        isPending={false}
+      /> */}
+    </Container>
   );
 };
 

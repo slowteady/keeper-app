@@ -1,15 +1,14 @@
 import { Dimensions } from 'react-native';
 import { styled, View } from 'tamagui';
 
-import { useHomeBannerSection } from '@/features';
-import { Carousel } from '@/shared';
+import { Carousel, useCarousel } from '@/shared';
 
 export interface HomeBannerSectionProps {
   images: string[];
 }
 
 export const HomeBannerSection = ({ images }: HomeBannerSectionProps) => {
-  const { state, actions, refs } = useHomeBannerSection({ images });
+  const { state, actions, refs } = useCarousel({ images });
 
   return (
     <Container>

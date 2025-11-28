@@ -4,12 +4,11 @@ import { forwardRef, useCallback, useMemo } from 'react';
 import { ActivityIndicator } from 'react-native';
 import { styled, Text, View, XStack } from 'tamagui';
 
-import { BottomSheet } from '@/shared';
+import { BottomSheet, BottomSheetSearchInput } from '@/shared';
 
 import { KakaoAddressDocumentDto } from '../model';
-import { BottomSheetSearchbar } from './BottomSheetSearchbar';
 
-export interface NewLocationBottomSheetProps {
+export interface LocationBottomSheetProps {
   addresses: KakaoAddressDocumentDto[];
   onDismiss: () => void;
   onSearch: (text: string) => void;
@@ -17,7 +16,7 @@ export interface NewLocationBottomSheetProps {
   isPending: boolean;
 }
 
-export const NewLocationBottomSheet = forwardRef<BottomSheetModal, NewLocationBottomSheetProps>((props, ref) => {
+export const LocationBottomSheet = forwardRef<BottomSheetModal, LocationBottomSheetProps>((props, ref) => {
   const { addresses, onDismiss, onSearch, onSelectAddress, isPending } = props;
   const snapPoints = useMemo(() => [500], []);
 
@@ -42,7 +41,7 @@ export const NewLocationBottomSheet = forwardRef<BottomSheetModal, NewLocationBo
     >
       <View py={10}>
         <HeaderText>주소검색</HeaderText>
-        <BottomSheetSearchbar onSubmit={onSearch} placeholder="예)강남구" />
+        <BottomSheetSearchInput onSubmit={onSearch} placeholder="예)강남구" />
       </View>
 
       {isPending ? (
@@ -108,4 +107,4 @@ const HeaderText = styled(Text, {
   mb: 18
 });
 
-NewLocationBottomSheet.displayName = 'NewLocationBottomSheet';
+LocationBottomSheet.displayName = 'NewLocationBottomSheet';

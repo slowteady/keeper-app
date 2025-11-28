@@ -6,12 +6,11 @@ import { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'r
 import { useFormContext } from 'react-hook-form';
 import { Dimensions, FlatList, ListRenderItemInfo, StyleSheet, Text, View } from 'react-native';
 
+import { ShelterMap } from '@/entities/shelter/ui/ShelterMap';
 import { KakaoAddressDocumentDto } from '@/features/search-address';
-import { Button, LocationBottomSheet, ScrollUpButton, Skeleton, theme, useScrollUpButton } from '@/shared';
+import { Button, ScrollUpButton, Skeleton, theme, useScrollUpButton } from '@/shared';
 import { CameraParams } from '@/shared/model/types/map.types';
 import { ShelterCard } from '@/shared/ui/data-display/ShelterCard';
-import { ShelterMap } from '@/entities/shelter/ui/ShelterMap';
-import { Searchbar } from '@/shared/ui/form/Searchbar';
 
 import { useKakaoGeocodeMutation } from '../../queries/geocode.queries';
 import { ShelterCountDto, ShelterDto, ShelterSearchParams } from '../../types/shelter.types';
@@ -129,7 +128,7 @@ const SheltersTemplate = forwardRef<NaverMapViewRef, SheltersTemplateProps>((pro
         }
       />
       <ScrollUpButton visible={isButtonVisible} onPress={handlePress} />
-      <LocationBottomSheet
+      {/* <LocationBottomSheet
         addresses={addresses}
         snapPoints={snapPoints}
         onAnimate={handleAnimate}
@@ -137,7 +136,7 @@ const SheltersTemplate = forwardRef<NaverMapViewRef, SheltersTemplateProps>((pro
         onSubmit={handleSubmitGeocode}
         onPressAddress={handlePressAddress}
         isPending={isPending}
-      />
+      /> */}
     </>
   );
 });
@@ -200,11 +199,11 @@ const MapSection = forwardRef<NaverMapViewRef, MapSectionProps>((props, ref) => 
           <Text style={styles.buttonText}>위치설정</Text>
         </Button>
       </View>
-      <Searchbar
+      {/* <Searchbar
         onSubmit={handleSubmitSearch}
         placeholder="보호소명 또는 주소로 검색해주세요."
         ViewStyle={{ marginBottom: 24 }}
-      />
+      /> */}
 
       <ShelterMap.DistanceBox
         hasLocationStatus={hasLocationStatus}

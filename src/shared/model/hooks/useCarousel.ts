@@ -2,11 +2,11 @@ import { useCallback, useRef, useState } from 'react';
 import { NativeSyntheticEvent } from 'react-native';
 import PagerView from 'react-native-pager-view';
 
-export interface HomeBannerSectionProps {
+export interface useCarouselProps {
   images: string[];
 }
 
-export const useHomeBannerSection = ({ images }: HomeBannerSectionProps) => {
+export const useCarousel = ({ images }: useCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const carouselRef = useRef<PagerView | null>(null);
 

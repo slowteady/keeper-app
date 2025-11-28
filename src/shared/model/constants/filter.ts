@@ -1,4 +1,4 @@
-import { AnimalTypeDto } from '@/entities/adopt/model/schema';
+import { AnimalTypeDto } from '@/entities';
 
 export const ADOPT_ANIMAL_FILTER: { id: AnimalTypeDto; label: string }[] = [
   { id: 'ALL', label: '전체' },

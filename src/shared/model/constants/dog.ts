@@ -1,9 +1,9 @@
 export interface DogBreed {
-  // kindCd: string;
+  kindCd: string;
   name: string;
 }
 
-export const DOG_BREEDS = [
+export const DOG_BREEDS: DogBreed[] = [
   { kindCd: '000054', name: '골든 리트리버' },
   { kindCd: '000056', name: '그레이 하운드' },
   { kindCd: '000055', name: '그레이트 덴' },

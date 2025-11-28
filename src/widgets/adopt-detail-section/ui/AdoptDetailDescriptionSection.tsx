@@ -41,7 +41,7 @@ export const AdoptDetailDescriptionSection = ({ specialMark, shelter }: AdoptDet
 
       <Divider mb={20} />
 
-      <XStack items="center" mb={20}>
+      <XStack items="flex-start" mb={20}>
         <XStack gap={4} items="center" minW={90}>
           <Text fontSize={18} fontWeight="600" lineHeight={24} color="$black800">
             보호소

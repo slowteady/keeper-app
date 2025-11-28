@@ -1,2 +1,2 @@
-export * from './BottomSheetSearchbar';
-export * from './NewLocationBottomSheet';
+export * from '../../../shared/ui/form/BottomSheetSearchInput';
+export * from './LocationBottomSheet';

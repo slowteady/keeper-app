@@ -1,11 +1,11 @@
 import { atomFamily, atomWithReset } from 'jotai/utils';
 
-import { TAnimalType } from '@/shared';
+import { AnimalTypeDto } from '@/entities';
 
 import { AdoptFilter } from '../types';
 
 export interface AdoptFilterSchema {
-  animalType: TAnimalType;
+  animalType: AnimalTypeDto;
   filter: AdoptFilter;
   search: string;
 }
