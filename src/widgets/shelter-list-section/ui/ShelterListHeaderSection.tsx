@@ -12,7 +12,7 @@ export const ShelterListHeaderSection = ({ onSubmitSearch, onPressLocation }: Sh
     <>
       <TitleContainer mb={30}>
         <Text fontSize={32} lineHeight={40} fontWeight="500" color="$black900">
-          보호소
+          보호소 찾기
         </Text>
         <Button onPress={onPressLocation}>
           <Text fontSize={14} lineHeight={16} fontWeight="500" color="$black600">

@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
-import { Modal, Pressable, StyleSheet } from 'react-native';
+import { Modal } from 'react-native';
+import { styled, View } from 'tamagui';
 
 export type OpenOptions = {
   onDismiss?: () => void;
@@ -32,9 +33,7 @@ export const ModalProvider = ({ children }: { children: React.ReactNode }) => {
     <ModalContext.Provider value={value}>
       {children}
       <Modal animationType="fade" visible={visible} onRequestClose={close} transparent>
-        <Pressable style={styles.overlay} onPress={close}>
-          {content}
-        </Pressable>
+        <Overlay onPress={close}>{content}</Overlay>
       </Modal>
     </ModalContext.Provider>
   );
@@ -46,11 +45,9 @@ export const useModal = () => {
   return ctx;
 };
 
-const styles = StyleSheet.create({
-  overlay: {
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flex: 1
-  }
+const Overlay = styled(View, {
+  bg: 'rgba(0, 0, 0, 0.5)',
+  justify: 'center',
+  items: 'center',
+  flex: 1
 });

@@ -47,11 +47,11 @@ export const Button = ({
 };
 
 const getStyles = (
-  variant: 'default' | 'ghost',
+  variant: ButtonProps['variant'],
   theme: any,
-  size: 'small' | 'medium' | 'large',
-  color: 'primary' | 'secondary',
-  disabled: boolean
+  size: ButtonProps['size'],
+  color: ButtonProps['color'],
+  disabled: ButtonProps['disabled']
 ) => {
   const sizes = {
     small: { minHeight: BUTTON_HEIGHT.small },
@@ -59,7 +59,11 @@ const getStyles = (
     large: { minHeight: BUTTON_HEIGHT.large }
   };
 
-  const getColorStyles = (variant: 'default' | 'ghost', color: 'primary' | 'secondary', disabled: boolean) => {
+  const getColorStyles = (
+    variant: ButtonProps['variant'],
+    color: ButtonProps['color'],
+    disabled: ButtonProps['disabled']
+  ) => {
     if (variant === 'ghost') {
       return {
         backgroundColor: 'transparent'
@@ -88,7 +92,11 @@ const getStyles = (
     }
   };
 
-  const getTextStyles = (variant: 'default' | 'ghost', color: 'primary' | 'secondary', disabled: boolean) => {
+  const getTextStyles = (
+    variant: ButtonProps['variant'],
+    color: ButtonProps['color'],
+    disabled: ButtonProps['disabled']
+  ) => {
     if (variant === 'ghost') {
       if (disabled) {
         return {
@@ -141,8 +149,8 @@ const getStyles = (
       justifyContent: 'center',
       borderRadius: 10,
       overflow: 'hidden',
-      ...(variant === 'ghost' ? {} : sizes[size]),
-      ...getColorStyles(variant, color, disabled)
+      ...(variant === 'ghost' ? {} : sizes[size!]),
+      ...getColorStyles(variant!, color!, disabled!)
     },
     text: {
       fontWeight: '600',

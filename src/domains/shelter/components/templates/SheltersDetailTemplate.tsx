@@ -37,8 +37,6 @@ import {
   useScrollUpButton
 } from '@/shared';
 
-import { ShelterTelModal } from '../organisms';
-
 interface SheltersDetailTemplateProps {
   shelterData: ShelterDto;
   adoptData?: AdoptResponse;
@@ -201,7 +199,7 @@ const MapSection = ({ shelterData }: MapSectionProps) => {
         </Button>
       </View>
 
-      <ShelterTelModal open={modalOpen} onClose={handleClose} tel={tel} name={name} />
+      {/* <ShelterTelModal open={modalOpen} onClose={handleClose} tel={tel} name={name} /> */}
     </YStack>
   );
 };

@@ -52,12 +52,12 @@ export const CreatePost = () => {
       </KeyboardAvoidingView>
 
       <LocationBottomSheet
-        ref={locationBottomSheet.ref}
+        ref={locationBottomSheet.refs.ref}
         addresses={locationBottomSheet.state.searchedAddresses || []}
         onDismiss={locationBottomSheet.actions.dismiss}
         onSearch={locationBottomSheet.actions.submitGeocode}
         onSelectAddress={locationBottomSheet.actions.getAddress}
-        isPending={locationBottomSheet.state.isPending}
+        isPending={locationBottomSheet.flags.isPending}
       />
     </>
   );

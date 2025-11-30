@@ -1,15 +1,17 @@
-import { formatTimeAMPM } from '@/shared';
+import { formatTimeAMPM, validateAndSanitizeTel } from '@/shared';
 
 import { ShelterDto } from './schema';
 
 export const mapToShelter = (data: ShelterDto) => {
   const formattedTime = formatOperatingTime(data);
   const formattedPerson = formatPerson(data);
+  const sanitizedTel = validateAndSanitizeTel(data.tel);
 
   return {
     ...data,
     time: formattedTime,
-    person: formattedPerson
+    person: formattedPerson,
+    tel: sanitizedTel
   };
 };
 

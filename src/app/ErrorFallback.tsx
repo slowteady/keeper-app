@@ -34,7 +34,8 @@ export default ErrorFallback;
 const Container = styled(YStack, {
   flex: 1,
   items: 'center',
-  justify: 'center'
+  justify: 'center',
+  bg: '$white900'
 });
 
 const Button = styled(View, {

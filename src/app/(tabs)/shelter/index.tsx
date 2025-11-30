@@ -1,6 +1,7 @@
 import { FlashList } from '@shopify/flash-list';
 import { styled, View } from 'tamagui';
 
+import { LocationBottomSheet, useLocationBottomSheet } from '@/features';
 import { ShelterListHeaderSection, ShelterMapSection } from '@/widgets';
 
 /**
@@ -95,6 +96,7 @@ const Page = () => {
   //       isLoading={isLoading}
   //     />
   // </FormProvider>
+  const { state, refs, flags, actions } = useLocationBottomSheet((selectedAddress) => {});
 
   return (
     <Container>
@@ -104,7 +106,10 @@ const Page = () => {
         ListHeaderComponent={
           <>
             <View px={20}>
-              <ShelterListHeaderSection onSubmitSearch={() => {}} onPressLocation={() => {}} />
+              <ShelterListHeaderSection
+                onSubmitSearch={actions.submitGeocode}
+                onPressLocation={actions.openBottomSheet}
+              />
             </View>
             <ShelterMapSection />
           </>
@@ -112,14 +117,14 @@ const Page = () => {
         contentContainerStyle={{ paddingVertical: 32 }}
       />
 
-      {/*TODO: LocationBottomSheet 추가 */}
-      {/* <LocationBottomSheet
-        addresses={[]}
-        onDismiss={() => {}}
-        onSearch={() => {}}
-        onSelectAddress={() => {}}
-        isPending={false}
-      /> */}
+      <LocationBottomSheet
+        ref={refs.ref}
+        addresses={state.searchedAddresses || []}
+        onDismiss={actions.dismiss}
+        onSearch={actions.submitGeocode}
+        onSelectAddress={actions.getAddress}
+        isPending={flags.isPending}
+      />
     </Container>
   );
 };

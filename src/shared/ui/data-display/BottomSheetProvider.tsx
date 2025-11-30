@@ -31,7 +31,6 @@ export const BottomSheetProvider = ({ children }: { children: React.ReactNode })
     setContent(node);
     requestAnimationFrame(() => sheetRef.current?.present());
   }, []);
-
   const update = useCallback((node: React.ReactNode) => setContent(node), []);
   const dismiss = useCallback(() => sheetRef.current?.dismiss(), []);
 

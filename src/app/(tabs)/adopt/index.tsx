@@ -1,18 +1,21 @@
-import { useCallback } from 'react';
+import { useEffect } from 'react';
 import { styled, View } from 'tamagui';
 
 import { useAdoptList } from '@/entities';
-import { ShowMoreButton } from '@/shared';
+import { ScrollUpButton, ShowMoreButton, useScrollUpButton } from '@/shared';
 import { AdoptListHeaderSection, AdoptListSection } from '@/widgets';
 
 const LIST_SIZE = 16;
 
 const Page = () => {
-  const { refs, state, data, actions, flags } = useAdoptList({ size: LIST_SIZE });
+  const { state, data, actions, flags } = useAdoptList({ size: LIST_SIZE });
+  const { handleScroll, handlePressButton, isButtonVisible, scrollRef } = useScrollUpButton();
 
-  const fetchNextPage = useCallback(() => {
-    actions.fetchNextPage();
-  }, [actions]);
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollToOffset({ animated: false, offset: 0 });
+    }
+  }, [scrollRef]);
 
   const currentPage = (data.originalData?.page ?? 0) + 1;
   const totalPage = Math.ceil((data.originalData?.total || 0) / LIST_SIZE);
@@ -21,9 +24,10 @@ const Page = () => {
   return (
     <Container>
       <AdoptListSection
-        ref={refs.listRef}
+        ref={scrollRef}
         data={data.convertedData}
         isLoading={flags.isLoading}
+        onScroll={handleScroll}
         onRefreshCallback={actions.executeRefresh}
         onPressItem={actions.goDetail}
         header={
@@ -40,11 +44,13 @@ const Page = () => {
         footer={
           flags.hasNextPage ? (
             <View mb={24} justify="center">
-              <ShowMoreButton text={text} onPress={fetchNextPage} isLoading={flags.isFetchingNextPage} />
+              <ShowMoreButton text={text} onPress={actions.fetchNextPage} isLoading={flags.isFetchingNextPage} />
             </View>
           ) : undefined
         }
       />
+
+      <ScrollUpButton visible={isButtonVisible} onPress={handlePressButton} />
     </Container>
   );
 };

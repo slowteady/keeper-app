@@ -107,4 +107,4 @@ const HeaderText = styled(Text, {
   mb: 18
 });
 
-LocationBottomSheet.displayName = 'NewLocationBottomSheet';
+LocationBottomSheet.displayName = 'LocationBottomSheet';

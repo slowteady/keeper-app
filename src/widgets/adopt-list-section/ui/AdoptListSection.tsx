@@ -14,10 +14,14 @@ export interface AdoptListSectionProps {
   onPressItem: (id: string) => void;
   isLoading?: boolean;
   style?: FlashListProps<AdoptItem>['style'];
+  onScroll?: FlashListProps<AdoptItem>['onScroll'];
 }
 
 export const AdoptListSection = forwardRef<FlashListRef<AdoptItem>, AdoptListSectionProps>(
-  ({ data, header, footer, onRefreshCallback, onPressItem, isLoading = false, style }: AdoptListSectionProps, ref) => {
+  (
+    { data, header, footer, onRefreshCallback, onPressItem, isLoading = false, style, onScroll }: AdoptListSectionProps,
+    ref
+  ) => {
     const { refreshing, handleRefresh } = useRefreshing(onRefreshCallback);
 
     const renderItem = useCallback(
@@ -38,6 +42,7 @@ export const AdoptListSection = forwardRef<FlashListRef<AdoptItem>, AdoptListSec
         ref={ref}
         data={data}
         renderItem={renderItem}
+        onScroll={onScroll}
         numColumns={2}
         keyExtractor={({ id }, i) => `${id}-${i}`}
         showsVerticalScrollIndicator={false}

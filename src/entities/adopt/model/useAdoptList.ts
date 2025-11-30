@@ -1,8 +1,7 @@
-import { FlashListRef } from '@shopify/flash-list';
 import { useQueryClient } from '@tanstack/react-query';
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { ADOPT_LIST_FILTER, AdoptParamsDto, useGetAdopts } from '@/entities';
 import { ADOPT_ANIMAL_FILTER, ADOPTS_QUERY_KEY, parseQueryParam } from '@/shared';
@@ -14,7 +13,6 @@ export type AdoptItem = ReturnType<typeof mapToAdoptList>[number];
 export const useAdoptList = (queryParams?: Partial<AdoptParamsDto>) => {
   const router = useRouter();
   const params = useLocalSearchParams<{ filter?: string; type?: string; search?: string }>();
-  const listRef = useRef<FlashListRef<AdoptItem>>(null);
   const queryClient = useQueryClient();
 
   const selectedFilter = useMemo(
@@ -49,12 +47,6 @@ export const useAdoptList = (queryParams?: Partial<AdoptParamsDto>) => {
     return mapToAdoptList(data.value, selectedFilter);
   }, [data, selectedFilter]);
 
-  useEffect(() => {
-    if (listRef.current) {
-      listRef.current.scrollToOffset({ animated: false, offset: 0 });
-    }
-  }, [selectedFilter, selectedType]);
-
   const changeFilter = (id: string) => router.setParams({ filter: id });
 
   const changeType = (id: string) => router.setParams({ type: id });
@@ -78,7 +70,6 @@ export const useAdoptList = (queryParams?: Partial<AdoptParamsDto>) => {
 
   return {
     state: { selectedFilter, selectedType, selectedSearch },
-    refs: { listRef },
     data: { originalData: data, convertedData },
     flags: { isLoading, isFetching, isFetchingNextPage, hasNextPage },
     actions: { changeFilter, changeType, changeSearch, goDetail, goList, executeRefresh, fetchNextPage }

@@ -1,5 +1,4 @@
-import { Pressable, StyleSheet } from 'react-native';
-import { styled, Text, useTheme, XStack } from 'tamagui';
+import { styled, Text, View, XStack } from 'tamagui';
 
 export interface ModalButtonsProps {
   onPressSecondary: () => void;
@@ -11,20 +10,24 @@ export interface ModalButtonsProps {
 }
 
 export const ModalButtons = ({ onPressSecondary, onPressPrimary, text }: ModalButtonsProps) => {
-  const { white800, primaryMain } = useTheme();
-
   return (
     <XStack gap={6}>
-      <Pressable onPress={onPressSecondary} style={[styles.closeButton, { backgroundColor: white800.val }]}>
+      <Button onPress={onPressSecondary} bg="$white800">
         <ButtonText>{text.secondary}</ButtonText>
-      </Pressable>
+      </Button>
 
-      <Pressable onPress={onPressPrimary} style={[styles.primaryButton, { backgroundColor: primaryMain.val }]}>
+      <Button onPress={onPressPrimary} bg="$primaryMain">
         <ButtonText>{text.primary}</ButtonText>
-      </Pressable>
+      </Button>
     </XStack>
   );
 };
+
+const Button = styled(View, {
+  rounded: 10,
+  py: 16,
+  flex: 1
+});
 
 const ButtonText = styled(Text, {
   fontSize: 14,
@@ -32,17 +35,4 @@ const ButtonText = styled(Text, {
   lineHeight: 16,
   text: 'center',
   color: '$black800'
-});
-
-const styles = StyleSheet.create({
-  closeButton: {
-    flex: 1,
-    paddingVertical: 16,
-    borderRadius: 10
-  },
-  primaryButton: {
-    flex: 1,
-    paddingVertical: 16,
-    borderRadius: 10
-  }
 });

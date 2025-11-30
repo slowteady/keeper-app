@@ -3,7 +3,6 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { styled } from 'tamagui';
 
 import { TransformedShelterValue } from '@/domains/shelter/business/shelter.business';
-import { ShelterTelModal } from '@/domains/shelter/components/organisms/modal';
 import { Button, theme, useLayout } from '@/shared';
 
 import { TransformedAbandonmentDetail } from '../../business/announcement.business';
@@ -45,7 +44,7 @@ export const AbandonmentsDetailTemplate = ({ abandonment, shelter }: Abandonment
         </View>
       </View>
 
-      <ShelterTelModal open={modalOpen} onClose={() => setModalOpen(false)} tel={careTel} name={shelter?.name} />
+      {/* <ShelterTelModal open={modalOpen} onClose={() => setModalOpen(false)} tel={careTel} name={shelter?.name} /> */}
     </>
   );
 };

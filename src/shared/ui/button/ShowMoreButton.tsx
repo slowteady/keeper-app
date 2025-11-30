@@ -11,7 +11,7 @@ export const ShowMoreButton = ({ text, onPress, isLoading = false }: ShowMoreBut
   return (
     <Button onPress={onPress} disabled={isLoading}>
       {isLoading ? (
-        <ActivityIndicator size={16} />
+        <ActivityIndicator size={12} style={{ minWidth: 54 }} />
       ) : (
         <Text fontWeight="600" fontSize={13} lineHeight={15} color="$white900">
           {text}
@@ -26,6 +26,5 @@ const Button = styled(View, {
   px: 28,
   py: 16,
   bg: '$black800',
-  rounded: 50,
-  minW: 120
+  rounded: 50
 });

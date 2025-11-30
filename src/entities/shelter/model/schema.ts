@@ -12,7 +12,7 @@ export const ShelterSchema = z.object({
   id: z.number(), // 보호소 아이디
   name: z.string(), // 보호소 이름
   address: z.string(), // 보호소 주소
-  tel: z.string(), // 보호소 전화번호
+  tel: z.string().nullable(), // 보호소 전화번호
   latitude: z.number(), // 위도
   longitude: z.number(), // 경도
   division: ShelterDivisionSchema.optional(), // 동물보호센터유형

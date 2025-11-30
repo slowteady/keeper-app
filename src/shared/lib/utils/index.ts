@@ -4,5 +4,6 @@ export * from './instance.util';
 export * from './interceptors.utils';
 export * from './makeQuery';
 export * from './map.utils';
+export * from './sanitizeTel';
 export * from './sentry.utils';
 export * from './token.utils';

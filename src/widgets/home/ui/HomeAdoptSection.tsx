@@ -1,5 +1,5 @@
-import { FlashList, ListRenderItemInfo } from '@shopify/flash-list';
-import { useCallback } from 'react';
+import { FlashList, FlashListRef, ListRenderItemInfo } from '@shopify/flash-list';
+import { useCallback, useEffect, useRef } from 'react';
 import { styled, Text, View, XStack } from 'tamagui';
 
 import {
@@ -14,7 +14,9 @@ import {
 import { ADOPT_ANIMAL_FILTER, ButtonGroup, Dropdown, ViewAllButton } from '@/shared';
 
 export const HomeAdoptSection = () => {
-  const { refs, state, data, actions, flags } = useAdoptList();
+  const scrollRef = useRef<FlashListRef<AdoptItem>>(null);
+
+  const { state, data, actions, flags } = useAdoptList();
 
   const renderItem = useCallback(({ item }: ListRenderItemInfo<AdoptItem>) => {
     const { uri, title, description, chips } = item;
@@ -25,6 +27,12 @@ export const HomeAdoptSection = () => {
       </View>
     );
   }, []);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollToOffset({ animated: false, offset: 0 });
+    }
+  }, [scrollRef]);
 
   return (
     <>
@@ -48,7 +56,7 @@ export const HomeAdoptSection = () => {
       </View>
 
       <FlashList
-        ref={refs.listRef}
+        ref={scrollRef}
         data={data.convertedData}
         keyExtractor={({ id }, idx) => `${id}-${idx}`}
         renderItem={renderItem}
