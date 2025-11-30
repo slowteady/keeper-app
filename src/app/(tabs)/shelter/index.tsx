@@ -119,7 +119,7 @@ const Page = () => {
 
       <LocationBottomSheet
         ref={refs.ref}
-        addresses={state.searchedAddresses || []}
+        addresses={state.searchedAddresses}
         onDismiss={actions.dismiss}
         onSearch={actions.submitGeocode}
         onSelectAddress={actions.getAddress}

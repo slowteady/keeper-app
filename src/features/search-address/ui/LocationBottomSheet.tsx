@@ -9,7 +9,7 @@ import { BottomSheet, BottomSheetSearchInput } from '@/shared';
 import { KakaoAddressDocumentDto } from '../model';
 
 export interface LocationBottomSheetProps {
-  addresses: KakaoAddressDocumentDto[];
+  addresses?: KakaoAddressDocumentDto[];
   onDismiss: () => void;
   onSearch: (text: string) => void;
   onSelectAddress: (address: KakaoAddressDocumentDto) => void;
@@ -50,16 +50,18 @@ export const LocationBottomSheet = forwardRef<BottomSheetModal, LocationBottomSh
         </IndicatorContainer>
       ) : (
         <FlashList
-          data={addresses}
+          data={addresses || []}
           keyExtractor={({ address_name }, idx) => `${address_name}-${idx}`}
           renderItem={renderItem}
           showsVerticalScrollIndicator
           ListEmptyComponent={
-            addresses ? (
-              <NodataContainer>
+            <NodataContainer>
+              {addresses === undefined ? (
+                <NodataText>주소를 검색해주세요.</NodataText>
+              ) : (
                 <NodataText>검색 결과가 없습니다.</NodataText>
-              </NodataContainer>
-            ) : null
+              )}
+            </NodataContainer>
           }
           style={{ marginBottom: 48 }}
         />
