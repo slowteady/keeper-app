@@ -1,19 +1,10 @@
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { Camera, NaverMapViewRef } from '@mj-studio/react-native-naver-map';
 import * as Location from 'expo-location';
-import { router } from 'expo-router';
-import { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useFormContext } from 'react-hook-form';
-import { Dimensions, FlatList, ListRenderItemInfo, StyleSheet, Text, View } from 'react-native';
+import { forwardRef } from 'react';
+import { Dimensions, StyleSheet, Text, View } from 'react-native';
 
-import { ShelterMap } from '@/entities/shelter/ui/ShelterMap';
-import { KakaoAddressDocumentDto } from '@/features/search-address';
-import { Button, ScrollUpButton, Skeleton, theme, useScrollUpButton } from '@/shared';
-import { CameraParams } from '@/shared/model/types/map.types';
-import { ShelterCard } from '@/shared/ui/data-display/ShelterCard';
-
-import { useKakaoGeocodeMutation } from '../../queries/geocode.queries';
-import { ShelterCountDto, ShelterDto, ShelterSearchParams } from '../../types/shelter.types';
+import { ShelterCountDto, ShelterDto } from '@/entities';
+import { CameraParams, theme } from '@/shared';
 
 interface SheltersTemplateProps {
   data: SheltersTemplateData;
@@ -30,64 +21,64 @@ interface SheltersTemplateData {
 }
 const PADDING_HORIZONTAL = 20;
 const SheltersTemplate = forwardRef<NaverMapViewRef, SheltersTemplateProps>((props, ref) => {
-  const { data, isLoading, camera, permissionStatus, onSubmitSearch, onRefetch, onInitMap } = props;
-  const [addresses, setAddresses] = useState<KakaoAddressDocumentDto[]>();
-  const [shelterValues, setShelterValues] = useState<ShelterDto[]>([]);
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-  const snapPoints = useMemo(() => [400], []);
-  const { isButtonVisible, handlePress, handleScroll, flatListRef } = useScrollUpButton();
-  const { mutateAsync: geocodeMutate, isPending } = useKakaoGeocodeMutation();
+  // const { data, isLoading, camera, permissionStatus, onSubmitSearch, onRefetch, onInitMap } = props;
+  // const [addresses, setAddresses] = useState<KakaoAddressDocumentDto[]>();
+  // const [shelterValues, setShelterValues] = useState<ShelterDto[]>([]);
+  // const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  // const snapPoints = useMemo(() => [400], []);
+  // const { isButtonVisible, handlePress, handleScroll, flatListRef } = useScrollUpButton();
+  // const { mutateAsync: geocodeMutate, isPending } = useKakaoGeocodeMutation();
 
-  useEffect(() => {
-    if (data.sheltersData) {
-      setShelterValues(data.sheltersData);
-    }
-  }, [data.sheltersData]);
+  // useEffect(() => {
+  //   if (data.sheltersData) {
+  //     setShelterValues(data.sheltersData);
+  //   }
+  // }, [data.sheltersData]);
 
-  const handlePressCard = useCallback((id: number) => {
-    router.push({ pathname: '/shelter/[id]', params: { id } });
-  }, []);
-  const handlePressLocation = () => {
-    bottomSheetModalRef.current?.present();
-  };
-  const handleAnimate = useCallback((fromIndex: number, toIndex: number) => {
-    if (toIndex === -1) {
-      bottomSheetModalRef.current?.dismiss();
-      setAddresses(undefined);
-    }
-  }, []);
-  const handleSubmitGeocode = async (value: string) => {
-    try {
-      const { data } = await geocodeMutate({ query: value });
-      const { documents } = data;
-      setAddresses(documents);
-    } catch {}
-  };
-  const handlePressAddress = useCallback(
-    (item: KakaoAddressDocumentDto) => {
-      if (ref && 'current' in ref && ref.current) {
-        const { x, y } = item;
-        ref.current.animateCameraTo({ longitude: Number(x), latitude: Number(y) });
-      }
-      bottomSheetModalRef.current?.dismiss();
-      setAddresses(undefined);
-    },
-    [ref]
-  );
-  const handleShelterValues = (data: ShelterDto) => {
-    setShelterValues((prev) => [data, ...prev]);
-  };
+  // const handlePressCard = useCallback((id: number) => {
+  //   router.push({ pathname: '/shelter/[id]', params: { id } });
+  // }, []);
+  // const handlePressLocation = () => {
+  //   bottomSheetModalRef.current?.present();
+  // };
+  // const handleAnimate = useCallback((fromIndex: number, toIndex: number) => {
+  //   if (toIndex === -1) {
+  //     bottomSheetModalRef.current?.dismiss();
+  //     setAddresses(undefined);
+  //   }
+  // }, []);
+  // const handleSubmitGeocode = async (value: string) => {
+  //   try {
+  //     const { data } = await geocodeMutate({ query: value });
+  //     const { documents } = data;
+  //     setAddresses(documents);
+  //   } catch {}
+  // };
+  // const handlePressAddress = useCallback(
+  //   (item: KakaoAddressDocumentDto) => {
+  //     if (ref && 'current' in ref && ref.current) {
+  //       const { x, y } = item;
+  //       ref.current.animateCameraTo({ longitude: Number(x), latitude: Number(y) });
+  //     }
+  //     bottomSheetModalRef.current?.dismiss();
+  //     setAddresses(undefined);
+  //   },
+  //   [ref]
+  // );
+  // const handleShelterValues = (data: ShelterDto) => {
+  //   setShelterValues((prev) => [data, ...prev]);
+  // };
 
-  const renderItem = useCallback(
-    ({ item }: ListRenderItemInfo<ShelterDto>) => {
-      return <ShelterCard onPress={handlePressCard} data={item} />;
-    },
-    [handlePressCard]
-  );
+  // const renderItem = useCallback(
+  //   ({ item }: ListRenderItemInfo<ShelterDto>) => {
+  //     return <ShelterCard onPress={handlePressCard} data={item} />;
+  //   },
+  //   [handlePressCard]
+  // );
 
   return (
     <>
-      <FlatList
+      {/* <FlatList
         data={shelterValues}
         renderItem={renderItem}
         ListHeaderComponent={
@@ -127,7 +118,7 @@ const SheltersTemplate = forwardRef<NaverMapViewRef, SheltersTemplateProps>((pro
           )
         }
       />
-      <ScrollUpButton visible={isButtonVisible} onPress={handlePress} />
+      <ScrollUpButton visible={isButtonVisible} onPress={handlePress} /> */}
       {/* <LocationBottomSheet
         addresses={addresses}
         snapPoints={snapPoints}
@@ -154,63 +145,63 @@ interface MapSectionProps {
   camera?: Camera;
 }
 const MapSection = forwardRef<NaverMapViewRef, MapSectionProps>((props, ref) => {
-  const { handleSubmit, setValue } = useFormContext<ShelterSearchParams>();
-  const {
-    data,
-    camera,
-    permissionStatus = null,
-    onInitMap,
-    onRefetch,
-    onChange,
-    onPressLocation,
-    onSubmitSearch
-  } = props;
-  const [selectedMarkerId, setSelectedMarkerId] = useState<number>();
+  // const { handleSubmit, setValue } = useFormContext<ShelterSearchParams>();
+  // const {
+  //   data,
+  //   camera,
+  //   permissionStatus = null,
+  //   onInitMap,
+  //   onRefetch,
+  //   onChange,
+  //   onPressLocation,
+  //   onSubmitSearch
+  // } = props;
+  // const [selectedMarkerId, setSelectedMarkerId] = useState<number>();
 
-  const handleRefetch = useCallback(
-    (params?: CameraParams) => {
-      if (!params) return null;
-      setSelectedMarkerId(undefined);
-      onRefetch(params);
-    },
-    [onRefetch]
-  );
-  const handleTapMarker = (data: ShelterDto) => {
-    setSelectedMarkerId(data.id);
-    onChange(data);
-  };
-  const handleSubmitSearch = useCallback(
-    (text: string) => {
-      setValue('search', text);
-      handleSubmit(onSubmitSearch)();
-    },
-    [handleSubmit, onSubmitSearch, setValue]
-  );
+  // const handleRefetch = useCallback(
+  //   (params?: CameraParams) => {
+  //     if (!params) return null;
+  //     setSelectedMarkerId(undefined);
+  //     onRefetch(params);
+  //   },
+  //   [onRefetch]
+  // );
+  // const handleTapMarker = (data: ShelterDto) => {
+  //   setSelectedMarkerId(data.id);
+  //   onChange(data);
+  // };
+  // const handleSubmitSearch = useCallback(
+  //   (text: string) => {
+  //     setValue('search', text);
+  //     handleSubmit(onSubmitSearch)();
+  //   },
+  //   [handleSubmit, onSubmitSearch, setValue]
+  // );
 
-  if (permissionStatus === null) return null;
+  // if (permissionStatus === null) return null;
 
-  const hasLocationStatus = permissionStatus?.status === Location.PermissionStatus.GRANTED;
+  // const hasLocationStatus = permissionStatus?.status === Location.PermissionStatus.GRANTED;
 
   return (
     <>
-      <View style={styles.titleWrap}>
+      {/* <View style={styles.titleWrap}>
         <Text style={styles.title}>보호소 찾기</Text>
         <Button variant="ghost" style={styles.button} onPress={onPressLocation}>
           <Text style={styles.buttonText}>위치설정</Text>
         </Button>
-      </View>
+      </View> */}
       {/* <Searchbar
         onSubmit={handleSubmitSearch}
         placeholder="보호소명 또는 주소로 검색해주세요."
         ViewStyle={{ marginBottom: 24 }}
       /> */}
 
-      <ShelterMap.DistanceBox
+      {/* <ShelterMap.DistanceBox
         hasLocationStatus={hasLocationStatus}
         value={data.shelterCountData}
         style={{ marginBottom: 16 }}
-      />
-      <ShelterMap
+      /> */}
+      {/* <ShelterMap
         ref={ref}
         hasLocation={hasLocationStatus}
         data={data.sheltersData}
@@ -221,7 +212,7 @@ const MapSection = forwardRef<NaverMapViewRef, MapSectionProps>((props, ref) => 
         selectedMarkerId={selectedMarkerId}
         isShowCompass={false}
         minZoom={10}
-      />
+      /> */}
     </>
   );
 });

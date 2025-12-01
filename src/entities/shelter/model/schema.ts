@@ -47,12 +47,12 @@ export const ShelterCountsParamsSchema = z.object({
 });
 export type ShelterCountsParamsDto = z.infer<typeof ShelterCountsParamsSchema>;
 
-export const ShelterAdoptParamsSchema = z.object({
+export const ShelterAdoptsParamsSchema = z.object({
   size: z.number(),
   page: z.number(),
   filter: AdoptFilterSchema
 });
-export type ShelterAdoptParamsDto = z.infer<typeof ShelterAdoptParamsSchema>;
+export type ShelterAdoptsParamsDto = z.infer<typeof ShelterAdoptsParamsSchema>;
 
 export const ShelterSearchParamsSchema = z.object({
   search: z.string(),

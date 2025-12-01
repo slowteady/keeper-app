@@ -1,4 +1,4 @@
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { AxiosError, AxiosResponse } from 'axios';
 
 import { AdoptResponseDto } from '@/entities/adopt';
@@ -10,11 +10,12 @@ import {
   SHELTER_QUERY_KEY,
   SHELTERS_QUERY_KEY,
   UseInfiniteQueryCustomOptions,
-  UseQueryCustomOptions
+  UseQueryCustomOptions,
+  UseSuspenseQueryCustomOptions
 } from '@/shared';
 
 import {
-  ShelterAdoptParamsDto,
+  ShelterAdoptsParamsDto,
   ShelterCountDto,
   ShelterCountsParamsDto,
   ShelterDto,
@@ -75,9 +76,9 @@ const getShelter = async (id: string): Promise<AxiosResponse<ApiResponse<Shelter
 };
 export const useGetShelter = (
   id: string,
-  options?: UseQueryCustomOptions<AxiosResponse<ApiResponse<ShelterDto>, AxiosError>, AxiosError, ShelterDto>
+  options?: UseSuspenseQueryCustomOptions<AxiosResponse<ApiResponse<ShelterDto>, AxiosError>, AxiosError, ShelterDto>
 ) => {
-  return useQuery({
+  return useSuspenseQuery({
     queryKey: [SHELTER_QUERY_KEY, id],
     queryFn: () => getShelter(id),
     select: (data) => data.data.data,
@@ -87,7 +88,7 @@ export const useGetShelter = (
 
 const getShelterAdopts = async (
   id: string,
-  params: ShelterAdoptParamsDto
+  params: ShelterAdoptsParamsDto
 ): Promise<AxiosResponse<ApiResponse<AdoptResponseDto>, AxiosError>> => {
   const endpoint = `${BASE_URL}/${id}/abandonments`;
 
@@ -95,7 +96,7 @@ const getShelterAdopts = async (
 };
 export const useGetShelterAdopts = (
   id: string,
-  params: ShelterAdoptParamsDto,
+  params: ShelterAdoptsParamsDto,
   options?: UseInfiniteQueryCustomOptions<
     AxiosResponse<ApiResponse<AdoptResponseDto>, AxiosError>,
     AxiosError,

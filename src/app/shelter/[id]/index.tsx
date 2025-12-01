@@ -1,69 +1,59 @@
-import { useQueryClient } from '@tanstack/react-query';
-import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
-import { useLocalSearchParams, usePathname } from 'expo-router';
-import { useAtomValue } from 'jotai';
-import { useCallback, useMemo } from 'react';
+import { FlashList } from '@shopify/flash-list';
+import { useLocalSearchParams } from 'expo-router';
+import { Suspense, useCallback } from 'react';
 import { RefreshControl } from 'react-native';
 import { styled, View } from 'tamagui';
 
-import { adoptFilterAtomFamily } from '@/domains/animal';
-import { SheltersDetailTemplate, useGetShelterAdoptNoticesQuery, useGetShelterQuery } from '@/domains/shelter';
-import { SHELTER_ADOPTS_QUERY_KEY, SHELTER_QUERY_KEY, useRefreshing } from '@/shared';
+import { useShelter, useShelterAdoptList } from '@/entities';
+import { SuspenseFallback, useRefreshing } from '@/shared';
+import { ShelterDetailOverviewSection } from '@/widgets';
 
 const Page = () => {
-  const { id } = useLocalSearchParams<{ id: string }>();
-  const pathname = usePathname();
-  const adoptFilter = useAtomValue(adoptFilterAtomFamily(pathname));
-  const queryClient = useQueryClient();
-
-  const { data: shelterData, isLoading: isShelterLoading } = useGetShelterQuery(id, { enabled: !!id });
-  const {
-    data: adoptData,
-    isLoading: isAdoptLoading,
-    isFetching,
-    isFetchingNextPage,
-    fetchNextPage,
-    hasNextPage
-  } = useGetShelterAdoptNoticesQuery(Number(id), { size: 16, filter: adoptFilter.filter });
-
-  const handleFetch = useCallback(async () => {
-    if (hasNextPage) {
-      await impactAsync(ImpactFeedbackStyle.Medium);
-      fetchNextPage();
-    }
-  }, [fetchNextPage, hasNextPage]);
-  const onRefreshCallback = useCallback(async () => {
-    await Promise.all([
-      queryClient.invalidateQueries({ queryKey: [SHELTER_ADOPTS_QUERY_KEY] }),
-      queryClient.invalidateQueries({ queryKey: [SHELTER_QUERY_KEY] })
-    ]);
-  }, [queryClient]);
-  const { refreshing, handleRefresh } = useRefreshing(onRefreshCallback);
-
-  const isLoading = useMemo(
-    () => ({
-      shelter: isShelterLoading,
-      adopt: isAdoptLoading || isFetching || isFetchingNextPage
-    }),
-    [isAdoptLoading, isFetching, isFetchingNextPage, isShelterLoading]
-  );
-
-  if (!shelterData) return null;
+  const { id } = useLocalSearchParams<{ id?: string }>();
+  if (!id) return null;
 
   return (
     <Container>
-      <SheltersDetailTemplate
-        shelterData={shelterData}
-        adoptData={adoptData}
-        isLoading={isLoading}
-        onFetch={handleFetch}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
-      />
+      <Suspense fallback={<SuspenseFallback />}>
+        <ShelterDetailContent id={id} />
+      </Suspense>
     </Container>
   );
+
+  // {
+  //   /* <SheltersDetailTemplate
+  //       shelterData={shelterData}
+  //       adoptData={adoptData}
+  //       isLoading={isLoading}
+  //       onFetch={handleFetch}
+  //       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
+  //     /> */
+  // }
 };
 
 export default Page;
+
+const ShelterDetailContent = ({ id }: { id: string }) => {
+  const shelter = useShelter({ id });
+  const shelterAdopts = useShelterAdoptList({ id });
+
+  const onRefreshCallback = useCallback(async () => {
+    await Promise.all([shelter.actions.executeRefresh(), shelterAdopts.actions.executeRefresh()]);
+  }, []);
+
+  const { refreshing, handleRefresh } = useRefreshing(onRefreshCallback);
+
+  return (
+    <FlashList
+      data={[]}
+      renderItem={() => <ShelterDetailOverviewSection />}
+      keyExtractor={() => 'shelter-detail-overview-section'}
+      decelerationRate="fast"
+      showsVerticalScrollIndicator={false}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
+    />
+  );
+};
 
 const Container = styled(View, {
   bg: '$pageBackground',

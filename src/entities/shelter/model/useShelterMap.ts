@@ -2,7 +2,8 @@ import { PermissionStatus } from 'expo-location';
 import { useCallback, useEffect, useState } from 'react';
 import { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
-import { ShelterDto, useGetShelterCounts, useGetShelters } from '@/entities';
+import { ShelterDto, useGetSearchedShelters, useGetShelterCounts, useGetShelters } from '@/entities';
+import { KakaoAddressDocumentDto } from '@/features';
 import { calcMapRadiusKm, CameraParams, useMap } from '@/shared';
 
 export const useShelterMap = () => {
@@ -34,6 +35,8 @@ export const useShelterMap = () => {
     { enabled: !!initialLocation }
   );
 
+  const { mutate, isPending } = useGetSearchedShelters();
+
   const toggleMapEnabled = useCallback(() => {
     setEnabled((prev) => !prev);
   }, []);
@@ -55,6 +58,32 @@ export const useShelterMap = () => {
       setDistance(radius);
     },
     [setCamera, setDistance]
+  );
+
+  const changeLocation = useCallback(
+    (item: KakaoAddressDocumentDto) => {
+      if (mapRef && mapRef.current) {
+        const { x, y } = item;
+        mapRef.current.animateCameraTo({ longitude: Number(x), latitude: Number(y) });
+      }
+    },
+    [mapRef]
+  );
+
+  const searchLocation = useCallback(
+    (text: string) => {
+      mutate(
+        {
+          search: text,
+          userLatitude: initialLocation?.latitude || 0,
+          userLongitude: initialLocation?.longitude || 0
+        },
+        {
+          onSuccess: ({ data }) => setShelterList(data.data)
+        }
+      );
+    },
+    [initialLocation?.latitude, initialLocation?.longitude, mutate]
   );
 
   const toggleTapMarker = useCallback(
@@ -92,7 +121,7 @@ export const useShelterMap = () => {
     data: { shelters, shelterCounts },
     refs: { mapRef },
     state: { camera, selectedMarkerId, shelterList },
-    actions: { toggleMapEnabled, refetchShelterList, toggleTapMarker },
+    actions: { toggleMapEnabled, refetchShelterList, toggleTapMarker, changeLocation, searchLocation },
     flags: { hasLocationStatus, isLoading },
     styles: { animatedListStyle }
   };

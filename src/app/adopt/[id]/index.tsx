@@ -28,7 +28,7 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
   const { bottom } = useLayout();
 
   const { data: adopt } = useAdopt({ id });
-  const { data: shelter } = useShelter({ id: adopt.shelterId, enabled: !!adopt.shelterId });
+  const { data: shelter } = useShelter({ id: adopt.shelterId });
 
   const hasCallNumber = !!shelter?.tel;
 
@@ -36,6 +36,7 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
     <>
       <ScrollView
         decelerationRate="fast"
+        showsVerticalScrollIndicator={false}
         contentContainerStyle={
           { position: 'relative', paddingTop: 40, paddingBottom: hasCallNumber ? undefined : bottom } as any
         }

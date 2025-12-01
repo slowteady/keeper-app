@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { ShelterDto } from '@/domains/shelter/types';
+import { ShelterDto } from '@/entities';
 import { theme } from '@/shared';
 
 export interface ShelterCardProps {

@@ -8,14 +8,16 @@ import { applicationId } from 'expo-application';
 import * as Haptics from 'expo-haptics';
 import { ActivityAction, startActivityAsync } from 'expo-intent-launcher';
 import { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
-import { Linking, Platform, StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { Linking, Platform, StyleSheet, ViewStyle } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import { styled, Text, useTheme, View, YStack } from 'tamagui';
 
-import { ShelterCountDto, ShelterDto } from '@/domains/shelter/types/shelter.types';
 import { theme, useDebounceFunc } from '@/shared';
 import { isCameraChanged } from '@/shared/lib/utils/map.utils';
 import { CameraParams } from '@/shared/model';
 import { Button } from '@/shared/ui/button';
+
+import { ShelterCountDto, ShelterDto } from '../model';
 
 export interface ShelterMapProps extends NaverMapViewProps {
   hasLocation: boolean;
@@ -132,6 +134,7 @@ interface ShelterMapMarkerProps {
 const MARKER_DEFAULT_ZINDEX = 200000;
 const Marker = ({ data, onTap, isSelectedId }: ShelterMapMarkerProps) => {
   const { id, latitude, longitude } = data;
+  const { white900 } = useTheme();
 
   const handleTapMarker = () => {
     onTap?.(data);
@@ -139,8 +142,8 @@ const Marker = ({ data, onTap, isSelectedId }: ShelterMapMarkerProps) => {
 
   const isSelected = isSelectedId === id;
   const captionStyle = isSelected
-    ? { textSize: 13, haloColor: theme.colors.white[900] }
-    : { textSize: 11, haloColor: theme.colors.white[900] };
+    ? { textSize: 13, haloColor: white900.val }
+    : { textSize: 11, haloColor: white900.val };
 
   return (
     <NaverMapMarkerOverlay
@@ -157,7 +160,7 @@ const Marker = ({ data, onTap, isSelectedId }: ShelterMapMarkerProps) => {
 };
 
 const NoValidMap = () => {
-  const handlePressSetting = async () => {
+  const goSettingMenu = async () => {
     if (Platform.OS === 'ios') {
       Linking.openURL('app-settings:');
     } else if (Platform.OS === 'android') {
@@ -168,18 +171,39 @@ const NoValidMap = () => {
   };
 
   return (
-    <View style={styles.reqContainer}>
-      <Text style={styles.reqText}>사용자의 위치설정을 켜주세요.</Text>
-      <Button onPress={handlePressSetting} style={styles.settingButton}>
-        <Text style={styles.settingButtonText}>위치설정 바로가기</Text>
-      </Button>
-    </View>
+    <NoValidContainer>
+      <Text fontSize={15} lineHeight={17} fontWeight="500" color="$black600">
+        사용자의 위치설정을 켜주세요.
+      </Text>
+      <SettingButton onPress={goSettingMenu}>
+        <Text fontSize={14} lineHeight={16} fontWeight="500" color="$white900">
+          위치설정 바로가기
+        </Text>
+      </SettingButton>
+    </NoValidContainer>
   );
 };
 
 export const ShelterMap = Object.assign(Map, {
-  DistanceBox,
+  // DistanceBox,
   Marker
+});
+
+const NoValidContainer = styled(YStack, {
+  position: 'relative',
+  width: '100%',
+  flex: 1,
+  items: 'center',
+  justify: 'center',
+  bg: '$white900'
+});
+
+const SettingButton = styled(View, {
+  position: 'absolute',
+  px: 32,
+  py: 16,
+  rounded: 30,
+  bg: '$black900'
 });
 
 const styles = StyleSheet.create({
@@ -197,22 +221,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     position: 'relative'
-  },
-  reqContainer: {
-    position: 'relative',
-    width: '100%',
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: theme.colors.white[900]
-  },
-  reqText: {
-    fontSize: 15,
-    lineHeight: 17,
-    fontWeight: '500',
-    color: theme.colors.black[600]
   },
   distanceContainer: {
     display: 'flex',
@@ -269,21 +277,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
     lineHeight: 22
-  },
-  settingButton: {
-    position: 'absolute',
-    paddingVertical: 16,
-    paddingHorizontal: 32,
-    borderRadius: 30,
-    backgroundColor: theme.colors.black[900],
-    borderWidth: 1,
-    bottom: 24
-  },
-  settingButtonText: {
-    fontSize: 14,
-    lineHeight: 16,
-    fontWeight: '500',
-    color: theme.colors.white[900]
   }
 });
 

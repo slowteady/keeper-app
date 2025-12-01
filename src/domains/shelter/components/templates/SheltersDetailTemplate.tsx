@@ -18,17 +18,15 @@ import {
 import { YStack } from 'tamagui';
 
 import { adoptFilterAtomFamily } from '@/domains/animal';
-import { ADOPT_FILTERS } from '@/domains/animal/constants';
 import { AdoptFilter, AdoptResponse } from '@/domains/animal/types';
 import { transformShelterData } from '@/domains/shelter/business/shelter.business';
-import { ShelterDto } from '@/domains/shelter/types/shelter.types';
+import { ShelterDto } from '@/entities';
 import { AdoptItem, mapToAdoptList } from '@/features';
 import {
   AdoptCardSkeleton,
   AnimalCard,
   BottomSheetMenuData,
   Button,
-  Dropdown,
   ScrollUpButton,
   ShelterMap,
   theme,
@@ -281,7 +279,12 @@ const AbandonmentsFilterSection = ({ number = 0 }: AbandonmentsFilterProps) => {
         <Text style={styles.filterTitle}>보호중인 아이들</Text>
         <Text style={styles.filterText}>{number}마리</Text>
       </View>
-      <Dropdown data={ADOPT_FILTERS} value={adoptFilter.filter} onChange={handleChangeFilter} snapPoints={snapPoints} />
+      {/* <Dropdown
+        data={ADOPT_ANIMAL_FILTER}
+        value={adoptFilter.filter}
+        onChange={handleChangeFilter}
+        snapPoints={snapPoints}
+      /> */}
     </View>
   );
 };

@@ -1,6 +1,5 @@
+import { ShelterDto } from '@/entities';
 import { formatTimeAMPM } from '@/shared';
-
-import { ShelterDto } from '../types/shelter.types';
 
 /**
  * 보호소 바텀시트 데이터로 변환

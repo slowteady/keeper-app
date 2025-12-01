@@ -25,7 +25,7 @@ export const HomeShelterSection = () => {
   const renderItem = useCallback(({ item }: ListRenderItemInfo<ShelterDto>) => {
     return (
       <View onPress={() => router.push({ pathname: '/shelter/[id]', params: { id: item.id } })}>
-        <HomeShelterCard name={item.name} address={item.address} tel={item.tel} />
+        <HomeShelterCard name={item.name} address={item.address} tel={item.tel ?? '-'} />
       </View>
     );
   }, []);
