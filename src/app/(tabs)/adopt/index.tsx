@@ -25,7 +25,7 @@ const Page = () => {
     <Container>
       <AdoptListSection
         ref={scrollRef}
-        data={data.convertedData}
+        data={data.convertedData ?? []}
         isLoading={flags.isLoading}
         onScroll={handleScroll}
         onRefreshCallback={actions.executeRefresh}

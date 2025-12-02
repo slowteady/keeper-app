@@ -43,7 +43,9 @@ export const useAdoptList = (queryParams?: Partial<AdoptParamsDto>) => {
   });
 
   const convertedData = useMemo(() => {
-    if (!data) return [];
+    const hasValue = data && data?.value && data?.value.length > 0;
+    if (!hasValue) return [];
+
     return mapToAdoptList(data.value, selectedFilter);
   }, [data, selectedFilter]);
 

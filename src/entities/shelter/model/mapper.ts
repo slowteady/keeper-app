@@ -49,5 +49,6 @@ const formatPerson = ({
 }: Pick<ShelterDto, 'veterinarianCount' | 'caretakerCount'>) => {
   if (veterinarianCount > 0) return `수의사 ${veterinarianCount}명 외`;
   if (caretakerCount > 0) return `보조사 ${caretakerCount}명 외`;
+
   return '정보 없음';
 };

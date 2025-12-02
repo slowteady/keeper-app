@@ -36,7 +36,9 @@ export const useShelterAdoptList = ({ id, adoptsParams }: UseShelterAdoptListPro
   });
 
   const convertedData = useMemo(() => {
-    if (!data) return [];
+    const hasValue = data && data?.value && data?.value.length > 0;
+    if (!hasValue) return [];
+
     return mapToAdoptList(data.value, selectedFilter);
   }, [data, selectedFilter]);
 
@@ -53,9 +55,12 @@ export const useShelterAdoptList = ({ id, adoptsParams }: UseShelterAdoptListPro
     }
   }, [fetchNextPageQuery, hasNextPage]);
 
+  const goDetail = (id: string) => router.push({ pathname: '/adopt/[id]', params: { id } });
+
   return {
-    data: convertedData,
+    state: { selectedFilter },
+    data: { originalData: data, convertedData },
     flags: { isLoading },
-    actions: { changeFilter, executeRefresh, fetchNextPage }
+    actions: { changeFilter, executeRefresh, fetchNextPage, goDetail }
   };
 };

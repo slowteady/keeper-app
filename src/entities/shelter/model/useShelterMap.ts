@@ -105,6 +105,15 @@ export const useShelterMap = () => {
     [opacity, translateY]
   );
 
+  const moveCamera = useCallback(
+    (latitude: number, longitude: number) => {
+      if (mapRef && mapRef.current) {
+        mapRef.current.animateCameraTo({ latitude, longitude });
+      }
+    },
+    [mapRef]
+  );
+
   useEffect(() => {
     if (!shelters) return;
     setShelterList(shelters);
@@ -120,9 +129,9 @@ export const useShelterMap = () => {
   return {
     data: { shelters, shelterCounts },
     refs: { mapRef },
-    state: { camera, selectedMarkerId, shelterList },
-    actions: { toggleMapEnabled, refetchShelterList, toggleTapMarker, changeLocation, searchLocation },
-    flags: { hasLocationStatus, isLoading },
+    state: { camera, selectedMarkerId, shelterList, enabled },
+    actions: { toggleMapEnabled, refetchShelterList, toggleTapMarker, changeLocation, searchLocation, moveCamera },
+    flags: { hasLocationStatus, isLoading, isSearchPending: isPending },
     styles: { animatedListStyle }
   };
 };

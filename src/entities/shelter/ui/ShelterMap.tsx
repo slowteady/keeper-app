@@ -8,7 +8,7 @@ import { applicationId } from 'expo-application';
 import * as Haptics from 'expo-haptics';
 import { ActivityAction, startActivityAsync } from 'expo-intent-launcher';
 import { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
-import { Linking, Platform, StyleSheet, ViewStyle } from 'react-native';
+import { Linking, Platform, StyleSheet } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { styled, Text, useTheme, View, YStack } from 'tamagui';
 
@@ -17,7 +17,7 @@ import { isCameraChanged } from '@/shared/lib/utils/map.utils';
 import { CameraParams } from '@/shared/model';
 import { Button } from '@/shared/ui/button';
 
-import { ShelterCountDto, ShelterDto } from '../model';
+import { ShelterDto } from '../model';
 
 export interface ShelterMapProps extends NaverMapViewProps {
   hasLocation: boolean;
@@ -25,10 +25,11 @@ export interface ShelterMapProps extends NaverMapViewProps {
   onRefetch: (params?: CameraParams) => void;
   onTapMarker?: (data: ShelterDto) => void;
   selectedMarkerId?: number;
+  readOnly?: boolean;
 }
 
 const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
-  ({ hasLocation, data, onRefetch, onTapMarker, selectedMarkerId, ...props }, ref) => {
+  ({ hasLocation, data, onRefetch, onTapMarker, selectedMarkerId, readOnly, ...props }, ref) => {
     const [isVisibleButton, setIsVisibleButton] = useState(false);
     const cameraRef = useRef<CameraParams | null>(null);
     const scale = useSharedValue(0);
@@ -77,6 +78,14 @@ const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
               isExtentBoundedInKorea
               animationDuration={500}
               style={styles.mapContainer}
+              {...(readOnly
+                ? {
+                    isZoomGesturesEnabled: false,
+                    isScrollGesturesEnabled: false,
+                    isRotateGesturesEnabled: false,
+                    isTiltGesturesEnabled: false
+                  }
+                : {})}
               {...props}
             >
               {data?.map((item) => (
@@ -84,7 +93,7 @@ const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
               ))}
             </NaverMapView>
 
-            {isVisibleButton && (
+            {isVisibleButton && !readOnly && (
               <Animated.View style={[styles.mapButton, animatedStyle]}>
                 <Button variant="ghost" onPress={handlePressRefetch}>
                   <Text style={styles.mapButtonText}>현 지도에서 검색</Text>
@@ -99,32 +108,6 @@ const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
     );
   }
 );
-
-export interface ShelterMapDistanceBoxProps {
-  value?: ShelterCountDto[];
-  hasLocationStatus: boolean;
-  style?: ViewStyle;
-}
-const DistanceBox = ({ value, hasLocationStatus, style }: ShelterMapDistanceBoxProps) => {
-  const DISTANCES = [1, 5, 10, 30];
-
-  return (
-    <View style={[styles.distanceContainer, style]}>
-      {DISTANCES.map((dist, idx) => {
-        const key = `${dist}-${idx}`;
-        const matchedCount = value?.find(({ distance }) => distance === dist);
-        const count = hasLocationStatus ? (matchedCount?.count ?? 0) : 0;
-
-        return (
-          <View key={key} style={styles.textContainer}>
-            <Text style={styles.label}>{dist}km</Text>
-            <Text style={styles.value}>{count}곳</Text>
-          </View>
-        );
-      })}
-    </View>
-  );
-};
 
 interface ShelterMapMarkerProps {
   data: ShelterDto;
@@ -185,7 +168,6 @@ const NoValidMap = () => {
 };
 
 export const ShelterMap = Object.assign(Map, {
-  // DistanceBox,
   Marker
 });
 

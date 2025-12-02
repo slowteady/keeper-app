@@ -110,6 +110,12 @@ export const useGetShelterAdopts = (
     getNextPageParam: (lastPage) => {
       return lastPage.data.data.has_next ? lastPage.data.data.page + 1 : undefined;
     },
+    select: (data) => {
+      const lastPage = data.pages[data.pages.length - 1].data.data;
+      const allData = data.pages.flatMap((page) => page.data.data.value);
+
+      return { ...lastPage, value: allData };
+    },
     ...options
   });
 };

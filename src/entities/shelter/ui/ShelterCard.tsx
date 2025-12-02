@@ -1,23 +1,24 @@
 import { styled, Text, View, XStack } from 'tamagui';
 
+import { AnimatedHeart } from '@/shared/ui/icons/animation';
+
 import { ShelterDto } from '../model';
 
 export interface ShelterCardProps {
   data: ShelterDto;
   onPress: (id: number) => void;
-  size?: 'medium';
 }
 
-export const ShelterCard = ({ data, onPress, size = 'medium' }: ShelterCardProps) => {
+export const ShelterCard = ({ data, onPress }: ShelterCardProps) => {
   const { name, distance, address } = data;
   const convertedDistance = Math.round(distance * 10) / 10;
   const convertedAddress = address.split(' ').slice(0, 3).join(' ');
 
   return (
-    <Container size={size}>
+    <Container>
       <View onPress={() => onPress(data.id)}>
-        <View p={20}>
-          <XStack items="center" gap={8} mb={10}>
+        <View p={16}>
+          <XStack items="center" justify="space-between" gap={8} mb={10}>
             <Text
               numberOfLines={1}
               ellipsizeMode="tail"
@@ -28,6 +29,7 @@ export const ShelterCard = ({ data, onPress, size = 'medium' }: ShelterCardProps
             >
               {name}
             </Text>
+            <AnimatedHeart isLiked={false} onPress={() => {}} size={20} />
           </XStack>
 
           <XStack items="center">
@@ -55,12 +57,5 @@ export const ShelterCard = ({ data, onPress, size = 'medium' }: ShelterCardProps
 const Container = styled(View, {
   borderColor: '$white800',
   borderWidth: 1,
-  rounded: 12,
-  variants: {
-    size: {
-      medium: {
-        width: 270
-      }
-    }
-  } as const
+  rounded: 12
 });

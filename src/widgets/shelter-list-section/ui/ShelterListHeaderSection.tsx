@@ -10,7 +10,7 @@ interface ShelterListHeaderSectionProps {
 export const ShelterListHeaderSection = ({ onSubmitSearch, onPressLocation }: ShelterListHeaderSectionProps) => {
   return (
     <>
-      <TitleContainer mb={30}>
+      <TitleContainer mb={16}>
         <Text fontSize={32} lineHeight={40} fontWeight="500" color="$black900">
           보호소 찾기
         </Text>
@@ -21,7 +21,7 @@ export const ShelterListHeaderSection = ({ onSubmitSearch, onPressLocation }: Sh
         </Button>
       </TitleContainer>
 
-      <SearchInput onSubmit={onSubmitSearch} placeholder="보호소명 또는 주소로 검색해주세요." />
+      <SearchInput onSubmit={onSubmitSearch} placeholder="보호소명 또는 주소를 검색해주세요." />
     </>
   );
 };

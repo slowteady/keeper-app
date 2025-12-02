@@ -33,5 +33,5 @@ const Container = styled(XStack, {
   justify: 'space-between',
   items: 'center',
   bg: '$backgroundDefault',
-  rounded: 6
+  rounded: 8
 });

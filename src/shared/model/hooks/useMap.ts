@@ -3,7 +3,7 @@ import * as Location from 'expo-location';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState } from 'react-native';
 
-export const useMap = (readOnly?: boolean) => {
+export const useMap = () => {
   const [camera, setCamera] = useState<Camera>();
   const [distance, setDistance] = useState(7);
   const [initialLocation, setInitialLocation] = useState<Camera>();
@@ -16,14 +16,14 @@ export const useMap = (readOnly?: boolean) => {
     const permissions = await Location.getForegroundPermissionsAsync();
     setPermissionStatus(permissions);
 
-    if (permissions.status === Location.PermissionStatus.GRANTED && !readOnly) {
+    if (permissions.status === Location.PermissionStatus.GRANTED) {
       const { coords } = await Location.getCurrentPositionAsync();
       mapRef.current?.animateCameraTo({ latitude: coords.latitude, longitude: coords.longitude });
       mapRef.current?.setLocationTrackingMode('Follow');
       setInitialLocation({ latitude: coords.latitude, longitude: coords.longitude });
       setCamera({ latitude: coords.latitude, longitude: coords.longitude, zoom: 11 });
     }
-  }, [readOnly]);
+  }, []);
 
   useEffect(() => {
     const getCurrentLocation = async () => {

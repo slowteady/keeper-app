@@ -67,7 +67,7 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
         <>
           <BottomButton onPress={() => setCallModalOpen((prev) => !prev)}>
             <Text fontSize={15} fontWeight={600} lineHeight={18} color="$black900">
-              보호소에 연락하기
+              보호소에 문의하기
             </Text>
           </BottomButton>
 

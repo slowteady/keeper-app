@@ -1,11 +1,11 @@
 import { FlashList, ListRenderItemInfo } from '@shopify/flash-list';
 import { router } from 'expo-router';
 import { useCallback } from 'react';
-import { styled, Text, View, XStack } from 'tamagui';
+import { styled, Text, View, YStack } from 'tamagui';
 
 import { ShelterCard, ShelterDto, useShelterMap } from '@/entities';
 import { KakaoAddressDocumentDto, LocationBottomSheet, useLocationBottomSheet } from '@/features';
-import { ScrollUpButton, useScrollUpButton } from '@/shared';
+import { ScrollUpButton, Skeleton, useScrollUpButton } from '@/shared';
 import { ShelterListHeaderSection, ShelterMapSection } from '@/widgets';
 
 const Page = () => {
@@ -18,7 +18,9 @@ const Page = () => {
 
   const renderItem = useCallback(({ item }: ListRenderItemInfo<ShelterDto>) => {
     return (
-      <ShelterCard onPress={() => router.push({ pathname: '/shelter/[id]', params: { id: item.id } })} data={item} />
+      <View px={20}>
+        <ShelterCard onPress={() => router.push({ pathname: '/shelter/[id]', params: { id: item.id } })} data={item} />
+      </View>
     );
   }, []);
 
@@ -33,11 +35,13 @@ const Page = () => {
         onScroll={handleScroll}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={
-          <View px={20}>
-            <ShelterListHeaderSection
-              onSubmitSearch={actions.searchLocation}
-              onPressLocation={locationBottomSheet.actions.openBottomSheet}
-            />
+          <View px={20} mb={20}>
+            <View mb={16}>
+              <ShelterListHeaderSection
+                onSubmitSearch={actions.searchLocation}
+                onPressLocation={locationBottomSheet.actions.openBottomSheet}
+              />
+            </View>
 
             <ShelterMapSection
               ref={refs.mapRef}
@@ -52,7 +56,8 @@ const Page = () => {
             />
           </View>
         }
-        ListEmptyComponent={<EmptyComponent isLoading={flags.isLoading} />}
+        ItemSeparatorComponent={() => <View height={10} />}
+        ListEmptyComponent={<EmptyComponent isLoading={flags.isLoading || flags.isSearchPending} />}
         contentContainerStyle={{ paddingVertical: 32 }}
       />
 
@@ -74,23 +79,31 @@ export default Page;
 
 const EmptyComponent = ({ isLoading }: { isLoading: boolean }) => {
   return isLoading ? (
-    <XStack gap={12}>
+    <YStack gap={12} mx={20}>
       {Array.from({ length: 4 }).map((_, idx) => (
         <View key={`shelter-card-skeleton-${idx}`} height={80}>
-          {/* <Skeleton width="100%" height="100%" /> */}
+          <Skeleton style={{ width: '100%', height: '100%', borderRadius: 12 }} />
         </View>
       ))}
-    </XStack>
+    </YStack>
   ) : (
-    <View flex={1} items="center" justify="center">
+    <NodataContainer mx={20} py={32}>
       <Text fontSize={14} lineHeight={16} fontWeight="500" color="$black500">
         가까운 곳에 보호소가 없어요.
       </Text>
-    </View>
+    </NodataContainer>
   );
 };
 
 const Container = styled(View, {
   bg: '$pageBackground',
   flex: 1
+});
+
+const NodataContainer = styled(View, {
+  items: 'center',
+  justify: 'center',
+  borderColor: '$white800',
+  borderWidth: 1,
+  rounded: 12
 });

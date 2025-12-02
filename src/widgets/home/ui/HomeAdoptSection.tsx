@@ -57,7 +57,7 @@ export const HomeAdoptSection = () => {
 
       <FlashList
         ref={scrollRef}
-        data={data.convertedData}
+        data={data.convertedData ?? []}
         keyExtractor={({ id }, idx) => `${id}-${idx}`}
         renderItem={renderItem}
         horizontal
