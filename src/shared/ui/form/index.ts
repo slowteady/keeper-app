@@ -4,3 +4,4 @@ export * from './ImageSelector';
 export * from './SearchInput';
 export * from './TextArea';
 export * from './TextField';
+export * from './TextInput';

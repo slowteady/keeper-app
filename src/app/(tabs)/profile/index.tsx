@@ -1,7 +1,5 @@
-import { Redirect } from 'expo-router';
-
 const Page = () => {
-  return <Redirect href="/(auth)/login" />;
+  return <></>;
 };
 
 export default Page;

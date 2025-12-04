@@ -22,12 +22,11 @@ export const CancelModal = ({
 
   const executeClose = useCallback(() => {
     closeModal();
-    onClose();
-  }, [closeModal, onClose]);
+  }, [closeModal]);
 
   const executeConfirm = useCallback(() => {
-    closeModal();
     onConfirm();
+    closeModal();
   }, [closeModal, onConfirm]);
 
   useEffect(() => {

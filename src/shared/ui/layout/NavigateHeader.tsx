@@ -1,7 +1,6 @@
 import { router } from 'expo-router';
 import { useCallback } from 'react';
-import { Pressable } from 'react-native';
-import { useTheme } from 'tamagui';
+import { useTheme, View } from 'tamagui';
 
 import { HeaderLayout } from '@/shared';
 import { LeftLineArrow } from '@/shared/ui/icons/mini';
@@ -19,15 +18,15 @@ export const NavigateHeader = () => {
   }, []);
 
   const left = (
-    <Pressable onPress={navigateToPage}>
+    <View onPress={navigateToPage} hitSlop={10}>
       <LeftLineArrow width={24} height={30} color={black900.val} />
-    </Pressable>
+    </View>
   );
 
   const right = (
-    <Pressable onPress={() => router.replace('/')}>
+    <View onPress={() => router.replace('/')} hitSlop={10}>
       <Home width={28} height={28} color={black900.val} />
-    </Pressable>
+    </View>
   );
 
   return <HeaderLayout left={left} right={right} />;

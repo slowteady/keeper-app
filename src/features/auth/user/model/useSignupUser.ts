@@ -3,15 +3,11 @@ import { logout } from '@react-native-kakao/user';
 import NaverLogin from '@react-native-seoul/naver-login';
 import { usePreventRemove } from '@react-navigation/native';
 import { useToastController } from '@tamagui/toast';
-import { Route, router, useLocalSearchParams, useNavigation } from 'expo-router';
-import { useCallback, useRef, useState } from 'react';
+import { Route, router, useLocalSearchParams } from 'expo-router';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { SignUpBodyDto, SocialLoginType, useSignUp } from '@/entities';
 import { removeToken, saveAccessToken, saveRefreshToken } from '@/shared';
-
-// 1. SearchInput과 같은 형태로 TextField 구현 / helperText 결합형으로 구현
-// 2. nickname 체크용 커스텀 훅 구현
-// 3. 결합된 형태의 닉네임 텍스트 필드 구현
 
 export const useSignupUser = () => {
   const { socialType, socialId, redirect } = useLocalSearchParams<{
@@ -19,18 +15,25 @@ export const useSignupUser = () => {
     socialId: string;
     redirect?: Route;
   }>();
-  const navigation = useNavigation();
   const { show } = useToastController();
 
   const [prevent, setPrevent] = useState(true);
   const [showCancelModal, setShowCancelModal] = useState(false);
-  const actionRef = useRef<any>(null);
+  const [navigateTarget, setNavigateTarget] = useState<Route>();
 
   const { mutateAsync, isPending } = useSignUp();
 
-  usePreventRemove(prevent, ({ data }) => {
-    actionRef.current = data.action;
-    setShowCancelModal(true);
+  // 모달 상태를 ref로 관리하여 클로저 문제 방지
+  const showCancelModalRef = useRef(showCancelModal);
+  useEffect(() => {
+    showCancelModalRef.current = showCancelModal;
+  }, [showCancelModal]);
+
+  usePreventRemove(prevent, () => {
+    // 모달이 이미 열려있으면 중복으로 열지 않음
+    if (!showCancelModalRef.current) {
+      setShowCancelModal(true);
+    }
   });
 
   const cancelSignup = useCallback(async () => {
@@ -66,11 +69,9 @@ export const useSignupUser = () => {
 
         show('회원가입이 완료되었어요.', { customData: { status: 'success' } });
 
-        if (redirect && redirect !== '/login') {
-          router.replace(redirect);
-        } else {
-          router.replace('/');
-        }
+        const target: Route = redirect && redirect !== '/login' ? redirect : '/';
+        setPrevent(false);
+        setNavigateTarget(target);
       } catch {
         show('회원가입에 실패했어요. 다시 시도해주세요.', { customData: { status: 'fail' } });
       }
@@ -79,19 +80,25 @@ export const useSignupUser = () => {
   );
 
   const executeCancel = useCallback(async () => {
-    try {
-      await cancelSignup();
-    } finally {
-      removeToken();
-      setPrevent(false);
-      setShowCancelModal(false);
-      if (actionRef.current) navigation.dispatch(actionRef.current);
-    }
-  }, [cancelSignup, navigation]);
+    cancelSignup();
+    removeToken();
+
+    const target: Route = redirect && redirect !== '/login' ? redirect : '/';
+    setPrevent(false);
+    setShowCancelModal(false);
+    setNavigateTarget(target);
+  }, [cancelSignup, redirect]);
 
   const closeModal = useCallback(() => {
     setShowCancelModal(false);
   }, []);
+
+  useEffect(() => {
+    if (!prevent && navigateTarget) {
+      router.replace(navigateTarget);
+      setNavigateTarget(undefined);
+    }
+  }, [prevent, navigateTarget]);
 
   return {
     actions: { executeSignup, executeCancel, closeModal },

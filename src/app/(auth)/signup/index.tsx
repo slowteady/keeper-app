@@ -1,62 +1,74 @@
-import { useToastController } from '@tamagui/toast';
-import { router, useLocalSearchParams } from 'expo-router';
-import { FormProvider, useForm } from 'react-hook-form';
+import { Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
+import { Spinner, styled, Text, XStack, YStack } from 'tamagui';
 
-import { SettingNicknameTemplate } from '@/domains/auth/components';
-import { useSignUpMutation } from '@/domains/auth/services';
-import { SocialLoginType } from '@/entities';
-import { saveAccessToken, saveRefreshToken } from '@/shared';
+import { useCheckNickname, useSignupUser } from '@/features';
+import { BottomButton, CancelModal, TextInput } from '@/shared';
 
-export interface SignupForm {
-  nickname: string;
-}
 const Page = () => {
-  const { socialType, socialId, redirect } = useLocalSearchParams<{
-    socialType: SocialLoginType;
-    socialId: string;
-    redirect?: string;
-  }>();
-  // const setUser = useSetAtom(userAtom);
+  const { actions: signupActions, flags: signupFlags } = useSignupUser();
+  const { state: nicknameState, flags: nicknameFlags, actions: nicknameActions } = useCheckNickname();
 
-  const { show } = useToastController();
-  const methods = useForm<SignupForm>({ defaultValues: { nickname: '' } });
+  const helperText = nicknameFlags.isChecking ? (
+    <XStack>
+      <Spinner size="small" color="$primaryMain" />
+    </XStack>
+  ) : (
+    nicknameState.nicknameStatus.message
+  );
 
-  const { mutateAsync: signupMutate } = useSignUpMutation();
-
-  const handleSubmitSignup = async (values: SignupForm) => {
-    const { nickname } = values;
-    const body = {
-      socialType,
-      socialId,
-      nickname
-    };
-
-    try {
-      const { data } = await signupMutate(body);
-      if (data) {
-        const { accessToken, refreshToken, id, email, image, name, nickname } = data.data;
-
-        await saveAccessToken(accessToken);
-        await saveRefreshToken(refreshToken);
-        // setUser({ id, email, image, name, nickname });
-        show('회원가입이 완료되었어요.', { customData: { status: 'success' } });
-
-        if (redirect && redirect !== '/login') {
-          router.replace(redirect as any);
-        } else {
-          router.replace('/');
-        }
-      }
-    } catch {
-      show('회원가입에 실패했어요. 다시 시도해주세요.', { customData: { status: 'fail' } });
-    }
-  };
+  const disabled = !nicknameFlags.isComplete || nicknameFlags.isChecking || signupFlags.isPending;
 
   return (
-    <FormProvider {...methods}>
-      <SettingNicknameTemplate onSubmit={handleSubmitSignup} />
-    </FormProvider>
+    <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <Container>
+          <SubContainer>
+            <Text fontSize={26} lineHeight={36} fontWeight="600" mb={32}>
+              {'어떤 닉네임으로\n불러드릴까요?'}
+            </Text>
+            <TextInput
+              value={nicknameState.nickname}
+              onChangeText={nicknameActions.changeNickname}
+              onPressReset={nicknameActions.clearNickname}
+              placeholder="닉네임을 입력해주세요."
+              helperText={helperText}
+              helperTextStatus={nicknameState.nicknameStatus.status}
+              maxLength={8}
+            />
+          </SubContainer>
+
+          <BottomButton
+            onPress={() => signupActions.executeSignup(nicknameState.nickname)}
+            disabled={disabled}
+            isLoading={signupFlags.isPending}
+          >
+            <Text fontSize={15} fontWeight={600} lineHeight={18} color={disabled ? '$black500' : '$black900'}>
+              등록하기
+            </Text>
+          </BottomButton>
+        </Container>
+      </TouchableWithoutFeedback>
+
+      <CancelModal
+        open={signupFlags.showCancelModal}
+        onClose={signupActions.closeModal}
+        onConfirm={signupActions.executeCancel}
+        description="지금 나가시면 회원가입이 완료되지 않아요."
+      />
+    </KeyboardAvoidingView>
   );
 };
 
 export default Page;
+
+const Container = styled(YStack, {
+  flex: 1,
+  bg: '$pageBackground'
+});
+
+const SubContainer = styled(YStack, {
+  flex: 1,
+  px: 20,
+  pt: 48
+});

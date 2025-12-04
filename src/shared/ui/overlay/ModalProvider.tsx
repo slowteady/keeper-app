@@ -25,7 +25,14 @@ export const ModalProvider = ({ children }: { children: React.ReactNode }) => {
     setVisible(true);
   }, []);
   const update = useCallback((node: React.ReactNode) => setContent(node), []);
-  const close = useCallback(() => setVisible(false), []);
+  const close = useCallback(() => {
+    setVisible(false);
+    // 모달이 닫힐 때 onDismiss 콜백 호출
+    if (onDismissRef.current) {
+      onDismissRef.current();
+      onDismissRef.current = undefined;
+    }
+  }, []);
 
   const value = useMemo<ModalContextType>(() => ({ open, update, close }), [open, update, close]);
 

@@ -5,8 +5,6 @@ import PagerView from 'react-native-pager-view';
 import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 import { styled, Text, useTheme, View, XStack } from 'tamagui';
 
-import { useLayout } from '@/shared';
-
 import { Close, LeftArrow, RightArrow } from '../icons/outline';
 
 export interface ImageViewerProps {
@@ -20,7 +18,6 @@ export const ImageViewer = ({ open, onClose, images, defaultIndex }: ImageViewer
   const [currentIndex, setCurrentIndex] = useState<number>(defaultIndex);
   const carouselRef = useRef<PagerView | null>(null);
   const scale = useSharedValue(1);
-  const { top, bottom } = useLayout();
   const { white900 } = useTheme();
 
   const handlePress = useCallback(
@@ -48,7 +45,7 @@ export const ImageViewer = ({ open, onClose, images, defaultIndex }: ImageViewer
   return (
     <Modal visible={open} transparent={true} animationType="fade">
       <XStack items="center" justify="center" flex={1} px={20} bg="$black700">
-        <View flex={1} self="flex-end" t={top} b={bottom}>
+        <View flex={1}>
           <IconButton self="flex-end" mb={8} onPress={onClose}>
             <Close width={18} height={18} color={white900.val} />
           </IconButton>
