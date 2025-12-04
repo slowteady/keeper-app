@@ -15,11 +15,22 @@ export interface AdoptListSectionProps {
   isLoading?: boolean;
   style?: FlashListProps<AdoptItem>['style'];
   onScroll?: FlashListProps<AdoptItem>['onScroll'];
+  contentContainerStyle?: FlashListProps<AdoptItem>['contentContainerStyle'];
 }
 
 export const AdoptListSection = forwardRef<FlashListRef<AdoptItem>, AdoptListSectionProps>(
   (
-    { data, header, footer, onRefreshCallback, onPressItem, isLoading = false, style, onScroll }: AdoptListSectionProps,
+    {
+      data,
+      header,
+      footer,
+      onRefreshCallback,
+      onPressItem,
+      isLoading = false,
+      style,
+      onScroll,
+      contentContainerStyle
+    }: AdoptListSectionProps,
     ref
   ) => {
     const { refreshing, handleRefresh } = useRefreshing(onRefreshCallback);
@@ -51,7 +62,7 @@ export const AdoptListSection = forwardRef<FlashListRef<AdoptItem>, AdoptListSec
         ListHeaderComponent={header ?? null}
         ListFooterComponent={footer ?? null}
         ListEmptyComponent={<EmptyComponent isLoading={isLoading} />}
-        contentContainerStyle={{ paddingHorizontal: 20, flexGrow: 1 }}
+        contentContainerStyle={[{ paddingHorizontal: 20, flexGrow: 1 }, contentContainerStyle]}
         style={style}
       />
     );

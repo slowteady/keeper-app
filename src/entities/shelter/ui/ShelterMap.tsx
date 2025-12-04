@@ -10,10 +10,10 @@ import { ActivityAction, startActivityAsync } from 'expo-intent-launcher';
 import { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
 import { Linking, Platform, StyleSheet } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
-import { styled, Text, useTheme, View, YStack } from 'tamagui';
+import { styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
 
-import { theme, useDebounceFunc } from '@/shared';
-import { isCameraChanged } from '@/shared/lib/utils/map.utils';
+import { useDebounceFunc } from '@/shared';
+import { isCameraChanged } from '@/shared/lib/utils/map';
 import { CameraParams } from '@/shared/model';
 import { Button } from '@/shared/ui/button';
 
@@ -33,6 +33,7 @@ const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
     const [isVisibleButton, setIsVisibleButton] = useState(false);
     const cameraRef = useRef<CameraParams | null>(null);
     const scale = useSharedValue(0);
+    const { primaryMain } = useTheme();
 
     useEffect(() => {
       scale.value = withTiming(isVisibleButton ? 1 : 0, { duration: 200 });
@@ -69,7 +70,7 @@ const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
     );
 
     return (
-      <View style={[styles.container]}>
+      <Container>
         {hasLocation ? (
           <>
             <NaverMapView
@@ -77,7 +78,7 @@ const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
               onCameraChanged={moveCamera}
               isExtentBoundedInKorea
               animationDuration={500}
-              style={styles.mapContainer}
+              style={{ width: '100%', height: '100%', position: 'relative' }}
               {...(readOnly
                 ? {
                     isZoomGesturesEnabled: false,
@@ -94,9 +95,11 @@ const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
             </NaverMapView>
 
             {isVisibleButton && !readOnly && (
-              <Animated.View style={[styles.mapButton, animatedStyle]}>
+              <Animated.View style={[styles.mapButton, { backgroundColor: primaryMain.val }, animatedStyle]}>
                 <Button variant="ghost" onPress={handlePressRefetch}>
-                  <Text style={styles.mapButtonText}>현 지도에서 검색</Text>
+                  <Text fontSize={13} fontWeight="600" lineHeight={22} color="$black900">
+                    현 지도에서 검색
+                  </Text>
                 </Button>
               </Animated.View>
             )}
@@ -104,7 +107,7 @@ const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
         ) : (
           <NoValidMap />
         )}
-      </View>
+      </Container>
     );
   }
 );
@@ -171,6 +174,16 @@ export const ShelterMap = Object.assign(Map, {
   Marker
 });
 
+const Container = styled(XStack, {
+  rounded: 10,
+  bg: '#D9D9D9',
+  width: '100%',
+  aspectRatio: 4 / 5,
+  items: 'center',
+  justify: 'center',
+  overflow: 'hidden'
+});
+
 const NoValidContainer = styled(YStack, {
   position: 'relative',
   width: '100%',
@@ -189,49 +202,6 @@ const SettingButton = styled(View, {
 });
 
 const styles = StyleSheet.create({
-  container: {
-    borderRadius: 10,
-    backgroundColor: '#D9D9D9',
-    width: '100%',
-    aspectRatio: 4 / 5,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden'
-  },
-  mapContainer: {
-    width: '100%',
-    height: '100%',
-    position: 'relative'
-  },
-  distanceContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 28,
-    paddingVertical: 10,
-    backgroundColor: theme.colors.background.default,
-    borderRadius: 6
-  },
-  textContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4
-  },
-  label: {
-    color: theme.colors.black[600],
-    fontSize: 13,
-    fontWeight: '400',
-    lineHeight: 22
-  },
-  value: {
-    color: theme.colors.black[700],
-    fontSize: 13,
-    fontWeight: '700',
-    lineHeight: 22
-  },
   mapButton: {
     display: 'flex',
     alignItems: 'center',
@@ -239,7 +209,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 16,
     borderRadius: 24,
-    backgroundColor: theme.colors.primary.main,
     paddingHorizontal: 18,
     height: 40,
     ...Platform.select({
@@ -253,12 +222,6 @@ const styles = StyleSheet.create({
         elevation: 4
       }
     })
-  },
-  mapButtonText: {
-    color: theme.colors.black[900],
-    fontSize: 13,
-    fontWeight: '600',
-    lineHeight: 22
   }
 });
 

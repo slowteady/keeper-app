@@ -34,6 +34,7 @@ const Container = styled(XStack, {
   px: 24,
   justify: 'space-between'
 });
+
 const Label = styled(Text, {
   fontSize: 15,
   fontWeight: 500,

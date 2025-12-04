@@ -1,12 +1,7 @@
-import { styled, View } from 'tamagui';
+import { Redirect } from 'expo-router';
 
 const Page = () => {
-  return <Container />;
+  return <Redirect href="/(auth)/login" />;
 };
 
 export default Page;
-
-const Container = styled(View, {
-  flex: 1,
-  bg: '$pageBackground'
-});

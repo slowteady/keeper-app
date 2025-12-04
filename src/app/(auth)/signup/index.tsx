@@ -1,18 +1,11 @@
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import { logout } from '@react-native-kakao/user';
-import NaverLogin from '@react-native-seoul/naver-login';
-import { usePreventRemove } from '@react-navigation/native';
 import { useToastController } from '@tamagui/toast';
-import { router, useLocalSearchParams, useNavigation } from 'expo-router';
-import { useSetAtom } from 'jotai';
-import { useState } from 'react';
+import { router, useLocalSearchParams } from 'expo-router';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import { SettingNicknameTemplate } from '@/domains/auth/components';
 import { useSignUpMutation } from '@/domains/auth/services';
-import { userAtom } from '@/domains/auth/stores';
-import { SocialLoginType } from '@/domains/auth/types/auth.types';
-import { removeToken, saveAccessToken, saveRefreshToken } from '@/shared';
+import { SocialLoginType } from '@/entities';
+import { saveAccessToken, saveRefreshToken } from '@/shared';
 
 export interface SignupForm {
   nickname: string;
@@ -23,31 +16,13 @@ const Page = () => {
     socialId: string;
     redirect?: string;
   }>();
-  const setUser = useSetAtom(userAtom);
-
-  const [prevent, setPrevent] = useState(true);
+  // const setUser = useSetAtom(userAtom);
 
   const { show } = useToastController();
   const methods = useForm<SignupForm>({ defaultValues: { nickname: '' } });
-  const navigation = useNavigation();
 
   const { mutateAsync: signupMutate } = useSignUpMutation();
 
-  const handleSocialLogout = async () => {
-    switch (socialType) {
-      case 'KAKAO':
-        await logout();
-        break;
-      case 'NAVER':
-        await NaverLogin.logout();
-        break;
-      case 'GOOGLE':
-        await GoogleSignin.signOut();
-        break;
-      default:
-        break;
-    }
-  };
   const handleSubmitSignup = async (values: SignupForm) => {
     const { nickname } = values;
     const body = {
@@ -59,12 +34,11 @@ const Page = () => {
     try {
       const { data } = await signupMutate(body);
       if (data) {
-        setPrevent(false);
         const { accessToken, refreshToken, id, email, image, name, nickname } = data.data;
 
         await saveAccessToken(accessToken);
         await saveRefreshToken(refreshToken);
-        setUser({ id, email, image, name, nickname });
+        // setUser({ id, email, image, name, nickname });
         show('회원가입이 완료되었어요.', { customData: { status: 'success' } });
 
         if (redirect && redirect !== '/login') {
@@ -77,18 +51,6 @@ const Page = () => {
       show('회원가입에 실패했어요. 다시 시도해주세요.', { customData: { status: 'fail' } });
     }
   };
-
-  usePreventRemove(prevent, ({ data }) => {
-    (async () => {
-      try {
-        await handleSocialLogout();
-      } finally {
-        removeToken();
-        setPrevent(false);
-        navigation.dispatch(data.action);
-      }
-    })();
-  });
 
   return (
     <FormProvider {...methods}>

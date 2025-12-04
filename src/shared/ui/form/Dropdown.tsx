@@ -4,7 +4,7 @@ import { styled, Text, useTheme, XStack } from 'tamagui';
 
 import { DownArrow } from '@/shared/ui/icons/mini';
 
-import { BottomSheet, BottomSheetMenu, BottomSheetMenuData } from '../data-display';
+import { BottomSheet, BottomSheetMenu, BottomSheetMenuData } from '../overlay';
 
 export interface DropdownProps<T> {
   data: BottomSheetMenuData<T>[];

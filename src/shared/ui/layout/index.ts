@@ -5,4 +5,3 @@ export * from './LogoHeader';
 export * from './NavigateHeader';
 export * from './SafeScreen';
 export * from './safeScreen.store';
-export * from './ScrollUpButton';

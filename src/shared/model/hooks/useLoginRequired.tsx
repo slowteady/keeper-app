@@ -1,9 +1,7 @@
 import { router, usePathname } from 'expo-router';
-import { useAtomValue } from 'jotai';
 import { useCallback } from 'react';
 import { styled, Text, YStack } from 'tamagui';
 
-import { userAtom } from '@/domains/auth/stores';
 import { ModalButtons, useModal } from '@/shared';
 import { getAccessToken } from '@/shared/lib/utils';
 
@@ -11,7 +9,7 @@ import { getAccessToken } from '@/shared/lib/utils';
  * 로그인이 필요한 기능/페이지 진입 시 모달을 보여주는 훅
  */
 export const useLoginRequired = () => {
-  const user = useAtomValue(userAtom);
+  // const user = useAtomValue(userAtom);
 
   const { open, close } = useModal();
   const pathname = usePathname();
@@ -74,20 +72,20 @@ export const useLoginRequired = () => {
   /**
    * 로그인 상태만 확인 (모달 표시 없음)
    */
-  const isLoggedIn = useCallback(async (): Promise<boolean> => {
-    const accessToken = await getAccessToken();
-    return !!(accessToken && user.id);
-  }, [user]);
+  // const isLoggedIn = useCallback(async (): Promise<boolean> => {
+  //   const accessToken = await getAccessToken();
+  //   return !!(accessToken && user.id);
+  // }, [user]);
 
   /**
    * 로그인 상태만 확인 (모달 표시 없음) - 동기
    * 토큰 검증 없이 user.id만으로 빠른 체크
    */
-  const isLoggedInSync = useCallback((): boolean => {
-    return !!user.id;
-  }, [user.id]);
+  // const isLoggedInSync = useCallback((): boolean => {
+  //   return !!user.id;
+  // }, [user.id]);
 
-  return { requireLogin, isLoggedIn, isLoggedInSync };
+  return { requireLogin };
 };
 
 const ModalContainer = styled(YStack, {

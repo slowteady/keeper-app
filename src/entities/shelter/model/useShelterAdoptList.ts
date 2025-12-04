@@ -27,7 +27,8 @@ export const useShelterAdoptList = ({ id, adoptsParams }: UseShelterAdoptListPro
     data,
     isLoading,
     fetchNextPage: fetchNextPageQuery,
-    hasNextPage
+    hasNextPage,
+    isFetchingNextPage
   } = useGetShelterAdopts(id, {
     size: 16,
     page: 0,
@@ -60,7 +61,7 @@ export const useShelterAdoptList = ({ id, adoptsParams }: UseShelterAdoptListPro
   return {
     state: { selectedFilter },
     data: { originalData: data, convertedData },
-    flags: { isLoading },
+    flags: { isLoading, hasNextPage, isFetchingNextPage },
     actions: { changeFilter, executeRefresh, fetchNextPage, goDetail }
   };
 };

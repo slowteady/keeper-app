@@ -3,8 +3,8 @@ import { useState } from 'react';
 import { Image, Pressable, StyleSheet } from 'react-native';
 import { Spinner, styled, XStack, XStackProps, YStack } from 'tamagui';
 
-import { ImageViewer } from '../data-display/ImageViewer';
 import { Close } from '../icons/outline';
+import { ImageViewer } from '../overlay/ImageViewer';
 
 export interface ImageSelectorProps {
   max?: number;

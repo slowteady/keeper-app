@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { StyleProp, StyleSheet, ViewStyle } from 'react-native';
+import { StyleProp, ViewStyle } from 'react-native';
 import Animated, {
   interpolate,
   useAnimatedStyle,
@@ -7,8 +7,7 @@ import Animated, {
   withRepeat,
   withTiming
 } from 'react-native-reanimated';
-
-import { theme } from '@/shared';
+import { useTheme } from 'tamagui';
 
 export interface SkeletonProps {
   style?: StyleProp<ViewStyle>;
@@ -16,6 +15,8 @@ export interface SkeletonProps {
 
 export const Skeleton = ({ style }: SkeletonProps) => {
   const animatedValue = useSharedValue(0);
+
+  const { white700 } = useTheme();
 
   const animatedStyle = useAnimatedStyle(() => {
     const opacity = interpolate(animatedValue.value, [0, 1], [0.2, 1]);
@@ -26,12 +27,5 @@ export const Skeleton = ({ style }: SkeletonProps) => {
     animatedValue.value = withRepeat(withTiming(1, { duration: 1500 }), -1, true);
   }, [animatedValue]);
 
-  return <Animated.View style={[styles.container, animatedStyle, style]} />;
+  return <Animated.View style={[{ overflow: 'hidden', backgroundColor: white700.val }, animatedStyle, style]} />;
 };
-
-const styles = StyleSheet.create({
-  container: {
-    overflow: 'hidden',
-    backgroundColor: theme.colors.white[700]
-  }
-});
