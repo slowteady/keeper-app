@@ -3,16 +3,20 @@ import { useCallback } from 'react';
 import { styled, Text, YStack } from 'tamagui';
 
 import { ModalButtons, useModal } from '@/shared';
-import { getAccessToken } from '@/shared/lib/utils';
+
+import { useAuthUser } from './useAuthUser';
 
 /**
  * 로그인이 필요한 기능/페이지 진입 시 모달을 보여주는 훅
  */
 export const useLoginRequired = () => {
-  // const user = useAtomValue(userAtom);
+  const { data } = useAuthUser();
+  const user = data?.user;
 
   const { open, close } = useModal();
   const pathname = usePathname();
+
+  const isLoggedIn = !!user;
 
   /**
    * 로그인 상태를 확인하고, 로그인되지 않았으면 모달을 보여줌
@@ -22,11 +26,6 @@ export const useLoginRequired = () => {
    */
   const requireLogin = useCallback(
     async (callback?: () => void | Promise<void>): Promise<boolean> => {
-      // 토큰과 유저 정보 모두 확인
-      const accessToken = await getAccessToken();
-      // const isLoggedIn = !!(accessToken && user.id);
-      const isLoggedIn = !!accessToken;
-
       if (isLoggedIn) {
         await callback?.();
         return true;
@@ -66,26 +65,10 @@ export const useLoginRequired = () => {
         open(modalContent);
       });
     },
-    [close, open, pathname]
+    [close, isLoggedIn, open, pathname]
   );
 
-  /**
-   * 로그인 상태만 확인 (모달 표시 없음)
-   */
-  // const isLoggedIn = useCallback(async (): Promise<boolean> => {
-  //   const accessToken = await getAccessToken();
-  //   return !!(accessToken && user.id);
-  // }, [user]);
-
-  /**
-   * 로그인 상태만 확인 (모달 표시 없음) - 동기
-   * 토큰 검증 없이 user.id만으로 빠른 체크
-   */
-  // const isLoggedInSync = useCallback((): boolean => {
-  //   return !!user.id;
-  // }, [user.id]);
-
-  return { requireLogin };
+  return { actions: { requireLogin }, flags: { isLoggedIn } };
 };
 
 const ModalContainer = styled(YStack, {

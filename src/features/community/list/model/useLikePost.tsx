@@ -1,13 +1,13 @@
 import { useCallback } from 'react';
 
-import { useLoginRequired } from '@/shared';
+import { useLoginRequired } from '@/features';
 
 export const useLikePost = () => {
-  const { requireLogin } = useLoginRequired();
+  const { actions } = useLoginRequired();
 
   const toggleLike = useCallback(
     async (postId: string) => {
-      requireLogin(async () => {
+      actions.requireLogin(async () => {
         try {
           // TODO: API 호출 구현
           // await likePostApi(postId);
@@ -17,7 +17,7 @@ export const useLikePost = () => {
         }
       });
     },
-    [requireLogin]
+    [actions]
   );
 
   return {

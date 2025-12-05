@@ -3,7 +3,8 @@ import { Dimensions } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { styled, Text, TextProps, View, ViewProps, XStack, XStackProps } from 'tamagui';
 
-import { Carousel, Chip, useLoginRequired } from '@/shared';
+import { useLoginRequired } from '@/features';
+import { Carousel, Chip } from '@/shared';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
 import { CommunityAdoptListDto } from '../model';
@@ -30,7 +31,7 @@ export const CommunityAdoptCard = ({
   onPressLike,
   isLoading = false
 }: CommunityAdoptCardProps) => {
-  const { isLoggedInSync } = useLoginRequired();
+  const { flags } = useLoginRequired();
 
   const tap = Gesture.Tap()
     .maxDuration(250) // 탭 최대 지속시간
@@ -60,7 +61,7 @@ export const CommunityAdoptCard = ({
           <CommunityAdoptCardHeart
             isLiked={isLiked}
             onPress={handlePressLike}
-            disabled={!isLoggedInSync()}
+            disabled={!flags.isLoggedIn}
             loading={isLoading}
           />
         </XStack>
