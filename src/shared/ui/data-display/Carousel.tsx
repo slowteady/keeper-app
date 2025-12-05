@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import { forwardRef, useCallback, useState } from 'react';
-import { NativeSyntheticEvent, Pressable, StyleSheet } from 'react-native';
+import { NativeSyntheticEvent, StyleSheet } from 'react-native';
 import PagerView, { PagerViewProps } from 'react-native-pager-view';
 import { styled, Text, useTheme, View, XStack } from 'tamagui';
 
@@ -141,13 +141,13 @@ const Controller = ({ currentIndex, max, onPress }: BasicCarouselControllerProps
 
   return (
     <ControllerContainer>
-      <Pressable onPress={() => handlePress('prev')}>
+      <View onPress={() => handlePress('prev')} hitSlop={10}>
         <LeftLineArrow width={11} height={11} color={black900.val} />
-      </Pressable>
+      </View>
       <ControllerText>{text}</ControllerText>
-      <Pressable onPress={() => handlePress('next')}>
+      <View onPress={() => handlePress('next')} hitSlop={10}>
         <RightLineArrow width={11} height={11} color={black900.val} />
-      </Pressable>
+      </View>
     </ControllerContainer>
   );
 };

@@ -39,8 +39,8 @@ export const BottomNavigation = memo(({ state, navigation, insets }: BottomTabBa
     profile: AnimatedUserIcon
   } as const;
 
-  const renderIcon = (name: string, isActive: boolean) => {
-    const IconComponent = iconMap[name as keyof typeof iconMap];
+  const renderIcon = (name: keyof typeof iconMap, isActive: boolean) => {
+    const IconComponent = iconMap[name];
     return IconComponent ? <IconComponent isActive={isActive} /> : null;
   };
 
@@ -70,31 +70,31 @@ export const BottomNavigation = memo(({ state, navigation, insets }: BottomTabBa
 const AnimatedHomeIcon = memo(({ isActive }: { isActive: boolean }) => {
   const size = { width: 24, height: 24 } as const;
 
-  return isActive ? <ActiveHome2 {...size} /> : <Home2 {...size} />;
+  return isActive ? <ActiveHome2 {...size} /> : <Home2 {...size} color="#0C0C0C" />;
 });
 
 const AnimatedHeartIcon = memo(({ isActive }: { isActive: boolean }) => {
   const size = { width: 26, height: 26 } as const;
 
-  return isActive ? <ActiveHeart {...size} /> : <Heart {...size} />;
+  return isActive ? <ActiveHeart {...size} /> : <Heart {...size} color="#0C0C0C" />;
 });
 
 const AnimatedLocationIcon = memo(({ isActive }: { isActive: boolean }) => {
   const size = { width: 28, height: 28 } as const;
 
-  return isActive ? <ActiveLocation {...size} /> : <Location {...size} />;
+  return isActive ? <ActiveLocation {...size} /> : <Location {...size} color="#0C0C0C" />;
 });
 
 const AnimatedMessageIcon = memo(({ isActive }: { isActive: boolean }) => {
   const size = { width: 24, height: 24 } as const;
 
-  return isActive ? <ActiveMessage {...size} /> : <Message {...size} />;
+  return isActive ? <ActiveMessage {...size} /> : <Message {...size} color="#0C0C0C" />;
 });
 
 const AnimatedUserIcon = memo(({ isActive }: { isActive: boolean }) => {
   const size = { width: 26, height: 26 } as const;
 
-  return isActive ? <ActiveUser {...size} /> : <User {...size} />;
+  return isActive ? <ActiveUser {...size} /> : <User {...size} color="#0C0C0C" />;
 });
 
 const Container = styled(XStack, {
@@ -130,7 +130,8 @@ const TabItemInner = styled(YStack, {
 const TabLabel = styled(Text, {
   fontSize: 11,
   lineHeight: 13,
-  fontWeight: '600'
+  fontWeight: '600',
+  color: '#0C0C0C'
 });
 
 BottomNavigation.displayName = 'CustomTabBar';

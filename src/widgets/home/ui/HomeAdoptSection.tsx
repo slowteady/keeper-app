@@ -64,7 +64,7 @@ export const HomeAdoptSection = () => {
         decelerationRate="fast"
         showsHorizontalScrollIndicator={false}
         ItemSeparatorComponent={() => <View width={18} />}
-        contentContainerStyle={{ flexGrow: 1 }}
+        contentContainerStyle={{ flexGrow: 1, minHeight: 350 }}
         style={{ paddingLeft: 20 }}
         ListEmptyComponent={<EmptyComponent isLoading={flags.isLoading} />}
         ListFooterComponent={<ViewAllButton onPress={actions.goList} />}
