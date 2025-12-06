@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import { useCallback } from 'react';
 
-import { getAdoptListValue } from '../lib/mock';
+import { getAdoptListValue } from './mock';
 
 export const useCommunityAdoptFeed = () => {
   const goDetailPage = useCallback((id: string) => {

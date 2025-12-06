@@ -25,10 +25,10 @@ export const CommentListHeader = ({ commentCount = 0, sortOrder, onChangeSortOrd
         </XStack>
 
         <XStack items="center" gap={10}>
-          <SortText active={isLatest} onPress={() => onChangeSortOrder('LATEST')}>
+          <SortText active={isLatest} onPress={() => onChangeSortOrder('LATEST')} hitSlop={12}>
             최신순
           </SortText>
-          <SortText active={isCreated} onPress={() => onChangeSortOrder('CREATED')}>
+          <SortText active={isCreated} onPress={() => onChangeSortOrder('CREATED')} hitSlop={12}>
             등록순
           </SortText>
         </XStack>
@@ -53,9 +53,7 @@ const OverViewWrapper = styled(XStack, {
 const SortText = styled(Text, {
   fontWeight: '500',
   animation: 'quick',
-  pressStyle: {
-    scale: 0.97
-  },
+
   variants: {
     active: {
       true: {

@@ -106,12 +106,14 @@ export const config = createTamagui({
     light: {
       ...defaultConfig.themes.light,
 
-      background: '#F3F4F4',
+      pageBackground: '#FFFFFF',
+      backgroundDefault: '#F3F4F4',
       color: '#161717',
 
       white600: '#D3D9D5',
       white700: '#E7E7E7',
       white800: '#E9ECEA',
+      white850: '#F7F7F7',
       white900: '#FFFFFF',
 
       blackMain: '#000000',

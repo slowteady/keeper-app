@@ -49,7 +49,7 @@ export const CommunityDetailOverviewSection = ({
         </XStack>
       </HeaderWrapper>
 
-      <CommunityAdoptCardTitle title={title} numberOfLines={undefined} mb={16} />
+      <CommunityAdoptCardTitle title={title} mb={16} />
       <CommunityAdoptCardCarousel images={images} mb={16} />
       <CommunityAdoptCardTags tags={tags} mb={20} />
       <Content>{content}</Content>

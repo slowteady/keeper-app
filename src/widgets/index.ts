@@ -1,6 +1,5 @@
 export * from './adopt-detail-section';
 export * from './adopt-list-section';
-export * from './comment-section';
 export * from './community-adopt-feed-section';
 export * from './community-life-feed-section';
 export * from './community-qna-feed-section';

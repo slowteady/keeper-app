@@ -8,9 +8,10 @@ import { ScrollButton } from '@/shared/ui/icons/etc';
 export interface ScrollUpButtonProps {
   visible: boolean;
   onPress: () => void;
+  bottom?: number;
 }
 
-export const ScrollUpButton = ({ onPress, visible }: ScrollUpButtonProps) => {
+export const ScrollUpButton = ({ onPress, visible, bottom = 20 }: ScrollUpButtonProps) => {
   const scale = useSharedValue(0);
 
   useEffect(() => {
@@ -23,7 +24,7 @@ export const ScrollUpButton = ({ onPress, visible }: ScrollUpButtonProps) => {
   }));
 
   return (
-    <Animated.View style={[styles.button, animatedStyle]}>
+    <Animated.View style={[styles.button, animatedStyle, { bottom }]}>
       <Button variant="ghost" onPress={onPress}>
         <ScrollButton width={64} height={64} />
       </Button>
@@ -36,7 +37,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     position: 'absolute',
     right: 20,
-    bottom: 20,
     ...Platform.select({
       ios: {
         shadowColor: '#000',

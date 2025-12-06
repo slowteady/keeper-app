@@ -65,7 +65,7 @@ export const CommunityAdoptCard = ({
             loading={isLoading}
           />
         </XStack>
-        <CommunityAdoptCardTitle title={title} />
+        <CommunityAdoptCardTitle title={title} numberOfLines={1} />
         <CommunityAdoptCardContent content={content} />
         {hasTags && <CommunityAdoptCardTags tags={tags} />}
         <CommunityAdoptCardCarousel images={images} mb={12} />

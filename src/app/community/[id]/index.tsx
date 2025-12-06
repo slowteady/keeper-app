@@ -1,84 +1,128 @@
+import { FlashList, ListRenderItemInfo } from '@shopify/flash-list';
 import { useLocalSearchParams } from 'expo-router';
-import { useState } from 'react';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
-import { styled, View, YStack } from 'tamagui';
+import { useCallback, useState } from 'react';
+import { KeyboardStickyView } from 'react-native-keyboard-controller';
+import { styled, Text, View, YStack } from 'tamagui';
 
-import { CommunityAdoptCardStats } from '@/entities';
-import { useCommunityAdoptDetailFeed } from '@/features';
-import { Button, CallModal, useLayout, useLikePost, useSharePost } from '@/shared';
-import {
-  AdoptDetailInfoSection,
-  CommentSection,
-  CommunityDetailDescriptionSection,
-  CommunityDetailOverviewSection
-} from '@/widgets';
+import { CommentCard, CommentDto, CommentFormInput, CommentListHeader, CommunityAdoptCardStats } from '@/entities';
+import { useCommunityAdoptDetailFeed, useCommunityCommentList } from '@/features';
+import { Button, CallModal, ScrollUpButton, useLayout, useLikePost, useScrollUpButton, useSharePost } from '@/shared';
+import { AdoptDetailInfoSection, CommunityDetailDescriptionSection, CommunityDetailOverviewSection } from '@/widgets';
 
 const Page = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
 
+  const [inputHeight, setInputHeight] = useState(0);
   const [callModalOpen, setCallModalOpen] = useState(false);
 
   const { bottom } = useLayout();
 
-  const { state, data, actions } = useCommunityAdoptDetailFeed(id);
+  const { data } = useCommunityAdoptDetailFeed(id);
+  const { handleScroll, handlePressButton, isButtonVisible, scrollRef } = useScrollUpButton();
+  const { state: commentState, data: commentData, actions: commentActions } = useCommunityCommentList();
   const { actions: likeActions } = useLikePost();
   const { actions: shareActions } = useSharePost();
 
-  return (
-    <KeyboardAwareScrollView bottomOffset={bottom}>
-      <Container pb={bottom}>
-        <View px={20} mb={32}>
-          <CommunityDetailOverviewSection
-            {...data.overviews}
-            onPressLike={() => likeActions.toggleLike(id)}
-            onPressShare={(id) =>
-              shareActions.sharePost({ id, title: data.detailPost.title, image: data.detailPost.images[0] })
-            }
-          />
+  const renderItem = useCallback(
+    ({ item }: ListRenderItemInfo<CommentDto>) => {
+      return (
+        <View key={item.id} px={20} pt={24} pb={16}>
+          <CommentCard comment={item} onPressLike={() => likeActions.toggleLikeComment(item.id)} />
         </View>
-        <Divider mb={32} />
-        <YStack px={20} mb={40}>
-          <AdoptDetailInfoSection {...data.infos} />
-        </YStack>
-        <View px={20} mb={32}>
-          <CommunityDetailDescriptionSection {...data.descriptions} />
-        </View>
-        <View px={20} mb={20}>
-          <Button onPress={() => setCallModalOpen((prev) => !prev)}>연락하기</Button>
-        </View>
-        <View px={20} mb={16}>
-          <CommunityAdoptCardStats {...data.detailPost.counts} />
-        </View>
+      );
+    },
+    [likeActions]
+  );
 
-        <CommentSection
-          commentCount={data.detailPost.counts.comment}
-          sortOrder={state.sortOrder}
-          onChangeSortOrder={actions.changeSort}
-        />
-      </Container>
+  return (
+    <Container>
+      <FlashList
+        data={commentData.commentList}
+        keyExtractor={(item, i) => `${item.id}-${i}`}
+        renderItem={renderItem}
+        onScroll={handleScroll}
+        ref={scrollRef}
+        showsVerticalScrollIndicator={false}
+        decelerationRate="fast"
+        ListHeaderComponent={() => (
+          <>
+            <View px={20} mb={32}>
+              <CommunityDetailOverviewSection
+                {...data.overviews}
+                onPressLike={() => likeActions.toggleLikePost(id)}
+                onPressShare={(id) =>
+                  shareActions.sharePost({ id, title: data.detailPost.title, image: data.detailPost.images[0] })
+                }
+              />
+            </View>
+            <Divider mb={32} />
+            <YStack px={20} mb={40}>
+              <AdoptDetailInfoSection {...data.infos} />
+            </YStack>
+            <View px={20} mb={32}>
+              <CommunityDetailDescriptionSection {...data.descriptions} />
+            </View>
+            <View px={20} mb={20}>
+              <Button onPress={() => setCallModalOpen((prev) => !prev)}>연락하기</Button>
+            </View>
+            <View px={20} mb={16}>
+              <CommunityAdoptCardStats {...data.detailPost.counts} />
+            </View>
+
+            <CommentListHeader
+              commentCount={commentData.commentList.length}
+              sortOrder={commentState.sortOrder}
+              onChangeSortOrder={commentActions.changeSortOrder}
+            />
+          </>
+        )}
+        contentContainerStyle={{ paddingBottom: inputHeight, paddingTop: 24, flexGrow: 1 }}
+        ListEmptyComponent={() => (
+          <View items="center" justify="center" height={200}>
+            <EmptyText>{'아직 댓글이 없습니다.\n여러분의 의견을 적어주세요:)'}</EmptyText>
+          </View>
+        )}
+      />
+
+      <KeyboardStickyView>
+        <StickyInner onLayout={(event) => setInputHeight(event.nativeEvent.layout.height)} pb={bottom}>
+          <CommentFormInput />
+          <ScrollUpButton visible={isButtonVisible} onPress={handlePressButton} bottom={inputHeight + 20} />
+        </StickyInner>
+      </KeyboardStickyView>
 
       <CallModal
         open={callModalOpen}
         onClose={() => setCallModalOpen(false)}
         tel={''}
-        name={''}
-        title="님에게 문의하기"
+        title={`${data.detailPost.user.nickname}님에게 문의하기`}
         description={`*보호자에게 직접 문의해 정보를 확인할 수 있어요.`}
       />
-    </KeyboardAwareScrollView>
+    </Container>
   );
 };
 
 export default Page;
 
-const Container = styled(YStack, {
+const Container = styled(View, {
   bg: '$pageBackground',
-  position: 'relative',
-  flex: 1,
-  pt: 24
+  flex: 1
 });
 
 const Divider = styled(View, {
   height: 8,
   bg: '$white850'
+});
+
+const EmptyText = styled(Text, {
+  fontSize: 15,
+  lineHeight: 23,
+  color: '$black500',
+  fontWeight: 500,
+  text: 'center'
+});
+
+const StickyInner = styled(View, {
+  position: 'relative',
+  bg: '$pageBackground'
 });

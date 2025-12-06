@@ -7,12 +7,11 @@ export interface CallModalProps {
   open: boolean;
   tel: string;
   onClose: () => void;
-  name?: string;
   title?: string;
   description?: string;
 }
 
-export const CallModal = ({ open, tel, onClose, name, title, description }: CallModalProps) => {
+export const CallModal = ({ open, tel, onClose, title, description }: CallModalProps) => {
   const { actions: callActions } = useCall();
   const { open: openModal, close: closeModal } = useModal();
 
@@ -27,12 +26,10 @@ export const CallModal = ({ open, tel, onClose, name, title, description }: Call
   }, [closeModal, onClose]);
 
   const modalContent = useMemo(() => {
-    const person = name || '담당자님';
-
     return (
       <Container>
         <Text mb={12} fontSize={17} fontWeight="600" color="$black800" lineHeight={19}>
-          {title || `${person}에게 문의하기`}
+          {title}
         </Text>
 
         {description && (
@@ -48,7 +45,7 @@ export const CallModal = ({ open, tel, onClose, name, title, description }: Call
         />
       </Container>
     );
-  }, [description, executeCall, executeClose, name, title]);
+  }, [description, executeCall, executeClose, title]);
 
   useEffect(() => {
     if (!open) {

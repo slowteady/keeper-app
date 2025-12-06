@@ -1,6 +1,4 @@
-import { useMemo, useState } from 'react';
-
-import { CommentSortOrderDto } from '@/entities';
+import { useMemo } from 'react';
 
 import {
   convertToAdoptDetailDescriptionData,
@@ -10,8 +8,6 @@ import {
 import { getAdoptDetailValue } from './mock';
 
 export const useCommunityAdoptDetailFeed = (id: string) => {
-  const [sortOrder, setSortOrder] = useState<CommentSortOrderDto>('CREATED');
-
   const detailPost = useMemo(() => getAdoptDetailValue(id), [id]);
 
   const overviews = useMemo(() => convertToAdoptDetailOverviewData(detailPost), [detailPost]);
@@ -19,8 +15,6 @@ export const useCommunityAdoptDetailFeed = (id: string) => {
   const descriptions = useMemo(() => convertToAdoptDetailDescriptionData(detailPost), [detailPost]);
 
   return {
-    state: { sortOrder },
-    actions: { changeSort: setSortOrder },
     data: { detailPost, overviews, infos, descriptions }
   };
 };

@@ -5,7 +5,7 @@ import { useLoginRequired } from '@/features';
 export const useLikePost = () => {
   const { actions } = useLoginRequired();
 
-  const toggleLike = useCallback(
+  const toggleLikePost = useCallback(
     async (postId: string) => {
       actions.requireLogin(async () => {
         try {
@@ -20,7 +20,22 @@ export const useLikePost = () => {
     [actions]
   );
 
+  const toggleLikeComment = useCallback(
+    async (commentId: string) => {
+      actions.requireLogin(async () => {
+        try {
+          // TODO: API 호출 구현
+          // await likeCommentApi(commentId);
+        } catch (error) {
+          console.error('Failed to like comment:', error);
+        } finally {
+        }
+      });
+    },
+    [actions]
+  );
+
   return {
-    actions: { toggleLike }
+    actions: { toggleLikePost, toggleLikeComment }
   };
 };

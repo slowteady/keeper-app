@@ -45,7 +45,7 @@ export const CommunityAdoptFeed = () => {
             <CommunityAdoptCard
               {...item}
               onPressCard={() => feedActions.goDetailPage(item.id)}
-              onPressLike={() => likeActions.toggleLike(item.id)}
+              onPressLike={() => likeActions.toggleLikePost(item.id)}
             />
           </View>
         )}

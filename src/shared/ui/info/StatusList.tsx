@@ -29,7 +29,7 @@ export const StatusList = ({ data }: StatusListProps) => {
 const Container = styled(XStack, {
   flex: 1,
   rounded: 8,
-  bg: '$background',
+  bg: '$backgroundDefault',
   py: 14,
   px: 24,
   justify: 'space-between'
