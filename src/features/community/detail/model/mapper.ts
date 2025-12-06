@@ -1,7 +1,7 @@
-import { TDetailPostDto } from '@/entities';
+import { CommunityAdoptDetailDto } from '@/entities';
 
-export const getSectionData = (detailPost: TDetailPostDto) => {
-  const overviewData = {
+export const convertToAdoptDetailOverviewData = (detailPost: CommunityAdoptDetailDto) => {
+  return {
     id: detailPost.id,
     image: detailPost.user.image,
     nickname: detailPost.user.nickname,
@@ -11,8 +11,10 @@ export const getSectionData = (detailPost: TDetailPostDto) => {
     tags: detailPost.tags,
     content: detailPost.content
   };
+};
 
-  const infoData = {
+export const convertToAdoptDetailInfoData = (detailPost: CommunityAdoptDetailDto) => {
+  return {
     age: detailPost.age,
     gender: detailPost.gender === 'M' ? '남아' : '여아',
     weight: detailPost.weight + 'kg',
@@ -20,18 +22,14 @@ export const getSectionData = (detailPost: TDetailPostDto) => {
     neuterYn: detailPost.neuterYn,
     vaccinationCheck: detailPost.vaccinationCheck
   };
+};
 
-  const descriptionData = {
+export const convertToAdoptDetailDescriptionData = (detailPost: CommunityAdoptDetailDto) => {
+  return {
     specialMark: detailPost.specialMark,
     likes: detailPost.likes,
     dislikes: detailPost.dislikes,
     health: detailPost.health,
     relatedLink: detailPost.relatedLink
-  };
-
-  return {
-    overviewData,
-    infoData,
-    descriptionData
   };
 };

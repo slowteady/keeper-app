@@ -3,8 +3,15 @@ import { Suspense, useCallback, useState } from 'react';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
 import { ADOPT_LIST_FILTER, useShelter, useShelterAdoptList } from '@/entities';
-import { CallShelterModal } from '@/features';
-import { Button, Dropdown, ScrollUpButton, ShowMoreButton, SuspenseFallback, useScrollUpButton } from '@/shared';
+import {
+  Button,
+  CallModal,
+  Dropdown,
+  ScrollUpButton,
+  ShowMoreButton,
+  SuspenseFallback,
+  useScrollUpButton
+} from '@/shared';
 import { AdoptListSection, ShelterDetailDescriptionSection, ShelterDetailOverviewSection } from '@/widgets';
 
 const Page = () => {
@@ -115,11 +122,12 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
       <ScrollUpButton visible={isButtonVisible} onPress={handlePressButton} />
 
       {hasCallNumber && (
-        <CallShelterModal
+        <CallModal
           open={callModalOpen}
           onClose={() => setCallModalOpen(false)}
           tel={shelter.tel!}
           name={shelter.name}
+          description="*원활한 소통을 위해 상담원이 상담, 휴대폰 번호, 주소 등을 수집할 수 있습니다."
         />
       )}
     </>

@@ -2,8 +2,8 @@ import { FlashList } from '@shopify/flash-list';
 import { styled, useTheme, View, XStack, YStack } from 'tamagui';
 
 import { COMMUNITY_LIST_FILTER, CommunityAdoptCard } from '@/entities';
-import { useCommunityAdoptFeed, useLikePost, usePostFilter } from '@/features';
-import { ADOPT_ANIMAL_FILTER, ButtonGroup, ChipButton } from '@/shared';
+import { useCommunityAdoptFeed, usePostFilter } from '@/features';
+import { ADOPT_ANIMAL_FILTER, ButtonGroup, ChipButton, useLikePost } from '@/shared';
 import { DownArrow } from '@/shared/ui/icons/mini';
 
 export const CommunityAdoptFeed = () => {

@@ -45,5 +45,5 @@ export const useSharePost = () => {
     }
   }, []);
 
-  return { sharePost };
+  return { actions: { sharePost } };
 };

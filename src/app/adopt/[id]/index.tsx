@@ -3,8 +3,7 @@ import { Suspense, useState } from 'react';
 import { ScrollView, styled, Text, View } from 'tamagui';
 
 import { useAdopt, useShelter } from '@/entities';
-import { CallShelterModal } from '@/features';
-import { BottomButton, SuspenseFallback, useLayout } from '@/shared';
+import { BottomButton, CallModal, SuspenseFallback, useLayout } from '@/shared';
 import { AdoptDetailDescriptionSection, AdoptDetailInfoSection, AdoptDetailOverviewSection } from '@/widgets';
 
 const Page = () => {
@@ -71,11 +70,12 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
             </Text>
           </BottomButton>
 
-          <CallShelterModal
+          <CallModal
             open={callModalOpen}
             onClose={() => setCallModalOpen(false)}
             tel={shelter.tel!}
             name={shelter.name}
+            description="*원활한 소통을 위해 상담원이 상담, 휴대폰 번호, 주소 등을 수집할 수 있습니다."
           />
         </>
       )}

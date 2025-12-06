@@ -12,7 +12,7 @@ import { CREATE_POST_OPTIONS } from './constant';
 
 // 보호 유형
 export const ProtectionTypeSchema = z.enum(['TEMPORARY', 'ADOPTION', 'BOTH']);
-export type TProtectionTypeSchema = z.infer<typeof ProtectionTypeSchema>;
+export type ProtectionTypeDto = z.infer<typeof ProtectionTypeSchema>;
 
 export const CommunityAdoptFormSchema = z.object({
   title: z.string().min(0, '제목을 입력해주세요.'),
@@ -74,7 +74,7 @@ export const CommunityAdoptDetailSchema = z.object({
     comment: z.number()
   })
 });
-export type TDetailPostDto = z.infer<typeof CommunityAdoptDetailSchema>;
+export type CommunityAdoptDetailDto = z.infer<typeof CommunityAdoptDetailSchema>;
 
 export const CommunityAdoptListSchema = z.object({
   id: z.string(),

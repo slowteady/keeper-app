@@ -1,6 +1,7 @@
 export * from './BottomSheet';
 export * from './BottomSheetMenu';
 export * from './BottomSheetProvider';
+export * from './CallModal';
 export * from './CancelModal';
 export * from './ImageViewer';
 export * from './ModalButtons';

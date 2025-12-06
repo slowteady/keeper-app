@@ -1,5 +1,3 @@
-import { View } from 'tamagui';
-
 import { CommentFormInput, CommentList, CommentListHeader, CommentSortOrderDto } from '@/entities';
 
 export interface CommentSectionProps {
@@ -16,10 +14,10 @@ export const CommentSection = ({
   placeholder = '아직 댓글이 없습니다.\n여러분의 의견을 적어주세요:)'
 }: CommentSectionProps) => {
   return (
-    <View>
+    <>
       <CommentListHeader commentCount={commentCount} sortOrder={sortOrder} onChangeSortOrder={onChangeSortOrder} />
       <CommentList placeholder={placeholder} commentList={[]} />
       <CommentFormInput />
-    </View>
+    </>
   );
 };
