@@ -1,8 +1,9 @@
+import { ListRenderItemInfo } from '@shopify/flash-list';
 import { useLocalSearchParams } from 'expo-router';
 import { Suspense, useCallback, useState } from 'react';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
-import { ADOPT_LIST_FILTER, useShelter, useShelterAdoptList } from '@/entities';
+import { ADOPT_LIST_FILTER, AdoptCard, AdoptItem, useShelter, useShelterAdoptList } from '@/entities';
 import {
   Button,
   CallModal,
@@ -47,11 +48,26 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
     await Promise.all([shelterActions.executeRefresh(), shelterAdoptsActions.executeRefresh()]);
   }, []);
 
-  const hasCallNumber = !!shelter?.tel;
+  const renderItem = useCallback(
+    ({ item, index }: ListRenderItemInfo<AdoptItem>) => {
+      const isLeft = index % 2 === 0;
+
+      return (
+        <View pl={isLeft ? 20 : 4} pr={isLeft ? 4 : 20} mb={32} onPress={() => shelterAdoptsActions.goDetail(item.id)}>
+          <AdoptCard uri={item.uri} title={item.title} description={item.description} chips={item.chips} />
+        </View>
+      );
+    },
+    [shelterAdoptsActions]
+  );
+
+  const hasCallNumber = !!shelter.shelterData?.tel;
 
   const currentPage = (shelterAdopts.originalData?.page ?? 0) + 1;
   const totalPage = Math.ceil((shelterAdopts.originalData?.total ?? 0) / LIST_SIZE);
   const text = `더보기 ${currentPage}/${totalPage}`;
+
+  if (!shelter.shelterData) return null;
 
   return (
     <>
@@ -61,33 +77,36 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
         isLoading={shelterAdoptsFlags.isLoading}
         onScroll={handleScroll}
         onRefreshCallback={refreshFetch}
-        onPressItem={shelterAdoptsActions.goDetail}
-        contentContainerStyle={{ paddingVertical: 32 }}
+        renderItem={renderItem}
+        emptyComponentVariant="list"
+        contentContainerStyle={{ paddingVertical: 48 }}
         header={
           <YStack mb={24}>
-            <View mb={20}>
-              <ShelterDetailOverviewSection data={shelter} />
+            <View mb={30} px={20}>
+              <ShelterDetailOverviewSection data={shelter.shelterData} />
             </View>
-            <View mb={hasCallNumber ? 32 : 48}>
+            <View mb={32} px={20}>
               <ShelterDetailDescriptionSection
-                time={shelter.time}
-                address={shelter.address}
-                person={shelter.person}
-                tel={shelter.tel ?? '정보 없음'}
+                time={shelter.shelterData.time}
+                address={shelter.shelterData.address}
+                person={shelter.shelterData.person}
+                tel={shelter.shelterData.tel ?? '정보 없음'}
               />
             </View>
 
-            {hasCallNumber && (
-              <View mb={48}>
+            {hasCallNumber ? (
+              <View mb={40}>
                 <Button size="large" onPress={() => setCallModalOpen((prev) => !prev)}>
                   <Text fontSize={15} fontWeight={600} lineHeight={18} color="$black900">
                     보호소에 문의하기
                   </Text>
                 </Button>
               </View>
+            ) : (
+              <Divider mb={40} />
             )}
 
-            <XStack items="flex-end" justify="space-between">
+            <XStack items="flex-end" justify="space-between" px={20}>
               <XStack gap={6} items="flex-end">
                 <Text fontSize={20} fontWeight="600" lineHeight={24} letterSpacing={-0.25} color="$black800">
                   보호중인 아이들
@@ -125,8 +144,8 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
         <CallModal
           open={callModalOpen}
           onClose={() => setCallModalOpen(false)}
-          tel={shelter.tel!}
-          title={`${shelter.name}에 문의하기`}
+          tel={shelter.shelterData.tel!}
+          title={`${shelter.shelterData.name}에 문의하기`}
           description="*원활한 소통을 위해 상담원이 상담, 휴대폰 번호, 주소 등을 수집할 수 있습니다."
         />
       )}
@@ -137,4 +156,9 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
 const Container = styled(View, {
   bg: '$pageBackground',
   flex: 1
+});
+
+const Divider = styled(View, {
+  height: 8,
+  bg: '$white850'
 });

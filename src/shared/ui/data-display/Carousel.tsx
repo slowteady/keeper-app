@@ -91,7 +91,7 @@ const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>(
           {data.map((image, idx) => (
             <View key={image + idx}>
               {!isLoaded[idx] && <Skeleton style={styles.skeleton} />}
-              {isError[idx] && <NoImage style={{ backgroundColor: white800.val }} />}
+              {isError[idx] && <NoImage />}
               {renderImage(image, idx)}
             </View>
           ))}
@@ -179,7 +179,7 @@ const ControllerText = styled(Text, {
 
 const IndicatorContainer = styled(View, {
   position: 'absolute',
-  b: 16,
+  b: 12,
   r: 16,
   rounded: 20,
   px: 8,
@@ -188,8 +188,8 @@ const IndicatorContainer = styled(View, {
 });
 
 const IndicatorText = styled(Text, {
-  fontSize: 11,
-  lineHeight: 13,
+  fontSize: 12,
+  lineHeight: 14,
   fontWeight: '500',
   color: '$white900'
 });

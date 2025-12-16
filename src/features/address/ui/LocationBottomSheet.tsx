@@ -18,7 +18,7 @@ export interface LocationBottomSheetProps {
 
 export const LocationBottomSheet = forwardRef<BottomSheetModal, LocationBottomSheetProps>((props, ref) => {
   const { addresses, onDismiss, onSearch, onSelectAddress, isPending } = props;
-  const snapPoints = useMemo(() => [500], []);
+  const snapPoints = useMemo(() => [300], []);
 
   const renderItem = useCallback(({ item }: ListRenderItemInfo<KakaoAddressDocumentDto>) => {
     const { address_name } = item;
@@ -83,10 +83,11 @@ const NodataContainer = styled(XStack, {
 });
 
 const NodataText = styled(Text, {
-  fontSize: 15,
+  fontSize: 16,
   fontWeight: '400',
-  lineHeight: 17,
-  color: '$black500'
+  lineHeight: 18,
+  color: '$black500',
+  mb: 48
 });
 
 const ListButton = styled(View, {

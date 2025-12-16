@@ -6,7 +6,8 @@ import { Pressable } from 'react-native';
 import { styled, Text, useTheme, XStack, YStack } from 'tamagui';
 
 import { useDeleteUser, useLogout } from '@/entities';
-import { clearUserContext, removeToken, useLayout } from '@/shared';
+import { clearUserContext, removeToken } from '@/shared/lib';
+import { useLayout } from '@/shared/model';
 import { Chat, Heart, Location, Login } from '@/shared/ui/icons/outline';
 
 interface MenuItem {

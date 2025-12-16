@@ -17,7 +17,7 @@ export const ShelterCard = ({ data, onPress }: ShelterCardProps) => {
   return (
     <Container>
       <View onPress={() => onPress(data.id)}>
-        <View p={16}>
+        <View px={16} py={18}>
           <XStack items="center" justify="space-between" gap={8} mb={10}>
             <Text
               numberOfLines={1}
@@ -45,7 +45,7 @@ export const ShelterCard = ({ data, onPress }: ShelterCardProps) => {
               color="$black500"
               ml={4}
             >
-              {convertedAddress}
+              | {convertedAddress}
             </Text>
           </XStack>
         </View>

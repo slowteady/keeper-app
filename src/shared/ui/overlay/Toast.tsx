@@ -18,9 +18,11 @@ export const Toast = () => {
     <>
       <StyledToast
         key={toast.id}
+        animation="quick"
         duration={toast.duration || 2000}
-        enterStyle={{ opacity: 0, transform: [{ translateY: 0 }] }}
-        exitStyle={{ opacity: 0, transform: [{ translateY: 0 }] }}
+        enterStyle={{ transform: [{ translateY: -40 }], opacity: 0 }}
+        exitStyle={{ transform: [{ translateY: -40 }], opacity: 0 }}
+        transform={[{ translateY: 0 }]}
         viewportName={toast.viewportName}
       >
         {hasStatus && <AnimatedIcon status={toast.customData?.status} />}
@@ -65,6 +67,7 @@ const StyledToast = styled(TamaguiToast, {
   bg: '$black900',
   minW: '100%'
 });
+
 const StyledTitle = styled(TamaguiToast.Title, {
   fontWeight: '$5',
   fontSize: 14,

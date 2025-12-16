@@ -2,8 +2,9 @@ import { useEffect } from 'react';
 import { Platform, StyleSheet } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
-import { Button } from '@/shared/ui/button';
 import { ScrollButton } from '@/shared/ui/icons/etc';
+
+import { Button } from './Button';
 
 export interface ScrollUpButtonProps {
   visible: boolean;

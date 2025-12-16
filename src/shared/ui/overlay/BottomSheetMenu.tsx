@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet } from 'react-native';
 import { styled, Text, useTheme, View } from 'tamagui';
 
-import { useLayout } from '@/shared';
+import { useLayout } from '@/shared/model';
 
 import { Check } from '../icons/solid';
 

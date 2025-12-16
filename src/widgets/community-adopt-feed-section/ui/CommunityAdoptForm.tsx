@@ -1,11 +1,11 @@
 import { UseFormReturn } from 'react-hook-form';
 import { Accordion, Form, Paragraph, Square, styled, Text, useTheme, View, YStack } from 'tamagui';
 
-import { ContactSelectField, LabelImageSelector, LabelTextArea, LabelTextField, OptionSelectField } from '@/entities';
-import { CommunityAdoptFormDto } from '@/entities/community';
+import { LabelTextArea, LabelTextField, OptionSelectField } from '@/entities';
+import { CommunityAdoptFormDto, ContactSelectField, LabelImageSelector } from '@/entities/community';
 import { DownArrow } from '@/shared/ui/icons/mini';
 
-export interface CreatePostFormProps {
+export interface CommunityAdoptFormProps {
   form: UseFormReturn<CommunityAdoptFormDto>;
   onPressWeight: () => void;
   onPressAge: () => void;
@@ -13,14 +13,15 @@ export interface CreatePostFormProps {
   onPressLocation: () => void;
 }
 
-export const CreatePostForm = ({
+export const CommunityAdoptForm = ({
   form,
   onPressWeight,
   onPressAge,
   onPressKind,
   onPressLocation
-}: CreatePostFormProps) => {
+}: CommunityAdoptFormProps) => {
   const { black500 } = useTheme();
+
   const { control } = form;
 
   return (
@@ -112,9 +113,12 @@ export const CreatePostForm = ({
             placeholder="예)겁이 많아요, 치석이 있어요"
           />
           <ContactSelectField control={control} label="연락 정보 (중복가능)" required />
-          <LabelImageSelector name="images" control={control} label="이미지 첨부(최대 10장)" required max={10} />
 
-          <Divider mt={12} />
+          <View mb={12}>
+            <LabelImageSelector name="images" control={control} label="이미지 첨부(최대 10장)" required max={10} />
+          </View>
+
+          <Divider />
         </YStack>
 
         <YStack px={20} my={40}>
@@ -203,6 +207,7 @@ const Divider = styled(View, {
   height: 1,
   bg: '$white800'
 });
+
 const H1 = styled(Text, {
   letterSpacing: -0.25,
   fontSize: 26,
@@ -211,6 +216,7 @@ const H1 = styled(Text, {
   mb: 8,
   px: 20
 });
+
 const Caption = styled(Text, {
   fontSize: 14,
   lineHeight: 16,
@@ -219,6 +225,7 @@ const Caption = styled(Text, {
   px: 20,
   mb: 20
 });
+
 const OptionalTitle = styled(Text, {
   fontSize: 18,
   lineHeight: 24,
@@ -227,6 +234,7 @@ const OptionalTitle = styled(Text, {
   mb: 8,
   letterSpacing: -0.25
 });
+
 const OptionalDescription = styled(Text, {
   fontSize: 14,
   lineHeight: 20,
@@ -234,6 +242,7 @@ const OptionalDescription = styled(Text, {
   color: '$black500',
   letterSpacing: -0.25
 });
+
 const AccordionTrigger = styled(Accordion.Trigger, {
   px: 16,
   py: 12,

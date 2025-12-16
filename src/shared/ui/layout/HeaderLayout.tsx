@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { Platform } from 'react-native';
 import { StackProps, styled, XStack, YStack } from 'tamagui';
 
-import { useLayout } from '@/shared';
+import { useLayout } from '@/shared/model';
 
 export interface HeaderLayoutProps {
   showShadow?: boolean;

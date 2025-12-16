@@ -63,6 +63,7 @@ const Page = () => {
         ListFooterComponent={<HomeFooterSection />}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
       />
+
       <ScrollUpButton visible={isButtonVisible} onPress={handlePressButton} />
     </Container>
   );

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Dimensions, Pressable, StyleSheet } from 'react-native';
+import { Dimensions, StyleSheet } from 'react-native';
 import Animated, { interpolate, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { NavigationState, Route, TabView, TabViewProps } from 'react-native-tab-view';
 import { styled, Text, useTheme, View, XStack } from 'tamagui';
@@ -46,7 +46,7 @@ export const TabItem = <T extends Route>({
   const routes = navigationState.routes;
   const animatedIndex = useSharedValue(activeIndex);
 
-  const { primaryMain } = useTheme();
+  const { black900 } = useTheme();
 
   useEffect(() => {
     animatedIndex.value = withTiming(activeIndex, {
@@ -75,15 +75,15 @@ export const TabItem = <T extends Route>({
           const key = `${route.key}-${idx}`;
 
           return (
-            <Pressable key={key} onPress={() => onIndexChange(idx)} style={styles.button}>
+            <View key={key} onPress={() => onIndexChange(idx)} flex={1} items="center" justify="center" hitSlop={16}>
               <StyledText style={{ color: isActive ? activeColor : inactiveColor }}>{route.title}</StyledText>
-            </Pressable>
+            </View>
           );
         })}
       </TabContainer>
 
       <IndicatorContainer>
-        <Animated.View style={[styles.indicator, animatedIndicatorStyle, { backgroundColor: primaryMain.val }]} />
+        <Animated.View style={[styles.indicator, animatedIndicatorStyle, { backgroundColor: black900.val }]} />
       </IndicatorContainer>
     </Container>
   );
@@ -95,16 +95,19 @@ const Container = styled(View, {
   borderBottomColor: '$white600',
   height: TAB_BAR_HEIGHT
 });
+
 const TabContainer = styled(XStack, {
   items: 'center',
   height: '100%'
 });
+
 const StyledText = styled(Text, {
   fontSize: 17,
   lineHeight: 19,
-  fontWeight: '500',
+  fontWeight: '600',
   text: 'center'
 });
+
 const IndicatorContainer = styled(View, {
   position: 'absolute',
   b: -3,
@@ -118,10 +121,5 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     height: 3,
     position: 'absolute'
-  },
-  button: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
   }
 });

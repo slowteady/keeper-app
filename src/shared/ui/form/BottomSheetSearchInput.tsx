@@ -1,10 +1,9 @@
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { useCallback, useState } from 'react';
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
-import { styled, useTheme, XStack } from 'tamagui';
+import { useSharedValue } from 'react-native-reanimated';
+import { AnimatePresence, styled, useTheme, View, XStack } from 'tamagui';
 
-import { Button } from '@/shared';
-import { Close } from '@/shared/ui/icons/outline';
+import { Cancel } from '@/shared/ui/icons/outline';
 import { Search } from '@/shared/ui/icons/solid';
 
 export interface BottomSheetSearchInputProps {
@@ -44,10 +43,7 @@ export const BottomSheetSearchInput = ({ onSubmit, placeholder }: BottomSheetSea
     [closeButtonOpacity]
   );
 
-  const animatedCloseButtonStyle = useAnimatedStyle(() => ({
-    opacity: withTiming(closeButtonOpacity.value, { duration: 200 }),
-    transform: [{ scale: withTiming(closeButtonOpacity.value, { duration: 200 }) }]
-  }));
+  const hasValue = value && value.length > 0;
 
   return (
     <Container borderColor={isFocus ? '$black900' : '$white600'}>
@@ -63,16 +59,19 @@ export const BottomSheetSearchInput = ({ onSubmit, placeholder }: BottomSheetSea
         onBlur={handleBlur}
       />
 
-      <IconContainer>
-        <Animated.View style={animatedCloseButtonStyle}>
-          <Button variant="ghost" onPress={handlePressReset}>
-            <Close width={24} height={24} color={black500.val} />
-          </Button>
-        </Animated.View>
-        <Button variant="ghost" onPress={handleSubmit}>
-          <Search width={24} height={24} color={isFocus ? black900.val : white600.val} />
-        </Button>
-      </IconContainer>
+      <ButtonContainer r={0} gap={12} px={20}>
+        <AnimatePresence>
+          {hasValue && (
+            <ClearButton onPress={() => handlePressReset()}>
+              <Cancel />
+            </ClearButton>
+          )}
+        </AnimatePresence>
+
+        <View width={24} height={24} onPress={() => onSubmit?.(value ?? '')} hitSlop={10}>
+          <Search color={isFocus ? black900.val : white600.val} />
+        </View>
+      </ButtonContainer>
     </Container>
   );
 };
@@ -98,8 +97,15 @@ const Input = styled(BottomSheetTextInput, {
   }
 });
 
-const IconContainer = styled(XStack, {
-  items: 'center',
-  gap: 10,
-  ml: 8
+const ButtonContainer = styled(XStack, {
+  position: 'absolute'
+});
+
+const ClearButton = styled(View, {
+  width: 20,
+  height: 20,
+  hitSlop: 10,
+  enterStyle: { opacity: 0, scale: 0.8 },
+  exitStyle: { opacity: 0, scale: 0.8 },
+  animation: 'quick'
 });

@@ -1,8 +1,13 @@
-import { styled, Text, XStack } from 'tamagui';
+import { styled, Text, XStack, XStackProps } from 'tamagui';
 
-export const FieldLabel = ({ title, required = false }: { title: string; required?: boolean }) => {
+interface FieldLabelProps extends XStackProps {
+  title: string;
+  required?: boolean;
+}
+
+export const FieldLabel = ({ title, required = false, ...props }: FieldLabelProps) => {
   return (
-    <XStack items="baseline" mb={8}>
+    <XStack items="baseline" mb={8} {...props}>
       <Title>{title}</Title>
       {required && (
         <Text color="$primaryMain" fontSize={20}>

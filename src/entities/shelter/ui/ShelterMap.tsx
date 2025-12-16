@@ -4,18 +4,13 @@ import {
   NaverMapViewProps,
   NaverMapViewRef
 } from '@mj-studio/react-native-naver-map';
-import { applicationId } from 'expo-application';
 import * as Haptics from 'expo-haptics';
-import { ActivityAction, startActivityAsync } from 'expo-intent-launcher';
 import { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
-import { Linking, Platform, StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
 
-import { useDebounceFunc } from '@/shared';
-import { isCameraChanged } from '@/shared/lib/utils/map';
-import { CameraParams } from '@/shared/model';
-import { Button } from '@/shared/ui/button';
+import { Button, CameraParams, isCameraChanged, useDebounceFunc, usePermission } from '@/shared';
 
 import { ShelterDto } from '../model';
 
@@ -146,22 +141,14 @@ const Marker = ({ data, onTap, isSelectedId }: ShelterMapMarkerProps) => {
 };
 
 const NoValidMap = () => {
-  const goSettingMenu = async () => {
-    if (Platform.OS === 'ios') {
-      Linking.openURL('app-settings:');
-    } else if (Platform.OS === 'android') {
-      startActivityAsync(ActivityAction.APPLICATION_DETAILS_SETTINGS, {
-        data: `package:${applicationId}`
-      });
-    }
-  };
+  const { actions } = usePermission();
 
   return (
     <NoValidContainer>
-      <Text fontSize={15} lineHeight={17} fontWeight="500" color="$black600">
+      <Text fontSize={16} lineHeight={18} fontWeight="500" color="$black600">
         사용자의 위치설정을 켜주세요.
       </Text>
-      <SettingButton onPress={goSettingMenu}>
+      <SettingButton onPress={actions.goSettingMenu}>
         <Text fontSize={14} lineHeight={16} fontWeight="500" color="$white900">
           위치설정 바로가기
         </Text>

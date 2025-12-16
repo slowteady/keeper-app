@@ -19,7 +19,7 @@ export const Link = ({ url, text }: LinkProps) => {
   return (
     <View onPress={handlePress} hitSlop={12}>
       <YStack self="flex-start" gap={0.5}>
-        <Text fontSize={16} fontWeight="400" color="#707070">
+        <Text fontSize={16} fontWeight="700" color="#707070">
           {text}
         </Text>
 
@@ -32,6 +32,6 @@ export const Link = ({ url, text }: LinkProps) => {
 const isExternal = (url: string) => url.startsWith('http://') || url.startsWith('https://');
 
 const Divider = styled(View, {
-  height: 1,
+  height: 1.4,
   bg: '#707070'
 });

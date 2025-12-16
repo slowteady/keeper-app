@@ -1,11 +1,49 @@
+import { useState } from 'react';
+import { KeyboardAwareScrollView, KeyboardStickyView } from 'react-native-keyboard-controller';
 import { styled, View } from 'tamagui';
 
-import { CreatePost } from '@/features';
+import { LocationBottomSheet, useCreatePost, useLocationBottomSheet } from '@/features';
+import { Button, useLayout } from '@/shared';
+import { CommunityAdoptForm } from '@/widgets';
 
 const Page = () => {
+  const { bottom } = useLayout();
+  const [buttonHeight, setButtonHeight] = useState(0);
+
+  const { form, actions } = useCreatePost();
+
+  const locationBottomSheet = useLocationBottomSheet((selectedAddress) => {
+    form.setValue('location', selectedAddress.address.address_name);
+  });
+
   return (
     <Container>
-      <CreatePost />
+      <KeyboardAwareScrollView contentContainerStyle={{ paddingVertical: 40 }} bottomOffset={buttonHeight}>
+        <CommunityAdoptForm
+          form={form}
+          onPressWeight={actions.openWeightSelector}
+          onPressAge={actions.openAgeSelector}
+          onPressKind={actions.openKindSelector}
+          onPressLocation={locationBottomSheet.actions.openBottomSheet}
+        />
+      </KeyboardAwareScrollView>
+
+      <KeyboardStickyView onLayout={(e) => setButtonHeight(e.nativeEvent.layout.height)}>
+        <StickyButtonWrapper pb={bottom}>
+          <Button size="large" style={{ borderRadius: 10 }} onPress={form.handleSubmit(actions.handleSubmit)}>
+            등록하기
+          </Button>
+        </StickyButtonWrapper>
+      </KeyboardStickyView>
+
+      <LocationBottomSheet
+        ref={locationBottomSheet.refs.ref}
+        addresses={locationBottomSheet.state.searchedAddresses || []}
+        onDismiss={locationBottomSheet.actions.dismiss}
+        onSearch={locationBottomSheet.actions.submitGeocode}
+        onSelectAddress={locationBottomSheet.actions.getAddress}
+        isPending={locationBottomSheet.flags.isPending}
+      />
     </Container>
   );
 };
@@ -15,4 +53,10 @@ export default Page;
 const Container = styled(View, {
   bg: '$pageBackground',
   flex: 1
+});
+
+const StickyButtonWrapper = styled(View, {
+  px: 20,
+  pt: 10,
+  bg: '$white900'
 });

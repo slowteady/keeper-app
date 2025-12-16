@@ -2,9 +2,10 @@ import { router } from 'expo-router';
 import { useCallback } from 'react';
 import { useTheme, View } from 'tamagui';
 
-import { HeaderLayout } from '@/shared';
 import { LeftLineArrow } from '@/shared/ui/icons/mini';
 import { Home } from '@/shared/ui/icons/outline';
+
+import { HeaderLayout } from './HeaderLayout';
 
 export const NavigateHeader = () => {
   const { black900 } = useTheme();

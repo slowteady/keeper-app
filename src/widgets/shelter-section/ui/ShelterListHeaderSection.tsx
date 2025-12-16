@@ -1,13 +1,16 @@
+import { useState } from 'react';
 import { styled, Text, View, XStack } from 'tamagui';
 
 import { SearchInput } from '@/shared';
 
 interface ShelterListHeaderSectionProps {
-  onSubmitSearch: (text: string) => void;
+  onSearch: (text: string) => void;
   onPressLocation: () => void;
 }
 
-export const ShelterListHeaderSection = ({ onSubmitSearch, onPressLocation }: ShelterListHeaderSectionProps) => {
+export const ShelterListHeaderSection = ({ onSearch, onPressLocation }: ShelterListHeaderSectionProps) => {
+  const [searchValue, setSearchValue] = useState('');
+
   return (
     <>
       <TitleContainer mb={16}>
@@ -21,7 +24,12 @@ export const ShelterListHeaderSection = ({ onSubmitSearch, onPressLocation }: Sh
         </Button>
       </TitleContainer>
 
-      <SearchInput onSubmit={onSubmitSearch} placeholder="보호소명 또는 주소를 검색해주세요." />
+      <SearchInput
+        placeholder="보호소명 또는 주소를 검색해주세요."
+        value={searchValue}
+        onTextChange={setSearchValue}
+        onSubmit={onSearch}
+      />
     </>
   );
 };

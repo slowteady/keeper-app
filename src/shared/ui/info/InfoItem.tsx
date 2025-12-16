@@ -8,7 +8,7 @@ export interface InfoItemProps {
 
 export const InfoItem = ({ label, subLabel, value }: InfoItemProps) => {
   return (
-    <YStack items="center" gap={10} flex={1}>
+    <YStack items="center" gap={8} flex={1}>
       <Text fontSize={14} fontWeight="500" lineHeight={20} color="$black600">
         {label}
       </Text>

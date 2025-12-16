@@ -20,7 +20,7 @@ export const ShelterDetailDescriptionSection = ({
         보호소 운영정보
       </Text>
 
-      <YStack gap={8}>
+      <YStack gap={16}>
         <DescriptionWrap>
           <Image source={require('@/assets/images/clock.png')} contentFit="contain" style={{ width: 20, height: 20 }} />
           <DescriptionText>{time}</DescriptionText>
@@ -46,7 +46,7 @@ export const ShelterDetailDescriptionSection = ({
             contentFit="contain"
             style={{ width: 20, height: 20 }}
           />
-          <DescriptionText>{address}</DescriptionText>
+          <DescriptionText lineHeight={24}>{address}</DescriptionText>
         </DescriptionWrap>
       </YStack>
     </YStack>

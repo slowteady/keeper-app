@@ -1,9 +1,36 @@
-import { Text, View } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
+import { styled, View, YStack } from 'tamagui';
+
+import { FeedNodata, ScrollUpButton, useScrollUpButton } from '@/shared';
 
 export const CommunityQnAFeed = () => {
+  const { handleScroll, handlePressButton, isButtonVisible, scrollRef } = useScrollUpButton();
+
   return (
-    <View>
-      <Text>CommunityQnAFeed - 구현 예정</Text>
+    <Container>
+      <FlashList
+        ref={scrollRef}
+        onScroll={handleScroll}
+        data={[]}
+        renderItem={({ item }) => <View></View>}
+        ListEmptyComponent={<EmptyComponent />}
+        contentContainerStyle={{ flexGrow: 1 }}
+      />
+
+      <ScrollUpButton visible={isButtonVisible} onPress={handlePressButton} />
+    </Container>
+  );
+};
+
+const EmptyComponent = () => {
+  return (
+    <View flex={1} items="center" justify="center">
+      <FeedNodata text="아직 게시물이 없어요!" />
     </View>
   );
 };
+
+const Container = styled(YStack, {
+  flex: 1,
+  py: 16
+});

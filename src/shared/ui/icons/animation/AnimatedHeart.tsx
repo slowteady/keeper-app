@@ -1,6 +1,6 @@
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { useEffect, useState } from 'react';
-import { Pressable } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, { interpolateColor, useAnimatedProps, useSharedValue, withTiming } from 'react-native-reanimated';
 import type { SvgProps } from 'react-native-svg';
 import Svg, { Path } from 'react-native-svg';
@@ -33,6 +33,12 @@ export const AnimatedHeart = ({
     fillProgress.value = withTiming(liked ? 1 : 0, { duration: 200 });
   }, [liked, fillProgress]);
 
+  const tap = Gesture.Tap()
+    .onEnd((_e, success) => {
+      if (success) handlePress();
+    })
+    .runOnJS(true);
+
   const handlePress = async () => {
     if (disabled || loading) {
       onPress?.(liked);
@@ -54,8 +60,8 @@ export const AnimatedHeart = ({
   });
 
   return (
-    <Pressable onPress={handlePress} hitSlop={8}>
-      <Svg width={size} height={size} viewBox="0 0 22 20" fill="none" {...props}>
+    <GestureDetector gesture={tap}>
+      <Svg width={size} height={size} viewBox="-1 -1 24 22" fill="none" {...props}>
         <LikeHeart
           fillRule="evenodd"
           clipRule="evenodd"
@@ -64,6 +70,6 @@ export const AnimatedHeart = ({
           animatedProps={animatedPathProps}
         />
       </Svg>
-    </Pressable>
+    </GestureDetector>
   );
 };

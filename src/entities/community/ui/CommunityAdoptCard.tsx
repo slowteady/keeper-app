@@ -55,7 +55,7 @@ export const CommunityAdoptCard = ({
   return (
     <GestureDetector gesture={tap}>
       <View>
-        <XStack items="center" justify="space-between" mb={14}>
+        <XStack items="center" justify="space-between" mb={12}>
           <CommunityAdoptCardHeader image={user.image} nickname={user.nickname} displayTime={displayTime} />
 
           <CommunityAdoptCardHeart
@@ -65,9 +65,9 @@ export const CommunityAdoptCard = ({
             loading={isLoading}
           />
         </XStack>
-        <CommunityAdoptCardTitle title={title} numberOfLines={1} />
-        <CommunityAdoptCardContent content={content} />
-        {hasTags && <CommunityAdoptCardTags tags={tags} />}
+        <CommunityAdoptCardTitle title={title} numberOfLines={1} mb={8} />
+        <CommunityAdoptCardContent content={content} mb={20} />
+        {hasTags && <CommunityAdoptCardTags tags={tags} mb={20} />}
         <CommunityAdoptCardCarousel images={images} mb={12} />
         <CommunityAdoptCardStats comment={counts.comment} like={counts.like} view={counts.view} />
       </View>
@@ -83,7 +83,7 @@ export interface CommunityAdoptCardHeartProps {
 }
 
 export const CommunityAdoptCardHeart = ({ isLiked, onPress, disabled, loading }: CommunityAdoptCardHeartProps) => {
-  return <AnimatedHeart isLiked={isLiked} onPress={onPress} disabled={disabled} loading={loading} size={22} />;
+  return <AnimatedHeart isLiked={isLiked} onPress={onPress} disabled={disabled} loading={loading} size={28} />;
 };
 
 export const CommunityAdoptCardTitle = ({ title, ...props }: { title: string } & TextProps) => {
@@ -92,7 +92,7 @@ export const CommunityAdoptCardTitle = ({ title, ...props }: { title: string } &
 
 export const CommunityAdoptCardTags = ({ tags, ...props }: { tags: string[] } & XStackProps) => {
   return (
-    <XStack gap={6} flexWrap="wrap" mb={16} {...props}>
+    <XStack gap={6} flexWrap="wrap" {...props}>
       {tags.map((tag, idx) => (
         <Chip key={`${tag}-${idx}`} text={tag} />
       ))}
@@ -100,8 +100,8 @@ export const CommunityAdoptCardTags = ({ tags, ...props }: { tags: string[] } & 
   );
 };
 
-export const CommunityAdoptCardContent = ({ content }: { content: string }) => {
-  return <StyledContent>{content}</StyledContent>;
+export const CommunityAdoptCardContent = ({ content, ...props }: { content: string } & Omit<TextProps, 'content'>) => {
+  return <StyledContent {...props}>{content}</StyledContent>;
 };
 
 export const CommunityAdoptCardCarousel = ({ images, ...props }: { images: string[] } & ViewProps) => {
@@ -114,23 +114,23 @@ export const CommunityAdoptCardCarousel = ({ images, ...props }: { images: strin
 
 const StyledTitle = styled(Text, {
   fontSize: 20,
-  lineHeight: 30,
+  lineHeight: 32,
   fontWeight: 600,
   color: '$black800',
-  numberOfLines: 1,
+  numberOfLines: 2,
   ellipsizeMode: 'tail',
-  mb: 12,
   letterSpacing: -0.25
 });
+
 const StyledContent = styled(Text, {
   fontSize: 15,
-  lineHeight: 21,
+  lineHeight: 24,
   fontWeight: 400,
   color: '#7E7E7E',
   numberOfLines: 2,
-  ellipsizeMode: 'tail',
-  mb: 24
+  ellipsizeMode: 'tail'
 });
+
 const CarouselWrap = styled(View, {
   width: Dimensions.get('screen').width - 40,
   aspectRatio: 5 / 4,

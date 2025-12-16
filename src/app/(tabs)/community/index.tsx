@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { SceneMap } from 'react-native-tab-view';
 import { styled, View } from 'tamagui';
 
-import { COMMUNITY_ROUTES } from '@/entities';
+import { COMMUNITY_TAB_ROUTES } from '@/entities';
 import { Tab } from '@/shared';
 import { CommunityAdoptFeed, CommunityLifeFeed, CommunityQnAFeed } from '@/widgets';
 
@@ -17,7 +17,11 @@ const Page = () => {
 
   return (
     <Container>
-      <Tab onIndexChange={setIndex} navigationState={{ index, routes: COMMUNITY_ROUTES }} renderScene={renderScene} />
+      <Tab
+        onIndexChange={setIndex}
+        navigationState={{ index, routes: COMMUNITY_TAB_ROUTES }}
+        renderScene={renderScene}
+      />
     </Container>
   );
 };

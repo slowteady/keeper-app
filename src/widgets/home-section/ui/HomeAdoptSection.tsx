@@ -1,6 +1,6 @@
 import { FlashList, FlashListRef, ListRenderItemInfo } from '@shopify/flash-list';
 import { useCallback, useEffect, useRef } from 'react';
-import { styled, Text, View, XStack } from 'tamagui';
+import { styled, Text, View, XStack, YStack } from 'tamagui';
 
 import {
   ADOPT_CARD_IMAGE_SIZES,
@@ -8,7 +8,6 @@ import {
   AdoptCard,
   AdoptCardSkeleton,
   AdoptItem,
-  AdoptNodata,
   useAdoptList
 } from '@/entities';
 import { ADOPT_ANIMAL_FILTER, ButtonGroup, Dropdown, ViewAllButton } from '@/shared';
@@ -37,8 +36,8 @@ export const HomeAdoptSection = () => {
   return (
     <>
       <TitleContainer mb={16} px={20}>
-        <Text fontSize={26} lineHeight={36} fontWeight="600" color="$black900">
-          오늘의 입양공고
+        <Text fontSize={26} lineHeight={36} fontWeight="600" color="$black900" onPress={() => actions.goList()}>
+          입양공고
         </Text>
 
         <View mt={12}>
@@ -63,8 +62,8 @@ export const HomeAdoptSection = () => {
         horizontal
         decelerationRate="fast"
         showsHorizontalScrollIndicator={false}
-        ItemSeparatorComponent={() => <View width={18} />}
-        contentContainerStyle={{ flexGrow: 1, minHeight: 350 }}
+        ItemSeparatorComponent={() => <View width={12} />}
+        contentContainerStyle={{ minHeight: 350 }}
         style={{ paddingLeft: 20 }}
         ListEmptyComponent={<EmptyComponent isLoading={flags.isLoading} />}
         ListFooterComponent={<ViewAllButton onPress={actions.goList} />}
@@ -82,9 +81,16 @@ const EmptyComponent = ({ isLoading }: { isLoading: boolean }) => {
       ))}
     </XStack>
   ) : (
-    <View flex={1} items="center" justify="center">
-      <AdoptNodata />
-    </View>
+    <YStack gap={20}>
+      <NodataWrap>
+        <Text fontSize={18} lineHeight={20} fontWeight="500" color="$black500">
+          [No Data]
+        </Text>
+      </NodataWrap>
+      <Text fontSize={17} lineHeight={19} fontWeight="500" color="$black900">
+        공고가 없습니다.
+      </Text>
+    </YStack>
   );
 };
 
@@ -93,24 +99,11 @@ const TitleContainer = styled(XStack, {
   justify: 'space-between'
 });
 
-{
-  /* <YStack gap={20}>
-  <NodataWrap>
-    <Text fontSize={18} lineHeight={20} fontWeight="500" color="$black500">
-      [No Data]
-    </Text>
-  </NodataWrap>
-  <Text fontSize={17} lineHeight={19} fontWeight="500" color="$black900">
-    공고가 없습니다.
-  </Text>
-</YStack>; */
-}
-
-// const NodataWrap = styled(XStack, {
-//   width: ADOPT_CARD_IMAGE_SIZES.medium,
-//   aspectRatio: 5 / 4,
-//   items: 'center',
-//   justify: 'center',
-//   bg: '$backgroundDefault',
-//   rounded: 8
-// });
+const NodataWrap = styled(XStack, {
+  width: ADOPT_CARD_IMAGE_SIZES.medium,
+  aspectRatio: 5 / 4,
+  items: 'center',
+  justify: 'center',
+  bg: '$backgroundDefault',
+  rounded: 8
+});

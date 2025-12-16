@@ -1,13 +1,13 @@
 import { Image } from 'expo-image';
 import { Text, YStack } from 'tamagui';
 
-export interface AdoptNodataProps {
+export interface FeedNodataProps {
   text?: string;
   width?: number;
   height?: number;
 }
 
-export const AdoptNodata = ({ text = '아직 공고가 없어요!', width = 100, height = 120 }: AdoptNodataProps) => {
+export const FeedNodata = ({ text = '아직 공고가 없어요!', width = 100, height = 120 }: FeedNodataProps) => {
   return (
     <YStack gap={20} items="center" justify="center">
       <Image source={require('@/assets/images/puppy.png')} contentFit="contain" style={{ width, height }} />

@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useMemo } from 'react';
 import { styled, Text, View } from 'tamagui';
 
-import { ModalButtons, useCall, useModal } from '@/shared';
+import { useCall } from '@/shared/model';
+
+import { ModalButtons } from './ModalButtons';
+import { useModal } from './ModalProvider';
 
 export interface CallModalProps {
   open: boolean;

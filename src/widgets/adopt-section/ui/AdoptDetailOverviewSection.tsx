@@ -12,7 +12,7 @@ export interface AdoptDetailOverviewSectionProps {
 export const AdoptDetailOverviewSection = ({ title, images, description }: AdoptDetailOverviewSectionProps) => {
   return (
     <>
-      <TitleContainer mb={30} gap={8}>
+      <TitleContainer mb={20} gap={8}>
         <Text numberOfLines={1} ellipsizeMode="tail" fontSize={28} lineHeight={30} fontWeight="500" flex={1}>
           {title}
         </Text>

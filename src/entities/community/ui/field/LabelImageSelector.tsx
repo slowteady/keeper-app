@@ -21,13 +21,13 @@ export const LabelImageSelector = ({ label, required, name, control, max = 10, .
       name={name}
       control={control}
       render={({ field }) => {
-        const images = Array.isArray(field.value) ? field.value : [];
+        const images: string[] = Array.isArray(field.value) ? (field.value as string[]) : [];
         const count = images.length;
 
         return (
           <YStack>
             <XStack items="center" justify="space-between">
-              <FieldLabel title={label} required={required} />
+              <FieldLabel title={label} required={required} mb={10} />
 
               <XStack>
                 <Text fontSize={12} fontWeight="$4" color={count > 0 ? '#707070' : '#BEBEBE'}>
@@ -39,7 +39,13 @@ export const LabelImageSelector = ({ label, required, name, control, max = 10, .
               </XStack>
             </XStack>
 
-            <ImageSelector max={max} size={IMAGE_BOX_SIZE} value={images} onChange={field.onChange} {...props} />
+            <ImageSelector
+              max={max}
+              size={IMAGE_BOX_SIZE}
+              value={images}
+              onChange={(images: string[]) => field.onChange(images)}
+              {...props}
+            />
           </YStack>
         );
       }}

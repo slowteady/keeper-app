@@ -21,11 +21,11 @@ export const mapToAdoptList = (data: AdoptDataDto[], filter?: AdoptFilterDto) =>
 };
 
 export const mapToAdopt = (data: AdoptDataDto) => {
-  const { age, weight, happenPlace, orgName, noticeStartDt, noticeEndDt, fullName, gender } = data;
+  const { age, weight, happenPlace, orgName, noticeStartDt, noticeEndDt, fullName, gender, specificType } = data;
 
   const convertedWeight = formatWeight(weight);
   const convertedAge = `${age.substring(0, 4).replace(/[^0-9]/g, '')}`;
-  const convertedDescriptions = convertDescription({ noticeStartDt, noticeEndDt, orgName, happenPlace });
+  const convertedDescriptions = convertDescription({ noticeStartDt, noticeEndDt, orgName, happenPlace, specificType });
   const convertedGender = convertGenderLabel(gender);
 
   return {
@@ -135,15 +135,17 @@ interface DescriptionParams {
   noticeEndDt: AdoptDataDto['noticeEndDt'];
   orgName: AdoptDataDto['orgName'];
   happenPlace: AdoptDataDto['happenPlace'];
+  specificType?: AdoptDataDto['specificType'];
 }
-const convertDescription = ({ noticeStartDt, noticeEndDt, orgName, happenPlace }: DescriptionParams) => {
+const convertDescription = ({ noticeStartDt, noticeEndDt, orgName, happenPlace, specificType }: DescriptionParams) => {
   const startDt = dayjs(noticeStartDt).format('YY.MM.DD');
   const endDt = dayjs(noticeEndDt).format('YY.MM.DD');
 
   return [
     { label: '공고기간', value: `${startDt}-${endDt}` },
     { label: '지역', value: orgName },
-    { label: '구조장소', value: happenPlace }
+    { label: '구조장소', value: happenPlace },
+    ...(specificType ? [{ label: '품종', value: specificType }] : [])
   ];
 };
 

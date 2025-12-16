@@ -30,7 +30,7 @@ const Page = () => {
         ref={scrollRef}
         keyExtractor={({ id }, i) => `${id}-${i}`}
         decelerationRate="fast"
-        data={data.shelters}
+        data={state.shelterList}
         renderItem={renderItem}
         onScroll={handleScroll}
         showsVerticalScrollIndicator={false}
@@ -38,7 +38,7 @@ const Page = () => {
           <View px={20} mb={20}>
             <View mb={16}>
               <ShelterListHeaderSection
-                onSubmitSearch={actions.searchLocation}
+                onSearch={actions.searchLocation}
                 onPressLocation={locationBottomSheet.actions.openBottomSheet}
               />
             </View>
@@ -87,8 +87,8 @@ const EmptyComponent = ({ isLoading }: { isLoading: boolean }) => {
       ))}
     </YStack>
   ) : (
-    <NodataContainer mx={20} py={32}>
-      <Text fontSize={14} lineHeight={16} fontWeight="500" color="$black500">
+    <NodataContainer mx={20} py={42}>
+      <Text fontSize={15} lineHeight={17} fontWeight="500" color="$black500">
         가까운 곳에 보호소가 없어요.
       </Text>
     </NodataContainer>

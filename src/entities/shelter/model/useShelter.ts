@@ -1,7 +1,7 @@
-import { useQueryClient } from '@tanstack/react-query';
-import { useCallback, useMemo } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useCallback } from 'react';
 
-import { SHELTER_QUERY_KEY } from '@/shared';
+import { SHELTER_QUERY_KEY, throwToErrorBoundary } from '@/shared';
 
 import { mapToShelter } from './mapper';
 import { useGetShelter } from './query';
@@ -11,17 +11,23 @@ export interface UseShelterProps {
 }
 
 export const useShelter = ({ id }: UseShelterProps) => {
-  const { data: shelterData } = useGetShelter(id);
-  const queryClient = useQueryClient();
+  const { data: shelterData, isLoading } = useQuery({
+    ...useGetShelter(id),
+    select: (data) => mapToShelter(data.data.data),
+    throwOnError: (error) => throwToErrorBoundary(error)
+  });
 
-  const convertedShelter = useMemo(() => shelterData && mapToShelter(shelterData), [shelterData]);
+  const queryClient = useQueryClient();
 
   const executeRefresh = useCallback(async () => {
     await queryClient.invalidateQueries({ queryKey: [SHELTER_QUERY_KEY] });
   }, [queryClient]);
 
+  const hasCallNumber = !!shelterData?.tel;
+
   return {
-    data: convertedShelter,
+    data: { shelterData },
+    flags: { isLoading, hasCallNumber },
     actions: { executeRefresh }
   };
 };

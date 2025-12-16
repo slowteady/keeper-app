@@ -19,7 +19,7 @@ export const ShelterDetailOverviewSection = ({ data }: ShelterDetailOverviewSect
 
   return (
     <>
-      <TitleContainer mb={24}>
+      <TitleContainer mb={30}>
         <Text numberOfLines={2} ellipsizeMode="tail" fontSize={28} lineHeight={38} fontWeight="500" color="$black900">
           {name}
         </Text>

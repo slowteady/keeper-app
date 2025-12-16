@@ -3,11 +3,13 @@ import { styled, useTheme, View, XStack, YStack } from 'tamagui';
 
 import { COMMUNITY_LIST_FILTER, CommunityAdoptCard } from '@/entities';
 import { useCommunityAdoptFeed, usePostFilter } from '@/features';
-import { ADOPT_ANIMAL_FILTER, ButtonGroup, ChipButton, useLikePost } from '@/shared';
+import { ADOPT_ANIMAL_FILTER, ButtonGroup, ChipButton, ScrollUpButton, useLikePost, useScrollUpButton } from '@/shared';
 import { DownArrow } from '@/shared/ui/icons/mini';
 
 export const CommunityAdoptFeed = () => {
   const { black500 } = useTheme();
+
+  const { handleScroll, handlePressButton, isButtonVisible, scrollRef } = useScrollUpButton();
   const { actions: likeActions } = useLikePost();
   const { state: filterState, actions: filterActions } = usePostFilter();
   const { data, actions: feedActions } = useCommunityAdoptFeed();
@@ -17,6 +19,8 @@ export const CommunityAdoptFeed = () => {
   return (
     <Container>
       <FlashList
+        ref={scrollRef}
+        onScroll={handleScroll}
         keyExtractor={({ id }, i) => `${id}-${i}`}
         data={data.adoptList}
         showsVerticalScrollIndicator={false}
@@ -24,13 +28,15 @@ export const CommunityAdoptFeed = () => {
         ListEmptyComponent={<></>}
         ListHeaderComponent={
           <View px={20}>
-            <ButtonGroup
-              data={ADOPT_ANIMAL_FILTER}
-              id={filterState.selectedAnimalType}
-              onChange={filterActions.changeAnimalType}
-            />
+            <View mb={16}>
+              <ButtonGroup
+                data={ADOPT_ANIMAL_FILTER}
+                id={filterState.selectedAnimalType}
+                onChange={filterActions.changeAnimalType}
+              />
+            </View>
 
-            <XStack mt={16} gap={4}>
+            <XStack gap={4}>
               <ChipButton
                 onPress={filterActions.changeFilter}
                 right={<DownArrow width={12} height={12} color={black500.val} style={{ marginLeft: 4 }} />}
@@ -50,6 +56,8 @@ export const CommunityAdoptFeed = () => {
           </View>
         )}
       />
+
+      <ScrollUpButton visible={isButtonVisible} onPress={handlePressButton} />
     </Container>
   );
 };

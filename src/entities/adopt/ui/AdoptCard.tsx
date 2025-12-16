@@ -116,7 +116,7 @@ const ImageContainer = styled(View, {
 });
 
 const Title = styled(Text, {
-  fontWeight: 700,
+  fontWeight: 600,
   color: '$black900',
   numberOfLines: 1,
   ellipsizeMode: 'tail',

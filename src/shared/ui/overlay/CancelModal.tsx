@@ -1,7 +1,8 @@
 import { useCallback, useEffect } from 'react';
 import { styled, Text, View } from 'tamagui';
 
-import { ModalButtons, useModal } from '@/shared';
+import { ModalButtons } from './ModalButtons';
+import { useModal } from './ModalProvider';
 
 export interface CancelModalProps {
   open: boolean;

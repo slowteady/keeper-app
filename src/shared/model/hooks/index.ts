@@ -5,6 +5,7 @@ export * from './useDebounce';
 export * from './useLayout';
 export * from './useLikePost';
 export * from './useMap';
+export * from './usePermission';
 export * from './useRefreshing';
 export * from './useScrollUpButton';
 export * from './useSharePost';

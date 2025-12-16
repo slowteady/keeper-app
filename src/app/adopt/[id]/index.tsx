@@ -27,9 +27,7 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
   const { bottom } = useLayout();
 
   const { data: adopt } = useAdopt({ id });
-  const { data: shelter } = useShelter({ id: adopt.shelterId });
-
-  const hasCallNumber = !!shelter?.tel;
+  const { data: shelter, flags: shelterFlags } = useShelter({ id: adopt.shelterId });
 
   return (
     <>
@@ -37,16 +35,16 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
         decelerationRate="fast"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={
-          { position: 'relative', paddingTop: 40, paddingBottom: hasCallNumber ? undefined : bottom } as any
+          { position: 'relative', paddingTop: 48, paddingBottom: shelterFlags.hasCallNumber ? 24 : bottom } as any
         }
       >
-        <View mb={20} px={20}>
+        <View mb={30} px={20}>
           <AdoptDetailOverviewSection title={adopt.title} images={adopt.images} description={adopt.description} />
         </View>
 
-        <Divider mb={36} />
+        <Divider mb={30} />
 
-        <View px={20} pb={32}>
+        <View px={20} pb={48}>
           <AdoptDetailInfoSection
             age={adopt.age}
             gender={adopt.gender}
@@ -58,11 +56,15 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
         </View>
 
         <View px={20}>
-          <AdoptDetailDescriptionSection specialMark={adopt.specialMark} shelter={shelter} />
+          <AdoptDetailDescriptionSection
+            specialMark={adopt.specialMark}
+            shelter={shelter.shelterData}
+            hasCallNumber={shelterFlags.hasCallNumber}
+          />
         </View>
       </ScrollView>
 
-      {hasCallNumber && (
+      {shelterFlags.hasCallNumber && (
         <>
           <BottomButton onPress={() => setCallModalOpen((prev) => !prev)}>
             <Text fontSize={15} fontWeight={600} lineHeight={18} color="$black900">
@@ -73,8 +75,8 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
           <CallModal
             open={callModalOpen}
             onClose={() => setCallModalOpen(false)}
-            tel={shelter.tel!}
-            title={`${shelter.name}에 문의하기`}
+            tel={shelter.shelterData?.tel!}
+            title={`${shelter.shelterData?.name}에 문의하기`}
             description="*원활한 소통을 위해 상담원이 상담, 휴대폰 번호, 주소 등을 수집할 수 있습니다."
           />
         </>

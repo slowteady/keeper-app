@@ -3,20 +3,19 @@ import { styled, TextArea as TamaguiTextArea } from 'tamagui';
 export type TextAreaSize = 'medium' | 'large';
 
 export const TextArea = styled(TamaguiTextArea, {
-  flex: 1,
   variants: {
     size: {
       medium: {
         fontSize: 15,
         fontWeight: 500,
         lineHeight: 23,
-        height: 48,
+        minHeight: 48,
         rounded: 8
       },
       large: {
         fontSize: 16,
         fontWeight: 600,
-        height: 60
+        minHeight: 60
       }
     },
     variant: {

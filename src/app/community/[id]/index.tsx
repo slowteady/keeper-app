@@ -26,7 +26,7 @@ const Page = () => {
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<CommentDto>) => {
       return (
-        <View key={item.id} px={20} pt={24} pb={16}>
+        <View key={item.id} px={20} py={24}>
           <CommentCard comment={item} onPressLike={() => likeActions.toggleLikeComment(item.id)} />
         </View>
       );
@@ -44,6 +44,7 @@ const Page = () => {
         ref={scrollRef}
         showsVerticalScrollIndicator={false}
         decelerationRate="fast"
+        ItemSeparatorComponent={() => <View height={1} bg="$backgroundDefault" />}
         ListHeaderComponent={() => (
           <>
             <View px={20} mb={32}>
@@ -55,7 +56,9 @@ const Page = () => {
                 }
               />
             </View>
+
             <Divider mb={32} />
+
             <YStack px={20} mb={40}>
               <AdoptDetailInfoSection {...data.infos} />
             </YStack>
@@ -63,7 +66,7 @@ const Page = () => {
               <CommunityDetailDescriptionSection {...data.descriptions} />
             </View>
             <View px={20} mb={20}>
-              <Button onPress={() => setCallModalOpen((prev) => !prev)}>연락하기</Button>
+              <Button onPress={() => setCallModalOpen((prev) => !prev)}>문의하기</Button>
             </View>
             <View px={20} mb={16}>
               <CommunityAdoptCardStats {...data.detailPost.counts} />
@@ -76,7 +79,7 @@ const Page = () => {
             />
           </>
         )}
-        contentContainerStyle={{ paddingBottom: inputHeight, paddingTop: 24, flexGrow: 1 }}
+        contentContainerStyle={{ paddingBottom: inputHeight, paddingTop: 32, flexGrow: 1 }}
         ListEmptyComponent={() => (
           <View items="center" justify="center" height={200}>
             <EmptyText>{'아직 댓글이 없습니다.\n여러분의 의견을 적어주세요:)'}</EmptyText>
@@ -86,7 +89,7 @@ const Page = () => {
 
       <KeyboardStickyView>
         <StickyInner onLayout={(event) => setInputHeight(event.nativeEvent.layout.height)} pb={bottom}>
-          <CommentFormInput />
+          <CommentFormInput flex={1} maxH={48} />
           <ScrollUpButton visible={isButtonVisible} onPress={handlePressButton} bottom={inputHeight + 20} />
         </StickyInner>
       </KeyboardStickyView>

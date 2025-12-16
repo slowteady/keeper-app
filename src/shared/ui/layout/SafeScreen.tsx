@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai';
 import { View, ViewProps, YStack, YStackProps } from 'tamagui';
 
-import { useLayout } from '@/shared';
+import { useLayout } from '@/shared/model';
 
 import { safeScreenAtom } from './safeScreen.store';
 

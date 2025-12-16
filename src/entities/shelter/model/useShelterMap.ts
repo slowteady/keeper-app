@@ -1,3 +1,4 @@
+import { useToastController } from '@tamagui/toast';
 import { PermissionStatus } from 'expo-location';
 import { useCallback, useEffect, useState } from 'react';
 import { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
@@ -13,6 +14,7 @@ export const useShelterMap = () => {
 
   const opacity = useSharedValue(1);
   const translateY = useSharedValue(0);
+  const { show } = useToastController();
 
   const { camera, setCamera, distance, setDistance, initialLocation, mapRef, permissionStatus } = useMap();
 
@@ -79,11 +81,17 @@ export const useShelterMap = () => {
           userLongitude: initialLocation?.longitude || 0
         },
         {
-          onSuccess: ({ data }) => setShelterList(data.data)
+          onSuccess: ({ data }) => {
+            if (!data.data.length) {
+              show('검색 결과가 없어요.', { customData: { status: 'fail' } });
+              return;
+            }
+            setShelterList(data.data);
+          }
         }
       );
     },
-    [initialLocation?.latitude, initialLocation?.longitude, mutate]
+    [initialLocation?.latitude, initialLocation?.longitude, mutate, show]
   );
 
   const toggleTapMarker = useCallback(

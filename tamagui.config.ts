@@ -47,6 +47,7 @@ export const config = createTamagui({
     ...defaultConfig.tokens,
     color: {
       pageBackground: '#FFFFFF',
+      backgroundDefault: '#F3F4F4',
       white600: '#D3D9D5',
       white700: '#E7E7E7',
       white800: '#E9ECEA',
@@ -56,6 +57,7 @@ export const config = createTamagui({
       black400: '#C1C4C2',
       black500: '#ADB3AF',
       black600: '#868B88',
+      black650: '#707070',
       black700: '#3F403F',
       black800: '#222423',
       black900: '#161717',
@@ -67,7 +69,6 @@ export const config = createTamagui({
       errorLightest: '#FFD7D6',
       successMain: '#0A7FFF',
       successLightest: '#CFE6FF',
-      backgroundDefault: '#F3F4F4',
       noticeMain: '#FFB800',
       noticeLightest: '#FFF5DB'
     },
@@ -117,9 +118,11 @@ export const config = createTamagui({
       white900: '#FFFFFF',
 
       blackMain: '#000000',
+      black300: '#707070',
       black400: '#C1C4C2',
       black500: '#ADB3AF',
       black600: '#868B88',
+      black650: '#707070',
       black700: '#3F403F',
       black800: '#222423',
       black900: '#161717',
