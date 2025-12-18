@@ -33,7 +33,7 @@ export const HomeShelterSection = () => {
   return (
     <>
       <HeaderContainer px={20} mb={16}>
-        <Text fontSize={26} lineHeight={36} fontWeight="600" color="$black900">
+        <Text fontSize={26} lineHeight={36} fontWeight="600" color="$black900" onPress={() => router.push('/shelter')}>
           보호소 찾기
         </Text>
         <XStack items="center" gap={2} mt={12} onPress={() => router.push('/shelter')}>

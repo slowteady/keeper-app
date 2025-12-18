@@ -95,7 +95,7 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
             </View>
 
             {hasCallNumber ? (
-              <View mb={40}>
+              <View mb={40} px={20}>
                 <Button size="large" onPress={() => setCallModalOpen((prev) => !prev)}>
                   <Text fontSize={15} fontWeight={600} lineHeight={18} color="$black900">
                     보호소에 문의하기

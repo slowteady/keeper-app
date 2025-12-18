@@ -1,7 +1,7 @@
 import * as Haptics from 'expo-haptics';
 import { useCallback, useState } from 'react';
 
-export const useRefreshing = (onRefreshCallback: () => Promise<void>) => {
+export const useListRefreshing = (onRefreshCallback: () => Promise<void>) => {
   const [refreshing, setRefreshing] = useState(false);
 
   const handleRefresh = useCallback(async () => {

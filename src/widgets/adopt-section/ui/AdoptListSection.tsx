@@ -4,7 +4,7 @@ import { RefreshControl } from 'react-native';
 import { Text, View, XStack } from 'tamagui';
 
 import { ADOPT_CARD_IMAGE_SIZES, AdoptCardSkeleton, AdoptItem } from '@/entities';
-import { FeedNodata, useRefreshing } from '@/shared';
+import { FeedNodata, useListRefreshing } from '@/shared';
 
 export interface AdoptListSectionProps {
   data: AdoptItem[];
@@ -35,7 +35,7 @@ export const AdoptListSection = forwardRef<FlashListRef<AdoptItem>, AdoptListSec
     }: AdoptListSectionProps,
     ref
   ) => {
-    const { refreshing, handleRefresh } = useRefreshing(onRefreshCallback);
+    const { refreshing, handleRefresh } = useListRefreshing(onRefreshCallback);
 
     return (
       <FlashList

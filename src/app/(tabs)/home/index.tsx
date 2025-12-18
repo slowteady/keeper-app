@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { RefreshControl } from 'react-native';
 import { styled, View } from 'tamagui';
 
-import { ADOPTS_QUERY_KEY, ScrollUpButton, SHELTER_QUERY_KEY, useRefreshing, useScrollUpButton } from '@/shared';
+import { ADOPTS_QUERY_KEY, ScrollUpButton, SHELTER_QUERY_KEY, useListRefreshing, useScrollUpButton } from '@/shared';
 import { HomeAdoptSection, HomeBannerSection, HomeFooterSection, HomeShelterSection } from '@/widgets';
 
 const IMAGES = [require('@/assets/images/banner1.png'), require('@/assets/images/banner2.png')];
@@ -20,7 +20,7 @@ const Page = () => {
     ]);
   };
 
-  const { refreshing, handleRefresh } = useRefreshing(refetchQueries);
+  const { refreshing, handleRefresh } = useListRefreshing(refetchQueries);
 
   const sections = useMemo(() => {
     return [
