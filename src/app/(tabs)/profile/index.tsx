@@ -3,7 +3,7 @@ import { SceneMap } from 'react-native-tab-view';
 import { styled, View } from 'tamagui';
 
 import { PROFILE_TAB_ROUTES } from '@/entities/profile';
-import { useAuthUser } from '@/features';
+import { useCurrentUser } from '@/features';
 import { Tab } from '@/shared';
 import {
   ProfileActivityScene,
@@ -22,7 +22,7 @@ const renderScene = SceneMap({
 const Page = () => {
   const [index, setIndex] = useState(0);
 
-  const { data, flags } = useAuthUser();
+  const { data, flags } = useCurrentUser();
 
   return (
     <Container>

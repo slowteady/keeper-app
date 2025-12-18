@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useGetLoggedInUser } from '@/entities';
 import { getAccessToken, removeToken, USER_QUERY_KEY } from '@/shared';
 
-export const useAuthUser = () => {
+export const useCurrentUser = () => {
   const [enabled, setEnabled] = useState(false);
   const queryClient = useQueryClient();
 

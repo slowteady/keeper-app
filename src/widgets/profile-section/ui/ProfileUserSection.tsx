@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { router } from 'expo-router';
 import { Avatar, styled, Text, View, XStack, YStack } from 'tamagui';
 
 import { UserDto } from '@/entities';
+import { useCurrentUser } from '@/features';
 
 export interface ProfileUserSectionProps {
   isLoggedIn: boolean;
@@ -9,7 +10,8 @@ export interface ProfileUserSectionProps {
 }
 
 export const ProfileUserSection = ({ isLoggedIn, user }: ProfileUserSectionProps) => {
-  const [isValidUser, setIsValidUser] = useState(false);
+  const { data, flags } = useCurrentUser();
+
   const nickname = '정재현';
   const grade = '일반회원';
   const email = 'keeper@gmail.com';
@@ -19,7 +21,7 @@ export const ProfileUserSection = ({ isLoggedIn, user }: ProfileUserSectionProps
 
   return (
     <Container>
-      {isValidUser ? (
+      {flags.isLoggedIn ? (
         <>
           <StyledAvatar>
             <Avatar.Image source={{ uri }} />
@@ -41,7 +43,7 @@ export const ProfileUserSection = ({ isLoggedIn, user }: ProfileUserSectionProps
           </YStack>
 
           <YStack gap={24}>
-            <LogoutButton onPress={() => setIsValidUser(false)}>
+            <LogoutButton onPress={() => {}}>
               <Text fontSize={13} fontWeight="600" color="$black600">
                 로그아웃
               </Text>
@@ -54,7 +56,7 @@ export const ProfileUserSection = ({ isLoggedIn, user }: ProfileUserSectionProps
           </YStack>
         </>
       ) : (
-        <NoAuthSection onPress={() => setIsValidUser(true)} />
+        <NoAuthSection onPress={() => router.push('/login')} />
       )}
     </Container>
   );
