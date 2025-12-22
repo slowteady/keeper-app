@@ -1,11 +1,12 @@
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { useToastController } from '@tamagui/toast';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { isAvailableAsync } from 'expo-apple-authentication';
 import { Route, router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 
-import { SocialLoginType, useLogin as useLoginMutation } from '@/entities';
-import { saveAccessToken, saveRefreshToken, setUserContext } from '@/shared';
+import { login, SocialLoginType } from '@/entities';
+import { saveAccessToken, saveRefreshToken, setUserContext, USER_QUERY_KEY } from '@/shared';
 
 export const useLogin = () => {
   const { redirect } = useLocalSearchParams<{ redirect?: Route }>();
@@ -13,8 +14,10 @@ export const useLogin = () => {
   const [isAppleAvailable, isSetAppleAvailable] = useState<boolean | null>(null);
   const [isGoogleAvailable, isSetGoogleAvailable] = useState<boolean | null>(null);
 
-  const { mutate: loginMutate, isPending } = useLoginMutation();
+  const { mutate, isPending } = useMutation({ mutationFn: login });
+
   const { show } = useToastController();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     (async () => {
@@ -34,7 +37,7 @@ export const useLogin = () => {
 
   const executeLogin = useCallback(
     (socialType: SocialLoginType, token: string) => {
-      loginMutate(
+      mutate(
         { socialType, token },
         {
           onSuccess: async ({ data: resultData }) => {
@@ -52,6 +55,7 @@ export const useLogin = () => {
             await saveAccessToken(accessToken);
             await saveRefreshToken(refreshToken);
             setUserContext(user);
+            queryClient.invalidateQueries({ queryKey: [USER_QUERY_KEY] });
             show('로그인 되었어요.', { customData: { status: 'success' } });
 
             router.replace(redirect || '/');
@@ -62,7 +66,7 @@ export const useLogin = () => {
         }
       );
     },
-    [loginMutate, redirect, show]
+    [mutate, queryClient, show, redirect]
   );
 
   return {

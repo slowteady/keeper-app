@@ -1,30 +1,21 @@
 import { router } from 'expo-router';
 import { Avatar, styled, Text, View, XStack, YStack } from 'tamagui';
 
-import { UserDto } from '@/entities';
-import { useCurrentUser } from '@/features';
+import { useCurrentUser, useLogout } from '@/features';
 
-export interface ProfileUserSectionProps {
-  isLoggedIn: boolean;
-  user: UserDto | null;
-}
+export const ProfileUserSection = () => {
+  const { data: userData, flags: userFlags } = useCurrentUser();
+  const { actions: logoutActions } = useLogout();
 
-export const ProfileUserSection = ({ isLoggedIn, user }: ProfileUserSectionProps) => {
-  const { data, flags } = useCurrentUser();
-
-  const nickname = '정재현';
+  const { nickname, email, image } = userData?.user || {};
   const grade = '일반회원';
-  const email = 'keeper@gmail.com';
-  const uri = 'https://loremflickr.com/600/400';
-
-  // const isValidUser = isLoggedIn && user;
 
   return (
     <Container>
-      {flags.isLoggedIn ? (
+      {userFlags.isLoggedIn ? (
         <>
           <StyledAvatar>
-            <Avatar.Image source={{ uri }} />
+            <Avatar.Image source={{ uri: image }} />
             <Avatar.Fallback backgroundColor="$black400" />
           </StyledAvatar>
 
@@ -32,8 +23,8 @@ export const ProfileUserSection = ({ isLoggedIn, user }: ProfileUserSectionProps
             <Text fontSize={20} fontWeight="500" color="$black900" mb={6}>
               {nickname}님
             </Text>
-            <View px={6} py={4} mb={10}>
-              <Text fontSize={11} fontWeight="500" color="$black600" letterSpacing={-0.25}>
+            <View px={6} py={4} mb={10} bg="$white850" rounded={3} self="baseline">
+              <Text fontSize={11} fontWeight="500" color="$black500" letterSpacing={-0.25}>
                 {grade}
               </Text>
             </View>
@@ -43,7 +34,7 @@ export const ProfileUserSection = ({ isLoggedIn, user }: ProfileUserSectionProps
           </YStack>
 
           <YStack gap={24}>
-            <LogoutButton onPress={() => {}}>
+            <LogoutButton onPress={logoutActions.executeLogout}>
               <Text fontSize={13} fontWeight="600" color="$black600">
                 로그아웃
               </Text>
@@ -56,7 +47,7 @@ export const ProfileUserSection = ({ isLoggedIn, user }: ProfileUserSectionProps
           </YStack>
         </>
       ) : (
-        <NoAuthSection onPress={() => router.push('/login')} />
+        <NoAuthSection onPress={() => router.push({ pathname: '/login', params: { redirect: '/profile' } })} />
       )}
     </Container>
   );

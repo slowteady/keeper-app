@@ -3,13 +3,14 @@ import { logout } from '@react-native-kakao/user';
 import NaverLogin from '@react-native-seoul/naver-login';
 import { usePreventRemove } from '@react-navigation/native';
 import { useToastController } from '@tamagui/toast';
+import { useMutation } from '@tanstack/react-query';
 import { Route, router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { SignUpBodyDto, SocialLoginType, useSignUp } from '@/entities';
+import { signup, SignUpBodyDto, SocialLoginType } from '@/entities';
 import { removeToken, saveAccessToken, saveRefreshToken } from '@/shared';
 
-export const useSignupUser = () => {
+export const useSignup = () => {
   const { socialType, socialId, redirect } = useLocalSearchParams<{
     socialType: SocialLoginType;
     socialId: string;
@@ -21,7 +22,7 @@ export const useSignupUser = () => {
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [navigateTarget, setNavigateTarget] = useState<Route>();
 
-  const { mutateAsync, isPending } = useSignUp();
+  const { mutateAsync, isPending } = useMutation({ mutationFn: signup });
 
   // 모달 상태를 ref로 관리하여 클로저 문제 방지
   const showCancelModalRef = useRef(showCancelModal);

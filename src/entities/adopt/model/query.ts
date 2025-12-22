@@ -1,7 +1,6 @@
 import { useInfiniteQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { AxiosError, AxiosResponse } from 'axios';
 
-import { AdoptDataDto, AdoptParamsDto, AdoptResponseDto } from '@/entities';
 import {
   ADOPT_QUERY_KEY,
   ADOPTS_QUERY_KEY,
@@ -10,6 +9,8 @@ import {
   UseInfiniteQueryCustomOptions,
   UseSuspenseQueryCustomOptions
 } from '@/shared';
+
+import { AdoptDataDto, AdoptParamsDto, AdoptResponseDto } from './schema';
 
 const BASE_URL = `v2/abandonments`;
 

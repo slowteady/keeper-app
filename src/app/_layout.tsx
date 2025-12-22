@@ -22,7 +22,7 @@ import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { TamaguiProvider } from 'tamagui';
 
-import { authApi, BottomSheetProvider, ModalProvider, setupInterceptor, throwToErrorBoundary, Toast } from '@/shared';
+import { authApi, BottomSheetProvider, ModalProvider, setupInterceptor, Toast } from '@/shared';
 
 import { config } from '../../tamagui.config';
 import AnimatedSplash from './AnimatedSplash';
@@ -49,12 +49,12 @@ const RootLayout = () => {
         refetchOnReconnect: false,
         retry: false,
         gcTime: 1000 * 60 * 5,
-        staleTime: 1000 * 60 * 2,
-        throwOnError: throwToErrorBoundary
+        staleTime: 1000 * 60 * 2
+        // throwOnError:
       },
       mutations: {
-        retry: false,
-        throwOnError: throwToErrorBoundary
+        retry: false
+        // throwOnError: throwToErrorBoundary
       }
     }
   });
@@ -131,11 +131,7 @@ const RootLayout = () => {
                     <ToastProvider native={false} swipeDirection="up">
                       <StatusBar style="dark" />
                       <Toast />
-                      <Stack screenOptions={{ headerShown: false }}>
-                        <Stack.Screen name="index" options={{ headerShown: false }} />
-                        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-                      </Stack>
+                      <Stack screenOptions={{ headerShown: false }} />
                     </ToastProvider>
                   </ModalProvider>
                 </BottomSheetProvider>

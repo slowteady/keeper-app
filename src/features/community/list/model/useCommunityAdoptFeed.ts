@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { getAdoptListValue } from './mock';
 
@@ -8,7 +8,7 @@ export const useCommunityAdoptFeed = () => {
     router.push({ pathname: '/community/[id]', params: { id } });
   }, []);
 
-  const adoptList = getAdoptListValue();
+  const adoptList = useMemo(() => getAdoptListValue(), []);
 
   return {
     data: { adoptList },

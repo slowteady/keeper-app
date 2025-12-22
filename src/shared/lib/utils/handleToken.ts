@@ -31,14 +31,14 @@ export const saveRefreshToken = async (token: string) => {
  * 엑세스 토큰 조회
  */
 export const getAccessToken = async () => {
-  return getItemAsync(ACCESS_TOKEN_KEY);
+  return await getItemAsync(ACCESS_TOKEN_KEY);
 };
 
 /**
  * 리프레시 토큰 조회
  */
 export const getRefreshToken = async () => {
-  return getItemAsync(REFRESH_TOKEN_KEY);
+  return await getItemAsync(REFRESH_TOKEN_KEY);
 };
 
 /**

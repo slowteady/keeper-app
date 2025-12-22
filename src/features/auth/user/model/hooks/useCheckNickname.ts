@@ -1,6 +1,7 @@
+import { useMutation } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
 
-import { useCheckNickname as useCheckNicknameEntity } from '@/entities';
+import { checkNickname } from '@/entities';
 import { useDebounceValue } from '@/shared';
 
 export type NicknameStatus = {
@@ -11,15 +12,15 @@ export type NicknameStatus = {
 export const useCheckNickname = () => {
   const [isChecking, setIsChecking] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
+  const [nickname, setNickname] = useState('');
   const [nicknameStatus, setNicknameStatus] = useState<NicknameStatus>({
     status: 'default',
     message: '*기호, 특수문자 제외 8자 가능'
   });
-  const [nickname, setNickname] = useState('');
 
   const debouncedNickname = useDebounceValue(nickname, 1000);
 
-  const { mutate } = useCheckNicknameEntity();
+  const { mutate } = useMutation({ mutationFn: checkNickname });
 
   const changeNickname = useCallback((nickname: string) => {
     // 필터링: 특수문자 제거
