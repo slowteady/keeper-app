@@ -2,11 +2,11 @@ import { Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { Spinner, styled, Text, XStack, YStack } from 'tamagui';
 
-import { useCheckNickname, useSignupUser } from '@/features';
+import { useCheckNickname, useSignup } from '@/features';
 import { BottomButton, CancelModal, TextInput } from '@/shared';
 
 const Page = () => {
-  const { actions: signupActions, flags: signupFlags } = useSignupUser();
+  const { actions: signupActions, flags: signupFlags } = useSignup();
   const { state: nicknameState, flags: nicknameFlags, actions: nicknameActions } = useCheckNickname();
 
   const helperText = nicknameFlags.isChecking ? (

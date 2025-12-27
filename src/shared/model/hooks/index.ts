@@ -7,5 +7,6 @@ export * from './useLikePost';
 export * from './useListRefreshing';
 export * from './useMap';
 export * from './usePermission';
+export * from './useReview';
 export * from './useScrollUpButton';
-export * from './useSharePost';
+export * from './useShare';

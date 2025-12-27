@@ -6,7 +6,7 @@ import { styled, Text, View, YStack } from 'tamagui';
 
 import { CommentCard, CommentDto, CommentFormInput, CommentListHeader, CommunityAdoptCardStats } from '@/entities';
 import { useCommunityAdoptDetailFeed, useCommunityCommentList } from '@/features';
-import { Button, CallModal, ScrollUpButton, useLayout, useLikePost, useScrollUpButton, useSharePost } from '@/shared';
+import { Button, CallModal, ScrollUpButton, useLayout, useLikePost, useScrollUpButton } from '@/shared';
 import { AdoptDetailInfoSection, CommunityDetailDescriptionSection, CommunityDetailOverviewSection } from '@/widgets';
 
 const Page = () => {
@@ -21,7 +21,7 @@ const Page = () => {
   const { handleScroll, handlePressButton, isButtonVisible, scrollRef } = useScrollUpButton();
   const { state: commentState, data: commentData, actions: commentActions } = useCommunityCommentList();
   const { actions: likeActions } = useLikePost();
-  const { actions: shareActions } = useSharePost();
+  // const { actions: shareActions } = useSharePost();
 
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<CommentDto>) => {
@@ -52,7 +52,8 @@ const Page = () => {
                 {...data.overviews}
                 onPressLike={() => likeActions.toggleLikePost(id)}
                 onPressShare={(id) =>
-                  shareActions.sharePost({ id, title: data.detailPost.title, image: data.detailPost.images[0] })
+                  // shareActions.sharePost({ id, title: data.detailPost.title, image: data.detailPost.images[0] })
+                  console.log(123)
                 }
               />
             </View>

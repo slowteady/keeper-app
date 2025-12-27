@@ -1,29 +1,14 @@
 import { ChevronRight } from '@tamagui/lucide-icons';
-import * as StoreReview from 'expo-store-review';
-import { useCallback } from 'react';
-import { Linking } from 'react-native';
+import * as Application from 'expo-application';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
-import { logger } from '@/shared/lib/utils';
+import { useReview, useShare } from '@/shared';
 
 export const ProfileShareSection = () => {
-  const version = '10.34';
+  const { actions: shareActions } = useShare();
+  const { actions: reviewActions } = useReview();
 
-  const handleReviewPress = useCallback(async () => {
-    try {
-      const available = await StoreReview.isAvailableAsync();
-      if (available) {
-        await StoreReview.requestReview();
-      } else {
-        const url = StoreReview.storeUrl();
-        if (url) {
-          await Linking.openURL(url);
-        }
-      }
-    } catch (error) {
-      logger.warn('App Review failed:', error);
-    }
-  }, []);
+  const version = Application.nativeApplicationVersion;
 
   return (
     <Container>
@@ -33,7 +18,7 @@ export const ProfileShareSection = () => {
           <SubTitle>따뜻한 리뷰는 운영에 큰 힘이됩니다.</SubTitle>
         </LeftColumn>
 
-        <RightColumn onPress={handleReviewPress}>
+        <RightColumn onPress={reviewActions.promptReview} hitSlop={10}>
           <Text fontSize={12} fontWeight="600" color="$black500" letterSpacing={-0.25}>
             바로가기
           </Text>
@@ -49,7 +34,10 @@ export const ProfileShareSection = () => {
           <SubTitle>ver. {version}</SubTitle>
         </LeftColumn>
 
-        <RightColumn>
+        <RightColumn
+          hitSlop={10}
+          onPress={() => shareActions.share({ title: 'Keeper', desc: '유기동물들의 가족이 되어주세요' })}
+        >
           <Text fontSize={12} fontWeight="600" color="$black500" letterSpacing={-0.25}>
             공유하기
           </Text>
