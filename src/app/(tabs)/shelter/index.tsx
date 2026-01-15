@@ -3,10 +3,11 @@ import { router } from 'expo-router';
 import { useCallback } from 'react';
 import { styled, Text, View, YStack } from 'tamagui';
 
-import { ShelterCard, ShelterDto, useShelterMap } from '@/entities';
-import { KakaoAddressDocumentDto, LocationBottomSheet, useLocationBottomSheet } from '@/features';
-import { ScrollUpButton, Skeleton, useScrollUpButton } from '@/shared';
-import { ShelterListHeaderSection, ShelterMapSection } from '@/widgets';
+import { ShelterCard, ShelterDto, useShelterMap } from '@/entities/shelter';
+import { KakaoAddressDocumentDto, LocationBottomSheet, useLocationBottomSheet } from '@/features/address';
+import { useScrollUpButton } from '@/shared/model';
+import { ScrollUpButton, Skeleton } from '@/shared/ui';
+import { ShelterListHeaderSection, ShelterMapSection } from '@/widgets/shelter-section';
 
 const Page = () => {
   const { data, refs, state, actions, flags } = useShelterMap();

@@ -1,6 +1,6 @@
 import { styled, TextAreaProps, View, XStack } from 'tamagui';
 
-import { Button, TextArea } from '@/shared';
+import { Button, TextArea } from '@/shared/ui';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
 export const CommentFormInput = ({ ...props }: TextAreaProps) => {

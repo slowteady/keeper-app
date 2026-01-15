@@ -1,9 +1,9 @@
 import { Control, Controller, FieldPath } from 'react-hook-form';
 import { YStack } from 'tamagui';
 
-import { ChipGroup } from '@/shared';
+import { ChipGroup } from '@/shared/ui';
 
-import { CREATE_POST_OPTIONS, CommunityAdoptFormDto } from '../../model';
+import { CommunityAdoptFormDto, CREATE_POST_OPTIONS } from '../../model';
 import { FieldLabel } from './FieldLabel';
 
 type OptionFieldName = keyof typeof CREATE_POST_OPTIONS;

@@ -2,8 +2,8 @@ import { Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { Spinner, styled, Text, XStack, YStack } from 'tamagui';
 
-import { useCheckNickname, useSignup } from '@/features';
-import { BottomButton, CancelModal, TextInput } from '@/shared';
+import { useCheckNickname, useSignup } from '@/features/auth';
+import { BottomButton, CancelModal, TextInput } from '@/shared/ui';
 
 const Page = () => {
   const { actions: signupActions, flags: signupFlags } = useSignup();

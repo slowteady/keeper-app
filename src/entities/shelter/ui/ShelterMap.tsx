@@ -10,7 +10,9 @@ import { Platform, StyleSheet } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
 
-import { Button, CameraParams, isCameraChanged, useDebounceFunc, usePermission } from '@/shared';
+import { isCameraChanged } from '@/shared/lib';
+import { CameraParams, useDebounceFunc, usePermission } from '@/shared/model';
+import { Button } from '@/shared/ui';
 
 import { ShelterDto } from '../model';
 

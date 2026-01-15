@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Dimensions, StyleSheet } from 'react-native';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
-import { NoImage, Skeleton } from '@/shared';
+import { NoImage, Skeleton } from '@/shared/ui';
 
 export interface AdoptCardProps {
   uri: string;

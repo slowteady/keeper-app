@@ -2,8 +2,8 @@ import { Camera, NaverMapViewRef } from '@mj-studio/react-native-naver-map';
 import { forwardRef } from 'react';
 import { View } from 'tamagui';
 
-import { DistanceIndicator, ShelterCountDto, ShelterDto, ShelterMap } from '@/entities';
-import { CameraParams } from '@/shared';
+import { DistanceIndicator, ShelterCountDto, ShelterDto, ShelterMap } from '@/entities/shelter';
+import { CameraParams } from '@/shared/model';
 
 export interface ShelterMapSectionProps {
   hasLocationStatus: boolean;

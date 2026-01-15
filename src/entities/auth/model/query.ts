@@ -1,4 +1,4 @@
-import { USER_QUERY_KEY } from '@/shared';
+import { USER_QUERY_KEY } from '@/shared/model';
 
 import { getUser } from './api';
 

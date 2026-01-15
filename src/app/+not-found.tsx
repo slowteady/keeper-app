@@ -2,7 +2,8 @@ import { router } from 'expo-router';
 import LottieView from 'lottie-react-native';
 import { Text, View, YStack } from 'tamagui';
 
-import { Button, SafeScreen, useLayout } from '@/shared';
+import { useLayout } from '@/shared/model';
+import { Button, SafeScreen } from '@/shared/ui';
 
 export default function NotFound() {
   const { bottom } = useLayout();

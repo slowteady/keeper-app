@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 
-import { BottomNavigation } from '@/shared';
+import { BottomNavigation } from '@/shared/ui';
 
 const TabsLayout = () => {
   return (

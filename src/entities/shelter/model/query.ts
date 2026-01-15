@@ -2,16 +2,16 @@ import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { AxiosError, AxiosResponse } from 'axios';
 
 import { AdoptResponseDto } from '@/entities/adopt';
+import { publicApi } from '@/shared/apis';
 import {
   ApiResponse,
-  publicApi,
   SHELTER_ADOPTS_QUERY_KEY,
   SHELTER_COUNTS_QUERY_KEY,
   SHELTER_QUERY_KEY,
   SHELTERS_QUERY_KEY,
   UseInfiniteQueryCustomOptions,
   UseQueryCustomOptions
-} from '@/shared';
+} from '@/shared/model';
 
 import {
   ShelterAdoptsParamsDto,

@@ -1,9 +1,10 @@
 import { fakerKO } from '@faker-js/faker';
 import dayjs from 'dayjs';
 
-import { CommentDto, CommentSortOrderDto } from '@/entities';
+import { CommentDto } from '@/entities/comment';
+import { CommentSortOrderDto } from '@/entities/community';
 import { getUserValue } from '@/features/auth';
-import { formatTimeAgo } from '@/shared';
+import { formatTimeAgo } from '@/shared/lib';
 
 export const getCommentList = (sortOrder: CommentSortOrderDto): CommentDto[] => {
   // 1. 원본 Date로 데이터 생성

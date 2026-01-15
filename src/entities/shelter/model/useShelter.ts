@@ -1,7 +1,8 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
-import { SHELTER_QUERY_KEY, throwToErrorBoundary } from '@/shared';
+import { throwToErrorBoundary } from '@/shared/lib';
+import { SHELTER_QUERY_KEY } from '@/shared/model';
 
 import { mapToShelter } from './mapper';
 import { useGetShelter } from './query';

@@ -4,10 +4,16 @@ import { useCallback, useState } from 'react';
 import { KeyboardStickyView } from 'react-native-keyboard-controller';
 import { styled, Text, View, YStack } from 'tamagui';
 
-import { CommentCard, CommentDto, CommentFormInput, CommentListHeader, CommunityAdoptCardStats } from '@/entities';
-import { useCommunityAdoptDetailFeed, useCommunityCommentList } from '@/features';
-import { Button, CallModal, ScrollUpButton, useLayout, useLikePost, useScrollUpButton } from '@/shared';
-import { AdoptDetailInfoSection, CommunityDetailDescriptionSection, CommunityDetailOverviewSection } from '@/widgets';
+import { CommentCard, CommentDto, CommentFormInput, CommentListHeader } from '@/entities/comment';
+import { CommunityAdoptCardStats } from '@/entities/community';
+import { useCommunityAdoptDetailFeed, useCommunityCommentList } from '@/features/community';
+import { useLayout, useLikePost, useScrollUpButton, useShare } from '@/shared/model';
+import { Button, CallModal, ScrollUpButton } from '@/shared/ui';
+import { AdoptDetailInfoSection } from '@/widgets/adopt-section';
+import {
+  CommunityDetailDescriptionSection,
+  CommunityDetailOverviewSection
+} from '@/widgets/community-adopt-feed-section';
 
 const Page = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -21,7 +27,7 @@ const Page = () => {
   const { handleScroll, handlePressButton, isButtonVisible, scrollRef } = useScrollUpButton();
   const { state: commentState, data: commentData, actions: commentActions } = useCommunityCommentList();
   const { actions: likeActions } = useLikePost();
-  // const { actions: shareActions } = useSharePost();
+  const { actions: shareActions } = useShare();
 
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<CommentDto>) => {
@@ -52,8 +58,13 @@ const Page = () => {
                 {...data.overviews}
                 onPressLike={() => likeActions.toggleLikePost(id)}
                 onPressShare={(id) =>
-                  // shareActions.sharePost({ id, title: data.detailPost.title, image: data.detailPost.images[0] })
-                  console.log(123)
+                  shareActions.share({
+                    id,
+                    path: 'community',
+                    title: data.detailPost.title,
+                    desc: '유기동물들의 가족이 되어주세요',
+                    image: data.detailPost.images[0]
+                  })
                 }
               />
             </View>

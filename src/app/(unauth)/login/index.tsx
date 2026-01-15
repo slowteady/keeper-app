@@ -1,7 +1,7 @@
 import { styled, Text, View, YStack } from 'tamagui';
 
-import { AppleButton, GoogleButton, KakaoButton, NaverButton } from '@/entities';
-import { useLogin } from '@/features';
+import { AppleButton, GoogleButton, KakaoButton, NaverButton } from '@/entities/auth';
+import { useLogin } from '@/features/auth';
 
 const Page = () => {
   const { actions, flags } = useLogin();

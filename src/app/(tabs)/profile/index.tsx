@@ -1,37 +1,16 @@
-import { useState } from 'react';
-import { SceneMap } from 'react-native-tab-view';
 import { styled, View } from 'tamagui';
 
-import { PROFILE_TAB_ROUTES } from '@/entities/profile';
-import { Tab } from '@/shared';
-import {
-  ProfileActivityScene,
-  ProfileLikeScene,
-  ProfileNoticeScene,
-  ProfileShareSection,
-  ProfileUserSection
-} from '@/widgets';
-
-const renderScene = SceneMap({
-  like: ProfileLikeScene,
-  activity: ProfileActivityScene,
-  notice: ProfileNoticeScene
-});
+import { useCurrentUser } from '@/features/auth';
+import { ProfileContentSection, ProfileHeader, ProfileMenuList } from '@/widgets/profile';
 
 const Page = () => {
-  const [index, setIndex] = useState(0);
+  const { data, flags } = useCurrentUser();
 
   return (
     <Container>
-      <View px={20} mb={24} pt={40}>
-        <ProfileUserSection />
-      </View>
-
-      <View px={20} mb={16}>
-        <ProfileShareSection />
-      </View>
-
-      <Tab onIndexChange={setIndex} navigationState={{ index, routes: PROFILE_TAB_ROUTES }} renderScene={renderScene} />
+      <ProfileHeader user={data.user} isLoading={flags.isLoading} />
+      <ProfileContentSection />
+      <ProfileMenuList />
     </Container>
   );
 };

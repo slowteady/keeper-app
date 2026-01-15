@@ -1,14 +1,14 @@
 import { useInfiniteQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { AxiosError, AxiosResponse } from 'axios';
 
+import { publicApi } from '@/shared/apis';
 import {
   ADOPT_QUERY_KEY,
   ADOPTS_QUERY_KEY,
   ApiResponse,
-  publicApi,
   UseInfiniteQueryCustomOptions,
   UseSuspenseQueryCustomOptions
-} from '@/shared';
+} from '@/shared/model';
 
 import { AdoptDataDto, AdoptParamsDto, AdoptResponseDto } from './schema';
 

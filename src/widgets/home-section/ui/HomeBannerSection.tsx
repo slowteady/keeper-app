@@ -1,7 +1,8 @@
 import { Dimensions } from 'react-native';
 import { styled, View } from 'tamagui';
 
-import { Carousel, useCarousel } from '@/shared';
+import { useCarousel } from '@/shared/model';
+import { Carousel } from '@/shared/ui';
 
 export interface HomeBannerSectionProps {
   images: string[];

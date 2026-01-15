@@ -1,4 +1,4 @@
-import { CommunityAdoptDetailDto } from '@/entities';
+import { CommunityAdoptDetailDto } from '@/entities/community';
 
 export const convertToAdoptDetailOverviewData = (detailPost: CommunityAdoptDetailDto) => {
   return {

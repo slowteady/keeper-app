@@ -11,8 +11,8 @@ import {
   ShelterDto,
   ShelterMap,
   useShelterMap
-} from '@/entities';
-import { Skeleton, ViewAllButton } from '@/shared';
+} from '@/entities/shelter';
+import { Skeleton, ViewAllButton } from '@/shared/ui';
 import { DownArrow } from '@/shared/ui/icons/mini';
 
 const SHELTER_CARD_MIN_HEIGHT = 144;

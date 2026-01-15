@@ -1,4 +1,4 @@
-import { formatTimeAMPM, validateAndSanitizeTel } from '@/shared';
+import { formatTimeAMPM, validateAndSanitizeTel } from '@/shared/lib';
 
 import { ShelterDto } from './schema';
 

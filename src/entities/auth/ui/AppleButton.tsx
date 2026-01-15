@@ -7,7 +7,7 @@ import {
 } from 'expo-apple-authentication';
 import { useState } from 'react';
 
-import { logger } from '@/shared';
+import { logger } from '@/shared/lib';
 
 import { SocialLoginType } from '../model';
 

@@ -3,8 +3,8 @@ import { Dimensions } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { styled, Text, TextProps, View, ViewProps, XStack, XStackProps } from 'tamagui';
 
-import { useLoginRequired } from '@/features';
-import { Carousel, Chip } from '@/shared';
+import { useLoginRequired } from '@/features/auth';
+import { Carousel, Chip } from '@/shared/ui';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
 import { CommunityAdoptListDto } from '../model';

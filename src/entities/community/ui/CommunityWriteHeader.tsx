@@ -1,8 +1,8 @@
 import { router } from 'expo-router';
 import { useTheme, View } from 'tamagui';
 
-import { useLoginRequired } from '@/features';
-import { HeaderLayout } from '@/shared';
+import { useLoginRequired } from '@/features/auth';
+import { HeaderLayout } from '@/shared/ui';
 import { Logo, Pencil } from '@/shared/ui/icons/outline';
 
 export const CommunityWriteHeader = () => {

@@ -5,7 +5,7 @@ import { styled, useTheme, XStack } from 'tamagui';
 
 export interface ButtonGroupProps<T> {
   id: T;
-  data: ButtonGroupData<T>[];
+  data: readonly ButtonGroupData<T>[];
   onChange: (id: T) => void;
 }
 

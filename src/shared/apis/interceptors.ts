@@ -1,6 +1,6 @@
 import { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
 
-import { getRefresh } from '@/entities';
+import { getRefresh } from '@/entities/auth/model/api';
 
 import {
   getAccessToken,

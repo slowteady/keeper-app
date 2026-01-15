@@ -3,8 +3,9 @@ import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useMemo } from 'react';
 
-import { ADOPT_LIST_FILTER, mapToAdoptList } from '@/entities/adopt';
-import { parseQueryParam, SHELTER_ADOPTS_QUERY_KEY } from '@/shared';
+import { makeAdoptOption, mapToAdoptList } from '@/entities/adopt';
+import { parseQueryParam } from '@/shared/lib';
+import { SHELTER_ADOPTS_QUERY_KEY } from '@/shared/model';
 
 import { useGetShelterAdopts } from './query';
 import { ShelterAdoptsParamsDto } from './schema';
@@ -19,7 +20,7 @@ export const useShelterAdoptList = ({ id, adoptsParams }: UseShelterAdoptListPro
   const queryClient = useQueryClient();
 
   const selectedFilter = useMemo(
-    () => parseQueryParam(ADOPT_LIST_FILTER, ADOPT_LIST_FILTER[0].id, params.filter),
+    () => parseQueryParam(makeAdoptOption('FILTER'), makeAdoptOption('FILTER')[0].id, params.filter),
     [params.filter]
   );
 

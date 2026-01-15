@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { LayoutChangeEvent } from 'react-native';
 import { styled, View, ViewProps } from 'tamagui';
 
-import { useLayout } from '@/shared/model';
+import { useLayout } from '@/shared/model/hooks/useLayout';
 
 import { Button, ButtonProps } from './Button';
 

@@ -1,7 +1,7 @@
 import { Control, Controller } from 'react-hook-form';
 import { YStack } from 'tamagui';
 
-import { TextField, TextFieldProps } from '@/shared';
+import { TextField, TextFieldProps } from '@/shared/ui';
 
 import { CommunityAdoptFormDto } from '../../model';
 import { FieldLabel } from './FieldLabel';

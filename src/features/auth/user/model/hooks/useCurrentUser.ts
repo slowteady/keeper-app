@@ -2,13 +2,13 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useState } from 'react';
 
-import { useGetUser } from '@/entities';
-import { getAccessToken } from '@/shared';
+import { useGetUser } from '@/entities/auth';
+import { getAccessToken } from '@/shared/lib';
 
 export const useCurrentUser = () => {
   const [enabled, setEnabled] = useState(false);
 
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     ...useGetUser(),
     refetchOnWindowFocus: true,
     refetchOnReconnect: true,
@@ -25,8 +25,8 @@ export const useCurrentUser = () => {
     checkToken();
   });
 
-  const user = data?.data;
+  const user = enabled ? data?.data : null;
   const isLoggedIn = !!user;
 
-  return { data: { user }, flags: { isLoggedIn } };
+  return { data: { user }, flags: { isLoggedIn, isLoading } };
 };

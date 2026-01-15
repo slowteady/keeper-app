@@ -1,9 +1,9 @@
 import { FlashList } from '@shopify/flash-list';
 import { styled, View, YStack } from 'tamagui';
 
-import { FeedNodata } from '@/shared';
+import { FeedNodata } from '@/shared/ui';
 
-export const ProfileLikeScene = () => {
+export const ProfileNoticeScene = () => {
   return (
     <Container>
       <FlashList
@@ -19,7 +19,7 @@ export const ProfileLikeScene = () => {
 const EmptyComponent = () => {
   return (
     <View flex={1} items="center" justify="center">
-      <FeedNodata text="아직 관심 목록이 없어요!" />
+      <FeedNodata text="아직 공지사항이 없어요!" />
     </View>
   );
 };

@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { useLoginRequired } from '@/features';
+import { useLoginRequired } from '@/features/auth/user/model/hooks/useLoginRequired';
 
 export const useLikePost = () => {
   const { actions } = useLoginRequired();
@@ -9,12 +9,7 @@ export const useLikePost = () => {
     async (postId: string) => {
       actions.requireLogin(async () => {
         try {
-          // TODO: API 호출 구현
-          // await likePostApi(postId);
-        } catch (error) {
-          console.error('Failed to like post:', error);
-        } finally {
-        }
+        } catch {}
       });
     },
     [actions]
@@ -24,12 +19,7 @@ export const useLikePost = () => {
     async (commentId: string) => {
       actions.requireLogin(async () => {
         try {
-          // TODO: API 호출 구현
-          // await likeCommentApi(commentId);
-        } catch (error) {
-          console.error('Failed to like comment:', error);
-        } finally {
-        }
+        } catch {}
       });
     },
     [actions]

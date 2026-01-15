@@ -1,6 +1,6 @@
 import { fakerKO } from '@faker-js/faker';
 
-import { UserDto } from '@/entities';
+import { UserDto } from '@/entities/auth';
 
 export const getUserValue = (): UserDto => {
   return {

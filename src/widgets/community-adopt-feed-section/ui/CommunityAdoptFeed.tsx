@@ -1,9 +1,11 @@
 import { FlashList } from '@shopify/flash-list';
 import { styled, useTheme, View, XStack, YStack } from 'tamagui';
 
-import { COMMUNITY_LIST_FILTER, CommunityAdoptCard } from '@/entities';
-import { useCommunityAdoptFeed, usePostFilter } from '@/features';
-import { ADOPT_ANIMAL_FILTER, ButtonGroup, ChipButton, ScrollUpButton, useLikePost, useScrollUpButton } from '@/shared';
+import { makeAdoptOption } from '@/entities/adopt';
+import { COMMUNITY_LIST_FILTER, CommunityAdoptCard } from '@/entities/community';
+import { useCommunityAdoptFeed, useCommunityListFilter } from '@/features/community';
+import { useLikePost, useScrollUpButton } from '@/shared/model';
+import { ButtonGroup, ChipButton, ScrollUpButton } from '@/shared/ui';
 import { DownArrow } from '@/shared/ui/icons/mini';
 
 export const CommunityAdoptFeed = () => {
@@ -11,7 +13,7 @@ export const CommunityAdoptFeed = () => {
 
   const { handleScroll, handlePressButton, isButtonVisible, scrollRef } = useScrollUpButton();
   const { actions: likeActions } = useLikePost();
-  const { state: filterState, actions: filterActions } = usePostFilter();
+  const { state: filterState, actions: filterActions } = useCommunityListFilter();
   const { data, actions: feedActions } = useCommunityAdoptFeed();
 
   const filterText = COMMUNITY_LIST_FILTER.find((f) => f.id === filterState.selectedFilter)?.label || '';
@@ -30,7 +32,7 @@ export const CommunityAdoptFeed = () => {
           <View px={20}>
             <View mb={16}>
               <ButtonGroup
-                data={ADOPT_ANIMAL_FILTER}
+                data={makeAdoptOption('ANIMAL')}
                 id={filterState.selectedAnimalType}
                 onChange={filterActions.changeAnimalType}
               />

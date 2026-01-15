@@ -1,7 +1,8 @@
 import { FlashList } from '@shopify/flash-list';
 import { styled, View, YStack } from 'tamagui';
 
-import { FeedNodata, ScrollUpButton, useScrollUpButton } from '@/shared';
+import { useScrollUpButton } from '@/shared/model';
+import { FeedNodata, ScrollUpButton } from '@/shared/ui';
 
 export const CommunityQnAFeed = () => {
   const { handleScroll, handlePressButton, isButtonVisible, scrollRef } = useScrollUpButton();

@@ -1,7 +1,7 @@
 import { Control, Controller } from 'react-hook-form';
 import { Text, XStack, YStack } from 'tamagui';
 
-import { ImageSelector, ImageSelectorProps } from '@/shared';
+import { ImageSelector, ImageSelectorProps } from '@/shared/ui';
 
 import { CommunityAdoptFormDto } from '../../model';
 import { FieldLabel } from './FieldLabel';

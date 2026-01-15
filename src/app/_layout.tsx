@@ -22,7 +22,8 @@ import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { TamaguiProvider } from 'tamagui';
 
-import { authApi, BottomSheetProvider, ModalProvider, setupInterceptor, Toast } from '@/shared';
+import { authApi, setupInterceptor } from '@/shared/apis';
+import { BottomSheetProvider, ModalProvider, Toast } from '@/shared/ui';
 
 import { config } from '../../tamagui.config';
 import AnimatedSplash from './AnimatedSplash';

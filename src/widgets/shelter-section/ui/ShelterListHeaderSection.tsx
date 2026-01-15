@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { styled, Text, View, XStack } from 'tamagui';
 
-import { SearchInput } from '@/shared';
+import { SearchInput } from '@/shared/ui';
 
 interface ShelterListHeaderSectionProps {
   onSearch: (text: string) => void;

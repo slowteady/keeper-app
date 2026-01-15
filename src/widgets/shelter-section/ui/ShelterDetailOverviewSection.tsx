@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { styled, Text, XStack } from 'tamagui';
 
-import { ShelterDto, ShelterMap, useShelterMap } from '@/entities';
+import { ShelterDto, ShelterMap, useShelterMap } from '@/entities/shelter';
 
 export interface ShelterDetailOverviewSectionProps {
   data: ShelterDto;

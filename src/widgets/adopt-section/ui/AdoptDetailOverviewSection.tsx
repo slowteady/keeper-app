@@ -1,7 +1,7 @@
 import { Dimensions } from 'react-native';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
-import { Carousel } from '@/shared';
+import { Carousel } from '@/shared/ui';
 
 export interface AdoptDetailOverviewSectionProps {
   title: string;

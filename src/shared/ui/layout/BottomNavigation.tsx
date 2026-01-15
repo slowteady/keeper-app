@@ -3,7 +3,6 @@ import * as Haptics from 'expo-haptics';
 import { memo } from 'react';
 import { styled, Text, XStack, YStack } from 'tamagui';
 
-import { MENU_ITEMS } from '@/shared/model';
 import {
   ActiveHeart,
   ActiveHome2,
@@ -13,9 +12,18 @@ import {
   Heart,
   Home2,
   Location,
+  MapPin,
   Message,
   User
 } from '@/shared/ui/icons/outline';
+
+const MENU_ITEMS = [
+  { name: 'home', label: 'Home', icon: Home2 },
+  { name: 'adopt', label: '입양공고', icon: Heart },
+  { name: 'shelter', label: '보호소', icon: MapPin },
+  { name: 'community', label: '커뮤니티', icon: Message },
+  { name: 'profile', label: '프로필', icon: User }
+] as const;
 
 export const BottomNavigation = memo(({ state, navigation, insets }: BottomTabBarProps) => {
   const navigateToPage = (route: any, index: number) => {

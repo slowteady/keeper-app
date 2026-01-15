@@ -2,7 +2,7 @@ import { router, usePathname } from 'expo-router';
 import { useCallback } from 'react';
 import { styled, Text, YStack } from 'tamagui';
 
-import { ModalButtons, useModal } from '@/shared';
+import { ModalButtons, useModal } from '@/shared/ui';
 
 import { useCurrentUser } from './useCurrentUser';
 

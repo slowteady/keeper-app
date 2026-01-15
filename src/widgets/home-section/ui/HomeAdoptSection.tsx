@@ -4,13 +4,13 @@ import { styled, Text, View, XStack, YStack } from 'tamagui';
 
 import {
   ADOPT_CARD_IMAGE_SIZES,
-  ADOPT_LIST_FILTER,
   AdoptCard,
   AdoptCardSkeleton,
   AdoptItem,
+  makeAdoptOption,
   useAdoptList
-} from '@/entities';
-import { ADOPT_ANIMAL_FILTER, ButtonGroup, Dropdown, ViewAllButton } from '@/shared';
+} from '@/entities/adopt';
+import { ButtonGroup, Dropdown, ViewAllButton } from '@/shared/ui';
 
 export const HomeAdoptSection = () => {
   const scrollRef = useRef<FlashListRef<AdoptItem>>(null);
@@ -42,7 +42,7 @@ export const HomeAdoptSection = () => {
 
         <View mt={12}>
           <Dropdown
-            data={[...ADOPT_LIST_FILTER]}
+            data={makeAdoptOption('FILTER')}
             value={state.selectedFilter}
             onChange={(value) => actions.changeFilter(value.id)}
             snapPoints={[200]}
@@ -51,7 +51,11 @@ export const HomeAdoptSection = () => {
       </TitleContainer>
 
       <View px={20} mb={20}>
-        <ButtonGroup data={ADOPT_ANIMAL_FILTER} id={state.selectedType} onChange={(id) => actions.changeType(id)} />
+        <ButtonGroup
+          data={makeAdoptOption('ANIMAL')}
+          id={state.selectedType}
+          onChange={(id) => actions.changeType(id)}
+        />
       </View>
 
       <FlashList

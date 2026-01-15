@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { styled, Text, View, XStack } from 'tamagui';
 
-import { ADOPT_LIST_FILTER } from '@/entities';
-import { ADOPT_ANIMAL_FILTER, ButtonGroup, Dropdown, SearchInput } from '@/shared';
+import { makeAdoptOption } from '@/entities/adopt';
+import { ButtonGroup, Dropdown, SearchInput } from '@/shared/ui';
 
 export interface AdoptListHeaderSectionProps {
   filterValue: string;
@@ -29,7 +29,7 @@ export const AdoptListHeaderSection = ({
         </Text>
         <View mt={12}>
           <Dropdown
-            data={[...ADOPT_LIST_FILTER]}
+            data={makeAdoptOption('FILTER')}
             value={filterValue}
             onChange={(value) => onChangeFilter(value.id)}
             snapPoints={[200]}
@@ -38,7 +38,7 @@ export const AdoptListHeaderSection = ({
       </TitleContainer>
 
       <View mb={16}>
-        <ButtonGroup data={ADOPT_ANIMAL_FILTER} id={animalType} onChange={(id) => onChangeAnimalType(id)} />
+        <ButtonGroup data={makeAdoptOption('ANIMAL')} id={animalType} onChange={(id) => onChangeAnimalType(id)} />
       </View>
 
       <View mb={32}>

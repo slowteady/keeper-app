@@ -2,8 +2,9 @@ import { useToastController } from '@tamagui/toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
-import { deleteUser } from '@/entities';
-import { clearUserContext, removeToken, USER_QUERY_KEY } from '@/shared';
+import { deleteUser } from '@/entities/auth/model/api';
+import { clearUserContext, removeToken } from '@/shared/lib';
+import { USER_QUERY_KEY } from '@/shared/model';
 
 export const useDeleteUser = () => {
   const { show } = useToastController();

@@ -1,6 +1,8 @@
 import { AxiosError, AxiosResponse } from 'axios';
 
-import { handleLogging, kakaoApi, makeQueryString } from '@/shared';
+import { kakaoApi } from '@/shared/apis';
+import { handleLogging } from '@/shared/lib';
+import { makeQueryString } from '@/shared/lib/utils';
 
 import { KakaoGeocodeParamsDto, KakaoGeocodeResponseDto } from '../model';
 

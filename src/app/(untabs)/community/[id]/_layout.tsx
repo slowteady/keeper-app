@@ -1,6 +1,6 @@
 import { Stack } from 'expo-router';
 
-import { NavigateHeader } from '@/shared';
+import { NavigateHeader } from '@/shared/ui';
 
 const CommunityDetailLayout = () => {
   return <Stack screenOptions={{ header: () => <NavigateHeader /> }} />;

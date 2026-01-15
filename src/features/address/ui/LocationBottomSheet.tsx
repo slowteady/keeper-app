@@ -4,7 +4,7 @@ import { forwardRef, useCallback, useMemo } from 'react';
 import { ActivityIndicator } from 'react-native';
 import { styled, Text, View, XStack } from 'tamagui';
 
-import { BottomSheet, BottomSheetSearchInput } from '@/shared';
+import { BottomSheet, BottomSheetSearchInput } from '@/shared/ui';
 
 import { KakaoAddressDocumentDto } from '../model';
 

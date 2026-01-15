@@ -5,8 +5,15 @@ import { isAvailableAsync } from 'expo-apple-authentication';
 import { Route, router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 
-import { login, SocialLoginType } from '@/entities';
-import { saveAccessToken, saveRefreshToken, setUserContext, USER_QUERY_KEY } from '@/shared';
+import { SocialLoginType } from '@/entities/auth';
+import { login } from '@/entities/auth/model/api';
+import { saveAccessToken, saveRefreshToken, setUserContext } from '@/shared/lib';
+import { USER_QUERY_KEY } from '@/shared/model';
+
+const isTabRoute = (path: string) => {
+  const tabRoutes = ['/home', '/adopt', '/shelter', '/community', '/profile'];
+  return tabRoutes.some((route) => path.startsWith(route));
+};
 
 export const useLogin = () => {
   const { redirect } = useLocalSearchParams<{ redirect?: Route }>();
@@ -56,9 +63,19 @@ export const useLogin = () => {
             await saveRefreshToken(refreshToken);
             setUserContext(user);
             queryClient.invalidateQueries({ queryKey: [USER_QUERY_KEY] });
-            show('로그인 되었어요.', { customData: { status: 'success' } });
 
-            router.replace(redirect || '/');
+            setTimeout(() => {
+              show('로그인 되었어요.', { customData: { status: 'success' } });
+            }, 100);
+
+            const targetPath = redirect || '/';
+
+            if (isTabRoute(targetPath)) {
+              router.dismissAll();
+              router.replace(targetPath);
+            } else {
+              router.replace(targetPath);
+            }
           },
           onError: () => {
             show('로그인에 실패했어요. 다시 시도해주세요.', { customData: { status: 'fail' } });

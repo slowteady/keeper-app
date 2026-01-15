@@ -8,17 +8,18 @@ export interface HeaderLayoutProps {
   showShadow?: boolean;
   ContainerProps?: StackProps;
   left?: ReactNode;
+  center?: ReactNode;
   right?: ReactNode;
 }
 
-export const HeaderLayout = ({ showShadow = true, ContainerProps, left, right }: HeaderLayoutProps) => {
+export const HeaderLayout = ({ showShadow = true, ContainerProps, left, center, right }: HeaderLayoutProps) => {
   const { top } = useLayout();
 
   return (
     <HeaderContainer showShadow={showShadow} pt={top} {...ContainerProps}>
       <RowContainer>
         {left && left}
-        <Spacer />
+        {center ? center : <Spacer />}
         {right && right}
       </RowContainer>
     </HeaderContainer>

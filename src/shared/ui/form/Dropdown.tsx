@@ -7,7 +7,7 @@ import { DownArrow } from '@/shared/ui/icons/mini';
 import { BottomSheet, BottomSheetMenu, BottomSheetMenuData } from '../overlay';
 
 export interface DropdownProps<T> {
-  data: BottomSheetMenuData<T>[];
+  data: readonly BottomSheetMenuData<T>[];
   value: T;
   onChange: (value: BottomSheetMenuData<T>) => void;
   snapPoints: BottomSheetModalProps['snapPoints'];

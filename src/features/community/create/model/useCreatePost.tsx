@@ -2,8 +2,8 @@ import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch } from 'react-hook-form';
 
-import { CommunityAdoptFormDto, CommunityAdoptFormSchema, CREATE_POST_DEFAULT_VALUES } from '@/entities';
-import { BottomSheetMenu, useBottomSheet } from '@/shared';
+import { CommunityAdoptFormDto, CommunityAdoptFormSchema, CREATE_POST_OPTIONS } from '@/entities/community';
+import { BottomSheetMenu, useBottomSheet } from '@/shared/ui';
 
 import { makeFormOptions } from '../lib/makeFormOptions';
 import { CreatePostKindBottomSheet } from '../ui';
@@ -11,7 +11,28 @@ import { CreatePostKindBottomSheet } from '../ui';
 export const useCreatePost = () => {
   const form = useForm<CommunityAdoptFormDto>({
     resolver: zodResolver(CommunityAdoptFormSchema),
-    defaultValues: CREATE_POST_DEFAULT_VALUES
+    defaultValues: {
+      title: '',
+      animalType: CREATE_POST_OPTIONS.animalType[0].value,
+      gender: CREATE_POST_OPTIONS.gender[0].value,
+      neuterYn: CREATE_POST_OPTIONS.neuterYn[0].value,
+      healthCheck: CREATE_POST_OPTIONS.healthCheck[0].value,
+      protectionType: CREATE_POST_OPTIONS.protectionType[0].value,
+      vaccinationCheck: CREATE_POST_OPTIONS.vaccinationCheck[0].value,
+      weight: '',
+      location: '',
+      age: '',
+      specificType: '',
+      specialMark: '',
+      content: '',
+      contact: [{ type: CREATE_POST_OPTIONS.contact[0].value, value: '' }],
+      images: [],
+      // 선택 입력 필드
+      likes: '',
+      dislikes: '',
+      health: '',
+      relatedLink: ''
+    }
   });
 
   const weight = useWatch({ control: form.control, name: 'weight' });

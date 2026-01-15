@@ -1,6 +1,6 @@
 import { Stack } from 'expo-router';
 
-import { LogoHeader } from '@/shared';
+import { LogoHeader } from '@/shared/ui';
 
 const AdoptLayout = () => {
   return <Stack screenOptions={{ header: () => <LogoHeader /> }} />;

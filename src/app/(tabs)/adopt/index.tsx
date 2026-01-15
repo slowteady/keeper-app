@@ -2,9 +2,10 @@ import { ListRenderItemInfo } from '@shopify/flash-list';
 import { useCallback, useEffect } from 'react';
 import { styled, View } from 'tamagui';
 
-import { AdoptCard, AdoptItem, useAdoptList } from '@/entities';
-import { ScrollUpButton, ShowMoreButton, useScrollUpButton } from '@/shared';
-import { AdoptListHeaderSection, AdoptListSection } from '@/widgets';
+import { AdoptCard, AdoptItem, useAdoptList } from '@/entities/adopt';
+import { useScrollUpButton } from '@/shared/model';
+import { ScrollUpButton, ShowMoreButton } from '@/shared/ui';
+import { AdoptListHeaderSection, AdoptListSection } from '@/widgets/adopt-section';
 
 const LIST_SIZE = 16;
 
@@ -31,10 +32,6 @@ const Page = () => {
     [actions]
   );
 
-  const currentPage = (data.originalData?.page ?? 0) + 1;
-  const totalPage = Math.ceil((data.originalData?.total || 0) / LIST_SIZE);
-  const text = `더보기 ${currentPage}/${totalPage}`;
-
   return (
     <Container>
       <AdoptListSection
@@ -56,7 +53,11 @@ const Page = () => {
         footer={
           flags.hasNextPage ? (
             <View mb={24} justify="center">
-              <ShowMoreButton text={text} onPress={actions.fetchNextPage} isLoading={flags.isFetchingNextPage} />
+              <ShowMoreButton
+                text={data.moreButtonText}
+                onPress={actions.fetchNextPage}
+                isLoading={flags.isFetchingNextPage}
+              />
             </View>
           ) : undefined
         }

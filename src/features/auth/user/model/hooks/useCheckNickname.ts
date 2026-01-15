@@ -1,8 +1,8 @@
 import { useMutation } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
 
-import { checkNickname } from '@/entities';
-import { useDebounceValue } from '@/shared';
+import { checkNickname } from '@/entities/auth/model/api';
+import { useDebounceValue } from '@/shared/model';
 
 export type NicknameStatus = {
   status: 'default' | 'success' | 'error';

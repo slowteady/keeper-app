@@ -7,8 +7,8 @@ import { useMutation } from '@tanstack/react-query';
 import { Route, router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { signup, SignUpBodyDto, SocialLoginType } from '@/entities';
-import { removeToken, saveAccessToken, saveRefreshToken } from '@/shared';
+import { signup, SignUpBodyDto, SocialLoginType } from '@/entities/auth';
+import { removeToken, saveAccessToken, saveRefreshToken } from '@/shared/lib';
 
 export const useSignup = () => {
   const { socialType, socialId, redirect } = useLocalSearchParams<{

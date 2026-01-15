@@ -1,6 +1,6 @@
 import { styled, View, YStack } from 'tamagui';
 
-import { FeedNodata } from '@/shared';
+import { FeedNodata } from '@/shared/ui';
 
 export const ProfileActivityScene = () => {
   return (

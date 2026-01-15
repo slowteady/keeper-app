@@ -3,10 +3,13 @@ import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useMemo } from 'react';
 
-import { ADOPT_LIST_FILTER, AdoptParamsDto, useGetAdopts } from '@/entities';
-import { ADOPT_ANIMAL_FILTER, ADOPTS_QUERY_KEY, parseQueryParam } from '@/shared';
+import { parseQueryParam } from '@/shared/lib';
+import { ADOPTS_QUERY_KEY } from '@/shared/model';
 
+import { makeAdoptOption } from '../lib';
 import { mapToAdoptList } from './mapper';
+import { useGetAdopts } from './query';
+import { AdoptParamsDto } from './schema';
 
 export type AdoptItem = ReturnType<typeof mapToAdoptList>[number];
 
@@ -16,12 +19,12 @@ export const useAdoptList = (queryParams?: Partial<AdoptParamsDto>) => {
   const queryClient = useQueryClient();
 
   const selectedFilter = useMemo(
-    () => parseQueryParam(ADOPT_LIST_FILTER, ADOPT_LIST_FILTER[0].id, params.filter),
+    () => parseQueryParam(makeAdoptOption('FILTER'), makeAdoptOption('FILTER')[0].id, params.filter),
     [params.filter]
   );
 
   const selectedType = useMemo(
-    () => parseQueryParam(ADOPT_ANIMAL_FILTER, ADOPT_ANIMAL_FILTER[0].id, params.type),
+    () => parseQueryParam(makeAdoptOption('ANIMAL'), makeAdoptOption('ANIMAL')[0].id, params.type),
     [params.type]
   );
 
@@ -70,9 +73,13 @@ export const useAdoptList = (queryParams?: Partial<AdoptParamsDto>) => {
     }
   }, [fetchNextPageQuery, hasNextPage]);
 
+  const currentPage = (data?.page ?? 0) + 1;
+  const totalPage = Math.ceil((data?.total || 0) / 20);
+  const moreButtonText = `더보기 ${currentPage}/${totalPage}`;
+
   return {
     state: { selectedFilter, selectedType, selectedSearch },
-    data: { originalData: data, convertedData },
+    data: { originalData: data, convertedData, moreButtonText },
     flags: { isLoading, isFetching, isFetchingNextPage, hasNextPage },
     actions: { changeFilter, changeType, changeSearch, goDetail, goList, executeRefresh, fetchNextPage }
   };

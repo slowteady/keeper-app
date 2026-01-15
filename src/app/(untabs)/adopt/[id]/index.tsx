@@ -2,9 +2,15 @@ import { useLocalSearchParams } from 'expo-router';
 import { Suspense, useState } from 'react';
 import { ScrollView, styled, Text, View } from 'tamagui';
 
-import { useAdopt, useShelter } from '@/entities';
-import { BottomButton, CallModal, SuspenseFallback, useLayout } from '@/shared';
-import { AdoptDetailDescriptionSection, AdoptDetailInfoSection, AdoptDetailOverviewSection } from '@/widgets';
+import { useAdopt } from '@/entities/adopt';
+import { useShelter } from '@/entities/shelter';
+import { useLayout } from '@/shared/model';
+import { BottomButton, CallModal, SuspenseFallback } from '@/shared/ui';
+import {
+  AdoptDetailDescriptionSection,
+  AdoptDetailInfoSection,
+  AdoptDetailOverviewSection
+} from '@/widgets/adopt-section';
 
 const Page = () => {
   const { id } = useLocalSearchParams<{ id?: string }>();

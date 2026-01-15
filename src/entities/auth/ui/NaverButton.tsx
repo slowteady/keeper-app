@@ -2,7 +2,7 @@ import NaverLogin from '@react-native-seoul/naver-login';
 import { useState } from 'react';
 import { styled, Text, View, XStack } from 'tamagui';
 
-import { logger } from '@/shared';
+import { logger } from '@/shared/lib';
 import { Naver } from '@/shared/ui/icons/etc';
 
 import { SocialLoginType } from '../model';

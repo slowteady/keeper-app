@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/react-native';
 
-import { UserDto } from '@/entities';
+import { UserDto } from '@/entities/auth';
 
 /**
  * 센트리 사용자 컨텍스트 설정

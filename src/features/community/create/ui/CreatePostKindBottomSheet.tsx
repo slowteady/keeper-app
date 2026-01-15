@@ -1,7 +1,7 @@
 import { BottomSheetScrollView, BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { useMemo, useState } from 'react';
 
-import { BottomSheetMenu } from '@/shared';
+import { BottomSheetMenu } from '@/shared/ui';
 
 export interface CreatePostKindBottomSheetProps {
   kindOption: { id: string; label: string }[];

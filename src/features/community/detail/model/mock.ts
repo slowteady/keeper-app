@@ -1,8 +1,8 @@
 import { fakerKO } from '@faker-js/faker';
 
-import { CommunityAdoptDetailDto } from '@/entities';
+import { CommunityAdoptDetailDto } from '@/entities/community';
 import { getUserValue } from '@/features/auth';
-import { formatTimeAgo } from '@/shared';
+import { formatTimeAgo } from '@/shared/lib';
 
 export const getAdoptDetailValue = (id: string): CommunityAdoptDetailDto => {
   return {

@@ -1,6 +1,6 @@
 import { styled, View, YStack } from 'tamagui';
 
-import { Skeleton } from '@/shared';
+import { Skeleton } from '@/shared/ui';
 
 interface AdoptCardSkeletonProps {
   width: number;

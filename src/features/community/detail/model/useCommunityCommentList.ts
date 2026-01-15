@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 
-import { CommentSortOrderDto } from '@/entities';
+import { CommentSortOrderDto } from '@/entities/community';
 import { getCommentList } from '@/features/comment';
 
 export const useCommunityCommentList = () => {

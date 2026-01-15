@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { KeyboardAwareScrollView, KeyboardStickyView } from 'react-native-keyboard-controller';
 import { styled, View } from 'tamagui';
 
-import { LocationBottomSheet, useCreatePost, useLocationBottomSheet } from '@/features';
-import { Button, useLayout } from '@/shared';
-import { CommunityAdoptForm } from '@/widgets';
+import { LocationBottomSheet, useLocationBottomSheet } from '@/features/address';
+import { useCreatePost } from '@/features/community';
+import { useLayout } from '@/shared/model';
+import { Button } from '@/shared/ui';
+import { CommunityAdoptForm } from '@/widgets/community-adopt-feed-section';
 
 const Page = () => {
   const { bottom } = useLayout();

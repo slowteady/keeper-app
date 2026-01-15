@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError, AxiosResponse } from 'axios';
 
-import { UseMutationCustomOptions } from '@/shared';
+import { UseMutationCustomOptions } from '@/shared/model';
 
 import { getKakaoGeocode } from './api';
 import { KakaoGeocodeParamsDto, KakaoGeocodeResponseDto } from './schema';

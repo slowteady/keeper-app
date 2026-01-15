@@ -3,9 +3,13 @@ import { PermissionStatus } from 'expo-location';
 import { useCallback, useEffect, useState } from 'react';
 import { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
-import { ShelterDto, useGetSearchedShelters, useGetShelterCounts, useGetShelters } from '@/entities';
-import { KakaoAddressDocumentDto } from '@/features';
-import { calcMapRadiusKm, CameraParams, useMap } from '@/shared';
+import { KakaoAddressDocumentDto } from '@/features/address';
+import { calcMapRadiusKm } from '@/shared/lib';
+import { CameraParams, useMap } from '@/shared/model';
+
+import { useGetSearchedShelters } from './mutation';
+import { useGetShelterCounts, useGetShelters } from './query';
+import { ShelterDto } from './schema';
 
 export const useShelterMap = () => {
   const [enabled, setEnabled] = useState(false);

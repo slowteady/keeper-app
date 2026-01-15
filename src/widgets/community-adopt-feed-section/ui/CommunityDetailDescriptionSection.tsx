@@ -1,6 +1,6 @@
 import { styled, Text, YStack } from 'tamagui';
 
-import { Link } from '@/shared';
+import { Link } from '@/shared/ui';
 
 export interface CommunityDetailDescriptionSectionProps {
   specialMark: string;

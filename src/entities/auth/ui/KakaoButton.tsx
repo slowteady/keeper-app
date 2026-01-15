@@ -2,7 +2,7 @@ import { login } from '@react-native-kakao/user';
 import { useState } from 'react';
 import { styled, Text, useTheme, View, XStack } from 'tamagui';
 
-import { logger } from '@/shared';
+import { logger } from '@/shared/lib';
 import { Kakao } from '@/shared/ui/icons/etc';
 
 import { SocialLoginType } from '../model';

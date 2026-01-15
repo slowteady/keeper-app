@@ -2,7 +2,7 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { useState } from 'react';
 import { styled, Text, View, XStack } from 'tamagui';
 
-import { logger } from '@/shared';
+import { logger } from '@/shared/lib';
 import { Google } from '@/shared/ui/icons/etc';
 
 import { SocialLoginType } from '../model';

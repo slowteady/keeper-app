@@ -5,7 +5,7 @@ import {
   CommunityAdoptCardHeader,
   CommunityAdoptCardTags,
   CommunityAdoptCardTitle
-} from '@/entities';
+} from '@/entities/community';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 import { Share } from '@/shared/ui/icons/outline';
 

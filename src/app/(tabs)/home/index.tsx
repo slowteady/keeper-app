@@ -4,8 +4,9 @@ import { useMemo } from 'react';
 import { RefreshControl } from 'react-native';
 import { styled, View } from 'tamagui';
 
-import { ADOPTS_QUERY_KEY, ScrollUpButton, SHELTER_QUERY_KEY, useListRefreshing, useScrollUpButton } from '@/shared';
-import { HomeAdoptSection, HomeBannerSection, HomeFooterSection, HomeShelterSection } from '@/widgets';
+import { ADOPTS_QUERY_KEY, SHELTER_QUERY_KEY, useListRefreshing, useScrollUpButton } from '@/shared/model';
+import { ScrollUpButton } from '@/shared/ui';
+import { HomeAdoptSection, HomeBannerSection, HomeFooterSection, HomeShelterSection } from '@/widgets/home-section';
 
 const IMAGES = [require('@/assets/images/banner1.png'), require('@/assets/images/banner2.png')];
 

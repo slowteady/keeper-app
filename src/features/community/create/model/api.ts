@@ -1,4 +1,4 @@
-import { CommunityAdoptFormDto } from '@/entities';
+import { CommunityAdoptFormDto } from '@/entities/community';
 
 export const createPost = async (data: CommunityAdoptFormDto) => {
   // try {

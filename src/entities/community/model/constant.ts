@@ -1,11 +1,9 @@
-import { ChipOption } from '@/shared';
-
-import { CommunityAdoptFormDto } from './schema';
+import { ChipOption } from '@/shared/ui';
 
 export const COMMUNITY_TAB_ROUTES = [
   { key: 'adopt', title: '개인입양' },
   { key: 'life', title: '입양생활' },
-  { key: 'qna', title: '질문' }
+  { key: 'qna', title: '궁금해요' }
 ];
 
 export const CREATE_POST_OPTIONS = {
@@ -47,29 +45,6 @@ export const CREATE_POST_OPTIONS = {
     { value: 'SNS', label: 'SNS' }
   ] as const satisfies ChipOption[]
 } as const;
-
-export const CREATE_POST_DEFAULT_VALUES: CommunityAdoptFormDto = {
-  title: '',
-  animalType: CREATE_POST_OPTIONS.animalType[0].value,
-  gender: CREATE_POST_OPTIONS.gender[0].value,
-  neuterYn: CREATE_POST_OPTIONS.neuterYn[0].value,
-  healthCheck: CREATE_POST_OPTIONS.healthCheck[0].value,
-  protectionType: CREATE_POST_OPTIONS.protectionType[0].value,
-  vaccinationCheck: CREATE_POST_OPTIONS.vaccinationCheck[0].value,
-  weight: '',
-  location: '',
-  age: '',
-  specificType: '',
-  specialMark: '',
-  content: '',
-  contact: [{ type: CREATE_POST_OPTIONS.contact[0].value, value: '' }],
-  images: [],
-  // 선택 입력 필드
-  likes: '',
-  dislikes: '',
-  health: '',
-  relatedLink: ''
-};
 
 export const ADOPT_SUB_MENU = [
   { id: 'ALL', label: '전체공고' },

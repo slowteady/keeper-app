@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
-import { Link } from '@/shared';
+import { Link } from '@/shared/ui';
 
 export interface Shelter {
   id: number;

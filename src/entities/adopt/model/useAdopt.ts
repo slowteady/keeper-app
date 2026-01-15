@@ -1,8 +1,7 @@
 import { useMemo } from 'react';
 
-import { useGetAdopt } from '@/entities';
-
 import { mapToAdopt } from './mapper';
+import { useGetAdopt } from './query';
 
 export interface UseAdoptProps {
   id: string;

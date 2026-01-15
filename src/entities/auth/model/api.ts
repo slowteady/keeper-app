@@ -1,6 +1,7 @@
 import { AxiosError, AxiosResponse } from 'axios';
 
-import { ApiResponse, authApi, publicApi } from '@/shared';
+import { authApi, publicApi } from '@/shared/apis/instance';
+import { ApiResponse } from '@/shared/model';
 
 import { CheckNicknameBodyDto, LoginDataDto, LoginParamsDto, RefreshDataDto, SignUpBodyDto, UserDto } from './schema';
 

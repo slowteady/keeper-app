@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 
-import { DOG_BREEDS } from '@/shared';
+import { DOG_BREEDS } from '@/shared/model';
 
 export const makeFormOptions = () => {
   const makeWeightOption = () =>

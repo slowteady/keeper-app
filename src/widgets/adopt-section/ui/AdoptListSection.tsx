@@ -3,8 +3,9 @@ import { forwardRef } from 'react';
 import { RefreshControl } from 'react-native';
 import { Text, View, XStack } from 'tamagui';
 
-import { ADOPT_CARD_IMAGE_SIZES, AdoptCardSkeleton, AdoptItem } from '@/entities';
-import { FeedNodata, useListRefreshing } from '@/shared';
+import { ADOPT_CARD_IMAGE_SIZES, AdoptCardSkeleton, AdoptItem } from '@/entities/adopt';
+import { useListRefreshing } from '@/shared/model';
+import { FeedNodata } from '@/shared/ui';
 
 export interface AdoptListSectionProps {
   data: AdoptItem[];

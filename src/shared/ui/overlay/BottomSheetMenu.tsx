@@ -11,7 +11,7 @@ export interface BottomSheetMenuData<T> {
 }
 
 export interface BottomSheetMenuProps<T> {
-  data: BottomSheetMenuData<T>[];
+  data: readonly BottomSheetMenuData<T>[];
   value: T;
   onPress: (data: BottomSheetMenuData<T>) => void;
 }

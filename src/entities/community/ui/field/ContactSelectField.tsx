@@ -1,7 +1,7 @@
 import { Control, Controller } from 'react-hook-form';
 import { YStack } from 'tamagui';
 
-import { ChipGroup, TextField } from '@/shared';
+import { ChipGroup, TextField } from '@/shared/ui';
 
 import { CommunityAdoptFormDto, CREATE_POST_OPTIONS } from '../../model';
 import { FieldLabel } from './FieldLabel';

@@ -3,17 +3,12 @@ import { useLocalSearchParams } from 'expo-router';
 import { Suspense, useCallback, useState } from 'react';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
-import { ADOPT_LIST_FILTER, AdoptCard, AdoptItem, useShelter, useShelterAdoptList } from '@/entities';
-import {
-  Button,
-  CallModal,
-  Dropdown,
-  ScrollUpButton,
-  ShowMoreButton,
-  SuspenseFallback,
-  useScrollUpButton
-} from '@/shared';
-import { AdoptListSection, ShelterDetailDescriptionSection, ShelterDetailOverviewSection } from '@/widgets';
+import { AdoptCard, AdoptItem, makeAdoptOption } from '@/entities/adopt';
+import { useShelter, useShelterAdoptList } from '@/entities/shelter';
+import { useScrollUpButton } from '@/shared/model';
+import { Button, CallModal, Dropdown, ScrollUpButton, ShowMoreButton, SuspenseFallback } from '@/shared/ui';
+import { AdoptListSection } from '@/widgets/adopt-section';
+import { ShelterDetailDescriptionSection, ShelterDetailOverviewSection } from '@/widgets/shelter-section';
 
 const Page = () => {
   const { id } = useLocalSearchParams<{ id?: string }>();
@@ -117,7 +112,7 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
               </XStack>
 
               <Dropdown
-                data={[...ADOPT_LIST_FILTER]}
+                data={makeAdoptOption('FILTER')}
                 value={shelterAdoptsState.selectedFilter}
                 onChange={(value) => shelterAdoptsActions.changeFilter(value.id)}
                 snapPoints={[200]}
