@@ -9,10 +9,10 @@ export type NicknameStatus = {
   message: string;
 };
 
-export const useCheckNickname = () => {
+export const useCheckNickname = (initialValue: string = '') => {
   const [isChecking, setIsChecking] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
-  const [nickname, setNickname] = useState('');
+  const [nickname, setNickname] = useState(initialValue);
   const [nicknameStatus, setNicknameStatus] = useState<NicknameStatus>({
     status: 'default',
     message: '*기호, 특수문자 제외 8자 가능'
@@ -79,6 +79,10 @@ export const useCheckNickname = () => {
       }
     );
   }, [debouncedNickname, mutate]);
+
+  useEffect(() => {
+    setNickname(initialValue);
+  }, [initialValue]);
 
   return {
     state: { nickname, nicknameStatus },

@@ -96,6 +96,7 @@ export const useSignup = () => {
 
   useEffect(() => {
     if (!prevent && navigateTarget) {
+      router.dismissAll();
       router.replace(navigateTarget);
       setNavigateTarget(undefined);
     }

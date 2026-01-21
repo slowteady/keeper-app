@@ -11,7 +11,7 @@ export const BUTTON_HEIGHT = {
 export interface ButtonProps extends PressableProps {
   variant?: 'default' | 'ghost';
   size?: 'small' | 'medium' | 'large';
-  color?: 'primary' | 'secondary';
+  color?: 'primary' | 'secondary' | 'tertiary';
   isLoading?: boolean;
   style?: StyleProp<ViewStyle>;
 }
@@ -70,20 +70,18 @@ const getStyles = (
       };
     }
 
-    if (disabled) {
-      return {
-        backgroundColor: theme.white800.val
-      };
-    }
-
     switch (color) {
       case 'primary':
         return {
-          backgroundColor: theme.primaryMain.val
+          backgroundColor: disabled ? theme.white800.val : theme.primaryMain.val
         };
       case 'secondary':
         return {
-          backgroundColor: theme.blackMain.val
+          backgroundColor: disabled ? theme.white800.val : theme.blackMain.val
+        };
+      case 'tertiary':
+        return {
+          backgroundColor: disabled ? theme.backgroundDefault.val : theme.white800.val
         };
       default:
         return {
@@ -118,27 +116,25 @@ const getStyles = (
             color: theme.primaryMain.val
           };
       }
-    }
-
-    if (disabled) {
-      return {
-        color: theme.black500.val
-      };
-    }
-
-    switch (color) {
-      case 'primary':
-        return {
-          color: theme.black900.val
-        };
-      case 'secondary':
-        return {
-          color: theme.white900.val
-        };
-      default:
-        return {
-          color: theme.black900.val
-        };
+    } else if (variant === 'default') {
+      switch (color) {
+        case 'primary':
+          return {
+            color: disabled ? theme.black500.val : theme.black900.val
+          };
+        case 'secondary':
+          return {
+            color: disabled ? theme.black500.val : theme.white900.val
+          };
+        case 'tertiary':
+          return {
+            color: disabled ? theme.white600.val : theme.black900.val
+          };
+        default:
+          return {
+            color: theme.black900.val
+          };
+      }
     }
   };
 

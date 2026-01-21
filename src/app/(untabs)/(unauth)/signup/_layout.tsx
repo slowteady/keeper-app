@@ -2,8 +2,8 @@ import { Stack } from 'expo-router';
 
 import { NavigateHeader } from '@/shared/ui';
 
-const AuthLayout = () => {
+const SignupLayout = () => {
   return <Stack screenOptions={{ header: () => <NavigateHeader /> }} />;
 };
 
-export default AuthLayout;
+export default SignupLayout;

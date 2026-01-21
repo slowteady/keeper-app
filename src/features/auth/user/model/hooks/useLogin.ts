@@ -52,7 +52,7 @@ export const useLogin = () => {
             const { accessToken, refreshToken, socialId, isNew, ...user } = data;
 
             if (isNew) {
-              router.push({
+              router.replace({
                 pathname: '/signup',
                 params: { socialType, socialId, redirect }
               });

@@ -13,12 +13,8 @@ export const ProfileMenuList = () => {
 
         return (
           <View key={key}>
-            <View px={20}>
-              <Menu
-                icon={<item.icon size={20} />}
-                label={item.label}
-                onPress={() => router.push({ pathname: `/profile/${item.navigateTo}` })}
-              />
+            <View px={20} py={16} onPress={() => router.push({ pathname: `/profile/${item.navigateTo}` })}>
+              <Menu icon={<item.icon size={20} />} label={item.label} />
             </View>
 
             {idx !== MENU_ITEMS.length - 1 && <Separator borderColor="$backgroundDefault" />}

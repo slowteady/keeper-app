@@ -12,9 +12,9 @@ export interface UserAvatarProps {
 export const UserAvatar = ({ image, onPressAdd, onPressEdit }: UserAvatarProps) => {
   return (
     <StyledAvatar>
-      {image ? <AvatarImage source={{ uri: image }} /> : <AvatarImage />}
+      {image && <AvatarImage source={{ uri: image }} />}
 
-      <Avatar.Fallback>
+      <Avatar.Fallback z={10}>
         <EmptyAvatar onPress={onPressAdd} />
       </Avatar.Fallback>
 
@@ -37,7 +37,8 @@ const StyledAvatar = styled(Avatar, {
 
 const AvatarImage = styled(Avatar.Image, {
   width: '100%',
-  height: '100%'
+  height: '100%',
+  resizeMode: 'cover'
 });
 
 const EditButton = styled(View, {

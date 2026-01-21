@@ -1,15 +1,16 @@
 import { ChevronRight } from '@tamagui/lucide-icons';
-import { styled, Text, XStack } from 'tamagui';
+import { styled, Text, XStack, XStackProps } from 'tamagui';
 
 export interface MenuProps {
   icon?: React.ReactNode;
   label: string;
-  onPress: () => void;
+  onPress?: () => void;
+  style?: XStackProps['style'];
 }
 
-export const Menu = ({ icon, label, onPress }: MenuProps) => {
+export const Menu = ({ icon, label, onPress, style }: MenuProps) => {
   return (
-    <Container onPress={onPress}>
+    <Container onPress={onPress} hitSlop={12} style={style}>
       <XStack gap={8} items="center">
         {icon && icon}
         <Label>{label}</Label>
@@ -21,13 +22,13 @@ export const Menu = ({ icon, label, onPress }: MenuProps) => {
 
 const Container = styled(XStack, {
   justify: 'space-between',
-  items: 'center',
-  py: 16
+  items: 'center'
 });
 
 const Label = styled(Text, {
   fontSize: 16,
   fontWeight: '500',
   lineHeight: 21,
-  color: '$black900'
+  color: '$black900',
+  letterSpacing: -0.25
 });
