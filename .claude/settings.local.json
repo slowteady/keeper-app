@@ -1,0 +1,36 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm list:*)",
+      "Bash(npx task-master-ai:*)",
+      "Bash(npx --yes task-master-ai --help)",
+      "WebSearch",
+      "Bash(npm info:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(claude mcp:*)",
+      "Bash(npx -y task-master-ai@latest --version)",
+      "Bash(ls:*)",
+      "Bash(find /Users/leeyongmin/Documents/03.개인프로젝트/02.keeper/keeper-app/.claude -o -name .taskmaster -o -path */docs/* -o -path */planning/*)",
+      "Bash(ls -la /Users/leeyongmin/Documents/03.개인프로젝트/02.keeper/keeper-app/src/app/\\\\\\(tabs\\\\\\)/)",
+      "Bash(cat:*)",
+      "WebFetch(domain:medium.com)",
+      "WebFetch(domain:docs.expo.dev)",
+      "Bash(claude plugin:*)",
+      "WebFetch(domain:feature-sliced.design)",
+      "WebFetch(domain:jsdev.space)",
+      "WebFetch(domain:profy.dev)",
+      "Bash(xcodebuild:*)",
+      "Bash(system_profiler SPDeveloperToolsDataType)",
+      "WebFetch(domain:www.figma.com)",
+      "WebFetch(domain:developers.figma.com)",
+      "WebFetch(domain:help.figma.com)",
+      "WebFetch(domain:www.google.com)",
+      "WebFetch(domain:www.builder.io)",
+      "WebFetch(domain:www.spencerpauly.com)",
+      "Bash(git add:*)",
+      "Bash(git rm:*)",
+      "Bash(git commit:*)",
+      "Bash(pnpm install:*)"
+    ]
+  }
+}
