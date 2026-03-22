@@ -33,12 +33,6 @@ export const AnimatedHeart = ({
     fillProgress.value = withTiming(liked ? 1 : 0, { duration: 200 });
   }, [liked, fillProgress]);
 
-  const tap = Gesture.Tap()
-    .onEnd((_e, success) => {
-      if (success) handlePress();
-    })
-    .runOnJS(true);
-
   const handlePress = async () => {
     if (disabled || loading) {
       onPress?.(liked);
@@ -51,6 +45,12 @@ export const AnimatedHeart = ({
     setLiked(newLiked);
     onPress?.(newLiked);
   };
+
+  const tap = Gesture.Tap()
+    .onEnd((_e, success) => {
+      if (success) handlePress();
+    })
+    .runOnJS(true);
 
   const animatedPathProps = useAnimatedProps(() => {
     const stroke = interpolateColor(fillProgress.value, [0, 1], [white600.val, primaryMain.val]);

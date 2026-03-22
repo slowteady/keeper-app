@@ -14,7 +14,6 @@ export default () => ({
     orientation: 'portrait',
     scheme: 'keeper',
     userInterfaceStyle: 'automatic',
-    newArchEnabled: true,
     ios: { ...iosConfig, bundleIdentifier: 'com.keeper.love' },
     android: androidConfig,
     plugins,
