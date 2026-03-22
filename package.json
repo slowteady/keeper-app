@@ -107,6 +107,9 @@
     "prettier": "^3.5.2",
     "typescript": "^5.3.3"
   },
+  "jest": {
+    "preset": "jest-expo"
+  },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
       "eslint --fix",
