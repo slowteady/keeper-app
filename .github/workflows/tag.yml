@@ -1,0 +1,68 @@
+name: Tag on Main
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+          token: ${{ secrets.PAT_TOKEN }}
+
+      - name: package.json 버전 변경 여부 확인
+        id: version
+        run: |
+          echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+          git diff HEAD~1 HEAD -- package.json | grep '"version"' && echo "changed=true" >> $GITHUB_OUTPUT || echo "changed=false" >> $GITHUB_OUTPUT
+
+      - name: 태그 및 GitHub Release 생성
+        if: steps.version.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          VERSION=v${{ steps.version.outputs.version }}
+
+          if git ls-remote --tags origin | grep -q "refs/tags/$VERSION"; then
+            echo "태그 $VERSION 이미 존재, 스킵"
+          else
+            git tag $VERSION
+            git push origin $VERSION
+            gh release create $VERSION \
+              --title "$VERSION" \
+              --generate-notes
+            echo "릴리즈 $VERSION 생성 완료"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+
+      - name: release.yml default 버전 갱신
+        if: steps.version.outputs.changed == 'true'
+        run: |
+          NEW_VERSION="${{ steps.version.outputs.version }}"
+
+          # main 브랜치 갱신 (현재 브랜치)
+          sed -i "s/default: \".*\"/default: \"$NEW_VERSION\"/" .github/workflows/release.yml
+          if ! git diff --quiet; then
+            git add .github/workflows/release.yml
+            git commit -m "CHORE: release.yml default 버전 ${NEW_VERSION}으로 갱신"
+            git push origin main
+          fi
+
+          # develop 브랜치 갱신
+          git fetch origin develop
+          git checkout develop
+          sed -i "s/default: \".*\"/default: \"$NEW_VERSION\"/" .github/workflows/release.yml
+          if ! git diff --quiet; then
+            git add .github/workflows/release.yml
+            git commit -m "CHORE: release.yml default 버전 ${NEW_VERSION}으로 갱신"
+            git push origin develop
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}

@@ -1,0 +1,60 @@
+import { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
+import { Modal } from 'react-native';
+import { styled, View } from 'tamagui';
+
+export type OpenOptions = {
+  onDismiss?: () => void;
+};
+export type ModalContextType = {
+  open: (node: React.ReactNode, opts?: OpenOptions) => void;
+  update: (node: React.ReactNode) => void;
+  close: () => void;
+};
+
+const ModalContext = createContext<ModalContextType | null>(null);
+
+export const ModalProvider = ({ children }: { children: React.ReactNode }) => {
+  const [visible, setVisible] = useState(false);
+  const [content, setContent] = useState<React.ReactNode>(null);
+
+  const onDismissRef = useRef<(() => void) | undefined>(undefined);
+
+  const open = useCallback((node: React.ReactNode, opts?: OpenOptions) => {
+    onDismissRef.current = opts?.onDismiss;
+    setContent(node);
+    setVisible(true);
+  }, []);
+  const update = useCallback((node: React.ReactNode) => setContent(node), []);
+  const close = useCallback(() => {
+    setVisible(false);
+    // 모달이 닫힐 때 onDismiss 콜백 호출
+    if (onDismissRef.current) {
+      onDismissRef.current();
+      onDismissRef.current = undefined;
+    }
+  }, []);
+
+  const value = useMemo<ModalContextType>(() => ({ open, update, close }), [open, update, close]);
+
+  return (
+    <ModalContext.Provider value={value}>
+      {children}
+      <Modal animationType="fade" visible={visible} onRequestClose={close} transparent>
+        <Overlay onPress={close}>{content}</Overlay>
+      </Modal>
+    </ModalContext.Provider>
+  );
+};
+
+export const useModal = () => {
+  const ctx = useContext(ModalContext);
+  if (!ctx) throw new Error('useModal must be used within <ModalProvider>');
+  return ctx;
+};
+
+const Overlay = styled(View, {
+  bg: 'rgba(0, 0, 0, 0.5)',
+  justify: 'center',
+  items: 'center',
+  flex: 1
+});

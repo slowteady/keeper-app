@@ -4,7 +4,6 @@ module.exports = {
   usesAppleSignIn: true,
   supportsTablet: true,
   entitlements: { 'aps-environment': 'development' },
-  bundleIdentifier: 'com.keeper.love',
   appStoreUrl: 'https://apps.apple.com/app/id6739178024?action=write-review',
   infoPlist: {
     ITSAppUsesNonExemptEncryption: false,

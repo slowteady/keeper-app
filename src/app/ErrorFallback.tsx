@@ -1,75 +1,46 @@
-import { Button } from '@/shared/components/atoms/Button';
-import { MainHeader } from '@/shared/components/organisms/MainHeader';
-import { theme } from '@/shared/constants/theme.constants';
 import { Image } from 'expo-image';
-import { StyleSheet, Text, View } from 'react-native';
+import { styled, Text, View, YStack } from 'tamagui';
 
 interface ErrorFallbackProps {
-  error: Error;
+  error: unknown;
   resetError: () => void;
 }
 
+const ERROR_IMAGE = require('@/assets/images/error.png');
+
 const ErrorFallback = ({ error, resetError }: ErrorFallbackProps) => {
-  const handleRetry = () => {
-    resetError();
-  };
-
   return (
-    <View style={{ flex: 1 }}>
-      <MainHeader useDrawer={false} />
+    <Container>
+      <Image source={ERROR_IMAGE} style={{ width: 120, height: 100, marginBottom: 40 }} contentFit="contain" />
 
-      <View style={styles.container}>
-        <Image source={require('@/assets/images/error.png')} style={styles.image} contentFit="contain" />
-        <Text style={styles.titleText}>인터넷이 연결되어 있지 않아요</Text>
-        <Text style={styles.descriptionText}>{`Wi-fi 또는 셀룰러 데이터 연결을 확인한 후\n다시 시도해 주세요.`}</Text>
-        <Button style={styles.button} onPress={handleRetry}>
-          <Text style={styles.buttonText}>다시시도</Text>
-        </Button>
-      </View>
-    </View>
+      <Text fontSize={16} fontWeight="bold" lineHeight={18} color="$black900" mb={12}>
+        인터넷이 연결되어 있지 않아요
+      </Text>
+      <Text fontSize={13} fontWeight="500" lineHeight={18} color="$black900" mb={48} text="center">
+        {`Wi-fi 또는 셀룰러 데이터 연결을 확인한 후\n다시 시도해 주세요.`}
+      </Text>
+
+      <Button onPress={resetError}>
+        <Text fontSize={14} fontWeight="500" lineHeight={16} color="$white900">
+          다시시도
+        </Text>
+      </Button>
+    </Container>
   );
 };
 
 export default ErrorFallback;
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  image: {
-    width: 120,
-    height: 100,
-    marginBottom: 40
-  },
-  titleText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    lineHeight: 18,
-    color: theme.colors.black[900],
-    marginBottom: 12
-  },
-  descriptionText: {
-    fontSize: 13,
-    lineHeight: 18,
-    fontWeight: '500',
-    textAlign: 'center',
-    color: theme.colors.black[900],
-    marginBottom: 48
-  },
-  button: {
-    paddingHorizontal: 32,
-    paddingVertical: 16,
-    backgroundColor: theme.colors.black[900],
-    borderRadius: 60
-  },
-  buttonText: {
-    fontSize: 14,
-    fontWeight: '500',
-    lineHeight: 16,
-    color: theme.colors.white[900]
-  }
+const Container = styled(YStack, {
+  flex: 1,
+  items: 'center',
+  justify: 'center',
+  bg: '$white900'
+});
+
+const Button = styled(View, {
+  px: 32,
+  py: 16,
+  bg: '$black900',
+  rounded: 60
 });

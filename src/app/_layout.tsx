@@ -1,33 +1,61 @@
-import { authApi } from '@/shared/utils/instance.util';
-import { setupInterceptor } from '@/shared/utils/interceptors.utils';
+import 'dayjs/locale/ko';
+import 'expo-dev-client';
+import 'react-native-reanimated';
+
 import { useReactQueryDevTools } from '@dev-plugins/react-query';
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { initializeKakaoSDK } from '@react-native-kakao/core';
 import NaverLogin from '@react-native-seoul/naver-login';
+import * as Sentry from '@sentry/react-native';
+import { ToastProvider } from '@tamagui/toast';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { extend } from 'dayjs';
-import 'dayjs/locale/ko';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
-import 'expo-dev-client';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { router, Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
+import { Linking } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import 'react-native-reanimated';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { TamaguiProvider } from 'tamagui';
+
+import { authApi, setupInterceptor } from '@/shared/apis';
+import { BottomSheetProvider, ModalProvider, Toast } from '@/shared/ui';
+
+import { config } from '../../tamagui.config';
 import AnimatedSplash from './AnimatedSplash';
+import ErrorFallback from './ErrorFallback';
 
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
+Sentry.init({
+  dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
+  debug: __DEV__,
+  environment: __DEV__ ? 'development' : 'production',
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1.0,
+  integrations: [Sentry.mobileReplayIntegration()],
+  enabled: !__DEV__
+});
+
+const RootLayout = () => {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
-        gcTime: Infinity,
-        staleTime: 0
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        refetchOnReconnect: false,
+        retry: false,
+        gcTime: 1000 * 60 * 5,
+        staleTime: 1000 * 60 * 2
+        // throwOnError:
+      },
+      mutations: {
+        retry: false
+        // throwOnError: throwToErrorBoundary
       }
     }
   });
@@ -35,7 +63,10 @@ export default function RootLayout() {
   useReactQueryDevTools(queryClient);
 
   const [fontLoaded] = useFonts({
-    SpaceMono: require('@/assets/fonts/PretendardVariable.ttf')
+    'Pretendard-Regular': require('@/assets/fonts/Pretendard-Regular.otf'),
+    'Pretendard-Bold': require('@/assets/fonts/Pretendard-Bold.otf'),
+    'Pretendard-Medium': require('@/assets/fonts/Pretendard-Medium.otf'),
+    'Pretendard-SemiBold': require('@/assets/fonts/Pretendard-SemiBold.otf')
   });
 
   const [isAppReady, setAppReady] = useState(false);
@@ -48,23 +79,18 @@ export default function RootLayout() {
       extend(customParseFormat);
       setupInterceptor(authApi);
 
-      const kakaoNativeAppKey = process.env.EXPO_PUBLIC_KAKAO_NATIVE_KEY || '';
-      const consumerKey = process.env.EXPO_PUBLIC_NAVER_CLIENT_ID || '';
-      const consumerSecret = process.env.EXPO_PUBLIC_NAVER_CLIENT_SECRET || '';
-      const appName = process.env.EXPO_PUBLIC_NAVER_APP_NAME || '';
-      const serviceUrlSchemeIOS = process.env.EXPO_PUBLIC_NAVER_URL_SCHEME || '';
-      const iosClientId = process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID || '';
-      const webClientId = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID || '';
-
-      initializeKakaoSDK(kakaoNativeAppKey);
+      initializeKakaoSDK(process.env.EXPO_PUBLIC_KAKAO_NATIVE_KEY || '');
       NaverLogin.initialize({
-        appName,
-        consumerKey,
-        consumerSecret,
-        serviceUrlSchemeIOS,
+        appName: process.env.EXPO_PUBLIC_NAVER_APP_NAME || '',
+        consumerKey: process.env.EXPO_PUBLIC_NAVER_CLIENT_ID || '',
+        consumerSecret: process.env.EXPO_PUBLIC_NAVER_CLIENT_SECRET || '',
+        serviceUrlSchemeIOS: process.env.EXPO_PUBLIC_NAVER_URL_SCHEME || '',
         disableNaverAppAuthIOS: true
       });
-      GoogleSignin.configure({ webClientId, iosClientId });
+      GoogleSignin.configure({
+        webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID || '',
+        iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID || ''
+      });
 
       setAppReady(true);
     };
@@ -78,36 +104,45 @@ export default function RootLayout() {
     }
   }, [isAppReady, isAnimationDone]);
 
-  if (!isAppReady) {
-    return null;
-  }
+  useEffect(() => {
+    const sub = Linking.addEventListener('url', ({ url }) => {
+      if (url.includes('thirdPartyLoginResult')) {
+        router.back();
+        return;
+      }
+    });
 
-  if (!isAnimationDone) {
-    return <AnimatedSplash onFinish={() => setAnimationDone(true)} />;
-  }
+    return () => sub.remove();
+  }, []);
+
+  if (!isAppReady) return null;
+  if (!isAnimationDone) return <AnimatedSplash onFinish={() => setAnimationDone(true)} />;
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <BottomSheetModalProvider>
-          <SafeAreaProvider>
-            <StatusBar style="dark" />
-            <Stack screenOptions={{ headerShown: false }} />
-          </SafeAreaProvider>
-        </BottomSheetModalProvider>
-      </GestureHandlerRootView>
-    </QueryClientProvider>
+    <TamaguiProvider config={config}>
+      <Sentry.ErrorBoundary
+        fallback={({ error, resetError }) => <ErrorFallback error={error} resetError={resetError} />}
+      >
+        <QueryClientProvider client={queryClient}>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <KeyboardProvider>
+              <SafeAreaProvider>
+                <BottomSheetProvider>
+                  <ModalProvider>
+                    <ToastProvider native={false} swipeDirection="up">
+                      <StatusBar style="dark" />
+                      <Toast />
+                      <Stack screenOptions={{ headerShown: false }} />
+                    </ToastProvider>
+                  </ModalProvider>
+                </BottomSheetProvider>
+              </SafeAreaProvider>
+            </KeyboardProvider>
+          </GestureHandlerRootView>
+        </QueryClientProvider>
+      </Sentry.ErrorBoundary>
+    </TamaguiProvider>
   );
-}
-
-const enableMocking = async () => {
-  if (!__DEV__) {
-    return;
-  }
-
-  await import('../shared/mocks/msw.polyfills');
-  const { server } = await import('../shared/mocks/server');
-  server.listen({ onUnhandledRequest: 'bypass' });
-
-  console.log('[MSW] Mock server started');
 };
+
+export default Sentry.wrap(RootLayout);
