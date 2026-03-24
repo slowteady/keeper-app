@@ -2,7 +2,6 @@ export * from './useCall';
 export * from './useCarousel';
 export * from './useDebounce';
 export * from './useLayout';
-export * from './useLikePost';
 export * from './useListRefreshing';
 export * from './useMap';
 export * from './usePermission';
