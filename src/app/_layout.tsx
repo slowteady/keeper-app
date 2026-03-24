@@ -22,7 +22,7 @@ import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { TamaguiProvider } from 'tamagui';
 
-import { authApi, setupInterceptor } from '@/shared/apis';
+import { authApi, setupInterceptor } from '@/shared/api';
 import { BottomSheetProvider, ModalProvider, Toast } from '@/shared/ui';
 
 import { config } from '../../tamagui.config';

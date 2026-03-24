@@ -1,6 +1,6 @@
 import { AxiosError, AxiosResponse } from 'axios';
 
-import { kakaoApi } from '@/shared/apis';
+import { kakaoApi } from '@/shared/api';
 import { handleLogging } from '@/shared/lib';
 import { makeQueryString } from '@/shared/lib/utils';
 

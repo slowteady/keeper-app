@@ -2,7 +2,7 @@ import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { AxiosError, AxiosResponse } from 'axios';
 
 import { AdoptResponseDto } from '@/entities/adopt';
-import { publicApi } from '@/shared/apis';
+import { publicApi } from '@/shared/api';
 import {
   ApiResponse,
   SHELTER_ADOPTS_QUERY_KEY,
