@@ -1,7 +1,7 @@
 import * as Sentry from '@sentry/react-native';
 
 interface SentryUser {
-  id: string;
+  id: number;
   name: string;
   nickname: string;
   email: string;
@@ -12,7 +12,7 @@ interface SentryUser {
  */
 export const setUserContext = (user: SentryUser) => {
   Sentry.setUser({
-    id: user.id,
+    id: String(user.id),
     email: user.email,
     username: user.name,
     nickname: user.nickname

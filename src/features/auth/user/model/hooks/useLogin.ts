@@ -5,10 +5,9 @@ import { isAvailableAsync } from 'expo-apple-authentication';
 import { Route, router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 
-import { SocialLoginType } from '@/entities/auth';
+import { authQueries, SocialLoginType } from '@/entities/auth';
 import { login } from '@/entities/auth/model/api';
 import { saveAccessToken, saveRefreshToken, setUserContext } from '@/shared/lib';
-import { USER_QUERY_KEY } from '@/shared/model';
 
 const isTabRoute = (path: string) => {
   const tabRoutes = ['/home', '/adopt', '/shelter', '/community', '/profile'];
@@ -62,7 +61,7 @@ export const useLogin = () => {
             await saveAccessToken(accessToken);
             await saveRefreshToken(refreshToken);
             setUserContext(user);
-            queryClient.invalidateQueries({ queryKey: [USER_QUERY_KEY] });
+            queryClient.invalidateQueries({ queryKey: authQueries.all() });
 
             setTimeout(() => {
               show('로그인 되었어요.', { customData: { status: 'success' } });

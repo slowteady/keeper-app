@@ -1,3 +1,4 @@
+import { queryOptions } from '@tanstack/react-query';
 import { AxiosError, AxiosResponse } from 'axios';
 
 import { authApi, publicApi } from '@/shared/api/instance';
@@ -50,4 +51,17 @@ export const deleteUser = async (): Promise<AxiosResponse<ApiResponse<boolean>, 
   const endpoint = `${BASE_URL}/me`;
 
   return await authApi.delete(endpoint);
+};
+
+// --- Query Options Factory ---
+
+export const authQueries = {
+  all: () => ['auth'] as const,
+
+  me: () =>
+    queryOptions({
+      queryKey: [...authQueries.all(), 'me'] as const,
+      queryFn: () => getUser(),
+      select: (res) => res.data
+    })
 };

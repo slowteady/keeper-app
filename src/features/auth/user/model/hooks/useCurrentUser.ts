@@ -2,7 +2,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
 
-import { useGetUser } from '@/entities/auth';
+import { authQueries } from '@/entities/auth';
 import { getAccessToken } from '@/shared/lib';
 
 export const useCurrentUser = () => {
@@ -10,10 +10,9 @@ export const useCurrentUser = () => {
   const [isCheckingToken, setIsCheckingToken] = useState(true);
 
   const { data, isLoading } = useQuery({
-    ...useGetUser(),
+    ...authQueries.me(),
     refetchOnWindowFocus: true,
     refetchOnReconnect: true,
-    select: (data) => data.data,
     enabled
   });
 

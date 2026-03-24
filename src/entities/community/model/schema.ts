@@ -48,7 +48,7 @@ export type CommunityAdoptFormDto = z.infer<typeof CommunityAdoptFormSchema>;
 export const CommunityAdoptDetailSchema = z.object({
   id: z.number(),
   user: z.object({
-    id: z.string(),
+    id: z.number(),
     image: z.string(),
     nickname: z.string()
   }),
@@ -79,7 +79,7 @@ export type CommunityAdoptDetailDto = z.infer<typeof CommunityAdoptDetailSchema>
 export const CommunityAdoptListSchema = z.object({
   id: z.string(),
   user: z.object({
-    id: z.string(),
+    id: z.number(),
     image: z.string(),
     nickname: z.string()
   }),
