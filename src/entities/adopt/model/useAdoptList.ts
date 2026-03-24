@@ -1,14 +1,13 @@
-import { useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useMemo } from 'react';
 
 import { parseQueryParam } from '@/shared/lib';
-import { ADOPTS_QUERY_KEY } from '@/shared/model';
 
 import { makeAdoptOption } from '../lib';
+import { adoptQueries } from './api';
 import { mapToAdoptList } from './mapper';
-import { useGetAdopts } from './query';
 import { AdoptParamsDto } from './schema';
 
 export type AdoptItem = ReturnType<typeof mapToAdoptList>[number];
@@ -37,13 +36,15 @@ export const useAdoptList = (queryParams?: Partial<AdoptParamsDto>) => {
     isFetchingNextPage,
     fetchNextPage: fetchNextPageQuery,
     hasNextPage
-  } = useGetAdopts({
-    filter: selectedFilter,
-    animalType: selectedType,
-    search: selectedSearch,
-    size: 20,
-    ...queryParams
-  });
+  } = useInfiniteQuery(
+    adoptQueries.list({
+      filter: selectedFilter,
+      animalType: selectedType,
+      search: selectedSearch,
+      size: 20,
+      ...queryParams
+    })
+  );
 
   const convertedData = useMemo(() => {
     const hasValue = data && data?.value && data?.value.length > 0;
@@ -63,7 +64,7 @@ export const useAdoptList = (queryParams?: Partial<AdoptParamsDto>) => {
   const goList = () => router.push('/adopt');
 
   const executeRefresh = useCallback(async () => {
-    await queryClient.invalidateQueries({ queryKey: [ADOPTS_QUERY_KEY] });
+    await queryClient.invalidateQueries({ queryKey: adoptQueries.all() });
   }, [queryClient]);
 
   const fetchNextPage = useCallback(async () => {
