@@ -15,7 +15,7 @@ module.exports = {
     }
   },
   rules: {
-    'import/no-unresolved': 'error',
+    'import/no-unresolved': ['error', { caseSensitive: false }],
     'simple-import-sort/imports': 'error',
     'simple-import-sort/exports': 'error',
     'unused-imports/no-unused-imports': 'error',
