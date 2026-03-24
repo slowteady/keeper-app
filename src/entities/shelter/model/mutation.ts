@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError, AxiosResponse } from 'axios';
 
-import { publicApi } from '@/shared/apis';
+import { publicApi } from '@/shared/api';
 import { ApiResponse, UseMutationCustomOptions } from '@/shared/model';
 
 import { ShelterDto, ShelterSearchParamsDto } from './schema';

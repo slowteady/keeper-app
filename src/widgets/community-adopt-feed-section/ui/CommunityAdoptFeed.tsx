@@ -3,8 +3,9 @@ import { styled, useTheme, View, XStack, YStack } from 'tamagui';
 
 import { makeAdoptOption } from '@/entities/adopt';
 import { COMMUNITY_LIST_FILTER, CommunityAdoptCard } from '@/entities/community';
+import { useLikePost } from '@/features/common';
 import { useCommunityAdoptFeed, useCommunityListFilter } from '@/features/community';
-import { useLikePost, useScrollUpButton } from '@/shared/model';
+import { useScrollUpButton } from '@/shared/model';
 import { ButtonGroup, ChipButton, ScrollUpButton } from '@/shared/ui';
 import { DownArrow } from '@/shared/ui/icons/mini';
 

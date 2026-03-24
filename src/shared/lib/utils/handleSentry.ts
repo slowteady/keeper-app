@@ -1,11 +1,16 @@
 import * as Sentry from '@sentry/react-native';
 
-import { UserDto } from '@/entities/auth';
+interface SentryUser {
+  id: string;
+  name: string;
+  nickname: string;
+  email: string;
+}
 
 /**
  * 센트리 사용자 컨텍스트 설정
  */
-export const setUserContext = (user: UserDto) => {
+export const setUserContext = (user: SentryUser) => {
   Sentry.setUser({
     id: user.id,
     email: user.email,

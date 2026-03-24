@@ -1,7 +1,7 @@
 import { useInfiniteQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { AxiosError, AxiosResponse } from 'axios';
 
-import { publicApi } from '@/shared/apis';
+import { publicApi } from '@/shared/api';
 import {
   ADOPT_QUERY_KEY,
   ADOPTS_QUERY_KEY,

@@ -30,7 +30,6 @@ export const CommunityDetailDescriptionSection = ({
         <Label>싫어해요</Label>
         <Description>{dislikes}</Description>
       </Wrap>
-      <Description>{dislikes}</Description>
       <Wrap>
         <Label>아파요</Label>
         <Description>{health}</Description>
