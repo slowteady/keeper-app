@@ -22,6 +22,7 @@ import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { TamaguiProvider } from 'tamagui';
 
+import { getRefresh } from '@/entities/auth/model/api';
 import { authApi, setupInterceptor } from '@/shared/api';
 import { BottomSheetProvider, ModalProvider, Toast } from '@/shared/ui';
 
@@ -77,7 +78,13 @@ const RootLayout = () => {
       if (!fontLoaded) return;
 
       extend(customParseFormat);
-      setupInterceptor(authApi);
+      setupInterceptor(authApi, {
+        refreshFn: async (refreshToken) => {
+          const { data } = await getRefresh(refreshToken);
+          return data.data;
+        },
+        onRefreshFailed: () => router.replace('/login')
+      });
 
       initializeKakaoSDK(process.env.EXPO_PUBLIC_KAKAO_NATIVE_KEY || '');
       NaverLogin.initialize({
