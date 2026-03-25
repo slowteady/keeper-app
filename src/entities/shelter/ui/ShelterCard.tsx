@@ -6,7 +6,7 @@ import { ShelterDto } from '../model';
 
 export interface ShelterCardProps {
   data: ShelterDto;
-  onPress: (id: number) => void;
+  onPress: (id: string) => void;
 }
 
 export const ShelterCard = ({ data, onPress }: ShelterCardProps) => {

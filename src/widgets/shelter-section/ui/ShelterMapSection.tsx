@@ -13,7 +13,7 @@ export interface ShelterMapSectionProps {
   onRefetch: (params?: CameraParams) => void;
   onTapMarker?: (data: ShelterDto) => void;
   onInitialized: () => void;
-  selectedMarkerId?: number;
+  selectedMarkerId?: string;
 }
 
 export const ShelterMapSection = forwardRef<NaverMapViewRef, ShelterMapSectionProps>(

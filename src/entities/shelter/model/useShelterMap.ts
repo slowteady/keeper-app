@@ -1,4 +1,5 @@
 import { useToastController } from '@tamagui/toast';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { PermissionStatus } from 'expo-location';
 import { useCallback, useEffect, useState } from 'react';
 import { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
@@ -7,14 +8,13 @@ import { KakaoAddressDocumentDto } from '@/features/address';
 import { calcMapRadiusKm } from '@/shared/lib';
 import { CameraParams, useMap } from '@/shared/model';
 
-import { useGetSearchedShelters } from './mutation';
-import { useGetShelterCounts, useGetShelters } from './query';
+import { searchShelters, shelterQueries } from './api';
 import { ShelterDto } from './schema';
 
 export const useShelterMap = () => {
   const [enabled, setEnabled] = useState(false);
   const [shelterList, setShelterList] = useState<ShelterDto[]>([]);
-  const [selectedMarkerId, setSelectedMarkerId] = useState<number>();
+  const [selectedMarkerId, setSelectedMarkerId] = useState<string>();
 
   const opacity = useSharedValue(1);
   const translateY = useSharedValue(0);
@@ -22,26 +22,26 @@ export const useShelterMap = () => {
 
   const { camera, setCamera, distance, setDistance, initialLocation, mapRef, permissionStatus } = useMap();
 
-  const { data: shelters, isLoading } = useGetShelters(
-    {
+  const { data: shelters, isLoading } = useQuery({
+    ...shelterQueries.list({
       latitude: camera?.latitude || 0,
       longitude: camera?.longitude || 0,
       distance,
       userLatitude: initialLocation?.latitude || 0,
       userLongitude: initialLocation?.longitude || 0
-    },
-    { enabled: !!camera && enabled }
-  );
+    }),
+    enabled: !!camera && enabled
+  });
 
-  const { data: shelterCounts } = useGetShelterCounts(
-    {
+  const { data: shelterCounts } = useQuery({
+    ...shelterQueries.counts({
       latitude: initialLocation?.latitude || 0,
       longitude: initialLocation?.longitude || 0
-    },
-    { enabled: !!initialLocation }
-  );
+    }),
+    enabled: !!initialLocation
+  });
 
-  const { mutate, isPending } = useGetSearchedShelters();
+  const { mutate, isPending } = useMutation({ mutationFn: searchShelters });
 
   const toggleMapEnabled = useCallback(() => {
     setEnabled((prev) => !prev);

@@ -21,7 +21,7 @@ export interface ShelterMapProps extends NaverMapViewProps {
   data?: ShelterDto[];
   onRefetch: (params?: CameraParams) => void;
   onTapMarker?: (data: ShelterDto) => void;
-  selectedMarkerId?: number;
+  selectedMarkerId?: string;
   readOnly?: boolean;
 }
 
@@ -112,7 +112,7 @@ const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
 interface ShelterMapMarkerProps {
   data: ShelterDto;
   onTap?: (data: ShelterDto) => void;
-  isSelectedId?: number;
+  isSelectedId?: string;
 }
 const MARKER_DEFAULT_ZINDEX = 200000;
 const Marker = ({ data, onTap, isSelectedId }: ShelterMapMarkerProps) => {

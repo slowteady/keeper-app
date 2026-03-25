@@ -1,13 +1,12 @@
-import { useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useMemo } from 'react';
 
 import { makeAdoptOption, mapToAdoptList } from '@/entities/adopt';
 import { parseQueryParam } from '@/shared/lib';
-import { SHELTER_ADOPTS_QUERY_KEY } from '@/shared/model';
 
-import { useGetShelterAdopts } from './query';
+import { shelterQueries } from './api';
 import { ShelterAdoptsParamsDto } from './schema';
 
 export interface UseShelterAdoptListProps {
@@ -30,12 +29,14 @@ export const useShelterAdoptList = ({ id, adoptsParams }: UseShelterAdoptListPro
     fetchNextPage: fetchNextPageQuery,
     hasNextPage,
     isFetchingNextPage
-  } = useGetShelterAdopts(id, {
-    size: 16,
-    page: 0,
-    filter: selectedFilter,
-    ...adoptsParams
-  });
+  } = useInfiniteQuery(
+    shelterQueries.adopts(id, {
+      size: 16,
+      page: 0,
+      filter: selectedFilter,
+      ...adoptsParams
+    })
+  );
 
   const convertedData = useMemo(() => {
     const hasValue = data && data?.value && data?.value.length > 0;
@@ -47,7 +48,7 @@ export const useShelterAdoptList = ({ id, adoptsParams }: UseShelterAdoptListPro
   const changeFilter = (id: string) => router.setParams({ filter: id });
 
   const executeRefresh = useCallback(async () => {
-    await queryClient.invalidateQueries({ queryKey: [SHELTER_ADOPTS_QUERY_KEY] });
+    await queryClient.invalidateQueries({ queryKey: shelterQueries.all() });
   }, [queryClient]);
 
   const fetchNextPage = useCallback(async () => {
