@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { RefreshControl } from 'react-native';
 import { styled, View } from 'tamagui';
 
-import { adoptQueries } from '@/entities/adopt';
+import { adoptQueries, useAdoptList } from '@/entities/adopt';
 import { shelterQueries } from '@/entities/shelter';
 import { useListRefreshing, useScrollUpButton } from '@/shared/model';
 import { ScrollUpButton } from '@/shared/ui';
@@ -15,6 +15,8 @@ const IMAGES = [require('@/assets/images/banner1.png'), require('@/assets/images
 const Page = () => {
   const queryClient = useQueryClient();
   const { isButtonVisible, handlePressButton, handleScroll, scrollRef } = useScrollUpButton();
+
+  const adopt = useAdoptList();
 
   const refetchQueries = async () => {
     await Promise.all([
@@ -39,7 +41,16 @@ const Page = () => {
         id: 'adopt',
         Component: (
           <View pb={40}>
-            <HomeAdoptSection />
+            <HomeAdoptSection
+              selectedFilter={adopt.selectedFilter}
+              selectedType={adopt.selectedType}
+              convertedData={adopt.convertedData}
+              isLoading={adopt.isLoading}
+              onGoDetail={adopt.goDetail}
+              onGoList={adopt.goList}
+              onChangeFilter={adopt.changeFilter}
+              onChangeType={adopt.changeType}
+            />
           </View>
         )
       },
@@ -52,7 +63,7 @@ const Page = () => {
         )
       }
     ];
-  }, []);
+  }, [adopt]);
 
   return (
     <Container>

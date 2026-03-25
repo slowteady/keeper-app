@@ -23,9 +23,9 @@ describe('useProfileLikeFilter', () => {
     const { result } = renderHook(() => useProfileLikeFilter());
 
     act(() => {
-      result.current.toggleFilter('community');
+      result.current.toggleFilter('post');
     });
 
-    expect(result.current.filter).toBe('community');
+    expect(result.current.filter).toBe('post');
   });
 });
