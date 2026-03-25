@@ -20,17 +20,18 @@ export const NicknameForm = ({
   isPending = false,
   initialValue = ''
 }: NicknameFormProps) => {
-  const { state, flags, actions } = useCheckNickname(initialValue);
+  const { nickname, nicknameStatus, isChecking, isComplete, changeNickname, clearNickname } =
+    useCheckNickname(initialValue);
 
-  const helperText = flags.isChecking ? (
+  const helperText = isChecking ? (
     <XStack>
       <Spinner size="small" color="$primaryMain" />
     </XStack>
   ) : (
-    state.nicknameStatus.message
+    nicknameStatus.message
   );
 
-  const disabled = !flags.isComplete || flags.isChecking || isPending;
+  const disabled = !isComplete || isChecking || isPending;
 
   return (
     <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
@@ -41,17 +42,17 @@ export const NicknameForm = ({
               {title}
             </Text>
             <TextInput
-              value={state.nickname}
-              onChangeText={actions.changeNickname}
-              onPressReset={actions.clearNickname}
+              value={nickname}
+              onChangeText={changeNickname}
+              onPressReset={clearNickname}
               placeholder="닉네임을 입력해주세요."
               helperText={helperText}
-              helperTextStatus={state.nicknameStatus.status}
+              helperTextStatus={nicknameStatus.status}
               maxLength={8}
             />
           </SubContainer>
 
-          <BottomButton onPress={() => onSubmit(state.nickname)} disabled={disabled} isLoading={isPending}>
+          <BottomButton onPress={() => onSubmit(nickname)} disabled={disabled} isLoading={isPending}>
             <Text fontSize={15} fontWeight={600} lineHeight={18} color={disabled ? '$black500' : '$black900'}>
               {buttonText}
             </Text>

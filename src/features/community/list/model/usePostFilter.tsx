@@ -51,8 +51,5 @@ export const useCommunityListFilter = () => {
     [present, selectedFilter, dismiss]
   );
 
-  return {
-    state: { selectedAnimalType, selectedFilter },
-    actions: { changeAnimalType, changeFilter }
-  };
+  return { selectedAnimalType, selectedFilter, changeAnimalType, changeFilter };
 };

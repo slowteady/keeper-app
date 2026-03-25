@@ -5,18 +5,14 @@ import { UserAvatar } from '@/entities/profile';
 import { useAccount } from '@/features/auth';
 
 export const AccountHeader = ({ user }: { user: UserDto }) => {
-  const account = useAccount();
+  const { changeProfileImage } = useAccount();
 
   const createdAt = `25.09.23`;
   const signupType = '카카오';
 
   return (
     <XStack gap={20}>
-      <UserAvatar
-        image={user.image}
-        onPressEdit={account.actions.changeProfileImage}
-        onPressAdd={account.actions.changeProfileImage}
-      />
+      <UserAvatar image={user.image} onPressEdit={changeProfileImage} onPressAdd={changeProfileImage} />
       <YStack>
         <Text fontSize={20} fontWeight="500" color="$black900" lineHeight={22} mb={12}>
           {user.nickname}님

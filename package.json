@@ -93,6 +93,7 @@
     "@svgr/core": "^8.1.0",
     "@svgr/plugin-jsx": "^8.1.0",
     "@svgr/plugin-svgo": "^8.1.0",
+    "@testing-library/react-native": "13.3.3",
     "@types/jest": "^29.5.12",
     "@types/react": "~19.1.17",
     "eslint": "^8.57.0",
@@ -106,10 +107,14 @@
     "jest-expo": "~54.0.17",
     "lint-staged": "^16.4.0",
     "prettier": "^3.5.2",
+    "react-test-renderer": "19.1.0",
     "typescript": "^5.3.3"
   },
   "jest": {
-    "preset": "jest-expo"
+    "preset": "jest-expo",
+    "setupFiles": [
+      "<rootDir>/jest.setup.ts"
+    ]
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [

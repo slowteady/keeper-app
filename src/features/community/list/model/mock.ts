@@ -1,13 +1,20 @@
 import { fakerKO } from '@faker-js/faker';
 
 import { CommunityAdoptListDto } from '@/entities/community';
-import { getUserValue } from '@/features/auth';
 import { formatTimeAgo } from '@/shared/lib';
+
+const mockUser = () => ({
+  id: fakerKO.number.int(),
+  name: fakerKO.person.fullName(),
+  nickname: fakerKO.person.firstName(),
+  email: fakerKO.internet.email(),
+  image: fakerKO.image.avatar()
+});
 
 export const getAdoptListValue = (): CommunityAdoptListDto[] => {
   return Array.from({ length: 50 }, (_, id) => ({
     id: fakerKO.string.uuid(),
-    user: getUserValue(),
+    user: mockUser(),
     displayTime: id === 1 ? formatTimeAgo(fakerKO.date.recent()) : formatTimeAgo(fakerKO.date.past()),
     title: fakerKO.book.title(),
     content: fakerKO.lorem.text(),

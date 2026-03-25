@@ -5,8 +5,5 @@ import { ProfileLikeOption } from '@/entities/profile';
 export const useProfileLikeFilter = () => {
   const [filter, setFilter] = useState<ProfileLikeOption>('adopt');
 
-  return {
-    state: { filter },
-    actions: { toggleFilter: setFilter }
-  };
+  return { filter, toggleFilter: setFilter };
 };

@@ -26,25 +26,25 @@ const Page = () => {
 
   const { data } = useCommunityAdoptDetailFeed(id);
   const { handleScroll, handlePressButton, isButtonVisible, scrollRef } = useScrollUpButton();
-  const { state: commentState, data: commentData, actions: commentActions } = useCommunityCommentList();
-  const { actions: likeActions } = useLikePost();
-  const { actions: shareActions } = useShare();
+  const { sortOrder, commentList, changeSortOrder } = useCommunityCommentList();
+  const { toggleLikePost, toggleLikeComment } = useLikePost();
+  const { share } = useShare();
 
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<CommentDto>) => {
       return (
         <View key={item.id} px={20} py={24}>
-          <CommentCard comment={item} onPressLike={() => likeActions.toggleLikeComment(item.id)} />
+          <CommentCard comment={item} onPressLike={() => toggleLikeComment(item.id)} />
         </View>
       );
     },
-    [likeActions]
+    [toggleLikeComment]
   );
 
   return (
     <Container>
       <FlashList
-        data={commentData.commentList}
+        data={commentList}
         keyExtractor={(item, i) => `${item.id}-${i}`}
         renderItem={renderItem}
         onScroll={handleScroll}
@@ -57,9 +57,9 @@ const Page = () => {
             <View px={20} mb={32}>
               <CommunityDetailOverviewSection
                 {...data.overviews}
-                onPressLike={() => likeActions.toggleLikePost(id)}
+                onPressLike={() => toggleLikePost(id)}
                 onPressShare={(id) =>
-                  shareActions.share({
+                  share({
                     id,
                     path: 'community',
                     title: data.detailPost.title,
@@ -86,9 +86,9 @@ const Page = () => {
             </View>
 
             <CommentListHeader
-              commentCount={commentData.commentList.length}
-              sortOrder={commentState.sortOrder}
-              onChangeSortOrder={commentActions.changeSortOrder}
+              commentCount={commentList.length}
+              sortOrder={sortOrder}
+              onChangeSortOrder={changeSortOrder}
             />
           </>
         )}

@@ -30,46 +30,50 @@ const LIST_SIZE = 16;
 const ShelterDetailContent = ({ id }: { id: string }) => {
   const [callModalOpen, setCallModalOpen] = useState(false);
 
-  const { data: shelter, actions: shelterActions } = useShelter({ id });
+  const { shelterData, executeRefresh: refreshShelter, hasCallNumber } = useShelter({ id });
   const {
-    data: shelterAdopts,
-    state: shelterAdoptsState,
-    actions: shelterAdoptsActions,
-    flags: shelterAdoptsFlags
+    selectedFilter,
+    originalData,
+    convertedData,
+    isLoading: adoptsLoading,
+    hasNextPage,
+    isFetchingNextPage,
+    changeFilter,
+    executeRefresh: refreshAdopts,
+    fetchNextPage,
+    goDetail
   } = useShelterAdoptList({ id });
   const { handleScroll, handlePressButton, isButtonVisible, scrollRef } = useScrollUpButton();
 
   const refreshFetch = useCallback(async () => {
-    await Promise.all([shelterActions.executeRefresh(), shelterAdoptsActions.executeRefresh()]);
-  }, []);
+    await Promise.all([refreshShelter(), refreshAdopts()]);
+  }, [refreshShelter, refreshAdopts]);
 
   const renderItem = useCallback(
     ({ item, index }: ListRenderItemInfo<AdoptItem>) => {
       const isLeft = index % 2 === 0;
 
       return (
-        <View pl={isLeft ? 20 : 4} pr={isLeft ? 4 : 20} mb={32} onPress={() => shelterAdoptsActions.goDetail(item.id)}>
+        <View pl={isLeft ? 20 : 4} pr={isLeft ? 4 : 20} mb={32} onPress={() => goDetail(item.id)}>
           <AdoptCard uri={item.uri} title={item.title} description={item.description} chips={item.chips} />
         </View>
       );
     },
-    [shelterAdoptsActions]
+    [goDetail]
   );
 
-  const hasCallNumber = !!shelter.shelterData?.tel;
-
-  const currentPage = (shelterAdopts.originalData?.page ?? 0) + 1;
-  const totalPage = Math.ceil((shelterAdopts.originalData?.total ?? 0) / LIST_SIZE);
+  const currentPage = (originalData?.page ?? 0) + 1;
+  const totalPage = Math.ceil((originalData?.total ?? 0) / LIST_SIZE);
   const text = `더보기 ${currentPage}/${totalPage}`;
 
-  if (!shelter.shelterData) return null;
+  if (!shelterData) return null;
 
   return (
     <>
       <AdoptListSection
         ref={scrollRef}
-        data={shelterAdopts.convertedData ?? []}
-        isLoading={shelterAdoptsFlags.isLoading}
+        data={convertedData ?? []}
+        isLoading={adoptsLoading}
         onScroll={handleScroll}
         onRefreshCallback={refreshFetch}
         renderItem={renderItem}
@@ -78,14 +82,14 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
         header={
           <YStack mb={24}>
             <View mb={30} px={20}>
-              <ShelterDetailOverviewSection data={shelter.shelterData} />
+              <ShelterDetailOverviewSection data={shelterData} />
             </View>
             <View mb={32} px={20}>
               <ShelterDetailDescriptionSection
-                time={shelter.shelterData.time}
-                address={shelter.shelterData.address}
-                person={shelter.shelterData.person}
-                tel={shelter.shelterData.tel ?? '정보 없음'}
+                time={shelterData.time}
+                address={shelterData.address}
+                person={shelterData.person}
+                tel={shelterData.tel ?? '정보 없음'}
               />
             </View>
 
@@ -107,27 +111,23 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
                   보호중인 아이들
                 </Text>
                 <Text fontSize={15} fontWeight="500" lineHeight={17} letterSpacing={-0.25} color="$black500">
-                  {shelterAdopts.convertedData.length}마리
+                  {convertedData.length}마리
                 </Text>
               </XStack>
 
               <Dropdown
                 data={makeAdoptOption('FILTER')}
-                value={shelterAdoptsState.selectedFilter}
-                onChange={(value) => shelterAdoptsActions.changeFilter(value.id)}
+                value={selectedFilter}
+                onChange={(value) => changeFilter(value.id)}
                 snapPoints={[200]}
               />
             </XStack>
           </YStack>
         }
         footer={
-          shelterAdoptsFlags.hasNextPage ? (
+          hasNextPage ? (
             <View mb={24} justify="center">
-              <ShowMoreButton
-                text={text}
-                onPress={shelterAdoptsActions.fetchNextPage}
-                isLoading={shelterAdoptsFlags.isFetchingNextPage}
-              />
+              <ShowMoreButton text={text} onPress={fetchNextPage} isLoading={isFetchingNextPage} />
             </View>
           ) : undefined
         }
@@ -139,8 +139,8 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
         <CallModal
           open={callModalOpen}
           onClose={() => setCallModalOpen(false)}
-          tel={shelter.shelterData.tel!}
-          title={`${shelter.shelterData.name}에 문의하기`}
+          tel={shelterData.tel!}
+          title={`${shelterData.name}에 문의하기`}
           description="*원활한 소통을 위해 상담원이 상담, 휴대폰 번호, 주소 등을 수집할 수 있습니다."
         />
       )}

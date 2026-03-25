@@ -15,17 +15,21 @@ import { ButtonGroup, Dropdown, ViewAllButton } from '@/shared/ui';
 export const HomeAdoptSection = () => {
   const scrollRef = useRef<FlashListRef<AdoptItem>>(null);
 
-  const { state, data, actions, flags } = useAdoptList();
+  const { selectedFilter, selectedType, convertedData, isLoading, goDetail, goList, changeFilter, changeType } =
+    useAdoptList();
 
-  const renderItem = useCallback(({ item }: ListRenderItemInfo<AdoptItem>) => {
-    const { uri, title, description, chips } = item;
+  const renderItem = useCallback(
+    ({ item }: ListRenderItemInfo<AdoptItem>) => {
+      const { uri, title, description, chips } = item;
 
-    return (
-      <View onPress={() => actions.goDetail(item.id)}>
-        <AdoptCard horizontal uri={uri} title={title} description={description} chips={chips} />
-      </View>
-    );
-  }, []);
+      return (
+        <View onPress={() => goDetail(item.id)}>
+          <AdoptCard horizontal uri={uri} title={title} description={description} chips={chips} />
+        </View>
+      );
+    },
+    [goDetail]
+  );
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -36,31 +40,27 @@ export const HomeAdoptSection = () => {
   return (
     <>
       <TitleContainer mb={16} px={20}>
-        <Text fontSize={26} lineHeight={36} fontWeight="600" color="$black900" onPress={() => actions.goList()}>
+        <Text fontSize={26} lineHeight={36} fontWeight="600" color="$black900" onPress={() => goList()}>
           입양공고
         </Text>
 
         <View mt={12}>
           <Dropdown
             data={makeAdoptOption('FILTER')}
-            value={state.selectedFilter}
-            onChange={(value) => actions.changeFilter(value.id)}
+            value={selectedFilter}
+            onChange={(value) => changeFilter(value.id)}
             snapPoints={[200]}
           />
         </View>
       </TitleContainer>
 
       <View px={20} mb={20}>
-        <ButtonGroup
-          data={makeAdoptOption('ANIMAL')}
-          id={state.selectedType}
-          onChange={(id) => actions.changeType(id)}
-        />
+        <ButtonGroup data={makeAdoptOption('ANIMAL')} id={selectedType} onChange={(id) => changeType(id)} />
       </View>
 
       <FlashList
         ref={scrollRef}
-        data={data.convertedData ?? []}
+        data={convertedData ?? []}
         keyExtractor={({ id }, idx) => `${id}-${idx}`}
         renderItem={renderItem}
         horizontal
@@ -69,8 +69,8 @@ export const HomeAdoptSection = () => {
         ItemSeparatorComponent={() => <View width={12} />}
         contentContainerStyle={{ minHeight: 350 }}
         style={{ paddingLeft: 20 }}
-        ListEmptyComponent={<EmptyComponent isLoading={flags.isLoading} />}
-        ListFooterComponent={<ViewAllButton onPress={actions.goList} />}
+        ListEmptyComponent={<EmptyComponent isLoading={isLoading} />}
+        ListFooterComponent={<ViewAllButton onPress={goList} />}
         ListFooterComponentStyle={{ justifyContent: 'center', paddingHorizontal: 40 }}
       />
     </>

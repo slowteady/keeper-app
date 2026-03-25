@@ -1,13 +1,22 @@
 import { fakerKO } from '@faker-js/faker';
+import dayjs from 'dayjs';
 
-import { CommunityAdoptDetailDto } from '@/entities/community';
-import { getUserValue } from '@/features/auth';
+import { CommentDto } from '@/entities/comment';
+import { CommentSortOrderDto, CommunityAdoptDetailDto } from '@/entities/community';
 import { formatTimeAgo } from '@/shared/lib';
+
+const mockUser = () => ({
+  id: fakerKO.number.int(),
+  name: fakerKO.person.fullName(),
+  nickname: fakerKO.person.firstName(),
+  email: fakerKO.internet.email(),
+  image: fakerKO.image.avatar()
+});
 
 export const getAdoptDetailValue = (id: string): CommunityAdoptDetailDto => {
   return {
     id: fakerKO.number.int({ min: 1, max: 1000000 }),
-    user: getUserValue(),
+    user: mockUser(),
     displayTime: formatTimeAgo(fakerKO.date.recent()),
     title: fakerKO.lorem.sentences(2),
     images: Array.from({ length: 5 }, () => fakerKO.image.avatar()),
@@ -30,4 +39,28 @@ export const getAdoptDetailValue = (id: string): CommunityAdoptDetailDto => {
       view: fakerKO.number.int({ min: 0, max: 1000 })
     }
   };
+};
+
+export const getCommentList = (sortOrder: CommentSortOrderDto): CommentDto[] => {
+  const commentsWithRawDate = Array.from({ length: 50 }, (_, id) => {
+    const rawDate = id === 1 ? fakerKO.date.recent() : fakerKO.date.past();
+    return {
+      id: fakerKO.string.uuid(),
+      user: mockUser(),
+      likeCount: fakerKO.number.int({ min: 0, max: 1000 }),
+      content: fakerKO.lorem.text(),
+      likeByMe: fakerKO.helpers.arrayElement([true, false]),
+      rawDate
+    };
+  });
+
+  const sorted = commentsWithRawDate.sort((a, b) => {
+    if (sortOrder === 'LATEST') return dayjs(b.rawDate).diff(dayjs(a.rawDate));
+    return dayjs(a.rawDate).diff(dayjs(b.rawDate));
+  });
+
+  return sorted.map(({ rawDate, ...comment }) => ({
+    ...comment,
+    createdAt: formatTimeAgo(rawDate)
+  }));
 };

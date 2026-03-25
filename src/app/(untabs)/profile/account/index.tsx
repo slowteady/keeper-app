@@ -9,10 +9,9 @@ import { Menu } from '@/shared/ui';
 import { AccountHeader } from '@/widgets/profile';
 
 const Page = () => {
-  const { data } = useCurrentUser();
+  const { user } = useCurrentUser();
   const permission = usePermission();
 
-  const user = data.user;
   if (!user) return null;
 
   const version = Application.nativeApplicationVersion;

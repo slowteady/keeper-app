@@ -27,5 +27,5 @@ export const useDeleteUser = () => {
     }
   }, [isPending, mutateAsync, queryClient, show]);
 
-  return { actions: { executeDeleteUser }, flags: { isPending } };
+  return { deleteUser: executeDeleteUser, isPending };
 };

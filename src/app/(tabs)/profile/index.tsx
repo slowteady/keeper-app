@@ -4,11 +4,11 @@ import { useCurrentUser } from '@/features/auth';
 import { ProfileContentSection, ProfileHeader, ProfileMenuList } from '@/widgets/profile';
 
 const Page = () => {
-  const { data, flags } = useCurrentUser();
+  const { user, isLoading } = useCurrentUser();
 
   return (
     <Container>
-      <ProfileHeader user={data.user} isLoading={flags.isLoading} />
+      <ProfileHeader user={user} isLoading={isLoading} />
       <ProfileContentSection />
       <ProfileMenuList />
     </Container>

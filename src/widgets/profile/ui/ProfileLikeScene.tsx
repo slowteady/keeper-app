@@ -10,8 +10,8 @@ import { ButtonGroup, ScrollUpButton } from '@/shared/ui';
 import { AdoptListSection } from '@/widgets/adopt-section';
 
 export const ProfileLikeScene = () => {
-  const { state: filterState, actions: filterActions } = useProfileLikeFilter();
-  const { data: adoptData, actions: adoptActions, flags: adoptFlags } = useAdoptList({ size: 16 });
+  const { filter, toggleFilter } = useProfileLikeFilter();
+  const { convertedData, isLoading, goDetail, executeRefresh } = useAdoptList({ size: 16 });
 
   const { handleScroll, handlePressButton, isButtonVisible, scrollRef } = useScrollUpButton();
 
@@ -22,7 +22,7 @@ export const ProfileLikeScene = () => {
           const isLeft = index % 2 === 0;
 
           return (
-            <View pl={isLeft ? 0 : 4} pr={isLeft ? 4 : 0} mb={32} onPress={() => adoptActions.goDetail(item.id)}>
+            <View pl={isLeft ? 0 : 4} pr={isLeft ? 4 : 0} mb={32} onPress={() => goDetail(item.id)}>
               <AdoptCard uri={item.uri} title={item.title} description={item.description} chips={item.chips} />
             </View>
           );
@@ -32,25 +32,21 @@ export const ProfileLikeScene = () => {
         }
       }
     },
-    [adoptActions]
+    [goDetail]
   );
 
   return (
     <Container>
       <AdoptListSection
         ref={scrollRef}
-        data={adoptData.convertedData ?? []}
-        isLoading={adoptFlags.isLoading}
+        data={convertedData ?? []}
+        isLoading={isLoading}
         onScroll={handleScroll}
-        onRefreshCallback={adoptActions.executeRefresh}
-        renderItem={(p) => renderItem(p, filterState.filter)}
+        onRefreshCallback={executeRefresh}
+        renderItem={(p) => renderItem(p, filter)}
         header={
           <View mb={20}>
-            <ButtonGroup
-              data={makeProfileOption('LIKE')}
-              id={filterState.filter}
-              onChange={(id) => filterActions.toggleFilter(id)}
-            />
+            <ButtonGroup data={makeProfileOption('LIKE')} id={filter} onChange={(id) => toggleFilter(id)} />
           </View>
         }
         contentContainerStyle={{ paddingHorizontal: 20 }}

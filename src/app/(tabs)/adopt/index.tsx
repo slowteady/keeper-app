@@ -10,7 +10,21 @@ import { AdoptListHeaderSection, AdoptListSection } from '@/widgets/adopt-sectio
 const LIST_SIZE = 16;
 
 const Page = () => {
-  const { state, data, actions, flags } = useAdoptList({ size: LIST_SIZE });
+  const {
+    selectedFilter,
+    selectedType,
+    convertedData,
+    moreButtonText,
+    isLoading,
+    isFetchingNextPage,
+    hasNextPage,
+    goDetail,
+    changeFilter,
+    changeType,
+    changeSearch,
+    executeRefresh,
+    fetchNextPage
+  } = useAdoptList({ size: LIST_SIZE });
   const { handleScroll, handlePressButton, isButtonVisible, scrollRef } = useScrollUpButton();
 
   useEffect(() => {
@@ -24,40 +38,36 @@ const Page = () => {
       const isLeft = index % 2 === 0;
 
       return (
-        <View pl={isLeft ? 0 : 4} pr={isLeft ? 4 : 0} mb={32} onPress={() => actions.goDetail(item.id)}>
+        <View pl={isLeft ? 0 : 4} pr={isLeft ? 4 : 0} mb={32} onPress={() => goDetail(item.id)}>
           <AdoptCard uri={item.uri} title={item.title} description={item.description} chips={item.chips} />
         </View>
       );
     },
-    [actions]
+    [goDetail]
   );
 
   return (
     <Container>
       <AdoptListSection
         ref={scrollRef}
-        data={data.convertedData ?? []}
-        isLoading={flags.isLoading}
+        data={convertedData ?? []}
+        isLoading={isLoading}
         onScroll={handleScroll}
-        onRefreshCallback={actions.executeRefresh}
+        onRefreshCallback={executeRefresh}
         renderItem={renderItem}
         header={
           <AdoptListHeaderSection
-            filterValue={state.selectedFilter}
-            animalType={state.selectedType}
-            onChangeFilter={actions.changeFilter}
-            onChangeAnimalType={actions.changeType}
-            onSearch={actions.changeSearch}
+            filterValue={selectedFilter}
+            animalType={selectedType}
+            onChangeFilter={changeFilter}
+            onChangeAnimalType={changeType}
+            onSearch={changeSearch}
           />
         }
         footer={
-          flags.hasNextPage ? (
+          hasNextPage ? (
             <View mb={24} justify="center">
-              <ShowMoreButton
-                text={data.moreButtonText}
-                onPress={actions.fetchNextPage}
-                isLoading={flags.isFetchingNextPage}
-              />
+              <ShowMoreButton text={moreButtonText} onPress={fetchNextPage} isLoading={isFetchingNextPage} />
             </View>
           ) : undefined
         }

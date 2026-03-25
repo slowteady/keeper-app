@@ -46,5 +46,5 @@ export const useShare = () => {
     }
   }, []);
 
-  return { actions: { share } };
+  return { share };
 };

@@ -79,9 +79,22 @@ export const useAdoptList = (queryParams?: Partial<AdoptParamsDto>) => {
   const moreButtonText = `더보기 ${currentPage}/${totalPage}`;
 
   return {
-    state: { selectedFilter, selectedType, selectedSearch },
-    data: { originalData: data, convertedData, moreButtonText },
-    flags: { isLoading, isFetching, isFetchingNextPage, hasNextPage },
-    actions: { changeFilter, changeType, changeSearch, goDetail, goList, executeRefresh, fetchNextPage }
+    selectedFilter,
+    selectedType,
+    selectedSearch,
+    originalData: data,
+    convertedData,
+    moreButtonText,
+    isLoading,
+    isFetching,
+    isFetchingNextPage,
+    hasNextPage,
+    changeFilter,
+    changeType,
+    changeSearch,
+    goDetail,
+    goList,
+    executeRefresh,
+    fetchNextPage
   };
 };

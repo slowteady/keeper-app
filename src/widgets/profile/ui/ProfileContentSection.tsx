@@ -7,8 +7,8 @@ import { useReview, useShare } from '@/shared/model';
 export const ProfileContentSection = () => {
   const version = Application.nativeApplicationVersion;
 
-  const { actions: shareActions } = useShare();
-  const { actions: reviewActions } = useReview();
+  const { share } = useShare();
+  const { promptReview } = useReview();
 
   return (
     <View px={20} mb={16}>
@@ -19,7 +19,7 @@ export const ProfileContentSection = () => {
             <SubTitle>따뜻한 리뷰는 운영에 큰 힘이됩니다.</SubTitle>
           </YStack>
 
-          <XStack items="center" gap={2} onPress={reviewActions.promptReview} hitSlop={10}>
+          <XStack items="center" gap={2} onPress={promptReview} hitSlop={10}>
             <Text fontSize={12} fontWeight="600" color="$black500" letterSpacing={-0.25}>
               바로가기
             </Text>
@@ -39,7 +39,7 @@ export const ProfileContentSection = () => {
             items="center"
             gap={2}
             hitSlop={10}
-            onPress={() => shareActions.share({ title: 'Keeper', desc: '유기동물들의 가족이 되어주세요' })}
+            onPress={() => share({ title: 'Keeper', desc: '유기동물들의 가족이 되어주세요' })}
           >
             <Text fontSize={12} fontWeight="600" color="$black500" letterSpacing={-0.25}>
               공유하기

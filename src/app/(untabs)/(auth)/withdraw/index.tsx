@@ -6,8 +6,8 @@ import { useAccount, useDeleteUser } from '@/features/auth';
 import { Button } from '@/shared/ui';
 
 const Page = () => {
-  const account = useAccount();
-  const deleteUser = useDeleteUser();
+  const { openWithdrawModal } = useAccount();
+  const { deleteUser: executeDeleteUser } = useDeleteUser();
 
   const reasons = useMemo(
     () => [
@@ -26,13 +26,13 @@ const Page = () => {
   const isActive = selectedIndex !== null;
 
   const handleWithdraw = useCallback(() => {
-    account.actions.openWithdrawModal(() => {
-      deleteUser.actions.executeDeleteUser().then(() => {
+    openWithdrawModal(() => {
+      executeDeleteUser().then(() => {
         router.dismissAll();
         router.navigate('/(tabs)/profile');
       });
     });
-  }, [account.actions, deleteUser.actions]);
+  }, [openWithdrawModal, executeDeleteUser]);
 
   return (
     <Container>

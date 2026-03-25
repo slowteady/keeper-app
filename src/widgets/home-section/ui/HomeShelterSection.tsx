@@ -18,7 +18,22 @@ import { DownArrow } from '@/shared/ui/icons/mini';
 const SHELTER_CARD_MIN_HEIGHT = 144;
 
 export const HomeShelterSection = () => {
-  const { data, refs, state, actions, flags, styles } = useShelterMap();
+  const {
+    shelters,
+    shelterCounts,
+    mapRef,
+    camera,
+    selectedMarkerId,
+    shelterList,
+    enabled,
+    toggleMapEnabled,
+    refetchShelterList,
+    toggleTapMarker,
+    searchLocation,
+    hasLocationStatus,
+    isLoading,
+    animatedListStyle
+  } = useShelterMap();
 
   const { black500 } = useTheme();
 
@@ -44,34 +59,34 @@ export const HomeShelterSection = () => {
         </XStack>
       </HeaderContainer>
 
-      {flags.hasLocationStatus && (
+      {hasLocationStatus && (
         <View px={20} mb={16}>
-          <DistanceIndicator value={data.shelterCounts ?? []} />
+          <DistanceIndicator value={shelterCounts ?? []} />
         </View>
       )}
 
       <View px={20} mb={16}>
         <ShelterMap
-          data={data.shelters}
-          ref={refs.mapRef}
-          camera={state.camera}
-          selectedMarkerId={state.selectedMarkerId}
-          onInitialized={actions.toggleMapEnabled}
-          onRefetch={actions.refetchShelterList}
-          onTapMarker={actions.toggleTapMarker}
-          hasLocation={flags.hasLocationStatus}
+          data={shelters}
+          ref={mapRef}
+          camera={camera}
+          selectedMarkerId={selectedMarkerId}
+          onInitialized={toggleMapEnabled}
+          onRefetch={refetchShelterList}
+          onTapMarker={toggleTapMarker}
+          hasLocation={hasLocationStatus}
           isShowCompass={false}
           minZoom={10}
         />
       </View>
 
-      <Animated.View style={styles.animatedListStyle}>
+      <Animated.View style={animatedListStyle}>
         <FlashList
           keyExtractor={({ id }, i) => `${id}-${i}`}
-          data={data.shelters}
+          data={shelters}
           renderItem={renderItem}
           ItemSeparatorComponent={() => <View width={12} />}
-          ListEmptyComponent={<EmptyComponent isLoading={flags.isLoading} />}
+          ListEmptyComponent={<EmptyComponent isLoading={isLoading} />}
           ListFooterComponent={() => <ViewAllButton onPress={() => router.push('/shelter')} />}
           ListFooterComponentStyle={{ alignItems: 'center', justifyContent: 'center', paddingHorizontal: 40 }}
           style={{ paddingLeft: 20, minHeight: SHELTER_CARD_MIN_HEIGHT }}

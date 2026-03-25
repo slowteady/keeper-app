@@ -31,7 +31,7 @@ export const CommunityAdoptCard = ({
   onPressLike,
   isLoading = false
 }: CommunityAdoptCardProps) => {
-  const { flags } = useLoginRequired();
+  const { isLoggedIn } = useLoginRequired();
 
   const tap = Gesture.Tap()
     .maxDuration(250) // 탭 최대 지속시간
@@ -61,7 +61,7 @@ export const CommunityAdoptCard = ({
           <CommunityAdoptCardHeart
             isLiked={isLiked}
             onPress={handlePressLike}
-            disabled={!flags.isLoggedIn}
+            disabled={!isLoggedIn}
             loading={isLoading}
           />
         </XStack>
