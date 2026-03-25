@@ -9,7 +9,7 @@ export const ShelterDivisionSchema = z.enum(['ANIMAL_HOSPITAL', 'CORPORATION']);
 export type ShelterDivisionDto = z.infer<typeof ShelterDivisionSchema>;
 
 export const ShelterSchema = z.object({
-  id: z.number(), // 보호소 아이디
+  id: z.string(), // 보호소 아이디 (care_reg_no VARCHAR)
   name: z.string(), // 보호소 이름
   address: z.string(), // 보호소 주소
   tel: z.string().nullable(), // 보호소 전화번호

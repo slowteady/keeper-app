@@ -2,9 +2,9 @@ import { useToastController } from '@tamagui/toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
+import { authQueries } from '@/entities/auth';
 import { logout } from '@/entities/auth/model/api';
 import { clearUserContext, removeToken } from '@/shared/lib';
-import { USER_QUERY_KEY } from '@/shared/model';
 
 export const useLogout = () => {
   const { show } = useToastController();
@@ -19,7 +19,7 @@ export const useLogout = () => {
       await mutateAsync();
       await removeToken();
       clearUserContext();
-      qc.resetQueries({ queryKey: [USER_QUERY_KEY] });
+      qc.resetQueries({ queryKey: authQueries.all() });
 
       setTimeout(() => {
         show('로그아웃이 완료되었어요.', { customData: { status: 'success' } });

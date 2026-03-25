@@ -4,7 +4,7 @@ import { styled, Text, View, XStack, YStack } from 'tamagui';
 import { Link } from '@/shared/ui';
 
 export interface Shelter {
-  id: number;
+  id: string;
   time: string;
   person: string;
   address: string;

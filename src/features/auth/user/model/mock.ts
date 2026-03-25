@@ -4,7 +4,7 @@ import { UserDto } from '@/entities/auth';
 
 export const getUserValue = (): UserDto => {
   return {
-    id: fakerKO.string.uuid(),
+    id: fakerKO.number.int(),
     name: fakerKO.person.fullName(),
     nickname: fakerKO.person.fullName(),
     email: fakerKO.internet.email(),

@@ -1,14 +1,15 @@
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
+import { adoptQueries } from './api';
 import { mapToAdopt } from './mapper';
-import { useGetAdopt } from './query';
 
 export interface UseAdoptProps {
   id: string;
 }
 
 export const useAdopt = ({ id }: UseAdoptProps) => {
-  const { data: adoptData } = useGetAdopt(id);
+  const { data: adoptData } = useSuspenseQuery(adoptQueries.detail(id));
 
   const adopt = useMemo(() => adoptData && mapToAdopt(adoptData), [adoptData]);
 

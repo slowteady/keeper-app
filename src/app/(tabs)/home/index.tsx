@@ -4,7 +4,9 @@ import { useMemo } from 'react';
 import { RefreshControl } from 'react-native';
 import { styled, View } from 'tamagui';
 
-import { ADOPTS_QUERY_KEY, SHELTER_QUERY_KEY, useListRefreshing, useScrollUpButton } from '@/shared/model';
+import { adoptQueries } from '@/entities/adopt';
+import { shelterQueries } from '@/entities/shelter';
+import { useListRefreshing, useScrollUpButton } from '@/shared/model';
 import { ScrollUpButton } from '@/shared/ui';
 import { HomeAdoptSection, HomeBannerSection, HomeFooterSection, HomeShelterSection } from '@/widgets/home-section';
 
@@ -16,8 +18,8 @@ const Page = () => {
 
   const refetchQueries = async () => {
     await Promise.all([
-      queryClient.invalidateQueries({ queryKey: [ADOPTS_QUERY_KEY] }),
-      queryClient.invalidateQueries({ queryKey: [SHELTER_QUERY_KEY] })
+      queryClient.invalidateQueries({ queryKey: adoptQueries.all() }),
+      queryClient.invalidateQueries({ queryKey: shelterQueries.all() })
     ]);
   };
 
