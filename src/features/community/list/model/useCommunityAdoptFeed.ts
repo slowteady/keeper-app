@@ -10,8 +10,5 @@ export const useCommunityAdoptFeed = () => {
 
   const adoptList = useMemo(() => getAdoptListValue(), []);
 
-  return {
-    data: { adoptList },
-    actions: { goDetailPage }
-  };
+  return { adoptList, goDetailPage };
 };

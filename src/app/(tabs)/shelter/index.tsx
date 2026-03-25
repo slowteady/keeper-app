@@ -10,10 +10,25 @@ import { ScrollUpButton, Skeleton } from '@/shared/ui';
 import { ShelterListHeaderSection, ShelterMapSection } from '@/widgets/shelter-section';
 
 const Page = () => {
-  const { data, refs, state, actions, flags } = useShelterMap();
+  const {
+    shelters,
+    shelterCounts,
+    mapRef,
+    camera,
+    selectedMarkerId,
+    shelterList,
+    toggleMapEnabled,
+    refetchShelterList,
+    toggleTapMarker,
+    changeLocation,
+    searchLocation,
+    hasLocationStatus,
+    isLoading,
+    isSearchPending
+  } = useShelterMap();
   const { isButtonVisible, handlePressButton, handleScroll, scrollRef } = useScrollUpButton();
   const locationBottomSheet = useLocationBottomSheet((item: KakaoAddressDocumentDto) => {
-    actions.changeLocation(item);
+    changeLocation(item);
     locationBottomSheet.actions.dismiss();
   });
 
@@ -31,7 +46,7 @@ const Page = () => {
         ref={scrollRef}
         keyExtractor={({ id }, i) => `${id}-${i}`}
         decelerationRate="fast"
-        data={state.shelterList}
+        data={shelterList}
         renderItem={renderItem}
         onScroll={handleScroll}
         showsVerticalScrollIndicator={false}
@@ -39,26 +54,26 @@ const Page = () => {
           <View px={20} mb={20}>
             <View mb={16}>
               <ShelterListHeaderSection
-                onSearch={actions.searchLocation}
+                onSearch={searchLocation}
                 onPressLocation={locationBottomSheet.actions.openBottomSheet}
               />
             </View>
 
             <ShelterMapSection
-              ref={refs.mapRef}
-              hasLocationStatus={flags.hasLocationStatus}
-              data={data.shelters}
-              counts={data.shelterCounts}
-              camera={state.camera}
-              onRefetch={actions.refetchShelterList}
-              onTapMarker={actions.toggleTapMarker}
-              onInitialized={actions.toggleMapEnabled}
-              selectedMarkerId={state.selectedMarkerId}
+              ref={mapRef}
+              hasLocationStatus={hasLocationStatus}
+              data={shelters}
+              counts={shelterCounts}
+              camera={camera}
+              onRefetch={refetchShelterList}
+              onTapMarker={toggleTapMarker}
+              onInitialized={toggleMapEnabled}
+              selectedMarkerId={selectedMarkerId}
             />
           </View>
         }
         ItemSeparatorComponent={() => <View height={10} />}
-        ListEmptyComponent={<EmptyComponent isLoading={flags.isLoading || flags.isSearchPending} />}
+        ListEmptyComponent={<EmptyComponent isLoading={isLoading || isSearchPending} />}
         contentContainerStyle={{ paddingVertical: 32 }}
       />
 

@@ -10,8 +10,7 @@ import { useCurrentUser } from './useCurrentUser';
  * 로그인이 필요한 기능/페이지 진입 시 모달을 보여주는 훅
  */
 export const useLoginRequired = () => {
-  const { data } = useCurrentUser();
-  const user = data?.user;
+  const { user } = useCurrentUser();
 
   const { open, close } = useModal();
   const pathname = usePathname();
@@ -68,7 +67,7 @@ export const useLoginRequired = () => {
     [close, isLoggedIn, open, pathname]
   );
 
-  return { actions: { requireLogin }, flags: { isLoggedIn } };
+  return { requireLogin, isLoggedIn };
 };
 
 const ModalContainer = styled(YStack, {

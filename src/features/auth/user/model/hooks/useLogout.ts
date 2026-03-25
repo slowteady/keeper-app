@@ -29,5 +29,5 @@ export const useLogout = () => {
     }
   }, [isPending, mutateAsync, qc, show]);
 
-  return { actions: { executeLogout }, flags: { isPending } };
+  return { logout: executeLogout, isPending };
 };

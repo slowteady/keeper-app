@@ -7,7 +7,7 @@ import { Logo, Pencil } from '@/shared/ui/icons/outline';
 
 export const CommunityWriteHeader = () => {
   const { black900, black800 } = useTheme();
-  const { actions } = useLoginRequired();
+  const { requireLogin } = useLoginRequired();
 
   const handlePressWrite = async () => {
     // await requireLogin(() => router.push('/community/write'));

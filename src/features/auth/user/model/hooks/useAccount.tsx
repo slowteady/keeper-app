@@ -81,7 +81,7 @@ export const useAccount = () => {
     [close, open]
   );
 
-  return { actions: { changeProfileImage, openWithdrawModal } };
+  return { changeProfileImage, openWithdrawModal };
 };
 
 const Container = styled(View, {

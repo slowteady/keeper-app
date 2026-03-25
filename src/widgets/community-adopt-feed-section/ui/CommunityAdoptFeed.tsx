@@ -13,11 +13,11 @@ export const CommunityAdoptFeed = () => {
   const { black500 } = useTheme();
 
   const { handleScroll, handlePressButton, isButtonVisible, scrollRef } = useScrollUpButton();
-  const { actions: likeActions } = useLikePost();
-  const { state: filterState, actions: filterActions } = useCommunityListFilter();
-  const { data, actions: feedActions } = useCommunityAdoptFeed();
+  const { toggleLikePost } = useLikePost();
+  const { selectedFilter, selectedAnimalType, changeFilter, changeAnimalType } = useCommunityListFilter();
+  const { adoptList, goDetailPage } = useCommunityAdoptFeed();
 
-  const filterText = COMMUNITY_LIST_FILTER.find((f) => f.id === filterState.selectedFilter)?.label || '';
+  const filterText = COMMUNITY_LIST_FILTER.find((f) => f.id === selectedFilter)?.label || '';
 
   return (
     <Container>
@@ -25,23 +25,19 @@ export const CommunityAdoptFeed = () => {
         ref={scrollRef}
         onScroll={handleScroll}
         keyExtractor={({ id }, i) => `${id}-${i}`}
-        data={data.adoptList}
+        data={adoptList}
         showsVerticalScrollIndicator={false}
         ItemSeparatorComponent={() => <Divider />}
         ListEmptyComponent={<></>}
         ListHeaderComponent={
           <View px={20}>
             <View mb={16}>
-              <ButtonGroup
-                data={makeAdoptOption('ANIMAL')}
-                id={filterState.selectedAnimalType}
-                onChange={filterActions.changeAnimalType}
-              />
+              <ButtonGroup data={makeAdoptOption('ANIMAL')} id={selectedAnimalType} onChange={changeAnimalType} />
             </View>
 
             <XStack gap={4}>
               <ChipButton
-                onPress={filterActions.changeFilter}
+                onPress={changeFilter}
                 right={<DownArrow width={12} height={12} color={black500.val} style={{ marginLeft: 4 }} />}
               >
                 {filterText}
@@ -53,8 +49,8 @@ export const CommunityAdoptFeed = () => {
           <View px={20} py={32}>
             <CommunityAdoptCard
               {...item}
-              onPressCard={() => feedActions.goDetailPage(item.id)}
-              onPressLike={() => likeActions.toggleLikePost(item.id)}
+              onPressCard={() => goDetailPage(item.id)}
+              onPressLike={() => toggleLikePost(item.id)}
             />
           </View>
         )}

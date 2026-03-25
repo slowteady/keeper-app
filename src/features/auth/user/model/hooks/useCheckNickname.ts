@@ -84,9 +84,5 @@ export const useCheckNickname = (initialValue: string = '') => {
     setNickname(initialValue);
   }, [initialValue]);
 
-  return {
-    state: { nickname, nicknameStatus },
-    flags: { isChecking, isComplete },
-    actions: { changeNickname, clearNickname }
-  };
+  return { nickname, nicknameStatus, isChecking, isComplete, changeNickname, clearNickname };
 };

@@ -61,9 +61,15 @@ export const useShelterAdoptList = ({ id, adoptsParams }: UseShelterAdoptListPro
   const goDetail = (id: string) => router.push({ pathname: '/adopt/[id]', params: { id } });
 
   return {
-    state: { selectedFilter },
-    data: { originalData: data, convertedData },
-    flags: { isLoading, hasNextPage, isFetchingNextPage },
-    actions: { changeFilter, executeRefresh, fetchNextPage, goDetail }
+    selectedFilter,
+    originalData: data,
+    convertedData,
+    isLoading,
+    hasNextPage,
+    isFetchingNextPage,
+    changeFilter,
+    executeRefresh,
+    fetchNextPage,
+    goDetail
   };
 };

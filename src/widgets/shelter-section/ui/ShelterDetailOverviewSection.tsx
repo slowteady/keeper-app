@@ -8,14 +8,24 @@ export interface ShelterDetailOverviewSectionProps {
 }
 
 export const ShelterDetailOverviewSection = ({ data }: ShelterDetailOverviewSectionProps) => {
-  const { refs, state, actions, flags } = useShelterMap();
+  const {
+    mapRef,
+    camera,
+    selectedMarkerId,
+    enabled,
+    toggleMapEnabled,
+    refetchShelterList,
+    toggleTapMarker,
+    moveCamera,
+    hasLocationStatus
+  } = useShelterMap();
   const { name, longitude, latitude } = data;
 
   useEffect(() => {
-    if (flags.hasLocationStatus && state.enabled) {
-      actions.moveCamera(latitude, longitude);
+    if (hasLocationStatus && enabled) {
+      moveCamera(latitude, longitude);
     }
-  }, [actions, flags.hasLocationStatus, latitude, longitude, state.enabled]);
+  }, [moveCamera, hasLocationStatus, latitude, longitude, enabled]);
 
   return (
     <>
@@ -26,14 +36,14 @@ export const ShelterDetailOverviewSection = ({ data }: ShelterDetailOverviewSect
       </TitleContainer>
 
       <ShelterMap
-        ref={refs.mapRef}
-        hasLocation={flags.hasLocationStatus}
+        ref={mapRef}
+        hasLocation={hasLocationStatus}
         data={[data]}
-        camera={state.camera}
-        onRefetch={actions.refetchShelterList}
-        onTapMarker={actions.toggleTapMarker}
-        onInitialized={actions.toggleMapEnabled}
-        selectedMarkerId={state.selectedMarkerId}
+        camera={camera}
+        onRefetch={refetchShelterList}
+        onTapMarker={toggleTapMarker}
+        onInitialized={toggleMapEnabled}
+        selectedMarkerId={selectedMarkerId}
         isShowCompass={false}
         minZoom={10}
         readOnly

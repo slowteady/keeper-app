@@ -3,29 +3,27 @@ import { useCallback } from 'react';
 import { useLoginRequired } from '@/features/auth/user/model/hooks/useLoginRequired';
 
 export const useLikePost = () => {
-  const { actions } = useLoginRequired();
+  const { requireLogin } = useLoginRequired();
 
   const toggleLikePost = useCallback(
     async (postId: string) => {
-      actions.requireLogin(async () => {
+      requireLogin(async () => {
         try {
         } catch {}
       });
     },
-    [actions]
+    [requireLogin]
   );
 
   const toggleLikeComment = useCallback(
     async (commentId: string) => {
-      actions.requireLogin(async () => {
+      requireLogin(async () => {
         try {
         } catch {}
       });
     },
-    [actions]
+    [requireLogin]
   );
 
-  return {
-    actions: { toggleLikePost, toggleLikeComment }
-  };
+  return { toggleLikePost, toggleLikeComment };
 };

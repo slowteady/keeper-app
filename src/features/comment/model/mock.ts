@@ -3,8 +3,15 @@ import dayjs from 'dayjs';
 
 import { CommentDto } from '@/entities/comment';
 import { CommentSortOrderDto } from '@/entities/community';
-import { getUserValue } from '@/features/auth';
 import { formatTimeAgo } from '@/shared/lib';
+
+const mockUser = () => ({
+  id: fakerKO.number.int(),
+  name: fakerKO.person.fullName(),
+  nickname: fakerKO.person.firstName(),
+  email: fakerKO.internet.email(),
+  image: fakerKO.image.avatar()
+});
 
 export const getCommentList = (sortOrder: CommentSortOrderDto): CommentDto[] => {
   // 1. 원본 Date로 데이터 생성
@@ -12,7 +19,7 @@ export const getCommentList = (sortOrder: CommentSortOrderDto): CommentDto[] => 
     const rawDate = id === 1 ? fakerKO.date.recent() : fakerKO.date.past();
     return {
       id: fakerKO.string.uuid(),
-      user: getUserValue(),
+      user: mockUser(),
       likeCount: fakerKO.number.int({ min: 0, max: 1000 }),
       content: fakerKO.lorem.text(),
       likeByMe: fakerKO.helpers.arrayElement([true, false]),

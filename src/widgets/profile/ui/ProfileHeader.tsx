@@ -12,7 +12,7 @@ interface ProfileHeaderProps {
 }
 
 export const ProfileHeader = ({ user, isLoading }: ProfileHeaderProps) => {
-  const { actions } = useLogout();
+  const { logout } = useLogout();
 
   const navigateToLogin = () => {
     router.push({
@@ -45,7 +45,7 @@ export const ProfileHeader = ({ user, isLoading }: ProfileHeaderProps) => {
             </YStack>
 
             <YStack gap={24}>
-              <LogButton onPress={actions.executeLogout}>
+              <LogButton onPress={logout}>
                 <Text fontSize={13} fontWeight="600" color="$black600">
                   로그아웃
                 </Text>

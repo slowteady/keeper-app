@@ -21,5 +21,5 @@ export const useReview = () => {
     }
   }, []);
 
-  return { actions: { promptReview } };
+  return { promptReview };
 };

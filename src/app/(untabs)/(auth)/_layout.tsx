@@ -5,16 +5,16 @@ import { Spinner, View, YStack } from 'tamagui';
 import { useCurrentUser, useLoginRequired } from '@/features/auth';
 
 const AuthLayout = () => {
-  const { flags } = useCurrentUser();
-  const { actions } = useLoginRequired();
+  const { isLoading, isLoggedIn } = useCurrentUser();
+  const { requireLogin } = useLoginRequired();
 
   useEffect(() => {
-    if (!flags.isLoading && !flags.isLoggedIn) {
-      actions.requireLogin();
+    if (!isLoading && !isLoggedIn) {
+      requireLogin();
     }
-  }, [actions, flags.isLoading, flags.isLoggedIn]);
+  }, [requireLogin, isLoading, isLoggedIn]);
 
-  if (flags.isLoading) {
+  if (isLoading) {
     return (
       <YStack flex={1} items="center" justify="center" bg="$pageBackground">
         <Spinner size="large" color="$primaryMain" />
@@ -22,7 +22,7 @@ const AuthLayout = () => {
     );
   }
 
-  if (!flags.isLoggedIn) {
+  if (!isLoggedIn) {
     return <View flex={1} bg="$pageBackground" />;
   }
 

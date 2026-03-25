@@ -4,7 +4,7 @@ import { AppleButton, GoogleButton, KakaoButton, NaverButton } from '@/entities/
 import { useLogin } from '@/features/auth';
 
 const Page = () => {
-  const { actions, flags } = useLogin();
+  const { login, isGoogleAvailable, isAppleAvailable } = useLogin();
 
   return (
     <Container pt={48} px={20}>
@@ -18,10 +18,10 @@ const Page = () => {
       </YStack>
 
       <YStack gap={12}>
-        <KakaoButton onResponse={actions.executeLogin} />
-        <NaverButton onResponse={actions.executeLogin} />
-        {flags.isGoogleAvailable && <GoogleButton onResponse={actions.executeLogin} />}
-        {flags.isAppleAvailable && <AppleButton onResponse={actions.executeLogin} />}
+        <KakaoButton onResponse={login} />
+        <NaverButton onResponse={login} />
+        {isGoogleAvailable && <GoogleButton onResponse={login} />}
+        {isAppleAvailable && <AppleButton onResponse={login} />}
       </YStack>
     </Container>
   );

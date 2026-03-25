@@ -139,11 +139,22 @@ export const useShelterMap = () => {
   const hasLocationStatus = permissionStatus?.status === PermissionStatus.GRANTED;
 
   return {
-    data: { shelters, shelterCounts },
-    refs: { mapRef },
-    state: { camera, selectedMarkerId, shelterList, enabled },
-    actions: { toggleMapEnabled, refetchShelterList, toggleTapMarker, changeLocation, searchLocation, moveCamera },
-    flags: { hasLocationStatus, isLoading, isSearchPending: isPending },
-    styles: { animatedListStyle }
+    shelters,
+    shelterCounts,
+    mapRef,
+    camera,
+    selectedMarkerId,
+    shelterList,
+    enabled,
+    toggleMapEnabled,
+    refetchShelterList,
+    toggleTapMarker,
+    changeLocation,
+    searchLocation,
+    moveCamera,
+    hasLocationStatus,
+    isLoading,
+    isSearchPending: isPending,
+    animatedListStyle
   };
 };

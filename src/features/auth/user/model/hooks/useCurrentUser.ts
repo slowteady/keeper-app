@@ -38,5 +38,5 @@ export const useCurrentUser = () => {
 
   const isLoadingState = isCheckingToken || (enabled && isLoading);
 
-  return { data: { user }, flags: { isLoggedIn, isLoading: isLoadingState } };
+  return { user, isLoggedIn, isLoading: isLoadingState };
 };

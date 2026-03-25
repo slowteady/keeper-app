@@ -85,8 +85,5 @@ export const useLogin = () => {
     [mutate, queryClient, show, redirect]
   );
 
-  return {
-    actions: { executeLogin },
-    flags: { isPending, isAppleAvailable, isGoogleAvailable }
-  };
+  return { login: executeLogin, isPending, isAppleAvailable, isGoogleAvailable };
 };

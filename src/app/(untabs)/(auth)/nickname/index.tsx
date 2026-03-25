@@ -2,7 +2,7 @@ import { NicknameForm } from '@/entities/auth';
 import { useCurrentUser } from '@/features/auth';
 
 const Page = () => {
-  const { data } = useCurrentUser();
+  const { user } = useCurrentUser();
 
   return (
     <NicknameForm
@@ -10,7 +10,7 @@ const Page = () => {
       buttonText="등록하기"
       onSubmit={() => {}}
       isPending={false}
-      initialValue={data.user?.nickname}
+      initialValue={user?.nickname}
     />
   );
 };

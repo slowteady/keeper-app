@@ -25,9 +25,5 @@ export const useShelter = ({ id }: UseShelterProps) => {
 
   const hasCallNumber = !!shelterData?.tel;
 
-  return {
-    data: { shelterData },
-    flags: { isLoading, hasCallNumber },
-    actions: { executeRefresh }
-  };
+  return { shelterData, isLoading, hasCallNumber, executeRefresh };
 };
