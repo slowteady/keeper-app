@@ -5,7 +5,7 @@ import { RefreshControl } from 'react-native';
 import { styled, View } from 'tamagui';
 
 import { adoptQueries, useAdoptList } from '@/entities/adopt';
-import { shelterQueries } from '@/entities/shelter';
+import { shelterQueries, useShelterMap } from '@/entities/shelter';
 import { useListRefreshing, useScrollUpButton } from '@/shared/model';
 import { ScrollUpButton } from '@/shared/ui';
 import { HomeAdoptSection, HomeBannerSection, HomeFooterSection, HomeShelterSection } from '@/widgets/home-section';
@@ -17,6 +17,7 @@ const Page = () => {
   const { isButtonVisible, handlePressButton, handleScroll, scrollRef } = useScrollUpButton();
 
   const adopt = useAdoptList();
+  const shelter = useShelterMap();
 
   const refetchQueries = async () => {
     await Promise.all([
@@ -58,12 +59,24 @@ const Page = () => {
         id: 'shelter',
         Component: (
           <View pb={80}>
-            <HomeShelterSection />
+            <HomeShelterSection
+              shelters={shelter.shelters}
+              shelterCounts={shelter.shelterCounts}
+              mapRef={shelter.mapRef}
+              camera={shelter.camera}
+              selectedMarkerId={shelter.selectedMarkerId}
+              hasLocationStatus={shelter.hasLocationStatus}
+              isLoading={shelter.isLoading}
+              animatedListStyle={shelter.animatedListStyle}
+              onToggleMapEnabled={shelter.toggleMapEnabled}
+              onRefetchShelterList={shelter.refetchShelterList}
+              onToggleTapMarker={shelter.toggleTapMarker}
+            />
           </View>
         )
       }
     ];
-  }, [adopt]);
+  }, [adopt, shelter]);
 
   return (
     <Container>
