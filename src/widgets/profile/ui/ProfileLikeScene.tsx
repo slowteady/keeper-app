@@ -2,17 +2,29 @@ import { ListRenderItemInfo } from '@shopify/flash-list';
 import { useCallback } from 'react';
 import { styled, View, YStack } from 'tamagui';
 
-import { AdoptCard, AdoptItem, useAdoptList } from '@/entities/adopt';
+import { AdoptCard, AdoptItem } from '@/entities/adopt';
 import { makeProfileOption, ProfileLikeOption } from '@/entities/profile';
-import { useProfileLikeFilter } from '@/features/profile';
 import { useScrollUpButton } from '@/shared/model';
 import { ButtonGroup, ScrollUpButton } from '@/shared/ui';
 import { AdoptListSection } from '@/widgets/adopt-section';
 
-export const ProfileLikeScene = () => {
-  const { filter, toggleFilter } = useProfileLikeFilter();
-  const { convertedData, isLoading, goDetail, executeRefresh } = useAdoptList({ size: 16 });
+export interface ProfileLikeSceneProps {
+  filter: ProfileLikeOption;
+  convertedData: AdoptItem[];
+  isLoading: boolean;
+  onToggleFilter: (id: ProfileLikeOption) => void;
+  onGoDetail: (id: string) => void;
+  onRefresh: () => Promise<void>;
+}
 
+export const ProfileLikeScene = ({
+  filter,
+  convertedData,
+  isLoading,
+  onToggleFilter,
+  onGoDetail,
+  onRefresh
+}: ProfileLikeSceneProps) => {
   const { handleScroll, handlePressButton, isButtonVisible, scrollRef } = useScrollUpButton();
 
   const renderItem = useCallback(
@@ -22,7 +34,7 @@ export const ProfileLikeScene = () => {
           const isLeft = index % 2 === 0;
 
           return (
-            <View pl={isLeft ? 0 : 4} pr={isLeft ? 4 : 0} mb={32} onPress={() => goDetail(item.id)}>
+            <View pl={isLeft ? 0 : 4} pr={isLeft ? 4 : 0} mb={32} onPress={() => onGoDetail(item.id)}>
               <AdoptCard uri={item.uri} title={item.title} description={item.description} chips={item.chips} />
             </View>
           );
@@ -32,7 +44,7 @@ export const ProfileLikeScene = () => {
         }
       }
     },
-    [goDetail]
+    [onGoDetail]
   );
 
   return (
@@ -42,11 +54,11 @@ export const ProfileLikeScene = () => {
         data={convertedData ?? []}
         isLoading={isLoading}
         onScroll={handleScroll}
-        onRefreshCallback={executeRefresh}
+        onRefreshCallback={onRefresh}
         renderItem={(p) => renderItem(p, filter)}
         header={
           <View mb={20}>
-            <ButtonGroup data={makeProfileOption('LIKE')} id={filter} onChange={(id) => toggleFilter(id)} />
+            <ButtonGroup data={makeProfileOption('LIKE')} id={filter} onChange={(id) => onToggleFilter(id)} />
           </View>
         }
         contentContainerStyle={{ paddingHorizontal: 20 }}
