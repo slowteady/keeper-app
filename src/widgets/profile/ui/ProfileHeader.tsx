@@ -3,17 +3,15 @@ import { styled, Text, View, XStack, YStack } from 'tamagui';
 
 import { UserDto } from '@/entities/auth';
 import { EmptyAvatar, UserAvatar } from '@/entities/profile';
-import { useLogout } from '@/features/auth';
 import { Skeleton } from '@/shared/ui';
 
 interface ProfileHeaderProps {
   user?: UserDto | null;
   isLoading: boolean;
+  onLogout: () => void;
 }
 
-export const ProfileHeader = ({ user, isLoading }: ProfileHeaderProps) => {
-  const { logout } = useLogout();
-
+export const ProfileHeader = ({ user, isLoading, onLogout }: ProfileHeaderProps) => {
   const navigateToLogin = () => {
     router.push({
       pathname: '/login',
@@ -45,7 +43,7 @@ export const ProfileHeader = ({ user, isLoading }: ProfileHeaderProps) => {
             </YStack>
 
             <YStack gap={24}>
-              <LogButton onPress={logout}>
+              <LogButton onPress={onLogout}>
                 <Text fontSize={13} fontWeight="600" color="$black600">
                   로그아웃
                 </Text>
