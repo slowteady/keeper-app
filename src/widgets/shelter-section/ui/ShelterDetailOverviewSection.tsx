@@ -1,31 +1,41 @@
-import { useEffect } from 'react';
+import { RefObject, useEffect } from 'react';
 import { styled, Text, XStack } from 'tamagui';
 
-import { ShelterDto, ShelterMap, useShelterMap } from '@/entities/shelter';
+import { ShelterDto, ShelterMap } from '@/entities/shelter';
+import { CameraParams } from '@/shared/model';
 
 export interface ShelterDetailOverviewSectionProps {
   data: ShelterDto;
+  mapRef: RefObject<any>;
+  camera?: CameraParams;
+  selectedMarkerId?: string;
+  enabled: boolean;
+  hasLocationStatus: boolean;
+  onToggleMapEnabled: () => void;
+  onRefetchShelterList: (params?: CameraParams) => void;
+  onToggleTapMarker: (data: ShelterDto) => void;
+  onMoveCamera: (latitude: number, longitude: number) => void;
 }
 
-export const ShelterDetailOverviewSection = ({ data }: ShelterDetailOverviewSectionProps) => {
-  const {
-    mapRef,
-    camera,
-    selectedMarkerId,
-    enabled,
-    toggleMapEnabled,
-    refetchShelterList,
-    toggleTapMarker,
-    moveCamera,
-    hasLocationStatus
-  } = useShelterMap();
+export const ShelterDetailOverviewSection = ({
+  data,
+  mapRef,
+  camera,
+  selectedMarkerId,
+  enabled,
+  hasLocationStatus,
+  onToggleMapEnabled,
+  onRefetchShelterList,
+  onToggleTapMarker,
+  onMoveCamera
+}: ShelterDetailOverviewSectionProps) => {
   const { name, longitude, latitude } = data;
 
   useEffect(() => {
     if (hasLocationStatus && enabled) {
-      moveCamera(latitude, longitude);
+      onMoveCamera(latitude, longitude);
     }
-  }, [moveCamera, hasLocationStatus, latitude, longitude, enabled]);
+  }, [onMoveCamera, hasLocationStatus, latitude, longitude, enabled]);
 
   return (
     <>
@@ -40,9 +50,9 @@ export const ShelterDetailOverviewSection = ({ data }: ShelterDetailOverviewSect
         hasLocation={hasLocationStatus}
         data={[data]}
         camera={camera}
-        onRefetch={refetchShelterList}
-        onTapMarker={toggleTapMarker}
-        onInitialized={toggleMapEnabled}
+        onRefetch={onRefetchShelterList}
+        onTapMarker={onToggleTapMarker}
+        onInitialized={onToggleMapEnabled}
         selectedMarkerId={selectedMarkerId}
         isShowCompass={false}
         minZoom={10}
