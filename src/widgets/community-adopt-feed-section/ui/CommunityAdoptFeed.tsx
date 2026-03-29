@@ -1,21 +1,35 @@
 import { FlashList } from '@shopify/flash-list';
+import { GestureResponderEvent } from 'react-native';
 import { styled, useTheme, View, XStack, YStack } from 'tamagui';
 
-import { makeAdoptOption } from '@/entities/adopt';
-import { COMMUNITY_LIST_FILTER, CommunityAdoptCard } from '@/entities/community';
-import { useLikePost } from '@/features/common';
-import { useCommunityAdoptFeed, useCommunityListFilter } from '@/features/community';
+import { AnimalTypeDto, makeAdoptOption } from '@/entities/adopt';
+import { COMMUNITY_LIST_FILTER, CommunityAdoptCard, CommunityAdoptListDto } from '@/entities/community';
 import { useScrollUpButton } from '@/shared/model';
 import { ButtonGroup, ChipButton, ScrollUpButton } from '@/shared/ui';
 import { DownArrow } from '@/shared/ui/icons/mini';
 
-export const CommunityAdoptFeed = () => {
+export interface CommunityAdoptFeedProps {
+  adoptList: CommunityAdoptListDto[];
+  selectedFilter: string;
+  selectedAnimalType: string;
+  onChangeFilter: (event: GestureResponderEvent) => void;
+  onChangeAnimalType: (id: AnimalTypeDto) => void;
+  onGoDetailPage: (id: string) => void;
+  onToggleLikePost: (id: string) => void;
+}
+
+export const CommunityAdoptFeed = ({
+  adoptList,
+  selectedFilter,
+  selectedAnimalType,
+  onChangeFilter,
+  onChangeAnimalType,
+  onGoDetailPage,
+  onToggleLikePost
+}: CommunityAdoptFeedProps) => {
   const { black500 } = useTheme();
 
   const { handleScroll, handlePressButton, isButtonVisible, scrollRef } = useScrollUpButton();
-  const { toggleLikePost } = useLikePost();
-  const { selectedFilter, selectedAnimalType, changeFilter, changeAnimalType } = useCommunityListFilter();
-  const { adoptList, goDetailPage } = useCommunityAdoptFeed();
 
   const filterText = COMMUNITY_LIST_FILTER.find((f) => f.id === selectedFilter)?.label || '';
 
@@ -32,12 +46,16 @@ export const CommunityAdoptFeed = () => {
         ListHeaderComponent={
           <View px={20}>
             <View mb={16}>
-              <ButtonGroup data={makeAdoptOption('ANIMAL')} id={selectedAnimalType} onChange={changeAnimalType} />
+              <ButtonGroup
+                data={makeAdoptOption('ANIMAL')}
+                id={selectedAnimalType}
+                onChange={(id) => onChangeAnimalType(id as AnimalTypeDto)}
+              />
             </View>
 
             <XStack gap={4}>
               <ChipButton
-                onPress={changeFilter}
+                onPress={onChangeFilter}
                 right={<DownArrow width={12} height={12} color={black500.val} style={{ marginLeft: 4 }} />}
               >
                 {filterText}
@@ -49,8 +67,8 @@ export const CommunityAdoptFeed = () => {
           <View px={20} py={32}>
             <CommunityAdoptCard
               {...item}
-              onPressCard={() => goDetailPage(item.id)}
-              onPressLike={() => toggleLikePost(item.id)}
+              onPressCard={() => onGoDetailPage(item.id)}
+              onPressLike={() => onToggleLikePost(item.id)}
             />
           </View>
         )}
