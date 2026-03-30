@@ -39,7 +39,7 @@ export const AdoptDetailDescriptionSection = ({
             style={{ width: 20, height: 20 }}
           />
         </XStack>
-        <Text fontSize={16} fontWeight="500" lineHeight={22} color="#707070" flex={1}>
+        <Text fontSize={16} fontWeight="500" lineHeight={22} color="$black650" flex={1}>
           {specialMark}
         </Text>
       </XStack>
@@ -115,7 +115,7 @@ const Description = styled(Text, {
   fontSize: 16,
   fontWeight: '500',
   lineHeight: 18,
-  color: '#707070'
+  color: '$black650'
 });
 
 const DescriptionWrap = styled(XStack, {
@@ -127,5 +127,5 @@ const Bullet = styled(Text, {
   fontSize: 16,
   fontWeight: '500',
   lineHeight: 18,
-  color: '#707070'
+  color: '$black650'
 });

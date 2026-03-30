@@ -126,7 +126,7 @@ const StyledContent = styled(Text, {
   fontSize: 15,
   lineHeight: 24,
   fontWeight: 400,
-  color: '#7E7E7E',
+  color: '$black600',
   numberOfLines: 2,
   ellipsizeMode: 'tail'
 });
