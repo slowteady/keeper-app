@@ -2,33 +2,43 @@ import { FlashList, FlashListRef, ListRenderItemInfo } from '@shopify/flash-list
 import { useCallback, useEffect, useRef } from 'react';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
-import {
-  ADOPT_CARD_IMAGE_SIZES,
-  AdoptCard,
-  AdoptCardSkeleton,
-  AdoptItem,
-  makeAdoptOption,
-  useAdoptList
-} from '@/entities/adopt';
+import { ADOPT_CARD_IMAGE_SIZES, AdoptCard, AdoptCardSkeleton, AdoptItem, makeAdoptOption } from '@/entities/adopt';
 import { ButtonGroup, Dropdown, ViewAllButton } from '@/shared/ui';
 
-export const HomeAdoptSection = () => {
-  const scrollRef = useRef<FlashListRef<AdoptItem>>(null);
+export interface HomeAdoptSectionProps {
+  selectedFilter: string;
+  selectedType: string;
+  convertedData: AdoptItem[];
+  isLoading: boolean;
+  onGoDetail: (id: string) => void;
+  onGoList: () => void;
+  onChangeFilter: (id: string) => void;
+  onChangeType: (id: string) => void;
+}
 
-  const { selectedFilter, selectedType, convertedData, isLoading, goDetail, goList, changeFilter, changeType } =
-    useAdoptList();
+export const HomeAdoptSection = ({
+  selectedFilter,
+  selectedType,
+  convertedData,
+  isLoading,
+  onGoDetail,
+  onGoList,
+  onChangeFilter,
+  onChangeType
+}: HomeAdoptSectionProps) => {
+  const scrollRef = useRef<FlashListRef<AdoptItem>>(null);
 
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<AdoptItem>) => {
       const { uri, title, description, chips } = item;
 
       return (
-        <View onPress={() => goDetail(item.id)}>
+        <View onPress={() => onGoDetail(item.id)}>
           <AdoptCard horizontal uri={uri} title={title} description={description} chips={chips} />
         </View>
       );
     },
-    [goDetail]
+    [onGoDetail]
   );
 
   useEffect(() => {
@@ -40,7 +50,7 @@ export const HomeAdoptSection = () => {
   return (
     <>
       <TitleContainer mb={16} px={20}>
-        <Text fontSize={26} lineHeight={36} fontWeight="600" color="$black900" onPress={() => goList()}>
+        <Text fontSize={26} lineHeight={36} fontWeight="600" color="$black900" onPress={() => onGoList()}>
           입양공고
         </Text>
 
@@ -48,14 +58,14 @@ export const HomeAdoptSection = () => {
           <Dropdown
             data={makeAdoptOption('FILTER')}
             value={selectedFilter}
-            onChange={(value) => changeFilter(value.id)}
+            onChange={(value) => onChangeFilter(value.id)}
             snapPoints={[200]}
           />
         </View>
       </TitleContainer>
 
       <View px={20} mb={20}>
-        <ButtonGroup data={makeAdoptOption('ANIMAL')} id={selectedType} onChange={(id) => changeType(id)} />
+        <ButtonGroup data={makeAdoptOption('ANIMAL')} id={selectedType} onChange={(id) => onChangeType(id)} />
       </View>
 
       <FlashList
@@ -70,7 +80,7 @@ export const HomeAdoptSection = () => {
         contentContainerStyle={{ minHeight: 350 }}
         style={{ paddingLeft: 20 }}
         ListEmptyComponent={<EmptyComponent isLoading={isLoading} />}
-        ListFooterComponent={<ViewAllButton onPress={goList} />}
+        ListFooterComponent={<ViewAllButton onPress={onGoList} />}
         ListFooterComponentStyle={{ justifyContent: 'center', paddingHorizontal: 40 }}
       />
     </>

@@ -1,6 +1,7 @@
 import { FlashList, ListRenderItemInfo } from '@shopify/flash-list';
 import { router } from 'expo-router';
-import { useCallback } from 'react';
+import { RefObject, useCallback } from 'react';
+import { ViewStyle } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { styled, Text, useTheme, View, XStack } from 'tamagui';
 
@@ -8,33 +9,43 @@ import {
   DistanceIndicator,
   HOME_SHELTER_CARD_SIZE,
   HomeShelterCard,
+  ShelterCountDto,
   ShelterDto,
-  ShelterMap,
-  useShelterMap
+  ShelterMap
 } from '@/entities/shelter';
+import { CameraParams } from '@/shared/model';
 import { Skeleton, ViewAllButton } from '@/shared/ui';
 import { DownArrow } from '@/shared/ui/icons/mini';
 
 const SHELTER_CARD_MIN_HEIGHT = 144;
 
-export const HomeShelterSection = () => {
-  const {
-    shelters,
-    shelterCounts,
-    mapRef,
-    camera,
-    selectedMarkerId,
-    shelterList,
-    enabled,
-    toggleMapEnabled,
-    refetchShelterList,
-    toggleTapMarker,
-    searchLocation,
-    hasLocationStatus,
-    isLoading,
-    animatedListStyle
-  } = useShelterMap();
+export interface HomeShelterSectionProps {
+  shelters?: ShelterDto[];
+  shelterCounts?: ShelterCountDto[];
+  mapRef: RefObject<any>;
+  camera?: CameraParams;
+  selectedMarkerId?: string;
+  hasLocationStatus: boolean;
+  isLoading: boolean;
+  animatedListStyle: ViewStyle;
+  onToggleMapEnabled: () => void;
+  onRefetchShelterList: (params?: CameraParams) => void;
+  onToggleTapMarker: (data: ShelterDto) => void;
+}
 
+export const HomeShelterSection = ({
+  shelters,
+  shelterCounts,
+  mapRef,
+  camera,
+  selectedMarkerId,
+  hasLocationStatus,
+  isLoading,
+  animatedListStyle,
+  onToggleMapEnabled,
+  onRefetchShelterList,
+  onToggleTapMarker
+}: HomeShelterSectionProps) => {
   const { black500 } = useTheme();
 
   const renderItem = useCallback(({ item }: ListRenderItemInfo<ShelterDto>) => {
@@ -71,9 +82,9 @@ export const HomeShelterSection = () => {
           ref={mapRef}
           camera={camera}
           selectedMarkerId={selectedMarkerId}
-          onInitialized={toggleMapEnabled}
-          onRefetch={refetchShelterList}
-          onTapMarker={toggleTapMarker}
+          onInitialized={onToggleMapEnabled}
+          onRefetch={onRefetchShelterList}
+          onTapMarker={onToggleTapMarker}
           hasLocation={hasLocationStatus}
           isShowCompass={false}
           minZoom={10}

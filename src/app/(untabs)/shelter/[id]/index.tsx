@@ -4,7 +4,7 @@ import { Suspense, useCallback, useState } from 'react';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
 import { AdoptCard, AdoptItem, makeAdoptOption } from '@/entities/adopt';
-import { useShelter, useShelterAdoptList } from '@/entities/shelter';
+import { useShelter, useShelterAdoptList, useShelterMap } from '@/entities/shelter';
 import { useScrollUpButton } from '@/shared/model';
 import { Button, CallModal, Dropdown, ScrollUpButton, ShowMoreButton, SuspenseFallback } from '@/shared/ui';
 import { AdoptListSection } from '@/widgets/adopt-section';
@@ -31,6 +31,7 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
   const [callModalOpen, setCallModalOpen] = useState(false);
 
   const { shelterData, executeRefresh: refreshShelter, hasCallNumber } = useShelter({ id });
+  const shelterMap = useShelterMap();
   const {
     selectedFilter,
     originalData,
@@ -82,7 +83,18 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
         header={
           <YStack mb={24}>
             <View mb={30} px={20}>
-              <ShelterDetailOverviewSection data={shelterData} />
+              <ShelterDetailOverviewSection
+                data={shelterData}
+                mapRef={shelterMap.mapRef}
+                camera={shelterMap.camera}
+                selectedMarkerId={shelterMap.selectedMarkerId}
+                enabled={shelterMap.enabled}
+                hasLocationStatus={shelterMap.hasLocationStatus}
+                onToggleMapEnabled={shelterMap.toggleMapEnabled}
+                onRefetchShelterList={shelterMap.refetchShelterList}
+                onToggleTapMarker={shelterMap.toggleTapMarker}
+                onMoveCamera={shelterMap.moveCamera}
+              />
             </View>
             <View mb={32} px={20}>
               <ShelterDetailDescriptionSection

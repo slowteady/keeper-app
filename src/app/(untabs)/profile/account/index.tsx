@@ -3,13 +3,14 @@ import * as Application from 'expo-application';
 import { router } from 'expo-router';
 import { ScrollView, Separator, styled, Text, View, XStack, YStack } from 'tamagui';
 
-import { useCurrentUser } from '@/features/auth';
+import { useAccount, useCurrentUser } from '@/features/auth';
 import { usePermission } from '@/shared/model';
 import { Menu } from '@/shared/ui';
 import { AccountHeader } from '@/widgets/profile';
 
 const Page = () => {
   const { user } = useCurrentUser();
+  const { changeProfileImage } = useAccount();
   const permission = usePermission();
 
   if (!user) return null;
@@ -20,7 +21,7 @@ const Page = () => {
     <Container>
       <ScrollView py={32}>
         <View px={20} mb={24}>
-          <AccountHeader user={user} />
+          <AccountHeader user={user} onChangeProfileImage={changeProfileImage} />
         </View>
 
         <Separator borderColor="$backgroundDefault" mb={24} />

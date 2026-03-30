@@ -4,8 +4,8 @@ import { useMemo } from 'react';
 import { RefreshControl } from 'react-native';
 import { styled, View } from 'tamagui';
 
-import { adoptQueries } from '@/entities/adopt';
-import { shelterQueries } from '@/entities/shelter';
+import { adoptQueries, useAdoptList } from '@/entities/adopt';
+import { shelterQueries, useShelterMap } from '@/entities/shelter';
 import { useListRefreshing, useScrollUpButton } from '@/shared/model';
 import { ScrollUpButton } from '@/shared/ui';
 import { HomeAdoptSection, HomeBannerSection, HomeFooterSection, HomeShelterSection } from '@/widgets/home-section';
@@ -15,6 +15,9 @@ const IMAGES = [require('@/assets/images/banner1.png'), require('@/assets/images
 const Page = () => {
   const queryClient = useQueryClient();
   const { isButtonVisible, handlePressButton, handleScroll, scrollRef } = useScrollUpButton();
+
+  const adopt = useAdoptList();
+  const shelter = useShelterMap();
 
   const refetchQueries = async () => {
     await Promise.all([
@@ -39,7 +42,16 @@ const Page = () => {
         id: 'adopt',
         Component: (
           <View pb={40}>
-            <HomeAdoptSection />
+            <HomeAdoptSection
+              selectedFilter={adopt.selectedFilter}
+              selectedType={adopt.selectedType}
+              convertedData={adopt.convertedData}
+              isLoading={adopt.isLoading}
+              onGoDetail={adopt.goDetail}
+              onGoList={adopt.goList}
+              onChangeFilter={adopt.changeFilter}
+              onChangeType={adopt.changeType}
+            />
           </View>
         )
       },
@@ -47,12 +59,24 @@ const Page = () => {
         id: 'shelter',
         Component: (
           <View pb={80}>
-            <HomeShelterSection />
+            <HomeShelterSection
+              shelters={shelter.shelters}
+              shelterCounts={shelter.shelterCounts}
+              mapRef={shelter.mapRef}
+              camera={shelter.camera}
+              selectedMarkerId={shelter.selectedMarkerId}
+              hasLocationStatus={shelter.hasLocationStatus}
+              isLoading={shelter.isLoading}
+              animatedListStyle={shelter.animatedListStyle}
+              onToggleMapEnabled={shelter.toggleMapEnabled}
+              onRefetchShelterList={shelter.refetchShelterList}
+              onToggleTapMarker={shelter.toggleTapMarker}
+            />
           </View>
         )
       }
     ];
-  }, []);
+  }, [adopt, shelter]);
 
   return (
     <Container>

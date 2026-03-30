@@ -2,17 +2,19 @@ import { Text, XStack, YStack } from 'tamagui';
 
 import { UserDto } from '@/entities/auth';
 import { UserAvatar } from '@/entities/profile';
-import { useAccount } from '@/features/auth';
 
-export const AccountHeader = ({ user }: { user: UserDto }) => {
-  const { changeProfileImage } = useAccount();
+interface AccountHeaderProps {
+  user: UserDto;
+  onChangeProfileImage: () => void;
+}
 
+export const AccountHeader = ({ user, onChangeProfileImage }: AccountHeaderProps) => {
   const createdAt = `25.09.23`;
   const signupType = '카카오';
 
   return (
     <XStack gap={20}>
-      <UserAvatar image={user.image} onPressEdit={changeProfileImage} onPressAdd={changeProfileImage} />
+      <UserAvatar image={user.image} onPressEdit={onChangeProfileImage} onPressAdd={onChangeProfileImage} />
       <YStack>
         <Text fontSize={20} fontWeight="500" color="$black900" lineHeight={22} mb={12}>
           {user.nickname}님

@@ -1,14 +1,15 @@
 import { styled, View } from 'tamagui';
 
-import { useCurrentUser } from '@/features/auth';
+import { useCurrentUser, useLogout } from '@/features/auth';
 import { ProfileContentSection, ProfileHeader, ProfileMenuList } from '@/widgets/profile';
 
 const Page = () => {
   const { user, isLoading } = useCurrentUser();
+  const { logout } = useLogout();
 
   return (
     <Container>
-      <ProfileHeader user={user} isLoading={isLoading} />
+      <ProfileHeader user={user} isLoading={isLoading} onLogout={logout} />
       <ProfileContentSection />
       <ProfileMenuList />
     </Container>
