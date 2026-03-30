@@ -61,6 +61,6 @@ const Description = styled(Text, {
   fontSize: 16,
   lineHeight: 25,
   fontWeight: 400,
-  color: '#707070',
+  color: '$black650',
   letterSpacing: -0.25
 });

@@ -139,7 +139,7 @@ export const CommunityAdoptForm = ({
                 <AccordionTrigger>
                   {({ open }: { open: boolean }) => (
                     <>
-                      <Paragraph fontSize={14} fontWeight="500" flex={1} color="#7E7E7E">
+                      <Paragraph fontSize={14} fontWeight="500" flex={1} color="$black600">
                         펼쳐보기
                       </Paragraph>
                       <Square animation="quick" rotate={open ? '180deg' : '0deg'}>
@@ -258,5 +258,5 @@ const AccordionTrigger = styled(Accordion.Trigger, {
   flexDirection: 'row',
   items: 'center',
   justify: 'space-between',
-  bg: '#F7F7F7'
+  bg: '$white850'
 });

@@ -19,7 +19,7 @@ export const AccountHeader = ({ user, onChangeProfileImage }: AccountHeaderProps
         <Text fontSize={20} fontWeight="500" color="$black900" lineHeight={22} mb={12}>
           {user.nickname}님
         </Text>
-        <Text fontSize={13} lineHeight={15} fontWeight="500" color="#7E7E7E" mb={10}>
+        <Text fontSize={13} lineHeight={15} fontWeight="500" color="$black600" mb={10}>
           {user.email}
         </Text>
         <Text fontSize={12} lineHeight={14} fontWeight="500" color="$white600" letterSpacing={-0.25}>
