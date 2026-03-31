@@ -55,9 +55,9 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
             age={adopt.age}
             gender={adopt.gender}
             weight={adopt.weight}
-            healthCheck={adopt.healthCheck}
+            healthCheck={adopt.healthCheck ?? ''}
             neuterYn={adopt.neuterYn}
-            vaccinationCheck={adopt.vaccinationCheck}
+            vaccinationCheck={adopt.vaccinationCheck ?? ''}
           />
         </View>
 

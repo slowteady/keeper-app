@@ -4,7 +4,7 @@ import { AxiosError, AxiosResponse } from 'axios';
 import { publicApi } from '@/shared/api';
 import { ApiResponse } from '@/shared/model';
 
-import { AdoptDataDto, AdoptDataSchema, AdoptParamsDto, AdoptResponseDto, AdoptResponseSchema } from './schema';
+import { AdoptDataDto, AdoptParamsDto, AdoptResponseDto } from './schema';
 
 const BASE_URL = 'v2/abandonments';
 
@@ -33,7 +33,7 @@ export const adoptQueries = {
       },
       select: (data) => {
         const lastPage = data.pages[data.pages.length - 1].data.data;
-        const allData = data.pages.flatMap((page) => AdoptResponseSchema.parse(page.data.data).value);
+        const allData = data.pages.flatMap((page) => page.data.data.value);
         return { ...lastPage, value: allData };
       }
     }),
@@ -42,6 +42,6 @@ export const adoptQueries = {
     queryOptions({
       queryKey: [...adoptQueries.all(), 'detail', id] as const,
       queryFn: () => getAdopt(id),
-      select: (res) => AdoptDataSchema.parse(res.data.data)
+      select: (res) => res.data.data
     })
 };

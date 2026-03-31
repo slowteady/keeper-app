@@ -64,7 +64,7 @@ export const shelterQueries = {
     queryOptions({
       queryKey: [...shelterQueries.all(), 'list', params] as const,
       queryFn: () => getShelters(params),
-      select: (res) => res.data.data.sort((a, b) => a.distance - b.distance)
+      select: (res) => res.data.data.sort((a, b) => (a.distance ?? 0) - (b.distance ?? 0))
     }),
 
   detail: (id: string) =>
