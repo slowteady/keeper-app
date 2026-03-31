@@ -6,7 +6,7 @@ import {
   HealthCheckSchema,
   NeuterYnSchema,
   VaccinationCheckSchema
-} from '@/entities/adopt';
+} from '@/shared/model';
 
 import { CREATE_POST_OPTIONS } from './constant';
 

@@ -3,9 +3,10 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useMemo } from 'react';
 import { GestureResponderEvent } from 'react-native';
 
-import { AnimalTypeDto, makeAdoptOption } from '@/entities/adopt';
+import { makeAdoptOption } from '@/entities/adopt';
 import { COMMUNITY_LIST_FILTER } from '@/entities/community';
 import { parseQueryParam } from '@/shared/lib';
+import { AnimalTypeDto } from '@/shared/model';
 import { BottomSheetMenu, useBottomSheet } from '@/shared/ui';
 
 export interface CommunityListFilterSchema {
