@@ -1,7 +1,7 @@
 import { Pencil } from '@tamagui/lucide-icons';
 import { Avatar, styled, View } from 'tamagui';
 
-import { EmptyAvatar } from './EmptyAvatar';
+import { EmptyAvatar } from './empty-avatar';
 
 export interface UserAvatarProps {
   image?: string | null;

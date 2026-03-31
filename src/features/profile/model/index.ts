@@ -1,1 +1,1 @@
-export * from './useProfileLikeFilter';
+export * from './use-profile-like-filter';
