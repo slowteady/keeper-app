@@ -1,2 +1,2 @@
-export * from './InfoItem';
-export * from './StatusList';
+export * from './info-item';
+export * from './status-list';

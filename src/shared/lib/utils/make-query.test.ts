@@ -1,4 +1,4 @@
-import { makeQueryString, parseQueryParam } from './makeQuery';
+import { makeQueryString, parseQueryParam } from './make-query';
 
 describe('makeQueryString', () => {
   it('should encode special characters', () => {

@@ -1,4 +1,4 @@
 export * from './api';
 export * from './mutation';
 export * from './schema';
-export * from './useLocationBottomSheet';
+export * from './use-location-bottom-sheet';

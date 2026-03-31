@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { XStack, YStack } from 'tamagui';
 
-import { ChipButton, ChipButtonProps } from '../button/ChipButton';
+import { ChipButton, ChipButtonProps } from '../button/chip-button';
 
 type ChipGroupValue<T extends boolean> = T extends true ? string[] : string;
 type ChipGroupOnChange<T extends boolean> = T extends true ? (value: string[]) => void : (value: string) => void;

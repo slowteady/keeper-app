@@ -2,7 +2,7 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import NaverLogin from '@react-native-seoul/naver-login';
 import { signInAsync } from 'expo-apple-authentication';
 
-import { socialAuth } from './socialAuth';
+import { socialAuth } from './social-auth';
 
 jest.mock('@react-native-google-signin/google-signin', () => ({
   GoogleSignin: {

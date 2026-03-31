@@ -4,7 +4,7 @@ import { Image, StyleSheet } from 'react-native';
 import { ScrollView, Spinner, styled, View, XStack, XStackProps, YStack } from 'tamagui';
 
 import { Close } from '../icons/outline';
-import { ImageViewer } from '../overlay/ImageViewer';
+import { ImageViewer } from '../overlay/image-viewer';
 
 export interface ImageSelectorProps {
   max?: number;

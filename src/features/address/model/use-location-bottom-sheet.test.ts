@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react-native';
 
 import { createWrapper } from '@/shared/test/createWrapper';
 
-import { useLocationBottomSheet } from './useLocationBottomSheet';
+import { useLocationBottomSheet } from './use-location-bottom-sheet';
 
 describe('useLocationBottomSheet', () => {
   const mockOnSelect = jest.fn();

@@ -1,1 +1,1 @@
-export * from './CommunityLifeFeed';
+export * from './community-life-feed';

@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react-native';
 
-import { useShare } from './useShare';
+import { useShare } from './use-share';
 
 describe('useShare', () => {
   it('returns flat object with correct properties', () => {

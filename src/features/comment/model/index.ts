@@ -1,2 +1,2 @@
 export * from './mock';
-export * from './useAddComment';
+export * from './use-add-comment';

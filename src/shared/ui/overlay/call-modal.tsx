@@ -3,8 +3,8 @@ import { styled, Text, View } from 'tamagui';
 
 import { useCall } from '@/shared/model';
 
-import { ModalButtons } from './ModalButtons';
-import { useModal } from './ModalProvider';
+import { ModalButtons } from './modal-buttons';
+import { useModal } from './modal-provider';
 
 export interface CallModalProps {
   open: boolean;

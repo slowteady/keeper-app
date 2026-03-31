@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react-native';
 
-import { useReview } from './useReview';
+import { useReview } from './use-review';
 
 describe('useReview', () => {
   it('returns flat object with correct properties', () => {

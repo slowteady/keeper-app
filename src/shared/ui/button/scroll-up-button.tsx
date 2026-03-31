@@ -4,7 +4,7 @@ import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-na
 
 import { ScrollButton } from '@/shared/ui/icons/etc';
 
-import { Button } from './Button';
+import { Button } from './button';
 
 export interface ScrollUpButtonProps {
   visible: boolean;

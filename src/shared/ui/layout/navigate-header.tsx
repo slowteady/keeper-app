@@ -5,7 +5,7 @@ import { Text, useTheme, View } from 'tamagui';
 import { LeftLineArrow } from '@/shared/ui/icons/mini';
 import { Home } from '@/shared/ui/icons/outline';
 
-import { HeaderLayout } from './HeaderLayout';
+import { HeaderLayout } from './header-layout';
 
 export interface NavigateHeaderProps {
   text?: string;
