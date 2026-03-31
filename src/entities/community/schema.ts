@@ -96,7 +96,3 @@ export const CommunityAdoptListSchema = z.object({
   isLiked: z.boolean()
 });
 export type CommunityAdoptListDto = z.infer<typeof CommunityAdoptListSchema>;
-
-// 댓글 정렬 순서
-export const CommentSortOrderSchema = z.enum(['LATEST', 'CREATED']);
-export type CommentSortOrderDto = z.infer<typeof CommentSortOrderSchema>;

@@ -6,9 +6,9 @@ import { styled, Text, TextProps, View, ViewProps, XStack, XStackProps } from 't
 import { Carousel, Chip } from '@/shared/ui';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
-import { CommunityAdoptListDto } from '../model';
-import { CommunityAdoptCardHeader } from './CommunityAdoptCardHeader';
-import { CommunityAdoptCardStats } from './CommunityAdoptCardStats';
+import { CommunityAdoptListDto } from '../schema';
+import { CommunityAdoptCardHeader } from './community-adopt-card-header';
+import { CommunityAdoptCardStats } from './community-adopt-card-stats';
 
 export interface CommunityAdoptCardProps extends CommunityAdoptListDto {
   onPressCard: (id: string) => void;

@@ -1,8 +1,8 @@
 import { fakerKO } from '@faker-js/faker';
 import dayjs from 'dayjs';
 
-import { CommentDto } from '@/entities/comment';
-import { CommentSortOrderDto, CommunityAdoptDetailDto } from '@/entities/community';
+import { CommentDto, CommentSortOrderDto } from '@/entities/comment';
+import { CommunityAdoptDetailDto } from '@/entities/community';
 import { formatTimeAgo } from '@/shared/lib';
 
 const mockUser = () => ({

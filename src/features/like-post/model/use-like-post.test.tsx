@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react-native';
 
 import { createWrapper } from '@/shared/test/createWrapper';
 
-import { useLikePost } from './useLikePost';
+import { useLikePost } from './use-like-post';
 
 describe('useLikePost', () => {
   it('returns flat object with correct properties', () => {

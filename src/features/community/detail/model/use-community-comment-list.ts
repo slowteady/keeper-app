@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 
-import { CommentSortOrderDto } from '@/entities/community';
+import { CommentSortOrderDto } from '@/entities/comment';
 
 import { getCommentList } from './mock';
 

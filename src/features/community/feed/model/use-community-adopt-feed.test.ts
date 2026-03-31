@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react-native';
 
-import { useCommunityAdoptFeed } from './useCommunityAdoptFeed';
+import { useCommunityAdoptFeed } from './use-community-adopt-feed';
 
 describe('useCommunityAdoptFeed', () => {
   it('returns flat object with correct properties', () => {

@@ -1,4 +1,4 @@
 export * from './mapper';
 export * from './mock';
-export * from './useCommunityAdoptDetailFeed';
-export * from './useCommunityCommentList';
+export * from './use-community-adopt-detail-feed';
+export * from './use-community-comment-list';

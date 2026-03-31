@@ -1,1 +1,1 @@
-export * from './makeFormOptions';
+export * from './make-form-options';
