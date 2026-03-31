@@ -2,15 +2,17 @@ import { renderHook } from '@testing-library/react-native';
 
 import { createWrapper } from '@/shared/test/createWrapper';
 
-import { useDeleteUser } from './useDeleteUser';
+import { useDeleteUser } from './use-delete-user';
 
 describe('useDeleteUser', () => {
   it('returns flat object with correct properties', () => {
     const { result } = renderHook(() => useDeleteUser(), { wrapper: createWrapper() });
 
     expect(result.current).toHaveProperty('deleteUser');
+    expect(result.current).toHaveProperty('openWithdrawModal');
     expect(result.current).toHaveProperty('isPending');
     expect(typeof result.current.deleteUser).toBe('function');
+    expect(typeof result.current.openWithdrawModal).toBe('function');
   });
 
   it('does not have grouped keys', () => {

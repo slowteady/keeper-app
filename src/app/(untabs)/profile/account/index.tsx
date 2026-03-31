@@ -3,14 +3,15 @@ import * as Application from 'expo-application';
 import { router } from 'expo-router';
 import { ScrollView, Separator, styled, Text, View, XStack, YStack } from 'tamagui';
 
-import { useAccount, useCurrentUser } from '@/features/auth';
+import { useCurrentUser } from '@/features/auth';
 import { usePermission } from '@/shared/model';
 import { Menu } from '@/shared/ui';
 import { AccountHeader } from '@/widgets/profile';
 
 const Page = () => {
   const { user } = useCurrentUser();
-  const { changeProfileImage } = useAccount();
+  // TODO: Phase 5에서 features/profile/change-profile-image로 이동
+  const changeProfileImage = () => {};
   const permission = usePermission();
 
   if (!user) return null;

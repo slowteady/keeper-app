@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react-native';
 
 import { createWrapper } from '@/shared/test/createWrapper';
 
-import { useLoginRequired } from './useLoginRequired';
+import { useLoginRequired } from './use-login-required';
 
 describe('useLoginRequired', () => {
   it('returns flat object with correct properties', () => {
@@ -11,6 +11,7 @@ describe('useLoginRequired', () => {
     expect(result.current).toHaveProperty('requireLogin');
     expect(result.current).toHaveProperty('isLoggedIn');
     expect(typeof result.current.requireLogin).toBe('function');
+    expect(typeof result.current.isLoggedIn).toBe('boolean');
   });
 
   it('does not have grouped keys', () => {

@@ -5,8 +5,7 @@ import { isAvailableAsync } from 'expo-apple-authentication';
 import { Route, router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 
-import { authQueries, SocialLoginType } from '@/entities/auth';
-import { login } from '@/entities/auth/model/api';
+import { authQueries, login, SocialLoginType } from '@/entities/auth';
 import { saveAccessToken, saveRefreshToken, setUserContext } from '@/shared/lib';
 
 const isTabRoute = (path: string) => {

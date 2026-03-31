@@ -24,14 +24,12 @@ export const useSignup = () => {
 
   const { mutateAsync, isPending } = useMutation({ mutationFn: signup });
 
-  // 모달 상태를 ref로 관리하여 클로저 문제 방지
   const showCancelModalRef = useRef(showCancelModal);
   useEffect(() => {
     showCancelModalRef.current = showCancelModal;
   }, [showCancelModal]);
 
   usePreventRemove(prevent, () => {
-    // 모달이 이미 열려있으면 중복으로 열지 않음
     if (!showCancelModalRef.current) {
       setShowCancelModal(true);
     }
@@ -102,8 +100,5 @@ export const useSignup = () => {
     }
   }, [prevent, navigateTarget]);
 
-  return {
-    actions: { executeSignup, executeCancel, closeModal },
-    flags: { showCancelModal, isPending }
-  };
+  return { signup: executeSignup, cancel: executeCancel, closeModal, showCancelModal, isPending };
 };

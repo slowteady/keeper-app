@@ -2,16 +2,17 @@ import { Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { Spinner, styled, Text, XStack, YStack } from 'tamagui';
 
-import { useCheckNickname } from '@/features/auth';
 import { BottomButton, TextInput } from '@/shared/ui';
 
-export interface NicknameFormProps {
+import { useCheckNickname } from '../model/use-check-nickname';
+
+export type NicknameFormProps = {
   title: string;
   buttonText: string;
   onSubmit: (nickname: string) => void;
   isPending?: boolean;
   initialValue?: string;
-}
+};
 
 export const NicknameForm = ({
   title,

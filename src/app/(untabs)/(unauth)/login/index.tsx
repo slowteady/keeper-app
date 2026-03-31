@@ -1,10 +1,15 @@
 import { styled, Text, View, YStack } from 'tamagui';
 
-import { AppleButton, GoogleButton, KakaoButton, NaverButton } from '@/entities/auth';
-import { useLogin } from '@/features/auth';
+import { AppleLoginButton, SocialLoginButton, useLogin } from '@/features/auth';
+import { SocialAuthResult } from '@/shared/api';
+import { Google, Kakao, Naver } from '@/shared/ui/icons/etc';
 
 const Page = () => {
   const { login, isGoogleAvailable, isAppleAvailable } = useLogin();
+
+  const handleResponse = ({ socialType, token }: SocialAuthResult) => {
+    login(socialType, token);
+  };
 
   return (
     <Container pt={48} px={20}>
@@ -18,10 +23,32 @@ const Page = () => {
       </YStack>
 
       <YStack gap={12}>
-        <KakaoButton onResponse={login} />
-        <NaverButton onResponse={login} />
-        {isGoogleAvailable && <GoogleButton onResponse={login} />}
-        {isAppleAvailable && <AppleButton onResponse={login} />}
+        <SocialLoginButton
+          provider="kakao"
+          label="Kakao로 로그인"
+          icon={Kakao}
+          bg="#FEE500"
+          onResponse={handleResponse}
+        />
+        <SocialLoginButton
+          provider="naver"
+          label="Naver로 로그인"
+          icon={Naver}
+          bg="#03C75A"
+          textColor="$white900"
+          onResponse={handleResponse}
+        />
+        {isGoogleAvailable && (
+          <SocialLoginButton
+            provider="google"
+            label="Google로 로그인"
+            icon={Google}
+            bg="#FFFFFF"
+            borderColor="#D9D9D9"
+            onResponse={handleResponse}
+          />
+        )}
+        {isAppleAvailable && <AppleLoginButton onResponse={handleResponse} />}
       </YStack>
     </Container>
   );

@@ -2,21 +2,22 @@ import { useToastController } from '@tamagui/toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
-import { authQueries } from '@/entities/auth';
-import { deleteUser } from '@/entities/auth/model/api';
+import { authQueries, deleteUser } from '@/entities/auth';
 import { clearUserContext, removeToken } from '@/shared/lib';
+import { useModal } from '@/shared/ui';
+
+import { WithdrawModal } from '../ui/withdraw-modal';
 
 export const useDeleteUser = () => {
   const { show } = useToastController();
-
   const queryClient = useQueryClient();
+  const { open, close } = useModal();
 
   const { mutateAsync, isPending } = useMutation({ mutationFn: deleteUser });
 
   const executeDeleteUser = useCallback(async () => {
     try {
       if (isPending) return;
-
       await mutateAsync();
       await removeToken();
       clearUserContext();
@@ -27,5 +28,20 @@ export const useDeleteUser = () => {
     }
   }, [isPending, mutateAsync, queryClient, show]);
 
-  return { deleteUser: executeDeleteUser, isPending };
+  const openWithdrawModal = useCallback(
+    (onWithdraw: () => void) => {
+      open(
+        <WithdrawModal
+          onWithdraw={() => {
+            onWithdraw();
+            close();
+          }}
+          onClose={close}
+        />
+      );
+    },
+    [close, open]
+  );
+
+  return { deleteUser: executeDeleteUser, openWithdrawModal, isPending };
 };

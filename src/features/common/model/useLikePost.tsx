@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { useLoginRequired } from '@/features/auth/user/model/hooks/useLoginRequired';
+import { useLoginRequired } from '@/features/auth';
 
 export const useLikePost = () => {
   const { requireLogin } = useLoginRequired();
