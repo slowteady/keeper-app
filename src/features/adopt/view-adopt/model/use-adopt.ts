@@ -1,8 +1,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
-import { adoptQueries } from './api';
-import { mapToAdopt } from './mapper';
+import { adoptQueries, mapToAdopt } from '@/entities/adopt';
 
 export interface UseAdoptProps {
   id: string;

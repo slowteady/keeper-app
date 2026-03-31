@@ -1,7 +1,8 @@
 import dayjs from 'dayjs';
 
-import { AdoptCardChipVariant } from '../ui';
 import { AdoptDataDto, AdoptFilterDto } from './schema';
+
+type ChipVariant = 'error' | 'success' | 'notice' | 'default';
 
 export const mapToAdoptList = (data: AdoptDataDto[], filter?: AdoptFilterDto) => {
   return data.map((item) => {
@@ -46,7 +47,7 @@ interface ChipLabelParams {
   filter?: AdoptFilterDto;
 }
 const convertChipLabel = ({ neuterYn, weight, gender, age, filter }: ChipLabelParams) => {
-  const chips: { id: string; value: string; sort: number; variant?: AdoptCardChipVariant }[] = [];
+  const chips: { id: string; value: string; sort: number; variant?: ChipVariant }[] = [];
 
   // 1) 필터 칩
   const filterChip = FILTER_CHIP_MAP[filter as keyof typeof FILTER_CHIP_MAP];

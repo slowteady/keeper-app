@@ -2,9 +2,9 @@ import { FlashList } from '@shopify/flash-list';
 import { GestureResponderEvent } from 'react-native';
 import { styled, useTheme, View, XStack, YStack } from 'tamagui';
 
-import { AnimalTypeDto, makeAdoptOption } from '@/entities/adopt';
+import { makeAdoptOption } from '@/entities/adopt';
 import { COMMUNITY_LIST_FILTER, CommunityAdoptCard, CommunityAdoptListDto } from '@/entities/community';
-import { useScrollUpButton } from '@/shared/model';
+import { AnimalTypeDto, useScrollUpButton } from '@/shared/model';
 import { ButtonGroup, ChipButton, ScrollUpButton } from '@/shared/ui';
 import { DownArrow } from '@/shared/ui/icons/mini';
 

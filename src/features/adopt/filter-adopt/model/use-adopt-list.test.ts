@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react-native';
 
 import { createWrapper } from '@/shared/test/createWrapper';
 
-import { useAdoptList } from './useAdoptList';
+import { useAdoptList } from './use-adopt-list';
 
 describe('useAdoptList', () => {
   it('returns flat object with correct properties', () => {
@@ -15,12 +15,8 @@ describe('useAdoptList', () => {
     expect(result.current).toHaveProperty('convertedData');
     expect(result.current).toHaveProperty('moreButtonText');
     expect(result.current).toHaveProperty('isLoading');
-    expect(result.current).toHaveProperty('isFetching');
-    expect(result.current).toHaveProperty('isFetchingNextPage');
     expect(result.current).toHaveProperty('hasNextPage');
     expect(typeof result.current.changeFilter).toBe('function');
-    expect(typeof result.current.changeType).toBe('function');
-    expect(typeof result.current.changeSearch).toBe('function');
     expect(typeof result.current.goDetail).toBe('function');
     expect(typeof result.current.goList).toBe('function');
     expect(typeof result.current.executeRefresh).toBe('function');

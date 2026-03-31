@@ -3,12 +3,8 @@ import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useMemo } from 'react';
 
+import { AdoptParamsDto, adoptQueries, makeAdoptOption, mapToAdoptList } from '@/entities/adopt';
 import { parseQueryParam } from '@/shared/lib';
-
-import { makeAdoptOption } from '../lib';
-import { adoptQueries } from './api';
-import { mapToAdoptList } from './mapper';
-import { AdoptParamsDto } from './schema';
 
 export type AdoptItem = ReturnType<typeof mapToAdoptList>[number];
 

@@ -2,7 +2,8 @@ import { FlashList, FlashListRef, ListRenderItemInfo } from '@shopify/flash-list
 import { useCallback, useEffect, useRef } from 'react';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
-import { ADOPT_CARD_IMAGE_SIZES, AdoptCard, AdoptCardSkeleton, AdoptItem, makeAdoptOption } from '@/entities/adopt';
+import { ADOPT_CARD_IMAGE_SIZES, AdoptCard, AdoptCardSkeleton, makeAdoptOption } from '@/entities/adopt';
+import { AdoptItem } from '@/features/adopt';
 import { ButtonGroup, Dropdown, ViewAllButton } from '@/shared/ui';
 
 export interface HomeAdoptSectionProps {

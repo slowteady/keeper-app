@@ -3,7 +3,8 @@ import { forwardRef } from 'react';
 import { RefreshControl } from 'react-native';
 import { Text, View, XStack } from 'tamagui';
 
-import { ADOPT_CARD_IMAGE_SIZES, AdoptCardSkeleton, AdoptItem } from '@/entities/adopt';
+import { ADOPT_CARD_IMAGE_SIZES, AdoptCardSkeleton } from '@/entities/adopt';
+import { AdoptItem } from '@/features/adopt';
 import { useListRefreshing } from '@/shared/model';
 import { FeedNodata } from '@/shared/ui';
 

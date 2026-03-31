@@ -2,7 +2,8 @@ import { ListRenderItemInfo } from '@shopify/flash-list';
 import { useCallback, useEffect } from 'react';
 import { styled, View } from 'tamagui';
 
-import { AdoptCard, AdoptItem, useAdoptList } from '@/entities/adopt';
+import { AdoptCard } from '@/entities/adopt';
+import { AdoptItem, useAdoptList } from '@/features/adopt';
 import { useScrollUpButton } from '@/shared/model';
 import { ScrollUpButton, ShowMoreButton } from '@/shared/ui';
 import { AdoptListHeaderSection, AdoptListSection } from '@/widgets/adopt-section';

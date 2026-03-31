@@ -4,8 +4,9 @@ import { useMemo } from 'react';
 import { RefreshControl } from 'react-native';
 import { styled, View } from 'tamagui';
 
-import { adoptQueries, useAdoptList } from '@/entities/adopt';
+import { adoptQueries } from '@/entities/adopt';
 import { shelterQueries, useShelterMap } from '@/entities/shelter';
+import { useAdoptList } from '@/features/adopt';
 import { useListRefreshing, useScrollUpButton } from '@/shared/model';
 import { ScrollUpButton } from '@/shared/ui';
 import { HomeAdoptSection, HomeBannerSection, HomeFooterSection, HomeShelterSection } from '@/widgets/home-section';
