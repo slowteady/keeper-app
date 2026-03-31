@@ -5,12 +5,14 @@ import { ScrollView, styled, Text, View } from 'tamagui';
 import { useAdopt } from '@/features/adopt';
 import { useShelter } from '@/features/shelter';
 import { useLayout } from '@/shared/model';
-import { BottomButton, CallModal, SuspenseFallback } from '@/shared/ui';
+import { BottomButton, CallModal, DetailErrorBoundary, SuspenseFallback } from '@/shared/ui';
 import {
   AdoptDetailDescriptionSection,
   AdoptDetailInfoSection,
   AdoptDetailOverviewSection
 } from '@/widgets/adopt-section';
+
+export const ErrorBoundary = DetailErrorBoundary;
 
 const Page = () => {
   const { id } = useLocalSearchParams<{ id?: string }>();
@@ -55,9 +57,9 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
             age={adopt.age}
             gender={adopt.gender}
             weight={adopt.weight}
-            healthCheck={adopt.healthCheck}
+            healthCheck={adopt.healthCheck ?? ''}
             neuterYn={adopt.neuterYn}
-            vaccinationCheck={adopt.vaccinationCheck}
+            vaccinationCheck={adopt.vaccinationCheck ?? ''}
           />
         </View>
 

@@ -7,8 +7,10 @@ import { ShelterCard, ShelterDto } from '@/entities/shelter';
 import { KakaoAddressDocumentDto, LocationBottomSheet, useLocationBottomSheet } from '@/features/address';
 import { useShelterMap } from '@/features/shelter';
 import { useScrollUpButton } from '@/shared/model';
-import { ScrollUpButton, Skeleton } from '@/shared/ui';
+import { RouteErrorBoundary, ScrollUpButton, Skeleton } from '@/shared/ui';
 import { ShelterListHeaderSection, ShelterMapSection } from '@/widgets/shelter-section';
+
+export const ErrorBoundary = RouteErrorBoundary;
 
 const Page = () => {
   const {

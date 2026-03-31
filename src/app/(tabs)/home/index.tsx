@@ -9,8 +9,10 @@ import { shelterQueries } from '@/entities/shelter';
 import { useAdoptList } from '@/features/adopt';
 import { useShelterMap } from '@/features/shelter';
 import { useListRefreshing, useScrollUpButton } from '@/shared/model';
-import { ScrollUpButton } from '@/shared/ui';
+import { RouteErrorBoundary, ScrollUpButton } from '@/shared/ui';
 import { HomeAdoptSection, HomeBannerSection, HomeFooterSection, HomeShelterSection } from '@/widgets/home-section';
+
+export const ErrorBoundary = RouteErrorBoundary;
 
 const IMAGES = [require('@/assets/images/banner1.png'), require('@/assets/images/banner2.png')];
 

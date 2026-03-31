@@ -31,7 +31,7 @@ const formatOperatingTime = ({
   return '정보 없음';
 };
 
-const buildTimeRange = (label: string, open?: string, close?: string) => {
+const buildTimeRange = (label: string, open?: string | null, close?: string | null) => {
   const o = open ? formatTimeAMPM(open) : null;
   const c = close ? formatTimeAMPM(close) : null;
 

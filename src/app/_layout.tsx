@@ -8,7 +8,7 @@ import { initializeKakaoSDK } from '@react-native-kakao/core';
 import NaverLogin from '@react-native-seoul/naver-login';
 import * as Sentry from '@sentry/react-native';
 import { ToastProvider } from '@tamagui/toast';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { MutationCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { extend } from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useFonts } from 'expo-font';
@@ -24,11 +24,12 @@ import { TamaguiProvider } from 'tamagui';
 
 import { getRefresh } from '@/entities/auth';
 import { authApi, setupInterceptor } from '@/shared/api';
+import { logger, throwToErrorBoundary } from '@/shared/lib';
 import { BottomSheetProvider, ModalProvider, Toast } from '@/shared/ui';
 
 import { config } from '../../tamagui.config';
-import AnimatedSplash from './AnimatedSplash';
-import ErrorFallback from './ErrorFallback';
+import AnimatedSplash from './_animated-splash';
+import ErrorFallback from './_error-fallback';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -44,6 +45,13 @@ Sentry.init({
 
 const RootLayout = () => {
   const queryClient = new QueryClient({
+    mutationCache: new MutationCache({
+      onError: (error, _variables, _context, mutation) => {
+        if (!mutation.options.onError) {
+          logger.error(error);
+        }
+      }
+    }),
     defaultOptions: {
       queries: {
         refetchOnWindowFocus: false,
@@ -51,12 +59,12 @@ const RootLayout = () => {
         refetchOnReconnect: false,
         retry: false,
         gcTime: 1000 * 60 * 5,
-        staleTime: 1000 * 60 * 2
-        // throwOnError:
+        staleTime: 1000 * 60 * 2,
+        throwOnError: throwToErrorBoundary
       },
       mutations: {
-        retry: false
-        // throwOnError: throwToErrorBoundary
+        retry: false,
+        throwOnError: throwToErrorBoundary
       }
     }
   });

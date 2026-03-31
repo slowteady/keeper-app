@@ -11,7 +11,7 @@ export interface ShelterCardProps {
 
 export const ShelterCard = ({ data, onPress }: ShelterCardProps) => {
   const { name, distance, address } = data;
-  const convertedDistance = Math.round(distance * 10) / 10;
+  const convertedDistance = Math.round((distance ?? 0) * 10) / 10;
   const convertedAddress = address.split(' ').slice(0, 3).join(' ');
 
   return (

@@ -34,7 +34,9 @@ export const useLocationBottomSheet = (onSelect: (item: KakaoAddressDocumentDto)
             const { documents } = data;
             setSearchedAddresses(documents);
           },
-          onError: () => {}
+          onError: () => {
+            setSearchedAddresses(undefined);
+          }
         }
       );
     },
