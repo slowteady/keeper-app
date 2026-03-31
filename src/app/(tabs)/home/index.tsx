@@ -5,8 +5,9 @@ import { RefreshControl } from 'react-native';
 import { styled, View } from 'tamagui';
 
 import { adoptQueries } from '@/entities/adopt';
-import { shelterQueries, useShelterMap } from '@/entities/shelter';
+import { shelterQueries } from '@/entities/shelter';
 import { useAdoptList } from '@/features/adopt';
+import { useShelterMap } from '@/features/shelter';
 import { useListRefreshing, useScrollUpButton } from '@/shared/model';
 import { ScrollUpButton } from '@/shared/ui';
 import { HomeAdoptSection, HomeBannerSection, HomeFooterSection, HomeShelterSection } from '@/widgets/home-section';

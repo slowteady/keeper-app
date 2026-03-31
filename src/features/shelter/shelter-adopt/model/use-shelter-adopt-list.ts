@@ -4,10 +4,8 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useMemo } from 'react';
 
 import { makeAdoptOption, mapToAdoptList } from '@/entities/adopt';
+import { ShelterAdoptsParamsDto, shelterQueries } from '@/entities/shelter';
 import { parseQueryParam } from '@/shared/lib';
-
-import { shelterQueries } from './api';
-import { ShelterAdoptsParamsDto } from './schema';
 
 export interface UseShelterAdoptListProps {
   id: string;

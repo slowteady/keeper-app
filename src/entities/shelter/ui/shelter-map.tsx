@@ -14,7 +14,7 @@ import { isCameraChanged } from '@/shared/lib';
 import { CameraParams, useDebounceFunc, usePermission } from '@/shared/model';
 import { Button } from '@/shared/ui';
 
-import { ShelterDto } from '../model';
+import { ShelterDto } from '../schema';
 
 export interface ShelterMapProps extends NaverMapViewProps {
   hasLocation: boolean;

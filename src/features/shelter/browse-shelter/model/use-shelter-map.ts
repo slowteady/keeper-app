@@ -4,12 +4,9 @@ import { PermissionStatus } from 'expo-location';
 import { useCallback, useEffect, useState } from 'react';
 import { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
-import { KakaoAddressDocumentDto } from '@/features/address';
+import { searchShelters, ShelterDto, shelterQueries } from '@/entities/shelter';
 import { calcMapRadiusKm } from '@/shared/lib';
 import { CameraParams, useMap } from '@/shared/model';
-
-import { searchShelters, shelterQueries } from './api';
-import { ShelterDto } from './schema';
 
 export const useShelterMap = () => {
   const [enabled, setEnabled] = useState(false);
@@ -67,7 +64,7 @@ export const useShelterMap = () => {
   );
 
   const changeLocation = useCallback(
-    (item: KakaoAddressDocumentDto) => {
+    (item: { x: string; y: string }) => {
       if (mapRef && mapRef.current) {
         const { x, y } = item;
         mapRef.current.animateCameraTo({ longitude: Number(x), latitude: Number(y) });

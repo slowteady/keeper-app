@@ -48,9 +48,13 @@ export const useLocationBottomSheet = (onSelect: (item: KakaoAddressDocumentDto)
   };
 
   return {
-    state: { address, searchedAddresses },
-    refs: { ref },
-    flags: { isPending },
-    actions: { openBottomSheet, submitGeocode, getAddress, dismiss }
+    address,
+    searchedAddresses,
+    ref,
+    isPending,
+    openBottomSheet,
+    submitGeocode,
+    getAddress,
+    dismiss
   };
 };

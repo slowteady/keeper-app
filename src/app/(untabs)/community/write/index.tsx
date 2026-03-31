@@ -14,7 +14,15 @@ const Page = () => {
 
   const { form, actions } = useCreatePost();
 
-  const locationBottomSheet = useLocationBottomSheet((selectedAddress) => {
+  const {
+    ref: locationRef,
+    searchedAddresses,
+    isPending: isLocationPending,
+    openBottomSheet,
+    submitGeocode,
+    getAddress,
+    dismiss: dismissLocation
+  } = useLocationBottomSheet((selectedAddress) => {
     form.setValue('location', selectedAddress.address.address_name);
   });
 
@@ -26,7 +34,7 @@ const Page = () => {
           onPressWeight={actions.openWeightSelector}
           onPressAge={actions.openAgeSelector}
           onPressKind={actions.openKindSelector}
-          onPressLocation={locationBottomSheet.actions.openBottomSheet}
+          onPressLocation={openBottomSheet}
         />
       </KeyboardAwareScrollView>
 
@@ -39,12 +47,12 @@ const Page = () => {
       </KeyboardStickyView>
 
       <LocationBottomSheet
-        ref={locationBottomSheet.refs.ref}
-        addresses={locationBottomSheet.state.searchedAddresses || []}
-        onDismiss={locationBottomSheet.actions.dismiss}
-        onSearch={locationBottomSheet.actions.submitGeocode}
-        onSelectAddress={locationBottomSheet.actions.getAddress}
-        isPending={locationBottomSheet.flags.isPending}
+        ref={locationRef}
+        addresses={searchedAddresses || []}
+        onDismiss={dismissLocation}
+        onSearch={submitGeocode}
+        onSelectAddress={getAddress}
+        isPending={isLocationPending}
       />
     </Container>
   );

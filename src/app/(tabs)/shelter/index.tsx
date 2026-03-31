@@ -3,8 +3,9 @@ import { router } from 'expo-router';
 import { useCallback } from 'react';
 import { styled, Text, View, YStack } from 'tamagui';
 
-import { ShelterCard, ShelterDto, useShelterMap } from '@/entities/shelter';
+import { ShelterCard, ShelterDto } from '@/entities/shelter';
 import { KakaoAddressDocumentDto, LocationBottomSheet, useLocationBottomSheet } from '@/features/address';
+import { useShelterMap } from '@/features/shelter';
 import { useScrollUpButton } from '@/shared/model';
 import { ScrollUpButton, Skeleton } from '@/shared/ui';
 import { ShelterListHeaderSection, ShelterMapSection } from '@/widgets/shelter-section';
@@ -27,9 +28,16 @@ const Page = () => {
     isSearchPending
   } = useShelterMap();
   const { isButtonVisible, handlePressButton, handleScroll, scrollRef } = useScrollUpButton();
-  const locationBottomSheet = useLocationBottomSheet((item: KakaoAddressDocumentDto) => {
+  const {
+    ref: locationRef,
+    searchedAddresses,
+    isPending: isLocationPending,
+    openBottomSheet,
+    submitGeocode,
+    getAddress,
+    dismiss: dismissLocation
+  } = useLocationBottomSheet((item: KakaoAddressDocumentDto) => {
     changeLocation(item);
-    locationBottomSheet.actions.dismiss();
   });
 
   const renderItem = useCallback(({ item }: ListRenderItemInfo<ShelterDto>) => {
@@ -53,10 +61,7 @@ const Page = () => {
         ListHeaderComponent={
           <View px={20} mb={20}>
             <View mb={16}>
-              <ShelterListHeaderSection
-                onSearch={searchLocation}
-                onPressLocation={locationBottomSheet.actions.openBottomSheet}
-              />
+              <ShelterListHeaderSection onSearch={searchLocation} onPressLocation={openBottomSheet} />
             </View>
 
             <ShelterMapSection
@@ -78,12 +83,12 @@ const Page = () => {
       />
 
       <LocationBottomSheet
-        ref={locationBottomSheet.refs.ref}
-        addresses={locationBottomSheet.state.searchedAddresses}
-        onDismiss={locationBottomSheet.actions.dismiss}
-        onSearch={locationBottomSheet.actions.submitGeocode}
-        onSelectAddress={locationBottomSheet.actions.getAddress}
-        isPending={locationBottomSheet.flags.isPending}
+        ref={locationRef}
+        addresses={searchedAddresses}
+        onDismiss={dismissLocation}
+        onSearch={submitGeocode}
+        onSelectAddress={getAddress}
+        isPending={isLocationPending}
       />
 
       <ScrollUpButton visible={isButtonVisible} onPress={handlePressButton} />

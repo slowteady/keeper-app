@@ -4,8 +4,8 @@ import { Suspense, useCallback, useState } from 'react';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
 import { AdoptCard, makeAdoptOption } from '@/entities/adopt';
-import { useShelter, useShelterAdoptList, useShelterMap } from '@/entities/shelter';
 import { AdoptItem } from '@/features/adopt';
+import { useShelter, useShelterAdoptList, useShelterMap } from '@/features/shelter';
 import { useScrollUpButton } from '@/shared/model';
 import { Button, CallModal, Dropdown, ScrollUpButton, ShowMoreButton, SuspenseFallback } from '@/shared/ui';
 import { AdoptListSection } from '@/widgets/adopt-section';
