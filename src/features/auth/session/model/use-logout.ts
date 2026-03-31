@@ -2,8 +2,7 @@ import { useToastController } from '@tamagui/toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
-import { authQueries } from '@/entities/auth';
-import { logout } from '@/entities/auth/model/api';
+import { authQueries, logout } from '@/entities/auth';
 import { clearUserContext, removeToken } from '@/shared/lib';
 
 export const useLogout = () => {
