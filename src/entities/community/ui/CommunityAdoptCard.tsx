@@ -3,7 +3,6 @@ import { Dimensions } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { styled, Text, TextProps, View, ViewProps, XStack, XStackProps } from 'tamagui';
 
-import { useLoginRequired } from '@/features/auth';
 import { Carousel, Chip } from '@/shared/ui';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
@@ -15,6 +14,7 @@ export interface CommunityAdoptCardProps extends CommunityAdoptListDto {
   onPressCard: (id: string) => void;
   onPressLike: (id: string) => void;
   isLoading?: boolean;
+  isLoggedIn?: boolean;
 }
 
 export const CommunityAdoptCard = ({
@@ -29,10 +29,9 @@ export const CommunityAdoptCard = ({
   images,
   counts,
   onPressLike,
-  isLoading = false
+  isLoading = false,
+  isLoggedIn = false
 }: CommunityAdoptCardProps) => {
-  const { isLoggedIn } = useLoginRequired();
-
   const tap = Gesture.Tap()
     .maxDuration(250) // 탭 최대 지속시간
     .maxDeltaX(8) // X축 이동 허용치(px)

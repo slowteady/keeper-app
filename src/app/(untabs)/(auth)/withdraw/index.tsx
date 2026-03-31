@@ -2,12 +2,11 @@ import { router } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import { ScrollView, styled, Text, View, XStack, YStack } from 'tamagui';
 
-import { useAccount, useDeleteUser } from '@/features/auth';
+import { useDeleteUser } from '@/features/auth';
 import { Button } from '@/shared/ui';
 
 const Page = () => {
-  const { openWithdrawModal } = useAccount();
-  const { deleteUser: executeDeleteUser } = useDeleteUser();
+  const { deleteUser, openWithdrawModal } = useDeleteUser();
 
   const reasons = useMemo(
     () => [
@@ -27,12 +26,12 @@ const Page = () => {
 
   const handleWithdraw = useCallback(() => {
     openWithdrawModal(() => {
-      executeDeleteUser().then(() => {
+      deleteUser().then(() => {
         router.dismissAll();
         router.navigate('/(tabs)/profile');
       });
     });
-  }, [openWithdrawModal, executeDeleteUser]);
+  }, [openWithdrawModal, deleteUser]);
 
   return (
     <Container>
@@ -80,12 +79,8 @@ const Container = styled(ScrollView, {
 const ReasonItem = styled(View, {
   variants: {
     isSelected: {
-      true: {
-        bg: '$black800'
-      },
-      false: {
-        bg: '$white850'
-      }
+      true: { bg: '$black800' },
+      false: { bg: '$white850' }
     }
   } as const,
   rounded: 8,
@@ -95,12 +90,8 @@ const ReasonItem = styled(View, {
 const ReasonText = styled(Text, {
   variants: {
     isSelected: {
-      true: {
-        color: '$white900'
-      },
-      false: {
-        color: '#7E7E7E'
-      }
+      true: { color: '$white900' },
+      false: { color: '$black600' }
     }
   } as const,
   fontSize: 15,

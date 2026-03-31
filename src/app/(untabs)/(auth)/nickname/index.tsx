@@ -1,5 +1,4 @@
-import { NicknameForm } from '@/entities/auth';
-import { useCurrentUser } from '@/features/auth';
+import { NicknameForm, useCurrentUser } from '@/features/auth';
 
 const Page = () => {
   const { user } = useCurrentUser();
