@@ -19,7 +19,7 @@
     "lint": "expo lint",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "clean": "rm -rf pnpm-lock.yaml ios android node_modules .expo build",
-    "icon": "svgr --config-file .svgrrc --typescript --native --icon --out-dir src/shared/ui/icons src/assets/icons",
+    "icon": "svgr --config-file .svgrrc --typescript --native --icon --filename-case kebab --out-dir src/shared/ui/icons src/assets/icons",
     "prepare": "husky"
   },
   "dependencies": {

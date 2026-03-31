@@ -2,7 +2,7 @@ import { useTheme } from 'tamagui';
 
 import { Logo } from '@/shared/ui/icons/outline';
 
-import { HeaderLayout } from './HeaderLayout';
+import { HeaderLayout } from './header-layout';
 
 export const LogoHeader = () => {
   const { black900 } = useTheme();

@@ -3,7 +3,7 @@ import { View, ViewProps, YStack, YStackProps } from 'tamagui';
 
 import { useLayout } from '@/shared/model';
 
-import { safeScreenAtom } from './safeScreen.store';
+import { safeScreenAtom } from './safe-screen.store';
 
 export interface SafeScreenProps extends YStackProps {
   children: React.ReactNode;

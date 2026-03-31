@@ -1,7 +1,7 @@
 import { Avatar, styled, Text, XStack } from 'tamagui';
 
 import { CommentDto } from '../model';
-import { CommentLikeButton } from './CommentLikeButton';
+import { CommentLikeButton } from './comment-like-button';
 
 export interface CommentCardProps {
   comment: CommentDto;

@@ -6,7 +6,7 @@ import {
   removeToken,
   saveAccessToken,
   saveRefreshToken
-} from '../lib/utils/handleToken';
+} from '../lib/utils/handle-token';
 
 interface InterceptorConfig {
   refreshFn: (refreshToken: string) => Promise<{ accessToken: string; refreshToken: string }>;

@@ -1,1 +1,1 @@
-export * from './CommunityQnAFeed';
+export * from './community-qna-feed';

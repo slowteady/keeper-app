@@ -8,7 +8,7 @@ import { Button } from '../button';
 import { NoImage, Skeleton } from '../fallback';
 import { LeftLineArrow, RightLineArrow } from '../icons/mini';
 import { MoreImage } from '../icons/outline';
-import { ImageViewer } from '../overlay/ImageViewer';
+import { ImageViewer } from '../overlay/image-viewer';
 
 export interface BasicCarouselProps extends PagerViewProps {
   data: string[];

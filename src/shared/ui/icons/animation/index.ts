@@ -1,1 +1,1 @@
-export * from './AnimatedHeart';
+export * from './animated-heart';

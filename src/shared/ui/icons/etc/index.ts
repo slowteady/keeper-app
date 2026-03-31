@@ -1,5 +1,5 @@
-export { default as Apple } from './Apple';
-export { default as Google } from './Google';
-export { default as Kakao } from './Kakao';
-export { default as Naver } from './Naver';
-export { default as ScrollButton } from './ScrollButton';
+export { default as Apple } from './apple';
+export { default as Google } from './google';
+export { default as Kakao } from './kakao';
+export { default as Naver } from './naver';
+export { default as ScrollButton } from './scroll-button';
