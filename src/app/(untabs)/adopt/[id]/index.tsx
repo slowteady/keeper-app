@@ -2,8 +2,8 @@ import { useLocalSearchParams } from 'expo-router';
 import { Suspense, useState } from 'react';
 import { ScrollView, styled, Text, View } from 'tamagui';
 
-import { useShelter } from '@/entities/shelter';
 import { useAdopt } from '@/features/adopt';
+import { useShelter } from '@/features/shelter';
 import { useLayout } from '@/shared/model';
 import { BottomButton, CallModal, SuspenseFallback } from '@/shared/ui';
 import {

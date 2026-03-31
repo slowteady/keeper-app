@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react-native';
 
 import { createWrapper } from '@/shared/test/createWrapper';
 
-import { useShelter } from './useShelter';
+import { useShelter } from './use-shelter';
 
 describe('useShelter', () => {
   it('returns flat object with correct properties', () => {

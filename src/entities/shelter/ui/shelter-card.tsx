@@ -2,7 +2,7 @@ import { styled, Text, View, XStack } from 'tamagui';
 
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
-import { ShelterDto } from '../model';
+import { ShelterDto } from '../schema';
 
 export interface ShelterCardProps {
   data: ShelterDto;
