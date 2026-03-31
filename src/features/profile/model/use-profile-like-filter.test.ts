@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react-native';
 
-import { useProfileLikeFilter } from './useProfileLikeFilter';
+import { useProfileLikeFilter } from './use-profile-like-filter';
 
 describe('useProfileLikeFilter', () => {
   it('returns flat object with correct properties', () => {
