@@ -2,7 +2,8 @@ import { Image } from 'expo-image';
 import LottieView from 'lottie-react-native';
 import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
-import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, withDelay, withTiming } from 'react-native-reanimated';
+import { scheduleOnRN } from 'react-native-worklets';
 
 export interface AnimatedSplashProps {
   onFinish: () => void;
@@ -28,14 +29,12 @@ const AnimatedSplash = ({ onFinish }: AnimatedSplashProps) => {
   useEffect(() => {
     logoMarginTop.value = withTiming(44, { duration: 300 });
     puppyTop.value = withTiming(-100, { duration: 300 });
-
-    const timeout = setTimeout(() => {
-      containerOpacity.value = withTiming(0, { duration: 300 }, (finished) => {
-        if (finished) runOnJS(onFinish)();
-      });
-    }, 3000);
-
-    return () => clearTimeout(timeout);
+    containerOpacity.value = withDelay(
+      3000,
+      withTiming(0, { duration: 300 }, (finished) => {
+        if (finished) scheduleOnRN(onFinish);
+      })
+    );
   }, [containerOpacity, logoMarginTop, onFinish, puppyTop]);
 
   return (
