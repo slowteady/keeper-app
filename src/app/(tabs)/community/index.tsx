@@ -5,10 +5,12 @@ import { styled, View } from 'tamagui';
 import { COMMUNITY_TAB_ROUTES } from '@/entities/community';
 import { useCommunityAdoptFeed, useCommunityListFilter } from '@/features/community';
 import { useLikePost } from '@/features/like-post';
-import { Tab } from '@/shared/ui';
+import { RouteErrorBoundary, Tab } from '@/shared/ui';
 import { CommunityAdoptFeed } from '@/widgets/community-adopt-feed-section';
 import { CommunityLifeFeed } from '@/widgets/community-life-feed-section';
 import { CommunityQnAFeed } from '@/widgets/community-qna-feed-section';
+
+export const ErrorBoundary = RouteErrorBoundary;
 
 const Page = () => {
   const [index, setIndex] = useState(0);

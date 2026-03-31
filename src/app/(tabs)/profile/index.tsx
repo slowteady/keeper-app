@@ -1,7 +1,10 @@
 import { styled, View } from 'tamagui';
 
 import { useCurrentUser, useLogout } from '@/features/auth';
+import { RouteErrorBoundary } from '@/shared/ui';
 import { ProfileContentSection, ProfileHeader, ProfileMenuList } from '@/widgets/profile';
+
+export const ErrorBoundary = RouteErrorBoundary;
 
 const Page = () => {
   const { user, isLoading } = useCurrentUser();

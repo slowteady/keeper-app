@@ -5,8 +5,10 @@ import { styled, View } from 'tamagui';
 import { AdoptCard } from '@/entities/adopt';
 import { AdoptItem, useAdoptList } from '@/features/adopt';
 import { useScrollUpButton } from '@/shared/model';
-import { ScrollUpButton, ShowMoreButton } from '@/shared/ui';
+import { RouteErrorBoundary, ScrollUpButton, ShowMoreButton } from '@/shared/ui';
 import { AdoptListHeaderSection, AdoptListSection } from '@/widgets/adopt-section';
+
+export const ErrorBoundary = RouteErrorBoundary;
 
 const LIST_SIZE = 16;
 

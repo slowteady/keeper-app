@@ -7,9 +7,19 @@ import { AdoptCard, makeAdoptOption } from '@/entities/adopt';
 import { AdoptItem } from '@/features/adopt';
 import { useShelter, useShelterAdoptList, useShelterMap } from '@/features/shelter';
 import { useScrollUpButton } from '@/shared/model';
-import { Button, CallModal, Dropdown, ScrollUpButton, ShowMoreButton, SuspenseFallback } from '@/shared/ui';
+import {
+  Button,
+  CallModal,
+  DetailErrorBoundary,
+  Dropdown,
+  ScrollUpButton,
+  ShowMoreButton,
+  SuspenseFallback
+} from '@/shared/ui';
 import { AdoptListSection } from '@/widgets/adopt-section';
 import { ShelterDetailDescriptionSection, ShelterDetailOverviewSection } from '@/widgets/shelter-section';
+
+export const ErrorBoundary = DetailErrorBoundary;
 
 const Page = () => {
   const { id } = useLocalSearchParams<{ id?: string }>();

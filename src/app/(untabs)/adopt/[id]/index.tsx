@@ -5,12 +5,14 @@ import { ScrollView, styled, Text, View } from 'tamagui';
 import { useAdopt } from '@/features/adopt';
 import { useShelter } from '@/features/shelter';
 import { useLayout } from '@/shared/model';
-import { BottomButton, CallModal, SuspenseFallback } from '@/shared/ui';
+import { BottomButton, CallModal, DetailErrorBoundary, SuspenseFallback } from '@/shared/ui';
 import {
   AdoptDetailDescriptionSection,
   AdoptDetailInfoSection,
   AdoptDetailOverviewSection
 } from '@/widgets/adopt-section';
+
+export const ErrorBoundary = DetailErrorBoundary;
 
 const Page = () => {
   const { id } = useLocalSearchParams<{ id?: string }>();
