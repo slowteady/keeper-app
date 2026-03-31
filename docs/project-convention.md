@@ -54,6 +54,30 @@ features/[feature]/
 
 ---
 
+## 코딩 컨벤션
+
+- **API 응답**: 반드시 Zod 스키마로 파싱 (queryOptions의 `select`에서 수행)
+- **Query/API 패턴**: `queryOptions` 팩토리. entities에서 옵션 객체 정의, 사용처에서 `useQuery(options)` 호출
+- **테스트 파일**: co-location (소스 파일 옆에 `.test.ts`)
+- **스키마 대조**: 프론트 Zod 스키마 변경 시 백엔드 DTO + SQL 스키마 2중 검증 필수
+
+---
+
+## Git 컨벤션
+
+커밋 메시지: `FEAT:`, `FIX:`, `REFACTOR:`, `CHORE:`, `DOCS:`, `STYLE:`, `TEST:`
+
+브랜치: `develop` (메인), `feature/*` (기능)
+
+---
+
+## 주의사항
+
+- `.env` 키를 코드에 하드코딩 금지
+- 토큰 저장은 반드시 `expo-secure-store`(`shared/lib/utils/handleToken.ts`) 사용
+
+---
+
 ## 개발 워크플로우
 
 ### superpowers 스킬 활용
