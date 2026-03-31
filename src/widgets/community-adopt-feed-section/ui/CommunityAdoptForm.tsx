@@ -1,14 +1,14 @@
 import { UseFormReturn } from 'react-hook-form';
 import { Accordion, Form, Paragraph, Square, styled, Text, useTheme, View, YStack } from 'tamagui';
 
+import { CommunityAdoptFormDto } from '@/entities/community';
 import {
-  CommunityAdoptFormDto,
   ContactSelectField,
   LabelImageSelector,
   LabelTextArea,
   LabelTextField,
   OptionSelectField
-} from '@/entities/community';
+} from '@/features/community';
 import { DownArrow } from '@/shared/ui/icons/mini';
 
 export interface CommunityAdoptFormProps {

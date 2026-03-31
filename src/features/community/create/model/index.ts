@@ -1,2 +1,2 @@
 export * from './api';
-export * from './useCreatePost';
+export * from './use-create-post';

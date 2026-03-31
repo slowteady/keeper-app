@@ -1,10 +1,10 @@
 import { Control, Controller } from 'react-hook-form';
 import { Text, XStack, YStack } from 'tamagui';
 
+import { CommunityAdoptFormDto } from '@/entities/community';
 import { ImageSelector, ImageSelectorProps } from '@/shared/ui';
 
-import { CommunityAdoptFormDto } from '../../model';
-import { FieldLabel } from './FieldLabel';
+import { FieldLabel } from './field-label';
 
 export interface LabelImageSelectorProps extends Omit<ImageSelectorProps, 'value' | 'onChange'> {
   label: string;

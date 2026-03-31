@@ -6,8 +6,8 @@ import { styled, Text, View, YStack } from 'tamagui';
 
 import { CommentCard, CommentDto, CommentFormInput, CommentListHeader } from '@/entities/comment';
 import { CommunityAdoptCardStats } from '@/entities/community';
-import { useLikePost } from '@/features/common';
 import { useCommunityAdoptDetailFeed, useCommunityCommentList } from '@/features/community';
+import { useLikePost } from '@/features/like-post';
 import { useLayout, useScrollUpButton, useShare } from '@/shared/model';
 import { Button, CallModal, ScrollUpButton } from '@/shared/ui';
 import { AdoptDetailInfoSection } from '@/widgets/adopt-section';

@@ -1,10 +1,10 @@
 import { Control, Controller } from 'react-hook-form';
 import { Text, TextAreaProps, XStack, YStack } from 'tamagui';
 
+import { CommunityAdoptFormDto } from '@/entities/community';
 import { TextArea } from '@/shared/ui';
 
-import { CommunityAdoptFormDto } from '../../model';
-import { FieldLabel } from './FieldLabel';
+import { FieldLabel } from './field-label';
 
 export interface LabelTextAreaProps extends TextAreaProps {
   label: string;

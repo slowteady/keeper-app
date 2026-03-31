@@ -3,8 +3,8 @@ import { SceneRendererProps } from 'react-native-tab-view';
 import { styled, View } from 'tamagui';
 
 import { COMMUNITY_TAB_ROUTES } from '@/entities/community';
-import { useLikePost } from '@/features/common';
 import { useCommunityAdoptFeed, useCommunityListFilter } from '@/features/community';
+import { useLikePost } from '@/features/like-post';
 import { Tab } from '@/shared/ui';
 import { CommunityAdoptFeed } from '@/widgets/community-adopt-feed-section';
 import { CommunityLifeFeed } from '@/widgets/community-life-feed-section';

@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react-native';
 
-import { useCommunityCommentList } from './useCommunityCommentList';
+import { useCommunityCommentList } from './use-community-comment-list';
 
 describe('useCommunityCommentList', () => {
   it('returns flat object with correct properties', () => {

@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react-native';
 
-import { useCommunityListFilter } from './usePostFilter';
+import { useCommunityListFilter } from './use-post-filter';
 
 describe('useCommunityListFilter', () => {
   it('returns flat object with correct properties', () => {

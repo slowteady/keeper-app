@@ -11,3 +11,6 @@ export const CommentSchema = z.object({
   likeByMe: z.boolean()
 });
 export type CommentDto = z.infer<typeof CommentSchema>;
+
+export const CommentSortOrderSchema = z.enum(['LATEST', 'CREATED']);
+export type CommentSortOrderDto = z.infer<typeof CommentSortOrderSchema>;

@@ -5,7 +5,7 @@ import { useForm, useWatch } from 'react-hook-form';
 import { CommunityAdoptFormDto, CommunityAdoptFormSchema, CREATE_POST_OPTIONS } from '@/entities/community';
 import { BottomSheetMenu, useBottomSheet } from '@/shared/ui';
 
-import { makeFormOptions } from '../lib/makeFormOptions';
+import { makeFormOptions } from '../lib/make-form-options';
 import { CreatePostKindBottomSheet } from '../ui';
 
 export const useCreatePost = () => {

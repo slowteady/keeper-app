@@ -1,1 +1,1 @@
-export * from './convertNumber';
+export * from './convert-number';
