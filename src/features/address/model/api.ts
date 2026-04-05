@@ -1,4 +1,4 @@
-import { AxiosError, AxiosResponse } from 'axios';
+import { AxiosResponse } from 'axios';
 
 import { kakaoApi } from '@/shared/api';
 import { handleLogging } from '@/shared/lib';
@@ -8,7 +8,7 @@ import { KakaoGeocodeParamsDto, KakaoGeocodeResponseDto } from '../model';
 
 export const getKakaoGeocode = async ({
   query
-}: KakaoGeocodeParamsDto): Promise<AxiosResponse<KakaoGeocodeResponseDto, AxiosError>> => {
+}: KakaoGeocodeParamsDto): Promise<AxiosResponse<KakaoGeocodeResponseDto>> => {
   const qs = makeQueryString({ query });
 
   try {

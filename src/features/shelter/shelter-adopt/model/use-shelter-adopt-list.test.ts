@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react-native';
 
-import { createWrapper } from '@/shared/test/createWrapper';
+import { createWrapper } from '@/test/create-wrapper';
 
 import { useShelterAdoptList } from './use-shelter-adopt-list';
 
@@ -15,7 +15,7 @@ describe('useShelterAdoptList', () => {
     expect(result.current).toHaveProperty('hasNextPage');
     expect(result.current).toHaveProperty('isFetchingNextPage');
     expect(typeof result.current.changeFilter).toBe('function');
-    expect(typeof result.current.executeRefresh).toBe('function');
+    expect(typeof result.current.refresh).toBe('function');
     expect(typeof result.current.fetchNextPage).toBe('function');
     expect(typeof result.current.goDetail).toBe('function');
   });

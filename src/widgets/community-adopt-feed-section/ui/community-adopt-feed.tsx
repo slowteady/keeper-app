@@ -2,13 +2,13 @@ import { FlashList } from '@shopify/flash-list';
 import { GestureResponderEvent } from 'react-native';
 import { styled, useTheme, View, XStack, YStack } from 'tamagui';
 
-import { makeAdoptOption } from '@/entities/adopt';
+import { ADOPT_OPTIONS } from '@/entities/adopt';
 import { COMMUNITY_LIST_FILTER, CommunityAdoptCard, CommunityAdoptListDto } from '@/entities/community';
 import { AnimalTypeDto, useScrollUpButton } from '@/shared/model';
 import { ButtonGroup, ChipButton, ScrollUpButton } from '@/shared/ui';
 import { DownArrow } from '@/shared/ui/icons/mini';
 
-export interface CommunityAdoptFeedProps {
+export type CommunityAdoptFeedProps = {
   adoptList: CommunityAdoptListDto[];
   selectedFilter: string;
   selectedAnimalType: string;
@@ -16,7 +16,7 @@ export interface CommunityAdoptFeedProps {
   onChangeAnimalType: (id: AnimalTypeDto) => void;
   onGoDetailPage: (id: string) => void;
   onToggleLikePost: (id: string) => void;
-}
+};
 
 export const CommunityAdoptFeed = ({
   adoptList,
@@ -47,7 +47,7 @@ export const CommunityAdoptFeed = ({
           <View px={20}>
             <View mb={16}>
               <ButtonGroup
-                data={makeAdoptOption('ANIMAL')}
+                data={ADOPT_OPTIONS.ANIMAL}
                 id={selectedAnimalType}
                 onChange={(id) => onChangeAnimalType(id as AnimalTypeDto)}
               />

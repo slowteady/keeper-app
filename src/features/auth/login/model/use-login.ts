@@ -40,7 +40,7 @@ export const useLogin = () => {
     })();
   }, []);
 
-  const executeLogin = useCallback(
+  const handleLogin = useCallback(
     (socialType: SocialLoginType, token: string) => {
       mutate(
         { socialType, token },
@@ -84,5 +84,5 @@ export const useLogin = () => {
     [mutate, queryClient, show, redirect]
   );
 
-  return { login: executeLogin, isPending, isAppleAvailable, isGoogleAvailable };
+  return { login: handleLogin, isPending, isAppleAvailable, isGoogleAvailable };
 };

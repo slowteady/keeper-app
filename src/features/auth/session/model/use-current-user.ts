@@ -33,7 +33,7 @@ export const useCurrentUser = () => {
     }, [checkToken])
   );
 
-  const user = enabled ? data?.data : null;
+  const user = enabled ? data : null;
   const isLoggedIn = !!user;
 
   const isLoadingState = isCheckingToken || (enabled && isLoading);

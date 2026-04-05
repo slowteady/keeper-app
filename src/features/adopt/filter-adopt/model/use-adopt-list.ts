@@ -1,65 +1,41 @@
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
-import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useMemo } from 'react';
 
-import { AdoptParamsDto, adoptQueries, makeAdoptOption, mapToAdoptList } from '@/entities/adopt';
-import { parseQueryParam } from '@/shared/lib';
+import { AdoptFilterDto, adoptQueries, mapToAdoptList } from '@/entities/adopt';
 
-export type AdoptItem = ReturnType<typeof mapToAdoptList>[number];
+export type AdoptListParams = {
+  filter: AdoptFilterDto;
+  animalType: string;
+  search?: string;
+  size?: number;
+};
 
-export const useAdoptList = (queryParams?: Partial<AdoptParamsDto>) => {
-  const router = useRouter();
-  const params = useLocalSearchParams<{ filter?: string; type?: string; search?: string }>();
+export const useAdoptList = (params: AdoptListParams) => {
   const queryClient = useQueryClient();
-
-  const selectedFilter = useMemo(
-    () => parseQueryParam(makeAdoptOption('FILTER'), makeAdoptOption('FILTER')[0].id, params.filter),
-    [params.filter]
-  );
-
-  const selectedType = useMemo(
-    () => parseQueryParam(makeAdoptOption('ANIMAL'), makeAdoptOption('ANIMAL')[0].id, params.type),
-    [params.type]
-  );
-
-  const selectedSearch = useMemo(() => params.search, [params.search]);
+  const size = params.size ?? 20;
 
   const {
     data,
     isLoading,
-    isFetching,
     isFetchingNextPage,
     fetchNextPage: fetchNextPageQuery,
     hasNextPage
   } = useInfiniteQuery(
     adoptQueries.list({
-      filter: selectedFilter,
-      animalType: selectedType,
-      search: selectedSearch,
-      size: 20,
-      ...queryParams
+      filter: params.filter,
+      animalType: params.animalType,
+      search: params.search,
+      size
     })
   );
 
   const convertedData = useMemo(() => {
-    const hasValue = data && data?.value && data?.value.length > 0;
-    if (!hasValue) return [];
+    if (!data?.value?.length) return [];
+    return mapToAdoptList(data.value, params.filter);
+  }, [data, params.filter]);
 
-    return mapToAdoptList(data.value, selectedFilter);
-  }, [data, selectedFilter]);
-
-  const changeFilter = (id: string) => router.setParams({ filter: id });
-
-  const changeType = (id: string) => router.setParams({ type: id });
-
-  const changeSearch = (text: string) => router.setParams({ search: text });
-
-  const goDetail = (id: string) => router.push({ pathname: '/adopt/[id]', params: { id } });
-
-  const goList = () => router.push('/adopt');
-
-  const executeRefresh = useCallback(async () => {
+  const refresh = useCallback(async () => {
     await queryClient.invalidateQueries({ queryKey: adoptQueries.all() });
   }, [queryClient]);
 
@@ -70,27 +46,19 @@ export const useAdoptList = (queryParams?: Partial<AdoptParamsDto>) => {
     }
   }, [fetchNextPageQuery, hasNextPage]);
 
-  const currentPage = (data?.page ?? 0) + 1;
-  const totalPage = Math.ceil((data?.total || 0) / 20);
-  const moreButtonText = `더보기 ${currentPage}/${totalPage}`;
+  const moreButtonText = useMemo(() => {
+    const currentPage = (data?.page ?? 0) + 1;
+    const totalPage = Math.ceil((data?.total || 0) / size);
+    return `더보기 ${currentPage}/${totalPage}`;
+  }, [data?.page, data?.total, size]);
 
   return {
-    selectedFilter,
-    selectedType,
-    selectedSearch,
-    originalData: data,
     convertedData,
     moreButtonText,
     isLoading,
-    isFetching,
     isFetchingNextPage,
     hasNextPage,
-    changeFilter,
-    changeType,
-    changeSearch,
-    goDetail,
-    goList,
-    executeRefresh,
+    refresh,
     fetchNextPage
   };
 };

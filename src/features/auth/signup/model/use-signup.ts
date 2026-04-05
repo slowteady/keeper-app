@@ -51,7 +51,7 @@ export const useSignup = () => {
     }
   }, [socialType]);
 
-  const executeSignup = useCallback(
+  const handleSignup = useCallback(
     async (nickname: string) => {
       const body: SignUpBodyDto = {
         socialType,
@@ -78,7 +78,7 @@ export const useSignup = () => {
     [mutateAsync, redirect, show, socialId, socialType]
   );
 
-  const executeCancel = useCallback(async () => {
+  const handleCancel = useCallback(async () => {
     cancelSignup();
     removeToken();
 
@@ -100,5 +100,5 @@ export const useSignup = () => {
     }
   }, [prevent, navigateTarget]);
 
-  return { signup: executeSignup, cancel: executeCancel, closeModal, showCancelModal, isPending };
+  return { signup: handleSignup, cancel: handleCancel, closeModal, showCancelModal, isPending };
 };

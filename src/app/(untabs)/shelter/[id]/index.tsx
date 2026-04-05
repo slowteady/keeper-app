@@ -3,8 +3,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { Suspense, useCallback, useState } from 'react';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
-import { AdoptCard, makeAdoptOption } from '@/entities/adopt';
-import { AdoptItem } from '@/features/adopt';
+import { ADOPT_OPTIONS, AdoptCard, AdoptItem } from '@/entities/adopt';
 import { useShelter, useShelterAdoptList, useShelterMap } from '@/features/shelter';
 import { useScrollUpButton } from '@/shared/model';
 import {
@@ -41,7 +40,7 @@ const LIST_SIZE = 16;
 const ShelterDetailContent = ({ id }: { id: string }) => {
   const [callModalOpen, setCallModalOpen] = useState(false);
 
-  const { shelterData, executeRefresh: refreshShelter, hasCallNumber } = useShelter({ id });
+  const { shelterData, refresh: refreshShelter, hasCallNumber } = useShelter({ id });
   const shelterMap = useShelterMap();
   const {
     selectedFilter,
@@ -51,7 +50,7 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
     hasNextPage,
     isFetchingNextPage,
     changeFilter,
-    executeRefresh: refreshAdopts,
+    refresh: refreshAdopts,
     fetchNextPage,
     goDetail
   } = useShelterAdoptList({ id });
@@ -139,7 +138,7 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
               </XStack>
 
               <Dropdown
-                data={makeAdoptOption('FILTER')}
+                data={ADOPT_OPTIONS.FILTER}
                 value={selectedFilter}
                 onChange={(value) => changeFilter(value.id)}
                 snapPoints={[200]}

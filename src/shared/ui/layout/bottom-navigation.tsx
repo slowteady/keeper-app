@@ -1,6 +1,8 @@
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
+import { NavigationRoute, ParamListBase } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
-import { memo } from 'react';
+import { ComponentType, memo } from 'react';
+import { SvgProps } from 'react-native-svg';
 import { styled, Text, XStack, YStack } from 'tamagui';
 
 import {
@@ -12,21 +14,33 @@ import {
   Heart,
   Home2,
   Location,
-  MapPin,
   Message,
   User
 } from '@/shared/ui/icons/outline';
 
-const MENU_ITEMS = [
-  { name: 'home', label: 'Home', icon: Home2 },
-  { name: 'adopt', label: '입양공고', icon: Heart },
-  { name: 'shelter', label: '보호소', icon: MapPin },
-  { name: 'community', label: '커뮤니티', icon: Message },
-  { name: 'profile', label: '프로필', icon: User }
-] as const;
+type MenuItem = {
+  name: string;
+  label: string;
+  Icon: ComponentType<SvgProps>;
+  ActiveIcon: ComponentType<SvgProps>;
+  size: number;
+};
+
+const MENU_ITEMS: MenuItem[] = [
+  { name: 'home', label: 'Home', Icon: Home2, ActiveIcon: ActiveHome2, size: 24 },
+  { name: 'adopt', label: '입양공고', Icon: Heart, ActiveIcon: ActiveHeart, size: 26 },
+  { name: 'shelter', label: '보호소', Icon: Location, ActiveIcon: ActiveLocation, size: 28 },
+  { name: 'community', label: '커뮤니티', Icon: Message, ActiveIcon: ActiveMessage, size: 24 },
+  { name: 'profile', label: '프로필', Icon: User, ActiveIcon: ActiveUser, size: 26 }
+];
+
+const TabIcon = ({ item, isActive }: { item: MenuItem; isActive: boolean }) => {
+  const { Icon, ActiveIcon, size } = item;
+  return isActive ? <ActiveIcon width={size} height={size} /> : <Icon width={size} height={size} color="#0C0C0C" />;
+};
 
 export const BottomNavigation = memo(({ state, navigation, insets }: BottomTabBarProps) => {
-  const navigateToPage = (route: any, index: number) => {
+  const navigateToPage = (route: NavigationRoute<ParamListBase, string>, index: number) => {
     const event = navigation.emit({
       type: 'tabPress',
       target: route.key,
@@ -37,19 +51,6 @@ export const BottomNavigation = memo(({ state, navigation, insets }: BottomTabBa
       Haptics.selectionAsync();
       navigation.navigate(route.name);
     }
-  };
-
-  const iconMap = {
-    home: AnimatedHomeIcon,
-    adopt: AnimatedHeartIcon,
-    shelter: AnimatedLocationIcon,
-    community: AnimatedMessageIcon,
-    profile: AnimatedUserIcon
-  } as const;
-
-  const renderIcon = (name: keyof typeof iconMap, isActive: boolean) => {
-    const IconComponent = iconMap[name];
-    return IconComponent ? <IconComponent isActive={isActive} /> : null;
   };
 
   return (
@@ -63,7 +64,7 @@ export const BottomNavigation = memo(({ state, navigation, insets }: BottomTabBa
             return (
               <TabItemContainer key={route.key} onPress={() => navigateToPage(route, index)}>
                 <TabItemInner>
-                  {renderIcon(item.name, isActive)}
+                  <TabIcon item={item} isActive={isActive} />
                   <TabLabel>{item.label}</TabLabel>
                 </TabItemInner>
               </TabItemContainer>
@@ -75,35 +76,7 @@ export const BottomNavigation = memo(({ state, navigation, insets }: BottomTabBa
   );
 });
 
-const AnimatedHomeIcon = memo(({ isActive }: { isActive: boolean }) => {
-  const size = { width: 24, height: 24 } as const;
-
-  return isActive ? <ActiveHome2 {...size} /> : <Home2 {...size} color="#0C0C0C" />;
-});
-
-const AnimatedHeartIcon = memo(({ isActive }: { isActive: boolean }) => {
-  const size = { width: 26, height: 26 } as const;
-
-  return isActive ? <ActiveHeart {...size} /> : <Heart {...size} color="#0C0C0C" />;
-});
-
-const AnimatedLocationIcon = memo(({ isActive }: { isActive: boolean }) => {
-  const size = { width: 28, height: 28 } as const;
-
-  return isActive ? <ActiveLocation {...size} /> : <Location {...size} color="#0C0C0C" />;
-});
-
-const AnimatedMessageIcon = memo(({ isActive }: { isActive: boolean }) => {
-  const size = { width: 24, height: 24 } as const;
-
-  return isActive ? <ActiveMessage {...size} /> : <Message {...size} color="#0C0C0C" />;
-});
-
-const AnimatedUserIcon = memo(({ isActive }: { isActive: boolean }) => {
-  const size = { width: 26, height: 26 } as const;
-
-  return isActive ? <ActiveUser {...size} /> : <User {...size} color="#0C0C0C" />;
-});
+BottomNavigation.displayName = 'BottomNavigation';
 
 const Container = styled(XStack, {
   bg: '$white900'
@@ -141,10 +114,3 @@ const TabLabel = styled(Text, {
   fontWeight: '600',
   color: '#0C0C0C'
 });
-
-BottomNavigation.displayName = 'CustomTabBar';
-AnimatedHomeIcon.displayName = 'AnimatedHomeIcon';
-AnimatedHeartIcon.displayName = 'AnimatedHeartIcon';
-AnimatedLocationIcon.displayName = 'AnimatedLocationIcon';
-AnimatedMessageIcon.displayName = 'AnimatedMessageIcon';
-AnimatedUserIcon.displayName = 'AnimatedUserIcon';

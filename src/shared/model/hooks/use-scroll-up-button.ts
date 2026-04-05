@@ -4,15 +4,15 @@ import { NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
 
 export const useScrollUpButton = () => {
   const [isButtonVisible, setIsButtonVisible] = useState(false);
-  const lastScrollOffset = useRef(0);
   const scrollRef = useRef<FlashListRef<any>>(null);
 
   const handleScroll = useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const offset = event.nativeEvent.contentOffset.y;
-    const isAboveThreshold = offset > 300;
+    const isAboveThreshold = event.nativeEvent.contentOffset.y > 300;
 
-    setIsButtonVisible(isAboveThreshold);
-    lastScrollOffset.current = offset;
+    setIsButtonVisible((prev) => {
+      if (prev === isAboveThreshold) return prev;
+      return isAboveThreshold;
+    });
   }, []);
 
   const handlePressButton = useCallback(() => {

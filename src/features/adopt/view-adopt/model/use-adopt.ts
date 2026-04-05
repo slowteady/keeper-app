@@ -3,16 +3,14 @@ import { useMemo } from 'react';
 
 import { adoptQueries, mapToAdopt } from '@/entities/adopt';
 
-export interface UseAdoptProps {
+export type UseAdoptProps = {
   id: string;
-}
+};
 
 export const useAdopt = ({ id }: UseAdoptProps) => {
   const { data: adoptData } = useSuspenseQuery(adoptQueries.detail(id));
 
   const adopt = useMemo(() => adoptData && mapToAdopt(adoptData), [adoptData]);
 
-  return {
-    data: adopt
-  };
+  return { adopt };
 };

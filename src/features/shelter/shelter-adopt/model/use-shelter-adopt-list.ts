@@ -3,21 +3,21 @@ import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useMemo } from 'react';
 
-import { makeAdoptOption, mapToAdoptList } from '@/entities/adopt';
+import { ADOPT_OPTIONS, mapToAdoptList } from '@/entities/adopt';
 import { ShelterAdoptsParamsDto, shelterQueries } from '@/entities/shelter';
 import { parseQueryParam } from '@/shared/lib';
 
-export interface UseShelterAdoptListProps {
+export type UseShelterAdoptListProps = {
   id: string;
   adoptsParams?: ShelterAdoptsParamsDto;
-}
+};
 
 export const useShelterAdoptList = ({ id, adoptsParams }: UseShelterAdoptListProps) => {
   const params = useLocalSearchParams<{ filter?: string }>();
   const queryClient = useQueryClient();
 
   const selectedFilter = useMemo(
-    () => parseQueryParam(makeAdoptOption('FILTER'), makeAdoptOption('FILTER')[0].id, params.filter),
+    () => parseQueryParam(ADOPT_OPTIONS.FILTER, ADOPT_OPTIONS.FILTER[0].id, params.filter),
     [params.filter]
   );
 
@@ -43,9 +43,9 @@ export const useShelterAdoptList = ({ id, adoptsParams }: UseShelterAdoptListPro
     return mapToAdoptList(data.value, selectedFilter);
   }, [data, selectedFilter]);
 
-  const changeFilter = (id: string) => router.setParams({ filter: id });
+  const changeFilter = useCallback((id: string) => router.setParams({ filter: id }), [router]);
 
-  const executeRefresh = useCallback(async () => {
+  const refresh = useCallback(async () => {
     await queryClient.invalidateQueries({ queryKey: shelterQueries.all() });
   }, [queryClient]);
 
@@ -56,7 +56,7 @@ export const useShelterAdoptList = ({ id, adoptsParams }: UseShelterAdoptListPro
     }
   }, [fetchNextPageQuery, hasNextPage]);
 
-  const goDetail = (id: string) => router.push({ pathname: '/adopt/[id]', params: { id } });
+  const goDetail = useCallback((id: string) => router.push({ pathname: '/adopt/[id]', params: { id } }), [router]);
 
   return {
     selectedFilter,
@@ -66,7 +66,7 @@ export const useShelterAdoptList = ({ id, adoptsParams }: UseShelterAdoptListPro
     hasNextPage,
     isFetchingNextPage,
     changeFilter,
-    executeRefresh,
+    refresh,
     fetchNextPage,
     goDetail
   };

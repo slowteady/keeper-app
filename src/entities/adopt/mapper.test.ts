@@ -61,7 +61,7 @@ describe('mapToAdopt', () => {
 
     expect(result.title).toBe('[강아지] 믹스견');
     expect(result.gender).toBe('남아');
-    expect(result.age).toBe('2023');
+    expect(result.age).toBe('2023년생');
     expect(result.weight).toBe('5.2kg');
   });
 });

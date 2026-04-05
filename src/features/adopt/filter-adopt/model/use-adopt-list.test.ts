@@ -1,34 +1,33 @@
 import { renderHook } from '@testing-library/react-native';
 
-import { createWrapper } from '@/shared/test/createWrapper';
+import { createWrapper } from '@/test/create-wrapper';
 
-import { useAdoptList } from './use-adopt-list';
+import { AdoptListParams, useAdoptList } from './use-adopt-list';
 
 describe('useAdoptList', () => {
-  it('returns flat object with correct properties', () => {
-    const { result } = renderHook(() => useAdoptList(), { wrapper: createWrapper() });
+  const defaultParams: AdoptListParams = { filter: 'NEAR_DEADLINE', animalType: 'ALL' };
 
-    expect(result.current).toHaveProperty('selectedFilter');
-    expect(result.current).toHaveProperty('selectedType');
-    expect(result.current).toHaveProperty('selectedSearch');
-    expect(result.current).toHaveProperty('originalData');
+  it('데이터 페칭 관련 속성을 반환한다', () => {
+    const { result } = renderHook(() => useAdoptList(defaultParams), { wrapper: createWrapper() });
+
     expect(result.current).toHaveProperty('convertedData');
     expect(result.current).toHaveProperty('moreButtonText');
     expect(result.current).toHaveProperty('isLoading');
+    expect(result.current).toHaveProperty('isFetchingNextPage');
     expect(result.current).toHaveProperty('hasNextPage');
-    expect(typeof result.current.changeFilter).toBe('function');
-    expect(typeof result.current.goDetail).toBe('function');
-    expect(typeof result.current.goList).toBe('function');
-    expect(typeof result.current.executeRefresh).toBe('function');
+    expect(typeof result.current.refresh).toBe('function');
     expect(typeof result.current.fetchNextPage).toBe('function');
   });
 
-  it('does not have grouped keys', () => {
-    const { result } = renderHook(() => useAdoptList(), { wrapper: createWrapper() });
+  it('필터/네비게이션 관련 속성을 포함하지 않는다', () => {
+    const { result } = renderHook(() => useAdoptList(defaultParams), { wrapper: createWrapper() });
 
-    expect(result.current).not.toHaveProperty('state');
-    expect(result.current).not.toHaveProperty('data');
-    expect(result.current).not.toHaveProperty('flags');
-    expect(result.current).not.toHaveProperty('actions');
+    expect(result.current).not.toHaveProperty('selectedFilter');
+    expect(result.current).not.toHaveProperty('selectedType');
+    expect(result.current).not.toHaveProperty('changeFilter');
+    expect(result.current).not.toHaveProperty('goDetail');
+    expect(result.current).not.toHaveProperty('goList');
+    expect(result.current).not.toHaveProperty('originalData');
+    expect(result.current).not.toHaveProperty('isFetching');
   });
 });

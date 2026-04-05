@@ -15,7 +15,7 @@ export const useDeleteUser = () => {
 
   const { mutateAsync, isPending } = useMutation({ mutationFn: deleteUser });
 
-  const executeDeleteUser = useCallback(async () => {
+  const handleDeleteUser = useCallback(async () => {
     try {
       if (isPending) return;
       await mutateAsync();
@@ -43,5 +43,5 @@ export const useDeleteUser = () => {
     [close, open]
   );
 
-  return { deleteUser: executeDeleteUser, openWithdrawModal, isPending };
+  return { deleteUser: handleDeleteUser, openWithdrawModal, isPending };
 };

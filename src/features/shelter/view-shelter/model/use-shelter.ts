@@ -4,9 +4,9 @@ import { useCallback } from 'react';
 import { mapToShelter, shelterQueries } from '@/entities/shelter';
 import { throwToErrorBoundary } from '@/shared/lib';
 
-export interface UseShelterProps {
+export type UseShelterProps = {
   id: string;
-}
+};
 
 export const useShelter = ({ id }: UseShelterProps) => {
   const { data: shelterData, isLoading } = useQuery({
@@ -17,11 +17,11 @@ export const useShelter = ({ id }: UseShelterProps) => {
 
   const queryClient = useQueryClient();
 
-  const executeRefresh = useCallback(async () => {
+  const refresh = useCallback(async () => {
     await queryClient.invalidateQueries({ queryKey: shelterQueries.all() });
   }, [queryClient]);
 
   const hasCallNumber = !!shelterData?.tel;
 
-  return { shelterData, isLoading, hasCallNumber, executeRefresh };
+  return { shelterData, isLoading, hasCallNumber, refresh };
 };

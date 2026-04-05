@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react-native';
 
-import { createWrapper } from '@/shared/test/createWrapper';
+import { createWrapper } from '@/test/create-wrapper';
 
 import { useShelter } from './use-shelter';
 
@@ -11,7 +11,7 @@ describe('useShelter', () => {
     expect(result.current).toHaveProperty('shelterData');
     expect(result.current).toHaveProperty('isLoading');
     expect(result.current).toHaveProperty('hasCallNumber');
-    expect(typeof result.current.executeRefresh).toBe('function');
+    expect(typeof result.current.refresh).toBe('function');
   });
 
   it('does not have grouped keys', () => {

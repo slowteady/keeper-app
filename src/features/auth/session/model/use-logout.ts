@@ -11,7 +11,7 @@ export const useLogout = () => {
 
   const { mutateAsync, isPending } = useMutation({ mutationFn: logout });
 
-  const executeLogout = useCallback(async () => {
+  const handleLogout = useCallback(async () => {
     try {
       if (isPending) return;
 
@@ -28,5 +28,5 @@ export const useLogout = () => {
     }
   }, [isPending, mutateAsync, qc, show]);
 
-  return { logout: executeLogout, isPending };
+  return { logout: handleLogout, isPending };
 };

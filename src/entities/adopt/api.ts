@@ -1,5 +1,5 @@
 import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
-import { AxiosError, AxiosResponse } from 'axios';
+import { AxiosResponse } from 'axios';
 
 import { publicApi } from '@/shared/api';
 import { ApiResponse } from '@/shared/model';
@@ -10,11 +10,11 @@ const BASE_URL = 'v2/abandonments';
 
 // --- Service Functions ---
 
-const getAdopts = async (params: AdoptParamsDto): Promise<AxiosResponse<ApiResponse<AdoptResponseDto>, AxiosError>> => {
+const getAdopts = async (params: AdoptParamsDto): Promise<AxiosResponse<ApiResponse<AdoptResponseDto>>> => {
   return await publicApi.get(BASE_URL, { params });
 };
 
-const getAdopt = async (id: string): Promise<AxiosResponse<ApiResponse<AdoptDataDto>, AxiosError>> => {
+const getAdopt = async (id: string): Promise<AxiosResponse<ApiResponse<AdoptDataDto>>> => {
   return await publicApi.get(`${BASE_URL}/${id}`);
 };
 
