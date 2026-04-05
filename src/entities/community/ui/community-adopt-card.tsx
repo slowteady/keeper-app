@@ -11,8 +11,8 @@ import { CommunityAdoptCardHeader } from './community-adopt-card-header';
 import { CommunityAdoptCardStats } from './community-adopt-card-stats';
 
 export interface CommunityAdoptCardProps extends CommunityAdoptListDto {
-  onPressCard: (id: string) => void;
-  onPressLike: (id: string) => void;
+  onPressCard: (id: number) => void;
+  onPressLike: (id: number) => void;
   isLoading?: boolean;
   isLoggedIn?: boolean;
 }
@@ -74,12 +74,12 @@ export const CommunityAdoptCard = ({
   );
 };
 
-export interface CommunityAdoptCardHeartProps {
+export type CommunityAdoptCardHeartProps = {
   isLiked: boolean;
   onPress: () => void;
   disabled: boolean;
   loading: boolean;
-}
+};
 
 export const CommunityAdoptCardHeart = ({ isLiked, onPress, disabled, loading }: CommunityAdoptCardHeartProps) => {
   return <AnimatedHeart isLiked={isLiked} onPress={onPress} disabled={disabled} loading={loading} size={28} />;

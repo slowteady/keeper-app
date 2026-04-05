@@ -141,6 +141,6 @@ export type KakaoGeocodeOptionalParamsDto = z.infer<typeof KakaoGeocodeOptionalP
 
 export const KakaoGeocodeParamsSchema = z.object({
   query: z.string(),
-  params: z.object(KakaoGeocodeOptionalParamsSchema).optional()
+  params: KakaoGeocodeOptionalParamsSchema.optional()
 });
 export type KakaoGeocodeParamsDto = z.infer<typeof KakaoGeocodeParamsSchema>;

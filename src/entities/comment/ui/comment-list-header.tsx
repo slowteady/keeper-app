@@ -1,12 +1,12 @@
 import { styled, Text, XStack, YStack } from 'tamagui';
 
-import { CommentSortOrderDto } from '@/entities/comment';
+import { CommentSortOrderDto } from '../model/schema';
 
-export interface CommentListHeaderProps {
+export type CommentListHeaderProps = {
   commentCount: number;
   sortOrder: CommentSortOrderDto;
   onChangeSortOrder: (order: CommentSortOrderDto) => void;
-}
+};
 
 export const CommentListHeader = ({ commentCount = 0, sortOrder, onChangeSortOrder }: CommentListHeaderProps) => {
   const isLatest = sortOrder === 'LATEST';
