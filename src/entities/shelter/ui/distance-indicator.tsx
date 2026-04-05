@@ -1,8 +1,8 @@
 import { styled, Text, XStack } from 'tamagui';
 
-interface DistanceIndicatorProps {
+type DistanceIndicatorProps = {
   value: { distance: number; count: number }[];
-}
+};
 
 const DISTANCES = [1, 5, 10, 30];
 

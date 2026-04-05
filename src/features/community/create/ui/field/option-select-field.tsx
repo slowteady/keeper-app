@@ -8,12 +8,12 @@ import { FieldLabel } from './field-label';
 
 type OptionFieldName = keyof typeof CREATE_POST_OPTIONS;
 
-export interface OptionSelectFieldProps {
+export type OptionSelectFieldProps = {
   label: string;
   required?: boolean;
   name: OptionFieldName;
   control: Control<CommunityAdoptFormDto>;
-}
+};
 
 export const OptionSelectField = ({ name, control, label, required }: OptionSelectFieldProps) => {
   return (

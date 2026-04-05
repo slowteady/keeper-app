@@ -3,10 +3,10 @@ import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
-interface ErrorFallbackProps {
+type ErrorFallbackProps = {
   error: unknown;
   resetError: () => void;
-}
+};
 
 const ERROR_IMAGE = require('@/assets/images/error.png');
 

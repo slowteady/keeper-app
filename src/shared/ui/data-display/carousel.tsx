@@ -110,10 +110,10 @@ const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>(
   }
 );
 
-export interface BasicCarouselIndicatorProps {
+export type BasicCarouselIndicatorProps = {
   currentIndex: number;
   maxIndex: number;
-}
+};
 const Indicator = ({ currentIndex, maxIndex }: BasicCarouselIndicatorProps) => {
   const text = `${currentIndex + 1}/${maxIndex}`;
 
@@ -124,11 +124,11 @@ const Indicator = ({ currentIndex, maxIndex }: BasicCarouselIndicatorProps) => {
   );
 };
 
-export interface BasicCarouselControllerProps {
+export type BasicCarouselControllerProps = {
   currentIndex: number;
   max: number;
   onPress: (type: 'prev' | 'next') => void;
-}
+};
 const Controller = ({ currentIndex, max, onPress }: BasicCarouselControllerProps) => {
   const { black900 } = useTheme();
 

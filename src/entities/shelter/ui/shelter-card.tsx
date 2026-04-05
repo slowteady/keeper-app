@@ -4,10 +4,10 @@ import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
 import { ShelterDto } from '../schema';
 
-export interface ShelterCardProps {
+export type ShelterCardProps = {
   data: ShelterDto;
   onPress: (id: string) => void;
-}
+};
 
 export const ShelterCard = ({ data, onPress }: ShelterCardProps) => {
   const { name, distance, address } = data;

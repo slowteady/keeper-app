@@ -1,10 +1,10 @@
 import { styled, Text, View } from 'tamagui';
 
-export interface ChipProps {
+export type ChipProps = {
   size?: 'small' | 'medium';
   theme?: 'default';
   text: string;
-}
+};
 
 export const Chip = ({ size = 'small', theme = 'default', text }: ChipProps) => {
   return (

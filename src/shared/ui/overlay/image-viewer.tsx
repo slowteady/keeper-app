@@ -7,12 +7,12 @@ import { styled, Text, useTheme, View, XStack } from 'tamagui';
 
 import { Close, LeftArrow, RightArrow } from '../icons/outline';
 
-export interface ImageViewerProps {
+export type ImageViewerProps = {
   open: boolean;
   onClose: () => void;
   images: string[];
   defaultIndex: number;
-}
+};
 
 export const ImageViewer = ({ open, onClose, images, defaultIndex }: ImageViewerProps) => {
   const [currentIndex, setCurrentIndex] = useState<number>(defaultIndex);
@@ -76,11 +76,11 @@ export const ImageViewer = ({ open, onClose, images, defaultIndex }: ImageViewer
   );
 };
 
-interface IndicatorProps {
+type IndicatorProps = {
   currentIndex: number;
   maxIndex: number;
   onPress: (type: 'prev' | 'next') => void;
-}
+};
 const Indicator = ({ currentIndex, maxIndex, onPress }: IndicatorProps) => {
   const { white900 } = useTheme();
 

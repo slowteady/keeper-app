@@ -5,16 +5,16 @@ import { useLayout } from '@/shared/model';
 
 import { Check } from '../icons/solid';
 
-export interface BottomSheetMenuData<T> {
+export type BottomSheetMenuData<T> = {
   id: T;
   label: string;
-}
+};
 
-export interface BottomSheetMenuProps<T> {
+export type BottomSheetMenuProps<T> = {
   data: readonly BottomSheetMenuData<T>[];
   value: T;
   onPress: (data: BottomSheetMenuData<T>) => void;
-}
+};
 
 export const BottomSheetMenu = <T,>({ data, value, onPress }: BottomSheetMenuProps<T>) => {
   const { black800, black500 } = useTheme();

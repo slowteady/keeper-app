@@ -4,13 +4,13 @@ import { styled, Text, View } from 'tamagui';
 import { ModalButtons } from './modal-buttons';
 import { useModal } from './modal-provider';
 
-export interface CancelModalProps {
+export type CancelModalProps = {
   open: boolean;
   onClose: () => void;
   onConfirm: () => void;
   title?: string;
   description?: string;
-}
+};
 
 export const CancelModal = ({
   open,

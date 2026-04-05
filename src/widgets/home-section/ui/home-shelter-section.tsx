@@ -19,7 +19,7 @@ import { DownArrow } from '@/shared/ui/icons/mini';
 
 const SHELTER_CARD_MIN_HEIGHT = 144;
 
-export interface HomeShelterSectionProps {
+export type HomeShelterSectionProps = {
   shelters?: ShelterDto[];
   shelterCounts?: ShelterCountDto[];
   mapRef: RefObject<any>;
@@ -31,7 +31,7 @@ export interface HomeShelterSectionProps {
   onToggleMapEnabled: () => void;
   onRefetchShelterList: (params?: CameraParams) => void;
   onToggleTapMarker: (data: ShelterDto) => void;
-}
+};
 
 export const HomeShelterSection = ({
   shelters,

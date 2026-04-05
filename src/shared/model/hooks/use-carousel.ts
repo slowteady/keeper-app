@@ -2,9 +2,9 @@ import { useCallback, useRef, useState } from 'react';
 import { NativeSyntheticEvent } from 'react-native';
 import PagerView from 'react-native-pager-view';
 
-export interface useCarouselProps {
+export type useCarouselProps = {
   images: string[];
-}
+};
 
 export const useCarousel = ({ images }: useCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);

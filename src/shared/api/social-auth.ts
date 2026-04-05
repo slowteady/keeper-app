@@ -5,14 +5,14 @@ import { AppleAuthenticationScope, signInAsync } from 'expo-apple-authentication
 
 type SocialLoginType = 'GOOGLE' | 'APPLE' | 'KAKAO' | 'NAVER';
 
-export interface SocialAuthResult {
+export type SocialAuthResult = {
   token: string;
   socialType: SocialLoginType;
-}
+};
 
-interface SocialAuthProvider {
+type SocialAuthProvider = {
   login: () => Promise<SocialAuthResult>;
-}
+};
 
 export const socialAuth: Record<Lowercase<SocialLoginType>, SocialAuthProvider> = {
   kakao: {

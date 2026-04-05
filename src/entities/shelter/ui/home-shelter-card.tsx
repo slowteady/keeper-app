@@ -2,11 +2,11 @@ import { styled, Text, View, XStack, YStack } from 'tamagui';
 
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
-export interface HomeShelterCardProps {
+export type HomeShelterCardProps = {
   name: string;
   address: string;
   tel: string;
-}
+};
 
 export const HOME_SHELTER_CARD_SIZE = {
   SMALL: 270

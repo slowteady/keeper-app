@@ -11,13 +11,13 @@ import {
 } from '@/features/community';
 import { DownArrow } from '@/shared/ui/icons/mini';
 
-export interface CommunityAdoptFormProps {
+export type CommunityAdoptFormProps = {
   form: UseFormReturn<CommunityAdoptFormDto>;
   onPressWeight: () => void;
   onPressAge: () => void;
   onPressKind: () => void;
   onPressLocation: () => void;
-}
+};
 
 export const CommunityAdoptForm = ({
   form,

@@ -7,9 +7,9 @@ import { Home } from '@/shared/ui/icons/outline';
 
 import { HeaderLayout } from './header-layout';
 
-export interface NavigateHeaderProps {
+export type NavigateHeaderProps = {
   text?: string;
-}
+};
 
 export const NavigateHeader = ({ text }: NavigateHeaderProps) => {
   const { black900 } = useTheme();

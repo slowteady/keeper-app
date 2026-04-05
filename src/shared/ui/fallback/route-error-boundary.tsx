@@ -3,10 +3,10 @@ import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
-interface RouteErrorBoundaryProps {
+type RouteErrorBoundaryProps = {
   error: Error;
   retry: () => void;
-}
+};
 
 const ERROR_IMAGE = require('@/assets/images/error.png');
 

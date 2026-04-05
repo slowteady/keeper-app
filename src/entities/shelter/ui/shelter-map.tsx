@@ -109,11 +109,11 @@ const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
   }
 );
 
-interface ShelterMapMarkerProps {
+type ShelterMapMarkerProps = {
   data: ShelterDto;
   onTap?: (data: ShelterDto) => void;
   isSelectedId?: string;
-}
+};
 const MARKER_DEFAULT_ZINDEX = 200000;
 const Marker = ({ data, onTap, isSelectedId }: ShelterMapMarkerProps) => {
   const { id, latitude, longitude } = data;

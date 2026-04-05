@@ -3,14 +3,14 @@ import { XStack } from 'tamagui';
 
 import { InfoItem, StatusList } from '@/shared/ui';
 
-export interface AdoptDetailInfoSectionProps {
+export type AdoptDetailInfoSectionProps = {
   age: string;
   gender: string;
   weight: string;
   healthCheck: string;
   neuterYn: string;
   vaccinationCheck: string;
-}
+};
 
 export const AdoptDetailInfoSection = ({
   age,

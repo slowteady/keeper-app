@@ -6,13 +6,13 @@ import { ScrollView, Spinner, styled, View, XStack, XStackProps, YStack } from '
 import { Close } from '../icons/outline';
 import { ImageViewer } from '../overlay/image-viewer';
 
-export interface ImageSelectorProps {
+export type ImageSelectorProps = {
   max?: number;
   size?: number;
   value?: string[];
   onChange?: (images: string[]) => void;
   ContainerProps?: XStackProps;
-}
+};
 
 export const ImageSelector = ({ max = 10, size = 100, value = [], onChange }: ImageSelectorProps) => {
   const [loadingIndex, setLoadingIndex] = useState<number | null>(null);

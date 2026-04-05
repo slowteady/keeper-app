@@ -4,9 +4,9 @@ import { styled, View } from 'tamagui';
 import { useCarousel } from '@/shared/model';
 import { Carousel } from '@/shared/ui';
 
-export interface HomeBannerSectionProps {
+export type HomeBannerSectionProps = {
   images: string[];
-}
+};
 
 export const HomeBannerSection = ({ images }: HomeBannerSectionProps) => {
   const { state, actions, refs } = useCarousel({ images });

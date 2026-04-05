@@ -9,7 +9,7 @@ import {
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 import { Share } from '@/shared/ui/icons/outline';
 
-export interface CommunityDetailOverviewSectionProps {
+export type CommunityDetailOverviewSectionProps = {
   id: number;
   image: string;
   nickname: string;
@@ -20,7 +20,7 @@ export interface CommunityDetailOverviewSectionProps {
   content: string;
   onPressLike: () => void;
   onPressShare: (id: number) => void;
-}
+};
 
 export const CommunityDetailOverviewSection = ({
   id,

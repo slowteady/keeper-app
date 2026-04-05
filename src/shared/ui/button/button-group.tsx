@@ -3,16 +3,16 @@ import { Pressable, StyleSheet } from 'react-native';
 import Animated, { interpolateColor, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { styled, useTheme, XStack } from 'tamagui';
 
-export interface ButtonGroupProps<T> {
+export type ButtonGroupProps<T> = {
   id: T;
   data: readonly ButtonGroupData<T>[];
   onChange: (id: T) => void;
-}
+};
 
-export interface ButtonGroupData<T> {
+export type ButtonGroupData<T> = {
   id: T;
   label: string;
-}
+};
 
 export const ButtonGroup = <T,>({ data, id, onChange }: ButtonGroupProps<T>) => {
   return (
@@ -27,11 +27,11 @@ export const ButtonGroup = <T,>({ data, id, onChange }: ButtonGroupProps<T>) => 
   );
 };
 
-interface ButtonProps {
+type ButtonProps = {
   label: string;
   isSelected: boolean;
   onPress: () => void;
-}
+};
 const Button = ({ isSelected, label, onPress }: ButtonProps) => {
   const { black600, black900, white600, white900 } = useTheme();
   const progress = useSharedValue(isSelected ? 1 : 0);

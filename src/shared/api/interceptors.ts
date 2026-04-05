@@ -8,10 +8,10 @@ import {
   saveRefreshToken
 } from '../lib/utils/handle-token';
 
-interface InterceptorConfig {
+type InterceptorConfig = {
   refreshFn: (refreshToken: string) => Promise<{ accessToken: string; refreshToken: string }>;
   onRefreshFailed?: () => void;
-}
+};
 
 let refreshTokenPromise: Promise<string> | null = null;
 

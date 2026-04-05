@@ -1,12 +1,12 @@
 import { Image } from 'expo-image';
 import { styled, Text, XStack, YStack } from 'tamagui';
 
-export interface ShelterDetailDescriptionSectionProps {
+export type ShelterDetailDescriptionSectionProps = {
   time: string;
   address: string;
   person: string;
   tel: string;
-}
+};
 
 export const ShelterDetailDescriptionSection = ({
   time,

@@ -4,7 +4,7 @@ import { styled, Text, XStack } from 'tamagui';
 import { ShelterDto, ShelterMap } from '@/entities/shelter';
 import { CameraParams } from '@/shared/model';
 
-export interface ShelterDetailOverviewSectionProps {
+export type ShelterDetailOverviewSectionProps = {
   data: ShelterDto;
   mapRef: RefObject<any>;
   camera?: CameraParams;
@@ -15,7 +15,7 @@ export interface ShelterDetailOverviewSectionProps {
   onRefetchShelterList: (params?: CameraParams) => void;
   onToggleTapMarker: (data: ShelterDto) => void;
   onMoveCamera: (latitude: number, longitude: number) => void;
-}
+};
 
 export const ShelterDetailOverviewSection = ({
   data,

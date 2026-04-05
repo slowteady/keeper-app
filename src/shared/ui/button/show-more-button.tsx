@@ -1,11 +1,11 @@
 import { ActivityIndicator } from 'react-native';
 import { styled, Text, View } from 'tamagui';
 
-export interface ShowMoreButtonProps {
+export type ShowMoreButtonProps = {
   text: string;
   onPress: () => void;
   isLoading?: boolean;
-}
+};
 
 export const ShowMoreButton = ({ text, onPress, isLoading = false }: ShowMoreButtonProps) => {
   return (

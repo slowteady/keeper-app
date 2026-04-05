@@ -5,10 +5,10 @@ import { ChipButton, ChipButtonProps } from '../button/chip-button';
 
 type ChipGroupValue<T extends boolean> = T extends true ? string[] : string;
 type ChipGroupOnChange<T extends boolean> = T extends true ? (value: string[]) => void : (value: string) => void;
-export interface ChipOption {
+export type ChipOption = {
   value: string;
   label: string;
-}
+};
 export interface ChipGroupProps<T extends boolean = false> extends Omit<
   ChipButtonProps,
   'children' | 'selected' | 'onPress'

@@ -6,13 +6,13 @@ import { useCall } from '@/shared/model';
 import { ModalButtons } from './modal-buttons';
 import { useModal } from './modal-provider';
 
-export interface CallModalProps {
+export type CallModalProps = {
   open: boolean;
   tel: string;
   onClose: () => void;
   title?: string;
   description?: string;
-}
+};
 
 export const CallModal = ({ open, tel, onClose, title, description }: CallModalProps) => {
   const { actions: callActions } = useCall();

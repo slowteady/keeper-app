@@ -1,7 +1,7 @@
-export interface DogBreed {
+export type DogBreed = {
   kindCd: string;
   name: string;
-}
+};
 
 export const DOG_BREEDS: DogBreed[] = [
   { kindCd: '000054', name: '골든 리트리버' },

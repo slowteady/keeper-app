@@ -3,9 +3,9 @@ import { styled, Text, useTheme, XStack } from 'tamagui';
 
 import { Paw } from '../icons/solid';
 
-export interface NoImageProps {
+export type NoImageProps = {
   style?: ViewStyle;
-}
+};
 
 export const NoImage = ({ style }: NoImageProps) => {
   const { white600 } = useTheme();

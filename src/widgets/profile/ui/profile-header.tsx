@@ -5,11 +5,11 @@ import { UserDto } from '@/entities/auth';
 import { EmptyAvatar, UserAvatar } from '@/entities/profile';
 import { Skeleton } from '@/shared/ui';
 
-interface ProfileHeaderProps {
+type ProfileHeaderProps = {
   user?: UserDto | null;
   isLoading: boolean;
   onLogout: () => void;
-}
+};
 
 export const ProfileHeader = ({ user, isLoading, onLogout }: ProfileHeaderProps) => {
   const navigateToLogin = () => {

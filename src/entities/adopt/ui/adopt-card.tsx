@@ -5,13 +5,13 @@ import { styled, Text, View, XStack, YStack } from 'tamagui';
 
 import { NoImage, Skeleton } from '@/shared/ui';
 
-export interface AdoptCardProps {
+export type AdoptCardProps = {
   uri: string;
   title: string;
   description: AdoptCardDescriptionsProps['data'];
   chips?: AdoptCardChipsProps['data'];
   horizontal?: boolean;
-}
+};
 
 export const ADOPT_CARD_IMAGE_SIZES = {
   small: (Dimensions.get('window').width - 48) / 2, // 2컬럼 기준 양쪽 20패딩 제외한 너비, 카드 간 8패딩 제외한 너비
@@ -57,10 +57,10 @@ export const AdoptCard = ({ uri, title, description, chips, horizontal = false }
   );
 };
 
-export interface AdoptCardDescriptionsProps {
+export type AdoptCardDescriptionsProps = {
   data: { label: string; value: string }[];
   size?: keyof typeof ADOPT_CARD_IMAGE_SIZES;
-}
+};
 
 export const AdoptCardDescriptions = ({ data, size = 'medium' }: AdoptCardDescriptionsProps) => {
   return data.map(({ label, value }, idx) => (
@@ -71,9 +71,9 @@ export const AdoptCardDescriptions = ({ data, size = 'medium' }: AdoptCardDescri
   ));
 };
 
-export interface AdoptCardChipsProps {
+export type AdoptCardChipsProps = {
   data: { id: string; value: string; variant?: AdoptCardChipVariant }[];
-}
+};
 export type AdoptCardChipVariant = 'error' | 'success' | 'notice' | 'default';
 export const AdoptCardChips = ({ data }: AdoptCardChipsProps) => {
   return (

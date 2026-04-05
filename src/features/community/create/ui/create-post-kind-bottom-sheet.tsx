@@ -3,11 +3,11 @@ import { useMemo, useState } from 'react';
 
 import { BottomSheetMenu } from '@/shared/ui';
 
-export interface CreatePostKindBottomSheetProps {
+export type CreatePostKindBottomSheetProps = {
   kindOption: { id: string; label: string }[];
   kind: string;
   onSelect: (id: string) => void;
-}
+};
 
 export const CreatePostKindBottomSheet = ({ kindOption, kind, onSelect }: CreatePostKindBottomSheetProps) => {
   const [searchQuery, setSearchQuery] = useState('');

@@ -2,10 +2,10 @@ import { RelativePathString, router } from 'expo-router';
 import { Linking } from 'react-native';
 import { styled, Text, View, YStack } from 'tamagui';
 
-export interface LinkProps {
+export type LinkProps = {
   url: string;
   text: string;
-}
+};
 
 export const Link = ({ url, text }: LinkProps) => {
   const handlePress = () => {

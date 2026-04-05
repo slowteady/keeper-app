@@ -6,10 +6,10 @@ import { AnimatePresence, styled, useTheme, View, XStack } from 'tamagui';
 import { Cancel } from '@/shared/ui/icons/outline';
 import { Search } from '@/shared/ui/icons/solid';
 
-export interface BottomSheetSearchInputProps {
+export type BottomSheetSearchInputProps = {
   onSubmit: (text: string) => void;
   placeholder?: string;
-}
+};
 
 export const BottomSheetSearchInput = ({ onSubmit, placeholder }: BottomSheetSearchInputProps) => {
   const [isFocus, setIsFocus] = useState(false);

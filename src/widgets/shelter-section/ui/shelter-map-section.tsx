@@ -5,7 +5,7 @@ import { View } from 'tamagui';
 import { DistanceIndicator, ShelterCountDto, ShelterDto, ShelterMap } from '@/entities/shelter';
 import { CameraParams } from '@/shared/model';
 
-export interface ShelterMapSectionProps {
+export type ShelterMapSectionProps = {
   hasLocationStatus: boolean;
   data?: ShelterDto[];
   counts?: ShelterCountDto[];
@@ -14,7 +14,7 @@ export interface ShelterMapSectionProps {
   onTapMarker?: (data: ShelterDto) => void;
   onInitialized: () => void;
   selectedMarkerId?: string;
-}
+};
 
 export const ShelterMapSection = forwardRef<NaverMapViewRef, ShelterMapSectionProps>(
   ({ hasLocationStatus, data, counts, camera, onRefetch, onTapMarker, onInitialized, selectedMarkerId }, ref) => {

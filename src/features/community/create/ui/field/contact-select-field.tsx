@@ -6,11 +6,11 @@ import { ChipGroup, TextField } from '@/shared/ui';
 
 import { FieldLabel } from './field-label';
 
-export interface ContactSelectFieldProps {
+export type ContactSelectFieldProps = {
   label: string;
   required?: boolean;
   control: Control<CommunityAdoptFormDto>;
-}
+};
 
 export const ContactSelectField = ({ control, label, required }: ContactSelectFieldProps) => {
   return (

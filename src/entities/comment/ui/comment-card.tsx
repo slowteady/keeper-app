@@ -3,10 +3,10 @@ import { Avatar, styled, Text, XStack } from 'tamagui';
 import { CommentDto } from '../model';
 import { CommentLikeButton } from './comment-like-button';
 
-export interface CommentCardProps {
+export type CommentCardProps = {
   comment: CommentDto;
   onPressLike: () => void;
-}
+};
 
 export const CommentCard = ({ comment, onPressLike }: CommentCardProps) => {
   return (
@@ -27,11 +27,11 @@ export const CommentCard = ({ comment, onPressLike }: CommentCardProps) => {
   );
 };
 
-export interface CommentCardHeaderProps {
+export type CommentCardHeaderProps = {
   image: string;
   nickname: string;
   displayTime: string;
-}
+};
 export const CommentCardHeader = ({ image, nickname, displayTime }: CommentCardHeaderProps) => {
   return (
     <>
@@ -49,11 +49,11 @@ export const CommentCardHeader = ({ image, nickname, displayTime }: CommentCardH
   );
 };
 
-export interface CommentCardFooterProps {
+export type CommentCardFooterProps = {
   likeCount: number;
   likeByMe: boolean;
   onPressLike: () => void;
-}
+};
 export const CommentCardFooter = ({ likeCount, likeByMe, onPressLike }: CommentCardFooterProps) => {
   return (
     <XStack items="center" gap={8}>

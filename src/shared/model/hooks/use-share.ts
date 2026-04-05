@@ -4,13 +4,13 @@ import { Alert, Platform, Share } from 'react-native';
 
 const WEB_BASE_URL = process.env.EXPO_PUBLIC_SHARE_URL;
 
-interface ShareParams {
+type ShareParams = {
   title: string;
   desc: string;
   path?: string;
   id?: number | string;
   image?: string;
-}
+};
 
 export const useShare = () => {
   const share = useCallback(async (params: ShareParams) => {
