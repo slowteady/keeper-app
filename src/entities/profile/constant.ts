@@ -12,9 +12,4 @@ export const PROFILE_OPTIONS = {
   ] as const
 };
 
-export type ProfileOption = keyof typeof PROFILE_OPTIONS;
 export type ProfileLikeOption = (typeof PROFILE_OPTIONS.LIKE)[number]['id'];
-
-export const makeProfileOption = <T extends ProfileOption>(option: T) => {
-  return PROFILE_OPTIONS[option];
-};
