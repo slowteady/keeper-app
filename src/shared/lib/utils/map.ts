@@ -1,5 +1,3 @@
-import { Camera } from '@mj-studio/react-native-naver-map';
-
 type Region = {
   latitude: number;
   longitude: number;
@@ -28,16 +26,4 @@ export const calcMapRadiusKm = (region: Region) => {
 
   // 소수점 버리고 정수로 반내림
   return Math.floor(radiusKm);
-};
-
-const EPSILON_CAMERA_COORD = 0.001;
-
-/**
- * 카메라가 변경되었는지 판단합니다.
- */
-export const isCameraChanged = (prevCamera: Camera, newCamera: Camera) => {
-  return (
-    Math.abs(prevCamera.latitude - newCamera.latitude) > EPSILON_CAMERA_COORD ||
-    Math.abs(prevCamera.longitude - newCamera.longitude) > EPSILON_CAMERA_COORD
-  );
 };

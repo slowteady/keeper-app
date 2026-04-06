@@ -5,12 +5,10 @@ import {
   NaverMapViewRef
 } from '@mj-studio/react-native-naver-map';
 import * as Haptics from 'expo-haptics';
-import { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
+import { forwardRef, useCallback, useRef, useState } from 'react';
 import { Platform, StyleSheet } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
 
-import { isCameraChanged } from '@/shared/lib';
 import { CameraParams, useDebounceFunc, usePermission } from '@/shared/model';
 import { Button } from '@/shared/ui';
 
@@ -29,26 +27,14 @@ const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
   ({ hasLocation, data, onRefetch, onTapMarker, selectedMarkerId, readOnly, ...props }, ref) => {
     const [isVisibleButton, setIsVisibleButton] = useState(false);
     const cameraRef = useRef<CameraParams | null>(null);
-    const scale = useSharedValue(0);
     const { primaryMain } = useTheme();
 
-    useEffect(() => {
-      scale.value = withTiming(isVisibleButton ? 1 : 0, { duration: 200 });
-    }, [scale, isVisibleButton]);
-
-    const animatedStyle = useAnimatedStyle(() => ({
-      transform: [{ scale: scale.value }],
-      opacity: scale.value
-    }));
-
     const moveCamera = useDebounceFunc((params: CameraParams) => {
-      if (cameraRef.current && !isCameraChanged(cameraRef.current, params)) {
-        return;
-      }
+      if (params.reason !== 'Gesture') return;
 
       setIsVisibleButton(true);
       cameraRef.current = params;
-    }, 500);
+    }, 200);
 
     const handlePressRefetch = useCallback(() => {
       Haptics.selectionAsync();
@@ -92,13 +78,13 @@ const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
             </NaverMapView>
 
             {isVisibleButton && !readOnly && (
-              <Animated.View style={[styles.mapButton, { backgroundColor: primaryMain.val }, animatedStyle]}>
+              <View style={[styles.mapButton, { backgroundColor: primaryMain.val }]}>
                 <Button variant="ghost" onPress={handlePressRefetch}>
                   <Text fontSize={13} fontWeight="600" lineHeight={22} color="$black900">
                     현 지도에서 검색
                   </Text>
                 </Button>
-              </Animated.View>
+              </View>
             )}
           </>
         ) : (
