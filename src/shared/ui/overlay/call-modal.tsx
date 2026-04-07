@@ -15,13 +15,13 @@ export type CallModalProps = {
 };
 
 export const CallModal = ({ open, tel, onClose, title, description }: CallModalProps) => {
-  const { actions: callActions } = useCall();
+  const { call } = useCall();
   const { open: openModal, close: closeModal } = useModal();
 
   const executeCall = useCallback(async () => {
-    callActions.executeCall(tel);
+    call(tel);
     closeModal();
-  }, [callActions, closeModal, tel]);
+  }, [call, closeModal, tel]);
 
   const executeClose = useCallback(() => {
     closeModal();

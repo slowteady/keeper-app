@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 import { XStack } from 'tamagui';
 
-import { InfoItem, StatusList } from '@/shared/ui';
+import { InfoItem } from './info-item';
+import { StatusList } from './status-list';
 
 export type AdoptDetailInfoSectionProps = {
   age: string;

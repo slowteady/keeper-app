@@ -1,17 +1,21 @@
 import { useMemo } from 'react';
-import { Pressable, PressableProps, StyleProp, StyleSheet, ViewStyle } from 'react-native';
+import { Pressable, PressableProps, StyleProp, ViewStyle } from 'react-native';
 import { Spinner, Text, useTheme } from 'tamagui';
 
-export const BUTTON_HEIGHT = {
+type Variant = 'default' | 'ghost';
+type Size = 'small' | 'medium' | 'large';
+type Color = 'primary' | 'secondary' | 'tertiary';
+
+export const BUTTON_HEIGHT: Record<Size, number> = {
   small: 48,
   medium: 55,
   large: 60
 };
 
 export interface ButtonProps extends PressableProps {
-  variant?: 'default' | 'ghost';
-  size?: 'small' | 'medium' | 'large';
-  color?: 'primary' | 'secondary' | 'tertiary';
+  variant?: Variant;
+  size?: Size;
+  color?: Color;
   isLoading?: boolean;
   style?: StyleProp<ViewStyle>;
 }
@@ -28,17 +32,34 @@ export const Button = ({
 }: ButtonProps) => {
   const theme = useTheme();
 
-  const styles = useMemo(
-    () => getStyles(variant, theme, size, color, disabled!),
-    [color, size, theme, disabled, variant]
-  );
+  const { buttonStyle, textStyle } = useMemo(() => {
+    const isDisabled = !!disabled;
+    const bg = getBackgroundColor(variant, color, isDisabled, theme);
+    const fg = getTextColor(variant, color, isDisabled, theme);
+
+    return {
+      buttonStyle: {
+        alignItems: 'center' as const,
+        justifyContent: 'center' as const,
+        borderRadius: 10,
+        overflow: 'hidden' as const,
+        backgroundColor: bg,
+        ...(variant === 'ghost' ? {} : { minHeight: BUTTON_HEIGHT[size] })
+      },
+      textStyle: {
+        fontWeight: '600' as const,
+        fontSize: 15,
+        color: fg
+      }
+    };
+  }, [variant, size, color, disabled, theme]);
 
   return (
-    <Pressable disabled={disabled} style={[styles.button, style]} {...props}>
+    <Pressable disabled={disabled} style={[buttonStyle, style]} {...props}>
       {isLoading ? (
         <Spinner size="small" color="$primaryDark" />
       ) : typeof children === 'string' ? (
-        <Text style={styles.text}>{children}</Text>
+        <Text style={textStyle}>{children}</Text>
       ) : (
         children
       )}
@@ -46,112 +67,29 @@ export const Button = ({
   );
 };
 
-const getStyles = (
-  variant: ButtonProps['variant'],
-  theme: any,
-  size: ButtonProps['size'],
-  color: ButtonProps['color'],
-  disabled: ButtonProps['disabled']
-) => {
-  const sizes = {
-    small: { minHeight: BUTTON_HEIGHT.small },
-    medium: { minHeight: BUTTON_HEIGHT.medium },
-    large: { minHeight: BUTTON_HEIGHT.large }
+const getBackgroundColor = (variant: Variant, color: Color, disabled: boolean, theme: ReturnType<typeof useTheme>) => {
+  if (variant === 'ghost') return 'transparent';
+
+  const map = {
+    primary: disabled ? theme.white800.val : theme.primaryMain.val,
+    secondary: disabled ? theme.white800.val : theme.blackMain.val,
+    tertiary: disabled ? theme.backgroundDefault.val : theme.white800.val
   };
 
-  const getColorStyles = (
-    variant: ButtonProps['variant'],
-    color: ButtonProps['color'],
-    disabled: ButtonProps['disabled']
-  ) => {
-    if (variant === 'ghost') {
-      return {
-        backgroundColor: 'transparent'
-      };
-    }
+  return map[color];
+};
 
-    switch (color) {
-      case 'primary':
-        return {
-          backgroundColor: disabled ? theme.white800.val : theme.primaryMain.val
-        };
-      case 'secondary':
-        return {
-          backgroundColor: disabled ? theme.white800.val : theme.blackMain.val
-        };
-      case 'tertiary':
-        return {
-          backgroundColor: disabled ? theme.backgroundDefault.val : theme.white800.val
-        };
-      default:
-        return {
-          backgroundColor: theme.primaryMain.val
-        };
-    }
+const getTextColor = (variant: Variant, color: Color, disabled: boolean, theme: ReturnType<typeof useTheme>) => {
+  if (variant === 'ghost') {
+    if (disabled) return theme.black500.val;
+    return color === 'secondary' ? theme.blackMain.val : theme.primaryMain.val;
+  }
+
+  const map = {
+    primary: disabled ? theme.black500.val : theme.black900.val,
+    secondary: disabled ? theme.black500.val : theme.white900.val,
+    tertiary: disabled ? theme.white600.val : theme.black900.val
   };
 
-  const getTextStyles = (
-    variant: ButtonProps['variant'],
-    color: ButtonProps['color'],
-    disabled: ButtonProps['disabled']
-  ) => {
-    if (variant === 'ghost') {
-      if (disabled) {
-        return {
-          color: theme.black500.val
-        };
-      }
-
-      switch (color) {
-        case 'primary':
-          return {
-            color: theme.primaryMain.val
-          };
-        case 'secondary':
-          return {
-            color: theme.blackMain.val
-          };
-        default:
-          return {
-            color: theme.primaryMain.val
-          };
-      }
-    } else if (variant === 'default') {
-      switch (color) {
-        case 'primary':
-          return {
-            color: disabled ? theme.black500.val : theme.black900.val
-          };
-        case 'secondary':
-          return {
-            color: disabled ? theme.black500.val : theme.white900.val
-          };
-        case 'tertiary':
-          return {
-            color: disabled ? theme.white600.val : theme.black900.val
-          };
-        default:
-          return {
-            color: theme.black900.val
-          };
-      }
-    }
-  };
-
-  return StyleSheet.create({
-    button: {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      borderRadius: 10,
-      overflow: 'hidden',
-      ...(variant === 'ghost' ? {} : sizes[size!]),
-      ...getColorStyles(variant!, color!, disabled!)
-    },
-    text: {
-      fontWeight: '600',
-      fontSize: 15,
-      ...getTextStyles(variant, color, disabled)
-    }
-  });
+  return map[color];
 };

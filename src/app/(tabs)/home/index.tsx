@@ -1,10 +1,11 @@
 import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { RefreshControl } from 'react-native';
 import { styled, View } from 'tamagui';
 
-import { useAdoptFilter, useAdoptList } from '@/features/adopt';
+import { ADOPT_OPTIONS, AdoptFilterDto } from '@/entities/adopt';
+import { useAdoptList } from '@/features/adopt';
 import { useShelterMap } from '@/features/shelter';
 import { useListRefreshing, useScrollUpButton } from '@/shared/model';
 import { RouteErrorBoundary, ScrollUpButton } from '@/shared/ui';
@@ -20,11 +21,12 @@ const Page = () => {
   const router = useRouter();
   const { isButtonVisible, handlePressButton, handleScroll, scrollRef } = useScrollUpButton();
 
-  const { selectedFilter, selectedType, selectedSearch, changeFilter, changeType } = useAdoptFilter();
+  const [selectedFilter, setSelectedFilter] = useState<AdoptFilterDto>(ADOPT_OPTIONS.FILTER[0].id);
+  const [selectedType, setSelectedType] = useState<string>(ADOPT_OPTIONS.ANIMAL[0].id);
+
   const { convertedData, isLoading, refresh } = useAdoptList({
     filter: selectedFilter,
-    animalType: selectedType,
-    search: selectedSearch
+    animalType: selectedType
   });
 
   const shelter = useShelterMap();
@@ -58,8 +60,8 @@ const Page = () => {
                 isLoading={isLoading}
                 onGoDetail={goDetail}
                 onGoList={goList}
-                onChangeFilter={changeFilter}
-                onChangeType={changeType}
+                onChangeFilter={(id) => setSelectedFilter(id as AdoptFilterDto)}
+                onChangeType={setSelectedType}
               />
             </View>
           );
@@ -83,7 +85,7 @@ const Page = () => {
           );
       }
     },
-    [selectedFilter, selectedType, convertedData, isLoading, goDetail, goList, changeFilter, changeType, shelter]
+    [selectedFilter, selectedType, convertedData, isLoading, goDetail, goList, shelter]
   );
 
   return (

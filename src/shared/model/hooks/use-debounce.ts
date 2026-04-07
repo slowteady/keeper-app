@@ -3,6 +3,12 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 export const useDebounceFunc = <T extends (...args: any[]) => void>(func: T, delay: number): T => {
   const timerRef = useRef<number | null>(null);
 
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, []);
+
   return useCallback(
     (...args: Parameters<T>) => {
       if (timerRef.current) {

@@ -1,4 +1,3 @@
-export * from './bottom-sheet-search-input';
 export * from './dropdown';
 export * from './image-selector';
 export * from './search-input';

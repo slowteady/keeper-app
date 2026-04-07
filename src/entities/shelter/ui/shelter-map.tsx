@@ -129,14 +129,14 @@ const Marker = ({ data, onTap, isSelectedId }: ShelterMapMarkerProps) => {
 };
 
 const NoValidMap = () => {
-  const { actions } = usePermission();
+  const { goSettingMenu } = usePermission();
 
   return (
     <NoValidContainer>
       <Text fontSize={16} lineHeight={18} fontWeight="500" color="$black600">
         사용자의 위치설정을 켜주세요.
       </Text>
-      <SettingButton onPress={actions.goSettingMenu}>
+      <SettingButton onPress={goSettingMenu}>
         <Text fontSize={14} lineHeight={16} fontWeight="500" color="$white900">
           위치설정 바로가기
         </Text>

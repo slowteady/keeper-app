@@ -12,7 +12,7 @@ import { AccountHeader } from '@/widgets/profile';
 const Page = () => {
   const { user } = useCurrentUser();
   const { changeProfileImage } = useProfileImage();
-  const permission = usePermission();
+  const { goSettingMenu } = usePermission();
 
   if (!user) return null;
 
@@ -36,7 +36,7 @@ const Page = () => {
           />
           <XStack items="center" justify="space-between" mb={12}>
             <Label>위치 설정</Label>
-            <SettingButton onPress={permission.actions.goSettingMenu}>
+            <SettingButton onPress={goSettingMenu}>
               <Text fontSize={12} fontWeight="600" lineHeight={14} letterSpacing={-0.25} color="$black500">
                 설정하기
               </Text>

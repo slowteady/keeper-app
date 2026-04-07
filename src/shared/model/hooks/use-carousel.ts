@@ -2,34 +2,25 @@ import { useCallback, useRef, useState } from 'react';
 import { NativeSyntheticEvent } from 'react-native';
 import PagerView from 'react-native-pager-view';
 
-export type useCarouselProps = {
-  images: string[];
-};
-
-export const useCarousel = ({ images }: useCarouselProps) => {
+export const useCarousel = (totalCount: number) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const carouselRef = useRef<PagerView | null>(null);
 
-  const changeIndex = useCallback((e: NativeSyntheticEvent<{ position: number }>) => {
-    const { position } = e.nativeEvent;
-    setCurrentIndex(position);
+  const handlePageChange = useCallback((e: NativeSyntheticEvent<{ position: number }>) => {
+    setCurrentIndex(e.nativeEvent.position);
   }, []);
 
-  const changeCarouselPage = useCallback(
+  const goTo = useCallback(
     (type: 'prev' | 'next') => {
       if (!carouselRef.current) return;
 
-      let newIndex = currentIndex;
-      if (type === 'prev' && currentIndex > 0) {
-        newIndex = currentIndex - 1;
-        carouselRef.current.setPage(newIndex);
-      } else if (type === 'next' && currentIndex < images.length - 1) {
-        newIndex = currentIndex + 1;
-        carouselRef.current.setPage(newIndex);
-      }
+      const newIndex = type === 'prev' ? currentIndex - 1 : currentIndex + 1;
+      if (newIndex < 0 || newIndex >= totalCount) return;
+
+      carouselRef.current.setPage(newIndex);
     },
-    [currentIndex, images.length]
+    [currentIndex, totalCount]
   );
 
-  return { state: { currentIndex }, actions: { changeIndex, changeCarouselPage }, refs: { carouselRef } };
+  return { currentIndex, handlePageChange, goTo, carouselRef };
 };

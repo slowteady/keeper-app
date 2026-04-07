@@ -1,4 +1,4 @@
-export * from './constants';
+export * from './constant';
 export * from './hooks';
-export * from './schemas/animal';
+export * from './schema';
 export * from './type';

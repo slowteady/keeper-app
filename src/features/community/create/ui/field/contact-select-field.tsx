@@ -48,7 +48,6 @@ export const ContactSelectField = ({ control, label, required }: ContactSelectFi
             <FieldLabel title={label} required={required} />
             <ChipGroup
               variant="secondary"
-              isPressable
               multiple
               options={CREATE_POST_OPTIONS.contact}
               value={selectedTypes}
