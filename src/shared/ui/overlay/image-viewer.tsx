@@ -1,8 +1,7 @@
+import { Image } from 'expo-image';
 import { useCallback, useRef, useState } from 'react';
-import { Modal, NativeSyntheticEvent } from 'react-native';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import PagerView from 'react-native-pager-view';
-import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
+import { Modal, StyleSheet } from 'react-native';
+import { Gallery, GalleryRefType } from 'react-native-zoom-toolkit';
 import { styled, Text, useTheme, View, XStack } from 'tamagui';
 
 import { Close, LeftArrow, RightArrow } from '../icons/outline';
@@ -15,35 +14,32 @@ export type ImageViewerProps = {
 };
 
 export const ImageViewer = ({ open, onClose, images, defaultIndex }: ImageViewerProps) => {
-  const [currentIndex, setCurrentIndex] = useState<number>(defaultIndex);
-  const carouselRef = useRef<PagerView | null>(null);
-  const scale = useSharedValue(1);
+  const [currentIndex, setCurrentIndex] = useState(defaultIndex);
+  const galleryRef = useRef<GalleryRefType>(null);
   const { white900 } = useTheme();
+
+  const handleIndexChange = useCallback((index: number) => {
+    setCurrentIndex(index);
+  }, []);
 
   const handlePress = useCallback(
     (type: 'prev' | 'next') => {
-      carouselRef.current?.setPage(type === 'prev' ? currentIndex - 1 : currentIndex + 1);
+      const nextIndex = type === 'prev' ? currentIndex - 1 : currentIndex + 1;
+      if (nextIndex < 0 || nextIndex >= images.length) return;
+      galleryRef.current?.setIndex(nextIndex);
     },
-    [currentIndex]
+    [currentIndex, images.length]
   );
 
-  const handlePageScroll = useCallback(
-    (event: NativeSyntheticEvent<Readonly<{ position: number; offset: number }>>) => {
-      setCurrentIndex(event.nativeEvent.position);
-    },
+  const renderItem = useCallback(
+    (item: string) => <Image source={item} style={styles.image} contentFit="contain" />,
     []
   );
 
-  const pinchGesture = Gesture.Pinch().onUpdate((event) => {
-    scale.value = Math.max(1, event.scale);
-  });
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }]
-  }));
+  if (!open) return null;
 
   return (
-    <Modal visible={open} transparent={true} animationType="fade">
+    <Modal visible transparent animationType="fade">
       <XStack items="center" justify="center" flex={1} px={20} bg="$black700">
         <View flex={1}>
           <IconButton self="flex-end" mb={8} onPress={onClose}>
@@ -51,40 +47,31 @@ export const ImageViewer = ({ open, onClose, images, defaultIndex }: ImageViewer
           </IconButton>
 
           <ImageWrap mb={10}>
-            <PagerView
-              ref={carouselRef}
-              style={{ width: '100%', height: '100%' }}
-              initialPage={defaultIndex}
-              onPageScroll={handlePageScroll}
-            >
-              {images.map((image, index) => (
-                <GestureDetector key={image + index} gesture={pinchGesture}>
-                  <Animated.Image
-                    source={{ uri: image }}
-                    style={[{ width: '100%', height: '100%' }, animatedStyle]}
-                    resizeMode="contain"
-                  />
-                </GestureDetector>
-              ))}
-            </PagerView>
+            <Gallery
+              ref={galleryRef}
+              data={images}
+              renderItem={renderItem}
+              keyExtractor={(item) => item}
+              initialIndex={defaultIndex}
+              onIndexChange={handleIndexChange}
+              maxScale={4}
+            />
           </ImageWrap>
 
-          <Indicator currentIndex={currentIndex} maxIndex={images.length} onPress={handlePress} />
+          <ViewerIndicator currentIndex={currentIndex} maxIndex={images.length} onPress={handlePress} />
         </View>
       </XStack>
     </Modal>
   );
 };
 
-type IndicatorProps = {
+type ViewerIndicatorProps = {
   currentIndex: number;
   maxIndex: number;
   onPress: (type: 'prev' | 'next') => void;
 };
-const Indicator = ({ currentIndex, maxIndex, onPress }: IndicatorProps) => {
+const ViewerIndicator = ({ currentIndex, maxIndex, onPress }: ViewerIndicatorProps) => {
   const { white900 } = useTheme();
-
-  const text = `${currentIndex + 1}/${maxIndex}`;
 
   return (
     <IndicatorContainer>
@@ -93,7 +80,7 @@ const Indicator = ({ currentIndex, maxIndex, onPress }: IndicatorProps) => {
       </IconButton>
       <IndexContainer>
         <Text fontSize={12} lineHeight={14} fontWeight="500" color="$white900">
-          {text}
+          {`${currentIndex + 1}/${maxIndex}`}
         </Text>
       </IndexContainer>
       <IconButton position="relative" t={0} onPress={() => onPress('next')}>
@@ -108,7 +95,8 @@ const ImageWrap = styled(View, {
   width: '100%',
   aspectRatio: 9 / 16,
   bg: '$black900',
-  rounded: 14
+  rounded: 14,
+  overflow: 'hidden'
 });
 
 const IconButton = styled(XStack, {
@@ -131,4 +119,8 @@ const IndexContainer = styled(View, {
   px: 12,
   py: 6,
   bg: 'rgba(0, 0, 0, 0.5)'
+});
+
+const styles = StyleSheet.create({
+  image: { width: '100%', height: '100%' }
 });
