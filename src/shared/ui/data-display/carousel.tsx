@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
 import { forwardRef, useCallback, useState } from 'react';
-import { NativeSyntheticEvent, StyleSheet } from 'react-native';
-import PagerView, { PagerViewProps } from 'react-native-pager-view';
+import { StyleSheet } from 'react-native';
+import PagerView, { PagerViewOnPageSelectedEvent, PagerViewProps } from 'react-native-pager-view';
 import { styled, Text, useTheme, View, XStack } from 'tamagui';
 
 import { Button } from '../button';
@@ -12,7 +12,6 @@ import { ImageViewer } from '../overlay/image-viewer';
 
 export interface BasicCarouselProps extends PagerViewProps {
   data: string[];
-  onChange?: (data: string) => void;
   showIndicator?: boolean;
   showImageViewer?: boolean;
 }
@@ -24,57 +23,55 @@ const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>(
     const [openImgViewer, setOpenImgViewer] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
 
-    const { black900, white800 } = useTheme();
+    const { black900 } = useTheme();
 
-    const handleChange = useCallback((e: NativeSyntheticEvent<{ position: number }>) => {
-      const { position } = e.nativeEvent;
-      setCurrentIndex(position);
+    const handlePageSelected = useCallback((e: PagerViewOnPageSelectedEvent) => {
+      setCurrentIndex(e.nativeEvent.position);
     }, []);
 
     const handleLoadImage = useCallback((idx: number) => {
       setIsLoaded((prev) => {
-        const newLoaded = [...prev];
-        newLoaded[idx] = true;
-        return newLoaded;
+        const next = [...prev];
+        next[idx] = true;
+        return next;
       });
     }, []);
 
     const handleErrorImage = useCallback((idx: number) => {
       setIsError((prev) => {
-        const newError = [...prev];
-        newError[idx] = true;
-        return newError;
+        const next = [...prev];
+        next[idx] = true;
+        return next;
       });
     }, []);
 
-    const renderImage = (image: string, idx: number) => {
-      return showImageViewer ? (
-        <Button
-          onPress={() => setOpenImgViewer((prev) => !prev)}
-          disabled={!isLoaded[idx] || isError[idx]}
-          style={{ width: '100%', height: '100%' }}
-        >
-          <Image
-            key={idx}
-            source={image}
-            contentFit="cover"
-            onLoad={() => handleLoadImage(idx)}
-            onError={() => handleErrorImage(idx)}
-            style={styles.image}
-          />
-          <IconWrap>
-            <MoreImage color={black900.val} />
-          </IconWrap>
-        </Button>
-      ) : (
+    const renderPage = (image: string, idx: number) => {
+      if (isError[idx]) return <NoImage />;
+
+      const imageElement = (
         <Image
-          key={idx}
           source={image}
           contentFit="cover"
           onLoad={() => handleLoadImage(idx)}
           onError={() => handleErrorImage(idx)}
           style={styles.image}
         />
+      );
+
+      return (
+        <>
+          {!isLoaded[idx] && <Skeleton style={styles.skeleton} />}
+          {showImageViewer ? (
+            <Button onPress={() => setOpenImgViewer(true)} disabled={!isLoaded[idx]} style={styles.imageButton}>
+              {imageElement}
+              <IconWrap>
+                <MoreImage color={black900.val} />
+              </IconWrap>
+            </Button>
+          ) : (
+            imageElement
+          )}
+        </>
       );
     };
 
@@ -83,78 +80,59 @@ const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>(
         <PagerView
           style={styles.container}
           ref={ref}
-          onPageScroll={handleChange}
+          onPageSelected={handlePageSelected}
           initialPage={0}
           pageMargin={24}
           {...props}
         >
           {data.map((image, idx) => (
-            <View key={image + idx}>
-              {!isLoaded[idx] && <Skeleton style={styles.skeleton} />}
-              {isError[idx] && <NoImage />}
-              {renderImage(image, idx)}
-            </View>
+            <View key={image}>{renderPage(image, idx)}</View>
           ))}
         </PagerView>
         {showIndicator && <Indicator currentIndex={currentIndex} maxIndex={data.length} />}
-        {openImgViewer && (
-          <ImageViewer
-            open={openImgViewer}
-            onClose={() => setOpenImgViewer(false)}
-            images={data}
-            defaultIndex={currentIndex}
-          />
-        )}
+        <ImageViewer
+          open={openImgViewer}
+          onClose={() => setOpenImgViewer(false)}
+          images={data}
+          defaultIndex={currentIndex}
+        />
       </>
     );
   }
 );
 
-export type BasicCarouselIndicatorProps = {
+type IndicatorProps = {
   currentIndex: number;
   maxIndex: number;
 };
-const Indicator = ({ currentIndex, maxIndex }: BasicCarouselIndicatorProps) => {
-  const text = `${currentIndex + 1}/${maxIndex}`;
+const Indicator = ({ currentIndex, maxIndex }: IndicatorProps) => (
+  <IndicatorContainer>
+    <IndicatorText>{`${currentIndex + 1}/${maxIndex}`}</IndicatorText>
+  </IndicatorContainer>
+);
 
-  return (
-    <IndicatorContainer>
-      <IndicatorText>{text}</IndicatorText>
-    </IndicatorContainer>
-  );
-};
-
-export type BasicCarouselControllerProps = {
+export type CarouselControllerProps = {
   currentIndex: number;
   max: number;
   onPress: (type: 'prev' | 'next') => void;
 };
-const Controller = ({ currentIndex, max, onPress }: BasicCarouselControllerProps) => {
+const Controller = ({ currentIndex, max, onPress }: CarouselControllerProps) => {
   const { black900 } = useTheme();
-
-  const minCount = currentIndex + 1;
-  const text = `${minCount}/${max}`;
-
-  const handlePress = (type: 'prev' | 'next') => {
-    onPress(type);
-  };
 
   return (
     <ControllerContainer>
-      <View onPress={() => handlePress('prev')} hitSlop={10}>
+      <View onPress={() => onPress('prev')} hitSlop={10}>
         <LeftLineArrow width={11} height={11} color={black900.val} />
       </View>
-      <ControllerText>{text}</ControllerText>
-      <View onPress={() => handlePress('next')} hitSlop={10}>
+      <ControllerText>{`${currentIndex + 1}/${max}`}</ControllerText>
+      <View onPress={() => onPress('next')} hitSlop={10}>
         <RightLineArrow width={11} height={11} color={black900.val} />
       </View>
     </ControllerContainer>
   );
 };
 
-export const Carousel = Object.assign(BasicCarousel, {
-  Controller
-});
+export const Carousel = Object.assign(BasicCarousel, { Controller });
 
 const ControllerContainer = styled(XStack, {
   gap: 4,
@@ -203,6 +181,7 @@ const IconWrap = styled(View, {
 const styles = StyleSheet.create({
   container: { position: 'relative', width: '100%', height: '100%' },
   image: { borderRadius: 10, width: '100%', height: '100%' },
+  imageButton: { width: '100%', height: '100%' },
   skeleton: {
     position: 'absolute',
     top: 0,

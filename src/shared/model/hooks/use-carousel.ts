@@ -1,12 +1,11 @@
 import { useCallback, useRef, useState } from 'react';
-import { NativeSyntheticEvent } from 'react-native';
-import PagerView from 'react-native-pager-view';
+import PagerView, { PagerViewOnPageSelectedEvent } from 'react-native-pager-view';
 
 export const useCarousel = (totalCount: number) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const carouselRef = useRef<PagerView | null>(null);
 
-  const handlePageChange = useCallback((e: NativeSyntheticEvent<{ position: number }>) => {
+  const handlePageChange = useCallback((e: PagerViewOnPageSelectedEvent) => {
     setCurrentIndex(e.nativeEvent.position);
   }, []);
 

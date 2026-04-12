@@ -13,7 +13,7 @@ export const HomeBannerSection = ({ images }: HomeBannerSectionProps) => {
 
   return (
     <Container>
-      <Carousel initialPage={0} data={images} onPageScroll={handlePageChange} ref={carouselRef} />
+      <Carousel initialPage={0} data={images} onPageSelected={handlePageChange} ref={carouselRef} />
       <ControllerWrapper l={20} b={16}>
         <Carousel.Controller currentIndex={currentIndex} max={images.length} onPress={goTo} />
       </ControllerWrapper>
