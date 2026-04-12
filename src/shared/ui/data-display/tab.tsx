@@ -26,22 +26,17 @@ export const Tab = <T extends Route>({ ...props }: TabViewProps<T>) => {
   );
 };
 
-export type TabItemProps<T extends Route> = {
+type TabItemProps<T extends Route> = {
   navigationState: NavigationState<T>;
   onIndexChange: (index: number) => void;
   activeColor: string;
   inactiveColor: string;
 };
 
-export const TAB_BAR_HEIGHT = 55;
-export const TAB_BAR_INDICATOR_HEIGHT = 3;
+const TAB_BAR_HEIGHT = 55;
+const TAB_BAR_INDICATOR_HEIGHT = 3;
 
-export const TabItem = <T extends Route>({
-  navigationState,
-  onIndexChange,
-  activeColor,
-  inactiveColor
-}: TabItemProps<T>) => {
+const TabItem = <T extends Route>({ navigationState, onIndexChange, activeColor, inactiveColor }: TabItemProps<T>) => {
   const activeIndex = navigationState.index;
   const routes = navigationState.routes;
   const animatedIndex = useSharedValue(activeIndex);
@@ -58,7 +53,7 @@ export const TabItem = <T extends Route>({
     const leftPosition = interpolate(
       animatedIndex.value,
       routes.map((_, index) => index),
-      routes.map((_, index) => (100 / routes.length) * index + (100 / routes.length - 100 / routes.length))
+      routes.map((_, index) => (100 / routes.length) * index)
     );
 
     return {
