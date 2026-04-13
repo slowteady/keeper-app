@@ -79,8 +79,8 @@ export const useSignup = () => {
   );
 
   const handleCancel = useCallback(async () => {
-    cancelSignup();
-    removeToken();
+    await cancelSignup();
+    await removeToken();
 
     const target: Route = redirect && redirect !== '/login' ? redirect : '/';
     setPrevent(false);
