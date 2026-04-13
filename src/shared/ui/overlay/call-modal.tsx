@@ -19,7 +19,7 @@ export const CallModal = ({ open, tel, onClose, title, description }: CallModalP
   const { open: openModal, close: closeModal } = useModal();
 
   const executeCall = useCallback(async () => {
-    call(tel);
+    await call(tel);
     closeModal();
   }, [call, closeModal, tel]);
 

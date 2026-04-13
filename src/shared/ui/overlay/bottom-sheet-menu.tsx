@@ -28,7 +28,7 @@ export const BottomSheetMenu = <T,>({ data, value, onPress }: BottomSheetMenuPro
         const isActive = String(item.id) === String(value);
 
         return (
-          <Pressable key={key} style={[styles.button]} onPress={() => onPress(item)}>
+          <Pressable key={key} style={styles.button} onPress={() => onPress(item)}>
             <StyledText style={[{ color: isActive ? black800.val : black500.val }]}>{label}</StyledText>
             {isActive && <Check width={17} height={20} color={black800.val} />}
           </Pressable>
@@ -46,7 +46,6 @@ const StyledText = styled(Text, {
 
 const styles = StyleSheet.create({
   button: {
-    display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingVertical: 12

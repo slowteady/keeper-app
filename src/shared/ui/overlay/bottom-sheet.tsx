@@ -32,9 +32,7 @@ export const BottomSheet = forwardRef<BottomSheetModal, BottomSheetLayoutProps>(
       backdropComponent={renderBackdrop}
       {...rest}
     >
-      <BottomSheetView style={{ display: 'flex', flexDirection: 'column', flex: 1, paddingTop: 12 }}>
-        {children}
-      </BottomSheetView>
+      <BottomSheetView style={{ flexDirection: 'column', flex: 1, paddingTop: 12 }}>{children}</BottomSheetView>
     </BottomSheetModal>
   );
 });
