@@ -44,8 +44,8 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
   const shelterMap = useShelterMap();
   const {
     selectedFilter,
-    originalData,
     convertedData,
+    moreButtonText,
     isLoading: adoptsLoading,
     hasNextPage,
     isFetchingNextPage,
@@ -72,10 +72,6 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
     },
     [goDetail]
   );
-
-  const currentPage = (originalData?.page ?? 0) + 1;
-  const totalPage = Math.ceil((originalData?.total ?? 0) / LIST_SIZE);
-  const text = `더보기 ${currentPage}/${totalPage}`;
 
   if (!shelterData) return null;
 
@@ -149,7 +145,7 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
         footer={
           hasNextPage ? (
             <View mb={24} justify="center">
-              <ShowMoreButton text={text} onPress={fetchNextPage} isLoading={isFetchingNextPage} />
+              <ShowMoreButton text={moreButtonText} onPress={fetchNextPage} isLoading={isFetchingNextPage} />
             </View>
           ) : undefined
         }

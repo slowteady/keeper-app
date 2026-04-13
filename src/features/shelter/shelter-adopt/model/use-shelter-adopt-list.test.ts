@@ -9,8 +9,8 @@ describe('useShelterAdoptList', () => {
     const { result } = renderHook(() => useShelterAdoptList({ id: '1' }), { wrapper: createWrapper() });
 
     expect(result.current).toHaveProperty('selectedFilter');
-    expect(result.current).toHaveProperty('originalData');
     expect(result.current).toHaveProperty('convertedData');
+    expect(result.current).toHaveProperty('moreButtonText');
     expect(result.current).toHaveProperty('isLoading');
     expect(result.current).toHaveProperty('hasNextPage');
     expect(result.current).toHaveProperty('isFetchingNextPage');

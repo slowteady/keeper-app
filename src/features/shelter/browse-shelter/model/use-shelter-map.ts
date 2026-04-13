@@ -46,7 +46,7 @@ export const useShelterMap = () => {
 
   const refetchShelterList = useCallback(
     (params?: CameraParams) => {
-      if (!params) return null;
+      if (!params) return;
 
       const { latitude, longitude, zoom, region } = params;
       setCamera({ latitude, longitude, zoom });

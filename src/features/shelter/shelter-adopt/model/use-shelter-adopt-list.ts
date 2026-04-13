@@ -58,10 +58,16 @@ export const useShelterAdoptList = ({ id, adoptsParams }: UseShelterAdoptListPro
 
   const goDetail = useCallback((id: string) => router.push({ pathname: '/adopt/[id]', params: { id } }), [router]);
 
+  const moreButtonText = useMemo(() => {
+    const currentPage = (data?.page ?? 0) + 1;
+    const totalPage = Math.ceil((data?.total || 0) / 16);
+    return `더보기 ${currentPage}/${totalPage}`;
+  }, [data?.page, data?.total]);
+
   return {
     selectedFilter,
-    originalData: data,
     convertedData,
+    moreButtonText,
     isLoading,
     hasNextPage,
     isFetchingNextPage,
