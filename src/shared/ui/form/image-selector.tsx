@@ -1,7 +1,9 @@
 import * as ImagePicker from 'expo-image-picker';
 import { useState } from 'react';
 import { Image, StyleSheet } from 'react-native';
-import { ScrollView, Spinner, styled, View, XStack, XStackProps, YStack } from 'tamagui';
+import { ScrollView, Spinner, styled, View, XStack, YStack } from 'tamagui';
+
+import { logger } from '@/shared/lib';
 
 import { Close } from '../icons/outline';
 import { ImageViewer } from '../overlay/image-viewer';
@@ -11,7 +13,6 @@ export type ImageSelectorProps = {
   size?: number;
   value?: string[];
   onChange?: (images: string[]) => void;
-  ContainerProps?: XStackProps;
 };
 
 export const ImageSelector = ({ max = 10, size = 100, value = [], onChange }: ImageSelectorProps) => {
@@ -22,17 +23,21 @@ export const ImageSelector = ({ max = 10, size = 100, value = [], onChange }: Im
   const handlePickImage = async () => {
     if (value.length >= max) return;
 
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
-      allowsMultipleSelection: true,
-      quality: 0.8,
-      selectionLimit: max - value.length
-    });
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ['images'],
+        allowsMultipleSelection: true,
+        quality: 0.8,
+        selectionLimit: max - value.length
+      });
 
-    if (result.canceled || !result.assets?.length) return;
+      if (result.canceled || !result.assets?.length) return;
 
-    const newImages = result.assets.map((asset) => asset.uri);
-    onChange?.([...value, ...newImages].slice(0, max));
+      const newImages = result.assets.map((asset) => asset.uri);
+      onChange?.([...value, ...newImages].slice(0, max));
+    } catch (err) {
+      logger.error(err);
+    }
   };
 
   const handleRemoveImage = (index: number) => {
@@ -114,7 +119,7 @@ const RemoveButtonBackground = styled(YStack, {
   width: 22,
   height: 22,
   rounded: 12,
-  bg: '#454545',
+  bg: '$black700',
   items: 'center',
   justify: 'center'
 });
