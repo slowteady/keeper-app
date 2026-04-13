@@ -27,12 +27,12 @@ export const CommentCard = ({ comment, onPressLike }: CommentCardProps) => {
   );
 };
 
-export type CommentCardHeaderProps = {
+type CommentCardHeaderProps = {
   image: string;
   nickname: string;
   displayTime: string;
 };
-export const CommentCardHeader = ({ image, nickname, displayTime }: CommentCardHeaderProps) => {
+const CommentCardHeader = ({ image, nickname, displayTime }: CommentCardHeaderProps) => {
   return (
     <>
       <StyledAvatar>
@@ -49,12 +49,12 @@ export const CommentCardHeader = ({ image, nickname, displayTime }: CommentCardH
   );
 };
 
-export type CommentCardFooterProps = {
+type CommentCardFooterProps = {
   likeCount: number;
   likeByMe: boolean;
   onPressLike: () => void;
 };
-export const CommentCardFooter = ({ likeCount, likeByMe, onPressLike }: CommentCardFooterProps) => {
+const CommentCardFooter = ({ likeCount, likeByMe, onPressLike }: CommentCardFooterProps) => {
   return (
     <XStack items="center" gap={8}>
       <CommentLikeButton likeByMe={likeByMe} onPress={onPressLike} />

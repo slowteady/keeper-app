@@ -51,4 +51,4 @@ export const COMMUNITY_LIST_FILTER = [
   { id: 'LIKE', label: '인기순' },
   { id: 'COMMENT', label: '댓글순' },
   { id: 'VIEW', label: '조회순' }
-];
+] as const;

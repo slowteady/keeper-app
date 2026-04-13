@@ -5,6 +5,7 @@ import { AdoptResponseDto } from '@/entities/adopt';
 import { publicApi } from '@/shared/api';
 import { ApiResponse } from '@/shared/model';
 
+import { SHELTER_DISTANCES } from './constant';
 import {
   ShelterAdoptsParamsDto,
   ShelterCountDto,
@@ -21,7 +22,7 @@ const BASE_URL = '/v2/shelters';
 const getShelterCounts = async (
   params: ShelterCountsParamsDto
 ): Promise<AxiosResponse<ApiResponse<ShelterCountDto[]>>> => {
-  const distances = '1,5,10,30';
+  const distances = SHELTER_DISTANCES.join(',');
   return await publicApi.get(`${BASE_URL}/nearby/count`, { params: { ...params, distances } });
 };
 

@@ -57,12 +57,12 @@ export const AdoptCard = ({ uri, title, description, chips, horizontal = false }
   );
 };
 
-export type AdoptCardDescriptionsProps = {
+type AdoptCardDescriptionsProps = {
   data: { label: string; value: string }[];
   size?: keyof typeof ADOPT_CARD_IMAGE_SIZES;
 };
 
-export const AdoptCardDescriptions = ({ data, size = 'medium' }: AdoptCardDescriptionsProps) => {
+const AdoptCardDescriptions = ({ data, size = 'medium' }: AdoptCardDescriptionsProps) => {
   return data.map(({ label, value }, idx) => (
     <DescriptionWrap key={`${label}-${idx}`} size={size}>
       <DescriptionLabel size={size}>{label}</DescriptionLabel>
@@ -71,11 +71,11 @@ export const AdoptCardDescriptions = ({ data, size = 'medium' }: AdoptCardDescri
   ));
 };
 
-export type AdoptCardChipsProps = {
+type AdoptCardChipVariant = 'error' | 'success' | 'notice' | 'default';
+type AdoptCardChipsProps = {
   data: { id: string; value: string; variant?: AdoptCardChipVariant }[];
 };
-export type AdoptCardChipVariant = 'error' | 'success' | 'notice' | 'default';
-export const AdoptCardChips = ({ data }: AdoptCardChipsProps) => {
+const AdoptCardChips = ({ data }: AdoptCardChipsProps) => {
   return (
     <ChipContainer gap={4}>
       {data.map(({ id, value, variant = 'default' }, idx) => (

@@ -1,15 +1,15 @@
 import { styled, Text, XStack } from 'tamagui';
 
+import { SHELTER_DISTANCES } from '../constant';
+
 type DistanceIndicatorProps = {
   value: { distance: number; count: number }[];
 };
 
-const DISTANCES = [1, 5, 10, 30];
-
 export const DistanceIndicator = ({ value }: DistanceIndicatorProps) => {
   return (
     <Container px={28} py={10}>
-      {DISTANCES.map((dist, idx) => {
+      {SHELTER_DISTANCES.map((dist, idx) => {
         const key = `${dist}-${idx}`;
         const matchedCount = value.find(({ distance }) => distance === dist);
         const count = matchedCount?.count ?? 0;
