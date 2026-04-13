@@ -3,7 +3,7 @@ import { styled, Text, View, XStack, YStack } from 'tamagui';
 
 import { Link } from '@/shared/ui';
 
-export type Shelter = {
+type Shelter = {
   id: string;
   time: string;
   person: string;

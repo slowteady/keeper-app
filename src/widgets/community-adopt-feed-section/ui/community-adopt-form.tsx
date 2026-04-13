@@ -130,7 +130,7 @@ export const CommunityAdoptForm = ({
         <YStack px={20} my={40}>
           <YStack mb={20}>
             <OptionalTitle>필수 정보를 모두 체크하셨나요?</OptionalTitle>
-            <OptionalDescription>더 많은 관심을 위해 세부정보도 작어보세요.</OptionalDescription>
+            <OptionalDescription>더 많은 관심을 위해 세부정보도 적어보세요.</OptionalDescription>
           </YStack>
 
           <Accordion type="single" collapsible>
