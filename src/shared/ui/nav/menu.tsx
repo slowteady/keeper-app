@@ -12,7 +12,7 @@ export const Menu = ({ icon, label, onPress, style }: MenuProps) => {
   return (
     <Container onPress={onPress} hitSlop={12} style={style}>
       <XStack gap={8} items="center">
-        {icon && icon}
+        {icon}
         <Label>{label}</Label>
       </XStack>
       <ChevronRight size={21} color="$white600" />
