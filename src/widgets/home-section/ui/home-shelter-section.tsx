@@ -1,7 +1,7 @@
 import { Camera, NaverMapViewRef } from '@mj-studio/react-native-naver-map';
-import { FlashList, ListRenderItemInfo } from '@shopify/flash-list';
+import { FlashList, FlashListRef, ListRenderItemInfo } from '@shopify/flash-list';
 import { router } from 'expo-router';
-import { RefObject, useCallback } from 'react';
+import { RefObject, useCallback, useEffect, useRef } from 'react';
 import { ViewStyle } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { styled, Text, useTheme, View, XStack } from 'tamagui';
@@ -48,6 +48,13 @@ export const HomeShelterSection = ({
   onTapMarker
 }: HomeShelterSectionProps) => {
   const { black500 } = useTheme();
+  const listRef = useRef<FlashListRef<ShelterDto>>(null);
+
+  useEffect(() => {
+    if (selectedMarkerId && listRef.current) {
+      listRef.current.scrollToOffset({ animated: true, offset: 0 });
+    }
+  }, [selectedMarkerId]);
 
   const renderItem = useCallback(({ item }: ListRenderItemInfo<ShelterDto>) => {
     return (
@@ -94,6 +101,7 @@ export const HomeShelterSection = ({
 
       <Animated.View style={animatedListStyle}>
         <FlashList
+          ref={listRef}
           keyExtractor={({ id }) => id}
           data={shelters}
           renderItem={renderItem}

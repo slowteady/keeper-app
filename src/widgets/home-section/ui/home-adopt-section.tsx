@@ -45,7 +45,7 @@ export const HomeAdoptSection = ({
     if (scrollRef.current) {
       scrollRef.current.scrollToOffset({ animated: false, offset: 0 });
     }
-  }, [scrollRef]);
+  }, [selectedFilter, selectedType]);
 
   return (
     <>

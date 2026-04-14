@@ -79,7 +79,7 @@ const convertChipLabel = ({ neuterYn, weight, gender, age, filter, noticeEndDt }
 };
 
 const FILTER_CHIP_MAP: Record<AdoptFilterDto, { id: string; value: string; sort: number; variant: ChipVariant }> = {
-  NEAR_DEADLINE: { id: 'NEAR_DEADLINE', value: '마감임박', sort: 1, variant: 'error' },
+  NEAR_DEADLINE: { id: 'NEAR_DEADLINE', value: '공고마감임박', sort: 1, variant: 'error' },
   NEW: { id: 'NEW', value: '신규', sort: 1, variant: 'success' }
 };
 
