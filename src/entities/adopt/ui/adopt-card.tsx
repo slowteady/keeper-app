@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Dimensions, StyleSheet } from 'react-native';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
+import { ChipVariant } from '@/entities/adopt';
 import { NoImage, Skeleton } from '@/shared/ui';
 
 export type AdoptCardProps = {
@@ -71,9 +72,8 @@ const AdoptCardDescriptions = ({ data, size = 'medium' }: AdoptCardDescriptionsP
   ));
 };
 
-type AdoptCardChipVariant = 'error' | 'success' | 'notice' | 'default';
 type AdoptCardChipsProps = {
-  data: { id: string; value: string; variant?: AdoptCardChipVariant }[];
+  data: { id: string; value: string; variant?: ChipVariant }[];
 };
 const AdoptCardChips = ({ data }: AdoptCardChipsProps) => {
   return (

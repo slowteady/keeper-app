@@ -51,7 +51,7 @@ describe('mapToAdoptList', () => {
     const filterChip = result[0].chips.find((c: { id: string }) => c.id === 'NEAR_DEADLINE');
 
     expect(filterChip).toBeDefined();
-    expect(filterChip?.value).toBe('안락사 위기');
+    expect(filterChip?.value).toBe('마감임박');
   });
 });
 

@@ -1,5 +1,4 @@
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
-import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { useCallback, useMemo } from 'react';
 
 import { AdoptFilterDto, adoptQueries, mapToAdoptList } from '@/entities/adopt';
@@ -41,7 +40,6 @@ export const useAdoptList = (params: AdoptListParams) => {
 
   const fetchNextPage = useCallback(async () => {
     if (hasNextPage) {
-      impactAsync(ImpactFeedbackStyle.Medium);
       fetchNextPageQuery();
     }
   }, [fetchNextPageQuery, hasNextPage]);

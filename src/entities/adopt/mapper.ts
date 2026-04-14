@@ -4,13 +4,13 @@ import { AdoptDataDto, AdoptFilterDto } from './schema';
 
 export type AdoptItem = ReturnType<typeof mapToAdoptList>[number];
 
-type ChipVariant = 'error' | 'success' | 'notice' | 'default';
+export type ChipVariant = 'error' | 'success' | 'notice' | 'default';
 
 export const mapToAdoptList = (data: AdoptDataDto[], filter?: AdoptFilterDto) => {
   return data.map((item) => {
     const { neuterYn, age, weight, gender, happenPlace, images, orgName, noticeStartDt, noticeEndDt, fullName } = item;
 
-    const chips = convertChipLabel({ neuterYn, weight, gender, age, filter });
+    const chips = convertChipLabel({ neuterYn, weight, gender, age, filter, noticeEndDt });
     const descriptions = convertDescription({ noticeStartDt, noticeEndDt, orgName, happenPlace });
 
     return {
@@ -42,13 +42,21 @@ type ChipLabelParams = {
   gender: AdoptDataDto['gender'];
   age: AdoptDataDto['age'];
   filter?: AdoptFilterDto;
+  noticeEndDt?: AdoptDataDto['noticeEndDt'];
 };
-const convertChipLabel = ({ neuterYn, weight, gender, age, filter }: ChipLabelParams) => {
+const convertChipLabel = ({ neuterYn, weight, gender, age, filter, noticeEndDt }: ChipLabelParams) => {
   const chips: { id: string; value: string; sort: number; variant?: ChipVariant }[] = [];
 
   const filterChip = filter ? FILTER_CHIP_MAP[filter] : undefined;
   if (filterChip) {
     chips.push(filterChip);
+  }
+
+  if (filter === 'NEAR_DEADLINE' && noticeEndDt) {
+    const dday = calcDday(noticeEndDt);
+    if (dday !== null) {
+      chips.push({ id: 'DDAY', value: dday, sort: 1.5, variant: 'error' });
+    }
   }
 
   if (neuterYn === 'Y') {
@@ -71,7 +79,7 @@ const convertChipLabel = ({ neuterYn, weight, gender, age, filter }: ChipLabelPa
 };
 
 const FILTER_CHIP_MAP: Record<AdoptFilterDto, { id: string; value: string; sort: number; variant: ChipVariant }> = {
-  NEAR_DEADLINE: { id: 'NEAR_DEADLINE', value: '안락사 위기', sort: 1, variant: 'error' },
+  NEAR_DEADLINE: { id: 'NEAR_DEADLINE', value: '마감임박', sort: 1, variant: 'error' },
   NEW: { id: 'NEW', value: '신규', sort: 1, variant: 'success' }
 };
 
@@ -117,4 +125,14 @@ const convertDescription = ({ noticeStartDt, noticeEndDt, orgName, happenPlace, 
 
 const convertFullName = (fullName: AdoptDataDto['fullName']) => {
   return fullName.replace('[개]', '[강아지]');
+};
+
+const calcDday = (noticeEndDt: string): string | null => {
+  const today = dayjs().startOf('day');
+  const endDate = dayjs(noticeEndDt).startOf('day');
+  const diff = endDate.diff(today, 'day');
+
+  if (diff < 0) return null;
+  if (diff === 0) return 'D-Day';
+  return `D-${diff}`;
 };

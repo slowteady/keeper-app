@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { styled, Text, View, XStack } from 'tamagui';
 
 import { ADOPT_OPTIONS } from '@/entities/adopt';
@@ -7,6 +6,7 @@ import { ButtonGroup, Dropdown, SearchInput } from '@/shared/ui';
 export type AdoptListHeaderSectionProps = {
   filterValue: string;
   animalType: string;
+  searchValue: string;
   onChangeFilter: (value: string) => void;
   onChangeAnimalType: (value: string) => void;
   onSearch: (value: string) => void;
@@ -15,12 +15,11 @@ export type AdoptListHeaderSectionProps = {
 export const AdoptListHeaderSection = ({
   filterValue,
   animalType,
+  searchValue,
   onChangeFilter,
   onChangeAnimalType,
   onSearch
 }: AdoptListHeaderSectionProps) => {
-  const [searchValue, setSearchValue] = useState('');
-
   return (
     <>
       <TitleContainer mb={24}>
@@ -45,7 +44,7 @@ export const AdoptListHeaderSection = ({
         <SearchInput
           placeholder="품종 또는 지역을 입력해주세요."
           value={searchValue}
-          onTextChange={setSearchValue}
+          onTextChange={onSearch}
           onSubmit={onSearch}
         />
       </View>
