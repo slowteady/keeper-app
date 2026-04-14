@@ -18,7 +18,7 @@ export const useLogout = () => {
       await mutateAsync();
       await removeToken();
       clearUserContext();
-      qc.resetQueries({ queryKey: authQueries.all() });
+      qc.removeQueries({ queryKey: authQueries.all() });
 
       setTimeout(() => {
         show('로그아웃이 완료되었어요.', { customData: { status: 'success' } });

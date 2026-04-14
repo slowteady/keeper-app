@@ -1,11 +1,19 @@
-import { Toast as TamaguiToast, ToastViewport, useToastState } from '@tamagui/toast';
+import { Toast as TamaguiToast, ToastViewport, useToastController, useToastState } from '@tamagui/toast';
 import LottieView from 'lottie-react-native';
+import { useEffect } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { styled } from 'tamagui';
+
+import { setToastRef } from '@/shared/lib';
 
 export const Toast = () => {
   const { left, top, right } = useSafeAreaInsets();
   const toast = useToastState();
+  const { show } = useToastController();
+
+  useEffect(() => {
+    setToastRef(show);
+  }, [show]);
 
   if (!toast || toast.isHandledNatively) {
     return null;
