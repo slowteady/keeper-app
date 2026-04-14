@@ -5,8 +5,9 @@ import {
   NaverMapViewRef
 } from '@mj-studio/react-native-naver-map';
 import * as Haptics from 'expo-haptics';
-import { forwardRef, useCallback, useRef, useState } from 'react';
+import { forwardRef, memo, useCallback, useEffect, useRef, useState } from 'react';
 import { Platform, StyleSheet } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
 
 import { CameraParams, useDebounceFunc, usePermission } from '@/shared/model';
@@ -14,40 +15,51 @@ import { Button } from '@/shared/ui';
 
 import { ShelterDto } from '../schema';
 
-export interface ShelterMapProps extends NaverMapViewProps {
+export type ShelterMapProps = {
   hasLocation: boolean;
   data?: ShelterDto[];
   onRefetch: (params?: CameraParams) => void;
   onTapMarker?: (data: ShelterDto) => void;
   selectedMarkerId?: string;
   readOnly?: boolean;
-}
+} & Omit<NaverMapViewProps, 'onCameraChanged'>;
 
 const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
   ({ hasLocation, data, onRefetch, onTapMarker, selectedMarkerId, readOnly, ...props }, ref) => {
-    const [isVisibleButton, setIsVisibleButton] = useState(false);
+    const [isRefetchVisible, setIsRefetchVisible] = useState(false);
     const cameraRef = useRef<CameraParams | null>(null);
     const { primaryMain } = useTheme();
+    const scale = useSharedValue(0);
 
-    const moveCamera = useDebounceFunc((params: CameraParams) => {
+    useEffect(() => {
+      scale.value = withTiming(isRefetchVisible ? 1 : 0, { duration: 200 });
+    }, [scale, isRefetchVisible]);
+
+    const refetchButtonStyle = useAnimatedStyle(() => ({
+      transform: [{ scale: scale.value }],
+      opacity: scale.value
+    }));
+
+    const handleCameraChanged = useDebounceFunc((params: CameraParams) => {
       if (params.reason !== 'Gesture') return;
 
-      setIsVisibleButton(true);
+      setIsRefetchVisible(true);
       cameraRef.current = params;
     }, 200);
 
     const handlePressRefetch = useCallback(() => {
       Haptics.selectionAsync();
-      setIsVisibleButton(false);
+      setIsRefetchVisible(false);
       onRefetch(cameraRef.current ?? undefined);
     }, [onRefetch]);
 
     const handleTapMarker = useCallback(
       (data: ShelterDto) => {
-        if (ref && 'current' in ref && ref.current) {
-          ref?.current?.animateCameraTo({ latitude: data.latitude, longitude: data.longitude });
-          onTapMarker?.(data);
-        }
+        (ref as React.RefObject<NaverMapViewRef>)?.current?.animateCameraTo({
+          latitude: data.latitude,
+          longitude: data.longitude
+        });
+        onTapMarker?.(data);
       },
       [onTapMarker, ref]
     );
@@ -58,81 +70,94 @@ const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
           <>
             <NaverMapView
               ref={ref}
-              onCameraChanged={moveCamera}
+              onCameraChanged={handleCameraChanged}
               isExtentBoundedInKorea
               animationDuration={500}
-              style={{ width: '100%', height: '100%', position: 'relative' }}
-              {...(readOnly
-                ? {
-                    isZoomGesturesEnabled: false,
-                    isScrollGesturesEnabled: false,
-                    isRotateGesturesEnabled: false,
-                    isTiltGesturesEnabled: false
-                  }
-                : {})}
+              style={styles.map}
+              {...(readOnly && {
+                isZoomGesturesEnabled: false,
+                isScrollGesturesEnabled: false,
+                isRotateGesturesEnabled: false,
+                isTiltGesturesEnabled: false
+              })}
               {...props}
             >
               {data?.map((item) => (
-                <Marker data={item} key={item.id} onTap={handleTapMarker} isSelectedId={selectedMarkerId} />
+                <ShelterMarker
+                  key={item.id}
+                  data={item}
+                  onTap={handleTapMarker}
+                  isSelected={selectedMarkerId === item.id}
+                />
               ))}
             </NaverMapView>
 
-            {isVisibleButton && !readOnly && (
-              <View style={[styles.mapButton, { backgroundColor: primaryMain.val }]}>
+            {!readOnly && (
+              <Animated.View style={[styles.refetchButton, { backgroundColor: primaryMain.val }, refetchButtonStyle]}>
                 <Button variant="ghost" onPress={handlePressRefetch}>
                   <Text fontSize={13} fontWeight="600" lineHeight={22} color="$black900">
                     현 지도에서 검색
                   </Text>
                 </Button>
-              </View>
+              </Animated.View>
             )}
           </>
         ) : (
-          <NoValidMap />
+          <NoLocationFallback />
         )}
       </Container>
     );
   }
 );
 
-type ShelterMapMarkerProps = {
+Map.displayName = 'ShelterMap';
+export { Map as ShelterMap };
+
+// --- Marker ---
+
+const MARKER_BASE_ZINDEX = 200000;
+
+type ShelterMarkerProps = {
   data: ShelterDto;
-  onTap?: (data: ShelterDto) => void;
-  isSelectedId?: string;
+  onTap: (data: ShelterDto) => void;
+  isSelected: boolean;
 };
-const MARKER_DEFAULT_ZINDEX = 200000;
-const Marker = ({ data, onTap, isSelectedId }: ShelterMapMarkerProps) => {
-  const { id, latitude, longitude } = data;
+
+const ShelterMarker = memo(({ data, onTap, isSelected }: ShelterMarkerProps) => {
   const { white900 } = useTheme();
 
-  const handleTapMarker = () => {
-    onTap?.(data);
-  };
-
-  const isSelected = isSelectedId === id;
-  const captionStyle = isSelected
-    ? { textSize: 13, haloColor: white900.val }
-    : { textSize: 11, haloColor: white900.val };
+  const handleTap = useCallback(() => {
+    onTap(data);
+  }, [onTap, data]);
 
   return (
     <NaverMapMarkerOverlay
       image={require('@/assets/images/marker.png')}
-      latitude={latitude}
-      longitude={longitude}
+      latitude={data.latitude}
+      longitude={data.longitude}
       height={isSelected ? 42 : 32}
       width={isSelected ? 38 : 28}
-      onTap={handleTapMarker}
-      caption={{ text: data.name, minZoom: 10, ...captionStyle }}
-      globalZIndex={isSelected ? MARKER_DEFAULT_ZINDEX : MARKER_DEFAULT_ZINDEX - 1}
+      onTap={handleTap}
+      caption={{
+        text: data.name,
+        minZoom: 10,
+        textSize: isSelected ? 13 : 11,
+        haloColor: white900.val
+      }}
+      globalZIndex={isSelected ? MARKER_BASE_ZINDEX : MARKER_BASE_ZINDEX - 1}
     />
   );
-};
+});
 
-const NoValidMap = () => {
+ShelterMarker.displayName = 'ShelterMarker';
+
+// --- NoLocationFallback ---
+
+const NoLocationFallback = () => {
   const { goSettingMenu } = usePermission();
 
   return (
-    <NoValidContainer>
+    <NoLocationContainer>
       <Text fontSize={16} lineHeight={18} fontWeight="500" color="$black600">
         사용자의 위치설정을 켜주세요.
       </Text>
@@ -141,17 +166,15 @@ const NoValidMap = () => {
           위치설정 바로가기
         </Text>
       </SettingButton>
-    </NoValidContainer>
+    </NoLocationContainer>
   );
 };
 
-export const ShelterMap = Object.assign(Map, {
-  Marker
-});
+// --- Styles ---
 
 const Container = styled(XStack, {
   rounded: 10,
-  bg: '#D9D9D9',
+  bg: '$white800',
   width: '100%',
   aspectRatio: 4 / 5,
   items: 'center',
@@ -159,7 +182,7 @@ const Container = styled(XStack, {
   overflow: 'hidden'
 });
 
-const NoValidContainer = styled(YStack, {
+const NoLocationContainer = styled(YStack, {
   position: 'relative',
   width: '100%',
   flex: 1,
@@ -177,8 +200,11 @@ const SettingButton = styled(View, {
 });
 
 const styles = StyleSheet.create({
-  mapButton: {
-    display: 'flex',
+  map: {
+    width: '100%',
+    height: '100%'
+  },
+  refetchButton: {
     alignItems: 'center',
     justifyContent: 'center',
     position: 'absolute',
@@ -199,5 +225,3 @@ const styles = StyleSheet.create({
     })
   }
 });
-
-Map.displayName = 'ShelterMap';

@@ -1,11 +1,12 @@
+import { NaverMapViewRef } from '@mj-studio/react-native-naver-map';
 import { ListRenderItemInfo } from '@shopify/flash-list';
 import { useLocalSearchParams } from 'expo-router';
-import { Suspense, useCallback, useState } from 'react';
+import { Suspense, useCallback, useRef, useState } from 'react';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
 import { ADOPT_OPTIONS, AdoptCard, AdoptItem } from '@/entities/adopt';
-import { useShelter, useShelterAdoptList, useShelterMap } from '@/features/shelter';
-import { useScrollUpButton } from '@/shared/model';
+import { useShelter, useShelterAdoptList } from '@/features/shelter';
+import { useLocation, useScrollUpButton } from '@/shared/model';
 import {
   Button,
   CallModal,
@@ -35,13 +36,12 @@ const Page = () => {
 
 export default Page;
 
-const LIST_SIZE = 16;
-
 const ShelterDetailContent = ({ id }: { id: string }) => {
   const [callModalOpen, setCallModalOpen] = useState(false);
+  const { isGranted } = useLocation();
+  const mapRef = useRef<NaverMapViewRef>(null);
 
   const { shelterData, refresh: refreshShelter, hasCallNumber } = useShelter({ id });
-  const shelterMap = useShelterMap();
   const {
     selectedFilter,
     convertedData,
@@ -55,6 +55,15 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
     goDetail
   } = useShelterAdoptList({ id });
   const { handleScroll, handlePressButton, isButtonVisible, scrollRef } = useScrollUpButton();
+
+  const handleMapInitialized = useCallback(() => {
+    if (shelterData) {
+      mapRef.current?.animateCameraTo({
+        latitude: shelterData.latitude,
+        longitude: shelterData.longitude
+      });
+    }
+  }, [shelterData]);
 
   const refreshFetch = useCallback(async () => {
     await Promise.all([refreshShelter(), refreshAdopts()]);
@@ -91,15 +100,9 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
             <View mb={30} px={20}>
               <ShelterDetailOverviewSection
                 data={shelterData}
-                mapRef={shelterMap.mapRef}
-                camera={shelterMap.camera}
-                selectedMarkerId={shelterMap.selectedMarkerId}
-                enabled={shelterMap.enabled}
-                hasLocationStatus={shelterMap.hasLocationStatus}
-                onToggleMapEnabled={shelterMap.toggleMapEnabled}
-                onRefetchShelterList={shelterMap.refetchShelterList}
-                onToggleTapMarker={shelterMap.toggleTapMarker}
-                onMoveCamera={shelterMap.moveCamera}
+                mapRef={mapRef}
+                isGranted={isGranted}
+                onMapInitialized={handleMapInitialized}
               />
             </View>
             <View mb={32} px={20}>

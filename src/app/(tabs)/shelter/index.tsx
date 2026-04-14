@@ -16,18 +16,18 @@ const Page = () => {
   const {
     shelters,
     shelterCounts,
+    shelterList,
     mapRef,
     camera,
     selectedMarkerId,
-    shelterList,
-    toggleMapEnabled,
-    refetchShelterList,
-    toggleTapMarker,
-    changeLocation,
-    searchLocation,
-    hasLocationStatus,
+    isGranted,
     isLoading,
-    isSearchPending
+    isSearchPending,
+    onMapInitialized,
+    onRefetch,
+    onTapMarker,
+    changeLocation,
+    searchLocation
   } = useShelterMap();
   const { isButtonVisible, handlePressButton, handleScroll, scrollRef } = useScrollUpButton();
   const {
@@ -54,7 +54,7 @@ const Page = () => {
     <Container>
       <FlashList
         ref={scrollRef}
-        keyExtractor={({ id }, i) => `${id}-${i}`}
+        keyExtractor={({ id }) => id}
         decelerationRate="fast"
         data={shelterList}
         renderItem={renderItem}
@@ -68,13 +68,13 @@ const Page = () => {
 
             <ShelterMapSection
               ref={mapRef}
-              hasLocationStatus={hasLocationStatus}
+              isGranted={isGranted}
               data={shelters}
               counts={shelterCounts}
               camera={camera}
-              onRefetch={refetchShelterList}
-              onTapMarker={toggleTapMarker}
-              onInitialized={toggleMapEnabled}
+              onRefetch={onRefetch}
+              onTapMarker={onTapMarker}
+              onMapInitialized={onMapInitialized}
               selectedMarkerId={selectedMarkerId}
             />
           </View>

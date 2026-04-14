@@ -6,7 +6,7 @@ import { styled, View } from 'tamagui';
 
 import { ADOPT_OPTIONS, AdoptFilterDto } from '@/entities/adopt';
 import { useAdoptList } from '@/features/adopt';
-import { useShelterMap } from '@/features/shelter';
+import { useHomeShelter } from '@/features/shelter';
 import { useListRefreshing, useScrollUpButton } from '@/shared/model';
 import { RouteErrorBoundary, ScrollUpButton } from '@/shared/ui';
 import { HomeAdoptSection, HomeBannerSection, HomeFooterSection, HomeShelterSection } from '@/widgets/home-section';
@@ -29,17 +29,12 @@ const Page = () => {
     animalType: selectedType
   });
 
-  const shelter = useShelterMap();
-  const { refetchShelterList } = shelter;
+  const shelter = useHomeShelter();
 
   const goDetail = useCallback((id: string) => router.push({ pathname: '/adopt/[id]', params: { id } }), [router]);
   const goList = useCallback(() => router.push('/adopt'), [router]);
 
-  const refetchQueries = useCallback(async () => {
-    await Promise.all([refresh(), refetchShelterList()]);
-  }, [refresh, refetchShelterList]);
-
-  const { refreshing, handleRefresh } = useListRefreshing(refetchQueries);
+  const { refreshing, handleRefresh } = useListRefreshing(refresh);
 
   const renderItem = useCallback(
     ({ item }: { item: (typeof SECTIONS)[number] }) => {
@@ -74,12 +69,12 @@ const Page = () => {
                 mapRef={shelter.mapRef}
                 camera={shelter.camera}
                 selectedMarkerId={shelter.selectedMarkerId}
-                hasLocationStatus={shelter.hasLocationStatus}
+                isGranted={shelter.isGranted}
                 isLoading={shelter.isLoading}
                 animatedListStyle={shelter.animatedListStyle}
-                onToggleMapEnabled={shelter.toggleMapEnabled}
-                onRefetchShelterList={shelter.refetchShelterList}
-                onToggleTapMarker={shelter.toggleTapMarker}
+                onMapInitialized={shelter.onMapInitialized}
+                onRefetch={shelter.onRefetch}
+                onTapMarker={shelter.onTapMarker}
               />
             </View>
           );

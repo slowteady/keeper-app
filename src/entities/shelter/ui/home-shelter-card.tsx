@@ -70,7 +70,7 @@ const Description = styled(Text, {
   fontSize: 14,
   lineHeight: 16,
   fontWeight: '500',
-  color: '#505050',
+  color: '$black600',
   flex: 1,
   letterSpacing: -0.25,
   numberOfLines: 1,

@@ -1,85 +1,59 @@
 import { useToastController } from '@tamagui/toast';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { PermissionStatus } from 'expo-location';
-import { useCallback, useEffect, useState } from 'react';
-import { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import { useMutation } from '@tanstack/react-query';
+import { useCallback, useMemo, useState } from 'react';
 
-import { searchShelters, ShelterDto, shelterQueries } from '@/entities/shelter';
-import { calcMapRadiusKm } from '@/shared/lib';
-import { CameraParams, useMap } from '@/shared/model';
+import { searchShelters, ShelterDto } from '@/entities/shelter';
+
+import { useHomeShelter } from './use-home-shelter';
 
 export const useShelterMap = () => {
-  const [enabled, setEnabled] = useState(false);
-  const [shelterList, setShelterList] = useState<ShelterDto[]>([]);
-  const [selectedMarkerId, setSelectedMarkerId] = useState<string>();
-
-  const opacity = useSharedValue(1);
-  const translateY = useSharedValue(0);
+  const base = useHomeShelter();
   const { show } = useToastController();
 
-  const { camera, setCamera, distance, setDistance, initialLocation, mapRef, permissionStatus } = useMap();
+  const [searchResults, setSearchResults] = useState<ShelterDto[]>();
+  const [reorderedShelter, setReorderedShelter] = useState<ShelterDto>();
+  const { mutate: searchMutate, isPending: isSearchPending } = useMutation({ mutationFn: searchShelters });
 
-  const { data: shelters, isLoading } = useQuery({
-    ...shelterQueries.list({
-      latitude: camera?.latitude || 0,
-      longitude: camera?.longitude || 0,
-      distance,
-      userLatitude: initialLocation?.latitude || 0,
-      userLongitude: initialLocation?.longitude || 0
-    }),
-    enabled: !!camera && enabled
-  });
+  const shelterList = useMemo(() => {
+    const source = searchResults ?? base.shelters ?? [];
+    if (!reorderedShelter) return source;
+    return [reorderedShelter, ...source.filter((item) => item.id !== reorderedShelter.id)];
+  }, [searchResults, base.shelters, reorderedShelter]);
 
-  const { data: shelterCounts } = useQuery({
-    ...shelterQueries.counts({
-      latitude: initialLocation?.latitude || 0,
-      longitude: initialLocation?.longitude || 0
-    }),
-    enabled: !!initialLocation
-  });
-
-  const { mutate, isPending } = useMutation({ mutationFn: searchShelters });
-
-  const toggleMapEnabled = useCallback(() => {
-    setEnabled((prev) => !prev);
-  }, []);
-
-  const refetchShelterList = useCallback(
-    (params?: CameraParams) => {
-      if (!params) return;
-
-      const { latitude, longitude, zoom, region } = params;
-      setCamera({ latitude, longitude, zoom });
-      setSelectedMarkerId(undefined);
-
-      const radius = calcMapRadiusKm({
-        longitudeDelta: region?.longitudeDelta || 0,
-        latitudeDelta: region?.latitudeDelta || 0,
-        latitude,
-        longitude
-      });
-      setDistance(radius);
+  const handleRefetch = useCallback(
+    (...args: Parameters<typeof base.onRefetch>) => {
+      setSearchResults(undefined);
+      setReorderedShelter(undefined);
+      base.onRefetch(...args);
     },
-    [setCamera, setDistance]
+    [base.onRefetch]
+  );
+
+  const handleTapMarker = useCallback(
+    (data: ShelterDto) => {
+      base.onTapMarker(data);
+      setReorderedShelter(data);
+    },
+    [base.onTapMarker]
   );
 
   const changeLocation = useCallback(
     (item: { x: string; y: string }) => {
-      if (mapRef && mapRef.current) {
-        const { x, y } = item;
-        mapRef.current.animateCameraTo({ longitude: Number(x), latitude: Number(y) });
-      }
+      base.mapRef.current?.animateCameraTo({
+        longitude: Number(item.x),
+        latitude: Number(item.y)
+      });
     },
-    [mapRef]
+    [base.mapRef]
   );
 
   const searchLocation = useCallback(
     (text: string) => {
-      mutate(
+      searchMutate(
         {
           search: text,
-          userLatitude: initialLocation?.latitude || 0,
-          userLongitude: initialLocation?.longitude || 0
+          userLatitude: base.camera?.latitude ?? 0,
+          userLongitude: base.camera?.longitude ?? 0
         },
         {
           onSuccess: ({ data }) => {
@@ -87,71 +61,22 @@ export const useShelterMap = () => {
               show('검색 결과가 없어요.', { customData: { status: 'fail' } });
               return;
             }
-            setShelterList(data.data);
+            setSearchResults(data.data);
+            setReorderedShelter(undefined);
           }
         }
       );
     },
-    [initialLocation?.latitude, initialLocation?.longitude, mutate, show]
+    [base.camera?.latitude, base.camera?.longitude, searchMutate, show]
   );
-
-  const toggleTapMarker = useCallback(
-    (data: ShelterDto) => {
-      opacity.value = withTiming(0, { duration: 100 });
-      translateY.value = withTiming(50, { duration: 300 });
-
-      setTimeout(() => {
-        opacity.value = withTiming(1, { duration: 300 });
-        translateY.value = withTiming(0, {
-          duration: 300,
-          easing: Easing.out(Easing.exp)
-        });
-      }, 200);
-
-      setSelectedMarkerId(data.id);
-      setShelterList((prev) => [data, ...prev.filter((item) => item.id !== data.id)]);
-    },
-    [opacity, translateY]
-  );
-
-  const moveCamera = useCallback(
-    (latitude: number, longitude: number) => {
-      if (mapRef && mapRef.current) {
-        mapRef.current.animateCameraTo({ latitude, longitude });
-      }
-    },
-    [mapRef]
-  );
-
-  useEffect(() => {
-    if (!shelters) return;
-    setShelterList(shelters);
-  }, [shelters]);
-
-  const animatedListStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value,
-    transform: [{ translateY: translateY.value }]
-  }));
-
-  const hasLocationStatus = permissionStatus?.status === PermissionStatus.GRANTED;
 
   return {
-    shelters,
-    shelterCounts,
-    mapRef,
-    camera,
-    selectedMarkerId,
+    ...base,
     shelterList,
-    enabled,
-    toggleMapEnabled,
-    refetchShelterList,
-    toggleTapMarker,
+    isSearchPending,
+    onRefetch: handleRefetch,
+    onTapMarker: handleTapMarker,
     changeLocation,
-    searchLocation,
-    moveCamera,
-    hasLocationStatus,
-    isLoading,
-    isSearchPending: isPending,
-    animatedListStyle
+    searchLocation
   };
 };

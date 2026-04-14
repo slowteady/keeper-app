@@ -1,3 +1,4 @@
+import { Camera, NaverMapViewRef } from '@mj-studio/react-native-naver-map';
 import { FlashList, ListRenderItemInfo } from '@shopify/flash-list';
 import { router } from 'expo-router';
 import { RefObject, useCallback } from 'react';
@@ -22,15 +23,15 @@ const SHELTER_CARD_MIN_HEIGHT = 144;
 export type HomeShelterSectionProps = {
   shelters?: ShelterDto[];
   shelterCounts?: ShelterCountDto[];
-  mapRef: RefObject<any>;
-  camera?: CameraParams;
+  mapRef: RefObject<NaverMapViewRef | null>;
+  camera?: Camera;
   selectedMarkerId?: string;
-  hasLocationStatus: boolean;
+  isGranted: boolean;
   isLoading: boolean;
   animatedListStyle: ViewStyle;
-  onToggleMapEnabled: () => void;
-  onRefetchShelterList: (params?: CameraParams) => void;
-  onToggleTapMarker: (data: ShelterDto) => void;
+  onMapInitialized: () => void;
+  onRefetch: (params?: CameraParams) => void;
+  onTapMarker: (data: ShelterDto) => void;
 };
 
 export const HomeShelterSection = ({
@@ -39,12 +40,12 @@ export const HomeShelterSection = ({
   mapRef,
   camera,
   selectedMarkerId,
-  hasLocationStatus,
+  isGranted,
   isLoading,
   animatedListStyle,
-  onToggleMapEnabled,
-  onRefetchShelterList,
-  onToggleTapMarker
+  onMapInitialized,
+  onRefetch,
+  onTapMarker
 }: HomeShelterSectionProps) => {
   const { black500 } = useTheme();
 
@@ -70,7 +71,7 @@ export const HomeShelterSection = ({
         </XStack>
       </HeaderContainer>
 
-      {hasLocationStatus && (
+      {isGranted && (
         <View px={20} mb={16}>
           <DistanceIndicator value={shelterCounts ?? []} />
         </View>
@@ -82,10 +83,10 @@ export const HomeShelterSection = ({
           ref={mapRef}
           camera={camera}
           selectedMarkerId={selectedMarkerId}
-          onInitialized={onToggleMapEnabled}
-          onRefetch={onRefetchShelterList}
-          onTapMarker={onToggleTapMarker}
-          hasLocation={hasLocationStatus}
+          onInitialized={onMapInitialized}
+          onRefetch={onRefetch}
+          onTapMarker={onTapMarker}
+          hasLocation={isGranted}
           isShowCompass={false}
           minZoom={10}
         />
@@ -93,7 +94,7 @@ export const HomeShelterSection = ({
 
       <Animated.View style={animatedListStyle}>
         <FlashList
-          keyExtractor={({ id }, i) => `${id}-${i}`}
+          keyExtractor={({ id }) => id}
           data={shelters}
           renderItem={renderItem}
           ItemSeparatorComponent={() => <View width={12} />}

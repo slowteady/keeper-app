@@ -1,41 +1,23 @@
-import { RefObject, useEffect } from 'react';
+import { NaverMapViewRef } from '@mj-studio/react-native-naver-map';
+import { RefObject } from 'react';
 import { styled, Text, XStack } from 'tamagui';
 
 import { ShelterDto, ShelterMap } from '@/entities/shelter';
-import { CameraParams } from '@/shared/model';
 
 export type ShelterDetailOverviewSectionProps = {
   data: ShelterDto;
-  mapRef: RefObject<any>;
-  camera?: CameraParams;
-  selectedMarkerId?: string;
-  enabled: boolean;
-  hasLocationStatus: boolean;
-  onToggleMapEnabled: () => void;
-  onRefetchShelterList: (params?: CameraParams) => void;
-  onToggleTapMarker: (data: ShelterDto) => void;
-  onMoveCamera: (latitude: number, longitude: number) => void;
+  mapRef: RefObject<NaverMapViewRef | null>;
+  isGranted: boolean;
+  onMapInitialized: () => void;
 };
 
 export const ShelterDetailOverviewSection = ({
   data,
   mapRef,
-  camera,
-  selectedMarkerId,
-  enabled,
-  hasLocationStatus,
-  onToggleMapEnabled,
-  onRefetchShelterList,
-  onToggleTapMarker,
-  onMoveCamera
+  isGranted,
+  onMapInitialized
 }: ShelterDetailOverviewSectionProps) => {
   const { name, longitude, latitude } = data;
-
-  useEffect(() => {
-    if (hasLocationStatus && enabled) {
-      onMoveCamera(latitude, longitude);
-    }
-  }, [onMoveCamera, hasLocationStatus, latitude, longitude, enabled]);
 
   return (
     <>
@@ -47,13 +29,12 @@ export const ShelterDetailOverviewSection = ({
 
       <ShelterMap
         ref={mapRef}
-        hasLocation={hasLocationStatus}
+        hasLocation={isGranted}
         data={[data]}
-        camera={camera}
-        onRefetch={onRefetchShelterList}
-        onTapMarker={onToggleTapMarker}
-        onInitialized={onToggleMapEnabled}
-        selectedMarkerId={selectedMarkerId}
+        camera={{ latitude, longitude, zoom: 15 }}
+        onRefetch={() => {}}
+        onInitialized={onMapInitialized}
+        selectedMarkerId={data.id}
         isShowCompass={false}
         minZoom={10}
         readOnly
