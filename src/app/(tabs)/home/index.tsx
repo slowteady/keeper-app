@@ -1,3 +1,4 @@
+import { useScrollToTop } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
@@ -20,6 +21,7 @@ const SECTIONS = [{ id: 'banner' }, { id: 'adopt' }, { id: 'shelter' }] as const
 const Page = () => {
   const router = useRouter();
   const { isButtonVisible, handlePressButton, handleScroll, scrollRef } = useScrollUpButton();
+  useScrollToTop(scrollRef);
 
   const [selectedFilter, setSelectedFilter] = useState<AdoptFilterDto>(ADOPT_OPTIONS.FILTER[0].id);
   const [selectedType, setSelectedType] = useState<string>(ADOPT_OPTIONS.ANIMAL[0].id);

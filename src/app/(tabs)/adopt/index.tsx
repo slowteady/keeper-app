@@ -1,3 +1,4 @@
+import { useScrollToTop } from '@react-navigation/native';
 import { ListRenderItemInfo } from '@shopify/flash-list';
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { useRouter } from 'expo-router';
@@ -42,6 +43,7 @@ const Page = () => {
   }, [fetchNextPageQuery]);
 
   const { handleScroll, handlePressButton, isButtonVisible, scrollRef } = useScrollUpButton();
+  useScrollToTop(scrollRef);
 
   useEffect(() => {
     if (scrollRef.current) {

@@ -1,3 +1,4 @@
+import { useScrollToTop } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
 import { styled, View, YStack } from 'tamagui';
 
@@ -6,6 +7,7 @@ import { FeedNodata, ScrollUpButton } from '@/shared/ui';
 
 export const CommunityQnAFeed = () => {
   const { handleScroll, handlePressButton, isButtonVisible, scrollRef } = useScrollUpButton();
+  useScrollToTop(scrollRef);
 
   return (
     <Container>

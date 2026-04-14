@@ -1,3 +1,4 @@
+import { useScrollToTop } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
 import { GestureResponderEvent } from 'react-native';
 import { styled, useTheme, View, XStack, YStack } from 'tamagui';
@@ -30,6 +31,7 @@ export const CommunityAdoptFeed = ({
   const { black500 } = useTheme();
 
   const { handleScroll, handlePressButton, isButtonVisible, scrollRef } = useScrollUpButton();
+  useScrollToTop(scrollRef);
 
   const filterText = COMMUNITY_LIST_FILTER.find((f) => f.id === selectedFilter)?.label || '';
 

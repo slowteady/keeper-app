@@ -3,7 +3,7 @@ import { NavigationRoute, ParamListBase } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
 import { ComponentType, memo } from 'react';
 import { SvgProps } from 'react-native-svg';
-import { styled, Text, XStack, YStack } from 'tamagui';
+import { styled, Text, useTheme, XStack, YStack } from 'tamagui';
 
 import {
   ActiveHeart,
@@ -36,20 +36,30 @@ const MENU_ITEMS: MenuItem[] = [
 
 const TabIcon = ({ item, isActive }: { item: MenuItem; isActive: boolean }) => {
   const { Icon, ActiveIcon, size } = item;
-  return isActive ? <ActiveIcon width={size} height={size} /> : <Icon width={size} height={size} color="#0C0C0C" />;
+  const { black900 } = useTheme();
+  return isActive ? (
+    <ActiveIcon width={size} height={size} />
+  ) : (
+    <Icon width={size} height={size} color={black900.val} />
+  );
 };
 
 export const BottomNavigation = memo(({ state, navigation, insets }: BottomTabBarProps) => {
   const navigateToPage = (route: NavigationRoute<ParamListBase, string>, index: number) => {
-    const event = navigation.emit({
-      type: 'tabPress',
-      target: route.key,
-      canPreventDefault: true
-    });
+    Haptics.selectionAsync();
 
-    if (!event.defaultPrevented && state.index !== index) {
-      Haptics.selectionAsync();
-      navigation.navigate(route.name);
+    if (state.index !== index) {
+      const event = navigation.emit({
+        type: 'tabPress',
+        target: route.key,
+        canPreventDefault: true
+      });
+
+      if (!event.defaultPrevented) {
+        navigation.navigate(route.name);
+      }
+    } else {
+      navigation.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
     }
   };
 
@@ -88,7 +98,7 @@ const TabItemWrapper = styled(YStack, {
   borderTopWidth: 1,
   borderLeftWidth: 1,
   borderRightWidth: 1,
-  borderColor: '#E9E9E9',
+  borderColor: '$white800',
   borderTopLeftRadius: 16,
   borderTopRightRadius: 16,
   position: 'relative'
@@ -112,5 +122,5 @@ const TabLabel = styled(Text, {
   fontSize: 11,
   lineHeight: 13,
   fontWeight: '600',
-  color: '#0C0C0C'
+  color: '$black900'
 });

@@ -1,3 +1,4 @@
+import { useScrollToTop } from '@react-navigation/native';
 import { FlashList, ListRenderItemInfo } from '@shopify/flash-list';
 import { router } from 'expo-router';
 import { useCallback } from 'react';
@@ -30,6 +31,8 @@ const Page = () => {
     searchLocation
   } = useShelterMap();
   const { isButtonVisible, handlePressButton, handleScroll, scrollRef } = useScrollUpButton();
+  useScrollToTop(scrollRef);
+
   const {
     ref: locationRef,
     searchedAddresses,
