@@ -1,0 +1,7 @@
+appId: com.keeper.love
+---
+- launchApp
+- assertVisible: 'Home'
+- scroll
+- assertVisible: '입양공고'
+- assertVisible: '보호소 찾기'
