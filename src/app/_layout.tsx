@@ -51,6 +51,7 @@ const RootLayout = () => {
           onError: (error, _variables, _context, mutation) => {
             if (!mutation.options.onError) {
               logger.error(error);
+              globalToast('일시적인 오류가 발생했어요.', 'fail');
             }
           }
         }),

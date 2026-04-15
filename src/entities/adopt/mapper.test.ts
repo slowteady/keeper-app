@@ -55,6 +55,92 @@ describe('mapToAdoptList', () => {
   });
 });
 
+describe('mapToAdoptList — edge cases', () => {
+  it('returns empty array for empty input', () => {
+    const result = mapToAdoptList([]);
+    expect(result).toEqual([]);
+  });
+
+  it('handles missing age gracefully', () => {
+    const data = { ...mockAdoptData, age: '' };
+    const result = mapToAdoptList([data]);
+    const ageChip = result[0].chips.find((c: { id: string }) => c.id === 'AGE');
+    expect(ageChip).toBeUndefined();
+  });
+
+  it('handles missing weight gracefully', () => {
+    const data = { ...mockAdoptData, weight: '' };
+    const result = mapToAdoptList([data]);
+    const weightChip = result[0].chips.find((c: { id: string }) => c.id === 'WEIGHT');
+    expect(weightChip).toBeUndefined();
+  });
+
+  it('handles invalid weight (NaN)', () => {
+    const data = { ...mockAdoptData, weight: 'abc' };
+    const result = mapToAdoptList([data]);
+    const weightChip = result[0].chips.find((c: { id: string }) => c.id === 'WEIGHT');
+    expect(weightChip).toBeUndefined();
+  });
+
+  it('handles neuterYn N — no neuter chip', () => {
+    const data = { ...mockAdoptData, neuterYn: 'N' as const };
+    const result = mapToAdoptList([data]);
+    const neuterChip = result[0].chips.find((c: { id: string }) => c.id === 'NEUTER');
+    expect(neuterChip).toBeUndefined();
+  });
+
+  it('handles unknown gender', () => {
+    const data = { ...mockAdoptData, gender: 'Q' as any };
+    const result = mapToAdoptList([data]);
+    const genderChip = result[0].chips.find((c: { id: string }) => c.id === 'GENDER');
+    expect(genderChip?.value).toBe('미상');
+  });
+
+  it('handles female gender', () => {
+    const data = { ...mockAdoptData, gender: 'F' as const };
+    const result = mapToAdoptList([data]);
+    const genderChip = result[0].chips.find((c: { id: string }) => c.id === 'GENDER');
+    expect(genderChip?.value).toBe('여아');
+  });
+
+  it('uses first image as uri', () => {
+    const data = { ...mockAdoptData, images: ['first.jpg', 'second.jpg'] };
+    const result = mapToAdoptList([data]);
+    expect(result[0].uri).toBe('first.jpg');
+  });
+
+  it('handles empty images array', () => {
+    const data = { ...mockAdoptData, images: [] as string[] };
+    const result = mapToAdoptList([data]);
+    expect(result[0].uri).toBeUndefined();
+  });
+
+  it('does not include D-day chip for NEW filter', () => {
+    const result = mapToAdoptList([mockAdoptData], 'NEW');
+    const ddayChip = result[0].chips.find((c: { id: string }) => c.id === 'DDAY');
+    expect(ddayChip).toBeUndefined();
+  });
+
+  it('does not include D-day chip when notice already expired', () => {
+    const data = { ...mockAdoptData, noticeEndDt: '20200101' };
+    const result = mapToAdoptList([data], 'NEAR_DEADLINE');
+    const ddayChip = result[0].chips.find((c: { id: string }) => c.id === 'DDAY');
+    expect(ddayChip).toBeUndefined();
+  });
+
+  it('converts [개] to [강아지] in fullName', () => {
+    const data = { ...mockAdoptData, fullName: '[개] 포메라니안' };
+    const result = mapToAdoptList([data]);
+    expect(result[0].title).toBe('[강아지] 포메라니안');
+  });
+
+  it('does not convert [고양이] in fullName', () => {
+    const data = { ...mockAdoptData, fullName: '[고양이] 코리안숏헤어' };
+    const result = mapToAdoptList([data]);
+    expect(result[0].title).toBe('[고양이] 코리안숏헤어');
+  });
+});
+
 describe('mapToAdopt', () => {
   it('transforms single adopt data with formatted fields', () => {
     const result = mapToAdopt(mockAdoptData);
@@ -63,5 +149,29 @@ describe('mapToAdopt', () => {
     expect(result.gender).toBe('남아');
     expect(result.age).toBe('2023년생');
     expect(result.weight).toBe('5.2kg');
+  });
+
+  it('handles missing age', () => {
+    const data = { ...mockAdoptData, age: '' };
+    const result = mapToAdopt(data);
+    expect(result.age).toBe('');
+  });
+
+  it('handles missing weight', () => {
+    const data = { ...mockAdoptData, weight: '' };
+    const result = mapToAdopt(data);
+    expect(result.weight).toBe('');
+  });
+
+  it('formats weight without trailing .0', () => {
+    const data = { ...mockAdoptData, weight: '10.0(kg)' };
+    const result = mapToAdopt(data);
+    expect(result.weight).toBe('10kg');
+  });
+
+  it('formats weight with decimal', () => {
+    const data = { ...mockAdoptData, weight: '3.7(kg)' };
+    const result = mapToAdopt(data);
+    expect(result.weight).toBe('3.7kg');
   });
 });
