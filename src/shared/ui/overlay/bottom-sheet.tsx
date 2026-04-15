@@ -24,7 +24,7 @@ export const BottomSheet = forwardRef<BottomSheetModal, BottomSheetLayoutProps>(
   return (
     <BottomSheetModal
       ref={ref}
-      index={1}
+      index={0}
       animationConfigs={{ duration: 100 }}
       handleIndicatorStyle={{ width: 48, borderRadius: 30, backgroundColor: white800.val }}
       style={{ paddingHorizontal: 24 }}
