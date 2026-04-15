@@ -5,7 +5,7 @@ import PagerView, { PagerViewOnPageSelectedEvent, PagerViewProps } from 'react-n
 import { styled, Text, useTheme, View, XStack } from 'tamagui';
 
 import { Button } from '../button';
-import { NoImage, Skeleton } from '../fallback';
+import { NoImage } from '../fallback';
 import { LeftLineArrow, RightLineArrow } from '../icons/mini';
 import { MoreImage } from '../icons/outline';
 import { ImageViewer } from '../overlay/image-viewer';
@@ -18,7 +18,6 @@ export interface BasicCarouselProps extends PagerViewProps {
 
 const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>(
   ({ data, showIndicator = false, showImageViewer = false, ...props }, ref) => {
-    const [isLoaded, setIsLoaded] = useState(data.map(() => false));
     const [isError, setIsError] = useState(data.map(() => false));
     const [openImgViewer, setOpenImgViewer] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -27,14 +26,6 @@ const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>(
 
     const handlePageSelected = useCallback((e: PagerViewOnPageSelectedEvent) => {
       setCurrentIndex(e.nativeEvent.position);
-    }, []);
-
-    const handleLoadImage = useCallback((idx: number) => {
-      setIsLoaded((prev) => {
-        const next = [...prev];
-        next[idx] = true;
-        return next;
-      });
     }, []);
 
     const handleErrorImage = useCallback((idx: number) => {
@@ -52,26 +43,21 @@ const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>(
         <Image
           source={image}
           contentFit="cover"
-          onLoad={() => handleLoadImage(idx)}
           onError={() => handleErrorImage(idx)}
+          transition={300}
           style={styles.image}
         />
       );
 
-      return (
-        <>
-          {!isLoaded[idx] && <Skeleton style={styles.skeleton} />}
-          {showImageViewer ? (
-            <Button onPress={() => setOpenImgViewer(true)} disabled={!isLoaded[idx]} style={styles.imageButton}>
-              {imageElement}
-              <IconWrap>
-                <MoreImage color={black900.val} />
-              </IconWrap>
-            </Button>
-          ) : (
-            imageElement
-          )}
-        </>
+      return showImageViewer ? (
+        <Button onPress={() => setOpenImgViewer(true)} style={styles.imageButton}>
+          {imageElement}
+          <IconWrap>
+            <MoreImage color={black900.val} />
+          </IconWrap>
+        </Button>
+      ) : (
+        imageElement
       );
     };
 
@@ -181,14 +167,7 @@ const IconWrap = styled(View, {
 const styles = StyleSheet.create({
   container: { position: 'relative', width: '100%', height: '100%' },
   image: { borderRadius: 10, width: '100%', height: '100%' },
-  imageButton: { width: '100%', height: '100%' },
-  skeleton: {
-    position: 'absolute',
-    top: 0,
-    width: '100%',
-    height: '100%',
-    borderRadius: 10
-  }
+  imageButton: { width: '100%', height: '100%' }
 });
 
 BasicCarousel.displayName = 'BasicCarousel';
