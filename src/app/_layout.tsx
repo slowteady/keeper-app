@@ -148,7 +148,7 @@ const RootLayout = () => {
         fallback={({ error, resetError }) => <ErrorFallback error={error} resetError={resetError} />}
       >
         <QueryClientProvider client={queryClient}>
-          <GestureHandlerRootView style={{ flex: 1 }}>
+          <GestureHandlerRootView style={{ flex: 1 }} collapsable={!__DEV__} collapsableChildren={!__DEV__}>
             <KeyboardProvider>
               <SafeAreaProvider>
                 <BottomSheetProvider>

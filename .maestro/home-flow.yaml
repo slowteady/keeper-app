@@ -1,23 +1,36 @@
 appId: com.keeper.love
 ---
-# 홈 진입 + dev client 처리
+# 홈 진입 + dev client 처리 (iOS/Android 공통)
 - launchApp
 - tapOn:
     text: '앱을 사용하는 동안 허용'
     optional: true
 - tapOn:
+    text: 'While using the app'
+    optional: true
+- tapOn:
     text: 'http://localhost:8081'
+    optional: true
+- tapOn:
+    text: 'http://10.0.2.2:8081'
     optional: true
 - waitForAnimationToEnd
 - tapOn:
-    text: 'Go home'
+    text: 'No thanks'
+    optional: true
+- tapOn:
+    text: 'Continue'
+    optional: true
+- waitForAnimationToEnd
+- tapOn:
+    text: 'No thanks'
     optional: true
 - extendedWaitUntil:
-    visible: 'keeper'
+    visible: '입양공고'
     timeout: 30000
 
 # 홈 화면 섹션 확인
-- assertVisible: 'keeper'
+- assertVisible: '입양공고'
 
 # 배너 캐러셀 스와이프
 - swipe:
@@ -99,7 +112,7 @@ appId: com.keeper.love
 # 바텀 탭으로 홈 복귀
 - tapOn: 'Home'
 - extendedWaitUntil:
-    visible: 'keeper'
+    visible: '입양공고'
     timeout: 10000
 
 # 풀 리프레시
@@ -108,7 +121,7 @@ appId: com.keeper.love
     end: '50%, 80%'
     duration: 500
 - waitForAnimationToEnd
-- assertVisible: 'keeper'
+- assertVisible: '입양공고'
 
 # 바텀 탭 재클릭 — 스크롤 초기화 확인
 - swipe:
@@ -121,6 +134,6 @@ appId: com.keeper.love
     duration: 500
 - tapOn: 'Home'
 - extendedWaitUntil:
-    visible: 'keeper'
+    visible: '입양공고'
     timeout: 5000
-- assertVisible: 'keeper'
+- assertVisible: '입양공고'
