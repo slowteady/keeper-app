@@ -1,29 +1,16 @@
 appId: com.keeper.love
 ---
-# 홈 진입 + dev client 처리 (iOS/Android 공통)
+# 홈 진입 + dev client 처리 (iOS)
 - launchApp
 - tapOn:
     text: '앱을 사용하는 동안 허용'
     optional: true
 - tapOn:
-    text: 'While using the app'
-    optional: true
-- tapOn:
     text: 'http://localhost:8081'
     optional: true
-- tapOn:
-    text: 'http://10.0.2.2:8081'
-    optional: true
 - waitForAnimationToEnd
-- tapOn:
-    text: 'No thanks'
-    optional: true
 - tapOn:
     text: 'Continue'
-    optional: true
-- waitForAnimationToEnd
-- tapOn:
-    text: 'No thanks'
     optional: true
 - extendedWaitUntil:
     visible: '입양공고'
