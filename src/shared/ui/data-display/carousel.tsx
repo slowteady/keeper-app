@@ -5,7 +5,7 @@ import PagerView, { PagerViewOnPageSelectedEvent, PagerViewProps } from 'react-n
 import { styled, Text, useTheme, View, XStack } from 'tamagui';
 
 import { Button } from '../button';
-import { NoImage } from '../fallback';
+import { NoImage, Skeleton } from '../fallback';
 import { LeftLineArrow, RightLineArrow } from '../icons/mini';
 import { MoreImage } from '../icons/outline';
 import { ImageViewer } from '../overlay/image-viewer';
@@ -18,7 +18,6 @@ export interface BasicCarouselProps extends PagerViewProps {
 
 const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>(
   ({ data, showIndicator = false, showImageViewer = false, ...props }, ref) => {
-    const [isError, setIsError] = useState(data.map(() => false));
     const [openImgViewer, setOpenImgViewer] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -28,26 +27,8 @@ const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>(
       setCurrentIndex(e.nativeEvent.position);
     }, []);
 
-    const handleErrorImage = useCallback((idx: number) => {
-      setIsError((prev) => {
-        const next = [...prev];
-        next[idx] = true;
-        return next;
-      });
-    }, []);
-
-    const renderPage = (image: string, idx: number) => {
-      if (isError[idx]) return <NoImage />;
-
-      const imageElement = (
-        <Image
-          source={image}
-          contentFit="cover"
-          onError={() => handleErrorImage(idx)}
-          transition={300}
-          style={styles.image}
-        />
-      );
+    const renderPage = (image: string) => {
+      const imageElement = <CarouselImage uri={image} />;
 
       return showImageViewer ? (
         <Button onPress={() => setOpenImgViewer(true)} style={styles.imageButton}>
@@ -71,8 +52,8 @@ const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>(
           pageMargin={24}
           {...props}
         >
-          {data.map((image, idx) => (
-            <View key={image}>{renderPage(image, idx)}</View>
+          {data.map((image) => (
+            <View key={image}>{renderPage(image)}</View>
           ))}
         </PagerView>
         {showIndicator && <Indicator currentIndex={currentIndex} maxIndex={data.length} />}
@@ -86,6 +67,33 @@ const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>(
     );
   }
 );
+
+type CarouselImageProps = {
+  uri: string;
+};
+const CarouselImage = ({ uri }: CarouselImageProps) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
+
+  if (isError) return <NoImage />;
+
+  return (
+    <View style={styles.imageWrap}>
+      {isLoading && <Skeleton style={styles.skeleton} />}
+      <Image
+        source={uri}
+        contentFit="cover"
+        onLoad={() => setIsLoading(false)}
+        onError={() => {
+          setIsLoading(false);
+          setIsError(true);
+        }}
+        transition={300}
+        style={styles.image}
+      />
+    </View>
+  );
+};
 
 type IndicatorProps = {
   currentIndex: number;
@@ -166,7 +174,9 @@ const IconWrap = styled(View, {
 
 const styles = StyleSheet.create({
   container: { position: 'relative', width: '100%', height: '100%' },
+  imageWrap: { width: '100%', height: '100%' },
   image: { borderRadius: 10, width: '100%', height: '100%' },
+  skeleton: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, borderRadius: 10 },
   imageButton: { width: '100%', height: '100%' }
 });
 
