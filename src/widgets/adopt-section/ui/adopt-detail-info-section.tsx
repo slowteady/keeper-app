@@ -33,7 +33,7 @@ export const AdoptDetailInfoSection = ({
   return (
     <>
       <XStack gap={8} justify="space-between" flex={1} mb={12}>
-        <InfoItem label="나이" value={age} subLabel="년생" />
+        <InfoItem label="나이" value={age} />
         <InfoItem label="성별" value={gender} />
         <InfoItem label="크기/몸무게" value={weight} />
       </XStack>
