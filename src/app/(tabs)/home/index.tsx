@@ -1,11 +1,13 @@
 import { useScrollToTop } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
+import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { RefreshControl } from 'react-native';
 import { styled, View } from 'tamagui';
 
-import { ADOPT_OPTIONS, AdoptFilterDto } from '@/entities/adopt';
+import { ADOPT_OPTIONS, AdoptFilterDto, adoptQueries } from '@/entities/adopt';
+import { shelterQueries } from '@/entities/shelter';
 import { useAdoptList } from '@/features/adopt';
 import { useHomeShelter } from '@/features/shelter';
 import { useListRefreshing, useScrollUpButton } from '@/shared/model';
@@ -26,17 +28,25 @@ const Page = () => {
   const [selectedFilter, setSelectedFilter] = useState<AdoptFilterDto>(ADOPT_OPTIONS.FILTER[0].id);
   const [selectedType, setSelectedType] = useState<string>(ADOPT_OPTIONS.ANIMAL[0].id);
 
-  const { convertedData, isLoading, refresh } = useAdoptList({
+  const { convertedData, isLoading } = useAdoptList({
     filter: selectedFilter,
     animalType: selectedType
   });
 
   const shelter = useHomeShelter();
+  const queryClient = useQueryClient();
 
   const goDetail = useCallback((id: string) => router.push({ pathname: '/adopt/[id]', params: { id } }), [router]);
   const goList = useCallback(() => router.push('/adopt'), [router]);
 
-  const { refreshing, handleRefresh } = useListRefreshing(refresh);
+  const refreshCallback = useCallback(async () => {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: adoptQueries.all() }),
+      queryClient.invalidateQueries({ queryKey: shelterQueries.all() })
+    ]);
+  }, [queryClient]);
+
+  const { refreshing, handleRefresh } = useListRefreshing(refreshCallback);
 
   const renderItem = useCallback(
     ({ item }: { item: (typeof SECTIONS)[number] }) => {
