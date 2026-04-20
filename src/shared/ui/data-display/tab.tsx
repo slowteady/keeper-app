@@ -13,6 +13,7 @@ export const Tab = <T extends Route>({ ...props }: TabViewProps<T>) => {
     <TabView
       initialLayout={{ width: WIDTH }}
       swipeEnabled={true}
+      lazy={true}
       renderTabBar={(tabBarProps) => (
         <TabItem
           navigationState={tabBarProps.navigationState}
