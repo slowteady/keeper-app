@@ -1,9 +1,10 @@
-import { Image } from 'expo-image';
+import { Image as ExpoImage } from 'expo-image';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Modal, StyleSheet, useWindowDimensions } from 'react-native';
+import { ActivityIndicator, Modal, StyleSheet, useWindowDimensions } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Gallery, GalleryRefType } from 'react-native-zoom-toolkit';
-import { styled, Text, useTheme, View, XStack } from 'tamagui';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { fitContainer, Gallery, GalleryRefType, useImageResolution } from 'react-native-zoom-toolkit';
+import { styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
 
 import { Close, LeftArrow, RightArrow } from '../icons/outline';
 
@@ -17,16 +18,41 @@ export type ImageViewerProps = {
 const HORIZONTAL_PADDING = 20;
 const IMAGE_ASPECT_RATIO = 9 / 16;
 
+type ImageCellProps = {
+  uri: string;
+  containerWidth: number;
+  containerHeight: number;
+};
+
+const ImageCell = ({ uri, containerWidth, containerHeight }: ImageCellProps) => {
+  const { isFetching, resolution } = useImageResolution({ uri });
+
+  if (isFetching || !resolution) {
+    return (
+      <View width={containerWidth} height={containerHeight} items="center" justify="center">
+        <ActivityIndicator size="large" color="#fff" />
+      </View>
+    );
+  }
+
+  const size = fitContainer(resolution.width / resolution.height, {
+    width: containerWidth,
+    height: containerHeight
+  });
+
+  return <ExpoImage source={{ uri }} style={{ width: size.width, height: size.height }} />;
+};
+
 export const ImageViewer = ({ open, onClose, images, defaultIndex }: ImageViewerProps) => {
   const [currentIndex, setCurrentIndex] = useState(defaultIndex);
   const galleryRef = useRef<GalleryRefType>(null);
   const { white900 } = useTheme();
+  const insets = useSafeAreaInsets();
   const { width: screenWidth } = useWindowDimensions();
 
   const imageWidth = screenWidth - HORIZONTAL_PADDING * 2;
   const imageHeight = imageWidth / IMAGE_ASPECT_RATIO;
 
-  // Modal 이 재오픈될 때마다 defaultIndex 동기화
   useEffect(() => {
     if (open) {
       setCurrentIndex(defaultIndex);
@@ -47,11 +73,7 @@ export const ImageViewer = ({ open, onClose, images, defaultIndex }: ImageViewer
   );
 
   const renderItem = useCallback(
-    (item: string) => (
-      <View width={imageWidth} height={imageHeight} items="center" justify="center">
-        <Image source={item} style={styles.image} contentFit="contain" />
-      </View>
-    ),
+    (item: string) => <ImageCell uri={item} containerWidth={imageWidth} containerHeight={imageHeight} />,
     [imageWidth, imageHeight]
   );
 
@@ -60,8 +82,8 @@ export const ImageViewer = ({ open, onClose, images, defaultIndex }: ImageViewer
   return (
     <Modal visible transparent animationType="fade" onRequestClose={onClose}>
       <GestureHandlerRootView style={styles.root}>
-        <XStack items="center" justify="center" flex={1} px={HORIZONTAL_PADDING} bg="$black700">
-          <View flex={1}>
+        <YStack flex={1} bg="$black700" px={HORIZONTAL_PADDING} items="center" justify="center">
+          <View flex={1} self="stretch" pt={insets.top + 10} pb={insets.bottom}>
             <IconButton self="flex-end" mb={8} onPress={onClose}>
               <Close width={18} height={18} color={white900.val} />
             </IconButton>
@@ -80,7 +102,7 @@ export const ImageViewer = ({ open, onClose, images, defaultIndex }: ImageViewer
 
             <ViewerIndicator currentIndex={currentIndex} maxIndex={images.length} onPress={handlePress} />
           </View>
-        </XStack>
+        </YStack>
       </GestureHandlerRootView>
     </Modal>
   );
@@ -141,6 +163,5 @@ const IndexContainer = styled(View, {
 });
 
 const styles = StyleSheet.create({
-  root: { flex: 1 },
-  image: { width: '100%', height: '100%' }
+  root: { flex: 1 }
 });
