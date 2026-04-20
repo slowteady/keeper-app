@@ -4,7 +4,7 @@ import { Dimensions, StyleSheet } from 'react-native';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
 import { ChipVariant } from '@/entities/adopt';
-import { NoImage } from '@/shared/ui';
+import { Skeleton } from '@/shared/ui';
 
 export type AdoptCardProps = {
   uri: string;
@@ -20,7 +20,7 @@ export const ADOPT_CARD_IMAGE_SIZES = {
 } as const;
 
 export const AdoptCard = ({ uri, title, description, chips, horizontal = false }: AdoptCardProps) => {
-  const [isError, setIsError] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const size = horizontal ? 'medium' : 'small';
   const hasChips = chips && chips.length > 0;
@@ -28,18 +28,17 @@ export const AdoptCard = ({ uri, title, description, chips, horizontal = false }
   return (
     <Container size={size}>
       <ImageContainer size={size}>
-        {uri && !isError ? (
+        {!isLoaded && (
+          <Skeleton style={{ position: 'absolute', top: 0, width: '100%', height: '100%', borderRadius: 8 }} />
+        )}
+        {uri && (
           <Image
-            recyclingKey={uri}
+            key={uri}
             source={{ uri }}
-            onError={() => setIsError(true)}
-            transition={300}
+            onLoad={() => setIsLoaded(true)}
+            onError={() => setIsLoaded(false)}
             style={styles.image}
           />
-        ) : (
-          <View style={styles.image}>
-            <NoImage />
-          </View>
         )}
       </ImageContainer>
 

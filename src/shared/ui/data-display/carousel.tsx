@@ -5,7 +5,7 @@ import PagerView, { PagerViewOnPageSelectedEvent, PagerViewProps } from 'react-n
 import { styled, Text, useTheme, View, XStack } from 'tamagui';
 
 import { Button } from '../button';
-import { NoImage, Skeleton } from '../fallback';
+import { Skeleton } from '../fallback';
 import { LeftLineArrow, RightLineArrow } from '../icons/mini';
 import { MoreImage } from '../icons/outline';
 import { ImageViewer } from '../overlay/image-viewer';
@@ -73,9 +73,6 @@ type CarouselImageProps = {
 };
 const CarouselImage = ({ uri }: CarouselImageProps) => {
   const [isLoading, setIsLoading] = useState(true);
-  const [isError, setIsError] = useState(false);
-
-  if (isError) return <NoImage />;
 
   return (
     <View style={styles.imageWrap}>
@@ -84,11 +81,7 @@ const CarouselImage = ({ uri }: CarouselImageProps) => {
         source={uri}
         contentFit="cover"
         onLoad={() => setIsLoading(false)}
-        onError={() => {
-          setIsLoading(false);
-          setIsError(true);
-        }}
-        transition={300}
+        onError={() => setIsLoading(true)}
         style={styles.image}
       />
     </View>
