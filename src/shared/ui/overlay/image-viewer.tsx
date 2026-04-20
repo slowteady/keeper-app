@@ -1,6 +1,7 @@
 import { Image } from 'expo-image';
-import { useCallback, useRef, useState } from 'react';
-import { Modal, StyleSheet } from 'react-native';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Modal, StyleSheet, useWindowDimensions } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Gallery, GalleryRefType } from 'react-native-zoom-toolkit';
 import { styled, Text, useTheme, View, XStack } from 'tamagui';
 
@@ -13,10 +14,24 @@ export type ImageViewerProps = {
   defaultIndex: number;
 };
 
+const HORIZONTAL_PADDING = 20;
+const IMAGE_ASPECT_RATIO = 9 / 16;
+
 export const ImageViewer = ({ open, onClose, images, defaultIndex }: ImageViewerProps) => {
   const [currentIndex, setCurrentIndex] = useState(defaultIndex);
   const galleryRef = useRef<GalleryRefType>(null);
   const { white900 } = useTheme();
+  const { width: screenWidth } = useWindowDimensions();
+
+  const imageWidth = screenWidth - HORIZONTAL_PADDING * 2;
+  const imageHeight = imageWidth / IMAGE_ASPECT_RATIO;
+
+  // Modal 이 재오픈될 때마다 defaultIndex 동기화
+  useEffect(() => {
+    if (open) {
+      setCurrentIndex(defaultIndex);
+    }
+  }, [open, defaultIndex]);
 
   const handleIndexChange = useCallback((index: number) => {
     setCurrentIndex(index);
@@ -32,35 +47,41 @@ export const ImageViewer = ({ open, onClose, images, defaultIndex }: ImageViewer
   );
 
   const renderItem = useCallback(
-    (item: string) => <Image source={item} style={styles.image} contentFit="contain" />,
-    []
+    (item: string) => (
+      <View width={imageWidth} height={imageHeight} items="center" justify="center">
+        <Image source={item} style={styles.image} contentFit="contain" />
+      </View>
+    ),
+    [imageWidth, imageHeight]
   );
 
   if (!open) return null;
 
   return (
-    <Modal visible transparent animationType="fade">
-      <XStack items="center" justify="center" flex={1} px={20} bg="$black700">
-        <View flex={1}>
-          <IconButton self="flex-end" mb={8} onPress={onClose}>
-            <Close width={18} height={18} color={white900.val} />
-          </IconButton>
+    <Modal visible transparent animationType="fade" onRequestClose={onClose}>
+      <GestureHandlerRootView style={styles.root}>
+        <XStack items="center" justify="center" flex={1} px={HORIZONTAL_PADDING} bg="$black700">
+          <View flex={1}>
+            <IconButton self="flex-end" mb={8} onPress={onClose}>
+              <Close width={18} height={18} color={white900.val} />
+            </IconButton>
 
-          <ImageWrap mb={10}>
-            <Gallery
-              ref={galleryRef}
-              data={images}
-              renderItem={renderItem}
-              keyExtractor={(item) => item}
-              initialIndex={defaultIndex}
-              onIndexChange={handleIndexChange}
-              maxScale={4}
-            />
-          </ImageWrap>
+            <ImageWrap width={imageWidth} height={imageHeight} mb={10}>
+              <Gallery
+                ref={galleryRef}
+                data={images}
+                renderItem={renderItem}
+                keyExtractor={(item) => item}
+                initialIndex={defaultIndex}
+                onIndexChange={handleIndexChange}
+                maxScale={4}
+              />
+            </ImageWrap>
 
-          <ViewerIndicator currentIndex={currentIndex} maxIndex={images.length} onPress={handlePress} />
-        </View>
-      </XStack>
+            <ViewerIndicator currentIndex={currentIndex} maxIndex={images.length} onPress={handlePress} />
+          </View>
+        </XStack>
+      </GestureHandlerRootView>
     </Modal>
   );
 };
@@ -92,8 +113,6 @@ const ViewerIndicator = ({ currentIndex, maxIndex, onPress }: ViewerIndicatorPro
 
 const ImageWrap = styled(View, {
   position: 'relative',
-  width: '100%',
-  aspectRatio: 9 / 16,
   bg: '$black900',
   rounded: 14,
   overflow: 'hidden'
@@ -122,5 +141,6 @@ const IndexContainer = styled(View, {
 });
 
 const styles = StyleSheet.create({
+  root: { flex: 1 },
   image: { width: '100%', height: '100%' }
 });
