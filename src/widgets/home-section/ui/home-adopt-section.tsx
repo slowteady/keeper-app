@@ -5,6 +5,9 @@ import { styled, Text, View, XStack, YStack } from 'tamagui';
 import { ADOPT_CARD_IMAGE_SIZES, ADOPT_OPTIONS, AdoptCard, AdoptCardSkeleton, AdoptItem } from '@/entities/adopt';
 import { ButtonGroup, Dropdown, ViewAllButton } from '@/shared/ui';
 
+const CARD_GAP = 12;
+const CARD_SNAP_INTERVAL = ADOPT_CARD_IMAGE_SIZES.medium + CARD_GAP;
+
 export type HomeAdoptSectionProps = {
   selectedFilter: string;
   selectedType: string;
@@ -74,9 +77,10 @@ export const HomeAdoptSection = ({
         keyExtractor={({ id }, idx) => `${id}-${idx}`}
         renderItem={renderItem}
         horizontal
+        snapToInterval={CARD_SNAP_INTERVAL}
         decelerationRate="fast"
         showsHorizontalScrollIndicator={false}
-        ItemSeparatorComponent={() => <View width={12} />}
+        ItemSeparatorComponent={() => <View width={CARD_GAP} />}
         contentContainerStyle={{ minHeight: 350 }}
         style={{ paddingLeft: 20 }}
         ListEmptyComponent={<EmptyComponent isLoading={isLoading} />}
