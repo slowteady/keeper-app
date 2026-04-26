@@ -20,7 +20,16 @@ const Page = () => {
 
   const [selectedFilter, setSelectedFilter] = useState<AdoptFilterDto>(ADOPT_OPTIONS.FILTER[0].id);
   const [selectedType, setSelectedType] = useState<string>(ADOPT_OPTIONS.ANIMAL[0].id);
+  const [searchInput, setSearchInput] = useState('');
   const [searchValue, setSearchValue] = useState('');
+
+  const handleSearchChange = useCallback((text: string) => {
+    setSearchInput(text);
+  }, []);
+
+  const handleSearchSubmit = useCallback((text: string) => {
+    setSearchValue(text);
+  }, []);
 
   const {
     convertedData,
@@ -79,10 +88,11 @@ const Page = () => {
           <AdoptListHeaderSection
             filterValue={selectedFilter}
             animalType={selectedType}
-            searchValue={searchValue}
+            searchValue={searchInput}
             onChangeFilter={(id) => setSelectedFilter(id as AdoptFilterDto)}
             onChangeAnimalType={setSelectedType}
-            onSearch={setSearchValue}
+            onChangeSearch={handleSearchChange}
+            onSearch={handleSearchSubmit}
           />
         }
         footer={

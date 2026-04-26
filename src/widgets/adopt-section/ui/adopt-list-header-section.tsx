@@ -9,6 +9,7 @@ export type AdoptListHeaderSectionProps = {
   searchValue: string;
   onChangeFilter: (value: string) => void;
   onChangeAnimalType: (value: string) => void;
+  onChangeSearch: (value: string) => void;
   onSearch: (value: string) => void;
 };
 
@@ -18,6 +19,7 @@ export const AdoptListHeaderSection = ({
   searchValue,
   onChangeFilter,
   onChangeAnimalType,
+  onChangeSearch,
   onSearch
 }: AdoptListHeaderSectionProps) => {
   return (
@@ -44,7 +46,7 @@ export const AdoptListHeaderSection = ({
         <SearchInput
           placeholder="품종 또는 지역을 입력해주세요."
           value={searchValue}
-          onTextChange={onSearch}
+          onTextChange={onChangeSearch}
           onSubmit={onSearch}
         />
       </View>
