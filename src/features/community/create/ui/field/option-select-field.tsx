@@ -8,12 +8,12 @@ import { FieldLabel } from './field-label';
 
 type OptionFieldName = keyof typeof CREATE_POST_OPTIONS;
 
-export interface OptionSelectFieldProps {
+export type OptionSelectFieldProps = {
   label: string;
   required?: boolean;
   name: OptionFieldName;
   control: Control<CommunityAdoptFormDto>;
-}
+};
 
 export const OptionSelectField = ({ name, control, label, required }: OptionSelectFieldProps) => {
   return (
@@ -25,7 +25,6 @@ export const OptionSelectField = ({ name, control, label, required }: OptionSele
           <FieldLabel title={label} required={required} />
           <ChipGroup
             variant="secondary"
-            isPressable
             options={CREATE_POST_OPTIONS[name]}
             value={field.value as string}
             onChange={field.onChange}

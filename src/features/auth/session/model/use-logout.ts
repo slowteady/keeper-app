@@ -11,14 +11,14 @@ export const useLogout = () => {
 
   const { mutateAsync, isPending } = useMutation({ mutationFn: logout });
 
-  const executeLogout = useCallback(async () => {
+  const handleLogout = useCallback(async () => {
     try {
       if (isPending) return;
 
       await mutateAsync();
       await removeToken();
       clearUserContext();
-      qc.resetQueries({ queryKey: authQueries.all() });
+      qc.removeQueries({ queryKey: authQueries.all() });
 
       setTimeout(() => {
         show('로그아웃이 완료되었어요.', { customData: { status: 'success' } });
@@ -28,5 +28,5 @@ export const useLogout = () => {
     }
   }, [isPending, mutateAsync, qc, show]);
 
-  return { logout: executeLogout, isPending };
+  return { logout: handleLogout, isPending };
 };

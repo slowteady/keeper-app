@@ -24,7 +24,7 @@ import { TamaguiProvider } from 'tamagui';
 
 import { getRefresh } from '@/entities/auth';
 import { authApi, setupInterceptor } from '@/shared/api';
-import { logger, throwToErrorBoundary } from '@/shared/lib';
+import { clearUserContext, globalToast, logger, throwToErrorBoundary } from '@/shared/lib';
 import { BottomSheetProvider, ModalProvider, Toast } from '@/shared/ui';
 
 import { config } from '../../tamagui.config';
@@ -44,30 +44,34 @@ Sentry.init({
 });
 
 const RootLayout = () => {
-  const queryClient = new QueryClient({
-    mutationCache: new MutationCache({
-      onError: (error, _variables, _context, mutation) => {
-        if (!mutation.options.onError) {
-          logger.error(error);
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        mutationCache: new MutationCache({
+          onError: (error, _variables, _context, mutation) => {
+            if (!mutation.options.onError) {
+              logger.error(error);
+              globalToast('일시적인 오류가 발생했어요.', 'fail');
+            }
+          }
+        }),
+        defaultOptions: {
+          queries: {
+            refetchOnWindowFocus: false,
+            refetchOnMount: false,
+            refetchOnReconnect: false,
+            retry: false,
+            gcTime: 1000 * 60 * 5,
+            staleTime: 1000 * 60 * 2,
+            throwOnError: throwToErrorBoundary
+          },
+          mutations: {
+            retry: false,
+            throwOnError: throwToErrorBoundary
+          }
         }
-      }
-    }),
-    defaultOptions: {
-      queries: {
-        refetchOnWindowFocus: false,
-        refetchOnMount: false,
-        refetchOnReconnect: false,
-        retry: false,
-        gcTime: 1000 * 60 * 5,
-        staleTime: 1000 * 60 * 2,
-        throwOnError: throwToErrorBoundary
-      },
-      mutations: {
-        retry: false,
-        throwOnError: throwToErrorBoundary
-      }
-    }
-  });
+      })
+  );
 
   useReactQueryDevTools(queryClient);
 
@@ -91,7 +95,12 @@ const RootLayout = () => {
           const { data } = await getRefresh(refreshToken);
           return data.data;
         },
-        onRefreshFailed: () => router.replace('/login')
+        onRefreshFailed: () => {
+          clearUserContext();
+          queryClient.removeQueries({ queryKey: ['auth'] });
+          globalToast('세션이 만료되었어요. 다시 로그인해주세요.', 'fail');
+          setTimeout(() => router.replace('/login'), 100);
+        }
       });
 
       initializeKakaoSDK(process.env.EXPO_PUBLIC_KAKAO_NATIVE_KEY || '');
@@ -139,7 +148,7 @@ const RootLayout = () => {
         fallback={({ error, resetError }) => <ErrorFallback error={error} resetError={resetError} />}
       >
         <QueryClientProvider client={queryClient}>
-          <GestureHandlerRootView style={{ flex: 1 }}>
+          <GestureHandlerRootView style={{ flex: 1 }} collapsable={!__DEV__} collapsableChildren={!__DEV__}>
             <KeyboardProvider>
               <SafeAreaProvider>
                 <BottomSheetProvider>

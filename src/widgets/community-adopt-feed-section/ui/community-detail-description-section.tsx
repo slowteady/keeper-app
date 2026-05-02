@@ -2,13 +2,13 @@ import { styled, Text, YStack } from 'tamagui';
 
 import { Link } from '@/shared/ui';
 
-export interface CommunityDetailDescriptionSectionProps {
+export type CommunityDetailDescriptionSectionProps = {
   specialMark: string;
   likes: string;
   dislikes: string;
   health: string;
   relatedLink: string;
-}
+};
 export const CommunityDetailDescriptionSection = ({
   specialMark,
   likes,

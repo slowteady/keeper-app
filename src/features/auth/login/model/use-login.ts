@@ -16,8 +16,8 @@ const isTabRoute = (path: string) => {
 export const useLogin = () => {
   const { redirect } = useLocalSearchParams<{ redirect?: Route }>();
 
-  const [isAppleAvailable, isSetAppleAvailable] = useState<boolean | null>(null);
-  const [isGoogleAvailable, isSetGoogleAvailable] = useState<boolean | null>(null);
+  const [isAppleAvailable, setIsAppleAvailable] = useState(false);
+  const [isGoogleAvailable, setIsGoogleAvailable] = useState(false);
 
   const { mutate, isPending } = useMutation({ mutationFn: login });
 
@@ -31,16 +31,16 @@ export const useLogin = () => {
           isAvailableAsync(),
           GoogleSignin.hasPlayServices()
         ]);
-        isSetAppleAvailable(appleAvailable);
-        isSetGoogleAvailable(googleAvailable);
+        setIsAppleAvailable(appleAvailable);
+        setIsGoogleAvailable(googleAvailable);
       } catch {
-        isSetAppleAvailable(false);
-        isSetGoogleAvailable(false);
+        setIsAppleAvailable(false);
+        setIsGoogleAvailable(false);
       }
     })();
   }, []);
 
-  const executeLogin = useCallback(
+  const handleLogin = useCallback(
     (socialType: SocialLoginType, token: string) => {
       mutate(
         { socialType, token },
@@ -84,5 +84,5 @@ export const useLogin = () => {
     [mutate, queryClient, show, redirect]
   );
 
-  return { login: executeLogin, isPending, isAppleAvailable, isGoogleAvailable };
+  return { login: handleLogin, isPending, isAppleAvailable, isGoogleAvailable };
 };

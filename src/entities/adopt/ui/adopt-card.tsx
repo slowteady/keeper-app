@@ -3,15 +3,16 @@ import { useState } from 'react';
 import { Dimensions, StyleSheet } from 'react-native';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
-import { NoImage, Skeleton } from '@/shared/ui';
+import { ChipVariant } from '@/entities/adopt';
+import { Skeleton } from '@/shared/ui';
 
-export interface AdoptCardProps {
+export type AdoptCardProps = {
   uri: string;
   title: string;
   description: AdoptCardDescriptionsProps['data'];
   chips?: AdoptCardChipsProps['data'];
   horizontal?: boolean;
-}
+};
 
 export const ADOPT_CARD_IMAGE_SIZES = {
   small: (Dimensions.get('window').width - 48) / 2, // 2컬럼 기준 양쪽 20패딩 제외한 너비, 카드 간 8패딩 제외한 너비
@@ -20,7 +21,6 @@ export const ADOPT_CARD_IMAGE_SIZES = {
 
 export const AdoptCard = ({ uri, title, description, chips, horizontal = false }: AdoptCardProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
-  const [isError, setIsError] = useState(false);
 
   const size = horizontal ? 'medium' : 'small';
   const hasChips = chips && chips.length > 0;
@@ -28,21 +28,17 @@ export const AdoptCard = ({ uri, title, description, chips, horizontal = false }
   return (
     <Container size={size}>
       <ImageContainer size={size}>
-        {!isLoaded && !isError && (
+        {!isLoaded && (
           <Skeleton style={{ position: 'absolute', top: 0, width: '100%', height: '100%', borderRadius: 8 }} />
         )}
-        {uri && !isError ? (
+        {uri && (
           <Image
             key={uri}
             source={{ uri }}
             onLoad={() => setIsLoaded(true)}
-            onError={() => setIsError(true)}
+            onError={() => setIsLoaded(false)}
             style={styles.image}
           />
-        ) : (
-          <View style={styles.image}>
-            <NoImage />
-          </View>
         )}
       </ImageContainer>
 
@@ -57,12 +53,12 @@ export const AdoptCard = ({ uri, title, description, chips, horizontal = false }
   );
 };
 
-export interface AdoptCardDescriptionsProps {
+type AdoptCardDescriptionsProps = {
   data: { label: string; value: string }[];
   size?: keyof typeof ADOPT_CARD_IMAGE_SIZES;
-}
+};
 
-export const AdoptCardDescriptions = ({ data, size = 'medium' }: AdoptCardDescriptionsProps) => {
+const AdoptCardDescriptions = ({ data, size = 'medium' }: AdoptCardDescriptionsProps) => {
   return data.map(({ label, value }, idx) => (
     <DescriptionWrap key={`${label}-${idx}`} size={size}>
       <DescriptionLabel size={size}>{label}</DescriptionLabel>
@@ -71,11 +67,10 @@ export const AdoptCardDescriptions = ({ data, size = 'medium' }: AdoptCardDescri
   ));
 };
 
-export interface AdoptCardChipsProps {
-  data: { id: string; value: string; variant?: AdoptCardChipVariant }[];
-}
-export type AdoptCardChipVariant = 'error' | 'success' | 'notice' | 'default';
-export const AdoptCardChips = ({ data }: AdoptCardChipsProps) => {
+type AdoptCardChipsProps = {
+  data: { id: string; value: string; variant?: ChipVariant }[];
+};
+const AdoptCardChips = ({ data }: AdoptCardChipsProps) => {
   return (
     <ChipContainer gap={4}>
       {data.map(({ id, value, variant = 'default' }, idx) => (

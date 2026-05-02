@@ -2,21 +2,20 @@ import { ListRenderItemInfo } from '@shopify/flash-list';
 import { useCallback } from 'react';
 import { styled, View, YStack } from 'tamagui';
 
-import { AdoptCard } from '@/entities/adopt';
-import { makeProfileOption, ProfileLikeOption } from '@/entities/profile';
-import { AdoptItem } from '@/features/adopt';
+import { AdoptCard, AdoptItem } from '@/entities/adopt';
+import { PROFILE_OPTIONS, ProfileLikeOption } from '@/entities/profile';
 import { useScrollUpButton } from '@/shared/model';
 import { ButtonGroup, ScrollUpButton } from '@/shared/ui';
 import { AdoptListSection } from '@/widgets/adopt-section';
 
-export interface ProfileLikeSceneProps {
+export type ProfileLikeSceneProps = {
   filter: ProfileLikeOption;
   convertedData: AdoptItem[];
   isLoading: boolean;
   onToggleFilter: (id: ProfileLikeOption) => void;
   onGoDetail: (id: string) => void;
   onRefresh: () => Promise<void>;
-}
+};
 
 export const ProfileLikeScene = ({
   filter,
@@ -59,7 +58,7 @@ export const ProfileLikeScene = ({
         renderItem={(p) => renderItem(p, filter)}
         header={
           <View mb={20}>
-            <ButtonGroup data={makeProfileOption('LIKE')} id={filter} onChange={(id) => onToggleFilter(id)} />
+            <ButtonGroup data={PROFILE_OPTIONS.LIKE} id={filter} onChange={(id) => onToggleFilter(id)} />
           </View>
         }
         contentContainerStyle={{ paddingHorizontal: 20 }}

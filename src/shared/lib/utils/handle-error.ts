@@ -1,28 +1,25 @@
 import * as Sentry from '@sentry/react-native';
 import { AxiosError } from 'axios';
 
-/**
- * 개발/운영 환경에 따른 로거
- */
 export const logger = {
-  log: (...args: any[]) => {
+  log: (...args: unknown[]) => {
     if (__DEV__) {
       console.log(...args);
     }
   },
 
-  warn: (...args: any[]) => {
+  warn: (...args: unknown[]) => {
     if (__DEV__) {
       console.warn(...args);
     } else {
       Sentry.addBreadcrumb({
-        message: args.join(' '),
+        message: args.map(String).join(' '),
         level: 'warning'
       });
     }
   },
 
-  error: (...args: any[]) => {
+  error: (...args: unknown[]) => {
     if (__DEV__) {
       console.error(...args);
     } else {
@@ -34,60 +31,35 @@ export const logger = {
           }
         });
       } else {
-        Sentry.captureMessage(args.join(' '), 'error');
+        Sentry.captureMessage(args.map(String).join(' '), 'error');
       }
     }
   },
 
-  debug: (...args: any[]) => {
+  debug: (...args: unknown[]) => {
     if (__DEV__) {
       console.debug('[DEBUG]', ...args);
     }
   },
 
-  info: (...args: any[]) => {
+  info: (...args: unknown[]) => {
     if (__DEV__) {
       console.info('[INFO]', ...args);
     } else {
       Sentry.addBreadcrumb({
-        message: args.join(' '),
+        message: args.map(String).join(' '),
         level: 'info'
       });
     }
   }
 };
 
-/**
- * API 에러 및 일반 에러 처리
- */
-export const handleLogging = (error: unknown, msg: string) => {
-  if (error instanceof AxiosError) {
-    const errorMessage = `${msg}: ${error.message}`;
-
-    if (__DEV__) {
-      console.error(errorMessage);
-    } else {
-      Sentry.captureException(error);
-    }
-
-    return;
-  }
-};
-
 export const throwToErrorBoundary = (error: unknown) => {
-  const err = error as AxiosError;
-  const status = err.response?.status;
-  if (!status) return true;
-
-  // 클라이언트 에러 (400-499): 컴포넌트에서 처리
-  if (status >= 400 && status < 500) {
-    return false;
+  if (error instanceof AxiosError) {
+    const status = error.response?.status;
+    if (!status) return true;
+    return status >= 500;
   }
 
-  // 서버 에러 (500+) 또는 네트워크 에러: Error Boundary로
-  if (status >= 500 || !status) {
-    return true;
-  }
-
-  return false;
+  return true;
 };

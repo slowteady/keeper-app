@@ -1,6 +1,7 @@
-import { FlashList, ListRenderItemInfo } from '@shopify/flash-list';
+import { Camera, NaverMapViewRef } from '@mj-studio/react-native-naver-map';
+import { FlashList, FlashListRef, ListRenderItemInfo } from '@shopify/flash-list';
 import { router } from 'expo-router';
-import { RefObject, useCallback } from 'react';
+import { RefObject, useCallback, useEffect, useRef } from 'react';
 import { ViewStyle } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { styled, Text, useTheme, View, XStack } from 'tamagui';
@@ -19,19 +20,19 @@ import { DownArrow } from '@/shared/ui/icons/mini';
 
 const SHELTER_CARD_MIN_HEIGHT = 144;
 
-export interface HomeShelterSectionProps {
+export type HomeShelterSectionProps = {
   shelters?: ShelterDto[];
   shelterCounts?: ShelterCountDto[];
-  mapRef: RefObject<any>;
-  camera?: CameraParams;
+  mapRef: RefObject<NaverMapViewRef | null>;
+  camera?: Camera;
   selectedMarkerId?: string;
-  hasLocationStatus: boolean;
+  isGranted: boolean;
   isLoading: boolean;
   animatedListStyle: ViewStyle;
-  onToggleMapEnabled: () => void;
-  onRefetchShelterList: (params?: CameraParams) => void;
-  onToggleTapMarker: (data: ShelterDto) => void;
-}
+  onMapInitialized: () => void;
+  onRefetch: (params?: CameraParams) => void;
+  onTapMarker: (data: ShelterDto) => void;
+};
 
 export const HomeShelterSection = ({
   shelters,
@@ -39,14 +40,21 @@ export const HomeShelterSection = ({
   mapRef,
   camera,
   selectedMarkerId,
-  hasLocationStatus,
+  isGranted,
   isLoading,
   animatedListStyle,
-  onToggleMapEnabled,
-  onRefetchShelterList,
-  onToggleTapMarker
+  onMapInitialized,
+  onRefetch,
+  onTapMarker
 }: HomeShelterSectionProps) => {
   const { black500 } = useTheme();
+  const listRef = useRef<FlashListRef<ShelterDto>>(null);
+
+  useEffect(() => {
+    if (selectedMarkerId && listRef.current) {
+      listRef.current.scrollToOffset({ animated: true, offset: 0 });
+    }
+  }, [selectedMarkerId]);
 
   const renderItem = useCallback(({ item }: ListRenderItemInfo<ShelterDto>) => {
     return (
@@ -70,7 +78,7 @@ export const HomeShelterSection = ({
         </XStack>
       </HeaderContainer>
 
-      {hasLocationStatus && (
+      {isGranted && (
         <View px={20} mb={16}>
           <DistanceIndicator value={shelterCounts ?? []} />
         </View>
@@ -82,10 +90,10 @@ export const HomeShelterSection = ({
           ref={mapRef}
           camera={camera}
           selectedMarkerId={selectedMarkerId}
-          onInitialized={onToggleMapEnabled}
-          onRefetch={onRefetchShelterList}
-          onTapMarker={onToggleTapMarker}
-          hasLocation={hasLocationStatus}
+          onInitialized={onMapInitialized}
+          onRefetch={onRefetch}
+          onTapMarker={onTapMarker}
+          hasLocation={isGranted}
           isShowCompass={false}
           minZoom={10}
         />
@@ -93,7 +101,8 @@ export const HomeShelterSection = ({
 
       <Animated.View style={animatedListStyle}>
         <FlashList
-          keyExtractor={({ id }, i) => `${id}-${i}`}
+          ref={listRef}
+          keyExtractor={({ id }) => id}
           data={shelters}
           renderItem={renderItem}
           ItemSeparatorComponent={() => <View width={12} />}

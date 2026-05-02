@@ -10,9 +10,3 @@ export const ADOPT_OPTIONS = {
     { id: 'NEW', label: '신규공고' }
   ] as const
 } as const;
-
-export type AdoptOption = keyof typeof ADOPT_OPTIONS;
-
-export const makeAdoptOption = <T extends AdoptOption>(option: T) => {
-  return ADOPT_OPTIONS[option];
-};

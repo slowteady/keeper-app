@@ -3,12 +3,12 @@ import { logout } from '@react-native-kakao/user';
 import NaverLogin from '@react-native-seoul/naver-login';
 import { usePreventRemove } from '@react-navigation/native';
 import { useToastController } from '@tamagui/toast';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Route, router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { signup, SignUpBodyDto, SocialLoginType } from '@/entities/auth';
-import { removeToken, saveAccessToken, saveRefreshToken } from '@/shared/lib';
+import { authQueries, signup, SignUpBodyDto, SocialLoginType } from '@/entities/auth';
+import { removeToken, saveAccessToken, saveRefreshToken, setUserContext } from '@/shared/lib';
 
 export const useSignup = () => {
   const { socialType, socialId, redirect } = useLocalSearchParams<{
@@ -22,6 +22,7 @@ export const useSignup = () => {
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [navigateTarget, setNavigateTarget] = useState<Route>();
 
+  const queryClient = useQueryClient();
   const { mutateAsync, isPending } = useMutation({ mutationFn: signup });
 
   const showCancelModalRef = useRef(showCancelModal);
@@ -51,7 +52,7 @@ export const useSignup = () => {
     }
   }, [socialType]);
 
-  const executeSignup = useCallback(
+  const handleSignup = useCallback(
     async (nickname: string) => {
       const body: SignUpBodyDto = {
         socialType,
@@ -61,10 +62,12 @@ export const useSignup = () => {
 
       try {
         const { data } = await mutateAsync(body);
-        const { accessToken, refreshToken } = data.data;
+        const { accessToken, refreshToken, ...user } = data.data;
 
         await saveAccessToken(accessToken);
         await saveRefreshToken(refreshToken);
+        setUserContext(user);
+        queryClient.invalidateQueries({ queryKey: authQueries.all() });
 
         show('회원가입이 완료되었어요.', { customData: { status: 'success' } });
 
@@ -78,9 +81,9 @@ export const useSignup = () => {
     [mutateAsync, redirect, show, socialId, socialType]
   );
 
-  const executeCancel = useCallback(async () => {
-    cancelSignup();
-    removeToken();
+  const handleCancel = useCallback(async () => {
+    await cancelSignup();
+    await removeToken();
 
     const target: Route = redirect && redirect !== '/login' ? redirect : '/';
     setPrevent(false);
@@ -100,5 +103,5 @@ export const useSignup = () => {
     }
   }, [prevent, navigateTarget]);
 
-  return { signup: executeSignup, cancel: executeCancel, closeModal, showCancelModal, isPending };
+  return { signup: handleSignup, cancel: handleCancel, closeModal, showCancelModal, isPending };
 };

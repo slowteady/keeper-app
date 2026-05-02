@@ -3,11 +3,11 @@ import { Avatar, styled, View } from 'tamagui';
 
 import { EmptyAvatar } from './empty-avatar';
 
-export interface UserAvatarProps {
+export type UserAvatarProps = {
   image?: string | null;
   onPressAdd?: () => void;
   onPressEdit?: () => void;
-}
+};
 
 export const UserAvatar = ({ image, onPressAdd, onPressEdit }: UserAvatarProps) => {
   return (

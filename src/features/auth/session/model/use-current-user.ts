@@ -1,6 +1,6 @@
 import { useFocusEffect } from '@react-navigation/native';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { authQueries } from '@/entities/auth';
 import { getAccessToken } from '@/shared/lib';
@@ -16,24 +16,20 @@ export const useCurrentUser = () => {
     enabled
   });
 
-  const checkToken = useCallback(async () => {
-    setIsCheckingToken(true);
-    const accessToken = await getAccessToken();
-    setEnabled(!!accessToken);
-    setIsCheckingToken(false);
-  }, []);
-
-  useEffect(() => {
-    checkToken();
-  }, [checkToken]);
-
   useFocusEffect(
     useCallback(() => {
+      const checkToken = async () => {
+        setIsCheckingToken(true);
+        const accessToken = await getAccessToken();
+        setEnabled(!!accessToken);
+        setIsCheckingToken(false);
+      };
+
       checkToken();
-    }, [checkToken])
+    }, [])
   );
 
-  const user = enabled ? data?.data : null;
+  const user = enabled ? data : null;
   const isLoggedIn = !!user;
 
   const isLoadingState = isCheckingToken || (enabled && isLoading);

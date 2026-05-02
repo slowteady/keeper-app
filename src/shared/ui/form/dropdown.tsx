@@ -6,12 +6,12 @@ import { DownArrow } from '@/shared/ui/icons/mini';
 
 import { BottomSheet, BottomSheetMenu, BottomSheetMenuData } from '../overlay';
 
-export interface DropdownProps<T> {
+export type DropdownProps<T> = {
   data: readonly BottomSheetMenuData<T>[];
   value: T;
   onChange: (value: BottomSheetMenuData<T>) => void;
   snapPoints: BottomSheetModalProps['snapPoints'];
-}
+};
 
 export const Dropdown = <T,>({ data, value, onChange, snapPoints }: DropdownProps<T>) => {
   const { black500 } = useTheme();

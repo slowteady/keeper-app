@@ -5,9 +5,9 @@ import { StyleSheet, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withDelay, withTiming } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
 
-export interface AnimatedSplashProps {
+export type AnimatedSplashProps = {
   onFinish: () => void;
-}
+};
 
 const AnimatedSplash = ({ onFinish }: AnimatedSplashProps) => {
   const containerOpacity = useSharedValue(1);

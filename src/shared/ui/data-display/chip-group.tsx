@@ -5,10 +5,12 @@ import { ChipButton, ChipButtonProps } from '../button/chip-button';
 
 type ChipGroupValue<T extends boolean> = T extends true ? string[] : string;
 type ChipGroupOnChange<T extends boolean> = T extends true ? (value: string[]) => void : (value: string) => void;
-export interface ChipOption {
+
+export type ChipOption = {
   value: string;
   label: string;
-}
+};
+
 export interface ChipGroupProps<T extends boolean = false> extends Omit<
   ChipButtonProps,
   'children' | 'selected' | 'onPress'
@@ -20,6 +22,8 @@ export interface ChipGroupProps<T extends boolean = false> extends Omit<
   direction?: 'horizontal' | 'vertical';
   gap?: number;
 }
+
+const DIRECTION_MAP = { horizontal: XStack, vertical: YStack } as const;
 
 export const ChipGroup = <T extends boolean = false>({
   options,
@@ -33,15 +37,13 @@ export const ChipGroup = <T extends boolean = false>({
   const handleChipPress = useCallback(
     (optionValue: string) => {
       if (multiple) {
-        // 복수 선택
         const currentValues: string[] = Array.isArray(value) ? value : [];
-        const newValues: string[] = currentValues.includes(optionValue)
-          ? currentValues.filter((v: string) => v !== optionValue)
+        const newValues = currentValues.includes(optionValue)
+          ? currentValues.filter((v) => v !== optionValue)
           : [...currentValues, optionValue];
 
         (onChange as ChipGroupOnChange<true>)?.(newValues);
       } else {
-        // 단일 선택
         if (value !== optionValue) {
           (onChange as ChipGroupOnChange<false>)?.(optionValue);
         }
@@ -50,18 +52,14 @@ export const ChipGroup = <T extends boolean = false>({
     [value, onChange, multiple]
   );
 
-  const isSelected = useCallback(
-    (optionValue: string) => {
-      if (multiple) {
-        return Array.isArray(value) ? value.includes(optionValue) : false;
-      } else {
-        return value === optionValue;
-      }
-    },
-    [value, multiple]
-  );
+  const isSelected = (optionValue: string) => {
+    if (multiple) {
+      return Array.isArray(value) ? value.includes(optionValue) : false;
+    }
+    return value === optionValue;
+  };
 
-  const Container = direction === 'horizontal' ? XStack : YStack;
+  const Container = DIRECTION_MAP[direction];
 
   return (
     <Container flexWrap="wrap" gap={gap} items={direction === 'horizontal' ? 'center' : 'flex-start'}>

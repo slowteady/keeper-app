@@ -2,9 +2,9 @@ import { styled, View, YStack } from 'tamagui';
 
 import { Skeleton } from '@/shared/ui';
 
-interface AdoptCardSkeletonProps {
+type AdoptCardSkeletonProps = {
   width: number;
-}
+};
 
 export const AdoptCardSkeleton = ({ width }: AdoptCardSkeletonProps) => {
   return (

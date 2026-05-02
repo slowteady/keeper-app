@@ -43,7 +43,7 @@ export const TextField = ({
   return (
     <>
       <Container variant={variant} onPress={disabled ? onPress : undefined}>
-        {left && <LeftElementWrapper>{left}</LeftElementWrapper>}
+        {left ? <LeftElementWrapper>{left}</LeftElementWrapper> : null}
 
         <CustomTextField
           variant={variant}
@@ -86,7 +86,7 @@ const Container = styled(XStack, {
         bg: '$white900'
       },
       fill: {
-        bg: '#F7F7F7'
+        bg: '$white850'
       }
     }
   } as const,

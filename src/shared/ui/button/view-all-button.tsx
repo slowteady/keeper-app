@@ -2,9 +2,9 @@ import { styled, Text, useTheme, View, YStack } from 'tamagui';
 
 import { RightArrow } from '@/shared/ui/icons/outline';
 
-export interface ViewAllButtonProps {
+export type ViewAllButtonProps = {
   onPress: () => void;
-}
+};
 
 export const ViewAllButton = ({ onPress }: ViewAllButtonProps) => {
   const { black400 } = useTheme();

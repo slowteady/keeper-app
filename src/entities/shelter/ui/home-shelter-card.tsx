@@ -2,11 +2,11 @@ import { styled, Text, View, XStack, YStack } from 'tamagui';
 
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
-export interface HomeShelterCardProps {
+export type HomeShelterCardProps = {
   name: string;
   address: string;
   tel: string;
-}
+};
 
 export const HOME_SHELTER_CARD_SIZE = {
   SMALL: 270
@@ -70,7 +70,7 @@ const Description = styled(Text, {
   fontSize: 14,
   lineHeight: 16,
   fontWeight: '500',
-  color: '#505050',
+  color: '$black600',
   flex: 1,
   letterSpacing: -0.25,
   numberOfLines: 1,

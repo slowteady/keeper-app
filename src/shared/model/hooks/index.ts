@@ -3,7 +3,7 @@ export * from './use-carousel';
 export * from './use-debounce';
 export * from './use-layout';
 export * from './use-list-refreshing';
-export * from './use-map';
+export * from './use-location';
 export * from './use-permission';
 export * from './use-review';
 export * from './use-scroll-up-button';

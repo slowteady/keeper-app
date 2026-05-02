@@ -3,11 +3,11 @@ import { styled, Text, View, XStack, YStack } from 'tamagui';
 
 import { Carousel } from '@/shared/ui';
 
-export interface AdoptDetailOverviewSectionProps {
+export type AdoptDetailOverviewSectionProps = {
   title: string;
   images: string[];
   description: { label: string; value: string }[];
-}
+};
 
 export const AdoptDetailOverviewSection = ({ title, images, description }: AdoptDetailOverviewSectionProps) => {
   return (

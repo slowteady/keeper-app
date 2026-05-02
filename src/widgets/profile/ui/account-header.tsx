@@ -3,10 +3,10 @@ import { Text, XStack, YStack } from 'tamagui';
 import { UserDto } from '@/entities/auth';
 import { UserAvatar } from '@/entities/profile';
 
-interface AccountHeaderProps {
+type AccountHeaderProps = {
   user: UserDto;
   onChangeProfileImage: () => void;
-}
+};
 
 export const AccountHeader = ({ user, onChangeProfileImage }: AccountHeaderProps) => {
   const createdAt = `25.09.23`;

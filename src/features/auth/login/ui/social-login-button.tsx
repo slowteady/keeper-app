@@ -10,6 +10,7 @@ type SocialLoginButtonProps = {
   icon: ComponentType<{ width: number; height: number; color?: string }>;
   bg: string;
   textColor?: string;
+  iconColor?: string;
   borderColor?: string;
   onResponse: (result: SocialAuthResult) => void;
 };
@@ -20,6 +21,7 @@ export const SocialLoginButton = ({
   icon: Icon,
   bg,
   textColor = '$black900',
+  iconColor,
   borderColor,
   onResponse
 }: SocialLoginButtonProps) => {
@@ -45,7 +47,7 @@ export const SocialLoginButton = ({
       style={{ backgroundColor: bg, borderColor: borderColor || 'transparent', borderWidth: borderColor ? 1 : 0 }}
     >
       <IconWrap>
-        <Icon width={22} height={22} color={black900?.val} />
+        <Icon width={22} height={22} color={iconColor ?? black900?.val} />
       </IconWrap>
       <Text fontSize={16} fontWeight="600" lineHeight={24} ml={18} flex={1} style={{ color: textColor }}>
         {label}

@@ -6,22 +6,22 @@ import { useCall } from '@/shared/model';
 import { ModalButtons } from './modal-buttons';
 import { useModal } from './modal-provider';
 
-export interface CallModalProps {
+export type CallModalProps = {
   open: boolean;
   tel: string;
   onClose: () => void;
   title?: string;
   description?: string;
-}
+};
 
 export const CallModal = ({ open, tel, onClose, title, description }: CallModalProps) => {
-  const { actions: callActions } = useCall();
+  const { call } = useCall();
   const { open: openModal, close: closeModal } = useModal();
 
   const executeCall = useCallback(async () => {
-    callActions.executeCall(tel);
+    await call(tel);
     closeModal();
-  }, [callActions, closeModal, tel]);
+  }, [call, closeModal, tel]);
 
   const executeClose = useCallback(() => {
     closeModal();

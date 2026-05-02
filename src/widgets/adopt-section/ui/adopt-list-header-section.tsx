@@ -1,26 +1,27 @@
-import { useState } from 'react';
 import { styled, Text, View, XStack } from 'tamagui';
 
-import { makeAdoptOption } from '@/entities/adopt';
+import { ADOPT_OPTIONS } from '@/entities/adopt';
 import { ButtonGroup, Dropdown, SearchInput } from '@/shared/ui';
 
-export interface AdoptListHeaderSectionProps {
+export type AdoptListHeaderSectionProps = {
   filterValue: string;
   animalType: string;
+  searchValue: string;
   onChangeFilter: (value: string) => void;
   onChangeAnimalType: (value: string) => void;
+  onChangeSearch: (value: string) => void;
   onSearch: (value: string) => void;
-}
+};
 
 export const AdoptListHeaderSection = ({
   filterValue,
   animalType,
+  searchValue,
   onChangeFilter,
   onChangeAnimalType,
+  onChangeSearch,
   onSearch
 }: AdoptListHeaderSectionProps) => {
-  const [searchValue, setSearchValue] = useState('');
-
   return (
     <>
       <TitleContainer mb={24}>
@@ -29,7 +30,7 @@ export const AdoptListHeaderSection = ({
         </Text>
         <View mt={12}>
           <Dropdown
-            data={makeAdoptOption('FILTER')}
+            data={ADOPT_OPTIONS.FILTER}
             value={filterValue}
             onChange={(value) => onChangeFilter(value.id)}
             snapPoints={[200]}
@@ -38,14 +39,14 @@ export const AdoptListHeaderSection = ({
       </TitleContainer>
 
       <View mb={16}>
-        <ButtonGroup data={makeAdoptOption('ANIMAL')} id={animalType} onChange={(id) => onChangeAnimalType(id)} />
+        <ButtonGroup data={ADOPT_OPTIONS.ANIMAL} id={animalType} onChange={(id) => onChangeAnimalType(id)} />
       </View>
 
       <View mb={32}>
         <SearchInput
           placeholder="품종 또는 지역을 입력해주세요."
           value={searchValue}
-          onTextChange={setSearchValue}
+          onTextChange={onChangeSearch}
           onSubmit={onSearch}
         />
       </View>

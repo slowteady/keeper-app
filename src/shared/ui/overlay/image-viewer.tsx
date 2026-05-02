@@ -1,90 +1,120 @@
-import { useCallback, useRef, useState } from 'react';
-import { Modal, NativeSyntheticEvent } from 'react-native';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import PagerView from 'react-native-pager-view';
-import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
-import { styled, Text, useTheme, View, XStack } from 'tamagui';
+import { Image as ExpoImage } from 'expo-image';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, Modal, StyleSheet, useWindowDimensions } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { fitContainer, Gallery, GalleryRefType, useImageResolution } from 'react-native-zoom-toolkit';
+import { styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
 
 import { Close, LeftArrow, RightArrow } from '../icons/outline';
 
-export interface ImageViewerProps {
+export type ImageViewerProps = {
   open: boolean;
   onClose: () => void;
   images: string[];
   defaultIndex: number;
-}
+};
+
+const HORIZONTAL_PADDING = 20;
+const IMAGE_ASPECT_RATIO = 9 / 16;
+
+type ImageCellProps = {
+  uri: string;
+  containerWidth: number;
+  containerHeight: number;
+};
+
+const ImageCell = ({ uri, containerWidth, containerHeight }: ImageCellProps) => {
+  const { isFetching, resolution } = useImageResolution({ uri });
+
+  if (isFetching || !resolution) {
+    return (
+      <View width={containerWidth} height={containerHeight} items="center" justify="center">
+        <ActivityIndicator size="large" color="#fff" />
+      </View>
+    );
+  }
+
+  const size = fitContainer(resolution.width / resolution.height, {
+    width: containerWidth,
+    height: containerHeight
+  });
+
+  return <ExpoImage source={{ uri }} style={{ width: size.width, height: size.height }} />;
+};
 
 export const ImageViewer = ({ open, onClose, images, defaultIndex }: ImageViewerProps) => {
-  const [currentIndex, setCurrentIndex] = useState<number>(defaultIndex);
-  const carouselRef = useRef<PagerView | null>(null);
-  const scale = useSharedValue(1);
+  const [currentIndex, setCurrentIndex] = useState(defaultIndex);
+  const galleryRef = useRef<GalleryRefType>(null);
   const { white900 } = useTheme();
+  const insets = useSafeAreaInsets();
+  const { width: screenWidth } = useWindowDimensions();
+
+  const imageWidth = screenWidth - HORIZONTAL_PADDING * 2;
+  const imageHeight = imageWidth / IMAGE_ASPECT_RATIO;
+
+  useEffect(() => {
+    if (open) {
+      setCurrentIndex(defaultIndex);
+    }
+  }, [open, defaultIndex]);
+
+  const handleIndexChange = useCallback((index: number) => {
+    setCurrentIndex(index);
+  }, []);
 
   const handlePress = useCallback(
     (type: 'prev' | 'next') => {
-      carouselRef.current?.setPage(type === 'prev' ? currentIndex - 1 : currentIndex + 1);
+      const nextIndex = type === 'prev' ? currentIndex - 1 : currentIndex + 1;
+      if (nextIndex < 0 || nextIndex >= images.length) return;
+      galleryRef.current?.setIndex(nextIndex);
     },
-    [currentIndex]
+    [currentIndex, images.length]
   );
 
-  const handlePageScroll = useCallback(
-    (event: NativeSyntheticEvent<Readonly<{ position: number; offset: number }>>) => {
-      setCurrentIndex(event.nativeEvent.position);
-    },
-    []
+  const renderItem = useCallback(
+    (item: string) => <ImageCell uri={item} containerWidth={imageWidth} containerHeight={imageHeight} />,
+    [imageWidth, imageHeight]
   );
 
-  const pinchGesture = Gesture.Pinch().onUpdate((event) => {
-    scale.value = Math.max(1, event.scale);
-  });
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }]
-  }));
+  if (!open) return null;
 
   return (
-    <Modal visible={open} transparent={true} animationType="fade">
-      <XStack items="center" justify="center" flex={1} px={20} bg="$black700">
-        <View flex={1}>
-          <IconButton self="flex-end" mb={8} onPress={onClose}>
-            <Close width={18} height={18} color={white900.val} />
-          </IconButton>
+    <Modal visible transparent animationType="fade" onRequestClose={onClose}>
+      <GestureHandlerRootView style={styles.root}>
+        <YStack flex={1} bg="$black700" px={HORIZONTAL_PADDING} items="center" justify="center">
+          <View flex={1} self="stretch" pt={insets.top + 10} pb={insets.bottom}>
+            <IconButton self="flex-end" mb={8} onPress={onClose}>
+              <Close width={18} height={18} color={white900.val} />
+            </IconButton>
 
-          <ImageWrap mb={10}>
-            <PagerView
-              ref={carouselRef}
-              style={{ width: '100%', height: '100%' }}
-              initialPage={defaultIndex}
-              onPageScroll={handlePageScroll}
-            >
-              {images.map((image, index) => (
-                <GestureDetector key={image + index} gesture={pinchGesture}>
-                  <Animated.Image
-                    source={{ uri: image }}
-                    style={[{ width: '100%', height: '100%' }, animatedStyle]}
-                    resizeMode="contain"
-                  />
-                </GestureDetector>
-              ))}
-            </PagerView>
-          </ImageWrap>
+            <ImageWrap width={imageWidth} height={imageHeight} mb={10}>
+              <Gallery
+                ref={galleryRef}
+                data={images}
+                renderItem={renderItem}
+                keyExtractor={(item) => item}
+                initialIndex={defaultIndex}
+                onIndexChange={handleIndexChange}
+                maxScale={4}
+              />
+            </ImageWrap>
 
-          <Indicator currentIndex={currentIndex} maxIndex={images.length} onPress={handlePress} />
-        </View>
-      </XStack>
+            <ViewerIndicator currentIndex={currentIndex} maxIndex={images.length} onPress={handlePress} />
+          </View>
+        </YStack>
+      </GestureHandlerRootView>
     </Modal>
   );
 };
 
-interface IndicatorProps {
+type ViewerIndicatorProps = {
   currentIndex: number;
   maxIndex: number;
   onPress: (type: 'prev' | 'next') => void;
-}
-const Indicator = ({ currentIndex, maxIndex, onPress }: IndicatorProps) => {
+};
+const ViewerIndicator = ({ currentIndex, maxIndex, onPress }: ViewerIndicatorProps) => {
   const { white900 } = useTheme();
-
-  const text = `${currentIndex + 1}/${maxIndex}`;
 
   return (
     <IndicatorContainer>
@@ -93,7 +123,7 @@ const Indicator = ({ currentIndex, maxIndex, onPress }: IndicatorProps) => {
       </IconButton>
       <IndexContainer>
         <Text fontSize={12} lineHeight={14} fontWeight="500" color="$white900">
-          {text}
+          {`${currentIndex + 1}/${maxIndex}`}
         </Text>
       </IndexContainer>
       <IconButton position="relative" t={0} onPress={() => onPress('next')}>
@@ -105,10 +135,9 @@ const Indicator = ({ currentIndex, maxIndex, onPress }: IndicatorProps) => {
 
 const ImageWrap = styled(View, {
   position: 'relative',
-  width: '100%',
-  aspectRatio: 9 / 16,
   bg: '$black900',
-  rounded: 14
+  rounded: 14,
+  overflow: 'hidden'
 });
 
 const IconButton = styled(XStack, {
@@ -131,4 +160,8 @@ const IndexContainer = styled(View, {
   px: 12,
   py: 6,
   bg: 'rgba(0, 0, 0, 0.5)'
+});
+
+const styles = StyleSheet.create({
+  root: { flex: 1 }
 });

@@ -6,11 +6,11 @@ import { ScrollButton } from '@/shared/ui/icons/etc';
 
 import { Button } from './button';
 
-export interface ScrollUpButtonProps {
+export type ScrollUpButtonProps = {
   visible: boolean;
   onPress: () => void;
   bottom?: number;
-}
+};
 
 export const ScrollUpButton = ({ onPress, visible, bottom = 20 }: ScrollUpButtonProps) => {
   const scale = useSharedValue(0);
@@ -35,7 +35,6 @@ export const ScrollUpButton = ({ onPress, visible, bottom = 20 }: ScrollUpButton
 
 const styles = StyleSheet.create({
   button: {
-    display: 'flex',
     position: 'absolute',
     right: 20,
     ...Platform.select({

@@ -22,7 +22,6 @@ export const useProfileImage = () => {
     if (!result.canceled && result.assets?.[0]) {
       const imageUri = result.assets[0].uri;
       // TODO: 프로필 이미지 업로드 API 호출
-      console.log('Selected image:', imageUri);
     }
   }, [dismiss]);
 

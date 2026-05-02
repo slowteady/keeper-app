@@ -1,8 +1,8 @@
 import { styled, Text, View, YStack } from 'tamagui';
 
-import { AppleLoginButton, SocialLoginButton, useLogin } from '@/features/auth';
+import { SocialLoginButton, useLogin } from '@/features/auth';
 import { SocialAuthResult } from '@/shared/api';
-import { Google, Kakao, Naver } from '@/shared/ui/icons/etc';
+import { Apple, Google, Kakao, Naver } from '@/shared/ui/icons/etc';
 
 const Page = () => {
   const { login, isGoogleAvailable, isAppleAvailable } = useLogin();
@@ -48,7 +48,17 @@ const Page = () => {
             onResponse={handleResponse}
           />
         )}
-        {isAppleAvailable && <AppleLoginButton onResponse={handleResponse} />}
+        {isAppleAvailable && (
+          <SocialLoginButton
+            provider="apple"
+            label="Apple로 로그인"
+            icon={Apple}
+            bg="#000000"
+            textColor="$white900"
+            iconColor="#FFFFFF"
+            onResponse={handleResponse}
+          />
+        )}
       </YStack>
     </Container>
   );

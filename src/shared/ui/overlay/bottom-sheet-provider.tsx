@@ -1,4 +1,9 @@
-import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import {
+  BottomSheetBackdrop,
+  BottomSheetBackdropProps,
+  BottomSheetModal,
+  BottomSheetModalProvider
+} from '@gorhom/bottom-sheet';
 import { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { useTheme } from 'tamagui';
 
@@ -24,6 +29,13 @@ export const BottomSheetProvider = ({ children }: { children: React.ReactNode })
   const onDismissRef = useRef<(() => void) | undefined>(undefined);
   const sheetRef = useRef<BottomSheetModal>(null);
   const { white800 } = useTheme();
+
+  const renderBackdrop = useCallback(
+    (props: BottomSheetBackdropProps) => (
+      <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} pressBehavior="close" />
+    ),
+    []
+  );
 
   const present = useCallback((node: React.ReactNode, opts?: PresentOptions) => {
     if (opts?.snapPoints) setSnapPoints(opts.snapPoints);
@@ -54,9 +66,7 @@ export const BottomSheetProvider = ({ children }: { children: React.ReactNode })
           ref={sheetRef}
           snapPoints={snapPoints}
           animationConfigs={{ duration: 100 }}
-          backdropComponent={(props) => (
-            <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} pressBehavior={'close'} />
-          )}
+          backdropComponent={renderBackdrop}
           handleIndicatorStyle={{ width: 48, borderRadius: 30, backgroundColor: white800.val, marginBottom: 12 }}
           backgroundStyle={{ borderTopLeftRadius: 20, borderTopRightRadius: 20 }}
           style={{ paddingHorizontal: 24 }}

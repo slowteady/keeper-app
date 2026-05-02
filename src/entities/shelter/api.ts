@@ -1,10 +1,11 @@
 import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
-import { AxiosError, AxiosResponse } from 'axios';
+import { AxiosResponse } from 'axios';
 
 import { AdoptResponseDto } from '@/entities/adopt';
 import { publicApi } from '@/shared/api';
 import { ApiResponse } from '@/shared/model';
 
+import { SHELTER_DISTANCES } from './constant';
 import {
   ShelterAdoptsParamsDto,
   ShelterCountDto,
@@ -20,31 +21,29 @@ const BASE_URL = '/v2/shelters';
 
 const getShelterCounts = async (
   params: ShelterCountsParamsDto
-): Promise<AxiosResponse<ApiResponse<ShelterCountDto[]>, AxiosError>> => {
-  const distances = '1,5,10,30';
+): Promise<AxiosResponse<ApiResponse<ShelterCountDto[]>>> => {
+  const distances = SHELTER_DISTANCES.join(',');
   return await publicApi.get(`${BASE_URL}/nearby/count`, { params: { ...params, distances } });
 };
 
-const getShelters = async (
-  params: SheltersParamsDto
-): Promise<AxiosResponse<ApiResponse<ShelterDto[]>, AxiosError>> => {
+const getShelters = async (params: SheltersParamsDto): Promise<AxiosResponse<ApiResponse<ShelterDto[]>>> => {
   return await publicApi.get(BASE_URL, { params });
 };
 
-const getShelter = async (id: string): Promise<AxiosResponse<ApiResponse<ShelterDto>, AxiosError>> => {
+const getShelter = async (id: string): Promise<AxiosResponse<ApiResponse<ShelterDto>>> => {
   return await publicApi.get(`${BASE_URL}/${id}`);
 };
 
 const getShelterAdopts = async (
   id: string,
   params: ShelterAdoptsParamsDto
-): Promise<AxiosResponse<ApiResponse<AdoptResponseDto>, AxiosError>> => {
+): Promise<AxiosResponse<ApiResponse<AdoptResponseDto>>> => {
   return await publicApi.get(`${BASE_URL}/${id}/abandonments`, { params });
 };
 
 export const searchShelters = async (
   params: ShelterSearchParamsDto
-): Promise<AxiosResponse<ApiResponse<ShelterDto[]>, AxiosError>> => {
+): Promise<AxiosResponse<ApiResponse<ShelterDto[]>>> => {
   return await publicApi.get(`${BASE_URL}/search`, { params });
 };
 
@@ -64,7 +63,7 @@ export const shelterQueries = {
     queryOptions({
       queryKey: [...shelterQueries.all(), 'list', params] as const,
       queryFn: () => getShelters(params),
-      select: (res) => res.data.data.sort((a, b) => (a.distance ?? 0) - (b.distance ?? 0))
+      select: (res) => res.data.data
     }),
 
   detail: (id: string) =>

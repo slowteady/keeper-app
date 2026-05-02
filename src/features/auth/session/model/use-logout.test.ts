@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react-native';
 
-import { createWrapper } from '@/shared/test/createWrapper';
+import { createWrapper } from '@/test/create-wrapper';
 
 import { useLogout } from './use-logout';
 

@@ -1,15 +1,17 @@
 import { BottomSheetScrollView, BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { useMemo, useState } from 'react';
+import { useTheme } from 'tamagui';
 
 import { BottomSheetMenu } from '@/shared/ui';
 
-export interface CreatePostKindBottomSheetProps {
+export type CreatePostKindBottomSheetProps = {
   kindOption: { id: string; label: string }[];
   kind: string;
   onSelect: (id: string) => void;
-}
+};
 
 export const CreatePostKindBottomSheet = ({ kindOption, kind, onSelect }: CreatePostKindBottomSheetProps) => {
+  const { white850 } = useTheme();
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredKindOption = useMemo(() => {
@@ -26,7 +28,7 @@ export const CreatePostKindBottomSheet = ({ kindOption, kind, onSelect }: Create
         placeholder="품종을 입력해주세요."
         value={searchQuery}
         onChangeText={setSearchQuery}
-        style={{ padding: 16, backgroundColor: '#F7F7F7' }}
+        style={{ padding: 16, backgroundColor: white850.val }}
       />
 
       <BottomSheetMenu

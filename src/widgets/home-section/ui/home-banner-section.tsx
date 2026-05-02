@@ -4,22 +4,18 @@ import { styled, View } from 'tamagui';
 import { useCarousel } from '@/shared/model';
 import { Carousel } from '@/shared/ui';
 
-export interface HomeBannerSectionProps {
+export type HomeBannerSectionProps = {
   images: string[];
-}
+};
 
 export const HomeBannerSection = ({ images }: HomeBannerSectionProps) => {
-  const { state, actions, refs } = useCarousel({ images });
+  const { currentIndex, handlePageChange, goTo, carouselRef } = useCarousel(images.length);
 
   return (
     <Container>
-      <Carousel initialPage={0} data={images} onPageScroll={actions.changeIndex} ref={refs.carouselRef} />
+      <Carousel initialPage={0} data={images} onPageSelected={handlePageChange} ref={carouselRef} />
       <ControllerWrapper l={20} b={16}>
-        <Carousel.Controller
-          currentIndex={state.currentIndex}
-          max={images.length}
-          onPress={actions.changeCarouselPage}
-        />
+        <Carousel.Controller currentIndex={currentIndex} max={images.length} onPress={goTo} />
       </ControllerWrapper>
     </Container>
   );

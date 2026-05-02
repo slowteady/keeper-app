@@ -13,7 +13,7 @@ const mockUser = () => ({
 
 export const getAdoptListValue = (): CommunityAdoptListDto[] => {
   return Array.from({ length: 50 }, (_, id) => ({
-    id: fakerKO.string.uuid(),
+    id: fakerKO.number.int(),
     user: mockUser(),
     displayTime: id === 1 ? formatTimeAgo(fakerKO.date.recent()) : formatTimeAgo(fakerKO.date.past()),
     title: fakerKO.book.title(),

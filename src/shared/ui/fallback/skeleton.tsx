@@ -9,9 +9,9 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useTheme } from 'tamagui';
 
-export interface SkeletonProps {
+export type SkeletonProps = {
   style?: StyleProp<ViewStyle>;
-}
+};
 
 export const Skeleton = ({ style }: SkeletonProps) => {
   const animatedValue = useSharedValue(0);

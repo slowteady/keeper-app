@@ -4,31 +4,35 @@ import { forwardRef, useCallback, useMemo } from 'react';
 import { ActivityIndicator } from 'react-native';
 import { styled, Text, View, XStack } from 'tamagui';
 
-import { BottomSheet, BottomSheetSearchInput } from '@/shared/ui';
+import { BottomSheet } from '@/shared/ui';
 
 import { KakaoAddressDocumentDto } from '../model';
+import { BottomSheetSearchInput } from './bottom-sheet-search-input';
 
-export interface LocationBottomSheetProps {
+export type LocationBottomSheetProps = {
   addresses?: KakaoAddressDocumentDto[];
   onDismiss: () => void;
   onSearch: (text: string) => void;
   onSelectAddress: (address: KakaoAddressDocumentDto) => void;
   isPending: boolean;
-}
+};
 
 export const LocationBottomSheet = forwardRef<BottomSheetModal, LocationBottomSheetProps>((props, ref) => {
   const { addresses, onDismiss, onSearch, onSelectAddress, isPending } = props;
   const snapPoints = useMemo(() => [300], []);
 
-  const renderItem = useCallback(({ item }: ListRenderItemInfo<KakaoAddressDocumentDto>) => {
-    const { address_name } = item;
+  const renderItem = useCallback(
+    ({ item }: ListRenderItemInfo<KakaoAddressDocumentDto>) => {
+      const { address_name } = item;
 
-    return (
-      <ListButton onPress={() => onSelectAddress(item)}>
-        <ListText>{address_name}</ListText>
-      </ListButton>
-    );
-  }, []);
+      return (
+        <ListButton onPress={() => onSelectAddress(item)}>
+          <ListText>{address_name}</ListText>
+        </ListButton>
+      );
+    },
+    [onSelectAddress]
+  );
 
   return (
     <BottomSheet

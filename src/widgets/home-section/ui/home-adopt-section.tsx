@@ -2,11 +2,13 @@ import { FlashList, FlashListRef, ListRenderItemInfo } from '@shopify/flash-list
 import { useCallback, useEffect, useRef } from 'react';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
-import { ADOPT_CARD_IMAGE_SIZES, AdoptCard, AdoptCardSkeleton, makeAdoptOption } from '@/entities/adopt';
-import { AdoptItem } from '@/features/adopt';
+import { ADOPT_CARD_IMAGE_SIZES, ADOPT_OPTIONS, AdoptCard, AdoptCardSkeleton, AdoptItem } from '@/entities/adopt';
 import { ButtonGroup, Dropdown, ViewAllButton } from '@/shared/ui';
 
-export interface HomeAdoptSectionProps {
+const CARD_GAP = 12;
+const CARD_SNAP_INTERVAL = ADOPT_CARD_IMAGE_SIZES.medium + CARD_GAP;
+
+export type HomeAdoptSectionProps = {
   selectedFilter: string;
   selectedType: string;
   convertedData: AdoptItem[];
@@ -15,7 +17,7 @@ export interface HomeAdoptSectionProps {
   onGoList: () => void;
   onChangeFilter: (id: string) => void;
   onChangeType: (id: string) => void;
-}
+};
 
 export const HomeAdoptSection = ({
   selectedFilter,
@@ -46,7 +48,7 @@ export const HomeAdoptSection = ({
     if (scrollRef.current) {
       scrollRef.current.scrollToOffset({ animated: false, offset: 0 });
     }
-  }, [scrollRef]);
+  }, [selectedFilter, selectedType]);
 
   return (
     <>
@@ -57,7 +59,7 @@ export const HomeAdoptSection = ({
 
         <View mt={12}>
           <Dropdown
-            data={makeAdoptOption('FILTER')}
+            data={ADOPT_OPTIONS.FILTER}
             value={selectedFilter}
             onChange={(value) => onChangeFilter(value.id)}
             snapPoints={[200]}
@@ -66,7 +68,7 @@ export const HomeAdoptSection = ({
       </TitleContainer>
 
       <View px={20} mb={20}>
-        <ButtonGroup data={makeAdoptOption('ANIMAL')} id={selectedType} onChange={(id) => onChangeType(id)} />
+        <ButtonGroup data={ADOPT_OPTIONS.ANIMAL} id={selectedType} onChange={(id) => onChangeType(id)} />
       </View>
 
       <FlashList
@@ -75,9 +77,10 @@ export const HomeAdoptSection = ({
         keyExtractor={({ id }, idx) => `${id}-${idx}`}
         renderItem={renderItem}
         horizontal
+        snapToInterval={CARD_SNAP_INTERVAL}
         decelerationRate="fast"
         showsHorizontalScrollIndicator={false}
-        ItemSeparatorComponent={() => <View width={12} />}
+        ItemSeparatorComponent={() => <View width={CARD_GAP} />}
         contentContainerStyle={{ minHeight: 350 }}
         style={{ paddingLeft: 20 }}
         ListEmptyComponent={<EmptyComponent isLoading={isLoading} />}

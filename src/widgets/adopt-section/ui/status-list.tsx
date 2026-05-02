@@ -1,10 +1,10 @@
 import { styled, Text, XStack } from 'tamagui';
 
-import { Question, XMark, YMark } from '../icons/solid';
+import { Question, XMark, YMark } from '@/shared/ui/icons/solid';
 
-export interface StatusListProps {
+export type StatusListProps = {
   data: { label: string; status: string | 'NONE' }[];
-}
+};
 
 export const StatusList = ({ data }: StatusListProps) => {
   return (

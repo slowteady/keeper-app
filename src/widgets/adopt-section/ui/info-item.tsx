@@ -1,10 +1,10 @@
 import { styled, Text, XStack, YStack } from 'tamagui';
 
-export interface InfoItemProps {
+export type InfoItemProps = {
   label: string;
   subLabel?: string;
   value: string;
-}
+};
 
 export const InfoItem = ({ label, subLabel, value }: InfoItemProps) => {
   return (

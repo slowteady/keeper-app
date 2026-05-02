@@ -2,27 +2,32 @@ import { RelativePathString, router } from 'expo-router';
 import { Linking } from 'react-native';
 import { styled, Text, View, YStack } from 'tamagui';
 
-export interface LinkProps {
+import { logger } from '@/shared/lib';
+
+export type LinkProps = {
   url: string;
   text: string;
-}
+};
 
 export const Link = ({ url, text }: LinkProps) => {
-  const handlePress = () => {
-    if (isExternal(url)) {
-      Linking.openURL(url);
-    } else {
-      router.push(url as RelativePathString);
+  const handlePress = async () => {
+    try {
+      if (isExternal(url)) {
+        await Linking.openURL(url);
+      } else {
+        router.push(url as RelativePathString);
+      }
+    } catch (err) {
+      logger.error(err);
     }
   };
 
   return (
     <View onPress={handlePress} hitSlop={12}>
       <YStack self="flex-start" gap={0.5}>
-        <Text fontSize={16} fontWeight="700" color="#707070">
+        <Text fontSize={16} fontWeight="700" color="$black650">
           {text}
         </Text>
-
         <Divider />
       </YStack>
     </View>
@@ -33,5 +38,5 @@ const isExternal = (url: string) => url.startsWith('http://') || url.startsWith(
 
 const Divider = styled(View, {
   height: 1.4,
-  bg: '#707070'
+  bg: '$black650'
 });

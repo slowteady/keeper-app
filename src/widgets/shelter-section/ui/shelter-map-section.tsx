@@ -5,22 +5,22 @@ import { View } from 'tamagui';
 import { DistanceIndicator, ShelterCountDto, ShelterDto, ShelterMap } from '@/entities/shelter';
 import { CameraParams } from '@/shared/model';
 
-export interface ShelterMapSectionProps {
-  hasLocationStatus: boolean;
+export type ShelterMapSectionProps = {
+  isGranted: boolean;
   data?: ShelterDto[];
   counts?: ShelterCountDto[];
   camera?: Camera;
   onRefetch: (params?: CameraParams) => void;
   onTapMarker?: (data: ShelterDto) => void;
-  onInitialized: () => void;
+  onMapInitialized: () => void;
   selectedMarkerId?: string;
-}
+};
 
 export const ShelterMapSection = forwardRef<NaverMapViewRef, ShelterMapSectionProps>(
-  ({ hasLocationStatus, data, counts, camera, onRefetch, onTapMarker, onInitialized, selectedMarkerId }, ref) => {
+  ({ isGranted, data, counts, camera, onRefetch, onTapMarker, onMapInitialized, selectedMarkerId }, ref) => {
     return (
       <>
-        {hasLocationStatus && (
+        {isGranted && (
           <View mb={16}>
             <DistanceIndicator value={counts ?? []} />
           </View>
@@ -29,12 +29,12 @@ export const ShelterMapSection = forwardRef<NaverMapViewRef, ShelterMapSectionPr
         <View>
           <ShelterMap
             ref={ref}
-            hasLocation={hasLocationStatus}
-            data={data || []}
+            hasLocation={isGranted}
+            data={data}
             camera={camera}
             onRefetch={onRefetch}
             onTapMarker={onTapMarker}
-            onInitialized={onInitialized}
+            onInitialized={onMapInitialized}
             selectedMarkerId={selectedMarkerId}
             isShowCompass={false}
             minZoom={10}

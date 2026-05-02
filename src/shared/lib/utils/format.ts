@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 /**
  * - 보호소 운영시간으로 변환
  */
-export const formatTimeAMPM = (time: string) => {
+export const formatTimeAMPM = (time: string | null | undefined) => {
   if (!time) return null;
 
   const parsedTime = dayjs(time, 'HH:mm');

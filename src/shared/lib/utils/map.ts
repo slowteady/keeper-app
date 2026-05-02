@@ -1,43 +1,20 @@
-import { Camera } from '@mj-studio/react-native-naver-map';
-
 type Region = {
   latitude: number;
   longitude: number;
   latitudeDelta: number;
   longitudeDelta: number;
 };
-/**
- * - region 정보(위도/경도/Delta)를 받아,
- * 지도 중심 ~ 모서리까지의 대략적인 반경(km)을 계산합니다.
- * 소수점 없이 반올림하여 정수로 반환합니다.
- */
+
+const KM_PER_DEGREE = 111;
+/** 뷰포트 대비 검색 영역 비율 (가장자리 마커 누락 방지용 80% 축소) */
+const VIEWPORT_RATIO = 0.8;
+
 export const calcMapRadiusKm = (region: Region) => {
-  const kmPerLat = 0.8 * 111;
-  const kmPerLng = 0.8 * 111 * Math.cos((region.latitude * Math.PI) / 180);
+  const kmPerLat = VIEWPORT_RATIO * KM_PER_DEGREE;
+  const kmPerLng = VIEWPORT_RATIO * KM_PER_DEGREE * Math.cos((region.latitude * Math.PI) / 180);
 
-  // region 내 delta 값(도 단위)을 km로 환산
-  const deltaLatKm = region.latitudeDelta * kmPerLat;
-  const deltaLngKm = region.longitudeDelta * kmPerLng;
+  const halfLatKm = (region.latitudeDelta * kmPerLat) / 2;
+  const halfLngKm = (region.longitudeDelta * kmPerLng) / 2;
 
-  // 지도 중심에서 사각형의 가로·세로 절반
-  const halfLatKm = deltaLatKm / 2;
-  const halfLngKm = deltaLngKm / 2;
-
-  // 피타고라스 정리를 사용해 대각선 절반(=반경)을 구함
-  const radiusKm = Math.sqrt(halfLatKm ** 2 + halfLngKm ** 2);
-
-  // 소수점 버리고 정수로 반내림
-  return Math.floor(radiusKm);
-};
-
-const EPSILON_CAMERA_COORD = 0.001;
-
-/**
- * 카메라가 변경되었는지 판단합니다.
- */
-export const isCameraChanged = (prevCamera: Camera, newCamera: Camera) => {
-  return (
-    Math.abs(prevCamera.latitude - newCamera.latitude) > EPSILON_CAMERA_COORD ||
-    Math.abs(prevCamera.longitude - newCamera.longitude) > EPSILON_CAMERA_COORD
-  );
+  return Math.floor(Math.sqrt(halfLatKm ** 2 + halfLngKm ** 2));
 };

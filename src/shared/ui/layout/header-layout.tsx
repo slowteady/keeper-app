@@ -1,16 +1,15 @@
 import { ReactNode } from 'react';
-import { Platform } from 'react-native';
 import { StackProps, styled, XStack, YStack } from 'tamagui';
 
 import { useLayout } from '@/shared/model';
 
-export interface HeaderLayoutProps {
+export type HeaderLayoutProps = {
   showShadow?: boolean;
   ContainerProps?: StackProps;
   left?: ReactNode;
   center?: ReactNode;
   right?: ReactNode;
-}
+};
 
 export const HeaderLayout = ({ showShadow = true, ContainerProps, left, center, right }: HeaderLayoutProps) => {
   const { top } = useLayout();
@@ -18,16 +17,15 @@ export const HeaderLayout = ({ showShadow = true, ContainerProps, left, center, 
   return (
     <HeaderContainer showShadow={showShadow} pt={top} {...ContainerProps}>
       <RowContainer>
-        {left && left}
-        {center ? center : <Spacer />}
-        {right && right}
+        {left}
+        {center ?? <Spacer />}
+        {right}
       </RowContainer>
     </HeaderContainer>
   );
 };
 
 const HeaderContainer = styled(YStack, {
-  position: 'sticky',
   bg: '$white900',
   px: 20,
   pb: 10,
@@ -36,17 +34,7 @@ const HeaderContainer = styled(YStack, {
   variants: {
     showShadow: {
       true: {
-        ...Platform.select({
-          ios: {
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.14,
-            shadowRadius: 4
-          },
-          android: {
-            elevation: 4
-          }
-        })
+        boxShadow: '0px 2px 4px rgba(0,0,0,0.14)'
       },
       false: {}
     }

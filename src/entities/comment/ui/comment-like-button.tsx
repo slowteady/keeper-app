@@ -1,10 +1,10 @@
 import { ThumbsUp } from '@tamagui/lucide-icons';
 import { styled, Text, XStack } from 'tamagui';
 
-export interface CommentLikeButtonProps {
+export type CommentLikeButtonProps = {
   likeByMe: boolean;
   onPress?: () => void;
-}
+};
 
 export const CommentLikeButton = ({ likeByMe, onPress }: CommentLikeButtonProps) => {
   const iconColor = likeByMe ? '$white900' : '$black500';

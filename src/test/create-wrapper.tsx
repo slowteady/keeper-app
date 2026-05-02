@@ -1,5 +1,9 @@
+import { NavigationContainer } from '@react-navigation/native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { type ReactNode } from 'react';
+import { TamaguiProvider } from 'tamagui';
+
+import { config } from '../../tamagui.config';
 
 export const createTestQueryClient = () =>
   new QueryClient({
@@ -12,6 +16,10 @@ export const createTestQueryClient = () =>
 export const createWrapper = () => {
   const queryClient = createTestQueryClient();
   return ({ children }: { children: ReactNode }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <TamaguiProvider config={config} defaultTheme="light">
+      <NavigationContainer>
+        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      </NavigationContainer>
+    </TamaguiProvider>
   );
 };

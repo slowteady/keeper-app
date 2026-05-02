@@ -3,10 +3,10 @@ import { styled, Text, View, XStack } from 'tamagui';
 
 import { SearchInput } from '@/shared/ui';
 
-interface ShelterListHeaderSectionProps {
+type ShelterListHeaderSectionProps = {
   onSearch: (text: string) => void;
   onPressLocation: () => void;
-}
+};
 
 export const ShelterListHeaderSection = ({ onSearch, onPressLocation }: ShelterListHeaderSectionProps) => {
   const [searchValue, setSearchValue] = useState('');

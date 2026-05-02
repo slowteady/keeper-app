@@ -8,15 +8,24 @@ import {
   saveRefreshToken
 } from '../lib/utils/handle-token';
 
-interface InterceptorConfig {
+type InterceptorConfig = {
   refreshFn: (refreshToken: string) => Promise<{ accessToken: string; refreshToken: string }>;
   onRefreshFailed?: () => void;
-}
+};
 
 let refreshTokenPromise: Promise<string> | null = null;
+let requestInterceptorId: number | null = null;
+let responseInterceptorId: number | null = null;
 
 export const setupInterceptor = (authApi: AxiosInstance, config: InterceptorConfig) => {
-  authApi.interceptors.request.use(
+  if (requestInterceptorId !== null) {
+    authApi.interceptors.request.eject(requestInterceptorId);
+  }
+  if (responseInterceptorId !== null) {
+    authApi.interceptors.response.eject(responseInterceptorId);
+  }
+
+  requestInterceptorId = authApi.interceptors.request.use(
     async (reqConfig) => {
       const token = await getAccessToken();
       if (token && reqConfig.headers) {
@@ -27,7 +36,7 @@ export const setupInterceptor = (authApi: AxiosInstance, config: InterceptorConf
     (err) => Promise.reject(err)
   );
 
-  authApi.interceptors.response.use(
+  responseInterceptorId = authApi.interceptors.response.use(
     (response) => response,
     async (error: AxiosError) => {
       const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
@@ -46,24 +55,26 @@ export const setupInterceptor = (authApi: AxiosInstance, config: InterceptorConf
 
         const newAccessToken = await refreshTokenPromise;
 
-        authApi.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
         originalRequest.headers = {
           ...originalRequest.headers,
           Authorization: `Bearer ${newAccessToken}`
         };
 
         return authApi(originalRequest);
-      } catch {
+      } catch (refreshError) {
         const authError = {
           ...error,
           isAuthError: true,
-          message: '인증이 만료되었습니다. 다시 로그인해주세요.'
+          message: '인증이 만료되었습니다. 다시 로그인해주세요.',
+          cause: refreshError
         };
         return Promise.reject(authError);
       }
     }
   );
 };
+
+const REFRESH_TIMEOUT = 10000;
 
 async function refreshAccessToken(config: InterceptorConfig): Promise<string> {
   try {
@@ -74,14 +85,24 @@ async function refreshAccessToken(config: InterceptorConfig): Promise<string> {
       throw new Error('RefreshToken이 없습니다');
     }
 
-    const tokens = await config.refreshFn(refreshToken);
+    const timeoutPromise = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error('토큰 갱신 타임아웃')), REFRESH_TIMEOUT)
+    );
+
+    const tokens = await Promise.race([config.refreshFn(refreshToken), timeoutPromise]);
 
     await Promise.all([saveAccessToken(tokens.accessToken), saveRefreshToken(tokens.refreshToken)]);
 
     return tokens.accessToken;
   } catch (err) {
-    await removeToken();
-    config.onRefreshFailed?.();
+    const isAuthError = err instanceof AxiosError && err.response?.status === 401;
+    const isNoToken = err instanceof Error && err.message === 'RefreshToken이 없습니다';
+
+    if (isAuthError || isNoToken) {
+      await removeToken();
+      config.onRefreshFailed?.();
+    }
+
     throw err;
   } finally {
     refreshTokenPromise = null;

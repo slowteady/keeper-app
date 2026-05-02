@@ -1,16 +1,17 @@
 import { useMemo } from 'react';
 import { XStack } from 'tamagui';
 
-import { InfoItem, StatusList } from '@/shared/ui';
+import { InfoItem } from './info-item';
+import { StatusList } from './status-list';
 
-export interface AdoptDetailInfoSectionProps {
+export type AdoptDetailInfoSectionProps = {
   age: string;
   gender: string;
   weight: string;
   healthCheck: string;
   neuterYn: string;
   vaccinationCheck: string;
-}
+};
 
 export const AdoptDetailInfoSection = ({
   age,
@@ -32,7 +33,7 @@ export const AdoptDetailInfoSection = ({
   return (
     <>
       <XStack gap={8} justify="space-between" flex={1} mb={12}>
-        <InfoItem label="나이" value={age} subLabel="년생" />
+        <InfoItem label="나이" value={age} />
         <InfoItem label="성별" value={gender} />
         <InfoItem label="크기/몸무게" value={weight} />
       </XStack>

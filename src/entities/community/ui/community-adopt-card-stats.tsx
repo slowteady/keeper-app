@@ -4,11 +4,11 @@ import { Comment, Eye, LikeHeart } from '@/shared/ui/icons/outline';
 
 import { convertCountOver999 } from '../lib';
 
-export interface CommunityAdoptCardStatsProps {
+export type CommunityAdoptCardStatsProps = {
   comment: number;
   like: number;
   view: number;
-}
+};
 
 export const CommunityAdoptCardStats = ({ comment, like, view }: CommunityAdoptCardStatsProps) => {
   const { black500 } = useTheme();

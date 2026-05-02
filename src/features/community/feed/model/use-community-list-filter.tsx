@@ -3,22 +3,22 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useMemo } from 'react';
 import { GestureResponderEvent } from 'react-native';
 
-import { makeAdoptOption } from '@/entities/adopt';
+import { ADOPT_OPTIONS } from '@/entities/adopt';
 import { COMMUNITY_LIST_FILTER } from '@/entities/community';
 import { parseQueryParam } from '@/shared/lib';
 import { AnimalTypeDto } from '@/shared/model';
 import { BottomSheetMenu, useBottomSheet } from '@/shared/ui';
 
-export interface CommunityListFilterSchema {
+export type CommunityListFilterSchema = {
   animalType: AnimalTypeDto;
   filter: (typeof COMMUNITY_LIST_FILTER)[number]['id'];
-}
+};
 
 export const useCommunityListFilter = () => {
   const params = useLocalSearchParams<Partial<CommunityListFilterSchema>>();
 
   const selectedAnimalType = useMemo(
-    () => parseQueryParam(makeAdoptOption('ANIMAL'), makeAdoptOption('ANIMAL')[0].id, params.animalType),
+    () => parseQueryParam(ADOPT_OPTIONS.ANIMAL, ADOPT_OPTIONS.ANIMAL[0].id, params.animalType),
     [params.animalType]
   );
 

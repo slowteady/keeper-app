@@ -3,12 +3,11 @@ import { forwardRef } from 'react';
 import { RefreshControl } from 'react-native';
 import { Text, View, XStack } from 'tamagui';
 
-import { ADOPT_CARD_IMAGE_SIZES, AdoptCardSkeleton } from '@/entities/adopt';
-import { AdoptItem } from '@/features/adopt';
+import { ADOPT_CARD_IMAGE_SIZES, AdoptCardSkeleton, AdoptItem } from '@/entities/adopt';
 import { useListRefreshing } from '@/shared/model';
 import { FeedNodata } from '@/shared/ui';
 
-export interface AdoptListSectionProps {
+export type AdoptListSectionProps = {
   data: AdoptItem[];
   header?: React.ReactElement;
   footer?: React.ReactElement;
@@ -19,7 +18,7 @@ export interface AdoptListSectionProps {
   onScroll?: FlashListProps<AdoptItem>['onScroll'];
   contentContainerStyle?: FlashListProps<AdoptItem>['contentContainerStyle'];
   emptyComponentVariant?: 'feed' | 'list';
-}
+};
 
 export const AdoptListSection = forwardRef<FlashListRef<AdoptItem>, AdoptListSectionProps>(
   (
@@ -46,7 +45,7 @@ export const AdoptListSection = forwardRef<FlashListRef<AdoptItem>, AdoptListSec
         renderItem={renderItem}
         onScroll={onScroll}
         numColumns={2}
-        keyExtractor={({ id }, i) => `${id}-${i}`}
+        keyExtractor={({ id }) => id}
         showsVerticalScrollIndicator={false}
         decelerationRate="fast"
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}

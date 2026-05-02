@@ -24,7 +24,7 @@ export const BottomSheet = forwardRef<BottomSheetModal, BottomSheetLayoutProps>(
   return (
     <BottomSheetModal
       ref={ref}
-      index={1}
+      index={0}
       animationConfigs={{ duration: 100 }}
       handleIndicatorStyle={{ width: 48, borderRadius: 30, backgroundColor: white800.val }}
       style={{ paddingHorizontal: 24 }}
@@ -32,9 +32,7 @@ export const BottomSheet = forwardRef<BottomSheetModal, BottomSheetLayoutProps>(
       backdropComponent={renderBackdrop}
       {...rest}
     >
-      <BottomSheetView style={{ display: 'flex', flexDirection: 'column', flex: 1, paddingTop: 12 }}>
-        {children}
-      </BottomSheetView>
+      <BottomSheetView style={{ flexDirection: 'column', flex: 1, paddingTop: 12 }}>{children}</BottomSheetView>
     </BottomSheetModal>
   );
 });

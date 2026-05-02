@@ -1,4 +1,3 @@
-import { useCallback } from 'react';
 import { AnimatePresence, Input, InputProps, SizeTokens, styled, View, XStack } from 'tamagui';
 
 import { Cancel } from '../icons/outline';
@@ -18,13 +17,6 @@ export const SEARCH_INPUT_SIZE = {
 export const SearchInput = ({ size = 'MEDIUM', value, onTextChange, onSubmit, ...props }: SearchInputProps) => {
   const hasValue = value && value.length > 0;
 
-  const handleTextChange = useCallback(
-    (text: string) => {
-      onTextChange?.(text);
-    },
-    [onTextChange]
-  );
-
   return (
     <XStack items="center">
       <StyledInput
@@ -35,7 +27,7 @@ export const SearchInput = ({ size = 'MEDIUM', value, onTextChange, onSubmit, ..
         returnKeyType="search"
         pr={30}
         unstyled
-        onChangeText={handleTextChange}
+        onChangeText={onTextChange}
         onSubmitEditing={(e) => onSubmit?.(e.nativeEvent.text)}
         {...props}
       />
@@ -43,7 +35,7 @@ export const SearchInput = ({ size = 'MEDIUM', value, onTextChange, onSubmit, ..
       <ButtonContainer r={0} gap={12} px={20}>
         <AnimatePresence>
           {hasValue && (
-            <ClearButton onPress={() => handleTextChange('')}>
+            <ClearButton onPress={() => onTextChange?.('')}>
               <Cancel />
             </ClearButton>
           )}

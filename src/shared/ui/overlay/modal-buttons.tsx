@@ -1,13 +1,13 @@
 import { styled, Text, View, XStack } from 'tamagui';
 
-export interface ModalButtonsProps {
+export type ModalButtonsProps = {
   onPressSecondary: () => void;
   onPressPrimary: () => void;
   text: {
     primary: string;
     secondary: string;
   };
-}
+};
 
 export const ModalButtons = ({ onPressSecondary, onPressPrimary, text }: ModalButtonsProps) => {
   return (

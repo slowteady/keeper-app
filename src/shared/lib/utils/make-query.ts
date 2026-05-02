@@ -1,10 +1,3 @@
-export const makeQueryString = (params: Record<string, any>) => {
-  return Object.entries(params)
-    .filter(([, value]) => value !== undefined && value !== null && value !== '')
-    .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`)
-    .join('&');
-};
-
 /**
  * 쿼리 파라미터 값 safety 파싱
  * @param list - 목록 데이터

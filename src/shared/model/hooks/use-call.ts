@@ -7,7 +7,7 @@ import { Platform } from 'react-native';
 export const useCall = () => {
   const { show } = useToastController();
 
-  const executeCopy = useCallback(
+  const copy = useCallback(
     async (tel: string) => {
       await Clipboard.setStringAsync(tel);
       show('전화번호를 복사했어요.', { customData: { status: 'success' } });
@@ -15,26 +15,24 @@ export const useCall = () => {
     [show]
   );
 
-  const executeCall = useCallback(
+  const call = useCallback(
     async (tel: string) => {
       const sanitizedNumber = tel.replace(/[^0-9]/g, '').trim();
       const telLink = `tel:${sanitizedNumber}`;
 
       try {
         if (Platform.OS === 'ios' && Platform.isPad) {
-          await executeCopy(sanitizedNumber);
+          await copy(sanitizedNumber);
           return;
         }
 
         await Linking.openURL(telLink);
       } catch {
-        await executeCopy(sanitizedNumber);
+        await copy(sanitizedNumber);
       }
     },
-    [executeCopy]
+    [copy]
   );
 
-  return {
-    actions: { executeCopy, executeCall }
-  };
+  return { copy, call };
 };

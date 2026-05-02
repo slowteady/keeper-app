@@ -1,10 +1,10 @@
 import { Avatar, styled, Text, XStack } from 'tamagui';
 
-export interface CommunityAdoptCardHeaderProps {
+export type CommunityAdoptCardHeaderProps = {
   image: string;
   nickname: string;
   displayTime: string;
-}
+};
 
 export const CommunityAdoptCardHeader = ({ image, nickname, displayTime }: CommunityAdoptCardHeaderProps) => {
   return (

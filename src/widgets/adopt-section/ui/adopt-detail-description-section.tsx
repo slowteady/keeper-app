@@ -3,19 +3,19 @@ import { styled, Text, View, XStack, YStack } from 'tamagui';
 
 import { Link } from '@/shared/ui';
 
-export interface Shelter {
+type Shelter = {
   id: string;
   time: string;
   person: string;
   address: string;
   name: string;
-}
+};
 
-export interface AdoptDetailDescriptionSectionProps {
+export type AdoptDetailDescriptionSectionProps = {
   specialMark: string;
   shelter?: Shelter;
   hasCallNumber?: boolean;
-}
+};
 
 export const AdoptDetailDescriptionSection = ({
   specialMark,

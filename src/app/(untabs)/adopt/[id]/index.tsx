@@ -34,7 +34,7 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
 
   const { bottom } = useLayout();
 
-  const { data: adopt } = useAdopt({ id });
+  const { adopt } = useAdopt({ id });
   const { shelterData: shelter, hasCallNumber } = useShelter({ id: adopt.shelterId });
 
   return (

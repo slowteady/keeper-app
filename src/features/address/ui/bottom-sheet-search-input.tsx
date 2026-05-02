@@ -1,22 +1,20 @@
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { useCallback, useState } from 'react';
-import { useSharedValue } from 'react-native-reanimated';
 import { AnimatePresence, styled, useTheme, View, XStack } from 'tamagui';
 
 import { Cancel } from '@/shared/ui/icons/outline';
 import { Search } from '@/shared/ui/icons/solid';
 
-export interface BottomSheetSearchInputProps {
+export type BottomSheetSearchInputProps = {
   onSubmit: (text: string) => void;
   placeholder?: string;
-}
+};
 
 export const BottomSheetSearchInput = ({ onSubmit, placeholder }: BottomSheetSearchInputProps) => {
   const [isFocus, setIsFocus] = useState(false);
   const [value, setValue] = useState('');
 
   const { black500, black900, white600 } = useTheme();
-  const closeButtonOpacity = useSharedValue(0);
 
   const handleFocus = () => {
     setIsFocus(true);
@@ -32,16 +30,11 @@ export const BottomSheetSearchInput = ({ onSubmit, placeholder }: BottomSheetSea
 
   const handlePressReset = () => {
     setValue('');
-    closeButtonOpacity.value = 0;
   };
 
-  const handleChangeText = useCallback(
-    (text: string) => {
-      setValue(text);
-      closeButtonOpacity.value = text.length > 0 ? 1 : 0;
-    },
-    [closeButtonOpacity]
-  );
+  const handleChangeText = useCallback((text: string) => {
+    setValue(text);
+  }, []);
 
   const hasValue = value && value.length > 0;
 
