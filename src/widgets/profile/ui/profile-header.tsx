@@ -1,4 +1,3 @@
-import { router } from 'expo-router';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
 import { UserDto } from '@/entities/auth';
@@ -9,16 +8,11 @@ type ProfileHeaderProps = {
   user?: UserDto | null;
   isLoading: boolean;
   onLogout: () => void;
+  onLogin: () => void;
+  onAccount: () => void;
 };
 
-export const ProfileHeader = ({ user, isLoading, onLogout }: ProfileHeaderProps) => {
-  const navigateToLogin = () => {
-    router.push({
-      pathname: '/login',
-      params: { redirect: '/profile' }
-    });
-  };
-
+export const ProfileHeader = ({ user, isLoading, onLogout, onLogin, onAccount }: ProfileHeaderProps) => {
   return (
     <View px={20} mb={24} pt={40}>
       <XStack gap={16}>
@@ -26,7 +20,7 @@ export const ProfileHeader = ({ user, isLoading, onLogout }: ProfileHeaderProps)
           <Skeleton style={{ width: '100%', height: 72, borderRadius: 8 }} />
         ) : user ? (
           <>
-            <UserAvatar image={user.image} onPressAdd={navigateToLogin} />
+            <UserAvatar image={user.image} onPressAdd={onLogin} />
 
             <YStack flex={1}>
               <Text fontSize={20} fontWeight="500" color="$black900" mb={6}>
@@ -49,13 +43,7 @@ export const ProfileHeader = ({ user, isLoading, onLogout }: ProfileHeaderProps)
                 </Text>
               </LogButton>
 
-              <View
-                b={3}
-                r={6}
-                self="flex-end"
-                hitSlop={12}
-                onPress={() => router.push({ pathname: '/profile/account' })}
-              >
+              <View b={3} r={6} self="flex-end" hitSlop={12} onPress={onAccount}>
                 <Text fontSize={13} fontWeight="600" color="$white600">
                   계정관리
                 </Text>
@@ -64,7 +52,7 @@ export const ProfileHeader = ({ user, isLoading, onLogout }: ProfileHeaderProps)
           </>
         ) : (
           <XStack gap={16} flex={1}>
-            <EmptyAvatar onPress={navigateToLogin} />
+            <EmptyAvatar onPress={onLogin} />
             <YStack gap={12} flex={1}>
               <Text fontSize={20} fontWeight="500" color="$black900" lineHeight={22}>
                 반갑습니다 :)
@@ -75,7 +63,7 @@ export const ProfileHeader = ({ user, isLoading, onLogout }: ProfileHeaderProps)
             </YStack>
 
             <View>
-              <LogButton onPress={navigateToLogin}>
+              <LogButton onPress={onLogin}>
                 <Text fontSize={13} fontWeight="600" color="$black600">
                   로그인
                 </Text>

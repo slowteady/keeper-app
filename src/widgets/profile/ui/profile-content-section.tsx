@@ -1,15 +1,13 @@
 import { ChevronRight } from '@tamagui/lucide-icons';
-import * as Application from 'expo-application';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
-import { useReview, useShare } from '@/shared/model';
+type ProfileContentSectionProps = {
+  version: string | null;
+  onReview: () => void;
+  onShare: () => void;
+};
 
-export const ProfileContentSection = () => {
-  const version = Application.nativeApplicationVersion;
-
-  const { share } = useShare();
-  const { promptReview } = useReview();
-
+export const ProfileContentSection = ({ version, onReview, onShare }: ProfileContentSectionProps) => {
   return (
     <View px={20} mb={16}>
       <YStack px={16} py={20} bg="$white850" rounded={10}>
@@ -19,7 +17,7 @@ export const ProfileContentSection = () => {
             <SubTitle>따뜻한 리뷰는 운영에 큰 힘이됩니다.</SubTitle>
           </YStack>
 
-          <XStack items="center" gap={2} onPress={promptReview} hitSlop={10}>
+          <XStack items="center" gap={2} onPress={onReview} hitSlop={10}>
             <Text fontSize={12} fontWeight="600" color="$black500" letterSpacing={-0.25}>
               바로가기
             </Text>
@@ -35,12 +33,7 @@ export const ProfileContentSection = () => {
             <SubTitle>ver. {version}</SubTitle>
           </YStack>
 
-          <XStack
-            items="center"
-            gap={2}
-            hitSlop={10}
-            onPress={() => share({ title: 'Keeper', desc: '유기동물들의 가족이 되어주세요' })}
-          >
+          <XStack items="center" gap={2} hitSlop={10} onPress={onShare}>
             <Text fontSize={12} fontWeight="600" color="$black500" letterSpacing={-0.25}>
               공유하기
             </Text>
