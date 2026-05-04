@@ -15,7 +15,7 @@ export const Menu = ({ icon, label, onPress, style }: MenuProps) => {
         {icon}
         <Label>{label}</Label>
       </XStack>
-      <ChevronRight size={21} color="$white600" />
+      <ChevronRight size={21} color="#ADB3AF" />
     </Container>
   );
 };

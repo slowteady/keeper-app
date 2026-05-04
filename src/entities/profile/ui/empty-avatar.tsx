@@ -5,7 +5,7 @@ export const EmptyAvatar = ({ onPress }: { onPress?: () => void }) => {
   return (
     <Container onPress={onPress}>
       <WhiteCircle>
-        <Plus size={18} color="$white600" strokeWidth={3} />
+        <Plus size={18} color="#D3D9D5" strokeWidth={3} />
       </WhiteCircle>
     </Container>
   );
@@ -16,6 +16,8 @@ const Container = styled(View, {
   height: 72,
   rounded: 8,
   bg: '$backgroundDefault',
+  borderWidth: 1,
+  borderColor: '$white600',
   items: 'center',
   justify: 'center'
 });

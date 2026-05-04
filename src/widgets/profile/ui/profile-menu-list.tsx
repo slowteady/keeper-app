@@ -5,7 +5,7 @@ import { Menu } from '@/shared/ui';
 
 type ProfileMenuListProps = {
   items: typeof MENU_ITEMS;
-  onSelect: (path: string) => void;
+  onSelect: (path: string, requireAuth: boolean) => void;
 };
 
 export const ProfileMenuList = ({ items, onSelect }: ProfileMenuListProps) => {
@@ -16,7 +16,7 @@ export const ProfileMenuList = ({ items, onSelect }: ProfileMenuListProps) => {
 
         return (
           <View key={key}>
-            <View px={20} py={16} onPress={() => onSelect(item.navigateTo)}>
+            <View px={20} py={16} onPress={() => onSelect(item.navigateTo, item.requireAuth)}>
               <Menu icon={<item.icon size={20} />} label={item.label} />
             </View>
 

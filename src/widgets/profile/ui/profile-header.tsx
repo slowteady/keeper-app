@@ -7,76 +7,70 @@ import { Skeleton } from '@/shared/ui';
 type ProfileHeaderProps = {
   user?: UserDto | null;
   isLoading: boolean;
-  onLogout: () => void;
   onLogin: () => void;
   onAccount: () => void;
+  onChangeProfileImage: () => void;
 };
 
-export const ProfileHeader = ({ user, isLoading, onLogout, onLogin, onAccount }: ProfileHeaderProps) => {
+export const ProfileHeader = ({ user, isLoading, onLogin, onAccount, onChangeProfileImage }: ProfileHeaderProps) => {
   return (
     <View px={20} mb={24} pt={40}>
-      <XStack gap={16}>
-        {isLoading ? (
-          <Skeleton style={{ width: '100%', height: 72, borderRadius: 8 }} />
-        ) : user ? (
-          <>
-            <UserAvatar image={user.image} onPressAdd={onLogin} />
+      {isLoading ? (
+        <XStack gap={16} items="flex-start">
+          <Skeleton style={{ width: 72, height: 72, borderRadius: 8 }} />
+          <YStack flex={1} gap={0} py={2}>
+            <XStack items="flex-start" justify="space-between" gap={12}>
+              <Skeleton style={{ width: 120, height: 20, borderRadius: 4 }} />
+              <Skeleton style={{ width: 50, height: 13, borderRadius: 4 }} />
+            </XStack>
+            <Skeleton style={{ width: 180, height: 13, borderRadius: 4, marginTop: 12 }} />
+          </YStack>
+        </XStack>
+      ) : user ? (
+        <XStack gap={16} items="flex-start">
+          <UserAvatar image={user.image} onPressAdd={onChangeProfileImage} onPressEdit={onChangeProfileImage} />
 
-            <YStack flex={1}>
-              <Text fontSize={20} fontWeight="500" color="$black900" mb={6}>
+          <YStack flex={1} gap={0} py={2}>
+            <XStack items="flex-start" justify="space-between" gap={12}>
+              <Text fontSize={20} lineHeight={20} fontWeight="500" color="$black900">
                 {user.nickname}님
               </Text>
-              <View px={6} py={4} mb={10} bg="$white850" rounded={3} self="baseline">
-                <Text fontSize={11} fontWeight="500" color="$black500" letterSpacing={-0.25}>
-                  일반회원
-                </Text>
-              </View>
-              <Text fontSize={13} fontWeight="500" color="$black500">
-                {user.email}
-              </Text>
-            </YStack>
-
-            <YStack gap={24}>
-              <LogButton onPress={onLogout}>
-                <Text fontSize={13} fontWeight="600" color="$black600">
-                  로그아웃
-                </Text>
-              </LogButton>
-
-              <View b={3} r={6} self="flex-end" hitSlop={12} onPress={onAccount}>
-                <Text fontSize={13} fontWeight="600" color="$white600">
+              <LoginButton onPress={onAccount}>
+                <Text fontSize={13} lineHeight={13} fontWeight="600" color="$black600">
                   계정관리
                 </Text>
-              </View>
-            </YStack>
-          </>
-        ) : (
-          <XStack gap={16} flex={1}>
-            <EmptyAvatar onPress={onLogin} />
-            <YStack gap={12} flex={1}>
-              <Text fontSize={20} fontWeight="500" color="$black900" lineHeight={22}>
-                반갑습니다 :)
+              </LoginButton>
+            </XStack>
+            <Text fontSize={13} lineHeight={13} fontWeight="500" color="$black500">
+              {user.email}
+            </Text>
+          </YStack>
+        </XStack>
+      ) : (
+        <XStack gap={16} items="flex-start">
+          <EmptyAvatar onPress={onLogin} />
+          <YStack flex={1} gap={0} py={2}>
+            <XStack items="flex-start" justify="space-between" gap={12}>
+              <Text fontSize={20} lineHeight={20} fontWeight="500" color="$black900">
+                반갑습니다:)
               </Text>
-              <Text fontSize={13} fontWeight="500" color="$black500" letterSpacing={-0.25}>
-                로그인 후 이용 가능해요
-              </Text>
-            </YStack>
-
-            <View>
-              <LogButton onPress={onLogin}>
-                <Text fontSize={13} fontWeight="600" color="$black600">
+              <LoginButton onPress={onLogin}>
+                <Text fontSize={13} lineHeight={13} fontWeight="600" color="$black600">
                   로그인
                 </Text>
-              </LogButton>
-            </View>
-          </XStack>
-        )}
-      </XStack>
+              </LoginButton>
+            </XStack>
+            <Text fontSize={13} lineHeight={13} fontWeight="500" color="$black500" letterSpacing={-0.39}>
+              로그인 후 이용 가능해요
+            </Text>
+          </YStack>
+        </XStack>
+      )}
     </View>
   );
 };
 
-const LogButton = styled(View, {
+const LoginButton = styled(View, {
   borderWidth: 1,
   borderColor: '$white600',
   rounded: 34,
