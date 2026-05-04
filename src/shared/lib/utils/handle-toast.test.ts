@@ -1,52 +1,38 @@
-import { globalToast, setToastRef } from './handle-toast';
+import { toast as sonnerToast } from 'sonner-native';
+
+import { globalToast } from './handle-toast';
+
+jest.mock('sonner-native', () => ({
+  toast: { custom: jest.fn() }
+}));
+
+const customMock = sonnerToast.custom as jest.Mock;
 
 describe('handle-toast', () => {
-  afterEach(() => {
-    setToastRef(() => {});
+  beforeEach(() => {
+    customMock.mockClear();
   });
 
-  it('globalToast does nothing when ref is not set', () => {
-    // setToastRef 호출 전이라 에러 없이 무시되어야 함
-    expect(() => globalToast('test')).not.toThrow();
-  });
-
-  it('globalToast calls registered show function with message', () => {
-    const mockShow = jest.fn();
-    setToastRef(mockShow);
-
+  it('globalToast renders ToastContent without status', () => {
     globalToast('세션이 만료되었어요.');
 
-    expect(mockShow).toHaveBeenCalledWith('세션이 만료되었어요.', undefined);
+    expect(customMock).toHaveBeenCalledTimes(1);
+    const [element, options] = customMock.mock.calls[0];
+    expect(element.props).toMatchObject({ message: '세션이 만료되었어요.', status: undefined });
+    expect(options).toEqual({ duration: 2000 });
   });
 
-  it('globalToast passes status as customData', () => {
-    const mockShow = jest.fn();
-    setToastRef(mockShow);
-
+  it('globalToast renders ToastContent with fail status', () => {
     globalToast('실패했어요.', 'fail');
 
-    expect(mockShow).toHaveBeenCalledWith('실패했어요.', { customData: { status: 'fail' } });
+    const [element] = customMock.mock.calls[0];
+    expect(element.props).toMatchObject({ message: '실패했어요.', status: 'fail' });
   });
 
-  it('globalToast passes success status', () => {
-    const mockShow = jest.fn();
-    setToastRef(mockShow);
-
+  it('globalToast renders ToastContent with success status', () => {
     globalToast('성공했어요.', 'success');
 
-    expect(mockShow).toHaveBeenCalledWith('성공했어요.', { customData: { status: 'success' } });
-  });
-
-  it('setToastRef replaces previous ref', () => {
-    const firstShow = jest.fn();
-    const secondShow = jest.fn();
-
-    setToastRef(firstShow);
-    setToastRef(secondShow);
-
-    globalToast('test');
-
-    expect(firstShow).not.toHaveBeenCalled();
-    expect(secondShow).toHaveBeenCalledWith('test', undefined);
+    const [element] = customMock.mock.calls[0];
+    expect(element.props).toMatchObject({ message: '성공했어요.', status: 'success' });
   });
 });

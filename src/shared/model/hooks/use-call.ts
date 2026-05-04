@@ -1,19 +1,15 @@
-import { useToastController } from '@tamagui/toast';
 import * as Clipboard from 'expo-clipboard';
 import * as Linking from 'expo-linking';
 import { useCallback } from 'react';
 import { Platform } from 'react-native';
 
-export const useCall = () => {
-  const { show } = useToastController();
+import { globalToast } from '@/shared/lib';
 
-  const copy = useCallback(
-    async (tel: string) => {
-      await Clipboard.setStringAsync(tel);
-      show('전화번호를 복사했어요.', { customData: { status: 'success' } });
-    },
-    [show]
-  );
+export const useCall = () => {
+  const copy = useCallback(async (tel: string) => {
+    await Clipboard.setStringAsync(tel);
+    globalToast('전화번호를 복사했어요.', 'success');
+  }, []);
 
   const call = useCallback(
     async (tel: string) => {

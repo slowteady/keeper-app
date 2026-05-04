@@ -9,9 +9,10 @@ import { HeaderLayout } from './header-layout';
 
 export type NavigateHeaderProps = {
   text?: string;
+  hideHome?: boolean;
 };
 
-export const NavigateHeader = ({ text }: NavigateHeaderProps) => {
+export const NavigateHeader = ({ text, hideHome = false }: NavigateHeaderProps) => {
   const { black900 } = useTheme();
 
   const navigateToPage = useCallback(() => {
@@ -20,6 +21,10 @@ export const NavigateHeader = ({ text }: NavigateHeaderProps) => {
     } else {
       router.replace('/');
     }
+  }, []);
+
+  const goHome = useCallback(() => {
+    router.dismissTo('/(tabs)/home');
   }, []);
 
   const left = (
@@ -36,8 +41,10 @@ export const NavigateHeader = ({ text }: NavigateHeaderProps) => {
     </View>
   );
 
-  const right = (
-    <View onPress={() => router.replace('/')} hitSlop={10}>
+  const right = hideHome ? (
+    <View width={28} height={28} />
+  ) : (
+    <View onPress={goHome} hitSlop={10}>
       <Home width={28} height={28} color={black900.val} />
     </View>
   );

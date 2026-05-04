@@ -1,3 +1,4 @@
+export * from './current-route';
 export * from './format';
 export * from './handle-error';
 export * from './handle-sentry';

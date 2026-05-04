@@ -1,10 +1,9 @@
-import { Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { ReactNode } from 'react';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
-import { Spinner, styled, Text, XStack, YStack } from 'tamagui';
+import { ScrollView, Spinner, styled, Text, XStack, YStack } from 'tamagui';
 
+import { useCheckNickname } from '@/features/auth/check-nickname';
 import { BottomButton, TextInput } from '@/shared/ui';
-
-import { useCheckNickname } from '../model/use-check-nickname';
 
 export type NicknameFormProps = {
   title: string;
@@ -12,6 +11,8 @@ export type NicknameFormProps = {
   onSubmit: (nickname: string) => void;
   isPending?: boolean;
   initialValue?: string;
+  extraDisabled?: boolean;
+  children?: ReactNode;
 };
 
 export const NicknameForm = ({
@@ -19,7 +20,9 @@ export const NicknameForm = ({
   buttonText,
   onSubmit,
   isPending = false,
-  initialValue = ''
+  initialValue = '',
+  extraDisabled = false,
+  children
 }: NicknameFormProps) => {
   const { nickname, nicknameStatus, isChecking, isComplete, changeNickname, clearNickname } =
     useCheckNickname(initialValue);
@@ -32,12 +35,12 @@ export const NicknameForm = ({
     nicknameStatus.message
   );
 
-  const disabled = !isComplete || isChecking || isPending;
+  const disabled = !isComplete || isChecking || isPending || extraDisabled;
 
   return (
     <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <Container>
+      <Container>
+        <ScrollView keyboardShouldPersistTaps="handled">
           <SubContainer>
             <Text fontSize={26} lineHeight={36} fontWeight="600" mb={32}>
               {title}
@@ -46,20 +49,21 @@ export const NicknameForm = ({
               value={nickname}
               onChangeText={changeNickname}
               onPressReset={clearNickname}
-              placeholder="닉네임을 입력해주세요."
+              placeholder="닉네임"
               helperText={helperText}
               helperTextStatus={nicknameStatus.status}
-              maxLength={8}
+              maxLength={10}
             />
+            {children}
           </SubContainer>
+        </ScrollView>
 
-          <BottomButton onPress={() => onSubmit(nickname)} disabled={disabled} isLoading={isPending}>
-            <Text fontSize={15} fontWeight={600} lineHeight={18} color={disabled ? '$black500' : '$black900'}>
-              {buttonText}
-            </Text>
-          </BottomButton>
-        </Container>
-      </TouchableWithoutFeedback>
+        <BottomButton onPress={() => onSubmit(nickname)} disabled={disabled} isLoading={isPending}>
+          <Text fontSize={15} fontWeight={600} lineHeight={18} color={disabled ? '$black500' : '$black900'}>
+            {buttonText}
+          </Text>
+        </BottomButton>
+      </Container>
     </KeyboardAvoidingView>
   );
 };
@@ -70,7 +74,6 @@ const Container = styled(YStack, {
 });
 
 const SubContainer = styled(YStack, {
-  flex: 1,
   px: 20,
   pt: 48
 });

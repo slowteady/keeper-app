@@ -61,22 +61,15 @@ jest.mock('@react-navigation/native', () => ({
   usePreventRemove: jest.fn()
 }));
 
-jest.mock('@tamagui/toast', () => {
-  const { View, Text } = require('react-native');
-  return {
-    useToastController: jest.fn(() => ({
-      show: jest.fn(),
-      hide: jest.fn()
-    })),
-    useToastState: jest.fn(() => null),
-    ToastProvider: ({ children }: any) => children,
-    ToastViewport: () => null,
-    Toast: Object.assign(({ children }: any) => View({ children }), {
-      Title: ({ children }: any) => Text({ children }),
-      Description: ({ children }: any) => Text({ children })
-    })
-  };
-});
+jest.mock('sonner-native', () => ({
+  toast: {
+    custom: jest.fn(),
+    success: jest.fn(),
+    error: jest.fn(),
+    dismiss: jest.fn()
+  },
+  Toaster: () => null
+}));
 
 jest.mock('react-native-safe-area-context', () => ({
   useSafeAreaInsets: jest.fn(() => ({ top: 0, bottom: 0, left: 0, right: 0 })),

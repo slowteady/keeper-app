@@ -7,12 +7,11 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { initializeKakaoSDK } from '@react-native-kakao/core';
 import NaverLogin from '@react-native-seoul/naver-login';
 import * as Sentry from '@sentry/react-native';
-import { ToastProvider } from '@tamagui/toast';
 import { MutationCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { extend } from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useFonts } from 'expo-font';
-import { router, Stack } from 'expo-router';
+import { router, Stack, usePathname } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
@@ -20,12 +19,20 @@ import { Linking } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { Toaster } from 'sonner-native';
 import { TamaguiProvider } from 'tamagui';
 
 import { getRefresh } from '@/entities/auth';
 import { authApi, setupInterceptor } from '@/shared/api';
-import { clearUserContext, globalToast, logger, throwToErrorBoundary } from '@/shared/lib';
-import { BottomSheetProvider, ModalProvider, Toast } from '@/shared/ui';
+import {
+  clearUserContext,
+  getCurrentPathname,
+  globalToast,
+  logger,
+  setCurrentPathname,
+  throwToErrorBoundary
+} from '@/shared/lib';
+import { BottomSheetProvider, ModalProvider } from '@/shared/ui';
 
 import { config } from '../../tamagui.config';
 import AnimatedSplash from './_animated-splash';
@@ -99,7 +106,7 @@ const RootLayout = () => {
           clearUserContext();
           queryClient.removeQueries({ queryKey: ['auth'] });
           globalToast('세션이 만료되었어요. 다시 로그인해주세요.', 'fail');
-          setTimeout(() => router.replace('/login'), 100);
+          router.replace({ pathname: '/login', params: { redirect: getCurrentPathname() } });
         }
       });
 
@@ -132,12 +139,16 @@ const RootLayout = () => {
     const sub = Linking.addEventListener('url', ({ url }) => {
       if (url.includes('thirdPartyLoginResult')) {
         router.back();
-        return;
       }
     });
 
     return () => sub.remove();
   }, []);
+
+  const pathname = usePathname();
+  useEffect(() => {
+    setCurrentPathname(pathname);
+  }, [pathname]);
 
   if (!isAppReady) return null;
   if (!isAnimationDone) return <AnimatedSplash onFinish={() => setAnimationDone(true)} />;
@@ -153,11 +164,17 @@ const RootLayout = () => {
               <SafeAreaProvider>
                 <BottomSheetProvider>
                   <ModalProvider>
-                    <ToastProvider native={false} swipeDirection="up">
-                      <StatusBar style="dark" />
-                      <Toast />
-                      <Stack screenOptions={{ headerShown: false }} />
-                    </ToastProvider>
+                    <StatusBar style="dark" />
+                    <Stack screenOptions={{ headerShown: false }} />
+                    <Toaster
+                      position="top-center"
+                      duration={2000}
+                      swipeToDismissDirection="up"
+                      toastOptions={{
+                        toastContainerStyle: { paddingHorizontal: 20, width: '100%' },
+                        toastContentStyle: { width: '100%', padding: 0, backgroundColor: 'transparent' }
+                      }}
+                    />
                   </ModalProvider>
                 </BottomSheetProvider>
               </SafeAreaProvider>

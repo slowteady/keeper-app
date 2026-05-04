@@ -1,14 +1,13 @@
-import { useToastController } from '@tamagui/toast';
 import { useMutation } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 
 import { searchShelters, ShelterDto } from '@/entities/shelter';
+import { globalToast } from '@/shared/lib';
 
 import { useHomeShelter } from './use-home-shelter';
 
 export const useShelterMap = () => {
   const base = useHomeShelter();
-  const { show } = useToastController();
 
   const [searchResults, setSearchResults] = useState<ShelterDto[]>();
   const [reorderedShelter, setReorderedShelter] = useState<ShelterDto>();
@@ -58,7 +57,7 @@ export const useShelterMap = () => {
         {
           onSuccess: ({ data }) => {
             if (!data.data.length) {
-              show('검색 결과가 없어요.', { customData: { status: 'fail' } });
+              globalToast('검색 결과가 없어요.', 'fail');
               return;
             }
             setSearchResults(data.data);
@@ -67,7 +66,7 @@ export const useShelterMap = () => {
         }
       );
     },
-    [base.camera?.latitude, base.camera?.longitude, searchMutate, show]
+    [base.camera?.latitude, base.camera?.longitude, searchMutate]
   );
 
   return {

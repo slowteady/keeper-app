@@ -15,7 +15,7 @@ export const useCheckNickname = (initialValue: string = '') => {
   const [nickname, setNickname] = useState(initialValue);
   const [nicknameStatus, setNicknameStatus] = useState<NicknameStatus>({
     status: 'default',
-    message: '*기호, 특수문자 제외 8자 가능'
+    message: '*기호, 특수문자 제외 2~10자'
   });
 
   const debouncedNickname = useDebounceValue(nickname, 1000);
@@ -23,16 +23,14 @@ export const useCheckNickname = (initialValue: string = '') => {
   const { mutate } = useMutation({ mutationFn: checkNickname });
 
   const changeNickname = useCallback((nickname: string) => {
-    // 필터링: 특수문자 제거
     const filtered = nickname.replace(/[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z0-9]/g, '');
     setNickname(filtered);
 
-    // 유효한 값이면 상태 초기화 및 검사 시작
-    setIsChecking(true);
+    setIsChecking(filtered.length >= 2);
     setIsComplete(false);
     setNicknameStatus({
       status: 'default',
-      message: '*기호, 특수문자 제외 8자 가능'
+      message: '*기호, 특수문자 제외 2~10자'
     });
   }, []);
 
@@ -42,12 +40,12 @@ export const useCheckNickname = (initialValue: string = '') => {
     setIsComplete(false);
     setNicknameStatus({
       status: 'default',
-      message: '*기호, 특수문자 제외 8자 가능'
+      message: '*기호, 특수문자 제외 2~10자'
     });
   }, []);
 
   useEffect(() => {
-    if (debouncedNickname === '') {
+    if (debouncedNickname.length < 2) {
       setIsChecking(false);
       return;
     }

@@ -1,16 +1,17 @@
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import { useToastController } from '@tamagui/toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { isAvailableAsync } from 'expo-apple-authentication';
 import { Route, router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 
 import { authQueries, login, SocialLoginType } from '@/entities/auth';
-import { saveAccessToken, saveRefreshToken, setUserContext } from '@/shared/lib';
+import { globalToast, saveAccessToken, saveRefreshToken, setUserContext } from '@/shared/lib';
 
-const isTabRoute = (path: string) => {
-  const tabRoutes = ['/home', '/adopt', '/shelter', '/community', '/profile'];
-  return tabRoutes.some((route) => path.startsWith(route));
+import { useSetIsAuthenticated } from '../../lib/auth-state';
+
+const resolveRedirect = (redirect?: Route): Route | undefined => {
+  if (!redirect || redirect === '/login') return undefined;
+  return redirect;
 };
 
 export const useLogin = () => {
@@ -21,8 +22,8 @@ export const useLogin = () => {
 
   const { mutate, isPending } = useMutation({ mutationFn: login });
 
-  const { show } = useToastController();
   const queryClient = useQueryClient();
+  const setIsAuthenticated = useSetIsAuthenticated();
 
   useEffect(() => {
     (async () => {
@@ -50,7 +51,7 @@ export const useLogin = () => {
             const { accessToken, refreshToken, socialId, isNew, ...user } = data;
 
             if (isNew) {
-              router.replace({
+              router.push({
                 pathname: '/signup',
                 params: { socialType, socialId, redirect }
               });
@@ -60,28 +61,19 @@ export const useLogin = () => {
             await saveAccessToken(accessToken);
             await saveRefreshToken(refreshToken);
             setUserContext(user);
+
             queryClient.invalidateQueries({ queryKey: authQueries.all() });
-
-            setTimeout(() => {
-              show('로그인 되었어요.', { customData: { status: 'success' } });
-            }, 100);
-
-            const targetPath = redirect || '/';
-
-            if (isTabRoute(targetPath)) {
-              router.dismissAll();
-              router.replace(targetPath);
-            } else {
-              router.replace(targetPath);
-            }
+            globalToast('로그인 되었어요.', 'success');
+            router.replace(resolveRedirect(redirect) ?? '/');
+            setIsAuthenticated(true);
           },
           onError: () => {
-            show('로그인에 실패했어요. 다시 시도해주세요.', { customData: { status: 'fail' } });
+            globalToast('로그인에 실패했어요. 다시 시도해주세요.', 'fail');
           }
         }
       );
     },
-    [mutate, queryClient, show, redirect]
+    [mutate, queryClient, redirect, setIsAuthenticated]
   );
 
   return { login: handleLogin, isPending, isAppleAvailable, isGoogleAvailable };

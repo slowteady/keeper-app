@@ -40,6 +40,9 @@ export type CheckNicknameBodyDto = z.infer<typeof CheckNicknameBodySchema>;
 export const SignUpBodySchema = z.object({
   socialType: SocialLoginTypeSchema,
   socialId: z.string(),
-  nickname: z.string()
+  nickname: z.string(),
+  agreedTermsVersion: z.string(),
+  agreedPrivacyVersion: z.string(),
+  agreedAt: z.string()
 });
 export type SignUpBodyDto = z.infer<typeof SignUpBodySchema>;
