@@ -26,10 +26,7 @@ const Page = () => {
 
   const handleWithdraw = useCallback(() => {
     openWithdrawModal(() => {
-      deleteUser().then(() => {
-        router.dismissAll();
-        router.navigate('/(tabs)/profile');
-      });
+      deleteUser();
     });
   }, [openWithdrawModal, deleteUser]);
 

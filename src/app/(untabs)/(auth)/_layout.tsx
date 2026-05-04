@@ -1,5 +1,5 @@
 import { Slot } from 'expo-router';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Spinner, View, YStack } from 'tamagui';
 
 import { useCurrentUser, useLoginRequired } from '@/features/auth';
@@ -7,12 +7,15 @@ import { useCurrentUser, useLoginRequired } from '@/features/auth';
 const AuthLayout = () => {
   const { isLoading, isLoggedIn } = useCurrentUser();
   const { requireLogin } = useLoginRequired();
+  const triggeredRef = useRef(false);
 
   useEffect(() => {
-    if (!isLoading && !isLoggedIn) {
+    if (triggeredRef.current || isLoading) return;
+    triggeredRef.current = true;
+    if (!isLoggedIn) {
       requireLogin();
     }
-  }, [requireLogin, isLoading, isLoggedIn]);
+  }, [isLoading, isLoggedIn, requireLogin]);
 
   if (isLoading) {
     return (

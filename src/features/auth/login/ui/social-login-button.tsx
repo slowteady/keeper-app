@@ -1,5 +1,5 @@
 import { ComponentType, useState } from 'react';
-import { styled, Text, useTheme, View, XStack } from 'tamagui';
+import { ColorTokens, styled, Text, useTheme, XStack } from 'tamagui';
 
 import { socialAuth, SocialAuthResult } from '@/shared/api';
 import { logger } from '@/shared/lib';
@@ -9,7 +9,7 @@ type SocialLoginButtonProps = {
   label: string;
   icon: ComponentType<{ width: number; height: number; color?: string }>;
   bg: string;
-  textColor?: string;
+  textColor?: ColorTokens;
   iconColor?: string;
   borderColor?: string;
   onResponse: (result: SocialAuthResult) => void;
@@ -46,10 +46,8 @@ export const SocialLoginButton = ({
       onPress={handlePress}
       style={{ backgroundColor: bg, borderColor: borderColor || 'transparent', borderWidth: borderColor ? 1 : 0 }}
     >
-      <IconWrap>
-        <Icon width={22} height={22} color={iconColor ?? black900?.val} />
-      </IconWrap>
-      <Text fontSize={16} fontWeight="600" lineHeight={24} ml={18} flex={1} style={{ color: textColor }}>
+      <Icon width={22} height={22} color={iconColor ?? black900?.val} />
+      <Text fontSize={16} fontWeight="600" lineHeight={24} ml={10} color={textColor}>
         {label}
       </Text>
     </Container>
@@ -57,12 +55,9 @@ export const SocialLoginButton = ({
 };
 
 const Container = styled(XStack, {
-  position: 'relative',
   items: 'center',
   justify: 'center',
   width: '100%',
   py: 14,
   rounded: 5
 });
-
-const IconWrap = styled(View, { flexBasis: '30%', items: 'flex-end' });

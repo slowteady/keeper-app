@@ -3,7 +3,7 @@ import * as Application from 'expo-application';
 import { router } from 'expo-router';
 import { ScrollView, Separator, styled, Text, View, XStack, YStack } from 'tamagui';
 
-import { useCurrentUser } from '@/features/auth';
+import { useCurrentUser, useLogout } from '@/features/auth';
 import { useProfileImage } from '@/features/profile';
 import { usePermission } from '@/shared/model';
 import { Menu } from '@/shared/ui';
@@ -11,6 +11,7 @@ import { AccountHeader } from '@/widgets/profile';
 
 const Page = () => {
   const { user } = useCurrentUser();
+  const { logout } = useLogout();
   const { changeProfileImage } = useProfileImage();
   const { goSettingMenu } = usePermission();
 
@@ -43,6 +44,7 @@ const Page = () => {
               <ChevronRight size={12} color="$black500" mx={-4} />
             </SettingButton>
           </XStack>
+          <Menu label="로그아웃" style={{ paddingVertical: 16 }} onPress={logout} />
           <Menu label="회원탈퇴" style={{ paddingVertical: 16 }} onPress={() => router.push('/withdraw')} />
         </YStack>
 
