@@ -19,7 +19,7 @@ export type LocationBottomSheetProps = {
 
 export const LocationBottomSheet = forwardRef<BottomSheetModal, LocationBottomSheetProps>((props, ref) => {
   const { addresses, onDismiss, onSearch, onSelectAddress, isPending } = props;
-  const snapPoints = useMemo(() => [300], []);
+  const snapPoints = useMemo(() => ['50%'], []);
 
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<KakaoAddressDocumentDto>) => {
@@ -61,9 +61,9 @@ export const LocationBottomSheet = forwardRef<BottomSheetModal, LocationBottomSh
           ListEmptyComponent={
             <NodataContainer>
               {addresses === undefined ? (
-                <NodataText>주소를 검색해주세요.</NodataText>
+                <NodataText>주소를 검색해주세요</NodataText>
               ) : (
-                <NodataText>검색 결과가 없습니다.</NodataText>
+                <NodataText>검색 결과가 없습니다</NodataText>
               )}
             </NodataContainer>
           }
