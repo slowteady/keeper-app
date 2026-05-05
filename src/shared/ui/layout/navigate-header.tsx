@@ -10,9 +10,10 @@ import { HeaderLayout } from './header-layout';
 export type NavigateHeaderProps = {
   text?: string;
   hideHome?: boolean;
+  showShadow?: boolean;
 };
 
-export const NavigateHeader = ({ text, hideHome = false }: NavigateHeaderProps) => {
+export const NavigateHeader = ({ text, hideHome = false, showShadow = true }: NavigateHeaderProps) => {
   const { black900 } = useTheme();
 
   const navigateToPage = useCallback(() => {
@@ -49,5 +50,5 @@ export const NavigateHeader = ({ text, hideHome = false }: NavigateHeaderProps) 
     </View>
   );
 
-  return <HeaderLayout left={left} center={text ? center : undefined} right={right} />;
+  return <HeaderLayout showShadow={showShadow} left={left} center={text ? center : undefined} right={right} />;
 };
