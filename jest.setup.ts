@@ -38,6 +38,33 @@ jest.mock('expo-image-picker', () => ({
   launchImageLibraryAsync: jest.fn(() => Promise.resolve({ canceled: true, assets: [] }))
 }));
 
+jest.mock('expo-image-manipulator', () => {
+  const saveAsync = jest.fn(() =>
+    Promise.resolve({
+      uri: 'file:///mock/manipulated.jpg',
+      width: 800,
+      height: 800,
+      base64: null
+    })
+  );
+  const renderAsync = jest.fn(() => Promise.resolve({ saveAsync, width: 800, height: 800 }));
+  const ctx = {
+    crop: jest.fn().mockReturnThis(),
+    resize: jest.fn().mockReturnThis(),
+    rotate: jest.fn().mockReturnThis(),
+    flip: jest.fn().mockReturnThis(),
+    extent: jest.fn().mockReturnThis(),
+    reset: jest.fn().mockReturnThis(),
+    renderAsync
+  };
+  return {
+    ImageManipulator: {
+      manipulate: jest.fn(() => ctx)
+    },
+    SaveFormat: { JPEG: 'jpeg', PNG: 'png', WEBP: 'webp' }
+  };
+});
+
 jest.mock('expo-store-review', () => ({
   requestReview: jest.fn(() => Promise.resolve()),
   isAvailableAsync: jest.fn(() => Promise.resolve(true))
@@ -161,8 +188,8 @@ jest.mock('@/shared/lib', () => ({
 }));
 
 jest.mock('@/shared/api/instance', () => ({
-  publicApi: { get: jest.fn(), post: jest.fn(), delete: jest.fn() },
-  authApi: { get: jest.fn(), post: jest.fn(), delete: jest.fn() },
+  publicApi: { get: jest.fn(), post: jest.fn(), delete: jest.fn(), patch: jest.fn(), put: jest.fn() },
+  authApi: { get: jest.fn(), post: jest.fn(), delete: jest.fn(), patch: jest.fn(), put: jest.fn() },
   kakaoApi: { get: jest.fn() }
 }));
 
