@@ -25,7 +25,7 @@ const Page = () => {
         open={showCancelModal}
         onClose={closeModal}
         onConfirm={cancel}
-        description="지금 나가시면 회원가입이 완료되지 않아요."
+        description="지금 나가시면 회원가입이 완료되지 않아요"
       />
     </>
   );

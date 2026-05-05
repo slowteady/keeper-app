@@ -106,7 +106,7 @@ const EmptyComponent = ({ isLoading }: { isLoading: boolean }) => {
         </Text>
       </NodataWrap>
       <Text fontSize={17} lineHeight={19} fontWeight="500" color="$black900">
-        공고가 없습니다.
+        공고가 없습니다
       </Text>
     </YStack>
   );

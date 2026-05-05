@@ -25,7 +25,7 @@ export const ShelterListHeaderSection = ({ onSearch, onPressLocation }: ShelterL
       </TitleContainer>
 
       <SearchInput
-        placeholder="보호소명 또는 주소를 검색해주세요."
+        placeholder="보호소명 또는 주소를 검색해주세요"
         value={searchValue}
         onTextChange={setSearchValue}
         onSubmit={onSearch}

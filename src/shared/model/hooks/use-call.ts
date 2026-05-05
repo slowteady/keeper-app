@@ -8,7 +8,7 @@ import { globalToast } from '@/shared/lib';
 export const useCall = () => {
   const copy = useCallback(async (tel: string) => {
     await Clipboard.setStringAsync(tel);
-    globalToast('전화번호를 복사했어요.', 'success');
+    globalToast('전화번호를 복사했어요', 'success');
   }, []);
 
   const call = useCallback(

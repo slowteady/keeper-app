@@ -90,11 +90,11 @@ export const useSignup = () => {
 
         queryClient.invalidateQueries({ queryKey: authQueries.all() });
         setPrevent(false);
-        globalToast('회원가입이 완료되었어요.', 'success');
+        globalToast('회원가입이 완료되었어요', 'success');
         router.replace(resolveRedirect(redirect) ?? '/');
         setIsAuthenticated(true);
       } catch {
-        globalToast('회원가입에 실패했어요. 다시 시도해주세요.', 'fail');
+        globalToast('회원가입에 실패했어요 다시 시도해주세요', 'fail');
       }
     },
     [mutateAsync, queryClient, redirect, setIsAuthenticated, socialId, socialType]

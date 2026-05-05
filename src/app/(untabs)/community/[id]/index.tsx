@@ -97,7 +97,7 @@ const Page = () => {
         contentContainerStyle={{ paddingBottom: inputHeight, paddingTop: 32, flexGrow: 1 }}
         ListEmptyComponent={() => (
           <View items="center" justify="center" height={200}>
-            <EmptyText>{'아직 댓글이 없습니다.\n여러분의 의견을 적어주세요:)'}</EmptyText>
+            <EmptyText>{'아직 댓글이 없습니다\n여러분의 의견을 적어주세요:)'}</EmptyText>
           </View>
         )}
       />
@@ -114,7 +114,7 @@ const Page = () => {
         onClose={() => setCallModalOpen(false)}
         tel={''}
         title={`${data.detailPost.user.nickname}님에게 문의하기`}
-        description={`*보호자에게 직접 문의해 정보를 확인할 수 있어요.`}
+        description={`*보호자에게 직접 문의해 정보를 확인할 수 있어요`}
       />
     </Container>
   );

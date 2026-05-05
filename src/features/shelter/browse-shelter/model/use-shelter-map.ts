@@ -57,7 +57,7 @@ export const useShelterMap = () => {
         {
           onSuccess: ({ data }) => {
             if (!data.data.length) {
-              globalToast('검색 결과가 없어요.', 'fail');
+              globalToast('검색 결과가 없어요', 'fail');
               return;
             }
             setSearchResults(data.data);

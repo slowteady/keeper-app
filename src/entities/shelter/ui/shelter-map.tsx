@@ -159,7 +159,7 @@ const NoLocationFallback = () => {
   return (
     <NoLocationContainer>
       <Text fontSize={16} lineHeight={18} fontWeight="500" color="$black600">
-        사용자의 위치설정을 켜주세요.
+        사용자의 위치설정을 켜주세요
       </Text>
       <SettingButton onPress={goSettingMenu}>
         <Text fontSize={14} lineHeight={16} fontWeight="500" color="$white900">

@@ -63,12 +63,12 @@ export const useLogin = () => {
             setUserContext(user);
 
             queryClient.invalidateQueries({ queryKey: authQueries.all() });
-            globalToast('로그인 되었어요.', 'success');
+            globalToast('로그인 되었어요', 'success');
             router.replace(resolveRedirect(redirect) ?? '/');
             setIsAuthenticated(true);
           },
           onError: () => {
-            globalToast('로그인에 실패했어요. 다시 시도해주세요.', 'fail');
+            globalToast('로그인에 실패했어요 다시 시도해주세요', 'fail');
           }
         }
       );

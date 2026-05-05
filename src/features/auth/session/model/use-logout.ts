@@ -22,11 +22,11 @@ export const useLogout = () => {
       clearUserContext();
       qc.removeQueries({ queryKey: authQueries.all() });
 
-      globalToast('로그아웃이 완료되었어요.', 'success');
+      globalToast('로그아웃이 완료되었어요', 'success');
       router.dismissTo('/(tabs)/home');
       setIsAuthenticated(false);
     } catch {
-      globalToast('로그아웃에 실패했어요. 다시 시도해주세요.', 'fail');
+      globalToast('로그아웃에 실패했어요 다시 시도해주세요', 'fail');
     }
   }, [isPending, mutateAsync, qc, setIsAuthenticated]);
 

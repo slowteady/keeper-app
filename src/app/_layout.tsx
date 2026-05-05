@@ -58,7 +58,7 @@ const RootLayout = () => {
           onError: (error, _variables, _context, mutation) => {
             if (!mutation.options.onError) {
               logger.error(error);
-              globalToast('일시적인 오류가 발생했어요.', 'fail');
+              globalToast('일시적인 오류가 발생했어요', 'fail');
             }
           }
         }),
@@ -105,7 +105,7 @@ const RootLayout = () => {
         onRefreshFailed: () => {
           clearUserContext();
           queryClient.removeQueries({ queryKey: ['auth'] });
-          globalToast('세션이 만료되었어요. 다시 로그인해주세요.', 'fail');
+          globalToast('세션이 만료되었어요 다시 로그인해주세요', 'fail');
           router.replace({ pathname: '/login', params: { redirect: getCurrentPathname() } });
         }
       });
