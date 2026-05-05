@@ -46,3 +46,9 @@ export const SignUpBodySchema = z.object({
   agreedAt: z.string()
 });
 export type SignUpBodyDto = z.infer<typeof SignUpBodySchema>;
+
+export const UpdateMeBodySchema = z.object({
+  nickname: z.string().optional(),
+  image: z.string().optional()
+});
+export type UpdateMeBodyDto = z.infer<typeof UpdateMeBodySchema>;
