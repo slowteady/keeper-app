@@ -10,19 +10,18 @@ const Page = () => {
 
   const reasons = useMemo(
     () => [
-      '입양을 이미 완료했어요.',
-      '잠시 이용을 중단하고 싶어요.',
-      '원하는 정보나 기능을 찾기 어려웠어요.',
-      '앱 사용이 불편했어요. (속도, 알림, 오류 등)',
-      '개인정보 보호나 알림 수신이 부담돼요.',
-      '탈퇴 후 재가입 할 거에요.',
+      '입양을 이미 완료했어요',
+      '잠시 이용을 중단하고 싶어요',
+      '원하는 정보나 기능을 찾기 어려웠어요',
+      '앱 사용이 불편했어요 (속도, 알림, 오류 등)',
+      '개인정보 보호나 알림 수신이 부담돼요',
+      '탈퇴 후 재가입 할 거에요',
       '기타'
     ],
     []
   );
 
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-  const isActive = selectedIndex !== null;
 
   const handleWithdraw = useCallback(() => {
     openWithdrawModal(() => {
@@ -33,10 +32,10 @@ const Page = () => {
   return (
     <Container>
       <Text fontSize={26} lineHeight={40} fontWeight={600} letterSpacing={-0.25} color="$black900" mb={10}>
-        {'keeper를 탈퇴하는\n이유를 알려주세요.'}
+        {'Keeper를 탈퇴하는\n이유를 알려주세요'}
       </Text>
       <Text fontSize={14} lineHeight={16} fontWeight={400} letterSpacing={-0.25} color="$black500" mb={32}>
-        더 나은 서비스를 위해 노력하겠습니다.
+        더 나은 서비스를 위해 노력하겠습니다
       </Text>
 
       <YStack gap={12} mb={24}>
@@ -56,7 +55,7 @@ const Page = () => {
         <Button style={{ flex: 1 }} onPress={() => router.back()}>
           돌아가기
         </Button>
-        <Button style={{ flex: 1 }} color="tertiary" disabled={!isActive} onPress={handleWithdraw}>
+        <Button style={{ flex: 1 }} color="tertiary" onPress={handleWithdraw}>
           탈퇴하기
         </Button>
       </XStack>
