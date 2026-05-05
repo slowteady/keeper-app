@@ -59,7 +59,7 @@ export const deleteUser = async (): Promise<AxiosResponse<ApiResponse<boolean>>>
   return await authApi.delete(endpoint);
 };
 
-export const updateMe = async (body: UpdateMeBodyDto): Promise<AxiosResponse<ApiResponse<LoginDataDto>>> => {
+export const updateMe = async (body: UpdateMeBodyDto): Promise<AxiosResponse<ApiResponse<UserDto>>> => {
   const endpoint = `${BASE_URL}/me`;
 
   return await authApi.patch(endpoint, body);

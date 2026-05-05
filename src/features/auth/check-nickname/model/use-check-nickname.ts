@@ -22,17 +22,20 @@ export const useCheckNickname = (initialValue: string = '') => {
 
   const { mutate } = useMutation({ mutationFn: checkNickname });
 
-  const changeNickname = useCallback((nickname: string) => {
-    const filtered = nickname.replace(/[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z0-9]/g, '');
-    setNickname(filtered);
+  const changeNickname = useCallback(
+    (nickname: string) => {
+      const filtered = nickname.replace(/[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z0-9]/g, '');
+      setNickname(filtered);
 
-    setIsChecking(filtered.length >= 2);
-    setIsComplete(false);
-    setNicknameStatus({
-      status: 'default',
-      message: '*기호, 특수문자 제외 2~10자'
-    });
-  }, []);
+      setIsChecking(filtered.length >= 2 && filtered !== initialValue);
+      setIsComplete(false);
+      setNicknameStatus({
+        status: 'default',
+        message: '*기호, 특수문자 제외 2~10자'
+      });
+    },
+    [initialValue]
+  );
 
   const clearNickname = useCallback(() => {
     setNickname('');
@@ -45,7 +48,7 @@ export const useCheckNickname = (initialValue: string = '') => {
   }, []);
 
   useEffect(() => {
-    if (debouncedNickname.length < 2) {
+    if (debouncedNickname.length < 2 || debouncedNickname === initialValue) {
       setIsChecking(false);
       return;
     }
@@ -60,12 +63,12 @@ export const useCheckNickname = (initialValue: string = '') => {
             setIsComplete(false);
             setNicknameStatus({
               status: 'error',
-              message: '*사용할 수 없는 닉네임이에요.'
+              message: '*사용할 수 없는 닉네임이에요'
             });
           } else {
             setNicknameStatus({
               status: 'success',
-              message: '*사용가능한 닉네임이에요.'
+              message: '*사용가능한 닉네임이에요'
             });
 
             setIsComplete(true);
@@ -76,7 +79,7 @@ export const useCheckNickname = (initialValue: string = '') => {
         }
       }
     );
-  }, [debouncedNickname, mutate]);
+  }, [debouncedNickname, initialValue, mutate]);
 
   useEffect(() => {
     setNickname(initialValue);
