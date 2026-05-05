@@ -1,5 +1,6 @@
-import { Pencil } from '@tamagui/lucide-icons';
 import { Avatar, styled, View } from 'tamagui';
+
+import { Pencil } from '@/shared/ui/icons/outline';
 
 import { EmptyAvatar } from './empty-avatar';
 
@@ -20,7 +21,7 @@ export const UserAvatar = ({ image, onPressAdd, onPressEdit }: UserAvatarProps) 
 
       {image && onPressEdit && (
         <EditButton onPress={onPressEdit} hitSlop={12}>
-          <Pencil size={10} color="$white900" />
+          <Pencil width={10} height={10} color="white" />
         </EditButton>
       )}
     </StyledAvatar>
