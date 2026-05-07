@@ -87,7 +87,7 @@ const EmptyComponent = ({
   return (
     <View flex={1} items="center" justify="center" minH={160}>
       <Text fontSize={15} lineHeight={17} fontWeight="500" color="$black400">
-        보호중인 아이들이 없어요.
+        보호중인 아이들이 없어요
       </Text>
     </View>
   );

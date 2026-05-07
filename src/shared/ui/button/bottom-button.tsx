@@ -1,5 +1,5 @@
-import { useCallback, useState } from 'react';
-import { LayoutChangeEvent } from 'react-native';
+import { LayoutChangeEvent, StyleSheet } from 'react-native';
+import { KeyboardStickyView } from 'react-native-keyboard-controller';
 import { styled, View, ViewProps } from 'tamagui';
 
 import { useLayout } from '@/shared/model';
@@ -8,35 +8,32 @@ import { Button, ButtonProps } from './button';
 
 export interface BottomButtonProps extends ButtonProps {
   containerProps?: ViewProps;
+  onLayout?: (event: LayoutChangeEvent) => void;
 }
 
-export const BottomButton = ({ children, containerProps: containerProps, ...props }: BottomButtonProps) => {
-  const [height, setHeight] = useState(0);
+export const BottomButton = ({ children, containerProps, onLayout, ...props }: BottomButtonProps) => {
   const { bottom } = useLayout();
 
-  const calculateHeight = useCallback((event: LayoutChangeEvent) => {
-    const { height } = event.nativeEvent.layout;
-    setHeight(height);
-  }, []);
-
   return (
-    <>
-      <View height={height} />
-
-      <ButtonContainer onLayout={calculateHeight} px={20} pt={10} pb={bottom} {...containerProps}>
+    <KeyboardStickyView style={styles.sticky} onLayout={onLayout}>
+      <ButtonContainer px={20} pt={10} pb={bottom} {...containerProps}>
         <Button size="large" style={{ borderRadius: 10 }} {...props}>
           {children}
         </Button>
       </ButtonContainer>
-    </>
+    </KeyboardStickyView>
   );
 };
 
 const ButtonContainer = styled(View, {
-  position: 'absolute',
-  b: 0,
-  l: 0,
-  r: 0,
-  bg: '$white900',
-  z: 10
+  bg: '$white900'
+});
+
+const styles = StyleSheet.create({
+  sticky: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0
+  }
 });

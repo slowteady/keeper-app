@@ -25,7 +25,7 @@ export const CreatePostKindBottomSheet = ({ kindOption, kind, onSelect }: Create
   return (
     <BottomSheetScrollView>
       <BottomSheetTextInput
-        placeholder="품종을 입력해주세요."
+        placeholder="품종을 입력해주세요"
         value={searchQuery}
         onChangeText={setSearchQuery}
         style={{ padding: 16, backgroundColor: white850.val }}

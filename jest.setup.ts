@@ -38,6 +38,33 @@ jest.mock('expo-image-picker', () => ({
   launchImageLibraryAsync: jest.fn(() => Promise.resolve({ canceled: true, assets: [] }))
 }));
 
+jest.mock('expo-image-manipulator', () => {
+  const saveAsync = jest.fn(() =>
+    Promise.resolve({
+      uri: 'file:///mock/manipulated.jpg',
+      width: 800,
+      height: 800,
+      base64: null
+    })
+  );
+  const renderAsync = jest.fn(() => Promise.resolve({ saveAsync, width: 800, height: 800 }));
+  const ctx = {
+    crop: jest.fn().mockReturnThis(),
+    resize: jest.fn().mockReturnThis(),
+    rotate: jest.fn().mockReturnThis(),
+    flip: jest.fn().mockReturnThis(),
+    extent: jest.fn().mockReturnThis(),
+    reset: jest.fn().mockReturnThis(),
+    renderAsync
+  };
+  return {
+    ImageManipulator: {
+      manipulate: jest.fn(() => ctx)
+    },
+    SaveFormat: { JPEG: 'jpeg', PNG: 'png', WEBP: 'webp' }
+  };
+});
+
 jest.mock('expo-store-review', () => ({
   requestReview: jest.fn(() => Promise.resolve()),
   isAvailableAsync: jest.fn(() => Promise.resolve(true))
@@ -61,22 +88,15 @@ jest.mock('@react-navigation/native', () => ({
   usePreventRemove: jest.fn()
 }));
 
-jest.mock('@tamagui/toast', () => {
-  const { View, Text } = require('react-native');
-  return {
-    useToastController: jest.fn(() => ({
-      show: jest.fn(),
-      hide: jest.fn()
-    })),
-    useToastState: jest.fn(() => null),
-    ToastProvider: ({ children }: any) => children,
-    ToastViewport: () => null,
-    Toast: Object.assign(({ children }: any) => View({ children }), {
-      Title: ({ children }: any) => Text({ children }),
-      Description: ({ children }: any) => Text({ children })
-    })
-  };
-});
+jest.mock('sonner-native', () => ({
+  toast: {
+    custom: jest.fn(),
+    success: jest.fn(),
+    error: jest.fn(),
+    dismiss: jest.fn()
+  },
+  Toaster: () => null
+}));
 
 jest.mock('react-native-safe-area-context', () => ({
   useSafeAreaInsets: jest.fn(() => ({ top: 0, bottom: 0, left: 0, right: 0 })),
@@ -168,8 +188,8 @@ jest.mock('@/shared/lib', () => ({
 }));
 
 jest.mock('@/shared/api/instance', () => ({
-  publicApi: { get: jest.fn(), post: jest.fn(), delete: jest.fn() },
-  authApi: { get: jest.fn(), post: jest.fn(), delete: jest.fn() },
+  publicApi: { get: jest.fn(), post: jest.fn(), delete: jest.fn(), patch: jest.fn(), put: jest.fn() },
+  authApi: { get: jest.fn(), post: jest.fn(), delete: jest.fn(), patch: jest.fn(), put: jest.fn() },
   kakaoApi: { get: jest.fn() }
 }));
 

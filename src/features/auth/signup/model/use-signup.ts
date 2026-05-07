@@ -2,13 +2,29 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { logout } from '@react-native-kakao/user';
 import NaverLogin from '@react-native-seoul/naver-login';
 import { usePreventRemove } from '@react-navigation/native';
-import { useToastController } from '@tamagui/toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Route, router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { authQueries, signup, SignUpBodyDto, SocialLoginType } from '@/entities/auth';
-import { removeToken, saveAccessToken, saveRefreshToken, setUserContext } from '@/shared/lib';
+import { globalToast, removeToken, saveAccessToken, saveRefreshToken, setUserContext } from '@/shared/lib';
+
+import { PRIVACY_VERSION, TERMS_VERSION } from '../../lib/agreement';
+import { useSetIsAuthenticated } from '../../lib/auth-state';
+import type { AgreementState } from '../ui/signup-agreement';
+
+const resolveRedirect = (redirect?: Route): Route | undefined => {
+  if (!redirect || redirect === '/login') return undefined;
+  return redirect;
+};
+
+const goBackToLogin = () => {
+  if (router.canGoBack()) {
+    router.back();
+  } else {
+    router.replace('/login');
+  }
+};
 
 export const useSignup = () => {
   const { socialType, socialId, redirect } = useLocalSearchParams<{
@@ -16,14 +32,13 @@ export const useSignup = () => {
     socialId: string;
     redirect?: Route;
   }>();
-  const { show } = useToastController();
+  const queryClient = useQueryClient();
+  const setIsAuthenticated = useSetIsAuthenticated();
+  const { mutateAsync, isPending } = useMutation({ mutationFn: signup });
 
   const [prevent, setPrevent] = useState(true);
   const [showCancelModal, setShowCancelModal] = useState(false);
-  const [navigateTarget, setNavigateTarget] = useState<Route>();
-
-  const queryClient = useQueryClient();
-  const { mutateAsync, isPending } = useMutation({ mutationFn: signup });
+  const [pendingCancel, setPendingCancel] = useState(false);
 
   const showCancelModalRef = useRef(showCancelModal);
   useEffect(() => {
@@ -36,7 +51,7 @@ export const useSignup = () => {
     }
   });
 
-  const cancelSignup = useCallback(async () => {
+  const revokeSocialLogin = useCallback(async () => {
     switch (socialType) {
       case 'KAKAO':
         await logout();
@@ -53,11 +68,16 @@ export const useSignup = () => {
   }, [socialType]);
 
   const handleSignup = useCallback(
-    async (nickname: string) => {
+    async (nickname: string, agreement: AgreementState) => {
+      if (!agreement.age14 || !agreement.terms || !agreement.privacy) return;
+
       const body: SignUpBodyDto = {
         socialType,
         socialId,
-        nickname
+        nickname,
+        agreedTermsVersion: TERMS_VERSION,
+        agreedPrivacyVersion: PRIVACY_VERSION,
+        agreedAt: new Date().toISOString()
       };
 
       try {
@@ -67,41 +87,38 @@ export const useSignup = () => {
         await saveAccessToken(accessToken);
         await saveRefreshToken(refreshToken);
         setUserContext(user);
+
         queryClient.invalidateQueries({ queryKey: authQueries.all() });
-
-        show('회원가입이 완료되었어요.', { customData: { status: 'success' } });
-
-        const target: Route = redirect && redirect !== '/login' ? redirect : '/';
         setPrevent(false);
-        setNavigateTarget(target);
+        globalToast('회원가입이 완료되었어요', 'success');
+        router.replace(resolveRedirect(redirect) ?? '/');
+        setIsAuthenticated(true);
       } catch {
-        show('회원가입에 실패했어요. 다시 시도해주세요.', { customData: { status: 'fail' } });
+        globalToast('회원가입에 실패했어요 다시 시도해주세요', 'fail');
       }
     },
-    [mutateAsync, redirect, show, socialId, socialType]
+    [mutateAsync, queryClient, redirect, setIsAuthenticated, socialId, socialType]
   );
 
   const handleCancel = useCallback(async () => {
-    await cancelSignup();
+    await revokeSocialLogin();
     await removeToken();
 
-    const target: Route = redirect && redirect !== '/login' ? redirect : '/';
-    setPrevent(false);
     setShowCancelModal(false);
-    setNavigateTarget(target);
-  }, [cancelSignup, redirect]);
+    setPrevent(false);
+    setPendingCancel(true);
+  }, [revokeSocialLogin]);
 
   const closeModal = useCallback(() => {
     setShowCancelModal(false);
   }, []);
 
   useEffect(() => {
-    if (!prevent && navigateTarget) {
-      router.dismissAll();
-      router.replace(navigateTarget);
-      setNavigateTarget(undefined);
+    if (!prevent && pendingCancel) {
+      goBackToLogin();
+      setPendingCancel(false);
     }
-  }, [prevent, navigateTarget]);
+  }, [prevent, pendingCancel]);
 
   return { signup: handleSignup, cancel: handleCancel, closeModal, showCancelModal, isPending };
 };

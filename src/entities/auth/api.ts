@@ -4,7 +4,15 @@ import { AxiosResponse } from 'axios';
 import { authApi, publicApi } from '@/shared/api/instance';
 import { ApiResponse } from '@/shared/model';
 
-import { CheckNicknameBodyDto, LoginDataDto, LoginParamsDto, RefreshDataDto, SignUpBodyDto, UserDto } from './schema';
+import {
+  CheckNicknameBodyDto,
+  LoginDataDto,
+  LoginParamsDto,
+  RefreshDataDto,
+  SignUpBodyDto,
+  UpdateMeBodyDto,
+  UserDto
+} from './schema';
 
 const BASE_URL = `/auth`;
 
@@ -49,6 +57,12 @@ export const deleteUser = async (): Promise<AxiosResponse<ApiResponse<boolean>>>
   const endpoint = `${BASE_URL}/me`;
 
   return await authApi.delete(endpoint);
+};
+
+export const updateMe = async (body: UpdateMeBodyDto): Promise<AxiosResponse<ApiResponse<UserDto>>> => {
+  const endpoint = `${BASE_URL}/me`;
+
+  return await authApi.patch(endpoint, body);
 };
 
 // --- Query Options Factory ---

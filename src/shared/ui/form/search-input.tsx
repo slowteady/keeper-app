@@ -21,7 +21,7 @@ export const SearchInput = ({ size = 'MEDIUM', value, onTextChange, onSubmit, ..
     <XStack items="center">
       <StyledInput
         value={value}
-        placeholder="검색어를 입력하세요."
+        placeholder="검색어를 입력하세요"
         size={size as SizeTokens}
         keyboardType="default"
         returnKeyType="search"

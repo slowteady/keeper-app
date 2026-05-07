@@ -135,7 +135,7 @@ const EmptyComponent = ({ isLoading }: { isLoading: boolean }) => {
   ) : (
     <NodataContainer>
       <Text fontSize={14} lineHeight={16} fontWeight="500" color="$black500">
-        가까운 곳에 보호소가 없어요.
+        가까운 곳에 보호소가 없어요
       </Text>
     </NodataContainer>
   );

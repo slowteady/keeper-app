@@ -78,6 +78,8 @@ const TabItem = <T extends Route>({ navigationState, onIndexChange, activeColor,
         })}
       </TabContainer>
 
+      <Underline />
+
       <IndicatorContainer>
         <Animated.View style={[styles.indicator, animatedIndicatorStyle, { backgroundColor: black900.val }]} />
       </IndicatorContainer>
@@ -87,14 +89,12 @@ const TabItem = <T extends Route>({ navigationState, onIndexChange, activeColor,
 
 const Container = styled(View, {
   position: 'relative',
-  borderBottomWidth: 1,
-  borderBottomColor: '$white600',
-  height: TAB_BAR_HEIGHT
+  height: TAB_BAR_HEIGHT + TAB_BAR_INDICATOR_HEIGHT
 });
 
 const TabContainer = styled(XStack, {
   items: 'center',
-  height: '100%'
+  height: TAB_BAR_HEIGHT
 });
 
 const StyledText = styled(Text, {
@@ -104,9 +104,18 @@ const StyledText = styled(Text, {
   text: 'center'
 });
 
+const Underline = styled(View, {
+  position: 'absolute',
+  t: TAB_BAR_HEIGHT - 1,
+  l: 0,
+  r: 0,
+  height: 1,
+  bg: '$white600'
+});
+
 const IndicatorContainer = styled(View, {
   position: 'absolute',
-  b: -3,
+  b: 0,
   l: 0,
   r: 0,
   height: TAB_BAR_INDICATOR_HEIGHT
@@ -114,8 +123,7 @@ const IndicatorContainer = styled(View, {
 
 const styles = StyleSheet.create({
   indicator: {
-    borderRadius: 10,
-    height: 3,
+    height: TAB_BAR_INDICATOR_HEIGHT,
     position: 'absolute'
   }
 });

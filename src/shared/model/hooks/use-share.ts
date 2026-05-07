@@ -42,7 +42,7 @@ export const useShare = () => {
         });
       }
     } catch {
-      Alert.alert('공유 실패', '공유 중 오류가 발생했습니다.');
+      Alert.alert('공유 실패', '공유 중 오류가 발생했습니다');
     }
   }, []);
 

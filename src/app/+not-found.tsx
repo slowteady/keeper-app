@@ -26,7 +26,7 @@ export default function NotFound() {
 
         <Text fontSize={14} color="$black600" style={{ textAlign: 'center', lineHeight: 22 }}>
           요청하신 페이지가 존재하지 않거나{'\n'}
-          잘못된 경로로 접근하셨어요.
+          잘못된 경로로 접근하셨어요
         </Text>
       </YStack>
 

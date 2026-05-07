@@ -34,7 +34,7 @@ export const CommunityAdoptForm = ({
     <>
       <YStack>
         <H1 color="$black900">개인입양 홍보</H1>
-        <Caption>*은 필수 표기 정보입니다.</Caption>
+        <Caption>*은 필수 표기 정보입니다</Caption>
       </YStack>
 
       <Form>
@@ -50,7 +50,7 @@ export const CommunityAdoptForm = ({
             required
             name="weight"
             control={control}
-            placeholder="몸무게를 선택해주세요."
+            placeholder="몸무게를 선택해주세요"
             right={<Text color="$black500">kg</Text>}
             maxLength={2}
             value={form.watch('weight')}
@@ -62,7 +62,7 @@ export const CommunityAdoptForm = ({
             control={control}
             label="지역"
             required
-            placeholder="지역을 추가해주세요."
+            placeholder="지역을 추가해주세요"
             value={form.watch('location')}
             onPress={onPressLocation}
             disabled
@@ -73,7 +73,7 @@ export const CommunityAdoptForm = ({
             label="나이"
             required
             right={<Text color="$black500">년생</Text>}
-            placeholder="나이를 선택해주세요."
+            placeholder="나이를 선택해주세요"
             value={form.watch('age')}
             onPress={onPressAge}
             disabled
@@ -83,7 +83,7 @@ export const CommunityAdoptForm = ({
             control={control}
             label="품종"
             required
-            placeholder="품종을 선택해주세요."
+            placeholder="품종을 선택해주세요"
             value={form.watch('specificType')}
             onPress={onPressKind}
             disabled
@@ -106,7 +106,7 @@ export const CommunityAdoptForm = ({
             maxLength={1000}
             rows={6}
             minH={130}
-            placeholder="예)성격, 특별한 사연 등을 자유롭게 적어주세요."
+            placeholder="예)성격, 특별한 사연 등을 자유롭게 적어주세요"
           />
           <LabelTextArea
             name="specialMark"
@@ -130,7 +130,7 @@ export const CommunityAdoptForm = ({
         <YStack px={20} my={40}>
           <YStack mb={20}>
             <OptionalTitle>필수 정보를 모두 체크하셨나요?</OptionalTitle>
-            <OptionalDescription>더 많은 관심을 위해 세부정보도 적어보세요.</OptionalDescription>
+            <OptionalDescription>더 많은 관심을 위해 세부정보도 적어보세요</OptionalDescription>
           </YStack>
 
           <Accordion type="single" collapsible>
@@ -160,7 +160,7 @@ export const CommunityAdoptForm = ({
                       rows={3}
                       minH={70}
                       maxLength={100}
-                      placeholder="예) 산책과 드라이브를 좋아해요."
+                      placeholder="예) 산책과 드라이브를 좋아해요"
                     />
                     <LabelTextArea
                       name="dislikes"
@@ -169,7 +169,7 @@ export const CommunityAdoptForm = ({
                       rows={3}
                       minH={70}
                       maxLength={100}
-                      placeholder="예) 모르는 사람은 무서워해요."
+                      placeholder="예) 모르는 사람은 무서워해요"
                     />
                     <LabelTextArea
                       name="health"
@@ -178,7 +178,7 @@ export const CommunityAdoptForm = ({
                       rows={3}
                       minH={70}
                       maxLength={100}
-                      placeholder="예) 피부병이 있어서 하루에 두 번 연고를 발라줘야해요."
+                      placeholder="예) 피부병이 있어서 하루에 두 번 연고를 발라줘야해요"
                     />
                     <LabelTextField name="relatedLink" control={control} label="관련 링크" placeholder="URL" />
                   </YStack>
@@ -191,14 +191,14 @@ export const CommunityAdoptForm = ({
         {/* <YStack px={20} py={32}>
           <XStack items="center" justify="space-between" mb={16}>
             <Text fontWeight="$6" fontSize={17}>
-              커뮤니티 가이드라인을 준수합니다.
+              커뮤니티 가이드라인을 준수합니다
             </Text>
             <Checkbox size="$4" checked={true} />
           </XStack>
 
           <Text fontSize={14} lineHeight={20} fontWeight="$4" color="$black600" mb={16} letterSpacing={-0.25}>
             {
-              '이 가이드라인은 개인 입양 게시판에 반드시 지켜야 할 최소한의 규칙을 담고 있습니다.\n위반 시 게시물 삭제 또는 계정 제재가 이루어질 수 있으니, 글 작성전 꼭 확인해주세요.'
+              '이 가이드라인은 개인 입양 게시판에 반드시 지켜야 할 최소한의 규칙을 담고 있습니다\n위반 시 게시물 삭제 또는 계정 제재가 이루어질 수 있으니, 글 작성전 꼭 확인해주세요'
             }
           </Text>
 
