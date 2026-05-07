@@ -4,6 +4,7 @@ import NaverLogin from '@react-native-seoul/naver-login';
 import { usePreventRemove } from '@react-navigation/native';
 import { useToastController } from '@tamagui/toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import { Route, router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -74,8 +75,13 @@ export const useSignup = () => {
         const target: Route = redirect && redirect !== '/login' ? redirect : '/';
         setPrevent(false);
         setNavigateTarget(target);
-      } catch {
-        show('회원가입에 실패했어요. 다시 시도해주세요.', { customData: { status: 'fail' } });
+      } catch (error) {
+        // 사전 check-nickname 통과 후 signup 사이 race condition으로 닉네임 중복 발생 가능
+        if (error instanceof AxiosError && error.response?.status === 409) {
+          show('이미 사용 중인 닉네임이에요. 다시 시도해주세요.', { customData: { status: 'fail' } });
+        } else {
+          show('회원가입에 실패했어요. 다시 시도해주세요.', { customData: { status: 'fail' } });
+        }
       }
     },
     [mutateAsync, redirect, show, socialId, socialType]
