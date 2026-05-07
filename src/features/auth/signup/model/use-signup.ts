@@ -3,6 +3,7 @@ import { logout } from '@react-native-kakao/user';
 import NaverLogin from '@react-native-seoul/naver-login';
 import { usePreventRemove } from '@react-navigation/native';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import { Route, router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -93,8 +94,13 @@ export const useSignup = () => {
         globalToast('회원가입이 완료되었어요', 'success');
         router.replace(resolveRedirect(redirect) ?? '/');
         setIsAuthenticated(true);
-      } catch {
-        globalToast('회원가입에 실패했어요 다시 시도해주세요', 'fail');
+      } catch (error) {
+        // 사전 check-nickname 통과 후 signup 사이 race condition으로 닉네임 중복 발생 가능
+        if (error instanceof AxiosError && error.response?.status === 409) {
+          globalToast('이미 사용 중인 닉네임이에요. 다시 시도해주세요.', 'fail');
+        } else {
+          globalToast('회원가입에 실패했어요 다시 시도해주세요', 'fail');
+        }
       }
     },
     [mutateAsync, queryClient, redirect, setIsAuthenticated, socialId, socialType]

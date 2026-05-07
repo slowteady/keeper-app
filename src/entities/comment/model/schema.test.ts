@@ -7,7 +7,8 @@ const VALID_COMMENT = {
     name: 'Lee',
     nickname: 'keeper',
     email: 'a@b.com',
-    image: 'https://x'
+    image: 'https://x',
+    socialType: 'KAKAO' as const
   },
   likeCount: 0,
   content: '댓글',

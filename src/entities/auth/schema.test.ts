@@ -14,7 +14,8 @@ const VALID_USER = {
   name: 'Lee',
   nickname: 'keeper',
   email: 'a@b.com',
-  image: 'https://x'
+  image: 'https://x',
+  socialType: 'KAKAO' as const
 };
 
 describe('UserSchema', () => {
