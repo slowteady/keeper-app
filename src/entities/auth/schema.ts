@@ -1,11 +1,15 @@
 import { z } from 'zod';
 
+export const SocialLoginTypeSchema = z.enum(['GOOGLE', 'APPLE', 'KAKAO', 'NAVER']);
+export type SocialLoginType = z.infer<typeof SocialLoginTypeSchema>;
+
 export const UserSchema = z.object({
   id: z.number(),
   name: z.string(),
   nickname: z.string(),
   email: z.string(),
-  image: z.string()
+  image: z.string(),
+  socialType: SocialLoginTypeSchema
 });
 export type UserDto = z.infer<typeof UserSchema>;
 
@@ -22,9 +26,6 @@ export const LoginDataSchema = UserSchema.extend({
   isNew: z.boolean()
 });
 export type LoginDataDto = z.infer<typeof LoginDataSchema>;
-
-export const SocialLoginTypeSchema = z.enum(['GOOGLE', 'APPLE', 'KAKAO', 'NAVER']);
-export type SocialLoginType = z.infer<typeof SocialLoginTypeSchema>;
 
 export const LoginParamsSchema = z.object({
   socialType: SocialLoginTypeSchema,

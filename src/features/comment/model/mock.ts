@@ -9,7 +9,8 @@ const mockUser = () => ({
   name: fakerKO.person.fullName(),
   nickname: fakerKO.person.firstName(),
   email: fakerKO.internet.email(),
-  image: fakerKO.image.avatar()
+  image: fakerKO.image.avatar(),
+  socialType: 'KAKAO' as const
 });
 
 export const getCommentList = (sortOrder: CommentSortOrderDto): CommentDto[] => {
