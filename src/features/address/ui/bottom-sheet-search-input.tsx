@@ -41,7 +41,7 @@ export const BottomSheetSearchInput = ({ onSubmit, placeholder }: BottomSheetSea
   return (
     <Container borderColor={isFocus ? '$black900' : '$white600'}>
       <Input
-        placeholder={placeholder || '검색어를 입력하세요.'}
+        placeholder={placeholder || '검색어를 입력하세요'}
         placeholderTextColor={black500.val}
         keyboardType="default"
         returnKeyType="search"

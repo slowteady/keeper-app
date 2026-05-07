@@ -18,7 +18,7 @@ const Page = () => {
           social login
         </Text>
         <Text fontSize={15} lineHeight={17} fontWeight="400" color="$black500">
-          소셜로그인으로 Keeper와 함께하세요.
+          소셜로그인으로 Keeper와 함께하세요
         </Text>
       </YStack>
 

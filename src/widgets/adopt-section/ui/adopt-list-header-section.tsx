@@ -44,7 +44,7 @@ export const AdoptListHeaderSection = ({
 
       <View mb={32}>
         <SearchInput
-          placeholder="품종 또는 지역을 입력해주세요."
+          placeholder="품종 또는 지역을 입력해주세요"
           value={searchValue}
           onTextChange={onChangeSearch}
           onSubmit={onSearch}

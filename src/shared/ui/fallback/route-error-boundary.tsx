@@ -15,7 +15,7 @@ const getErrorInfo = (error: Error) => {
     if (!error.response || error.code === 'ERR_NETWORK' || error.code === 'ECONNABORTED') {
       return {
         title: '인터넷이 연결되어 있지 않아요',
-        description: 'Wi-fi 또는 셀룰러 데이터 연결을 확인한 후\n다시 시도해 주세요.'
+        description: 'Wi-fi 또는 셀룰러 데이터 연결을 확인한 후\n다시 시도해 주세요'
       };
     }
 
@@ -23,14 +23,14 @@ const getErrorInfo = (error: Error) => {
     if (status && status >= 500) {
       return {
         title: '일시적인 문제가 발생했어요',
-        description: '서버에 문제가 생겼어요.\n잠시 후 다시 시도해 주세요.'
+        description: '서버에 문제가 생겼어요\n잠시 후 다시 시도해 주세요'
       };
     }
   }
 
   return {
     title: '문제가 발생했어요',
-    description: '잠시 후 다시 시도해 주세요.'
+    description: '잠시 후 다시 시도해 주세요'
   };
 };
 

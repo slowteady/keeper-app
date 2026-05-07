@@ -15,6 +15,7 @@
 ## Hook
 
 - flat 객체 반환 (그룹핑 금지)
+- 호출부에서 **반환값은 구조분해**로 받는다 (`const vm = useXxx()` 후 `vm.foo` 형태로 통째 참조 금지)
 - 불필요한 useCallback/useMemo 금지
 - setter 네이밍: setIsXxx (isSetXxx 금지)
 - execute prefix 금지 → 동사 그대로 (refresh, login)

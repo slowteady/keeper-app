@@ -1,14 +1,15 @@
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { logout as kakaoLogout } from '@react-native-kakao/user';
 import NaverLogin from '@react-native-seoul/naver-login';
-import { useToastController } from '@tamagui/toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { router } from 'expo-router';
 import { useCallback } from 'react';
 
 import { authQueries, deleteUser, SocialLoginType, UserDto } from '@/entities/auth';
-import { clearUserContext, logger, removeToken } from '@/shared/lib';
+import { clearUserContext, globalToast, logger, removeToken } from '@/shared/lib';
 import { useModal } from '@/shared/ui';
 
+import { useSetIsAuthenticated } from '../../lib/auth-state';
 import { WithdrawModal } from '../ui/withdraw-modal';
 
 /**
@@ -37,15 +38,16 @@ const signOutSocialSession = async (socialType: SocialLoginType) => {
 };
 
 export const useDeleteUser = () => {
-  const { show } = useToastController();
   const queryClient = useQueryClient();
   const { open, close } = useModal();
+  const setIsAuthenticated = useSetIsAuthenticated();
 
   const { mutateAsync, isPending } = useMutation({ mutationFn: deleteUser });
 
   const handleDeleteUser = useCallback(async () => {
+    if (isPending) return;
+
     try {
-      if (isPending) return;
       const cachedUser = queryClient.getQueryData<UserDto>(authQueries.me().queryKey);
 
       await mutateAsync();
@@ -55,11 +57,14 @@ export const useDeleteUser = () => {
       await removeToken();
       clearUserContext();
       queryClient.removeQueries({ queryKey: authQueries.all() });
-      show('회원탈퇴가 완료되었어요.', { customData: { status: 'success' } });
+
+      globalToast('회원탈퇴가 완료되었어요', 'success');
+      router.dismissTo('/(tabs)/home');
+      setIsAuthenticated(false);
     } catch {
-      show('회원탈퇴에 실패했어요. 다시 시도해주세요.', { customData: { status: 'fail' } });
+      globalToast('회원탈퇴에 실패했어요 다시 시도해주세요', 'fail');
     }
-  }, [isPending, mutateAsync, queryClient, show]);
+  }, [isPending, mutateAsync, queryClient, setIsAuthenticated]);
 
   const openWithdrawModal = useCallback(
     (onWithdraw: () => void) => {

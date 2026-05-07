@@ -5,15 +5,17 @@ import { useCallback, useState } from 'react';
 import { authQueries } from '@/entities/auth';
 import { getAccessToken } from '@/shared/lib';
 
+import { useIsAuthenticated } from '../../lib/auth-state';
+
 export const useCurrentUser = () => {
-  const [enabled, setEnabled] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useIsAuthenticated();
   const [isCheckingToken, setIsCheckingToken] = useState(true);
 
   const { data, isLoading } = useQuery({
     ...authQueries.me(),
     refetchOnWindowFocus: true,
     refetchOnReconnect: true,
-    enabled
+    enabled: isAuthenticated
   });
 
   useFocusEffect(
@@ -21,18 +23,18 @@ export const useCurrentUser = () => {
       const checkToken = async () => {
         setIsCheckingToken(true);
         const accessToken = await getAccessToken();
-        setEnabled(!!accessToken);
+        setIsAuthenticated(!!accessToken);
         setIsCheckingToken(false);
       };
 
       checkToken();
-    }, [])
+    }, [setIsAuthenticated])
   );
 
-  const user = enabled ? data : null;
+  const user = isAuthenticated ? data : null;
   const isLoggedIn = !!user;
 
-  const isLoadingState = isCheckingToken || (enabled && isLoading);
+  const isLoadingState = isCheckingToken || (isAuthenticated && isLoading);
 
   return { user, isLoggedIn, isLoading: isLoadingState };
 };

@@ -11,7 +11,7 @@ export const WithdrawModal = ({ onWithdraw, onClose }: WithdrawModalProps) => (
       정말 탈퇴하실건가요?
     </Text>
     <Text mb={32} fontSize={14} fontWeight="400" color="$black500" lineHeight={19}>
-      탈퇴 후 계정 복구는 불가합니다.
+      {`탈퇴 후 계정 복구는 불가하며,\n작성한 게시글은 '탈퇴한 회원'으로 표시됩니다`}
     </Text>
     <XStack gap={6}>
       <ModalButton onPress={onClose} bg="$white800">

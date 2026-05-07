@@ -15,18 +15,18 @@ export const ProtectionTypeSchema = z.enum(['TEMPORARY', 'ADOPTION', 'BOTH']);
 export type ProtectionTypeDto = z.infer<typeof ProtectionTypeSchema>;
 
 export const CommunityAdoptFormSchema = z.object({
-  title: z.string().min(1, '제목을 입력해주세요.'),
+  title: z.string().min(1, '제목을 입력해주세요'),
   animalType: AnimalTypeSchema,
-  specificType: z.string().min(1, '품종을 입력해주세요.'),
-  images: z.array(z.string()).min(1, '최소 1장의 이미지를 업로드해주세요.'),
+  specificType: z.string().min(1, '품종을 입력해주세요'),
+  images: z.array(z.string()).min(1, '최소 1장의 이미지를 업로드해주세요'),
   gender: GenderSchema,
   neuterYn: NeuterYnSchema,
   healthCheck: HealthCheckSchema,
-  age: z.string().min(1, '나이를 입력해주세요.'),
-  weight: z.string().min(1, '몸무게를 입력해주세요.'),
-  location: z.string().min(1, '지역을 입력해주세요.'),
-  specialMark: z.string().min(1, '특징을 입력해주세요.'),
-  content: z.string().min(1, '소개글을 입력해주세요.'),
+  age: z.string().min(1, '나이를 입력해주세요'),
+  weight: z.string().min(1, '몸무게를 입력해주세요'),
+  location: z.string().min(1, '지역을 입력해주세요'),
+  specialMark: z.string().min(1, '특징을 입력해주세요'),
+  content: z.string().min(1, '소개글을 입력해주세요'),
   contact: z
     .array(
       z.object({
@@ -34,7 +34,7 @@ export const CommunityAdoptFormSchema = z.object({
         value: z.string()
       })
     )
-    .min(1, '최소 1개의 연락 정보를 입력해주세요.'),
+    .min(1, '최소 1개의 연락 정보를 입력해주세요'),
   // 선택 입력 필드
   likes: z.string().optional(),
   dislikes: z.string().optional(),

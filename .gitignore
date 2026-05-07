@@ -40,3 +40,7 @@ android/
 ios/
 service-account.json
 .env.local
+
+# Claude Code
+.claude/scheduled_tasks.lock
+.claude/settings.local.json

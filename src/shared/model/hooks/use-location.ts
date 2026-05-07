@@ -2,6 +2,8 @@ import * as Location from 'expo-location';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState } from 'react-native';
 
+import { logger } from '@/shared/lib';
+
 type Coords = {
   latitude: number;
   longitude: number;
@@ -21,24 +23,34 @@ export const useLocation = () => {
   }, []);
 
   const fetchLocation = useCallback(async () => {
-    const { coords } = await Location.getCurrentPositionAsync();
-    const location = { latitude: coords.latitude, longitude: coords.longitude };
+    try {
+      const { coords } = await Location.getCurrentPositionAsync();
+      const location = { latitude: coords.latitude, longitude: coords.longitude };
 
-    if (!initializedRef.current) {
-      setUserLocation(location);
-      initializedRef.current = true;
+      if (!initializedRef.current) {
+        setUserLocation(location);
+        initializedRef.current = true;
+      }
+
+      return location;
+    } catch (error) {
+      // kCLErrorLocationUnknown 등 일시적 실패는 무시하고 다음 트리거(AppState 등)에 재시도
+      logger.warn('[useLocation] getCurrentPositionAsync failed', error);
+      return undefined;
     }
-
-    return location;
   }, []);
 
   useEffect(() => {
     const init = async () => {
-      const { status } = await requestPermission();
-      setPermissionStatus(status);
+      try {
+        const { status } = await requestPermission();
+        setPermissionStatus(status);
 
-      if (status === Location.PermissionStatus.GRANTED) {
-        await fetchLocation();
+        if (status === Location.PermissionStatus.GRANTED) {
+          await fetchLocation();
+        }
+      } catch (error) {
+        logger.warn('[useLocation] init failed', error);
       }
     };
 
@@ -47,12 +59,16 @@ export const useLocation = () => {
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', async (nextAppState) => {
-      if (nextAppState === 'active') {
+      if (nextAppState !== 'active') return;
+
+      try {
         const status = await checkPermission();
 
         if (status === Location.PermissionStatus.GRANTED && !initializedRef.current) {
           await fetchLocation();
         }
+      } catch (error) {
+        logger.warn('[useLocation] resume failed', error);
       }
     });
 

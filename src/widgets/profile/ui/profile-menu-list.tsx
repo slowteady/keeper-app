@@ -1,23 +1,26 @@
-import { router } from 'expo-router';
 import { Separator, View, YStack } from 'tamagui';
 
+import { MENU_ITEMS } from '@/features/profile';
 import { Menu } from '@/shared/ui';
 
-import { MENU_ITEMS } from '../model';
+type ProfileMenuListProps = {
+  items: typeof MENU_ITEMS;
+  onSelect: (path: string, requireAuth: boolean) => void;
+};
 
-export const ProfileMenuList = () => {
+export const ProfileMenuList = ({ items, onSelect }: ProfileMenuListProps) => {
   return (
     <YStack>
-      {MENU_ITEMS.map((item, idx) => {
+      {items.map((item, idx) => {
         const key = `${item.label}-${idx}`;
 
         return (
           <View key={key}>
-            <View px={20} py={16} onPress={() => router.push({ pathname: `/profile/${item.navigateTo}` })}>
+            <View px={20} py={16} onPress={() => onSelect(item.navigateTo, item.requireAuth)}>
               <Menu icon={<item.icon size={20} />} label={item.label} />
             </View>
 
-            {idx !== MENU_ITEMS.length - 1 && <Separator borderColor="$backgroundDefault" />}
+            {idx !== items.length - 1 && <Separator borderColor="$backgroundDefault" />}
           </View>
         );
       })}

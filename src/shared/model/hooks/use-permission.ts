@@ -11,9 +11,14 @@ export const usePermission = () => {
       if (Platform.OS === 'ios') {
         await Linking.openURL('app-settings:');
       } else if (Platform.OS === 'android') {
-        await startActivityAsync(ActivityAction.APPLICATION_DETAILS_SETTINGS, {
-          data: `package:${applicationId}`
-        });
+        const data = `package:${applicationId}`;
+        try {
+          // Android 12+(API 31): 위치 권한 페이지로 직접 이동
+          await startActivityAsync('android.settings.APP_LOCATION_SETTINGS', { data });
+        } catch {
+          // Android 11 이하 폴백: 앱 권한 전체 페이지
+          await startActivityAsync(ActivityAction.APPLICATION_DETAILS_SETTINGS, { data });
+        }
       }
     } catch (err) {
       logger.error(err);

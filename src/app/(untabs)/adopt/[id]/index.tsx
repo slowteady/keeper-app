@@ -4,7 +4,6 @@ import { ScrollView, styled, Text, View } from 'tamagui';
 
 import { useAdopt } from '@/features/adopt';
 import { useShelter } from '@/features/shelter';
-import { useLayout } from '@/shared/model';
 import { BottomButton, CallModal, DetailErrorBoundary, SuspenseFallback } from '@/shared/ui';
 import {
   AdoptDetailDescriptionSection,
@@ -31,8 +30,7 @@ export default Page;
 
 const AdoptDetailContent = ({ id }: { id: string }) => {
   const [callModalOpen, setCallModalOpen] = useState(false);
-
-  const { bottom } = useLayout();
+  const [buttonHeight, setButtonHeight] = useState(0);
 
   const { adopt } = useAdopt({ id });
   const { shelterData: shelter, hasCallNumber } = useShelter({ id: adopt.shelterId });
@@ -43,7 +41,7 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
         decelerationRate="fast"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={
-          { position: 'relative', paddingTop: 48, paddingBottom: hasCallNumber ? 24 : bottom } as any
+          { position: 'relative', paddingTop: 48, paddingBottom: hasCallNumber ? buttonHeight : 0 } as any
         }
       >
         <View mb={30} px={20}>
@@ -74,7 +72,10 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
 
       {hasCallNumber && (
         <>
-          <BottomButton onPress={() => setCallModalOpen((prev) => !prev)}>
+          <BottomButton
+            onPress={() => setCallModalOpen((prev) => !prev)}
+            onLayout={(e) => setButtonHeight(e.nativeEvent.layout.height)}
+          >
             <Text fontSize={15} fontWeight={600} lineHeight={18} color="$black900">
               보호소에 문의하기
             </Text>
@@ -85,7 +86,7 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
             onClose={() => setCallModalOpen(false)}
             tel={shelter?.tel!}
             title={`${shelter?.name}에 문의하기`}
-            description="*원활한 소통을 위해 상담원이 상담, 휴대폰 번호, 주소 등을 수집할 수 있습니다."
+            description="*원활한 소통을 위해 상담원이 상담, 휴대폰 번호, 주소 등을 수집할 수 있습니다"
           />
         </>
       )}
