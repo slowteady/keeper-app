@@ -1,16 +1,23 @@
 import { z } from 'zod';
 
-import { UserSchema } from '@/entities/auth';
+import { PostUserSummarySchema } from '@/entities/community/schema';
 
 export const CommentSchema = z.object({
-  id: z.string(),
-  user: UserSchema,
-  likeCount: z.number(),
+  id: z.number(),
+  user: PostUserSummarySchema.nullable(),
   content: z.string(),
-  createdAt: z.string(),
-  likeByMe: z.boolean()
+  displayTime: z.string()
 });
 export type CommentDto = z.infer<typeof CommentSchema>;
 
-export const CommentSortOrderSchema = z.enum(['LATEST', 'CREATED']);
+export const CommentListResponseSchema = z.object({
+  items: z.array(CommentSchema),
+  total: z.number(),
+  page: z.number(),
+  size: z.number(),
+  hasNext: z.boolean()
+});
+export type CommentListResponseDto = z.infer<typeof CommentListResponseSchema>;
+
+export const CommentSortOrderSchema = z.enum(['LATEST', 'OLDEST']);
 export type CommentSortOrderDto = z.infer<typeof CommentSortOrderSchema>;

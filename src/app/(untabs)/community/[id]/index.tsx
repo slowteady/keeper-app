@@ -26,22 +26,23 @@ const Page = () => {
 
   const { bottom } = useLayout();
 
+  const numId = Number(id);
   const { data } = useCommunityAdoptDetailFeed(id);
   const { handleScroll, handlePressButton, isButtonVisible, scrollRef } = useScrollUpButton();
-  const { sortOrder, commentList, changeSortOrder } = useCommunityCommentList();
-  const { toggleLikePost, toggleLikeComment } = useLikePost();
+  const { sortOrder, commentList, changeSortOrder } = useCommunityCommentList(numId);
+  const { toggleLikePost } = useLikePost();
   const { share } = useShare();
 
-  const renderItem = useCallback(
-    ({ item }: ListRenderItemInfo<CommentDto>) => {
-      return (
-        <View key={item.id} px={20} py={24}>
-          <CommentCard comment={item} onPressLike={() => toggleLikeComment(item.id)} />
-        </View>
-      );
-    },
-    [toggleLikeComment]
-  );
+  const renderItem = useCallback(({ item }: ListRenderItemInfo<CommentDto>) => {
+    return (
+      <View key={item.id} px={20} py={24}>
+        <CommentCard comment={item} />
+      </View>
+    );
+  }, []);
+
+  const detailPost = data.detailPost;
+  const isLiked = detailPost?.isLiked ?? false;
 
   return (
     <Container>
@@ -56,36 +57,44 @@ const Page = () => {
         ItemSeparatorComponent={() => <View height={1} bg="$backgroundDefault" />}
         ListHeaderComponent={() => (
           <>
-            <View px={20} mb={32}>
-              <CommunityDetailOverviewSection
-                {...data.overviews}
-                onPressLike={() => toggleLikePost(id)}
-                onPressShare={(id) =>
-                  share({
-                    id,
-                    path: 'community',
-                    title: data.detailPost.title,
-                    desc: '유기동물들의 가족이 되어주세요',
-                    image: data.detailPost.images[0]
-                  })
-                }
-              />
-            </View>
+            {detailPost && (
+              <View px={20} mb={32}>
+                <CommunityDetailOverviewSection
+                  {...(data.overviews as Parameters<typeof CommunityDetailOverviewSection>[0])}
+                  onPressLike={() => toggleLikePost(numId, isLiked)}
+                  onPressShare={(shareId: number) =>
+                    share({
+                      id: String(shareId),
+                      path: 'community',
+                      title: detailPost.title,
+                      desc: '유기동물들의 가족이 되어주세요',
+                      image: detailPost.images[0]
+                    })
+                  }
+                />
+              </View>
+            )}
 
             <Divider mb={32} />
 
-            <YStack px={20} mb={40}>
-              <AdoptDetailInfoSection {...data.infos} />
-            </YStack>
-            <View px={20} mb={32}>
-              <CommunityDetailDescriptionSection {...data.descriptions} />
-            </View>
-            <View px={20} mb={20}>
-              <Button onPress={() => setCallModalOpen((prev) => !prev)}>문의하기</Button>
-            </View>
-            <View px={20} mb={16}>
-              <CommunityAdoptCardStats {...data.detailPost.counts} />
-            </View>
+            {detailPost && (
+              <>
+                <YStack px={20} mb={40}>
+                  <AdoptDetailInfoSection {...(data.infos as Parameters<typeof AdoptDetailInfoSection>[0])} />
+                </YStack>
+                <View px={20} mb={32}>
+                  <CommunityDetailDescriptionSection
+                    {...(data.descriptions as Parameters<typeof CommunityDetailDescriptionSection>[0])}
+                  />
+                </View>
+                <View px={20} mb={20}>
+                  <Button onPress={() => setCallModalOpen((prev) => !prev)}>문의하기</Button>
+                </View>
+                <View px={20} mb={16}>
+                  <CommunityAdoptCardStats {...detailPost.counts} />
+                </View>
+              </>
+            )}
 
             <CommentListHeader
               commentCount={commentList.length}
@@ -113,7 +122,7 @@ const Page = () => {
         open={callModalOpen}
         onClose={() => setCallModalOpen(false)}
         tel={''}
-        title={`${data.detailPost.user.nickname}님에게 문의하기`}
+        title={`${detailPost?.user?.nickname ?? '탈퇴한 사용자'}님에게 문의하기`}
         description={`*보호자에게 직접 문의해 정보를 확인할 수 있어요`}
       />
     </Container>

@@ -1,14 +1,31 @@
+import { useQuery } from '@tanstack/react-query';
 import { router } from 'expo-router';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 
-import { getAdoptListValue } from './mock';
+import { CommunityListParams, communityQueries } from '@/entities/community';
 
-export const useCommunityAdoptFeed = () => {
+export const useCommunityAdoptFeed = (params: CommunityListParams = {}) => {
   const goDetailPage = useCallback((id: string) => {
     router.push({ pathname: '/community/[id]', params: { id } });
   }, []);
 
-  const adoptList = useMemo(() => getAdoptListValue(), []);
+  const { data, isLoading, isError, refetch } = useQuery(
+    communityQueries.list({
+      category: 'ADOPTION_PERSONAL',
+      sort: 'NEW',
+      page: 1,
+      size: 20,
+      ...params
+    })
+  );
 
-  return { adoptList, goDetailPage };
+  return {
+    adoptList: data?.items ?? [],
+    total: data?.total ?? 0,
+    hasNext: data?.hasNext ?? false,
+    isLoading,
+    isError,
+    refetch,
+    goDetailPage
+  };
 };

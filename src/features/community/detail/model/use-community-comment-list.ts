@@ -1,13 +1,23 @@
-import { useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 
-import { CommentSortOrderDto } from '@/entities/comment';
+import { commentQueries, CommentSortOrderDto } from '@/entities/comment';
 
-import { getCommentList } from './mock';
-
-export const useCommunityCommentList = () => {
+export const useCommunityCommentList = (postId: number) => {
   const [sortOrder, setSortOrder] = useState<CommentSortOrderDto>('LATEST');
 
-  const commentList = useMemo(() => getCommentList(sortOrder), [sortOrder]);
+  const { data, isLoading, isError, refetch } = useQuery(
+    commentQueries.list(postId, { sort: sortOrder, page: 1, size: 20 })
+  );
 
-  return { sortOrder, commentList, changeSortOrder: setSortOrder };
+  return {
+    sortOrder,
+    commentList: data?.items ?? [],
+    total: data?.total ?? 0,
+    hasNext: data?.hasNext ?? false,
+    isLoading,
+    isError,
+    refetch,
+    changeSortOrder: setSortOrder
+  };
 };

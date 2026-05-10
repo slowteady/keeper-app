@@ -45,49 +45,61 @@ export const CommunityAdoptFormSchema = z.object({
 });
 export type CommunityAdoptFormDto = z.infer<typeof CommunityAdoptFormSchema>;
 
+export const PostUserSummarySchema = z.object({
+  id: z.number(),
+  image: z.string(),
+  nickname: z.string()
+});
+export type PostUserSummaryDto = z.infer<typeof PostUserSummarySchema>;
+
+export const PostContactSchema = z.object({
+  type: z.enum(['TEL', 'EMAIL']),
+  value: z.string()
+});
+export type PostContactDto = z.infer<typeof PostContactSchema>;
+
 export const CommunityAdoptDetailSchema = z.object({
   id: z.number(),
-  user: z.object({
-    id: z.number(),
-    image: z.string(),
-    nickname: z.string()
-  }),
+  user: PostUserSummarySchema.nullable(),
   displayTime: z.string(),
   title: z.string(),
   images: z.array(z.string()),
   tags: z.array(z.string()),
-  content: z.string(),
+  content: z.string().optional(),
   age: z.string(),
   gender: z.string(),
   weight: z.string(),
-  healthCheck: HealthCheckSchema,
+  animalType: AnimalTypeSchema,
+  specificType: z.string(),
+  location: z.string(),
+  healthCheck: HealthCheckSchema.optional(),
   neuterYn: NeuterYnSchema,
-  vaccinationCheck: VaccinationCheckSchema,
-  specialMark: z.string(),
-  likes: z.string(),
-  dislikes: z.string(),
-  health: z.string(),
-  relatedLink: z.string(),
+  vaccinationCheck: VaccinationCheckSchema.optional(),
+  protectionType: ProtectionTypeSchema,
+  specialMark: z.string().optional(),
+  likes: z.string().optional(),
+  dislikes: z.string().optional(),
+  health: z.string().optional(),
+  relatedLink: z.string().optional(),
+  rfid: z.string().optional(),
+  contacts: z.array(PostContactSchema),
   counts: z.object({
     like: z.number(),
     view: z.number(),
     comment: z.number()
-  })
+  }),
+  isLiked: z.boolean()
 });
 export type CommunityAdoptDetailDto = z.infer<typeof CommunityAdoptDetailSchema>;
 
 export const CommunityAdoptListSchema = z.object({
   id: z.number(),
-  user: z.object({
-    id: z.number(),
-    image: z.string(),
-    nickname: z.string()
-  }),
+  user: PostUserSummarySchema.nullable(),
   displayTime: z.string(),
   title: z.string(),
   images: z.array(z.string()),
   tags: z.array(z.string()),
-  content: z.string(),
+  content: z.string().optional(),
   counts: z.object({
     like: z.number(),
     view: z.number(),
@@ -96,3 +108,12 @@ export const CommunityAdoptListSchema = z.object({
   isLiked: z.boolean()
 });
 export type CommunityAdoptListDto = z.infer<typeof CommunityAdoptListSchema>;
+
+export const CommunityListResponseSchema = z.object({
+  items: z.array(CommunityAdoptListSchema),
+  total: z.number(),
+  page: z.number(),
+  size: z.number(),
+  hasNext: z.boolean()
+});
+export type CommunityListResponseDto = z.infer<typeof CommunityListResponseSchema>;

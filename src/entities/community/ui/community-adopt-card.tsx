@@ -55,7 +55,11 @@ export const CommunityAdoptCard = ({
     <GestureDetector gesture={tap}>
       <View>
         <XStack items="center" justify="space-between" mb={12}>
-          <CommunityAdoptCardHeader image={user.image} nickname={user.nickname} displayTime={displayTime} />
+          <CommunityAdoptCardHeader
+            image={user?.image ?? ''}
+            nickname={user?.nickname ?? '탈퇴한 사용자'}
+            displayTime={displayTime}
+          />
 
           <CommunityAdoptCardHeart
             isLiked={isLiked}
@@ -65,7 +69,7 @@ export const CommunityAdoptCard = ({
           />
         </XStack>
         <CommunityAdoptCardTitle title={title} numberOfLines={1} mb={8} />
-        <CommunityAdoptCardContent content={content} mb={20} />
+        <CommunityAdoptCardContent content={content ?? ''} mb={20} />
         {hasTags && <CommunityAdoptCardTags tags={tags} mb={20} />}
         <CommunityAdoptCardCarousel images={images} mb={12} />
         <CommunityAdoptCardStats comment={counts.comment} like={counts.like} view={counts.view} />

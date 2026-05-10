@@ -1,28 +1,25 @@
 import { Avatar, styled, Text, XStack } from 'tamagui';
 
 import { CommentDto } from '../model';
-import { CommentLikeButton } from './comment-like-button';
 
 export type CommentCardProps = {
   comment: CommentDto;
-  onPressLike: () => void;
 };
 
-export const CommentCard = ({ comment, onPressLike }: CommentCardProps) => {
+export const CommentCard = ({ comment }: CommentCardProps) => {
   return (
     <>
       <XStack items="center" mb={16}>
         <CommentCardHeader
-          image={comment.user.image}
-          nickname={comment.user.nickname}
-          displayTime={comment.createdAt}
+          image={comment.user?.image ?? ''}
+          nickname={comment.user?.nickname ?? '탈퇴한 사용자'}
+          displayTime={comment.displayTime}
         />
       </XStack>
 
       <Text fontSize={15} lineHeight={22} fontWeight={500} color="$black650" letterSpacing={-0.25} mb={20}>
         {comment.content}
       </Text>
-      <CommentCardFooter likeCount={comment.likeCount} likeByMe={comment.likeByMe} onPressLike={onPressLike} />
     </>
   );
 };
@@ -46,22 +43,6 @@ const CommentCardHeader = ({ image, nickname, displayTime }: CommentCardHeaderPr
         {displayTime}
       </Text>
     </>
-  );
-};
-
-type CommentCardFooterProps = {
-  likeCount: number;
-  likeByMe: boolean;
-  onPressLike: () => void;
-};
-const CommentCardFooter = ({ likeCount, likeByMe, onPressLike }: CommentCardFooterProps) => {
-  return (
-    <XStack items="center" gap={8}>
-      <CommentLikeButton likeByMe={likeByMe} onPress={onPressLike} />
-      <Text fontSize={12} lineHeight={14} fontWeight={400} color="$black500">
-        {likeCount}명에게 도움이 되었어요
-      </Text>
-    </XStack>
   );
 };
 

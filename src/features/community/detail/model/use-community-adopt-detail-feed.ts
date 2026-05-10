@@ -1,20 +1,26 @@
+import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
+
+import { communityQueries } from '@/entities/community';
 
 import {
   convertToAdoptDetailDescriptionData,
   convertToAdoptDetailInfoData,
   convertToAdoptDetailOverviewData
 } from './mapper';
-import { getAdoptDetailValue } from './mock';
 
 export const useCommunityAdoptDetailFeed = (id: string) => {
-  const detailPost = useMemo(() => getAdoptDetailValue(id), [id]);
+  const numId = Number(id);
+  const { data: detailPost, isLoading, isError, refetch } = useQuery(communityQueries.detail(numId));
 
-  const overviews = useMemo(() => convertToAdoptDetailOverviewData(detailPost), [detailPost]);
-  const infos = useMemo(() => convertToAdoptDetailInfoData(detailPost), [detailPost]);
-  const descriptions = useMemo(() => convertToAdoptDetailDescriptionData(detailPost), [detailPost]);
+  const overviews = useMemo(() => (detailPost ? convertToAdoptDetailOverviewData(detailPost) : []), [detailPost]);
+  const infos = useMemo(() => (detailPost ? convertToAdoptDetailInfoData(detailPost) : []), [detailPost]);
+  const descriptions = useMemo(() => (detailPost ? convertToAdoptDetailDescriptionData(detailPost) : []), [detailPost]);
 
   return {
-    data: { detailPost, overviews, infos, descriptions }
+    data: { detailPost, overviews, infos, descriptions },
+    isLoading,
+    isError,
+    refetch
   };
 };

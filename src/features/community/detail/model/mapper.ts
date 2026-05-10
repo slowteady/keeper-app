@@ -3,13 +3,13 @@ import { CommunityAdoptDetailDto } from '@/entities/community';
 export const convertToAdoptDetailOverviewData = (detailPost: CommunityAdoptDetailDto) => {
   return {
     id: detailPost.id,
-    image: detailPost.user.image,
-    nickname: detailPost.user.nickname,
+    image: detailPost.user?.image ?? '',
+    nickname: detailPost.user?.nickname ?? '탈퇴한 사용자',
     displayTime: detailPost.displayTime,
     title: detailPost.title,
     images: detailPost.images,
     tags: detailPost.tags,
-    content: detailPost.content
+    content: detailPost.content ?? ''
   };
 };
 
@@ -26,10 +26,10 @@ export const convertToAdoptDetailInfoData = (detailPost: CommunityAdoptDetailDto
 
 export const convertToAdoptDetailDescriptionData = (detailPost: CommunityAdoptDetailDto) => {
   return {
-    specialMark: detailPost.specialMark,
-    likes: detailPost.likes,
-    dislikes: detailPost.dislikes,
-    health: detailPost.health,
-    relatedLink: detailPost.relatedLink
+    specialMark: detailPost.specialMark ?? '',
+    likes: detailPost.likes ?? '',
+    dislikes: detailPost.dislikes ?? '',
+    health: detailPost.health ?? '',
+    relatedLink: detailPost.relatedLink ?? ''
   };
 };
