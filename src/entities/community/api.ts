@@ -17,7 +17,7 @@ export type CommunityListParams = {
   size?: number;
   category?: 'ADOPTION_PERSONAL' | 'ADOPTION_LIFE' | 'QNA';
   animalType?: 'DOG' | 'CAT' | 'OTHER';
-  sort?: 'NEW';
+  sort?: 'NEW' | 'LIKE' | 'COMMENT' | 'VIEW';
 };
 
 const COMMUNITY_BASE = '/community/posts';
@@ -86,11 +86,14 @@ export const communityQueries = {
       queryFn: ({ pageParam }) => getList({ ...params, page: pageParam, size: params.size ?? 20 }),
       initialPageParam: 1,
       getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.page + 1 : undefined),
-      select: (data) => {
-        const lastPage = data.pages[data.pages.length - 1];
-        const items = data.pages.flatMap((p) => p.items);
-        return { ...lastPage, items };
-      }
+      // 페이지 합치고 메타(total/page/size/hasNext) 는 마지막 페이지 기준으로 노출
+      select: (data) => ({
+        items: data.pages.flatMap((p) => p.items),
+        total: data.pages[data.pages.length - 1].total,
+        page: data.pages[data.pages.length - 1].page,
+        size: data.pages[data.pages.length - 1].size,
+        hasNext: data.pages[data.pages.length - 1].hasNext
+      })
     }),
 
   detail: (id: number) =>

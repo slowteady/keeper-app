@@ -18,20 +18,22 @@ export const useCommunityAdoptFeed = (params: FeedParams = {}) => {
     data,
     isLoading,
     isError,
+    error,
     isFetchingNextPage,
     hasNextPage,
     fetchNextPage: fetchNextPageQuery
   } = useInfiniteQuery(
     communityQueries.list({
       category: 'ADOPTION_PERSONAL',
-      sort: 'NEW',
+      sort: params.sort ?? 'NEW',
       size,
       ...params
     })
   );
 
+  // list 캐시만 무효화 (detail / 다른 카테고리는 영향 X)
   const refresh = useCallback(async () => {
-    await queryClient.invalidateQueries({ queryKey: communityQueries.all() });
+    await queryClient.invalidateQueries({ queryKey: [...communityQueries.all(), 'list'] });
   }, [queryClient]);
 
   const fetchNextPage = useCallback(async () => {
@@ -50,10 +52,11 @@ export const useCommunityAdoptFeed = (params: FeedParams = {}) => {
     adoptList: data?.items ?? [],
     total: data?.total ?? 0,
     moreButtonText,
-    hasNextPage: !!hasNextPage,
+    hasNextPage: hasNextPage ?? false,
     isLoading,
     isFetchingNextPage,
     isError,
+    error,
     refresh,
     fetchNextPage,
     goDetailPage

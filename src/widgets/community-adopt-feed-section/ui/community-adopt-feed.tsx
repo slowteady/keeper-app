@@ -30,7 +30,8 @@ export const CommunityAdoptFeed = () => {
     fetchNextPage,
     goDetailPage
   } = useCommunityAdoptFeed({
-    animalType: selectedAnimalType === 'ALL' ? undefined : selectedAnimalType
+    animalType: selectedAnimalType === 'ALL' ? undefined : selectedAnimalType,
+    sort: selectedFilter
   });
 
   const { handleScroll, handlePressButton, isButtonVisible, scrollRef } = useScrollUpButton();

@@ -96,3 +96,25 @@ appId: com.keeper.love
     visible: '개인입양'
     timeout: 5000
 - assertVisible: '개인입양'
+
+# 정렬 chip 토글 — 최신순 / 인기순 / 댓글순 / 조회순
+- tapOn: '최신순'
+- waitForAnimationToEnd
+- tapOn: '인기순'
+- waitForAnimationToEnd
+- assertVisible: '인기순'
+- tapOn: '인기순'
+- waitForAnimationToEnd
+- tapOn: '댓글순'
+- waitForAnimationToEnd
+- assertVisible: '댓글순'
+- tapOn: '댓글순'
+- waitForAnimationToEnd
+- tapOn: '조회순'
+- waitForAnimationToEnd
+- assertVisible: '조회순'
+- tapOn: '조회순'
+- waitForAnimationToEnd
+- tapOn: '최신순'
+- waitForAnimationToEnd
+- assertVisible: '최신순'
