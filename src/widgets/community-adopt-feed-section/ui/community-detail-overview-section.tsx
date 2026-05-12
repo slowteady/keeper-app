@@ -1,3 +1,5 @@
+import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
+import { Pressable } from 'react-native';
 import { styled, Text, useTheme, View, XStack } from 'tamagui';
 
 import {
@@ -18,6 +20,7 @@ export type CommunityDetailOverviewSectionProps = {
   images: string[];
   tags: string[];
   content: string;
+  isLiked?: boolean;
   onPressLike: () => void;
   onPressShare: (id: number) => void;
 };
@@ -31,17 +34,25 @@ export const CommunityDetailOverviewSection = ({
   images,
   tags,
   content,
+  isLiked = false,
   onPressLike,
   onPressShare
 }: CommunityDetailOverviewSectionProps) => {
   const { white600 } = useTheme();
+
+  const handlePressLike = () => {
+    impactAsync(isLiked ? ImpactFeedbackStyle.Light : ImpactFeedbackStyle.Medium).catch(() => undefined);
+    onPressLike();
+  };
 
   return (
     <>
       <HeaderWrapper mb={20}>
         <CommunityAdoptCardHeader image={image} nickname={nickname} displayTime={displayTime} />
         <XStack gap={20} items="center">
-          <AnimatedHeart size={26} onPress={onPressLike} />
+          <Pressable onPress={handlePressLike} hitSlop={10}>
+            <AnimatedHeart size={26} isLiked={isLiked} />
+          </Pressable>
           <View hitSlop={8} onPress={() => onPressShare(id)}>
             <Share width={26} height={26} color={white600.val} />
           </View>

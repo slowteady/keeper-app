@@ -1,7 +1,7 @@
 import { useScrollToTop } from '@react-navigation/native';
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
-import { useCallback, useEffect } from 'react';
+import { memo, useCallback, useEffect } from 'react';
 import { ActivityIndicator, RefreshControl } from 'react-native';
 import { styled, useTheme, View, XStack, YStack } from 'tamagui';
 
@@ -9,7 +9,7 @@ import { ADOPT_OPTIONS } from '@/entities/adopt';
 import type { CommunityAdoptListDto } from '@/entities/community';
 import { COMMUNITY_LIST_FILTER, CommunityAdoptCard } from '@/entities/community';
 import { useCommunityAdoptFeed, useCommunityListFilter } from '@/features/community';
-import { useLikePost } from '@/features/like-post';
+import { useIsLikePending, useLikePost } from '@/features/like-post';
 import { AnimalTypeDto, useListRefreshing, useScrollUpButton } from '@/shared/model';
 import { ButtonGroup, ChipButton, FeedNodata, ScrollUpButton, ShowMoreButton } from '@/shared/ui';
 import { DownArrow } from '@/shared/ui/icons/mini';
@@ -55,16 +55,7 @@ export const CommunityAdoptFeed = () => {
   const handlePressLike = useCallback((id: number, isLiked: boolean) => toggleLikePost(id, isLiked), [toggleLikePost]);
 
   const renderItem = useCallback<ListRenderItem<CommunityAdoptListDto>>(
-    ({ item }) => (
-      <View px={20} py={32}>
-        <CommunityAdoptCard
-          {...item}
-          content={item.content ?? ''}
-          onPressCard={handlePressCard}
-          onPressLike={handlePressLike}
-        />
-      </View>
-    ),
+    ({ item }) => <FeedCardItem item={item} onPressCard={handlePressCard} onPressLike={handlePressLike} />,
     [handlePressCard, handlePressLike]
   );
 
@@ -114,6 +105,28 @@ export const CommunityAdoptFeed = () => {
     </Container>
   );
 };
+
+// 카드별 isPending 격리 — useIsLikePending 으로 그 postId 의 mutation 만 추적해 다른 카드 영향 없음.
+type FeedCardItemProps = {
+  item: CommunityAdoptListDto;
+  onPressCard: (id: number) => void;
+  onPressLike: (id: number, isLiked: boolean) => void;
+};
+const FeedCardItem = memo(({ item, onPressCard, onPressLike }: FeedCardItemProps) => {
+  const isPending = useIsLikePending(item.id);
+  return (
+    <View px={20} py={32}>
+      <CommunityAdoptCard
+        {...item}
+        content={item.content ?? ''}
+        isLoading={isPending}
+        onPressCard={onPressCard}
+        onPressLike={onPressLike}
+      />
+    </View>
+  );
+});
+FeedCardItem.displayName = 'FeedCardItem';
 
 const EmptyState = ({ isLoading }: { isLoading: boolean }) => {
   if (isLoading) {

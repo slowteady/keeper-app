@@ -1,4 +1,5 @@
-import { memo, useCallback } from 'react';
+import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
+import { memo, useCallback, useMemo } from 'react';
 import { Dimensions } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { styled, Text, TextProps, View, ViewProps, XStack, XStackProps } from 'tamagui';
@@ -32,27 +33,43 @@ const CommunityAdoptCardComponent = ({
   isLoading = false,
   isLoggedIn = false
 }: CommunityAdoptCardProps) => {
-  const tap = Gesture.Tap()
-    .maxDuration(250) // 탭 최대 지속시간
-    .maxDeltaX(8) // X축 이동 허용치(px)
-    .maxDeltaY(8) // Y축 이동 허용치(px)
-    .onEnd((_e, success) => {
-      if (success) handlePressCard();
-    })
-    .runOnJS(true);
-
-  const handlePressCard = useCallback(() => {
-    onPressCard(id);
-  }, [onPressCard, id]);
-
+  const handlePressCard = useCallback(() => onPressCard(id), [onPressCard, id]);
   const handlePressLike = useCallback(() => {
+    // 좋아요 토글 시 햅틱 — 추가는 Medium, 해제는 Light
+    impactAsync(isLiked ? ImpactFeedbackStyle.Light : ImpactFeedbackStyle.Medium).catch(() => undefined);
     onPressLike(id, isLiked);
   }, [id, isLiked, onPressLike]);
+
+  // 자식 hearTap 이 먼저 인식되면 cardTap 은 fail.
+  // requireExternalGestureToFail 로 명시 합성 — 자식 영역에서 cardTap 으로 잘못 떨어지는 케이스 차단.
+  const { cardTap, heartTap } = useMemo(() => {
+    const heart = Gesture.Tap()
+      .maxDuration(250)
+      .maxDeltaX(8)
+      .maxDeltaY(8)
+      .enabled(isLoggedIn && !isLoading)
+      .onEnd((_e, success) => {
+        if (success) handlePressLike();
+      })
+      .runOnJS(true);
+
+    const card = Gesture.Tap()
+      .maxDuration(250)
+      .maxDeltaX(8)
+      .maxDeltaY(8)
+      .requireExternalGestureToFail(heart)
+      .onEnd((_e, success) => {
+        if (success) handlePressCard();
+      })
+      .runOnJS(true);
+
+    return { cardTap: card, heartTap: heart };
+  }, [handlePressCard, handlePressLike, isLoggedIn, isLoading]);
 
   const hasTags = tags.length > 0;
 
   return (
-    <GestureDetector gesture={tap}>
+    <GestureDetector gesture={cardTap}>
       <View>
         <XStack items="center" justify="space-between" mb={12}>
           <CommunityAdoptCardHeader
@@ -61,12 +78,11 @@ const CommunityAdoptCardComponent = ({
             displayTime={displayTime}
           />
 
-          <CommunityAdoptCardHeart
-            isLiked={isLiked}
-            onPress={handlePressLike}
-            disabled={!isLoggedIn}
-            loading={isLoading}
-          />
+          <GestureDetector gesture={heartTap}>
+            <View hitSlop={10}>
+              <AnimatedHeart isLiked={isLiked} size={28} />
+            </View>
+          </GestureDetector>
         </XStack>
         <CommunityAdoptCardTitle title={title} numberOfLines={1} mb={8} />
         <CommunityAdoptCardContent content={content ?? ''} mb={20} />
@@ -80,17 +96,6 @@ const CommunityAdoptCardComponent = ({
 
 export const CommunityAdoptCard = memo(CommunityAdoptCardComponent);
 CommunityAdoptCard.displayName = 'CommunityAdoptCard';
-
-export type CommunityAdoptCardHeartProps = {
-  isLiked: boolean;
-  onPress: () => void;
-  disabled: boolean;
-  loading: boolean;
-};
-
-export const CommunityAdoptCardHeart = ({ isLiked, onPress, disabled, loading }: CommunityAdoptCardHeartProps) => {
-  return <AnimatedHeart isLiked={isLiked} onPress={onPress} disabled={disabled} loading={loading} size={28} />;
-};
 
 export const CommunityAdoptCardTitle = ({ title, ...props }: { title: string } & TextProps) => {
   return <StyledTitle {...props}>{title}</StyledTitle>;

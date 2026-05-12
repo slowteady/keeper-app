@@ -7,7 +7,7 @@ export const CommentFormInput = ({ ...props }: TextAreaProps) => {
   return (
     <Container>
       <View mr={8}>
-        <AnimatedHeart size={28} onPress={() => {}} />
+        <AnimatedHeart size={28} />
       </View>
 
       <View flex={1} mr={6}>

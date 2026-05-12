@@ -29,7 +29,7 @@ export const ShelterCard = ({ data, onPress }: ShelterCardProps) => {
             >
               {name}
             </Text>
-            <AnimatedHeart isLiked={false} onPress={() => {}} size={20} />
+            <AnimatedHeart isLiked={false} size={20} />
           </XStack>
 
           <XStack items="center">
