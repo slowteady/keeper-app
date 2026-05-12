@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { memo, useCallback } from 'react';
 import { Dimensions } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { styled, Text, TextProps, View, ViewProps, XStack, XStackProps } from 'tamagui';
@@ -12,12 +12,12 @@ import { CommunityAdoptCardStats } from './community-adopt-card-stats';
 
 export interface CommunityAdoptCardProps extends CommunityAdoptListDto {
   onPressCard: (id: number) => void;
-  onPressLike: (id: number) => void;
+  onPressLike: (id: number, isLiked: boolean) => void;
   isLoading?: boolean;
   isLoggedIn?: boolean;
 }
 
-export const CommunityAdoptCard = ({
+const CommunityAdoptCardComponent = ({
   id,
   user,
   onPressCard,
@@ -46,8 +46,8 @@ export const CommunityAdoptCard = ({
   }, [onPressCard, id]);
 
   const handlePressLike = useCallback(() => {
-    onPressLike(id);
-  }, [id, onPressLike]);
+    onPressLike(id, isLiked);
+  }, [id, isLiked, onPressLike]);
 
   const hasTags = tags.length > 0;
 
@@ -77,6 +77,9 @@ export const CommunityAdoptCard = ({
     </GestureDetector>
   );
 };
+
+export const CommunityAdoptCard = memo(CommunityAdoptCardComponent);
+CommunityAdoptCard.displayName = 'CommunityAdoptCard';
 
 export type CommunityAdoptCardHeartProps = {
   isLiked: boolean;
