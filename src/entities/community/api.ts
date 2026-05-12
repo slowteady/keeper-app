@@ -1,4 +1,4 @@
-import { queryOptions } from '@tanstack/react-query';
+import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
 import { AxiosResponse } from 'axios';
 
 import { authApi, publicApi } from '@/shared/api/instance';
@@ -20,7 +20,7 @@ export type CommunityListParams = {
   sort?: 'NEW';
 };
 
-const COMMUNITY_BASE = '/api/community/posts';
+const COMMUNITY_BASE = '/community/posts';
 
 const getList = async (params: CommunityListParams): Promise<CommunityListResponseDto> => {
   const res = await publicApi.get<ApiResponse<CommunityListResponseDto>>(COMMUNITY_BASE, { params });
@@ -74,16 +74,28 @@ export const communityApi = {
   reportPost
 };
 
+// 페이지네이션 제외한 list 필터 (queryKey 안정성 + page 분리)
+type CommunityListFilter = Omit<CommunityListParams, 'page'>;
+
 export const communityQueries = {
   all: () => ['community'] as const,
-  list: (params: CommunityListParams) =>
-    queryOptions({
-      queryKey: ['community', 'list', params],
-      queryFn: () => getList(params)
+
+  list: (params: CommunityListFilter) =>
+    infiniteQueryOptions({
+      queryKey: [...communityQueries.all(), 'list', params] as const,
+      queryFn: ({ pageParam }) => getList({ ...params, page: pageParam, size: params.size ?? 20 }),
+      initialPageParam: 1,
+      getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.page + 1 : undefined),
+      select: (data) => {
+        const lastPage = data.pages[data.pages.length - 1];
+        const items = data.pages.flatMap((p) => p.items);
+        return { ...lastPage, items };
+      }
     }),
+
   detail: (id: number) =>
     queryOptions({
-      queryKey: ['community', 'detail', id],
+      queryKey: [...communityQueries.all(), 'detail', id] as const,
       queryFn: () => getDetail(id),
       enabled: !!id
     })

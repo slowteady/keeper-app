@@ -1,5 +1,7 @@
 import { Avatar, styled, Text, XStack } from 'tamagui';
 
+import { formatTimeAgo } from '@/shared/lib';
+
 export type CommunityAdoptCardHeaderProps = {
   image: string;
   nickname: string;
@@ -17,7 +19,7 @@ export const CommunityAdoptCardHeader = ({ image, nickname, displayTime }: Commu
         {nickname}
       </Text>
       <Text fontSize={14} fontWeight={500} ml={4} letterSpacing={-0.25} color="$black400">
-        {displayTime}
+        {formatTimeAgo(displayTime)}
       </Text>
     </XStack>
   );
