@@ -53,7 +53,8 @@ export const PostUserSummarySchema = z.object({
 export type PostUserSummaryDto = z.infer<typeof PostUserSummarySchema>;
 
 export const PostContactSchema = z.object({
-  type: z.enum(['TEL', 'EMAIL']),
+  // 백엔드 PostContactType 과 정합 — PHONE/EMAIL/SNS
+  type: z.enum(['PHONE', 'EMAIL', 'SNS']),
   value: z.string()
 });
 export type PostContactDto = z.infer<typeof PostContactSchema>;
@@ -65,23 +66,24 @@ export const CommunityAdoptDetailSchema = z.object({
   title: z.string(),
   images: z.array(z.string()),
   tags: z.array(z.string()),
-  content: z.string().optional(),
+  // null + undefined 둘 다 허용 (nullish) — DB nullable 컬럼이 null 로 응답됨
+  content: z.string().nullish(),
   age: z.string(),
   gender: z.string(),
   weight: z.string(),
   animalType: AnimalTypeSchema,
   specificType: z.string(),
   location: z.string(),
-  healthCheck: HealthCheckSchema.optional(),
+  healthCheck: HealthCheckSchema.nullish(),
   neuterYn: NeuterYnSchema,
-  vaccinationCheck: VaccinationCheckSchema.optional(),
+  vaccinationCheck: VaccinationCheckSchema.nullish(),
   protectionType: ProtectionTypeSchema,
-  specialMark: z.string().optional(),
-  likes: z.string().optional(),
-  dislikes: z.string().optional(),
-  health: z.string().optional(),
-  relatedLink: z.string().optional(),
-  rfid: z.string().optional(),
+  specialMark: z.string().nullish(),
+  likes: z.string().nullish(),
+  dislikes: z.string().nullish(),
+  health: z.string().nullish(),
+  relatedLink: z.string().nullish(),
+  rfid: z.string().nullish(),
   contacts: z.array(PostContactSchema),
   counts: z.object({
     like: z.number(),

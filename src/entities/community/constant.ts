@@ -40,7 +40,8 @@ export const CREATE_POST_OPTIONS = {
     { value: 'NONE', label: '정보없음' }
   ] as const satisfies ChipOption[],
   contact: [
-    { value: 'TEL', label: '전화번호' },
+    // 백엔드 PostContactType 과 정합 — PHONE/EMAIL/SNS
+    { value: 'PHONE', label: '전화번호' },
     { value: 'EMAIL', label: '이메일' },
     { value: 'SNS', label: 'SNS' }
   ] as const satisfies ChipOption[]
