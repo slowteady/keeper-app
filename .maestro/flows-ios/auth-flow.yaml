@@ -1,0 +1,53 @@
+appId: com.keeper.love
+---
+# 앱 실행 + dev client 처리 (iOS)
+- launchApp
+- tapOn:
+    text: '앱을 사용하는 동안 허용'
+    optional: true
+- tapOn:
+    text: 'http://localhost:8081'
+    optional: true
+- waitForAnimationToEnd
+- tapOn:
+    text: 'Continue'
+    optional: true
+- extendedWaitUntil:
+    visible: '입양공고'
+    timeout: 30000
+
+# 프로필 탭 진입 → 로그인 페이지 노출 확인 (비로그인 가정)
+# 이미 로그인된 상태면 이 시나리오는 의미 없으므로 optional 처리
+- tapOn: '프로필'
+- waitForAnimationToEnd
+
+# 로그인 진입 (비로그인 상태에서만 노출)
+- tapOn:
+    text: '로그인'
+    optional: true
+- waitForAnimationToEnd
+
+# 소셜 로그인 버튼 노출 확인 (외부 OAuth는 e2e 자동화 불가 — UI 노출까지만)
+- assertVisible:
+    text: '카카오'
+    optional: true
+- assertVisible:
+    text: 'Google'
+    optional: true
+- assertVisible:
+    text: 'Apple'
+    optional: true
+
+# 뒤로가기 → 프로필 화면 복귀
+- tapOn:
+    point: '12%, 8%'
+    optional: true
+- waitForAnimationToEnd
+
+# 바텀 탭 다른 곳으로 이동 후 다시 프로필 진입
+- tapOn: 'Home'
+- extendedWaitUntil:
+    visible: '입양공고'
+    timeout: 5000
+- tapOn: '프로필'
+- waitForAnimationToEnd

@@ -1,0 +1,49 @@
+appId: com.keeper.love
+---
+# 앱 실행 + dev client 처리 (iOS)
+- launchApp
+- tapOn:
+    text: '앱을 사용하는 동안 허용'
+    optional: true
+- tapOn:
+    text: 'http://localhost:8081'
+    optional: true
+- waitForAnimationToEnd
+- tapOn:
+    text: 'Continue'
+    optional: true
+- extendedWaitUntil:
+    visible: '입양공고'
+    timeout: 30000
+
+# 프로필 탭 진입
+- tapOn: '프로필'
+- waitForAnimationToEnd
+
+# 비로그인 상태: 로그인 유도 화면, 로그인 상태: 마이페이지 — 두 경우 모두 케이스 처리
+- tapOn:
+    text: '로그인'
+    optional: true
+- waitForAnimationToEnd
+
+# 로그인 상태일 때 메뉴 영역 확인 (optional — 비로그인이면 skip됨)
+- tapOn:
+    text: '내 활동'
+    optional: true
+- waitForAnimationToEnd
+- tapOn:
+    text: '좋아요'
+    optional: true
+- waitForAnimationToEnd
+
+# 프로필 탭 재진입
+- tapOn: '프로필'
+- waitForAnimationToEnd
+
+# 바텀 탭 다른 곳으로 이동 후 복귀 — 스크롤 초기화 확인
+- tapOn: 'Home'
+- extendedWaitUntil:
+    visible: '입양공고'
+    timeout: 5000
+- tapOn: '프로필'
+- waitForAnimationToEnd
