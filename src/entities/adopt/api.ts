@@ -1,7 +1,7 @@
 import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
 import { AxiosResponse } from 'axios';
 
-import { publicApi } from '@/shared/api';
+import { authApi, publicApi } from '@/shared/api';
 import { ApiResponse } from '@/shared/model';
 
 import { AdoptDataDto, AdoptParamsDto, AdoptResponseDto } from './schema';
@@ -44,4 +44,21 @@ export const adoptQueries = {
       queryFn: () => getAdopt(id),
       select: (res) => res.data.data
     })
+};
+
+// --- Favorite (찜) ---
+
+const favoriteAbandonment = async (desertionNo: string): Promise<{ isFavorited: boolean }> => {
+  const res = await authApi.post<ApiResponse<{ isFavorited: boolean }>>(`/abandonments/${desertionNo}/favorite`);
+  return res.data.data;
+};
+
+const unfavoriteAbandonment = async (desertionNo: string): Promise<{ isFavorited: boolean }> => {
+  const res = await authApi.delete<ApiResponse<{ isFavorited: boolean }>>(`/abandonments/${desertionNo}/favorite`);
+  return res.data.data;
+};
+
+export const adoptApi = {
+  favorite: favoriteAbandonment,
+  unfavorite: unfavoriteAbandonment
 };

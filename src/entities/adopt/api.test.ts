@@ -1,8 +1,10 @@
-import { publicApi } from '@/shared/api/instance';
+import { authApi, publicApi } from '@/shared/api/instance';
 
-import { adoptQueries } from './api';
+import { adoptApi, adoptQueries } from './api';
 
 const mockedPublicGet = jest.mocked(publicApi.get);
+const mockedAuthPost = jest.mocked(authApi.post);
+const mockedAuthDelete = jest.mocked(authApi.delete);
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -99,5 +101,26 @@ describe('adoptQueries.detail', () => {
 
   it('select 함수가 정의되어 있다', () => {
     expect(typeof adoptQueries.detail('a1').select).toBe('function');
+  });
+});
+
+describe('adoptApi.favorite / unfavorite', () => {
+  beforeEach(() => {
+    mockedAuthPost.mockResolvedValue({ data: { data: { isFavorited: true } } } as never);
+    mockedAuthDelete.mockResolvedValue({ data: { data: { isFavorited: false } } } as never);
+  });
+
+  it('favorite: POST /abandonments/:desertionNo/favorite 호출 후 isFavorited 반환', async () => {
+    const result = await adoptApi.favorite('D001');
+
+    expect(mockedAuthPost).toHaveBeenCalledWith('/abandonments/D001/favorite');
+    expect(result).toEqual({ isFavorited: true });
+  });
+
+  it('unfavorite: DELETE /abandonments/:desertionNo/favorite 호출 후 isFavorited 반환', async () => {
+    const result = await adoptApi.unfavorite('D001');
+
+    expect(mockedAuthDelete).toHaveBeenCalledWith('/abandonments/D001/favorite');
+    expect(result).toEqual({ isFavorited: false });
   });
 });

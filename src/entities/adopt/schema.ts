@@ -25,7 +25,9 @@ export const AdoptDataSchema = z.object({
   noticeNo: z.string(),
   rfid: z.string().nullable(),
   vaccinationCheck: z.string().nullable(),
-  healthCheck: z.string().nullable()
+  healthCheck: z.string().nullable(),
+  // 백엔드 isFavorited 응답 추가 (abandonment_favorite 마이그레이션 동기화)
+  isFavorited: z.boolean().optional()
 });
 export type AdoptDataDto = z.infer<typeof AdoptDataSchema>;
 

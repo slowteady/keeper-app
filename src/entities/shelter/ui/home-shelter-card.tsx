@@ -1,22 +1,41 @@
+import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
+import { useCallback } from 'react';
+import { Pressable } from 'react-native';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
 export type HomeShelterCardProps = {
+  careRegNo: string;
   name: string;
   address: string;
   tel: string;
+  isFavorited?: boolean;
+  onPressFavorite?: (careRegNo: string, currentlyFavorited: boolean) => void;
 };
 
 export const HOME_SHELTER_CARD_SIZE = {
   SMALL: 270
 };
 
-export const HomeShelterCard = ({ name, address, tel }: HomeShelterCardProps) => {
+export const HomeShelterCard = ({
+  careRegNo,
+  name,
+  address,
+  tel,
+  isFavorited = false,
+  onPressFavorite
+}: HomeShelterCardProps) => {
   const descriptions = [
     { label: '주소', value: address },
     { label: '전화', value: tel }
   ];
+
+  const handlePressFavorite = useCallback(() => {
+    if (!onPressFavorite) return;
+    impactAsync(isFavorited ? ImpactFeedbackStyle.Light : ImpactFeedbackStyle.Medium).catch(() => undefined);
+    onPressFavorite(careRegNo, isFavorited);
+  }, [careRegNo, isFavorited, onPressFavorite]);
 
   return (
     <Container>
@@ -32,7 +51,9 @@ export const HomeShelterCard = ({ name, address, tel }: HomeShelterCardProps) =>
         >
           {name}
         </Text>
-        <AnimatedHeart size={18} />
+        <Pressable hitSlop={10} onPress={handlePressFavorite} disabled={!onPressFavorite}>
+          <AnimatedHeart isLiked={isFavorited} size={18} />
+        </Pressable>
       </XStack>
 
       <Divider mb={16} />

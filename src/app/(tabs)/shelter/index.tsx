@@ -6,6 +6,7 @@ import { styled, Text, View, YStack } from 'tamagui';
 
 import { ShelterCard, ShelterDto } from '@/entities/shelter';
 import { KakaoAddressDocumentDto, LocationBottomSheet, useLocationBottomSheet } from '@/features/address';
+import { useFavoriteShelter } from '@/features/favorite-shelter';
 import { useShelterMap } from '@/features/shelter';
 import { useScrollUpButton } from '@/shared/model';
 import { RouteErrorBoundary, ScrollUpButton, Skeleton } from '@/shared/ui';
@@ -45,13 +46,22 @@ const Page = () => {
     changeLocation(item);
   });
 
-  const renderItem = useCallback(({ item }: ListRenderItemInfo<ShelterDto>) => {
-    return (
-      <View px={20}>
-        <ShelterCard onPress={() => router.push({ pathname: '/shelter/[id]', params: { id: item.id } })} data={item} />
-      </View>
-    );
-  }, []);
+  const { toggleFavoriteShelter } = useFavoriteShelter();
+
+  const renderItem = useCallback(
+    ({ item }: ListRenderItemInfo<ShelterDto>) => {
+      return (
+        <View px={20}>
+          <ShelterCard
+            onPress={() => router.push({ pathname: '/shelter/[id]', params: { id: item.id } })}
+            onPressFavorite={toggleFavoriteShelter}
+            data={item}
+          />
+        </View>
+      );
+    },
+    [toggleFavoriteShelter]
+  );
 
   return (
     <Container>

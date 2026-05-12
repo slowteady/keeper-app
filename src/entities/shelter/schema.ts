@@ -18,7 +18,9 @@ export const ShelterSchema = z.object({
   weekdayCellCloseTime: z.string().nullable().optional(),
   weekendCellOpenTime: z.string().nullable().optional(),
   weekendCellCloseTime: z.string().nullable().optional(),
-  distance: z.number().optional()
+  distance: z.number().optional(),
+  // 백엔드 isFavorited 추가 (마이그레이션 014 + shelter v2 controller 변경 동기화)
+  isFavorited: z.boolean().optional()
 });
 export type ShelterDto = z.infer<typeof ShelterSchema>;
 

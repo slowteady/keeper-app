@@ -1,9 +1,11 @@
-import { publicApi } from '@/shared/api/instance';
+import { authApi, publicApi } from '@/shared/api/instance';
 
-import { searchShelters, shelterQueries } from './api';
+import { searchShelters, shelterApi, shelterQueries } from './api';
 import { SHELTER_DISTANCES } from './constant';
 
 const mockedPublicGet = jest.mocked(publicApi.get);
+const mockedAuthPost = jest.mocked(authApi.post);
+const mockedAuthDelete = jest.mocked(authApi.delete);
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -123,5 +125,26 @@ describe('searchShelters', () => {
     await searchShelters(params);
 
     expect(mockedPublicGet).toHaveBeenCalledWith('/v2/shelters/search', { params });
+  });
+});
+
+describe('shelterApi.favorite / unfavorite', () => {
+  beforeEach(() => {
+    mockedAuthPost.mockResolvedValue({ data: { data: { isFavorited: true } } } as never);
+    mockedAuthDelete.mockResolvedValue({ data: { data: { isFavorited: false } } } as never);
+  });
+
+  it('favorite: POST /shelters/:careRegNo/favorite 호출 후 isFavorited 반환', async () => {
+    const result = await shelterApi.favorite('S001');
+
+    expect(mockedAuthPost).toHaveBeenCalledWith('/shelters/S001/favorite');
+    expect(result).toEqual({ isFavorited: true });
+  });
+
+  it('unfavorite: DELETE /shelters/:careRegNo/favorite 호출 후 isFavorited 반환', async () => {
+    const result = await shelterApi.unfavorite('S001');
+
+    expect(mockedAuthDelete).toHaveBeenCalledWith('/shelters/S001/favorite');
+    expect(result).toEqual({ isFavorited: false });
   });
 });

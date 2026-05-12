@@ -14,6 +14,7 @@ import {
   ShelterDto,
   ShelterMap
 } from '@/entities/shelter';
+import { useFavoriteShelter } from '@/features/favorite-shelter';
 import { CameraParams } from '@/shared/model';
 import { Skeleton, ViewAllButton } from '@/shared/ui';
 import { DownArrow } from '@/shared/ui/icons/mini';
@@ -49,6 +50,7 @@ export const HomeShelterSection = ({
 }: HomeShelterSectionProps) => {
   const { black500 } = useTheme();
   const listRef = useRef<FlashListRef<ShelterDto>>(null);
+  const { toggleFavoriteShelter } = useFavoriteShelter();
 
   useEffect(() => {
     if (selectedMarkerId && listRef.current) {
@@ -56,13 +58,23 @@ export const HomeShelterSection = ({
     }
   }, [selectedMarkerId]);
 
-  const renderItem = useCallback(({ item }: ListRenderItemInfo<ShelterDto>) => {
-    return (
-      <View onPress={() => router.push({ pathname: '/shelter/[id]', params: { id: item.id } })}>
-        <HomeShelterCard name={item.name} address={item.address} tel={item.tel ?? '-'} />
-      </View>
-    );
-  }, []);
+  const renderItem = useCallback(
+    ({ item }: ListRenderItemInfo<ShelterDto>) => {
+      return (
+        <View onPress={() => router.push({ pathname: '/shelter/[id]', params: { id: item.id } })}>
+          <HomeShelterCard
+            careRegNo={item.id}
+            name={item.name}
+            address={item.address}
+            tel={item.tel ?? '-'}
+            isFavorited={item.isFavorited}
+            onPressFavorite={toggleFavoriteShelter}
+          />
+        </View>
+      );
+    },
+    [toggleFavoriteShelter]
+  );
 
   return (
     <>

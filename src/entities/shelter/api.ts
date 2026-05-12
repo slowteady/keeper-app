@@ -2,7 +2,7 @@ import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
 import { AxiosResponse } from 'axios';
 
 import { AdoptResponseDto } from '@/entities/adopt';
-import { publicApi } from '@/shared/api';
+import { authApi, publicApi } from '@/shared/api';
 import { ApiResponse } from '@/shared/model';
 
 import { SHELTER_DISTANCES } from './constant';
@@ -45,6 +45,23 @@ export const searchShelters = async (
   params: ShelterSearchParamsDto
 ): Promise<AxiosResponse<ApiResponse<ShelterDto[]>>> => {
   return await publicApi.get(`${BASE_URL}/search`, { params });
+};
+
+// --- Favorite (찜) ---
+
+const favoriteShelter = async (careRegNo: string): Promise<{ isFavorited: boolean }> => {
+  const res = await authApi.post<ApiResponse<{ isFavorited: boolean }>>(`/shelters/${careRegNo}/favorite`);
+  return res.data.data;
+};
+
+const unfavoriteShelter = async (careRegNo: string): Promise<{ isFavorited: boolean }> => {
+  const res = await authApi.delete<ApiResponse<{ isFavorited: boolean }>>(`/shelters/${careRegNo}/favorite`);
+  return res.data.data;
+};
+
+export const shelterApi = {
+  favorite: favoriteShelter,
+  unfavorite: unfavoriteShelter
 };
 
 // --- Query Options Factory ---

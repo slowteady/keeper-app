@@ -1,3 +1,6 @@
+import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
+import { useCallback } from 'react';
+import { Pressable } from 'react-native';
 import { styled, Text, View, XStack } from 'tamagui';
 
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
@@ -7,16 +10,23 @@ import { ShelterDto } from '../schema';
 export type ShelterCardProps = {
   data: ShelterDto;
   onPress: (id: string) => void;
+  onPressFavorite?: (careRegNo: string, currentlyFavorited: boolean) => void;
 };
 
-export const ShelterCard = ({ data, onPress }: ShelterCardProps) => {
-  const { name, distance, address } = data;
+export const ShelterCard = ({ data, onPress, onPressFavorite }: ShelterCardProps) => {
+  const { id, name, distance, address, isFavorited = false } = data;
   const convertedDistance = Math.round((distance ?? 0) * 10) / 10;
   const convertedAddress = address.split(' ').slice(0, 3).join(' ');
 
+  const handlePressFavorite = useCallback(() => {
+    if (!onPressFavorite) return;
+    impactAsync(isFavorited ? ImpactFeedbackStyle.Light : ImpactFeedbackStyle.Medium).catch(() => undefined);
+    onPressFavorite(id, isFavorited);
+  }, [id, isFavorited, onPressFavorite]);
+
   return (
     <Container>
-      <View onPress={() => onPress(data.id)}>
+      <View onPress={() => onPress(id)}>
         <View px={16} py={18}>
           <XStack items="center" justify="space-between" gap={8} mb={10}>
             <Text
@@ -29,7 +39,9 @@ export const ShelterCard = ({ data, onPress }: ShelterCardProps) => {
             >
               {name}
             </Text>
-            <AnimatedHeart isLiked={false} size={20} />
+            <Pressable hitSlop={10} onPress={handlePressFavorite} disabled={!onPressFavorite}>
+              <AnimatedHeart isLiked={isFavorited} size={20} />
+            </Pressable>
           </XStack>
 
           <XStack items="center">
