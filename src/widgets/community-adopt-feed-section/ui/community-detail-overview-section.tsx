@@ -1,6 +1,7 @@
+import { MoreVertical } from '@tamagui/lucide-icons';
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { Pressable } from 'react-native';
-import { styled, Text, useTheme, View, XStack } from 'tamagui';
+import { styled, Text, XStack } from 'tamagui';
 
 import {
   CommunityAdoptCardCarousel,
@@ -9,7 +10,6 @@ import {
   CommunityAdoptCardTitle
 } from '@/entities/community';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
-import { Share } from '@/shared/ui/icons/outline';
 
 export type CommunityDetailOverviewSectionProps = {
   id: number;
@@ -22,11 +22,10 @@ export type CommunityDetailOverviewSectionProps = {
   content: string;
   isLiked?: boolean;
   onPressLike: () => void;
-  onPressShare: (id: number) => void;
+  onPressMore?: () => void;
 };
 
 export const CommunityDetailOverviewSection = ({
-  id,
   image,
   nickname,
   displayTime,
@@ -36,10 +35,8 @@ export const CommunityDetailOverviewSection = ({
   content,
   isLiked = false,
   onPressLike,
-  onPressShare
+  onPressMore
 }: CommunityDetailOverviewSectionProps) => {
-  const { white600 } = useTheme();
-
   const handlePressLike = () => {
     impactAsync(isLiked ? ImpactFeedbackStyle.Light : ImpactFeedbackStyle.Medium).catch(() => undefined);
     onPressLike();
@@ -49,13 +46,15 @@ export const CommunityDetailOverviewSection = ({
     <>
       <HeaderWrapper mb={20}>
         <CommunityAdoptCardHeader image={image} nickname={nickname} displayTime={displayTime} />
-        <XStack gap={20} items="center">
+        <XStack gap={16} items="center">
           <Pressable onPress={handlePressLike} hitSlop={10}>
             <AnimatedHeart size={26} isLiked={isLiked} />
           </Pressable>
-          <View hitSlop={8} onPress={() => onPressShare(id)}>
-            <Share width={26} height={26} color={white600.val} />
-          </View>
+          {onPressMore && (
+            <Pressable onPress={onPressMore} hitSlop={10}>
+              <MoreVertical size={22} color="$black700" />
+            </Pressable>
+          )}
         </XStack>
       </HeaderWrapper>
 

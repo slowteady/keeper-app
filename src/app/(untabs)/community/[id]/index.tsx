@@ -1,14 +1,19 @@
 import { FlashList, ListRenderItemInfo } from '@shopify/flash-list';
 import { useLocalSearchParams } from 'expo-router';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { KeyboardStickyView } from 'react-native-keyboard-controller';
 import { styled, Text, View, YStack } from 'tamagui';
 
 import { CommentCard, CommentDto, CommentFormInput, CommentListHeader } from '@/entities/comment';
 import { CommunityAdoptCardStats } from '@/entities/community';
-import { useCommunityAdoptDetailFeed, useCommunityCommentList } from '@/features/community';
+import {
+  useCommentMenu,
+  useCommunityAdoptDetailFeed,
+  useCommunityCommentList,
+  usePostMenu
+} from '@/features/community';
 import { useLikePost } from '@/features/like-post';
-import { useLayout, useScrollUpButton, useShare } from '@/shared/model';
+import { useLayout, useScrollUpButton } from '@/shared/model';
 import { Button, CallModal, DetailErrorBoundary, ScrollUpButton } from '@/shared/ui';
 import { AdoptDetailInfoSection } from '@/widgets/adopt-section';
 import {
@@ -31,18 +36,36 @@ const Page = () => {
   const { handleScroll, handlePressButton, isButtonVisible, scrollRef } = useScrollUpButton();
   const { sortOrder, commentList, changeSortOrder } = useCommunityCommentList(numId);
   const { toggleLikePost } = useLikePost();
-  const { share } = useShare();
-
-  const renderItem = useCallback(({ item }: ListRenderItemInfo<CommentDto>) => {
-    return (
-      <View key={item.id} px={20} py={24}>
-        <CommentCard comment={item} />
-      </View>
-    );
-  }, []);
 
   const detailPost = data.detailPost;
   const isLiked = detailPost?.isLiked ?? false;
+  const authorId = detailPost?.user?.id ?? null;
+  const phoneContact = useMemo(
+    () => detailPost?.contacts.find((c) => c.type === 'PHONE')?.value ?? '',
+    [detailPost?.contacts]
+  );
+  const hasPhone = phoneContact.length > 0;
+
+  const { openPostMenu } = usePostMenu({
+    postId: numId,
+    authorId,
+    shareInfo: detailPost ? { title: detailPost.title, image: detailPost.images[0] } : undefined
+  });
+  const { openCommentMenu } = useCommentMenu({ postId: numId });
+
+  const renderItem = useCallback(
+    ({ item }: ListRenderItemInfo<CommentDto>) => {
+      return (
+        <View key={item.id} px={20} py={24}>
+          <CommentCard
+            comment={item}
+            onPressMore={() => openCommentMenu({ commentId: item.id, authorId: item.user?.id ?? null })}
+          />
+        </View>
+      );
+    },
+    [openCommentMenu]
+  );
 
   return (
     <Container>
@@ -62,15 +85,7 @@ const Page = () => {
                 <CommunityDetailOverviewSection
                   {...(data.overviews as Parameters<typeof CommunityDetailOverviewSection>[0])}
                   onPressLike={() => toggleLikePost(numId, isLiked)}
-                  onPressShare={(shareId: number) =>
-                    share({
-                      id: String(shareId),
-                      path: 'community',
-                      title: detailPost.title,
-                      desc: '유기동물들의 가족이 되어주세요',
-                      image: detailPost.images[0]
-                    })
-                  }
+                  onPressMore={openPostMenu}
                 />
               </View>
             )}
@@ -87,9 +102,11 @@ const Page = () => {
                     {...(data.descriptions as Parameters<typeof CommunityDetailDescriptionSection>[0])}
                   />
                 </View>
-                <View px={20} mb={20}>
-                  <Button onPress={() => setCallModalOpen((prev) => !prev)}>문의하기</Button>
-                </View>
+                {hasPhone && (
+                  <View px={20} mb={20}>
+                    <Button onPress={() => setCallModalOpen((prev) => !prev)}>문의하기</Button>
+                  </View>
+                )}
                 <View px={20} mb={16}>
                   <CommunityAdoptCardStats {...detailPost.counts} />
                 </View>
@@ -111,7 +128,8 @@ const Page = () => {
         )}
       />
 
-      <KeyboardStickyView>
+      {/* offset.opened={bottom} — 키보드 열릴 때 safe-area padding 상쇄 (BP) */}
+      <KeyboardStickyView offset={{ opened: bottom }}>
         <StickyInner onLayout={(event) => setInputHeight(event.nativeEvent.layout.height)} pb={bottom}>
           <CommentFormInput flex={1} maxH={48} />
           <ScrollUpButton visible={isButtonVisible} onPress={handlePressButton} bottom={inputHeight + 20} />
@@ -121,7 +139,7 @@ const Page = () => {
       <CallModal
         open={callModalOpen}
         onClose={() => setCallModalOpen(false)}
-        tel={''}
+        tel={phoneContact}
         title={`${detailPost?.user?.nickname ?? '탈퇴한 사용자'}님에게 문의하기`}
         description={`*보호자에게 직접 문의해 정보를 확인할 수 있어요`}
       />
