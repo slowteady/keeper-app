@@ -1,15 +1,20 @@
 import { FlashList, ListRenderItemInfo } from '@shopify/flash-list';
 import { useLocalSearchParams } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
+import { ActivityIndicator } from 'react-native';
 import { KeyboardStickyView } from 'react-native-keyboard-controller';
 import { styled, Text, View, YStack } from 'tamagui';
 
 import { CommentCard, CommentDto, CommentFormInput, CommentListHeader } from '@/entities/comment';
 import { CommunityAdoptCardStats } from '@/entities/community';
+import { useLoginRequired } from '@/features/auth';
 import {
+  CommunityPolicyBottomSheet,
   useCommentMenu,
   useCommunityAdoptDetailFeed,
   useCommunityCommentList,
+  useCommunityPolicyGate,
+  useCreateComment,
   usePostMenu
 } from '@/features/community';
 import { useLikePost } from '@/features/like-post';
@@ -34,7 +39,7 @@ const Page = () => {
   const numId = Number(id);
   const { data } = useCommunityAdoptDetailFeed(id);
   const { handleScroll, handlePressButton, isButtonVisible, scrollRef } = useScrollUpButton();
-  const { sortOrder, commentList, changeSortOrder } = useCommunityCommentList(numId);
+  const { sortOrder, commentList, changeSortOrder, fetchNextPage, isFetchingNextPage } = useCommunityCommentList(numId);
   const { toggleLikePost } = useLikePost();
 
   const detailPost = data.detailPost;
@@ -52,6 +57,40 @@ const Page = () => {
     shareInfo: detailPost ? { title: detailPost.title, image: detailPost.images[0] } : undefined
   });
   const { openCommentMenu } = useCommentMenu({ postId: numId });
+
+  // 댓글 작성: 로그인 → 정책 동의 → mutation
+  const [comment, setComment] = useState('');
+  const [pendingContent, setPendingContent] = useState<string | null>(null);
+  const { requireLogin } = useLoginRequired();
+  const createCommentMutation = useCreateComment({ postId: numId });
+
+  const submitComment = useCallback(
+    (content: string) => {
+      createCommentMutation.mutate(content, {
+        onSuccess: () => setComment('')
+      });
+    },
+    [createCommentMutation]
+  );
+
+  const policyGate = useCommunityPolicyGate({
+    enabled: pendingContent !== null,
+    onConfirmed: () => {
+      if (pendingContent !== null) {
+        submitComment(pendingContent);
+        setPendingContent(null);
+      }
+    },
+    onCancel: () => setPendingContent(null)
+  });
+
+  const handleSubmitComment = useCallback(async () => {
+    const content = comment.trim();
+    if (!content) return;
+    await requireLogin(() => {
+      setPendingContent(content);
+    });
+  }, [comment, requireLogin]);
 
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<CommentDto>) => {
@@ -77,6 +116,15 @@ const Page = () => {
         ref={scrollRef}
         showsVerticalScrollIndicator={false}
         decelerationRate="fast"
+        onEndReached={fetchNextPage}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={
+          isFetchingNextPage ? (
+            <View py={20} items="center">
+              <ActivityIndicator />
+            </View>
+          ) : null
+        }
         ItemSeparatorComponent={() => <View height={1} bg="$backgroundDefault" />}
         ListHeaderComponent={() => (
           <>
@@ -131,10 +179,25 @@ const Page = () => {
       {/* offset.opened={bottom} — 키보드 열릴 때 safe-area padding 상쇄 (BP) */}
       <KeyboardStickyView offset={{ opened: bottom }}>
         <StickyInner onLayout={(event) => setInputHeight(event.nativeEvent.layout.height)} pb={bottom}>
-          <CommentFormInput flex={1} maxH={48} />
+          <CommentFormInput
+            flex={1}
+            maxH={48}
+            value={comment}
+            onChangeText={setComment}
+            onSubmit={handleSubmitComment}
+            isPending={createCommentMutation.isPending}
+          />
           <ScrollUpButton visible={isButtonVisible} onPress={handlePressButton} bottom={inputHeight + 20} />
         </StickyInner>
       </KeyboardStickyView>
+
+      <CommunityPolicyBottomSheet
+        ref={policyGate.sheetRef}
+        agreed={policyGate.agreed}
+        onChangeAgreed={policyGate.setAgreed}
+        onConfirm={policyGate.handleConfirm}
+        isPending={policyGate.isPending}
+      />
 
       <CallModal
         open={callModalOpen}

@@ -2,6 +2,8 @@ import { MoreVertical } from '@tamagui/lucide-icons';
 import { Pressable } from 'react-native';
 import { Avatar, styled, Text, XStack } from 'tamagui';
 
+import { formatTimeAgo } from '@/shared/lib';
+
 import { CommentDto } from '../model';
 
 export type CommentCardProps = {
@@ -27,7 +29,7 @@ export const CommentCard = ({ comment, onPressMore }: CommentCardProps) => {
         )}
       </XStack>
 
-      <Text fontSize={15} lineHeight={22} fontWeight={500} color="$black650" letterSpacing={-0.25} mb={20}>
+      <Text fontSize={15} lineHeight={22} fontWeight={500} color="$black650" letterSpacing={-0.25}>
         {comment.content}
       </Text>
     </>
@@ -50,7 +52,7 @@ const CommentCardHeader = ({ image, nickname, displayTime }: CommentCardHeaderPr
         {nickname}
       </Text>
       <Text fontSize={12} lineHeight={14} fontWeight={500} ml={4} color="$black500">
-        {displayTime}
+        {formatTimeAgo(displayTime)}
       </Text>
     </XStack>
   );
