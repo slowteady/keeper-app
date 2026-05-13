@@ -1,6 +1,5 @@
 import { useScrollToTop } from '@react-navigation/native';
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
-import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { memo, useCallback, useEffect } from 'react';
 import { ActivityIndicator, RefreshControl } from 'react-native';
 import { styled, useTheme, View, XStack, YStack } from 'tamagui';
@@ -11,7 +10,7 @@ import { COMMUNITY_LIST_FILTER, CommunityAdoptCard } from '@/entities/community'
 import { useCommunityAdoptFeed, useCommunityListFilter } from '@/features/community';
 import { useIsLikePending, useLikePost } from '@/features/like-post';
 import { AnimalTypeDto, useListRefreshing, useScrollUpButton } from '@/shared/model';
-import { ButtonGroup, ChipButton, FeedNodata, ScrollUpButton, ShowMoreButton } from '@/shared/ui';
+import { ButtonGroup, ChipButton, FeedNodata, ScrollUpButton } from '@/shared/ui';
 import { DownArrow } from '@/shared/ui/icons/mini';
 
 export const CommunityAdoptFeed = () => {
@@ -20,19 +19,11 @@ export const CommunityAdoptFeed = () => {
   const { toggleLikePost } = useLikePost();
   const { selectedFilter, selectedAnimalType, changeFilter, changeAnimalType } = useCommunityListFilter();
   // 'ALL'은 백엔드 enum에 없어 undefined로 전달 (전체 조회)
-  const {
-    adoptList,
-    moreButtonText,
-    isLoading,
-    isFetchingNextPage,
-    hasNextPage,
-    refresh,
-    fetchNextPage,
-    goDetailPage
-  } = useCommunityAdoptFeed({
-    animalType: selectedAnimalType === 'ALL' ? undefined : selectedAnimalType,
-    sort: selectedFilter
-  });
+  const { adoptList, isLoading, isFetchingNextPage, hasNextPage, refresh, fetchNextPage, goDetailPage } =
+    useCommunityAdoptFeed({
+      animalType: selectedAnimalType === 'ALL' ? undefined : selectedAnimalType,
+      sort: selectedFilter
+    });
 
   const { handleScroll, handlePressButton, isButtonVisible, scrollRef } = useScrollUpButton();
   useScrollToTop(scrollRef);
@@ -44,11 +35,6 @@ export const CommunityAdoptFeed = () => {
   }, [selectedAnimalType, selectedFilter, scrollRef]);
 
   const filterText = COMMUNITY_LIST_FILTER.find((f) => f.id === selectedFilter)?.label || '';
-
-  const handleFetchNextPage = useCallback(() => {
-    impactAsync(ImpactFeedbackStyle.Medium);
-    fetchNextPage();
-  }, [fetchNextPage]);
 
   // 카드에 전달하는 콜백은 안정 ref 로 유지해야 매 스크롤/스트레치 시 카드 재렌더가 발생하지 않는다.
   const handlePressCard = useCallback((id: number) => goDetailPage(String(id)), [goDetailPage]);
@@ -90,10 +76,12 @@ export const CommunityAdoptFeed = () => {
             </XStack>
           </View>
         }
+        onEndReached={hasNextPage ? fetchNextPage : undefined}
+        onEndReachedThreshold={0.5}
         ListFooterComponent={
-          hasNextPage ? (
-            <View my={24} justify="center">
-              <ShowMoreButton text={moreButtonText} onPress={handleFetchNextPage} isLoading={isFetchingNextPage} />
+          isFetchingNextPage ? (
+            <View py={24} items="center">
+              <ActivityIndicator />
             </View>
           ) : null
         }
