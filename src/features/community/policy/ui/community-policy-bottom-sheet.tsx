@@ -1,7 +1,7 @@
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { BottomSheetFooter, BottomSheetModal } from '@gorhom/bottom-sheet';
 import { router } from 'expo-router';
-import { forwardRef, useMemo } from 'react';
-import { styled, Text, XStack, YStack } from 'tamagui';
+import { forwardRef, useCallback, useMemo } from 'react';
+import { styled, Text, View, XStack, YStack } from 'tamagui';
 
 import { BottomButton, BottomSheet, Checkbox } from '@/shared/ui';
 
@@ -16,9 +16,23 @@ export const CommunityPolicyBottomSheet = forwardRef<BottomSheetModal, Community
   ({ agreed, onChangeAgreed, onConfirm, isPending }, ref) => {
     const snapPoints = useMemo(() => ['40%'], []);
 
+    // BP: BottomSheetFooter 로 sticky 처리 — 스크롤 무관 하단 고정 + 키보드 대응
+    const renderFooter = useCallback(
+      (footerProps: React.ComponentProps<typeof BottomSheetFooter>) => (
+        <BottomSheetFooter {...footerProps} bottomInset={0}>
+          <View pb={24} pt={12} bg="$white900">
+            <BottomButton onPress={onConfirm} disabled={!agreed || isPending}>
+              동의하고 시작하기
+            </BottomButton>
+          </View>
+        </BottomSheetFooter>
+      ),
+      [agreed, isPending, onConfirm]
+    );
+
     return (
-      <BottomSheet ref={ref} snapPoints={snapPoints}>
-        <YStack flex={1} pt={8} pb={20} gap={20}>
+      <BottomSheet ref={ref} snapPoints={snapPoints} footerComponent={renderFooter}>
+        <YStack flex={1} pt={8} gap={20}>
           <Title>커뮤니티 이용을 위한{'\n'}약관에 동의해주세요</Title>
 
           <ItemRow>
@@ -30,10 +44,6 @@ export const CommunityPolicyBottomSheet = forwardRef<BottomSheetModal, Community
               <ViewChipText>보기</ViewChipText>
             </ViewChip>
           </ItemRow>
-
-          <BottomButton onPress={onConfirm} disabled={!agreed || isPending}>
-            동의하고 시작하기
-          </BottomButton>
         </YStack>
       </BottomSheet>
     );
