@@ -151,6 +151,6 @@ describe('useCommentMenu', () => {
     });
 
     await waitFor(() => expect(commentApi.remove).toHaveBeenCalledWith(7));
-    expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: [...commentQueries.all(), 'list', 10] });
+    expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: commentQueries.all() });
   });
 });
