@@ -27,11 +27,12 @@ export const CommunityAdoptFormSchema = z.object({
   location: z.string().min(1, '지역을 입력해주세요'),
   specialMark: z.string().min(1, '특징을 입력해주세요'),
   content: z.string().min(1, '소개글을 입력해주세요'),
+  // 선택한 chip 의 value 는 모두 필수 — chip 만 누르고 빈 값으로 제출 방지
   contact: z
     .array(
       z.object({
         type: z.enum([...CREATE_POST_OPTIONS.contact.map((option) => option.value)] as const),
-        value: z.string()
+        value: z.string().trim().min(1, '연락처를 입력해주세요')
       })
     )
     .min(1, '최소 1개의 연락 정보를 입력해주세요'),

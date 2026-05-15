@@ -4,6 +4,7 @@ import { YStack } from 'tamagui';
 import { CommunityAdoptFormDto, CREATE_POST_OPTIONS } from '@/entities/community';
 import { ChipGroup } from '@/shared/ui';
 
+import { FieldError } from './field-error';
 import { FieldLabel } from './field-label';
 
 type OptionFieldName = keyof typeof CREATE_POST_OPTIONS;
@@ -20,7 +21,7 @@ export const OptionSelectField = ({ name, control, label, required }: OptionSele
     <Controller
       name={name as FieldPath<CommunityAdoptFormDto>}
       control={control}
-      render={({ field }) => (
+      render={({ field, fieldState }) => (
         <YStack>
           <FieldLabel title={label} required={required} />
           <ChipGroup
@@ -29,6 +30,7 @@ export const OptionSelectField = ({ name, control, label, required }: OptionSele
             value={field.value as string}
             onChange={field.onChange}
           />
+          <FieldError message={fieldState.error?.message} />
         </YStack>
       )}
     />

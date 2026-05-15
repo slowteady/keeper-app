@@ -1,9 +1,10 @@
-import { Control, Controller } from 'react-hook-form';
+import { Control, Controller, useFormState } from 'react-hook-form';
 import { YStack } from 'tamagui';
 
 import { CommunityAdoptFormDto, CREATE_POST_OPTIONS } from '@/entities/community';
 import { ChipGroup, TextField } from '@/shared/ui';
 
+import { FieldError } from './field-error';
 import { FieldLabel } from './field-label';
 
 export type ContactSelectFieldProps = {
@@ -12,7 +13,18 @@ export type ContactSelectFieldProps = {
   control: Control<CommunityAdoptFormDto>;
 };
 
+// react-hook-form 의 errors.contact 는 두 형태로 옴
+// 1) root level (chip 0개 등): { message: '최소 1개의 연락 정보를...' }
+// 2) item level (특정 chip value 빈): [{ value: { message: '연락처를 입력해주세요' } }, ...]
+type ContactItemError = { value?: { message?: string } };
+
 export const ContactSelectField = ({ control, label, required }: ContactSelectFieldProps) => {
+  const { errors } = useFormState({ control, name: 'contact' });
+  const contactError = errors.contact;
+  const rootMessage =
+    contactError && 'message' in contactError ? (contactError as { message?: string }).message : undefined;
+  const itemErrors = Array.isArray(contactError) ? (contactError as ContactItemError[]) : undefined;
+
   return (
     <Controller
       name="contact"
@@ -21,10 +33,8 @@ export const ContactSelectField = ({ control, label, required }: ContactSelectFi
         const selectedTypes = field.value.map((item) => item.type);
 
         const handleChipChange = (newTypes: string[]) => {
-          // 최소 1개는 선택되어야 함
-          if (newTypes.length === 0) {
-            return;
-          }
+          // 최소 1개는 선택되어야 함 — chip 모두 해제 시도 시 silent fail
+          if (newTypes.length === 0) return;
 
           const updatedContact = newTypes.map((type) => {
             const existingItem = field.value.find((item) => item.type === type);
@@ -56,17 +66,24 @@ export const ContactSelectField = ({ control, label, required }: ContactSelectFi
 
             {field.value.length > 0 && (
               <YStack gap={10} mt={12}>
-                {field.value.map((item, idx) => (
-                  <TextField
-                    key={`${item.type}-${idx}`}
-                    placeholder={getPlaceholder(item.type)}
-                    variant="fill"
-                    value={item.value}
-                    onChangeText={(text) => handleValueChange(item.type, text)}
-                  />
-                ))}
+                {field.value.map((item, idx) => {
+                  const itemMessage = itemErrors?.[idx]?.value?.message;
+                  return (
+                    <YStack key={`${item.type}-${idx}`} gap={4}>
+                      <TextField
+                        placeholder={getPlaceholder(item.type)}
+                        variant="fill"
+                        value={item.value}
+                        onChangeText={(text) => handleValueChange(item.type, text)}
+                        status={itemMessage ? 'error' : 'default'}
+                      />
+                      <FieldError message={itemMessage} />
+                    </YStack>
+                  );
+                })}
               </YStack>
             )}
+            <FieldError message={rootMessage} />
           </YStack>
         );
       }}

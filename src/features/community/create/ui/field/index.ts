@@ -1,4 +1,5 @@
 export * from './contact-select-field';
+export * from './field-error';
 export * from './field-label';
 export * from './label-image-selector';
 export * from './label-select-field';
