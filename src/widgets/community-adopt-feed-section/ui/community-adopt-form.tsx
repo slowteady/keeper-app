@@ -5,6 +5,7 @@ import { CommunityAdoptFormDto } from '@/entities/community';
 import {
   ContactSelectField,
   LabelImageSelector,
+  LabelSelectField,
   LabelTextArea,
   LabelTextField,
   OptionSelectField
@@ -30,6 +31,11 @@ export const CommunityAdoptForm = ({
 
   const { control } = form;
 
+  // 동물 종류가 OTHER(기타) 면 공공데이터 표준 품종 리스트가 사실상 없으므로(1종) 자유 입력
+  // 강아지/고양이는 BS 검색 선택 (disabled + onPress 트릭으로 키보드 안 띄움)
+  const animalType = form.watch('animalType');
+  const isOtherAnimalType = animalType === 'OTHER';
+
   return (
     <>
       <YStack>
@@ -45,49 +51,52 @@ export const CommunityAdoptForm = ({
           <OptionSelectField name="healthCheck" control={control} label="건강검진" required />
           <OptionSelectField name="protectionType" control={control} label="보호 유형" required />
           <OptionSelectField name="vaccinationCheck" control={control} label="예방접종" required />
-          <LabelTextField
+          <LabelSelectField
             label="몸무게"
             required
             name="weight"
             control={control}
             placeholder="몸무게를 선택해주세요"
             right={<Text color="$black500">kg</Text>}
-            maxLength={2}
-            value={form.watch('weight')}
             onPress={onPressWeight}
-            disabled
           />
-          <LabelTextField
+          <LabelSelectField
             name="location"
             control={control}
             label="지역"
             required
             placeholder="지역을 추가해주세요"
-            value={form.watch('location')}
             onPress={onPressLocation}
-            disabled
           />
-          <LabelTextField
+          <LabelSelectField
             name="age"
             control={control}
             label="나이"
             required
             right={<Text color="$black500">년생</Text>}
             placeholder="나이를 선택해주세요"
-            value={form.watch('age')}
             onPress={onPressAge}
-            disabled
           />
-          <LabelTextField
-            name="specificType"
-            control={control}
-            label="품종"
-            required
-            placeholder="품종을 선택해주세요"
-            value={form.watch('specificType')}
-            onPress={onPressKind}
-            disabled
-          />
+          {isOtherAnimalType ? (
+            <LabelTextField
+              name="specificType"
+              control={control}
+              label="품종"
+              required
+              placeholder="품종을 직접 입력해주세요"
+              value={form.watch('specificType')}
+              maxLength={50}
+            />
+          ) : (
+            <LabelSelectField
+              name="specificType"
+              control={control}
+              label="품종"
+              required
+              placeholder="품종을 선택해주세요"
+              onPress={onPressKind}
+            />
+          )}
           <LabelTextArea
             name="title"
             control={control}
