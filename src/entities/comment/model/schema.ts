@@ -7,7 +7,14 @@ export const CommentSchema = z.object({
   id: z.coerce.number(),
   user: PostUserSummarySchema.nullable(),
   content: z.string(),
-  displayTime: z.string()
+  displayTime: z.string(),
+  // 백엔드가 createdAt vs updatedAt 비교(1초 threshold)로 산출 — true 면 "수정됨" 라벨 노출
+  // 구버전 호환을 위해 default false
+  isEdited: z.boolean().default(false),
+  // 대댓글 부모 댓글 id (root 면 null)
+  parentId: z.coerce.number().nullable().default(null),
+  // 대댓글 개수 (root 만 의미. reply 자신은 항상 0)
+  replyCount: z.coerce.number().default(0)
 });
 export type CommentDto = z.infer<typeof CommentSchema>;
 

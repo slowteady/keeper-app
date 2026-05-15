@@ -3,27 +3,40 @@ import { useCallback } from 'react';
 
 import { commentApi, commentQueries } from '@/entities/comment';
 import { useCurrentUser } from '@/features/auth';
-import { useReportSheet } from '@/features/community/safety';
+import { useBlock, useReportSheet } from '@/features/community/safety';
 import { globalToast } from '@/shared/lib';
 import { BottomSheetMenu, type BottomSheetMenuData, useBottomSheet, useModal } from '@/shared/ui';
 
 import { ConfirmDeleteModal } from '../ui/confirm-delete-modal';
 
-export type CommentMenuId = 'DELETE' | 'REPORT';
+export type CommentMenuId = 'EDIT' | 'DELETE' | 'REPORT' | 'BLOCK';
 
-const MINE_MENU: readonly BottomSheetMenuData<CommentMenuId>[] = [{ id: 'DELETE', label: '삭제' }] as const;
-const OTHER_MENU: readonly BottomSheetMenuData<CommentMenuId>[] = [{ id: 'REPORT', label: '신고' }] as const;
+const MINE_MENU: readonly BottomSheetMenuData<CommentMenuId>[] = [
+  { id: 'EDIT', label: '수정' },
+  { id: 'DELETE', label: '삭제' }
+] as const;
+const OTHER_MENU: readonly BottomSheetMenuData<CommentMenuId>[] = [
+  { id: 'REPORT', label: '신고' },
+  { id: 'BLOCK', label: '차단' }
+] as const;
 
 export type CommentMenuTarget = {
   commentId: number;
   authorId: number | null | undefined;
+  content: string;
 };
 
-export const useCommentMenu = ({ postId }: { postId: number }) => {
+export type UseCommentMenuParams = {
+  postId: number;
+  onEdit: (target: { commentId: number; content: string }) => void;
+};
+
+export const useCommentMenu = ({ postId, onEdit }: UseCommentMenuParams) => {
   const { user } = useCurrentUser();
   const { present, dismiss } = useBottomSheet();
   const { open: openModal, close: closeModal } = useModal();
   const { openReportSheet } = useReportSheet();
+  const { block } = useBlock();
   const queryClient = useQueryClient();
 
   const deleteMutation = useMutation({
@@ -36,12 +49,16 @@ export const useCommentMenu = ({ postId }: { postId: number }) => {
   });
 
   const openCommentMenu = useCallback(
-    ({ commentId, authorId }: CommentMenuTarget) => {
+    ({ commentId, authorId, content }: CommentMenuTarget) => {
       const isMine = !!user && !!authorId && user.id === authorId;
       const menuItems = isMine ? MINE_MENU : OTHER_MENU;
 
       const handlePress = (data: BottomSheetMenuData<CommentMenuId>) => {
         switch (data.id) {
+          case 'EDIT':
+            dismiss();
+            onEdit({ commentId, content });
+            break;
           case 'DELETE':
             dismiss();
             openModal(
@@ -59,14 +76,18 @@ export const useCommentMenu = ({ postId }: { postId: number }) => {
             // 같은 BottomSheet 컨텐츠 교체 — dismiss 호출 시 충돌
             openReportSheet({ type: 'COMMENT', id: commentId });
             break;
+          case 'BLOCK':
+            dismiss();
+            if (authorId) block(authorId);
+            break;
         }
       };
 
       present(<BottomSheetMenu data={menuItems} value={'' as CommentMenuId} onPress={handlePress} />, {
-        snapPoints: [180]
+        snapPoints: [200]
       });
     },
-    [user, present, dismiss, openModal, closeModal, deleteMutation, openReportSheet]
+    [user, present, dismiss, openModal, closeModal, deleteMutation, openReportSheet, block, onEdit]
   );
 
   return { openCommentMenu, isDeleting: deleteMutation.isPending };

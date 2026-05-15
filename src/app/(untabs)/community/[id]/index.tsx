@@ -10,12 +10,14 @@ import { CommunityAdoptCardStats } from '@/entities/community';
 import { useLoginRequired } from '@/features/auth';
 import {
   CommunityPolicyBottomSheet,
+  RepliesSection,
   useCommentMenu,
   useCommunityAdoptDetailFeed,
   useCommunityCommentList,
   useCommunityPolicyGate,
   useCreateComment,
-  usePostMenu
+  usePostMenu,
+  useUpdateComment
 } from '@/features/community';
 import { useLikePost } from '@/features/like-post';
 import { useLayout, useScrollUpButton } from '@/shared/model';
@@ -56,21 +58,69 @@ const Page = () => {
     authorId,
     shareInfo: detailPost ? { title: detailPost.title, image: detailPost.images[0] } : undefined
   });
-  const { openCommentMenu } = useCommentMenu({ postId: numId });
 
-  // 댓글 작성: 로그인 → 정책 동의 → mutation
+  // 댓글 작성/수정/답글 인라인 모드 분기
+  // - editingCommentId 있으면 update
+  // - replyTarget 있으면 create (with parentId)
+  // - 둘 다 없으면 일반 create
   const [comment, setComment] = useState('');
+  const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
+  const [replyTarget, setReplyTarget] = useState<{ parentId: number; nickname: string } | null>(null);
   const [pendingContent, setPendingContent] = useState<string | null>(null);
   const { requireLogin } = useLoginRequired();
   const createCommentMutation = useCreateComment({ postId: numId });
+  const updateCommentMutation = useUpdateComment({ postId: numId });
+
+  const handleEnterEditMode = useCallback((target: { commentId: number; content: string }) => {
+    setReplyTarget(null);
+    setEditingCommentId(target.commentId);
+    setComment(target.content);
+  }, []);
+
+  const handleCancelEdit = useCallback(() => {
+    setEditingCommentId(null);
+    setComment('');
+  }, []);
+
+  const handleEnterReplyMode = useCallback((target: { parentId: number; nickname: string }) => {
+    setEditingCommentId(null);
+    setReplyTarget(target);
+    setComment(`@${target.nickname} `);
+  }, []);
+
+  const handleCancelReply = useCallback(() => {
+    setReplyTarget(null);
+    setComment('');
+  }, []);
+
+  const { openCommentMenu } = useCommentMenu({ postId: numId, onEdit: handleEnterEditMode });
 
   const submitComment = useCallback(
     (content: string) => {
-      createCommentMutation.mutate(content, {
-        onSuccess: () => setComment('')
-      });
+      if (editingCommentId !== null) {
+        updateCommentMutation.mutate(
+          { commentId: editingCommentId, content },
+          {
+            onSuccess: () => {
+              setComment('');
+              setEditingCommentId(null);
+            }
+          }
+        );
+      } else {
+        const parentId = replyTarget?.parentId;
+        createCommentMutation.mutate(
+          { content, parentId },
+          {
+            onSuccess: () => {
+              setComment('');
+              setReplyTarget(null);
+            }
+          }
+        );
+      }
     },
-    [createCommentMutation]
+    [editingCommentId, replyTarget, createCommentMutation, updateCommentMutation]
   );
 
   const policyGate = useCommunityPolicyGate({
@@ -92,18 +142,51 @@ const Page = () => {
     });
   }, [comment, requireLogin]);
 
+  const isEditing = editingCommentId !== null;
+  const isReplying = replyTarget !== null;
+  const isSubmitPending = createCommentMutation.isPending || updateCommentMutation.isPending;
+
+  const formBanner = isEditing
+    ? { label: '댓글 수정 중', onCancel: handleCancelEdit }
+    : isReplying
+      ? { label: `@${replyTarget!.nickname}에게 답글 작성 중`, onCancel: handleCancelReply }
+      : undefined;
+  const submitLabel = isEditing ? '수정' : '등록';
+
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<CommentDto>) => {
       return (
         <View key={item.id} px={20} py={24}>
           <CommentCard
             comment={item}
-            onPressMore={() => openCommentMenu({ commentId: item.id, authorId: item.user?.id ?? null })}
+            onPressMore={() =>
+              openCommentMenu({
+                commentId: item.id,
+                authorId: item.user?.id ?? null,
+                content: item.content
+              })
+            }
+            onPressReply={() =>
+              handleEnterReplyMode({
+                parentId: item.id,
+                nickname: item.user?.nickname ?? '탈퇴한 사용자'
+              })
+            }
+          />
+          <RepliesSection
+            parentComment={item}
+            onPressReplyMore={(reply) =>
+              openCommentMenu({
+                commentId: reply.id,
+                authorId: reply.user?.id ?? null,
+                content: reply.content
+              })
+            }
           />
         </View>
       );
     },
-    [openCommentMenu]
+    [openCommentMenu, handleEnterReplyMode]
   );
 
   return (
@@ -185,7 +268,9 @@ const Page = () => {
             value={comment}
             onChangeText={setComment}
             onSubmit={handleSubmitComment}
-            isPending={createCommentMutation.isPending}
+            banner={formBanner}
+            submitLabel={submitLabel}
+            isPending={isSubmitPending}
           />
           <ScrollUpButton visible={isButtonVisible} onPress={handlePressButton} bottom={inputHeight + 20} />
         </StickyInner>

@@ -28,8 +28,30 @@ const getList = async (postId: number, params: CommentListParams): Promise<Comme
   return CommentListResponseSchema.parse(res.data.data);
 };
 
-const create = async (postId: number, content: string): Promise<CommentDto> => {
-  const res = await authApi.post<ApiResponse<CommentDto>>(`${BASE}/posts/${postId}/comments`, { content });
+const create = async (postId: number, content: string, parentId?: number | null): Promise<CommentDto> => {
+  const body: { content: string; parentId?: number } = { content };
+  if (parentId !== undefined && parentId !== null) body.parentId = parentId;
+  const res = await authApi.post<ApiResponse<CommentDto>>(`${BASE}/posts/${postId}/comments`, body);
+  return res.data.data;
+};
+
+export type ReplyListParams = {
+  cursor?: number | null;
+  size?: number;
+};
+
+const getReplies = async (parentId: number, params: ReplyListParams): Promise<CommentListResponseDto> => {
+  const query: Record<string, string | number> = {};
+  if (params.cursor !== null && params.cursor !== undefined) query.cursor = params.cursor;
+  if (params.size !== undefined) query.size = params.size;
+  const res = await publicApi.get<ApiResponse<CommentListResponseDto>>(`${BASE}/comments/${parentId}/replies`, {
+    params: query
+  });
+  return CommentListResponseSchema.parse(res.data.data);
+};
+
+const update = async (id: number, content: string): Promise<CommentDto> => {
+  const res = await authApi.patch<ApiResponse<CommentDto>>(`${BASE}/comments/${id}`, { content });
   return res.data.data;
 };
 
@@ -41,7 +63,7 @@ const report = async (id: number, body: { reason: string; reasonDetail?: string 
   await authApi.post<AxiosResponse>(`${BASE}/comments/${id}/report`, body);
 };
 
-export const commentApi = { getList, create, remove, report };
+export const commentApi = { getList, getReplies, create, update, remove, report };
 
 // queryKey 는 cursor 제외한 안정 키 (sort/size 만) — cursor 는 pageParam 으로 흘러감
 export type CommentListFilter = { sort: CommentSortOrderDto; size: number };
@@ -55,5 +77,14 @@ export const commentQueries = {
       initialPageParam: null as number | null,
       getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.nextCursor : undefined),
       enabled: !!postId
+    }),
+  // 대댓글: lazy fetch — use-replies 의 enabled 토글로 제어
+  replies: (parentId: number, size = 20) =>
+    infiniteQueryOptions({
+      queryKey: [...commentQueries.all(), 'replies', parentId, { size }] as const,
+      queryFn: ({ pageParam }) => getReplies(parentId, { cursor: pageParam, size }),
+      initialPageParam: null as number | null,
+      getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.nextCursor : undefined),
+      enabled: !!parentId
     })
 };

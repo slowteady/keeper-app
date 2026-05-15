@@ -3,11 +3,16 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { commentApi, commentQueries } from '@/entities/comment';
 import { globalToast } from '@/shared/lib';
 
+export type CreateCommentVars = {
+  content: string;
+  parentId?: number | null;
+};
+
 export const useCreateComment = ({ postId }: { postId: number }) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (content: string) => commentApi.create(postId, content),
+    mutationFn: ({ content, parentId }: CreateCommentVars) => commentApi.create(postId, content, parentId),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: [...commentQueries.all(), 'list', postId] });
       globalToast('댓글이 등록되었어요.', 'success');

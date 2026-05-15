@@ -11,6 +11,8 @@ const mockDismiss = jest.fn();
 const mockOpenModal = jest.fn();
 const mockCloseModal = jest.fn();
 const mockOpenReportSheet = jest.fn();
+const mockBlock = jest.fn();
+const mockOnEdit = jest.fn();
 
 let mockUser: { id: number } | null = { id: 1 };
 
@@ -32,7 +34,8 @@ jest.mock('@/entities/comment', () => {
 });
 
 jest.mock('@/features/community/safety', () => ({
-  useReportSheet: () => ({ openReportSheet: mockOpenReportSheet, isPending: false })
+  useReportSheet: () => ({ openReportSheet: mockOpenReportSheet, isPending: false }),
+  useBlock: () => ({ block: mockBlock, unblock: jest.fn(), isPending: false })
 }));
 
 jest.mock('@/features/auth', () => ({
@@ -54,58 +57,87 @@ const setup = () => {
   return { queryClient, wrapper };
 };
 
+const baseTarget = { commentId: 7, authorId: 1, content: '본문' };
+
 beforeEach(() => {
   jest.clearAllMocks();
   mockUser = { id: 1 };
 });
 
 describe('useCommentMenu', () => {
-  it('타인 댓글이면 메뉴에 [신고] 한 항목', () => {
+  it('타인 댓글이면 메뉴 = [신고, 차단]', () => {
     mockUser = { id: 99 };
     const { wrapper } = setup();
-    const { result } = renderHook(() => useCommentMenu({ postId: 10 }), { wrapper });
+    const { result } = renderHook(() => useCommentMenu({ postId: 10, onEdit: mockOnEdit }), { wrapper });
 
-    act(() => result.current.openCommentMenu({ commentId: 5, authorId: 1 }));
+    act(() => result.current.openCommentMenu(baseTarget));
 
     const { data } = extractMenu(mockPresent.mock.calls[0]);
-    expect(data.map((d) => d.id)).toEqual(['REPORT']);
+    expect(data.map((d) => d.id)).toEqual(['REPORT', 'BLOCK']);
   });
 
-  it('본인 댓글이면 메뉴에 [삭제] 한 항목', () => {
+  it('본인 댓글이면 메뉴 = [수정, 삭제]', () => {
     mockUser = { id: 1 };
     const { wrapper } = setup();
-    const { result } = renderHook(() => useCommentMenu({ postId: 10 }), { wrapper });
+    const { result } = renderHook(() => useCommentMenu({ postId: 10, onEdit: mockOnEdit }), { wrapper });
 
-    act(() => result.current.openCommentMenu({ commentId: 5, authorId: 1 }));
+    act(() => result.current.openCommentMenu(baseTarget));
 
     const { data } = extractMenu(mockPresent.mock.calls[0]);
-    expect(data.map((d) => d.id)).toEqual(['DELETE']);
+    expect(data.map((d) => d.id)).toEqual(['EDIT', 'DELETE']);
   });
 
-  it('REPORT 선택 시 openReportSheet 가 COMMENT/commentId 로 호출된다', () => {
+  it('EDIT 선택 시 onEdit({commentId, content}) 호출 + dismiss', () => {
+    mockUser = { id: 1 };
+    const { wrapper } = setup();
+    const { result } = renderHook(() => useCommentMenu({ postId: 10, onEdit: mockOnEdit }), { wrapper });
+
+    act(() => result.current.openCommentMenu({ commentId: 7, authorId: 1, content: '원본' }));
+    const { onPress } = extractMenu(mockPresent.mock.calls[0]);
+
+    act(() => onPress({ id: 'EDIT', label: '수정' }));
+
+    expect(mockDismiss).toHaveBeenCalled();
+    expect(mockOnEdit).toHaveBeenCalledWith({ commentId: 7, content: '원본' });
+  });
+
+  it('REPORT 선택 시 openReportSheet 호출 + dismiss 안 함 (같은 시트 교체)', () => {
     mockUser = { id: 99 };
     const { wrapper } = setup();
-    const { result } = renderHook(() => useCommentMenu({ postId: 10 }), { wrapper });
+    const { result } = renderHook(() => useCommentMenu({ postId: 10, onEdit: mockOnEdit }), { wrapper });
 
-    act(() => result.current.openCommentMenu({ commentId: 7, authorId: 1 }));
+    act(() => result.current.openCommentMenu(baseTarget));
     const { onPress } = extractMenu(mockPresent.mock.calls[0]);
 
     act(() => onPress({ id: 'REPORT', label: '신고' }));
 
-    // 같은 BottomSheet 컨텐츠 교체 — dismiss 호출하지 않는다
     expect(mockDismiss).not.toHaveBeenCalled();
     expect(mockOpenReportSheet).toHaveBeenCalledWith({ type: 'COMMENT', id: 7 });
   });
 
-  it('DELETE 선택 시 confirm 모달 → 확인 시 commentApi.remove + invalidate comment list', async () => {
+  it('BLOCK 선택 시 block(authorId) 호출 + dismiss', () => {
+    mockUser = { id: 99 };
+    const { wrapper } = setup();
+    const { result } = renderHook(() => useCommentMenu({ postId: 10, onEdit: mockOnEdit }), { wrapper });
+
+    act(() => result.current.openCommentMenu({ commentId: 7, authorId: 5, content: '본문' }));
+    const { onPress } = extractMenu(mockPresent.mock.calls[0]);
+
+    act(() => onPress({ id: 'BLOCK', label: '차단' }));
+
+    expect(mockDismiss).toHaveBeenCalled();
+    expect(mockBlock).toHaveBeenCalledWith(5);
+  });
+
+  it('DELETE 선택 시 confirm 모달 → 확인 시 commentApi.remove + invalidate', async () => {
     mockUser = { id: 1 };
     (commentApi.remove as jest.Mock).mockResolvedValue(undefined);
     const { queryClient, wrapper } = setup();
     const invalidateSpy = jest.spyOn(queryClient, 'invalidateQueries');
 
-    const { result } = renderHook(() => useCommentMenu({ postId: 10 }), { wrapper });
+    const { result } = renderHook(() => useCommentMenu({ postId: 10, onEdit: mockOnEdit }), { wrapper });
 
-    act(() => result.current.openCommentMenu({ commentId: 7, authorId: 1 }));
+    act(() => result.current.openCommentMenu(baseTarget));
     const { onPress } = extractMenu(mockPresent.mock.calls[0]);
 
     act(() => onPress({ id: 'DELETE', label: '삭제' }));
