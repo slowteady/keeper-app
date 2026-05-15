@@ -3,7 +3,8 @@ import { router } from 'expo-router';
 import { forwardRef, useCallback, useMemo } from 'react';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
-import { BottomButton, BottomSheet, Checkbox } from '@/shared/ui';
+import { useLayout } from '@/shared/model';
+import { BottomSheet, Button, Checkbox } from '@/shared/ui';
 
 export type CommunityPolicyBottomSheetProps = {
   agreed: boolean;
@@ -15,19 +16,28 @@ export type CommunityPolicyBottomSheetProps = {
 export const CommunityPolicyBottomSheet = forwardRef<BottomSheetModal, CommunityPolicyBottomSheetProps>(
   ({ agreed, onChangeAgreed, onConfirm, isPending }, ref) => {
     const snapPoints = useMemo(() => ['40%'], []);
+    const { bottom } = useLayout();
 
-    // BP: BottomSheetFooter 로 sticky 처리 — 스크롤 무관 하단 고정 + 키보드 대응
+    // BP: BottomSheetFooter 로 sticky 처리 — 스크롤 무관 하단 고정.
+    // BottomSheet 가 paddingHorizontal:24 를 적용하므로 footer 도 그 안에 들어가 좌우 24px 여백.
+    // BottomButton 은 KeyboardStickyView 기반이라 BottomSheet 안에선 부적합 → 직접 Button 사용.
     const renderFooter = useCallback(
       (footerProps: React.ComponentProps<typeof BottomSheetFooter>) => (
         <BottomSheetFooter {...footerProps} bottomInset={0}>
-          <View pb={24} pt={12} bg="$white900">
-            <BottomButton onPress={onConfirm} disabled={!agreed || isPending}>
+          <View pt={12} pb={bottom || 16} bg="$white900">
+            <Button
+              size="large"
+              style={{ borderRadius: 10 }}
+              onPress={onConfirm}
+              disabled={!agreed || isPending}
+              isLoading={isPending}
+            >
               동의하고 시작하기
-            </BottomButton>
+            </Button>
           </View>
         </BottomSheetFooter>
       ),
-      [agreed, isPending, onConfirm]
+      [agreed, isPending, onConfirm, bottom]
     );
 
     return (

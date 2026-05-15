@@ -9,13 +9,14 @@ type CommunityPolicy = {
   agreedAt: string | null;
 };
 
+// baseURL 에 이미 '/api' 가 포함되므로 path 는 '/me/...' 부터 시작
 const policyApi = {
   status: async (): Promise<CommunityPolicy> => {
-    const res = await authApi.get<ApiResponse<CommunityPolicy>>('/api/me/community-policy');
+    const res = await authApi.get<ApiResponse<CommunityPolicy>>('/me/community-policy');
     return res.data.data;
   },
   agree: async (): Promise<CommunityPolicy> => {
-    const res = await authApi.post<ApiResponse<CommunityPolicy>>('/api/me/community-policy/agree');
+    const res = await authApi.post<ApiResponse<CommunityPolicy>>('/me/community-policy/agree');
     return res.data.data;
   }
 };
