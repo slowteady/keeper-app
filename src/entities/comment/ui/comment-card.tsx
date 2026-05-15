@@ -1,4 +1,4 @@
-import { MoreVertical } from '@tamagui/lucide-icons';
+import { Heart, MoreVertical } from '@tamagui/lucide-icons';
 import { Pressable } from 'react-native';
 import { Avatar, styled, Text, XStack } from 'tamagui';
 
@@ -11,9 +11,11 @@ export type CommentCardProps = {
   onPressMore?: () => void;
   // root 댓글에서만 노출 — reply 카드(parentId 존재)에는 안 보임 (1뎁스)
   onPressReply?: () => void;
+  // 도움돼요 토글 — root/reply 모두 노출
+  onPressHelpful?: () => void;
 };
 
-export const CommentCard = ({ comment, onPressMore, onPressReply }: CommentCardProps) => {
+export const CommentCard = ({ comment, onPressMore, onPressReply, onPressHelpful }: CommentCardProps) => {
   return (
     <>
       <XStack items="center" justify="space-between" mb={16}>
@@ -36,13 +38,29 @@ export const CommentCard = ({ comment, onPressMore, onPressReply }: CommentCardP
         {comment.content}
       </Text>
 
-      {onPressReply && (
-        <XStack mt={8} items="center" gap={16}>
-          <Pressable onPress={onPressReply} hitSlop={6}>
-            <ReplyButtonText>답글 달기</ReplyButtonText>
+      <XStack mt={8} items="center" gap={16}>
+        {onPressHelpful && (
+          <Pressable onPress={onPressHelpful} hitSlop={6}>
+            <XStack items="center" gap={4}>
+              <Heart
+                size={14}
+                color={comment.isHelpful ? '$primaryMain' : '$black500'}
+                fill={comment.isHelpful ? '$primaryMain' : 'transparent'}
+              />
+              {comment.helpfulCount > 0 && (
+                <ActionButtonText color={comment.isHelpful ? '$primaryMain' : '$black500'}>
+                  {comment.helpfulCount}
+                </ActionButtonText>
+              )}
+            </XStack>
           </Pressable>
-        </XStack>
-      )}
+        )}
+        {onPressReply && (
+          <Pressable onPress={onPressReply} hitSlop={6}>
+            <ActionButtonText>답글 달기</ActionButtonText>
+          </Pressable>
+        )}
+      </XStack>
     </>
   );
 };
@@ -76,7 +94,7 @@ const StyledAvatar = styled(Avatar, {
   rounded: 4
 });
 
-const ReplyButtonText = styled(Text, {
+const ActionButtonText = styled(Text, {
   fontSize: 13,
   fontWeight: '600',
   color: '$black500'

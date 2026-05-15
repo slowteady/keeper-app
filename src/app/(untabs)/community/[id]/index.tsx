@@ -11,6 +11,7 @@ import { useLoginRequired } from '@/features/auth';
 import {
   CommunityPolicyBottomSheet,
   RepliesSection,
+  useCommentHelpful,
   useCommentMenu,
   useCommunityAdoptDetailFeed,
   useCommunityCommentList,
@@ -94,6 +95,18 @@ const Page = () => {
   }, []);
 
   const { openCommentMenu } = useCommentMenu({ postId: numId, onEdit: handleEnterEditMode });
+  const { toggleHelpful } = useCommentHelpful();
+
+  const handleToggleHelpful = useCallback(
+    (c: { id: number; isHelpful: boolean; helpfulCount: number }) => {
+      toggleHelpful({
+        commentId: c.id,
+        currentlyHelpful: c.isHelpful,
+        currentCount: c.helpfulCount
+      });
+    },
+    [toggleHelpful]
+  );
 
   const submitComment = useCallback(
     (content: string) => {
@@ -172,6 +185,7 @@ const Page = () => {
                 nickname: item.user?.nickname ?? '탈퇴한 사용자'
               })
             }
+            onPressHelpful={() => handleToggleHelpful(item)}
           />
           <RepliesSection
             parentComment={item}
@@ -182,11 +196,12 @@ const Page = () => {
                 content: reply.content
               })
             }
+            onPressReplyHelpful={(reply) => handleToggleHelpful(reply)}
           />
         </View>
       );
     },
-    [openCommentMenu, handleEnterReplyMode]
+    [openCommentMenu, handleEnterReplyMode, handleToggleHelpful]
   );
 
   return (

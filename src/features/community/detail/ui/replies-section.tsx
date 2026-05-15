@@ -9,6 +9,7 @@ import { useReplies } from '../model/use-replies';
 export type RepliesSectionProps = {
   parentComment: CommentDto;
   onPressReplyMore?: (reply: CommentDto) => void;
+  onPressReplyHelpful?: (reply: CommentDto) => void;
 };
 
 /**
@@ -18,7 +19,7 @@ export type RepliesSectionProps = {
  *  - reply 카드는 indent 32pt 로 시각 구분 (Facebook/Instagram 1뎁스 패턴)
  *  - 무한스크롤 BP — onEndReached 대신 명시 "답글 더 보기" 버튼 (수가 많을 때만 표시)
  */
-export const RepliesSection = ({ parentComment, onPressReplyMore }: RepliesSectionProps) => {
+export const RepliesSection = ({ parentComment, onPressReplyMore, onPressReplyHelpful }: RepliesSectionProps) => {
   const [expanded, setExpanded] = useState(false);
 
   const { replies, isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } = useReplies({
@@ -47,6 +48,7 @@ export const RepliesSection = ({ parentComment, onPressReplyMore }: RepliesSecti
                 <CommentCard
                   comment={reply}
                   onPressMore={onPressReplyMore ? () => onPressReplyMore(reply) : undefined}
+                  onPressHelpful={onPressReplyHelpful ? () => onPressReplyHelpful(reply) : undefined}
                 />
               </View>
             ))
