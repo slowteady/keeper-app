@@ -10,7 +10,7 @@ export const CREATE_POST_OPTIONS = {
   animalType: [
     { value: 'DOG', label: '강아지' },
     { value: 'CAT', label: '고양이' },
-    { value: 'ETC', label: '기타' }
+    { value: 'OTHER', label: '기타' }
   ] as const satisfies ChipOption[],
   gender: [
     { value: 'M', label: '남아' },

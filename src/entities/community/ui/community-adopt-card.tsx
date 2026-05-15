@@ -7,6 +7,7 @@ import { styled, Text, TextProps, View, ViewProps, XStack, XStackProps } from 't
 import { Carousel, Chip } from '@/shared/ui';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
+import { buildAdoptTags } from '../lib';
 import { CommunityAdoptListDto } from '../schema';
 import { CommunityAdoptCardHeader } from './community-adopt-card-header';
 import { CommunityAdoptCardStats } from './community-adopt-card-stats';
@@ -26,12 +27,17 @@ const CommunityAdoptCardComponent = ({
   isLiked = false,
   title,
   content,
-  tags,
   images,
   counts,
   onPressLike,
   isLoading = false,
-  isLoggedIn = false
+  isLoggedIn = false,
+  animalType,
+  gender,
+  neuterYn,
+  protectionType,
+  vaccinationCheck,
+  keywords
 }: CommunityAdoptCardProps) => {
   const handlePressCard = useCallback(() => onPressCard(id), [onPressCard, id]);
   const handlePressLike = useCallback(() => {
@@ -66,6 +72,15 @@ const CommunityAdoptCardComponent = ({
     return { cardTap: card, heartTap: heart };
   }, [handlePressCard, handlePressLike, isLoggedIn, isLoading]);
 
+  // raw enum 을 라벨로 변환 (관심사 분리 — 백엔드는 enum 만 응답)
+  // 입양생활은 사용자 자유 입력 keywords 를 그대로 노출, 그 외는 enum → 라벨 자동 생성
+  const tags = useMemo(
+    () =>
+      keywords && keywords.length > 0
+        ? keywords
+        : buildAdoptTags({ animalType, gender, neuterYn, protectionType, vaccinationCheck }),
+    [animalType, gender, neuterYn, protectionType, vaccinationCheck, keywords]
+  );
   const hasTags = tags.length > 0;
 
   return (

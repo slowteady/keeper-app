@@ -1,4 +1,4 @@
-import { CommunityAdoptDetailDto } from '@/entities/community';
+import { buildAdoptTags, CommunityAdoptDetailDto } from '@/entities/community';
 
 export const convertToAdoptDetailOverviewData = (detailPost: CommunityAdoptDetailDto) => {
   return {
@@ -8,7 +8,7 @@ export const convertToAdoptDetailOverviewData = (detailPost: CommunityAdoptDetai
     displayTime: detailPost.displayTime,
     title: detailPost.title,
     images: detailPost.images,
-    tags: detailPost.tags,
+    tags: buildAdoptTags(detailPost),
     content: detailPost.content ?? ''
   };
 };

@@ -65,7 +65,6 @@ export const CommunityAdoptDetailSchema = z.object({
   displayTime: z.string(),
   title: z.string(),
   images: z.array(z.string()),
-  tags: z.array(z.string()),
   // null + undefined 둘 다 허용 (nullish) — DB nullable 컬럼이 null 로 응답됨
   content: z.string().nullish(),
   age: z.string(),
@@ -100,8 +99,15 @@ export const CommunityAdoptListSchema = z.object({
   displayTime: z.string(),
   title: z.string(),
   images: z.array(z.string()),
-  tags: z.array(z.string()),
   content: z.string().optional(),
+  // 카테고리별 raw enum/원본 — 프론트 mapper 가 라벨로 변환
+  animalType: AnimalTypeSchema.optional(),
+  gender: z.string().optional(),
+  neuterYn: NeuterYnSchema.optional(),
+  protectionType: ProtectionTypeSchema.optional(),
+  vaccinationCheck: VaccinationCheckSchema.optional(),
+  // 입양생활 자유 입력 키워드
+  keywords: z.array(z.string()).optional(),
   counts: z.object({
     like: z.number(),
     view: z.number(),
