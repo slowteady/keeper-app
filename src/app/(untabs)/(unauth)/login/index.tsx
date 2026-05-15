@@ -1,3 +1,4 @@
+import { Pressable } from 'react-native';
 import { styled, Text, View, YStack } from 'tamagui';
 
 import { SocialLoginButton, useLogin } from '@/features/auth';
@@ -5,7 +6,7 @@ import { SocialAuthResult } from '@/shared/api';
 import { Apple, Google, Kakao, Naver } from '@/shared/ui/icons/etc';
 
 const Page = () => {
-  const { login, isGoogleAvailable, isAppleAvailable } = useLogin();
+  const { login, devLogin, isGoogleAvailable, isAppleAvailable } = useLogin();
 
   const handleResponse = ({ socialType, token }: SocialAuthResult) => {
     login(socialType, token);
@@ -58,6 +59,25 @@ const Page = () => {
             iconColor="#FFFFFF"
             onResponse={handleResponse}
           />
+        )}
+        {__DEV__ && (
+          <Pressable
+            onPress={() => devLogin(9)}
+            style={{
+              alignItems: 'center',
+              justifyContent: 'center',
+              paddingVertical: 14,
+              borderRadius: 5,
+              borderWidth: 1,
+              borderColor: '#E5E5E5',
+              borderStyle: 'dashed',
+              marginTop: 8
+            }}
+          >
+            <Text fontSize={14} color="$black500">
+              [DEV] 개발자 로그인 (user 9)
+            </Text>
+          </Pressable>
         )}
       </YStack>
     </Container>
