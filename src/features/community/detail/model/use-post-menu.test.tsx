@@ -39,8 +39,24 @@ jest.mock('@/features/community/safety', () => ({
   useBlock: () => ({ block: mockBlock, unblock: jest.fn(), isPending: false })
 }));
 
+jest.mock('@/features/community/policy', () => ({
+  useRequireCommunityPolicy: () => ({
+    requirePolicy: async (cb?: () => void | Promise<void>) => {
+      await cb?.();
+      return true;
+    }
+  })
+}));
+
 jest.mock('@/features/auth', () => ({
-  useCurrentUser: () => ({ user: mockUser, isLoggedIn: !!mockUser, isLoading: false })
+  useCurrentUser: () => ({ user: mockUser, isLoggedIn: !!mockUser, isLoading: false }),
+  useLoginRequired: () => ({
+    requireLogin: async (cb?: () => void) => {
+      await cb?.();
+      return true;
+    },
+    isLoggedIn: !!mockUser
+  })
 }));
 
 jest.mock('@/shared/model', () => {
@@ -88,7 +104,7 @@ describe('usePostMenu', () => {
     expect(data.map((d) => d.id)).toEqual(['SHARE', 'REPORT', 'BLOCK']);
   });
 
-  it('본인 글이면 메뉴 = [공유, 삭제]', () => {
+  it('본인 글이면 메뉴 = [공유, 수정, 삭제]', () => {
     mockUser = { id: 1 };
     const { wrapper } = setup();
     const { result } = renderHook(() => usePostMenu({ postId: 10, authorId: 1, shareInfo: baseShareInfo }), {
@@ -98,7 +114,23 @@ describe('usePostMenu', () => {
     act(() => result.current.openPostMenu());
 
     const { data } = extractMenu(mockPresent.mock.calls[0]);
-    expect(data.map((d) => d.id)).toEqual(['SHARE', 'DELETE']);
+    expect(data.map((d) => d.id)).toEqual(['SHARE', 'EDIT', 'DELETE']);
+  });
+
+  it('EDIT 선택 시 수정 페이지로 push + 시트 dismiss', () => {
+    mockUser = { id: 1 };
+    const { wrapper } = setup();
+    const { result } = renderHook(() => usePostMenu({ postId: 42, authorId: 1, shareInfo: baseShareInfo }), {
+      wrapper
+    });
+
+    act(() => result.current.openPostMenu());
+    const { onPress } = extractMenu(mockPresent.mock.calls[0]);
+
+    act(() => onPress({ id: 'EDIT', label: '수정하기' }));
+
+    expect(mockDismiss).toHaveBeenCalled();
+    expect(router.push).toHaveBeenCalledWith('/(untabs)/community/42/edit');
   });
 
   it('로그인 정보가 없으면 본인 판정 false → [공유, 신고, 차단]', () => {
@@ -132,7 +164,7 @@ describe('usePostMenu', () => {
     );
   });
 
-  it('REPORT 선택 시 openReportSheet 호출 + 같은 시트 교체이므로 dismiss 안 함', () => {
+  it('REPORT 선택 시 openReportSheet 호출 + 같은 시트 교체이므로 dismiss 안 함', async () => {
     mockUser = { id: 99 };
     const { wrapper } = setup();
     const { result } = renderHook(() => usePostMenu({ postId: 42, authorId: 1, shareInfo: baseShareInfo }), {
@@ -142,13 +174,15 @@ describe('usePostMenu', () => {
     act(() => result.current.openPostMenu());
     const { onPress } = extractMenu(mockPresent.mock.calls[0]);
 
-    act(() => onPress({ id: 'REPORT', label: '신고하기' }));
+    await act(async () => {
+      await onPress({ id: 'REPORT', label: '신고하기' });
+    });
 
     expect(mockDismiss).not.toHaveBeenCalled();
     expect(mockOpenReportSheet).toHaveBeenCalledWith({ type: 'POST', id: 42 });
   });
 
-  it('BLOCK 선택 시 block(authorId) 호출 + dismiss', () => {
+  it('BLOCK 선택 시 block(authorId) 호출 + dismiss', async () => {
     mockUser = { id: 99 };
     const { wrapper } = setup();
     const { result } = renderHook(() => usePostMenu({ postId: 42, authorId: 7, shareInfo: baseShareInfo }), {
@@ -158,7 +192,9 @@ describe('usePostMenu', () => {
     act(() => result.current.openPostMenu());
     const { onPress } = extractMenu(mockPresent.mock.calls[0]);
 
-    act(() => onPress({ id: 'BLOCK', label: '차단하기' }));
+    await act(async () => {
+      await onPress({ id: 'BLOCK', label: '차단하기' });
+    });
 
     expect(mockDismiss).toHaveBeenCalled();
     expect(mockBlock).toHaveBeenCalledWith(7);

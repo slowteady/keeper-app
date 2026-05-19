@@ -2,7 +2,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
 import { commentApi, commentQueries } from '@/entities/comment';
-import { useCurrentUser } from '@/features/auth';
+import { useCurrentUser, useLoginRequired } from '@/features/auth';
+import { useRequireCommunityPolicy } from '@/features/community/policy';
 import { useBlock, useReportSheet } from '@/features/community/safety';
 import { globalToast } from '@/shared/lib';
 import { BottomSheetMenu, type BottomSheetMenuData, useBottomSheet, useModal } from '@/shared/ui';
@@ -33,6 +34,8 @@ export type UseCommentMenuParams = {
 
 export const useCommentMenu = ({ postId, onEdit }: UseCommentMenuParams) => {
   const { user } = useCurrentUser();
+  const { requireLogin } = useLoginRequired();
+  const { requirePolicy } = useRequireCommunityPolicy();
   const { present, dismiss } = useBottomSheet();
   const { open: openModal, close: closeModal } = useModal();
   const { openReportSheet } = useReportSheet();
@@ -64,7 +67,8 @@ export const useCommentMenu = ({ postId, onEdit }: UseCommentMenuParams) => {
             dismiss();
             openModal(
               <ConfirmDeleteModal
-                title="댓글을 삭제하시겠어요?"
+                title="정말 댓글을 삭제할까요?"
+                description="*내가 쓴 댓글이 완전히 삭제됩니다."
                 onCancel={closeModal}
                 onConfirm={() => {
                   closeModal();
@@ -75,11 +79,16 @@ export const useCommentMenu = ({ postId, onEdit }: UseCommentMenuParams) => {
             break;
           case 'REPORT':
             // 같은 BottomSheet 컨텐츠 교체 — dismiss 호출 시 충돌
-            openReportSheet({ type: 'COMMENT', id: commentId });
+            requireLogin(async () => {
+              await requirePolicy(() => openReportSheet({ type: 'COMMENT', id: commentId }));
+            });
             break;
           case 'BLOCK':
             dismiss();
-            if (authorId) block(authorId);
+            if (authorId)
+              requireLogin(async () => {
+                await requirePolicy(() => block(authorId));
+              });
             break;
         }
       };
@@ -88,7 +97,19 @@ export const useCommentMenu = ({ postId, onEdit }: UseCommentMenuParams) => {
         snapPoints: [200]
       });
     },
-    [user, present, dismiss, openModal, closeModal, deleteMutation, openReportSheet, block, onEdit]
+    [
+      user,
+      requireLogin,
+      requirePolicy,
+      present,
+      dismiss,
+      openModal,
+      closeModal,
+      deleteMutation,
+      openReportSheet,
+      block,
+      onEdit
+    ]
   );
 
   return { openCommentMenu, isDeleting: deleteMutation.isPending };

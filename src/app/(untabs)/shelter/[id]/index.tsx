@@ -5,8 +5,11 @@ import { Suspense, useCallback, useRef, useState } from 'react';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
 import { ADOPT_OPTIONS, AdoptCard, AdoptItem } from '@/entities/adopt';
+import { buildShelterShareDesc } from '@/entities/shelter';
+import { useFavoriteAbandonment } from '@/features/favorite-abandonment';
+import { useFavoriteShelter } from '@/features/favorite-shelter';
 import { useShelter, useShelterAdoptList } from '@/features/shelter';
-import { useLocation, useScrollUpButton } from '@/shared/model';
+import { useLocation, useScrollUpButton, useShare } from '@/shared/model';
 import {
   Button,
   CallModal,
@@ -42,6 +45,20 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
   const mapRef = useRef<NaverMapViewRef>(null);
 
   const { shelterData, refresh: refreshShelter, hasCallNumber } = useShelter({ id });
+  const { toggleFavoriteShelter } = useFavoriteShelter();
+  const { toggleFavoriteAbandonment } = useFavoriteAbandonment();
+  const { share } = useShare();
+
+  const handlePressShare = () => {
+    if (!shelterData) return;
+    share({
+      title: shelterData.name,
+      desc: buildShelterShareDesc(shelterData),
+      path: 'shelter',
+      id: shelterData.id
+      // image 미지정 — keeper-web 이 keeper-og.png 로 fallback
+    });
+  };
   const {
     selectedFilter,
     convertedData,
@@ -74,12 +91,20 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
       const isLeft = index % 2 === 0;
 
       return (
-        <View pl={isLeft ? 20 : 4} pr={isLeft ? 4 : 20} mb={32} onPress={() => goDetail(item.id)}>
-          <AdoptCard uri={item.uri} title={item.title} description={item.description} chips={item.chips} />
+        <View pl={isLeft ? 20 : 4} pr={isLeft ? 4 : 20} mb={32}>
+          <AdoptCard
+            uri={item.uri}
+            title={item.title}
+            description={item.description}
+            chips={item.chips}
+            isFavorited={item.isFavorited}
+            onPress={() => goDetail(item.id)}
+            onPressFavorite={() => toggleFavoriteAbandonment(item.id, item.isFavorited ?? false)}
+          />
         </View>
       );
     },
-    [goDetail]
+    [goDetail, toggleFavoriteAbandonment]
   );
 
   if (!shelterData) return null;
@@ -103,6 +128,8 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
                 mapRef={mapRef}
                 isGranted={isGranted}
                 onMapInitialized={handleMapInitialized}
+                onPressFavorite={() => toggleFavoriteShelter(shelterData.id, shelterData.isFavorited ?? false)}
+                onPressShare={handlePressShare}
               />
             </View>
             <View mb={32} px={20}>

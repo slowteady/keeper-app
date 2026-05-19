@@ -6,7 +6,7 @@ import { styled, useTheme, View, XStack, YStack } from 'tamagui';
 
 import { ADOPT_OPTIONS } from '@/entities/adopt';
 import type { CommunityAdoptListDto } from '@/entities/community';
-import { COMMUNITY_LIST_FILTER, CommunityAdoptCard } from '@/entities/community';
+import { COMMUNITY_LIST_FILTER, CommunityAdoptCard, CommunityAdoptCardSkeleton } from '@/entities/community';
 import { useCommunityAdoptFeed, useCommunityListFilter } from '@/features/community';
 import { useIsLikePending, useLikePost } from '@/features/like-post';
 import { AnimalTypeDto, useListRefreshing, useScrollUpButton } from '@/shared/model';
@@ -52,6 +52,8 @@ export const CommunityAdoptFeed = () => {
         onScroll={handleScroll}
         keyExtractor={({ id }, i) => `${id}-${i}`}
         data={adoptList}
+        // 화면 밖 cell 더 멀리 keep — virtualization remount 시 이미지 reload 깜빡임 완화
+        drawDistance={1500}
         showsVerticalScrollIndicator={false}
         ItemSeparatorComponent={() => <Divider />}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
@@ -119,9 +121,14 @@ FeedCardItem.displayName = 'FeedCardItem';
 const EmptyState = ({ isLoading }: { isLoading: boolean }) => {
   if (isLoading) {
     return (
-      <View flex={1} items="center" justify="center" minH={300}>
-        <ActivityIndicator />
-      </View>
+      <YStack>
+        {Array.from({ length: 3 }).map((_, idx) => (
+          <View key={idx}>
+            <CommunityAdoptCardSkeleton />
+            {idx < 2 && <Divider />}
+          </View>
+        ))}
+      </YStack>
     );
   }
   return (

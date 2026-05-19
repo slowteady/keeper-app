@@ -1,6 +1,6 @@
 import { renderHook, waitFor } from '@testing-library/react-native';
 
-import { publicApi } from '@/shared/api/instance';
+import { authApi } from '@/shared/api/instance';
 import { createWrapper } from '@/test/create-wrapper';
 
 import { useCommunityAdoptFeed } from './use-community-adopt-feed';
@@ -9,7 +9,7 @@ jest.mock('expo-router', () => ({
   router: { push: jest.fn() }
 }));
 
-const mockedPublicGet = jest.mocked(publicApi.get);
+const mockedAuthGet = jest.mocked(authApi.get);
 
 const makeListResponse = (overrides?: object) => ({
   data: {
@@ -26,18 +26,18 @@ const makeListResponse = (overrides?: object) => ({
 
 beforeEach(() => {
   jest.clearAllMocks();
-  mockedPublicGet.mockResolvedValue(makeListResponse() as never);
+  mockedAuthGet.mockResolvedValue(makeListResponse() as never);
 });
 
 describe('useCommunityAdoptFeed', () => {
-  it('기본 호출 시 publicApi.get params에 sort=NEW가 포함된다', async () => {
+  it('기본 호출 시 authApi.get params에 sort=NEW가 포함된다', async () => {
     const { result } = renderHook(() => useCommunityAdoptFeed(), {
       wrapper: createWrapper()
     });
 
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
-    expect(mockedPublicGet).toHaveBeenCalledWith(
+    expect(mockedAuthGet).toHaveBeenCalledWith(
       '/community/posts',
       expect.objectContaining({
         params: expect.objectContaining({ sort: 'NEW' })
@@ -52,7 +52,7 @@ describe('useCommunityAdoptFeed', () => {
 
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
-    expect(mockedPublicGet).toHaveBeenCalledWith(
+    expect(mockedAuthGet).toHaveBeenCalledWith(
       '/community/posts',
       expect.objectContaining({
         params: expect.objectContaining({ sort: 'LIKE' })
@@ -67,7 +67,7 @@ describe('useCommunityAdoptFeed', () => {
 
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
-    expect(mockedPublicGet).toHaveBeenCalledWith(
+    expect(mockedAuthGet).toHaveBeenCalledWith(
       '/community/posts',
       expect.objectContaining({
         params: expect.objectContaining({ sort: 'VIEW', animalType: 'DOG' })

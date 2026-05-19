@@ -1,4 +1,3 @@
-import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { router } from 'expo-router';
@@ -8,11 +7,9 @@ import { useForm, useWatch } from 'react-hook-form';
 import { CommunityAdoptFormDto, CommunityAdoptFormSchema, CREATE_POST_OPTIONS } from '@/entities/community';
 import { useImageUpload } from '@/features/upload';
 import { globalToast } from '@/shared/lib';
-import { BottomSheetMenu, useBottomSheet } from '@/shared/ui';
 
-import { makeFormOptions } from '../lib/make-form-options';
-import { CreatePostKindBottomSheet } from '../ui';
 import { createAdoptionPersonal, toCreateAdoptionPersonalBody } from './api';
+import { useAdoptFormSelectors } from './use-adopt-form-selectors';
 
 export const useCreatePost = () => {
   const form = useForm<CommunityAdoptFormDto>({
@@ -41,13 +38,7 @@ export const useCreatePost = () => {
     }
   });
 
-  const weight = useWatch({ control: form.control, name: 'weight' });
-  const age = useWatch({ control: form.control, name: 'age' });
-  const kind = useWatch({ control: form.control, name: 'specificType' });
   const animalType = useWatch({ control: form.control, name: 'animalType' });
-
-  // animalType 이 바뀌면 품종 리스트가 달라지므로 옵션 재생성
-  const { weightOption, ageOption, kindOption } = makeFormOptions(animalType);
 
   // animalType 변경 시 specificType reset — 강아지에서 고른 품종이 고양이로 바꿔도 남아있는 문제 방지
   // 첫 마운트(default 값)에선 reset 하지 않도록 ref 로 변경 추적
@@ -58,7 +49,8 @@ export const useCreatePost = () => {
       prevAnimalTypeRef.current = animalType;
     }
   }, [animalType, form]);
-  const { present, dismiss } = useBottomSheet();
+
+  const { openWeightSelector, openAgeSelector, openKindSelector } = useAdoptFormSelectors(form, animalType);
 
   // 게시글 등록 흐름: 이미지 presigned 업로드 → 백엔드 createPost → 상세로 이동
   // 백엔드 presigned 엔드포인트(/uploads/presign) 미구현 시 이미지 업로드 단계에서 실패하므로,
@@ -80,50 +72,6 @@ export const useCreatePost = () => {
   });
 
   const handleSubmit = (data: CommunityAdoptFormDto) => submitMutation.mutate(data);
-
-  const openWeightSelector = () =>
-    present(
-      <BottomSheetScrollView>
-        <BottomSheetMenu
-          data={weightOption}
-          value={Number(weight)}
-          onPress={(data) => {
-            form.setValue('weight', data.id.toString());
-            dismiss();
-          }}
-        />
-      </BottomSheetScrollView>,
-      { snapPoints: ['50%'] }
-    );
-
-  const openAgeSelector = () =>
-    present(
-      <BottomSheetScrollView>
-        <BottomSheetMenu
-          data={ageOption}
-          value={Number(age)}
-          onPress={(data) => {
-            form.setValue('age', data.id.toString());
-            dismiss();
-          }}
-        />
-      </BottomSheetScrollView>,
-      { snapPoints: ['50%'] }
-    );
-
-  const openKindSelector = () => {
-    present(
-      <CreatePostKindBottomSheet
-        kindOption={kindOption}
-        kind={kind}
-        onSelect={(id) => {
-          form.setValue('specificType', id);
-          dismiss();
-        }}
-      />,
-      { snapPoints: ['50%'] }
-    );
-  };
 
   return {
     form,

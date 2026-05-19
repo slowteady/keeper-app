@@ -1,7 +1,6 @@
 import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
-import { AxiosResponse } from 'axios';
 
-import { authApi, publicApi } from '@/shared/api';
+import { authApi } from '@/shared/api';
 import { ApiResponse } from '@/shared/model';
 
 import { AdoptDataDto, AdoptParamsDto, AdoptResponseDto } from './schema';
@@ -9,13 +8,18 @@ import { AdoptDataDto, AdoptParamsDto, AdoptResponseDto } from './schema';
 const BASE_URL = 'v2/abandonments';
 
 // --- Service Functions ---
+// 낙관 업데이트 일관성 — list/detail cache 에 view 모델 (AdoptResponseDto / AdoptDataDto) 직접 저장.
+// authApi 사용 이유 — 백엔드가 @CurrentUser 를 optional 로 받아 토큰이 있으면 isFavorited 를 채워준다.
+// publicApi (토큰 미첨부) 로 호출하면 user=undefined 가 되어 isFavorited 가 항상 false 로 떨어진다.
 
-const getAdopts = async (params: AdoptParamsDto): Promise<AxiosResponse<ApiResponse<AdoptResponseDto>>> => {
-  return await publicApi.get(BASE_URL, { params });
+const getAdopts = async (params: AdoptParamsDto): Promise<AdoptResponseDto> => {
+  const res = await authApi.get<ApiResponse<AdoptResponseDto>>(BASE_URL, { params });
+  return res.data.data;
 };
 
-const getAdopt = async (id: string): Promise<AxiosResponse<ApiResponse<AdoptDataDto>>> => {
-  return await publicApi.get(`${BASE_URL}/${id}`);
+const getAdopt = async (id: string): Promise<AdoptDataDto> => {
+  const res = await authApi.get<ApiResponse<AdoptDataDto>>(`${BASE_URL}/${id}`);
+  return res.data.data;
 };
 
 // --- Query Options Factory ---
@@ -28,12 +32,10 @@ export const adoptQueries = {
       queryKey: [...adoptQueries.all(), 'list', params] as const,
       queryFn: ({ pageParam }) => getAdopts({ ...params, page: pageParam }),
       initialPageParam: 0,
-      getNextPageParam: (lastPage) => {
-        return lastPage.data.data.has_next ? lastPage.data.data.page + 1 : undefined;
-      },
+      getNextPageParam: (lastPage) => (lastPage.has_next ? lastPage.page + 1 : undefined),
       select: (data) => {
-        const lastPage = data.pages[data.pages.length - 1].data.data;
-        const allData = data.pages.flatMap((page) => page.data.data.value);
+        const lastPage = data.pages[data.pages.length - 1];
+        const allData = data.pages.flatMap((page) => page.value);
         return { ...lastPage, value: allData };
       }
     }),
@@ -41,8 +43,7 @@ export const adoptQueries = {
   detail: (id: string) =>
     queryOptions({
       queryKey: [...adoptQueries.all(), 'detail', id] as const,
-      queryFn: () => getAdopt(id),
-      select: (res) => res.data.data
+      queryFn: () => getAdopt(id)
     })
 };
 

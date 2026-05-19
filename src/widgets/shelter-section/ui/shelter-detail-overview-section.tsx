@@ -1,30 +1,56 @@
 import { NaverMapViewRef } from '@mj-studio/react-native-naver-map';
 import { RefObject } from 'react';
-import { styled, Text, XStack } from 'tamagui';
+import { Pressable } from 'react-native';
+import { styled, Text, useTheme, XStack } from 'tamagui';
 
 import { ShelterDto, ShelterMap } from '@/entities/shelter';
+import { AnimatedHeart } from '@/shared/ui/icons/animation';
+import { Share as ShareIcon } from '@/shared/ui/icons/outline';
 
 export type ShelterDetailOverviewSectionProps = {
   data: ShelterDto;
   mapRef: RefObject<NaverMapViewRef | null>;
   isGranted: boolean;
   onMapInitialized: () => void;
+  onPressFavorite?: () => void;
+  onPressShare?: () => void;
 };
 
 export const ShelterDetailOverviewSection = ({
   data,
   mapRef,
   isGranted,
-  onMapInitialized
+  onMapInitialized,
+  onPressFavorite,
+  onPressShare
 }: ShelterDetailOverviewSectionProps) => {
-  const { name, longitude, latitude } = data;
+  const { name, longitude, latitude, isFavorited = false } = data;
+  const { black700 } = useTheme();
 
   return (
     <>
-      <TitleContainer mb={30}>
-        <Text numberOfLines={2} ellipsizeMode="tail" fontSize={28} lineHeight={38} fontWeight="500" color="$black900">
+      <TitleContainer mb={30} gap={8}>
+        <Text
+          numberOfLines={2}
+          ellipsizeMode="tail"
+          fontSize={28}
+          lineHeight={38}
+          fontWeight="500"
+          color="$black900"
+          flex={1}
+        >
           {name}
         </Text>
+        {onPressFavorite && (
+          <Pressable hitSlop={10} onPress={onPressFavorite}>
+            <AnimatedHeart isLiked={isFavorited} size={26} />
+          </Pressable>
+        )}
+        {onPressShare && (
+          <Pressable hitSlop={10} onPress={onPressShare} accessibilityLabel="공유">
+            <ShareIcon width={24} height={24} color={black700.val} />
+          </Pressable>
+        )}
       </TitleContainer>
 
       <ShelterMap

@@ -1,7 +1,7 @@
 import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
 import { AxiosResponse } from 'axios';
 
-import { authApi, publicApi } from '@/shared/api/instance';
+import { authApi } from '@/shared/api/instance';
 import { ApiResponse } from '@/shared/model';
 
 import {
@@ -23,12 +23,13 @@ export type CommunityListParams = {
 const COMMUNITY_BASE = '/community/posts';
 
 const getList = async (params: CommunityListParams): Promise<CommunityListResponseDto> => {
-  const res = await publicApi.get<ApiResponse<CommunityListResponseDto>>(COMMUNITY_BASE, { params });
+  // authApi 사용 — 토큰 첨부 시 server 가 isLiked 정확히 반환. publicApi 면 invalidate refetch 후 isLiked=false 로 cache 덮어쓰기 → 하트 리셋 버그.
+  const res = await authApi.get<ApiResponse<CommunityListResponseDto>>(COMMUNITY_BASE, { params });
   return CommunityListResponseSchema.parse(res.data.data);
 };
 
 const getDetail = async (id: number): Promise<CommunityAdoptDetailDto> => {
-  const res = await publicApi.get<ApiResponse<CommunityAdoptDetailDto>>(`${COMMUNITY_BASE}/${id}`);
+  const res = await authApi.get<ApiResponse<CommunityAdoptDetailDto>>(`${COMMUNITY_BASE}/${id}`);
   return CommunityAdoptDetailSchema.parse(res.data.data);
 };
 

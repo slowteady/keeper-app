@@ -19,6 +19,7 @@ const Page = () => {
     shelters,
     shelterCounts,
     shelterList,
+    searchResults,
     mapRef,
     camera,
     selectedMarkerId,
@@ -82,13 +83,14 @@ const Page = () => {
             <ShelterMapSection
               ref={mapRef}
               isGranted={isGranted}
-              data={shelters}
+              data={searchResults ?? shelters}
               counts={shelterCounts}
               camera={camera}
               onRefetch={onRefetch}
               onTapMarker={onTapMarker}
               onMapInitialized={onMapInitialized}
               selectedMarkerId={selectedMarkerId}
+              searchResultCount={searchResults?.length}
             />
           </View>
         }

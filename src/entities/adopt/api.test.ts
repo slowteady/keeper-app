@@ -1,15 +1,15 @@
-import { authApi, publicApi } from '@/shared/api/instance';
+import { authApi } from '@/shared/api/instance';
 
 import { adoptApi, adoptQueries } from './api';
 
-const mockedPublicGet = jest.mocked(publicApi.get);
+const mockedAuthGet = jest.mocked(authApi.get);
 const mockedAuthPost = jest.mocked(authApi.post);
 const mockedAuthDelete = jest.mocked(authApi.delete);
 
 beforeEach(() => {
   jest.clearAllMocks();
   const noop = { data: { data: null } } as never;
-  mockedPublicGet.mockResolvedValue(noop);
+  mockedAuthGet.mockResolvedValue(noop);
 });
 
 describe('adoptQueries.all', () => {
@@ -26,7 +26,7 @@ describe('adoptQueries.list', () => {
 
     await (queryFn as never as (ctx: { pageParam: number }) => Promise<unknown>)({ pageParam: 3 });
 
-    expect(mockedPublicGet).toHaveBeenCalledWith('v2/abandonments', {
+    expect(mockedAuthGet).toHaveBeenCalledWith('v2/abandonments', {
       params: { ...listParams, page: 3 }
     });
   });
@@ -35,16 +35,26 @@ describe('adoptQueries.list', () => {
     expect(adoptQueries.list(listParams).queryKey).toEqual(['adopts', 'list', listParams]);
   });
 
+  it('queryFn 이 ApiResponse 의 data.data (AdoptResponseDto) 를 직접 반환한다 — 낙관 업데이트 일관성', async () => {
+    const response = { total: 1, page: 0, size: 10, has_next: false, value: [{ id: 'A' }] };
+    mockedAuthGet.mockResolvedValueOnce({ data: { data: response } } as never);
+
+    const queryFn = adoptQueries.list(listParams).queryFn;
+    const result = await (queryFn as never as (ctx: { pageParam: number }) => Promise<unknown>)({ pageParam: 0 });
+
+    expect(result).toEqual(response);
+  });
+
   it('getNextPageParam: has_next가 true이면 page + 1을 반환한다', () => {
     const opts = adoptQueries.list(listParams);
-    const lastPage = { data: { data: { has_next: true, page: 2 } } } as never;
+    const lastPage = { has_next: true, page: 2 } as never;
 
     expect(opts.getNextPageParam(lastPage, [lastPage], 0, [0])).toBe(3);
   });
 
   it('getNextPageParam: has_next가 false이면 undefined를 반환한다', () => {
     const opts = adoptQueries.list(listParams);
-    const lastPage = { data: { data: { has_next: false, page: 2 } } } as never;
+    const lastPage = { has_next: false, page: 2 } as never;
 
     expect(opts.getNextPageParam(lastPage, [lastPage], 0, [0])).toBeUndefined();
   });
@@ -57,8 +67,8 @@ describe('adoptQueries.list', () => {
 
     const pagesData = {
       pages: [
-        { data: { data: { total: 3, page: 1, size: 2, has_next: true, value: [item1, item2] } } },
-        { data: { data: { total: 3, page: 2, size: 2, has_next: false, value: [item3] } } }
+        { total: 3, page: 1, size: 2, has_next: true, value: [item1, item2] },
+        { total: 3, page: 2, size: 2, has_next: false, value: [item3] }
       ],
       pageParams: [0, 1]
     } as never;
@@ -72,8 +82,8 @@ describe('adoptQueries.list', () => {
     const opts = adoptQueries.list(listParams);
     const pagesData = {
       pages: [
-        { data: { data: { total: 5, page: 1, size: 2, has_next: true, value: [] } } },
-        { data: { data: { total: 5, page: 2, size: 2, has_next: false, value: [] } } }
+        { total: 5, page: 1, size: 2, has_next: true, value: [] },
+        { total: 5, page: 2, size: 2, has_next: false, value: [] }
       ],
       pageParams: [0, 1]
     } as never;
@@ -92,15 +102,20 @@ describe('adoptQueries.detail', () => {
 
     await (opts.queryFn as never as () => Promise<unknown>)();
 
-    expect(mockedPublicGet).toHaveBeenCalledWith('v2/abandonments/a1');
+    expect(mockedAuthGet).toHaveBeenCalledWith('v2/abandonments/a1');
   });
 
   it('queryKey에 id가 포함된다', () => {
     expect(adoptQueries.detail('a1').queryKey).toEqual(['adopts', 'detail', 'a1']);
   });
 
-  it('select 함수가 정의되어 있다', () => {
-    expect(typeof adoptQueries.detail('a1').select).toBe('function');
+  it('queryFn 이 ApiResponse 의 data.data (AdoptDataDto) 를 직접 반환한다', async () => {
+    const detail = { id: 'a1', name: 'malti' };
+    mockedAuthGet.mockResolvedValueOnce({ data: { data: detail } } as never);
+
+    const result = await (adoptQueries.detail('a1').queryFn as never as () => Promise<unknown>)();
+
+    expect(result).toEqual(detail);
   });
 });
 

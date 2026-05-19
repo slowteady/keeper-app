@@ -63,6 +63,7 @@ const Page = () => {
         {__DEV__ && (
           <Pressable
             onPress={() => devLogin(9)}
+            testID="dev-login-button"
             style={{
               alignItems: 'center',
               justifyContent: 'center',

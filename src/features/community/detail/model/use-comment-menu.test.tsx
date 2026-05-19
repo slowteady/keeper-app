@@ -39,7 +39,23 @@ jest.mock('@/features/community/safety', () => ({
 }));
 
 jest.mock('@/features/auth', () => ({
-  useCurrentUser: () => ({ user: mockUser, isLoggedIn: !!mockUser, isLoading: false })
+  useCurrentUser: () => ({ user: mockUser, isLoggedIn: !!mockUser, isLoading: false }),
+  useLoginRequired: () => ({
+    requireLogin: async (cb?: () => void) => {
+      await cb?.();
+      return true;
+    },
+    isLoggedIn: !!mockUser
+  })
+}));
+
+jest.mock('@/features/community/policy', () => ({
+  useRequireCommunityPolicy: () => ({
+    requirePolicy: async (cb?: () => void | Promise<void>) => {
+      await cb?.();
+      return true;
+    }
+  })
 }));
 
 type MenuProps = { data: { id: string; label: string }[]; onPress: (d: { id: string; label: string }) => void };
@@ -101,7 +117,7 @@ describe('useCommentMenu', () => {
     expect(mockOnEdit).toHaveBeenCalledWith({ commentId: 7, content: '원본' });
   });
 
-  it('REPORT 선택 시 openReportSheet 호출 + dismiss 안 함 (같은 시트 교체)', () => {
+  it('REPORT 선택 시 openReportSheet 호출 + dismiss 안 함 (같은 시트 교체)', async () => {
     mockUser = { id: 99 };
     const { wrapper } = setup();
     const { result } = renderHook(() => useCommentMenu({ postId: 10, onEdit: mockOnEdit }), { wrapper });
@@ -109,13 +125,15 @@ describe('useCommentMenu', () => {
     act(() => result.current.openCommentMenu(baseTarget));
     const { onPress } = extractMenu(mockPresent.mock.calls[0]);
 
-    act(() => onPress({ id: 'REPORT', label: '신고' }));
+    await act(async () => {
+      await onPress({ id: 'REPORT', label: '신고' });
+    });
 
     expect(mockDismiss).not.toHaveBeenCalled();
     expect(mockOpenReportSheet).toHaveBeenCalledWith({ type: 'COMMENT', id: 7 });
   });
 
-  it('BLOCK 선택 시 block(authorId) 호출 + dismiss', () => {
+  it('BLOCK 선택 시 block(authorId) 호출 + dismiss', async () => {
     mockUser = { id: 99 };
     const { wrapper } = setup();
     const { result } = renderHook(() => useCommentMenu({ postId: 10, onEdit: mockOnEdit }), { wrapper });
@@ -123,7 +141,9 @@ describe('useCommentMenu', () => {
     act(() => result.current.openCommentMenu({ commentId: 7, authorId: 5, content: '본문' }));
     const { onPress } = extractMenu(mockPresent.mock.calls[0]);
 
-    act(() => onPress({ id: 'BLOCK', label: '차단' }));
+    await act(async () => {
+      await onPress({ id: 'BLOCK', label: '차단' });
+    });
 
     expect(mockDismiss).toHaveBeenCalled();
     expect(mockBlock).toHaveBeenCalledWith(5);

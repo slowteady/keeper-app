@@ -13,9 +13,15 @@ export type ImageSelectorProps = {
   size?: number;
   value?: string[];
   onChange?: (images: string[]) => void;
+  readOnly?: boolean;
 };
 
-export const ImageSelector = ({ max = 10, size = 100, value = [], onChange }: ImageSelectorProps) => {
+export const canAddImage = ({ readOnly, count, max }: { readOnly: boolean; count: number; max: number }): boolean =>
+  !readOnly && count < max;
+
+export const canRemoveImage = ({ readOnly }: { readOnly: boolean }): boolean => !readOnly;
+
+export const ImageSelector = ({ max = 10, size = 100, value = [], onChange, readOnly = false }: ImageSelectorProps) => {
   const [loadingIndex, setLoadingIndex] = useState<number | null>(null);
   const [viewerOpen, setViewerOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -50,7 +56,8 @@ export const ImageSelector = ({ max = 10, size = 100, value = [], onChange }: Im
     setViewerOpen(true);
   };
 
-  const canAddMore = value.length < max;
+  const showAddButton = canAddImage({ readOnly, count: value.length, max });
+  const showRemoveButton = canRemoveImage({ readOnly });
 
   return (
     <>
@@ -74,15 +81,17 @@ export const ImageSelector = ({ max = 10, size = 100, value = [], onChange }: Im
                 />
               </View>
 
-              <View style={styles.removeButton} onPress={() => handleRemoveImage(index)}>
-                <RemoveButtonBackground>
-                  <Close width={12} height={12} color="white" />
-                </RemoveButtonBackground>
-              </View>
+              {showRemoveButton && (
+                <View style={styles.removeButton} onPress={() => handleRemoveImage(index)}>
+                  <RemoveButtonBackground>
+                    <Close width={12} height={12} color="white" />
+                  </RemoveButtonBackground>
+                </View>
+              )}
             </ImageBox>
           ))}
 
-          {canAddMore && (
+          {showAddButton && (
             <View style={[styles.addButton, { width: size, height: size }]} onPress={handlePickImage}>
               <AddButton>
                 <PlusIcon>

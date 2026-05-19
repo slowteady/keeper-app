@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
 import { ADOPT_CARD_IMAGE_SIZES, ADOPT_OPTIONS, AdoptCard, AdoptCardSkeleton, AdoptItem } from '@/entities/adopt';
+import { useFavoriteAbandonment } from '@/features/favorite-abandonment';
 import { ButtonGroup, Dropdown, ViewAllButton } from '@/shared/ui';
 
 const CARD_GAP = 12;
@@ -30,18 +31,26 @@ export const HomeAdoptSection = ({
   onChangeType
 }: HomeAdoptSectionProps) => {
   const scrollRef = useRef<FlashListRef<AdoptItem>>(null);
+  const { toggleFavoriteAbandonment } = useFavoriteAbandonment();
 
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<AdoptItem>) => {
-      const { uri, title, description, chips } = item;
+      const { uri, title, description, chips, isFavorited } = item;
 
       return (
-        <View onPress={() => onGoDetail(item.id)}>
-          <AdoptCard horizontal uri={uri} title={title} description={description} chips={chips} />
-        </View>
+        <AdoptCard
+          horizontal
+          uri={uri}
+          title={title}
+          description={description}
+          chips={chips}
+          isFavorited={isFavorited}
+          onPress={() => onGoDetail(item.id)}
+          onPressFavorite={() => toggleFavoriteAbandonment(item.id, isFavorited ?? false)}
+        />
       );
     },
-    [onGoDetail]
+    [onGoDetail, toggleFavoriteAbandonment]
   );
 
   useEffect(() => {

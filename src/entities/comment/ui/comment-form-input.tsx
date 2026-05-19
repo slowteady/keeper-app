@@ -2,7 +2,6 @@ import { Pressable } from 'react-native';
 import { styled, Text, TextAreaProps, View, XStack } from 'tamagui';
 
 import { Button, TextArea } from '@/shared/ui';
-import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
 export type CommentFormBanner = {
   label: string;
@@ -19,6 +18,7 @@ export type CommentFormInputProps = Omit<TextAreaProps, 'onSubmitEditing'> & {
   submitLabel?: string;
 };
 
+// 게시글 좋아요는 헤더 하트만 — 입력창에 좋아요 둘 필요 X (Instagram/Threads/29cm 표준).
 export const CommentFormInput = ({
   value,
   onChangeText,
@@ -41,15 +41,24 @@ export const CommentFormInput = ({
         </BannerRow>
       )}
       <InputRow>
-        <View mr={8}>
-          <AnimatedHeart size={28} />
-        </View>
-
         <View flex={1} mr={6}>
-          <TextArea placeholder="소중한 의견을 남겨주세요:)" value={value} onChangeText={onChangeText} {...rest} />
+          <TextArea
+            placeholder="소중한 의견을 남겨주세요:)"
+            value={value}
+            onChangeText={onChangeText}
+            testID="comment-input"
+            {...rest}
+          />
         </View>
 
-        <Button color="secondary" size="small" style={{ minWidth: 72 }} disabled={!canSubmit} onPress={onSubmit}>
+        <Button
+          color="secondary"
+          size="small"
+          style={{ minWidth: 72 }}
+          disabled={!canSubmit}
+          onPress={onSubmit}
+          testID="comment-submit"
+        >
           {submitLabel}
         </Button>
       </InputRow>
@@ -70,21 +79,22 @@ const InputRow = styled(XStack, {
 
 const BannerRow = styled(XStack, {
   px: 16,
-  pt: 8,
-  pb: 4,
+  py: 10,
   items: 'center',
   justify: 'space-between',
   bg: '$white850'
 });
 
 const BannerText = styled(Text, {
-  fontSize: 12,
+  fontSize: 13,
   fontWeight: '500',
-  color: '$black500'
+  color: '$black500',
+  lineHeight: 18
 });
 
 const CancelText = styled(Text, {
-  fontSize: 12,
+  fontSize: 13,
   fontWeight: '600',
-  color: '$primaryMain'
+  color: '$primaryMain',
+  lineHeight: 18
 });

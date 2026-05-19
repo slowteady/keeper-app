@@ -7,16 +7,24 @@ export type ModalButtonsProps = {
     primary: string;
     secondary: string;
   };
+  testIDSecondary?: string;
+  testIDPrimary?: string;
 };
 
-export const ModalButtons = ({ onPressSecondary, onPressPrimary, text }: ModalButtonsProps) => {
+export const ModalButtons = ({
+  onPressSecondary,
+  onPressPrimary,
+  text,
+  testIDSecondary,
+  testIDPrimary
+}: ModalButtonsProps) => {
   return (
     <XStack gap={6}>
-      <Button onPress={onPressSecondary} bg="$white800">
+      <Button onPress={onPressSecondary} bg="$white800" testID={testIDSecondary}>
         <ButtonText>{text.secondary}</ButtonText>
       </Button>
 
-      <Button onPress={onPressPrimary} bg="$primaryMain">
+      <Button onPress={onPressPrimary} bg="$primaryMain" testID={testIDPrimary}>
         <ButtonText>{text.primary}</ButtonText>
       </Button>
     </XStack>

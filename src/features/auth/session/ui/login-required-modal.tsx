@@ -8,7 +8,7 @@ type LoginRequiredModalProps = {
 };
 
 export const LoginRequiredModal = ({ onLogin, onCancel }: LoginRequiredModalProps) => (
-  <Container>
+  <Container testID="login-required-modal" accessible={false}>
     <Text mb={12} fontSize={17} fontWeight="600" color="$black800">
       로그인이 필요해요
     </Text>
@@ -19,6 +19,8 @@ export const LoginRequiredModal = ({ onLogin, onCancel }: LoginRequiredModalProp
       onPressSecondary={onCancel}
       onPressPrimary={onLogin}
       text={{ primary: '로그인하기', secondary: '닫기' }}
+      testIDSecondary="login-required-cancel"
+      testIDPrimary="login-required-confirm"
     />
   </Container>
 );

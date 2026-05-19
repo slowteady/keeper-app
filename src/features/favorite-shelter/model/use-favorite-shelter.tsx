@@ -48,6 +48,13 @@ export const useFavoriteShelter = () => {
       queryClient.setQueriesData({ queryKey: SHELTER_PREFIX }, (old: unknown) =>
         patchFavoritedCache(old, (item) => (item as { id?: string }).id === careRegNo, data.isFavorited)
       );
+    },
+
+    // 연속 토글 race condition 방지 — 마지막 mutation 만 invalidate trigger.
+    onSettled: () => {
+      if (queryClient.isMutating({ mutationKey: [...FAVORITE_SHELTER_MUTATION_KEY] }) === 1) {
+        queryClient.invalidateQueries({ queryKey: SHELTER_PREFIX });
+      }
     }
   });
 

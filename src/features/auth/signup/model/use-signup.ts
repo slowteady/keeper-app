@@ -12,6 +12,7 @@ import { globalToast, removeToken, saveAccessToken, saveRefreshToken, setUserCon
 
 import { PRIVACY_VERSION, TERMS_VERSION } from '../../lib/agreement';
 import { useSetIsAuthenticated } from '../../lib/auth-state';
+import { navigateAfterAuth } from '../../lib/navigate-after-auth';
 import type { AgreementState } from '../ui/signup-agreement';
 
 const resolveRedirect = (redirect?: Route): Route | undefined => {
@@ -92,7 +93,7 @@ export const useSignup = () => {
         queryClient.invalidateQueries({ queryKey: authQueries.all() });
         setPrevent(false);
         globalToast('회원가입이 완료되었어요', 'success');
-        router.replace(resolveRedirect(redirect) ?? '/');
+        navigateAfterAuth(resolveRedirect(redirect) ?? '/');
         setIsAuthenticated(true);
       } catch (error) {
         // 사전 check-nickname 통과 후 signup 사이 race condition으로 닉네임 중복 발생 가능

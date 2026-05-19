@@ -36,7 +36,7 @@ const setupHook = (overrides: { user?: typeof FAKE_USER | null; isLoading?: bool
 
   const share = jest.fn();
   const promptReview = jest.fn();
-  mockedUseShare.mockReturnValue({ share } as ReturnType<typeof useShare>);
+  mockedUseShare.mockReturnValue({ share, isSharing: false } as ReturnType<typeof useShare>);
   mockedUseReview.mockReturnValue({ promptReview } as ReturnType<typeof useReview>);
 
   return { ...renderHook(() => useProfileMain()), share, promptReview };

@@ -1,7 +1,7 @@
-import { infiniteQueryOptions } from '@tanstack/react-query';
+import { infiniteQueryOptions, keepPreviousData } from '@tanstack/react-query';
 import { AxiosResponse } from 'axios';
 
-import { authApi, publicApi } from '@/shared/api/instance';
+import { authApi } from '@/shared/api/instance';
 import { ApiResponse } from '@/shared/model';
 
 import { CommentDto, CommentListResponseDto, CommentListResponseSchema, CommentSortOrderDto } from './schema';
@@ -22,7 +22,7 @@ const getList = async (postId: number, params: CommentListParams): Promise<Comme
   if (params.size !== undefined) query.size = params.size;
   if (params.sort !== undefined) query.sort = params.sort;
 
-  const res = await publicApi.get<ApiResponse<CommentListResponseDto>>(`${BASE}/posts/${postId}/comments`, {
+  const res = await authApi.get<ApiResponse<CommentListResponseDto>>(`${BASE}/posts/${postId}/comments`, {
     params: query
   });
   return CommentListResponseSchema.parse(res.data.data);
@@ -44,7 +44,7 @@ const getReplies = async (parentId: number, params: ReplyListParams): Promise<Co
   const query: Record<string, string | number> = {};
   if (params.cursor !== null && params.cursor !== undefined) query.cursor = params.cursor;
   if (params.size !== undefined) query.size = params.size;
-  const res = await publicApi.get<ApiResponse<CommentListResponseDto>>(`${BASE}/comments/${parentId}/replies`, {
+  const res = await authApi.get<ApiResponse<CommentListResponseDto>>(`${BASE}/comments/${parentId}/replies`, {
     params: query
   });
   return CommentListResponseSchema.parse(res.data.data);
@@ -88,6 +88,8 @@ export const commentQueries = {
       queryFn: ({ pageParam }) => getList(postId, { cursor: pageParam, sort: filter.sort, size: filter.size }),
       initialPageParam: null as number | null,
       getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.nextCursor : undefined),
+      // 정렬 변경 시 query key 바뀌면서 cache miss → 빈 화면 깜빡. 이전 결과 유지로 새 데이터 도착 시까지 표시.
+      placeholderData: keepPreviousData,
       enabled: !!postId
     }),
   // 대댓글: lazy fetch — use-replies 의 enabled 토글로 제어

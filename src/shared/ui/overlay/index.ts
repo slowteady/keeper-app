@@ -6,4 +6,5 @@ export * from './cancel-modal';
 export * from './image-viewer';
 export * from './modal-buttons';
 export * from './modal-provider';
+export * from './share-guard';
 export * from './toast-content';

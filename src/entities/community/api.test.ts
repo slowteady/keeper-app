@@ -1,8 +1,8 @@
-import { publicApi } from '@/shared/api/instance';
+import { authApi } from '@/shared/api/instance';
 
 import { communityApi, communityQueries } from './api';
 
-const mockedPublicGet = jest.mocked(publicApi.get);
+const mockedAuthGet = jest.mocked(authApi.get);
 
 const makeListResponse = (overrides?: object) => ({
   data: {
@@ -31,7 +31,7 @@ const makeItem = (id: number) => ({
 
 beforeEach(() => {
   jest.clearAllMocks();
-  mockedPublicGet.mockResolvedValue(makeListResponse() as never);
+  mockedAuthGet.mockResolvedValue(makeListResponse() as never);
 });
 
 describe('communityQueries.all', () => {
@@ -48,7 +48,7 @@ describe('communityQueries.list', () => {
       pageParam: 1
     });
 
-    expect(mockedPublicGet).toHaveBeenCalledWith('/community/posts', {
+    expect(mockedAuthGet).toHaveBeenCalledWith('/community/posts', {
       params: expect.objectContaining({
         category: 'ADOPTION_PERSONAL',
         sort: 'NEW',
@@ -65,7 +65,7 @@ describe('communityQueries.list', () => {
       pageParam: 1
     });
 
-    expect(mockedPublicGet).toHaveBeenCalledWith(
+    expect(mockedAuthGet).toHaveBeenCalledWith(
       '/community/posts',
       expect.objectContaining({ params: expect.objectContaining({ size: 20 }) })
     );
@@ -78,7 +78,7 @@ describe('communityQueries.list', () => {
       pageParam: 1
     });
 
-    expect(mockedPublicGet).toHaveBeenCalledWith(
+    expect(mockedAuthGet).toHaveBeenCalledWith(
       '/community/posts',
       expect.objectContaining({ params: expect.objectContaining({ size: 5 }) })
     );
@@ -97,7 +97,7 @@ describe('communityQueries.list', () => {
       pageParam: 1
     });
 
-    expect(mockedPublicGet).toHaveBeenCalledTimes(1);
+    expect(mockedAuthGet).toHaveBeenCalledTimes(1);
   });
 
   it('queryKey에 params가 포함된다', () => {
@@ -169,7 +169,7 @@ describe('communityQueries.detail', () => {
 
 describe('communityApi.getList', () => {
   it('valid 응답이면 schema parse 결과를 반환한다', async () => {
-    mockedPublicGet.mockResolvedValue(makeListResponse({ items: [makeItem(1)], total: 1 }) as never);
+    mockedAuthGet.mockResolvedValue(makeListResponse({ items: [makeItem(1)], total: 1 }) as never);
 
     const result = await communityApi.getList({ sort: 'NEW' });
 
@@ -179,7 +179,7 @@ describe('communityApi.getList', () => {
   });
 
   it('schema 불일치 응답이면 ZodError를 던진다', async () => {
-    mockedPublicGet.mockResolvedValue({ data: { data: { invalid: true } } } as never);
+    mockedAuthGet.mockResolvedValue({ data: { data: { invalid: true } } } as never);
 
     await expect(communityApi.getList({ sort: 'NEW' })).rejects.toThrow();
   });

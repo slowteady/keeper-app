@@ -47,11 +47,11 @@ export const CommunityDetailOverviewSection = ({
       <HeaderWrapper mb={20}>
         <CommunityAdoptCardHeader image={image} nickname={nickname} displayTime={displayTime} />
         <XStack gap={16} items="center">
-          <Pressable onPress={handlePressLike} hitSlop={10}>
+          <Pressable onPress={handlePressLike} hitSlop={10} testID="community-detail-heart">
             <AnimatedHeart size={26} isLiked={isLiked} />
           </Pressable>
           {onPressMore && (
-            <Pressable onPress={onPressMore} hitSlop={10}>
+            <Pressable onPress={onPressMore} hitSlop={10} accessibilityLabel="더보기" testID="community-detail-more">
               <MoreVertical size={22} color="$black700" />
             </Pressable>
           )}
@@ -59,7 +59,7 @@ export const CommunityDetailOverviewSection = ({
       </HeaderWrapper>
 
       <CommunityAdoptCardTitle title={title} mb={20} />
-      <CommunityAdoptCardCarousel images={images} mb={16} />
+      <CommunityAdoptCardCarousel images={images} showImageViewer mb={16} />
       <CommunityAdoptCardTags tags={tags} mb={24} />
       <Content>{content}</Content>
     </>

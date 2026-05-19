@@ -54,7 +54,8 @@ export const useLogout = () => {
       }
       await removeToken();
       clearUserContext();
-      qc.removeQueries({ queryKey: authQueries.all() });
+      // 권한 의존 캐시(하트/찜/내 글 등) 가 stale 인 상태로 남으면 비로그인인데 ON 보이는 버그 발생 → 전체 제거.
+      qc.removeQueries();
 
       globalToast('로그아웃이 완료되었어요', 'success');
       router.dismissTo('/(tabs)/home');

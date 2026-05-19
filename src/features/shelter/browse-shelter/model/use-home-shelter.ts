@@ -39,7 +39,9 @@ export const useHomeShelter = () => {
   const shelters = useMemo(() => {
     const source = queryShelters ?? [];
     if (!reorderedShelter) return source;
-    return [reorderedShelter, ...source.filter((item) => item.id !== reorderedShelter.id)];
+    // reorderedShelter 는 마커 탭 시점 snapshot — cache patch (찜 토글 등) 가 반영되도록 live lookup 우선.
+    const live = source.find((item) => item.id === reorderedShelter.id) ?? reorderedShelter;
+    return [live, ...source.filter((item) => item.id !== reorderedShelter.id)];
   }, [queryShelters, reorderedShelter]);
 
   const { data: shelterCounts } = useQuery({

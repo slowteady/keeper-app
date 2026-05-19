@@ -1,9 +1,13 @@
 import { useLocalSearchParams } from 'expo-router';
-import { Suspense, useState } from 'react';
+import { Suspense, useMemo, useState } from 'react';
 import { ScrollView, styled, Text, View } from 'tamagui';
 
+import { buildAdoptShareDesc } from '@/entities/adopt';
 import { useAdopt } from '@/features/adopt';
+import { useFavoriteAbandonment } from '@/features/favorite-abandonment';
 import { useShelter } from '@/features/shelter';
+import { validateAndSanitizeTel } from '@/shared/lib';
+import { useShare } from '@/shared/model';
 import { BottomButton, CallModal, DetailErrorBoundary, SuspenseFallback } from '@/shared/ui';
 import {
   AdoptDetailDescriptionSection,
@@ -33,7 +37,35 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
   const [buttonHeight, setButtonHeight] = useState(0);
 
   const { adopt } = useAdopt({ id });
-  const { shelterData: shelter, hasCallNumber } = useShelter({ id: adopt.shelterId });
+  const { shelterData } = useShelter({ id: adopt.shelterId });
+  const { toggleFavoriteAbandonment } = useFavoriteAbandonment();
+  const { share } = useShare();
+
+  // shelter 마스터 매칭 실패 (careRegNo 미등록 보호소, 약 15%) 시 abandonment 응답으로 fallback.
+  // abandonment.careTel/careNm/careAddr 는 공공데이터 원본 100% 채워져 있어 문의하기 버튼이 거의 항상 노출된다.
+  const shelter = useMemo(
+    () =>
+      shelterData ?? {
+        id: adopt.shelterId,
+        name: adopt.careNm ?? '',
+        address: adopt.careAddr ?? '',
+        tel: validateAndSanitizeTel(adopt.careTel ?? null),
+        time: '정보 없음',
+        person: '정보 없음'
+      },
+    [shelterData, adopt.shelterId, adopt.careNm, adopt.careAddr, adopt.careTel]
+  );
+  const hasCallNumber = !!shelter.tel;
+
+  const handlePressShare = () => {
+    share({
+      title: adopt.title,
+      desc: buildAdoptShareDesc(adopt),
+      path: 'adopt',
+      id: adopt.id,
+      image: adopt.images[0]
+    });
+  };
 
   return (
     <>
@@ -45,7 +77,14 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
         }
       >
         <View mb={30} px={20}>
-          <AdoptDetailOverviewSection title={adopt.title} images={adopt.images} description={adopt.description} />
+          <AdoptDetailOverviewSection
+            title={adopt.title}
+            images={adopt.images}
+            description={adopt.description}
+            isFavorited={adopt.isFavorited}
+            onPressFavorite={() => toggleFavoriteAbandonment(adopt.id, adopt.isFavorited ?? false)}
+            onPressShare={handlePressShare}
+          />
         </View>
 
         <Divider mb={30} />

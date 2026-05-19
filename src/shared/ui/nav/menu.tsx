@@ -7,11 +7,12 @@ export type MenuProps = {
   labelColor?: ColorTokens;
   onPress?: () => void;
   style?: XStackProps['style'];
+  testID?: string;
 };
 
-export const Menu = ({ icon, label, labelColor, onPress, style }: MenuProps) => {
+export const Menu = ({ icon, label, labelColor, onPress, style, testID }: MenuProps) => {
   return (
-    <Container onPress={onPress} hitSlop={12} style={style}>
+    <Container onPress={onPress} hitSlop={12} style={style} testID={testID}>
       <XStack gap={8} items="center">
         {icon}
         <Label color={labelColor}>{label}</Label>

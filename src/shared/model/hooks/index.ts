@@ -1,3 +1,4 @@
+export * from './use-cache-size';
 export * from './use-call';
 export * from './use-carousel';
 export * from './use-debounce';

@@ -28,7 +28,14 @@ export const BottomSheetMenu = <T,>({ data, value, onPress }: BottomSheetMenuPro
         const isActive = String(item.id) === String(value);
 
         return (
-          <Pressable key={key} style={styles.button} onPress={() => onPress(item)}>
+          <Pressable
+            key={key}
+            style={styles.button}
+            onPress={() => onPress(item)}
+            accessibilityLabel={label}
+            accessibilityRole="button"
+            testID={`menu-${String(item.id)}`}
+          >
             <StyledText style={[{ color: isActive ? black800.val : black500.val }]}>{label}</StyledText>
             {isActive && <Check width={17} height={20} color={black800.val} />}
           </Pressable>
@@ -48,6 +55,9 @@ const styles = StyleSheet.create({
   button: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 12
+    alignItems: 'center',
+    paddingVertical: 12,
+    // active 항목엔 Check 아이콘(20px), 그 외엔 텍스트만 — minHeight 통일로 row 간 간격 일치.
+    minHeight: 44
   }
 });

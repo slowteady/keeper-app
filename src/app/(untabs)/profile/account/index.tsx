@@ -44,12 +44,13 @@ const Page = () => {
         <Separator borderColor="$backgroundDefault" mb={24} />
 
         <YStack px={20}>
-          <Menu label="로그아웃" style={{ paddingVertical: 14 }} onPress={logout} />
+          <Menu label="로그아웃" style={{ paddingVertical: 14 }} onPress={logout} testID="account-logout" />
           <Menu
             label="회원탈퇴"
             labelColor="$errorMain"
             style={{ paddingVertical: 14 }}
             onPress={() => router.push('/withdraw')}
+            testID="account-withdraw"
           />
         </YStack>
       </ScrollView>

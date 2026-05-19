@@ -20,8 +20,9 @@ export const useCurrentUser = () => {
 
   useFocusEffect(
     useCallback(() => {
+      // 매 focus 마다 isCheckingToken=true 로 돌리면 화면 깜빡임 → 초기값에서만 true.
+      // 이후 focus 는 silent check (값이 변하면 atom 갱신만 → 의도된 재렌더).
       const checkToken = async () => {
-        setIsCheckingToken(true);
         const accessToken = await getAccessToken();
         setIsAuthenticated(!!accessToken);
         setIsCheckingToken(false);

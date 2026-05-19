@@ -1,6 +1,11 @@
 import { CommunityAdoptFormDto } from '@/entities/community';
+import { authApi } from '@/shared/api/instance';
 
-import { toCreateAdoptionPersonalBody } from './api';
+import { toCreateAdoptionPersonalBody, updateAdoptionPersonal } from './api';
+
+jest.mock('@/shared/api/instance', () => ({
+  authApi: { patch: jest.fn(), post: jest.fn() }
+}));
 
 // 폼 데이터 → 백엔드 PostAdoptionPersonalRequest 매핑
 // 핵심: contact → contacts(복수), NONE 옵셔널 처리, tags 빈 배열, 이미지는 presigned 결과 사용
@@ -82,6 +87,67 @@ describe('toCreateAdoptionPersonalBody', () => {
     it('relatedLink 빈 문자열 → undefined', () => {
       const body = toCreateAdoptionPersonalBody({ ...fullForm, relatedLink: '' }, []);
       expect(body.relatedLink).toBeUndefined();
+    });
+  });
+
+  describe('updateAdoptionPersonal', () => {
+    const detailResponse = {
+      id: 42,
+      user: { id: 1, image: '', nickname: 't' },
+      displayTime: '',
+      title: '말티즈 가족 찾아요',
+      images: ['https://s3/1.jpg'],
+      content: '소개글',
+      age: '2023',
+      gender: 'M',
+      weight: '5',
+      animalType: 'DOG',
+      specificType: '말티즈',
+      location: '서울',
+      healthCheck: 'Y',
+      neuterYn: 'Y',
+      vaccinationCheck: 'THIRD',
+      protectionType: 'ADOPTION',
+      specialMark: '온순',
+      likes: null,
+      dislikes: null,
+      health: null,
+      relatedLink: null,
+      rfid: null,
+      contacts: [{ type: 'PHONE', value: '010-1234-5678' }],
+      counts: { like: 0, view: 0, comment: 0 },
+      isLiked: false
+    };
+
+    beforeEach(() => {
+      (authApi.patch as jest.Mock).mockReset();
+    });
+
+    it('PATCH /community/posts/adoption-personal/:id 로 요청한다', async () => {
+      (authApi.patch as jest.Mock).mockResolvedValue({ data: { data: detailResponse } });
+      const body = toCreateAdoptionPersonalBody(fullForm, ['https://s3/1.jpg']);
+
+      await updateAdoptionPersonal(42, body);
+
+      expect(authApi.patch).toHaveBeenCalledWith('/community/posts/adoption-personal/42', body);
+    });
+
+    it('응답을 CommunityAdoptDetailSchema 로 parse 한 결과를 반환한다', async () => {
+      (authApi.patch as jest.Mock).mockResolvedValue({ data: { data: detailResponse } });
+      const body = toCreateAdoptionPersonalBody(fullForm, ['https://s3/1.jpg']);
+
+      const result = await updateAdoptionPersonal(42, body);
+
+      expect(result.id).toBe(42);
+      expect(result.title).toBe('말티즈 가족 찾아요');
+      expect(result.contacts).toEqual([{ type: 'PHONE', value: '010-1234-5678' }]);
+    });
+
+    it('백엔드 응답이 스키마와 다르면 parse 가 throw 한다 (안전성 확인)', async () => {
+      (authApi.patch as jest.Mock).mockResolvedValue({ data: { data: { id: 'not-a-number' } } });
+      const body = toCreateAdoptionPersonalBody(fullForm, []);
+
+      await expect(updateAdoptionPersonal(42, body)).rejects.toThrow();
     });
   });
 

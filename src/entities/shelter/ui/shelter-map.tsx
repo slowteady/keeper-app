@@ -11,7 +11,7 @@ import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-na
 import { styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
 
 import { CameraParams, useDebounceFunc, usePermission } from '@/shared/model';
-import { Button } from '@/shared/ui';
+import { Button, Skeleton } from '@/shared/ui';
 
 import { ShelterDto } from '../schema';
 
@@ -27,6 +27,7 @@ export type ShelterMapProps = {
 const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
   ({ hasLocation, data, onRefetch, onTapMarker, selectedMarkerId, readOnly, ...props }, ref) => {
     const [isRefetchVisible, setIsRefetchVisible] = useState(false);
+    const [isMapReady, setIsMapReady] = useState(false);
     const cameraRef = useRef<CameraParams | null>(null);
     const { primaryMain } = useTheme();
     const scale = useSharedValue(0);
@@ -41,7 +42,9 @@ const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
     }));
 
     const handleCameraChanged = useDebounceFunc((params: CameraParams) => {
-      if (params.reason !== 'Gesture') return;
+      // Gesture(사용자 패닝) + Developer(animateCameraTo, 위치설정 BS) 둘 다 처리.
+      // Location(자동 추적) 만 제외 — 최초 마운트/추적 시 버튼이 깜빡 뜨는 노이즈 방지.
+      if (params.reason === 'Location') return;
 
       setIsRefetchVisible(true);
       cameraRef.current = params;
@@ -52,6 +55,11 @@ const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
       setIsRefetchVisible(false);
       onRefetch(cameraRef.current ?? undefined);
     }, [onRefetch]);
+
+    const handleInitialized = useCallback(() => {
+      setIsMapReady(true);
+      props.onInitialized?.();
+    }, [props]);
 
     const handleTapMarker = useCallback(
       (data: ShelterDto) => {
@@ -81,6 +89,7 @@ const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
                 isTiltGesturesEnabled: false
               })}
               {...props}
+              onInitialized={handleInitialized}
             >
               {data?.map((item) => (
                 <ShelterMarker
@@ -92,7 +101,7 @@ const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
               ))}
             </NaverMapView>
 
-            {!readOnly && (
+            {!readOnly && isMapReady && (
               <Animated.View style={[styles.refetchButton, { backgroundColor: primaryMain.val }, refetchButtonStyle]}>
                 <Button variant="ghost" onPress={handlePressRefetch}>
                   <Text fontSize={13} fontWeight="600" lineHeight={22} color="$black900">
@@ -100,6 +109,12 @@ const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
                   </Text>
                 </Button>
               </Animated.View>
+            )}
+
+            {!isMapReady && (
+              <View style={StyleSheet.absoluteFill} pointerEvents="none">
+                <Skeleton style={styles.map} />
+              </View>
             )}
           </>
         ) : (

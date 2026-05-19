@@ -1,3 +1,4 @@
+import { convertGenderLabel, formatAge } from '@/entities/adopt';
 import { buildAdoptTags, CommunityAdoptDetailDto } from '@/entities/community';
 
 export const convertToAdoptDetailOverviewData = (detailPost: CommunityAdoptDetailDto) => {
@@ -9,19 +10,31 @@ export const convertToAdoptDetailOverviewData = (detailPost: CommunityAdoptDetai
     title: detailPost.title,
     images: detailPost.images,
     tags: buildAdoptTags(detailPost),
-    content: detailPost.content ?? ''
+    content: detailPost.content ?? '',
+    isLiked: detailPost.isLiked
   };
 };
 
+// 공고 상세(adopt mapper) 와 동일 포맷팅 — 같은 InfoSection 컴포넌트에 같은 표시 보장.
 export const convertToAdoptDetailInfoData = (detailPost: CommunityAdoptDetailDto) => {
   return {
-    age: detailPost.age,
-    gender: detailPost.gender === 'M' ? '남아' : '여아',
-    weight: detailPost.weight + 'kg',
+    age: formatAge(detailPost.age) ?? '-',
+    gender: convertGenderLabel(detailPost.gender),
+    weight: formatWeight(detailPost.weight),
     healthCheck: detailPost.healthCheck,
     neuterYn: detailPost.neuterYn,
     vaccinationCheck: detailPost.vaccinationCheck
   };
+};
+
+// adopt mapper 의 formatWeight 와 동일 (community schema 는 string).
+// `4kg` 처럼 단위 포함 입력 / 숫자만 / 빈 값 모두 정제.
+const formatWeight = (weight: string): string => {
+  if (!weight) return '-';
+  const num = parseFloat(weight);
+  if (Number.isNaN(num)) return '-';
+  const cleaned = num.toFixed(1).replace(/\.0$/, '');
+  return `${cleaned}kg`;
 };
 
 export const convertToAdoptDetailDescriptionData = (detailPost: CommunityAdoptDetailDto) => {

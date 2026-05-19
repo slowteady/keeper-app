@@ -3,7 +3,8 @@ import { router } from 'expo-router';
 import { useCallback, useMemo } from 'react';
 
 import { communityApi, communityQueries } from '@/entities/community';
-import { useCurrentUser } from '@/features/auth';
+import { useCurrentUser, useLoginRequired } from '@/features/auth';
+import { useRequireCommunityPolicy } from '@/features/community/policy';
 import { useBlock, useReportSheet } from '@/features/community/safety';
 import { globalToast } from '@/shared/lib';
 import { useShare } from '@/shared/model';
@@ -11,7 +12,7 @@ import { BottomSheetMenu, type BottomSheetMenuData, useBottomSheet, useModal } f
 
 import { ConfirmDeleteModal } from '../ui/confirm-delete-modal';
 
-export type PostMenuId = 'SHARE' | 'DELETE' | 'REPORT' | 'BLOCK';
+export type PostMenuId = 'SHARE' | 'EDIT' | 'DELETE' | 'REPORT' | 'BLOCK';
 
 export type PostMenuShareInfo = {
   title: string;
@@ -19,7 +20,10 @@ export type PostMenuShareInfo = {
 };
 
 const SHARE_ITEM: BottomSheetMenuData<PostMenuId> = { id: 'SHARE', label: '공유하기' };
-const MINE_TAIL: readonly BottomSheetMenuData<PostMenuId>[] = [{ id: 'DELETE', label: '삭제하기' }] as const;
+const MINE_TAIL: readonly BottomSheetMenuData<PostMenuId>[] = [
+  { id: 'EDIT', label: '수정하기' },
+  { id: 'DELETE', label: '삭제하기' }
+] as const;
 const OTHER_TAIL: readonly BottomSheetMenuData<PostMenuId>[] = [
   { id: 'REPORT', label: '신고하기' },
   { id: 'BLOCK', label: '차단하기' }
@@ -35,6 +39,8 @@ export const usePostMenu = ({
   shareInfo?: PostMenuShareInfo;
 }) => {
   const { user } = useCurrentUser();
+  const { requireLogin } = useLoginRequired();
+  const { requirePolicy } = useRequireCommunityPolicy();
   const { present, dismiss } = useBottomSheet();
   const { open: openModal, close: closeModal } = useModal();
   const { openReportSheet } = useReportSheet();
@@ -84,20 +90,29 @@ export const usePostMenu = ({
           dismiss();
           handleShare();
           break;
+        case 'EDIT':
+          dismiss();
+          router.push(`/(untabs)/community/${postId}/edit`);
+          break;
         case 'DELETE':
           dismiss();
           handleConfirmDelete();
           break;
         case 'REPORT':
-          openReportSheet({ type: 'POST', id: postId });
+          requireLogin(async () => {
+            await requirePolicy(() => openReportSheet({ type: 'POST', id: postId }));
+          });
           break;
         case 'BLOCK':
           dismiss();
-          if (authorId) block(authorId);
+          if (authorId)
+            requireLogin(async () => {
+              await requirePolicy(() => block(authorId));
+            });
           break;
       }
     },
-    [dismiss, handleShare, handleConfirmDelete, openReportSheet, block, postId, authorId]
+    [dismiss, handleShare, handleConfirmDelete, openReportSheet, block, postId, authorId, requireLogin, requirePolicy]
   );
 
   const menuItems = useMemo(() => [SHARE_ITEM, ...(isMine ? MINE_TAIL : OTHER_TAIL)], [isMine]);

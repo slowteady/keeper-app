@@ -1,23 +1,22 @@
 import { FlashList, ListRenderItemInfo } from '@shopify/flash-list';
 import { useLocalSearchParams } from 'expo-router';
-import { useCallback, useMemo, useState } from 'react';
+import { Suspense, useCallback, useMemo, useState } from 'react';
 import { ActivityIndicator } from 'react-native';
 import { KeyboardStickyView } from 'react-native-keyboard-controller';
 import { styled, Text, View, YStack } from 'tamagui';
 
-import { CommentCard, CommentDto, CommentFormInput, CommentListHeader } from '@/entities/comment';
+import { CommentCard, CommentCardSkeleton, CommentDto, CommentFormInput, CommentListHeader } from '@/entities/comment';
 import { CommunityAdoptCardStats } from '@/entities/community';
 import { useLoginRequired } from '@/features/auth';
 import {
-  CommunityPolicyBottomSheet,
   RepliesSection,
   useCommentHelpful,
   useCommentMenu,
   useCommunityAdoptDetailFeed,
   useCommunityCommentList,
-  useCommunityPolicyGate,
   useCreateComment,
   usePostMenu,
+  useRequireCommunityPolicy,
   useUpdateComment
 } from '@/features/community';
 import { useLikePost } from '@/features/like-post';
@@ -26,14 +25,25 @@ import { Button, CallModal, DetailErrorBoundary, ScrollUpButton } from '@/shared
 import { AdoptDetailInfoSection } from '@/widgets/adopt-section';
 import {
   CommunityDetailDescriptionSection,
-  CommunityDetailOverviewSection
+  CommunityDetailOverviewSection,
+  PostDetailSkeleton
 } from '@/widgets/community-adopt-feed-section';
 
 export const ErrorBoundary = DetailErrorBoundary;
 
 const Page = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
+  if (!id) return null;
 
+  // Suspense — useSuspenseQuery 로 본문 도착 전 스켈레톤 fallback. 댓글창이 먼저 보이는 mount 깜빡임 제거.
+  return (
+    <Suspense fallback={<PostDetailSkeleton />}>
+      <CommunityDetailContent id={id} />
+    </Suspense>
+  );
+};
+
+const CommunityDetailContent = ({ id }: { id: string }) => {
   const [inputHeight, setInputHeight] = useState(0);
   const [callModalOpen, setCallModalOpen] = useState(false);
 
@@ -42,7 +52,14 @@ const Page = () => {
   const numId = Number(id);
   const { data } = useCommunityAdoptDetailFeed(id);
   const { handleScroll, handlePressButton, isButtonVisible, scrollRef } = useScrollUpButton();
-  const { sortOrder, commentList, changeSortOrder, fetchNextPage, isFetchingNextPage } = useCommunityCommentList(numId);
+  const {
+    sortOrder,
+    commentList,
+    changeSortOrder,
+    fetchNextPage,
+    isFetchingNextPage,
+    isLoading: isCommentLoading
+  } = useCommunityCommentList(numId);
   const { toggleLikePost } = useLikePost();
 
   const detailPost = data.detailPost;
@@ -67,8 +84,8 @@ const Page = () => {
   const [comment, setComment] = useState('');
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [replyTarget, setReplyTarget] = useState<{ parentId: number; nickname: string } | null>(null);
-  const [pendingContent, setPendingContent] = useState<string | null>(null);
   const { requireLogin } = useLoginRequired();
+  const { requirePolicy } = useRequireCommunityPolicy();
   const createCommentMutation = useCreateComment({ postId: numId });
   const updateCommentMutation = useUpdateComment({ postId: numId });
 
@@ -83,16 +100,34 @@ const Page = () => {
     setComment('');
   }, []);
 
-  const handleEnterReplyMode = useCallback((target: { parentId: number; nickname: string }) => {
-    setEditingCommentId(null);
-    setReplyTarget(target);
-    setComment(`@${target.nickname} `);
-  }, []);
+  const handleEnterReplyMode = useCallback(
+    async (target: { parentId: number; nickname: string }) => {
+      await requireLogin(async () => {
+        await requirePolicy(() => {
+          setEditingCommentId(null);
+          setReplyTarget(target);
+          setComment(`@${target.nickname} `);
+        });
+      });
+    },
+    [requireLogin, requirePolicy]
+  );
 
   const handleCancelReply = useCallback(() => {
     setReplyTarget(null);
     setComment('');
   }, []);
+
+  // 답글 모드에서 @닉네임 prefix 를 지우면 일반 댓글로 전환 (트위터/카톡 BP).
+  const handleChangeComment = useCallback(
+    (text: string) => {
+      setComment(text);
+      if (replyTarget && !text.startsWith(`@${replyTarget.nickname}`)) {
+        setReplyTarget(null);
+      }
+    },
+    [replyTarget]
+  );
 
   const { openCommentMenu } = useCommentMenu({ postId: numId, onEdit: handleEnterEditMode });
   const { toggleHelpful } = useCommentHelpful();
@@ -136,24 +171,15 @@ const Page = () => {
     [editingCommentId, replyTarget, createCommentMutation, updateCommentMutation]
   );
 
-  const policyGate = useCommunityPolicyGate({
-    enabled: pendingContent !== null,
-    onConfirmed: () => {
-      if (pendingContent !== null) {
-        submitComment(pendingContent);
-        setPendingContent(null);
-      }
-    },
-    onCancel: () => setPendingContent(null)
-  });
-
   const handleSubmitComment = useCallback(async () => {
     const content = comment.trim();
     if (!content) return;
-    await requireLogin(() => {
-      setPendingContent(content);
+    await requireLogin(async () => {
+      await requirePolicy(() => {
+        submitComment(content);
+      });
     });
-  }, [comment, requireLogin]);
+  }, [comment, requireLogin, requirePolicy, submitComment]);
 
   const isEditing = editingCommentId !== null;
   const isReplying = replyTarget !== null;
@@ -260,18 +286,29 @@ const Page = () => {
             )}
 
             <CommentListHeader
-              commentCount={commentList.length}
+              commentCount={detailPost?.counts?.comment ?? 0}
               sortOrder={sortOrder}
               onChangeSortOrder={changeSortOrder}
             />
           </>
         )}
         contentContainerStyle={{ paddingBottom: inputHeight, paddingTop: 32, flexGrow: 1 }}
-        ListEmptyComponent={() => (
-          <View items="center" justify="center" height={200}>
-            <EmptyText>{'아직 댓글이 없습니다\n여러분의 의견을 적어주세요:)'}</EmptyText>
-          </View>
-        )}
+        ListEmptyComponent={() =>
+          isCommentLoading ? (
+            <YStack>
+              {Array.from({ length: 3 }).map((_, idx) => (
+                <View key={idx}>
+                  <CommentCardSkeleton />
+                  {idx < 2 && <View height={1} bg="$backgroundDefault" />}
+                </View>
+              ))}
+            </YStack>
+          ) : (
+            <View items="center" justify="center" height={200}>
+              <EmptyText>{'아직 댓글이 없습니다\n여러분의 의견을 적어주세요:)'}</EmptyText>
+            </View>
+          )
+        }
       />
 
       {/* offset.opened={bottom} — 키보드 열릴 때 safe-area padding 상쇄 (BP) */}
@@ -281,7 +318,7 @@ const Page = () => {
             flex={1}
             maxH={48}
             value={comment}
-            onChangeText={setComment}
+            onChangeText={handleChangeComment}
             onSubmit={handleSubmitComment}
             banner={formBanner}
             submitLabel={submitLabel}
@@ -290,14 +327,6 @@ const Page = () => {
           <ScrollUpButton visible={isButtonVisible} onPress={handlePressButton} bottom={inputHeight + 20} />
         </StickyInner>
       </KeyboardStickyView>
-
-      <CommunityPolicyBottomSheet
-        ref={policyGate.sheetRef}
-        agreed={policyGate.agreed}
-        onChangeAgreed={policyGate.setAgreed}
-        onConfirm={policyGate.handleConfirm}
-        isPending={policyGate.isPending}
-      />
 
       <CallModal
         open={callModalOpen}

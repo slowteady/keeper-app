@@ -18,6 +18,8 @@ export type CommunityAdoptFormProps = {
   onPressAge: () => void;
   onPressKind: () => void;
   onPressLocation: () => void;
+  readOnlyImages?: boolean;
+  title?: string;
 };
 
 export const CommunityAdoptForm = ({
@@ -25,7 +27,9 @@ export const CommunityAdoptForm = ({
   onPressWeight,
   onPressAge,
   onPressKind,
-  onPressLocation
+  onPressLocation,
+  readOnlyImages = false,
+  title = '개인입양 홍보'
 }: CommunityAdoptFormProps) => {
   const { black500 } = useTheme();
 
@@ -39,7 +43,7 @@ export const CommunityAdoptForm = ({
   return (
     <>
       <YStack>
-        <H1 color="$black900">개인입양 홍보</H1>
+        <H1 color="$black900">{title}</H1>
         <Caption>*은 필수 표기 정보입니다</Caption>
       </YStack>
 
@@ -130,7 +134,14 @@ export const CommunityAdoptForm = ({
           <ContactSelectField control={control} label="연락 정보 (중복가능)" required />
 
           <View mb={12}>
-            <LabelImageSelector name="images" control={control} label="이미지 첨부(최대 10장)" required max={10} />
+            <LabelImageSelector
+              name="images"
+              control={control}
+              label="이미지 첨부(최대 10장)"
+              required
+              max={10}
+              readOnly={readOnlyImages}
+            />
           </View>
 
           <Divider />

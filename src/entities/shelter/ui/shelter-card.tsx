@@ -26,7 +26,8 @@ export const ShelterCard = ({ data, onPress, onPressFavorite }: ShelterCardProps
 
   return (
     <Container>
-      <View onPress={() => onPress(id)}>
+      {/* 카드 전체 클릭은 Pressable, 하트는 형제 Pressable 로 분리 — 부모/자식 onPress 충돌 방지 */}
+      <Pressable onPress={() => onPress(id)}>
         <View px={16} py={18}>
           <XStack items="center" justify="space-between" gap={8} mb={10}>
             <Text
@@ -36,12 +37,10 @@ export const ShelterCard = ({ data, onPress, onPressFavorite }: ShelterCardProps
               lineHeight={18}
               fontWeight="500"
               color="$black900"
+              flex={1}
             >
               {name}
             </Text>
-            <Pressable hitSlop={10} onPress={handlePressFavorite} disabled={!onPressFavorite}>
-              <AnimatedHeart isLiked={isFavorited} size={20} />
-            </Pressable>
           </XStack>
 
           <XStack items="center">
@@ -61,7 +60,16 @@ export const ShelterCard = ({ data, onPress, onPressFavorite }: ShelterCardProps
             </Text>
           </XStack>
         </View>
-      </View>
+      </Pressable>
+
+      <Pressable
+        style={{ position: 'absolute', top: 18, right: 16 }}
+        hitSlop={10}
+        onPress={handlePressFavorite}
+        disabled={!onPressFavorite}
+      >
+        <AnimatedHeart isLiked={isFavorited} size={20} />
+      </Pressable>
     </Container>
   );
 };

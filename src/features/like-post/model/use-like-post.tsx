@@ -1,4 +1,5 @@
 import { useIsMutating, useMutation, useQueryClient } from '@tanstack/react-query';
+import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { useCallback } from 'react';
 
 import { communityApi, communityQueries } from '@/entities/community';
@@ -55,11 +56,19 @@ export const useLikePost = () => {
       queryClient.setQueriesData({ queryKey: COMMUNITY_PREFIX }, (old: unknown) =>
         patchLikeCache(old, postId, { isLiked: data.isLiked, count: data.count })
       );
+    },
+
+    // 연속 토글 race condition 방지 — 마지막 mutation 만 invalidate.
+    onSettled: () => {
+      if (queryClient.isMutating({ mutationKey: [...LIKE_POST_MUTATION_KEY] }) === 1) {
+        queryClient.invalidateQueries({ queryKey: COMMUNITY_PREFIX });
+      }
     }
   });
 
   const toggleLikePost = useCallback(
     (postId: number, currentlyLiked: boolean) => {
+      impactAsync(currentlyLiked ? ImpactFeedbackStyle.Light : ImpactFeedbackStyle.Medium).catch(() => undefined);
       requireLogin(() => mutation.mutate({ postId, currentlyLiked }));
     },
     [mutation, requireLogin]

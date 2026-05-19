@@ -4,6 +4,7 @@ import { styled, View, YStack } from 'tamagui';
 
 import { AdoptCard, AdoptItem } from '@/entities/adopt';
 import { PROFILE_OPTIONS, ProfileLikeOption } from '@/entities/profile';
+import { useFavoriteAbandonment } from '@/features/favorite-abandonment';
 import { useScrollUpButton } from '@/shared/model';
 import { ButtonGroup, ScrollUpButton } from '@/shared/ui';
 import { AdoptListSection } from '@/widgets/adopt-section';
@@ -26,6 +27,7 @@ export const ProfileLikeScene = ({
   onRefresh
 }: ProfileLikeSceneProps) => {
   const { handleScroll, handlePressButton, isButtonVisible, scrollRef } = useScrollUpButton();
+  const { toggleFavoriteAbandonment } = useFavoriteAbandonment();
 
   const renderItem = useCallback(
     ({ item, index }: ListRenderItemInfo<AdoptItem>, filter: ProfileLikeOption) => {
@@ -34,8 +36,16 @@ export const ProfileLikeScene = ({
           const isLeft = index % 2 === 0;
 
           return (
-            <View pl={isLeft ? 0 : 4} pr={isLeft ? 4 : 0} mb={32} onPress={() => onGoDetail(item.id)}>
-              <AdoptCard uri={item.uri} title={item.title} description={item.description} chips={item.chips} />
+            <View pl={isLeft ? 0 : 4} pr={isLeft ? 4 : 0} mb={32}>
+              <AdoptCard
+                uri={item.uri}
+                title={item.title}
+                description={item.description}
+                chips={item.chips}
+                isFavorited={item.isFavorited}
+                onPress={() => onGoDetail(item.id)}
+                onPressFavorite={() => toggleFavoriteAbandonment(item.id, item.isFavorited ?? false)}
+              />
             </View>
           );
         }
@@ -44,7 +54,7 @@ export const ProfileLikeScene = ({
         }
       }
     },
-    [onGoDetail]
+    [onGoDetail, toggleFavoriteAbandonment]
   );
 
   return (

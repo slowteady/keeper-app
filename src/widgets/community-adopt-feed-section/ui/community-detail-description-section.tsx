@@ -9,6 +9,10 @@ export type CommunityDetailDescriptionSectionProps = {
   health: string;
   relatedLink: string;
 };
+
+// 빈 값이면 하이픈으로 fallback — 빈 자리 그대로 노출하면 사용자가 "정보 누락 / 오류" 로 오해.
+const orHyphen = (value?: string) => (value && value.trim().length > 0 ? value : '-');
+
 export const CommunityDetailDescriptionSection = ({
   specialMark,
   likes,
@@ -16,27 +20,29 @@ export const CommunityDetailDescriptionSection = ({
   health,
   relatedLink
 }: CommunityDetailDescriptionSectionProps) => {
+  const hasRelatedLink = !!relatedLink && relatedLink.trim().length > 0;
+
   return (
     <Container>
       <Wrap>
         <Label>특징</Label>
-        <Description>{specialMark}</Description>
+        <Description>{orHyphen(specialMark)}</Description>
       </Wrap>
       <Wrap>
         <Label>좋아해요</Label>
-        <Description>{likes}</Description>
+        <Description>{orHyphen(likes)}</Description>
       </Wrap>
       <Wrap>
         <Label>싫어해요</Label>
-        <Description>{dislikes}</Description>
+        <Description>{orHyphen(dislikes)}</Description>
       </Wrap>
       <Wrap>
         <Label>아파요</Label>
-        <Description>{health}</Description>
+        <Description>{orHyphen(health)}</Description>
       </Wrap>
       <Wrap>
         <Label>관련 링크</Label>
-        <Link url={relatedLink} text="원문 링크" />
+        {hasRelatedLink ? <Link url={relatedLink} text="원문 링크" /> : <Description>-</Description>}
       </Wrap>
     </Container>
   );

@@ -4,7 +4,7 @@ import { Dimensions } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { styled, Text, TextProps, View, ViewProps, XStack, XStackProps } from 'tamagui';
 
-import { Carousel, Chip } from '@/shared/ui';
+import { Carousel, Chip, NoImage } from '@/shared/ui';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
 import { buildAdoptTags } from '../lib';
@@ -48,12 +48,13 @@ const CommunityAdoptCardComponent = ({
 
   // 자식 hearTap 이 먼저 인식되면 cardTap 은 fail.
   // requireExternalGestureToFail 로 명시 합성 — 자식 영역에서 cardTap 으로 잘못 떨어지는 케이스 차단.
+  // 비로그인 상태에서도 heart gesture 자체는 활성 — onPressLike 가 requireLogin 으로 모달 표시 책임. (disabled 면 cardTap 이 잡혀 상세 라우팅 버그)
   const { cardTap, heartTap } = useMemo(() => {
     const heart = Gesture.Tap()
       .maxDuration(250)
       .maxDeltaX(8)
       .maxDeltaY(8)
-      .enabled(isLoggedIn && !isLoading)
+      .enabled(!isLoading)
       .onEnd((_e, success) => {
         if (success) handlePressLike();
       })
@@ -85,7 +86,7 @@ const CommunityAdoptCardComponent = ({
 
   return (
     <GestureDetector gesture={cardTap}>
-      <View>
+      <View testID={`community-card-${id}`}>
         <XStack items="center" justify="space-between" mb={12}>
           <CommunityAdoptCardHeader
             image={user?.image ?? ''}
@@ -94,7 +95,7 @@ const CommunityAdoptCardComponent = ({
           />
 
           <GestureDetector gesture={heartTap}>
-            <View hitSlop={10}>
+            <View hitSlop={10} testID={`community-card-heart-${id}`}>
               <AnimatedHeart isLiked={isLiked} size={28} />
             </View>
           </GestureDetector>
@@ -130,10 +131,17 @@ export const CommunityAdoptCardContent = ({ content, ...props }: { content: stri
   return <StyledContent {...props}>{content}</StyledContent>;
 };
 
-export const CommunityAdoptCardCarousel = ({ images, ...props }: { images: string[] } & ViewProps) => {
+type CommunityAdoptCardCarouselProps = { images: string[]; showImageViewer?: boolean } & ViewProps;
+
+export const CommunityAdoptCardCarousel = ({
+  images,
+  showImageViewer = false,
+  ...props
+}: CommunityAdoptCardCarouselProps) => {
+  const hasImages = images && images.length > 0;
   return (
     <CarouselWrap {...props}>
-      <Carousel data={images} showIndicator />
+      {hasImages ? <Carousel data={images} showIndicator showImageViewer={showImageViewer} /> : <NoImage />}
     </CarouselWrap>
   );
 };

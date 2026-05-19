@@ -21,6 +21,8 @@ export const AdoptDataSchema = z.object({
   noticeStartDt: z.string(),
   noticeEndDt: z.string(),
   shelterId: z.string(),
+  careNm: z.string().optional(),
+  careAddr: z.string().optional(),
   careTel: z.string(),
   noticeNo: z.string(),
   rfid: z.string().nullable(),

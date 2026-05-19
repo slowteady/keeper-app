@@ -32,7 +32,7 @@ import {
   setCurrentPathname,
   throwToErrorBoundary
 } from '@/shared/lib';
-import { BottomSheetProvider, ModalProvider } from '@/shared/ui';
+import { BottomSheetProvider, ModalProvider, ShareGuard } from '@/shared/ui';
 
 import { config } from '../../tamagui.config';
 import AnimatedSplash from './_animated-splash';
@@ -166,6 +166,7 @@ const RootLayout = () => {
                   <ModalProvider>
                     <StatusBar style="dark" />
                     <Stack screenOptions={{ headerShown: false }} />
+                    <ShareGuard />
                     <Toaster
                       position="top-center"
                       duration={2000}

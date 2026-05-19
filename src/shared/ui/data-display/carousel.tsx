@@ -1,13 +1,14 @@
 import { Image } from 'expo-image';
-import { forwardRef, useCallback, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import PagerView, { PagerViewOnPageSelectedEvent, PagerViewProps } from 'react-native-pager-view';
 import { styled, Text, useTheme, View, XStack } from 'tamagui';
 
+import { useIsSharing } from '@/shared/model';
+
 import { Button } from '../button';
-import { Skeleton } from '../fallback';
+import { NoImage, Skeleton } from '../fallback';
 import { LeftLineArrow, RightLineArrow } from '../icons/mini';
-import { MoreImage } from '../icons/outline';
 import { ImageViewer } from '../overlay/image-viewer';
 
 export interface BasicCarouselProps extends PagerViewProps {
@@ -20,22 +21,24 @@ const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>(
   ({ data, showIndicator = false, showImageViewer = false, ...props }, ref) => {
     const [openImgViewer, setOpenImgViewer] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
-
-    const { black900 } = useTheme();
+    // PagerView 가 native UIScrollView 라 RN root 의 pointerEvents 흡수를 우회 — onPress 자체에 직접 가드.
+    const isSharing = useIsSharing();
 
     const handlePageSelected = useCallback((e: PagerViewOnPageSelectedEvent) => {
       setCurrentIndex(e.nativeEvent.position);
     }, []);
 
+    const handleOpenViewer = useCallback(() => {
+      if (isSharing) return;
+      setOpenImgViewer(true);
+    }, [isSharing]);
+
     const renderPage = (image: string) => {
       const imageElement = <CarouselImage uri={image} />;
 
       return showImageViewer ? (
-        <Button onPress={() => setOpenImgViewer(true)} style={styles.imageButton}>
+        <Button onPress={handleOpenViewer} style={styles.imageButton}>
           {imageElement}
-          <IconWrap>
-            <MoreImage color={black900.val} />
-          </IconWrap>
         </Button>
       ) : (
         imageElement
@@ -71,18 +74,58 @@ const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>(
 type CarouselImageProps = {
   uri: string;
 };
-const CarouselImage = ({ uri }: CarouselImageProps) => {
-  const [isLoading, setIsLoading] = useState(true);
 
+const LOAD_TIMEOUT_MS = 5000;
+
+// 한 번 실패한 URL 을 module 레벨에서 기억 — 같은 URL 이 cell remount 시 처음부터 hasError=true 로 시작해
+// Skeleton → NoImage 전환 frame 자체를 없앤다 (인스타/카카오 등 일반 BP).
+// 또한 한 번 성공한 URL 도 기억 — initial isLoaded=true 로 시작해 cache hit 시 깜빡임 없음.
+const failedUrls = new Set<string>();
+const loadedUrls = new Set<string>();
+
+const CarouselImage = ({ uri }: CarouselImageProps) => {
+  const [hasError, setHasError] = useState(() => failedUrls.has(uri));
+  const [isLoaded, setIsLoaded] = useState(() => loadedUrls.has(uri));
+
+  // onError 가 안 오는 invalid URL 케이스 timeout fallback.
+  useEffect(() => {
+    if (isLoaded || hasError) return;
+    const timer = setTimeout(() => {
+      failedUrls.add(uri);
+      setHasError(true);
+    }, LOAD_TIMEOUT_MS);
+    return () => clearTimeout(timer);
+  }, [isLoaded, hasError, uri]);
+
+  const handleLoad = () => {
+    loadedUrls.add(uri);
+    setIsLoaded(true);
+  };
+
+  const handleError = () => {
+    failedUrls.add(uri);
+    setHasError(true);
+  };
+
+  // 3 layer 모두 항상 mount + opacity 만 0/1 전환 — conditional render(mount/unmount) 가 frame gap 의 원인.
+  // Skeleton: 로딩 중 보임 / NoImage: 실패 시 보임 / Image: 성공 시 보임.
+  const isLoading = !isLoaded && !hasError;
   return (
     <View style={styles.imageWrap}>
-      {isLoading && <Skeleton style={styles.skeleton} />}
+      <View style={[styles.image, { opacity: isLoading ? 1 : 0 }]}>
+        <Skeleton style={styles.image} />
+      </View>
+      <View style={[styles.image, styles.overlay, { opacity: hasError ? 1 : 0 }]}>
+        <NoImage style={styles.image} />
+      </View>
       <Image
         source={uri}
+        cachePolicy="memory-disk"
+        transition={150}
         contentFit="cover"
-        onLoad={() => setIsLoading(false)}
-        onError={() => setIsLoading(true)}
-        style={styles.image}
+        onLoad={handleLoad}
+        onError={handleError}
+        style={[styles.image, styles.overlay, { opacity: isLoaded ? 1 : 0 }]}
       />
     </View>
   );
@@ -159,17 +202,12 @@ const IndicatorText = styled(Text, {
   color: '$white900'
 });
 
-const IconWrap = styled(View, {
-  position: 'absolute',
-  r: 16,
-  t: 16
-});
-
 const styles = StyleSheet.create({
   container: { position: 'relative', width: '100%', height: '100%' },
   imageWrap: { width: '100%', height: '100%' },
   image: { borderRadius: 10, width: '100%', height: '100%' },
   skeleton: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, borderRadius: 10 },
+  overlay: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 },
   imageButton: { width: '100%', height: '100%' }
 });
 

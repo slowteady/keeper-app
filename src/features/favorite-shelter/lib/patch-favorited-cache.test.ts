@@ -65,4 +65,34 @@ describe('patchFavoritedCache', () => {
       expect(next.pages[0].value[0]).toEqual({ id: 'X', isFavorited: true });
     });
   });
+
+  describe('단순 배열 — shelter list cache', () => {
+    it('배열 안 매칭 아이템만 patch, 미터치 아이템 identity 유지', () => {
+      const a = { id: 'A', isFavorited: false };
+      const b = { id: 'B', isFavorited: true };
+      const c = { id: 'C', isFavorited: false };
+      const data = [a, b, c];
+      const next = patchFavoritedCache(data, matcher('B'), false);
+
+      expect(Array.isArray(next)).toBe(true);
+      expect(next).not.toBe(data);
+      expect(next[0]).toBe(a);
+      expect(next[1]).toEqual({ id: 'B', isFavorited: false });
+      expect(next[2]).toBe(c);
+    });
+
+    it('매칭 없으면 배열 identity 유지', () => {
+      const data = [
+        { id: 'A', isFavorited: false },
+        { id: 'B', isFavorited: false }
+      ];
+      const next = patchFavoritedCache(data, matcher('Z'), true);
+      expect(next).toBe(data);
+    });
+
+    it('빈 배열은 그대로 반환', () => {
+      const data: { id: string; isFavorited: boolean }[] = [];
+      expect(patchFavoritedCache(data, matcher('A'), true)).toBe(data);
+    });
+  });
 });

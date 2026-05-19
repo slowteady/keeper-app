@@ -28,7 +28,7 @@ export const CommentCard = ({ comment, onPressMore, onPressReply, onPressHelpful
           />
         </XStack>
         {onPressMore && (
-          <Pressable onPress={onPressMore} hitSlop={10}>
+          <Pressable onPress={onPressMore} hitSlop={10} testID={`comment-more-${comment.id}`}>
             <MoreVertical size={18} color="$black700" />
           </Pressable>
         )}
@@ -38,9 +38,9 @@ export const CommentCard = ({ comment, onPressMore, onPressReply, onPressHelpful
         {comment.content}
       </Text>
 
-      <XStack mt={8} items="center" gap={16}>
+      <XStack mt={16} items="center" gap={16}>
         {onPressHelpful && (
-          <Pressable onPress={onPressHelpful} hitSlop={6}>
+          <Pressable onPress={onPressHelpful} hitSlop={6} testID={`comment-helpful-${comment.id}`}>
             <XStack items="center" gap={4}>
               <Heart
                 size={14}
@@ -56,7 +56,7 @@ export const CommentCard = ({ comment, onPressMore, onPressReply, onPressHelpful
           </Pressable>
         )}
         {onPressReply && (
-          <Pressable onPress={onPressReply} hitSlop={6}>
+          <Pressable onPress={onPressReply} hitSlop={6} testID={`comment-reply-${comment.id}`}>
             <ActionButtonText>답글 달기</ActionButtonText>
           </Pressable>
         )}

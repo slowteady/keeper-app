@@ -3,12 +3,13 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { authApi } from '@/shared/api/instance';
 import { globalToast } from '@/shared/lib';
 
+// baseURL 에 이미 '/api' 포함됨 → path 에서 '/api' 빼야 404 안 발생.
 const blockApi = {
   block: async (userId: number) => {
-    await authApi.post(`/api/users/${userId}/block`);
+    await authApi.post(`/users/${userId}/block`);
   },
   unblock: async (userId: number) => {
-    await authApi.delete(`/api/users/${userId}/block`);
+    await authApi.delete(`/users/${userId}/block`);
   }
 };
 

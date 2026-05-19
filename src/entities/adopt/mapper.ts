@@ -83,13 +83,13 @@ const FILTER_CHIP_MAP: Record<AdoptFilterDto, { id: string; value: string; sort:
   NEW: { id: 'NEW', value: '신규', sort: 1, variant: 'success' }
 };
 
-const convertGenderLabel = (gender?: AdoptDataDto['gender']) => {
+export const convertGenderLabel = (gender?: AdoptDataDto['gender']) => {
   if (gender === 'F') return '여아';
   if (gender === 'M') return '남아';
   return '미상';
 };
 
-const formatAge = (age?: string): string | null => {
+export const formatAge = (age?: string): string | null => {
   if (!age) return null;
   const year = age.substring(0, 4).replace(/[^0-9]/g, '');
   if (!year) return null;

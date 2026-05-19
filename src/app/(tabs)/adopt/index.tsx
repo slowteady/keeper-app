@@ -7,6 +7,7 @@ import { styled, View } from 'tamagui';
 
 import { ADOPT_OPTIONS, AdoptCard, AdoptFilterDto, AdoptItem } from '@/entities/adopt';
 import { useAdoptList } from '@/features/adopt';
+import { useFavoriteAbandonment } from '@/features/favorite-abandonment';
 import { useScrollUpButton } from '@/shared/model';
 import { RouteErrorBoundary, ScrollUpButton, ShowMoreButton } from '@/shared/ui';
 import { AdoptListHeaderSection, AdoptListSection } from '@/widgets/adopt-section';
@@ -61,18 +62,27 @@ const Page = () => {
   }, [selectedFilter, selectedType, scrollRef]);
 
   const goDetail = useCallback((id: string) => router.push({ pathname: '/adopt/[id]', params: { id } }), [router]);
+  const { toggleFavoriteAbandonment } = useFavoriteAbandonment();
 
   const renderItem = useCallback(
     ({ item, index }: ListRenderItemInfo<AdoptItem>) => {
       const isLeft = index % 2 === 0;
 
       return (
-        <View pl={isLeft ? 0 : 4} pr={isLeft ? 4 : 0} mb={32} onPress={() => goDetail(item.id)}>
-          <AdoptCard uri={item.uri} title={item.title} description={item.description} chips={item.chips} />
+        <View pl={isLeft ? 0 : 4} pr={isLeft ? 4 : 0} mb={32}>
+          <AdoptCard
+            uri={item.uri}
+            title={item.title}
+            description={item.description}
+            chips={item.chips}
+            isFavorited={item.isFavorited}
+            onPress={() => goDetail(item.id)}
+            onPressFavorite={() => toggleFavoriteAbandonment(item.id, item.isFavorited ?? false)}
+          />
         </View>
       );
     },
-    [goDetail]
+    [goDetail, toggleFavoriteAbandonment]
   );
 
   return (

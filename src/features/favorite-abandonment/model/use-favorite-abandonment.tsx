@@ -1,7 +1,9 @@
 import { useIsMutating, useMutation, useQueryClient } from '@tanstack/react-query';
+import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { useCallback } from 'react';
 
 import { adoptApi, adoptQueries } from '@/entities/adopt';
+import { shelterQueries } from '@/entities/shelter';
 import { useLoginRequired } from '@/features/auth';
 import { globalToast } from '@/shared/lib';
 
@@ -12,6 +14,9 @@ type FavoriteResponse = { isFavorited: boolean };
 
 export const FAVORITE_ABANDONMENT_MUTATION_KEY = ['favorite-abandonment'] as const;
 const ADOPT_PREFIX = adoptQueries.all();
+// 보호소 상세 안 공고 목록 (shelterQueries.adopts) 도 sync — id matcher 가 desertionNo 만 패치하므로
+// 보호소 list/detail cache 는 무영향 (no-op).
+const SHELTER_PREFIX = shelterQueries.all();
 
 export const useFavoriteAbandonment = () => {
   const queryClient = useQueryClient();
@@ -23,12 +28,20 @@ export const useFavoriteAbandonment = () => {
       currentlyFavorited ? adoptApi.unfavorite(desertionNo) : adoptApi.favorite(desertionNo),
 
     onMutate: async ({ desertionNo, currentlyFavorited }) => {
-      await queryClient.cancelQueries({ queryKey: ADOPT_PREFIX });
-      const backup = queryClient.getQueriesData({ queryKey: ADOPT_PREFIX });
+      await Promise.all([
+        queryClient.cancelQueries({ queryKey: ADOPT_PREFIX }),
+        queryClient.cancelQueries({ queryKey: SHELTER_PREFIX })
+      ]);
+      const backup = [
+        ...queryClient.getQueriesData({ queryKey: ADOPT_PREFIX }),
+        ...queryClient.getQueriesData({ queryKey: SHELTER_PREFIX })
+      ];
 
       const next = !currentlyFavorited;
-      queryClient.setQueriesData({ queryKey: ADOPT_PREFIX }, (old: unknown) =>
-        patchFavoritedCache(old, (item) => (item as { id?: string }).id === desertionNo, next)
+      const matcher = (item: unknown) => (item as { id?: string }).id === desertionNo;
+      queryClient.setQueriesData({ queryKey: ADOPT_PREFIX }, (old: unknown) => patchFavoritedCache(old, matcher, next));
+      queryClient.setQueriesData({ queryKey: SHELTER_PREFIX }, (old: unknown) =>
+        patchFavoritedCache(old, matcher, next)
       );
 
       return { backup };
@@ -44,14 +57,28 @@ export const useFavoriteAbandonment = () => {
     },
 
     onSuccess: (data, { desertionNo }) => {
+      const matcher = (item: unknown) => (item as { id?: string }).id === desertionNo;
       queryClient.setQueriesData({ queryKey: ADOPT_PREFIX }, (old: unknown) =>
-        patchFavoritedCache(old, (item) => (item as { id?: string }).id === desertionNo, data.isFavorited)
+        patchFavoritedCache(old, matcher, data.isFavorited)
       );
+      queryClient.setQueriesData({ queryKey: SHELTER_PREFIX }, (old: unknown) =>
+        patchFavoritedCache(old, matcher, data.isFavorited)
+      );
+    },
+
+    // 연속 토글 race condition 방지 — 마지막 mutation 끝날 때만 invalidate.
+    // 현재 settled 중인 자기 자신도 카운트되므로 === 1 비교.
+    onSettled: () => {
+      if (queryClient.isMutating({ mutationKey: [...FAVORITE_ABANDONMENT_MUTATION_KEY] }) === 1) {
+        queryClient.invalidateQueries({ queryKey: ADOPT_PREFIX });
+        queryClient.invalidateQueries({ queryKey: SHELTER_PREFIX });
+      }
     }
   });
 
   const toggleFavoriteAbandonment = useCallback(
     (desertionNo: string, currentlyFavorited: boolean) => {
+      impactAsync(currentlyFavorited ? ImpactFeedbackStyle.Light : ImpactFeedbackStyle.Medium).catch(() => undefined);
       requireLogin(() => mutation.mutate({ desertionNo, currentlyFavorited }));
     },
     [mutation, requireLogin]

@@ -10,6 +10,7 @@ import { globalToast, saveAccessToken, saveRefreshToken, setUserContext } from '
 import { ApiResponse } from '@/shared/model';
 
 import { useSetIsAuthenticated } from '../../lib/auth-state';
+import { navigateAfterAuth } from '../../lib/navigate-after-auth';
 
 const resolveRedirect = (redirect?: Route): Route | undefined => {
   if (!redirect || redirect === '/login') return undefined;
@@ -53,6 +54,8 @@ export const useLogin = () => {
             const { accessToken, refreshToken, socialId, isNew, ...user } = data;
 
             if (isNew) {
+              // signup 페이지에서 cancel 시 router.back 으로 login 복귀해야 하므로 push 유지.
+              // 가입 완료 흐름은 use-signup.ts 의 dismissAll 이 (untabs) 그룹 통째로 닫는다.
               router.push({
                 pathname: '/signup',
                 params: { socialType, socialId, redirect }
@@ -66,7 +69,7 @@ export const useLogin = () => {
 
             queryClient.invalidateQueries({ queryKey: authQueries.all() });
             globalToast('로그인 되었어요', 'success');
-            router.replace(resolveRedirect(redirect) ?? '/');
+            navigateAfterAuth(resolveRedirect(redirect) ?? '/');
             setIsAuthenticated(true);
           },
           onError: () => {
@@ -92,7 +95,7 @@ export const useLogin = () => {
         setUserContext(user as Parameters<typeof setUserContext>[0]);
         queryClient.invalidateQueries({ queryKey: authQueries.all() });
         globalToast('개발자 로그인 되었어요', 'success');
-        router.replace(resolveRedirect(redirect) ?? '/');
+        navigateAfterAuth(resolveRedirect(redirect) ?? '/');
         setIsAuthenticated(true);
       } catch {
         globalToast('개발자 로그인 실패 — 백엔드 NODE_ENV=local 확인', 'fail');

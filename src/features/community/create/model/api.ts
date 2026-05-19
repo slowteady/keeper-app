@@ -6,11 +6,6 @@ import { ApiResponse } from '@/shared/model';
 
 const BASE = '/community/posts';
 
-// 백엔드 PostAdoptionPersonalRequest 와 매핑되는 body
-// - contact(단수) → contacts(복수)
-// - vaccinationCheck NONE 은 옵셔널 → undefined 로 송신 (백엔드 enum 매핑 회피)
-// - tags 는 빈 배열로 (백엔드 @IsArray() 필수 — 라벨 변환은 응답 측 mapper 책임)
-// - images 는 이미 업로드된 publicUrl 배열을 받는다 (handleSubmit 에서 presigned 후 전달)
 type CreateAdoptionPersonalBody = {
   category: 'ADOPTION_PERSONAL';
   title: string;
@@ -64,5 +59,13 @@ export const toCreateAdoptionPersonalBody = (
 
 export const createAdoptionPersonal = async (body: CreateAdoptionPersonalBody): Promise<CommunityAdoptDetailDto> => {
   const res: AxiosResponse<ApiResponse<unknown>> = await authApi.post(`${BASE}/adoption-personal`, body);
+  return CommunityAdoptDetailSchema.parse(res.data.data);
+};
+
+export const updateAdoptionPersonal = async (
+  id: number,
+  body: CreateAdoptionPersonalBody
+): Promise<CommunityAdoptDetailDto> => {
+  const res: AxiosResponse<ApiResponse<unknown>> = await authApi.patch(`${BASE}/adoption-personal/${id}`, body);
   return CommunityAdoptDetailSchema.parse(res.data.data);
 };
