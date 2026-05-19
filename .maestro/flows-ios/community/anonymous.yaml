@@ -1,0 +1,98 @@
+appId: com.keeper.love
+---
+# 비로그인 상태 매트릭스 — 모든 게이트 트리거가 '로그인이 필요해요' 모달로 안내되어야 함.
+- launchApp:
+    clearState: false
+- runFlow:
+    file: ./_setup-logout.yaml
+- extendedWaitUntil:
+    visible: '입양공고'
+    timeout: 10000
+
+# 1. 커뮤니티 list 진입
+- tapOn: '커뮤니티'
+- extendedWaitUntil:
+    visible: '개인입양'
+    timeout: 10000
+
+# 2. 카테고리 + 정렬은 비로그인이어도 열람 가능
+- tapOn: '강아지'
+- waitForAnimationToEnd
+- tapOn: '전체'
+- waitForAnimationToEnd
+- tapOn: '최신순'
+- waitForAnimationToEnd
+- tapOn: '인기순'
+- waitForAnimationToEnd
+- assertVisible: '인기순'
+- tapOn: '인기순'
+- waitForAnimationToEnd
+- tapOn: '최신순'
+- waitForAnimationToEnd
+
+# 3. 카드 하트 → 로그인 모달
+- tapOn:
+    point: '92%,40%'
+- extendedWaitUntil:
+    visible: '로그인이 필요해요'
+    timeout: 5000
+- tapOn: '닫기'
+- waitForAnimationToEnd
+
+# 4. 글쓰기 펜 → 로그인 모달
+- tapOn:
+    point: '92%,12%'
+- extendedWaitUntil:
+    visible: '로그인이 필요해요'
+    timeout: 5000
+- tapOn: '닫기'
+- waitForAnimationToEnd
+
+# 5. 카드 본문 탭 → 디테일 진입 가능
+- tapOn:
+    point: '50%,50%'
+- extendedWaitUntil:
+    visible: '말티즈'
+    timeout: 5000
+
+# 6. 디테일 carousel → 이미지뷰어 열림
+- tapOn:
+    point: '50%,55%'
+- extendedWaitUntil:
+    visible: '1/2'
+    timeout: 5000
+- tapOn:
+    point: '92%,12%' # 이미지뷰어 X 닫기
+- waitForAnimationToEnd
+
+# 7. 디테일 헤더 하트 → 로그인 모달
+- tapOn:
+    point: '82%,18%'
+- extendedWaitUntil:
+    visible: '로그인이 필요해요'
+    timeout: 5000
+- tapOn: '닫기'
+- waitForAnimationToEnd
+
+# 8. 댓글 영역 스크롤
+- swipe:
+    start: '50%,80%'
+    end: '50%,20%'
+    duration: 400
+- swipe:
+    start: '50%,80%'
+    end: '50%,20%'
+    duration: 400
+
+# 9. 댓글 등록 시도 → 로그인 모달
+- tapOn:
+    point: '30%,94%'
+- waitForAnimationToEnd
+- inputText: 'anon test'
+- hideKeyboard
+- tapOn: '등록'
+- extendedWaitUntil:
+    visible: '로그인이 필요해요'
+    timeout: 5000
+- tapOn: '닫기'
+- waitForAnimationToEnd
