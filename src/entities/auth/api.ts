@@ -53,6 +53,18 @@ export const signup = async (body: SignUpBodyDto): Promise<AxiosResponse<ApiResp
   return await publicApi.post(endpoint, body);
 };
 
+export type AgreeBodyDto = {
+  agreedTermsVersion: string;
+  agreedPrivacyVersion: string;
+  agreedAt: string;
+};
+
+export const agree = async (body: AgreeBodyDto): Promise<AxiosResponse<ApiResponse<LoginDataDto>>> => {
+  const endpoint = `${BASE_URL}/agree`;
+
+  return await authApi.post(endpoint, body);
+};
+
 export const deleteUser = async (): Promise<AxiosResponse<ApiResponse<boolean>>> => {
   const endpoint = `${BASE_URL}/me`;
 
