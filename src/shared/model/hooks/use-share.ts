@@ -1,4 +1,5 @@
 import { Buffer } from 'buffer';
+import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { useCallback } from 'react';
 import { Alert, Platform, Share } from 'react-native';
 
@@ -23,6 +24,8 @@ export const useShare = () => {
 
   const share = useCallback(
     async (params: ShareParams) => {
+      // share sheet 표시까지 short 지연 + ShareGuard 600ms 가드가 있어 사용자 "눌렸나?" 의문 방지용 Light 진동
+      await impactAsync(ImpactFeedbackStyle.Light);
       setIsSharing(true);
       try {
         const { title, desc, path, id, image } = params;
