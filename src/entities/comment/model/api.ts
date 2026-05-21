@@ -4,7 +4,13 @@ import { AxiosResponse } from 'axios';
 import { authApi } from '@/shared/api/instance';
 import { ApiResponse } from '@/shared/model';
 
-import { CommentDto, CommentListResponseDto, CommentListResponseSchema, CommentSortOrderDto } from './schema';
+import {
+  CommentDto,
+  CommentListResponseDto,
+  CommentListResponseSchema,
+  CommentSchema,
+  CommentSortOrderDto
+} from './schema';
 
 // axios baseURL 에 이미 '/api' 가 포함됨 → 여기선 '/community' 만
 const BASE = '/community';
@@ -32,7 +38,7 @@ const create = async (postId: number, content: string, parentId?: number | null)
   const body: { content: string; parentId?: number } = { content };
   if (parentId !== undefined && parentId !== null) body.parentId = parentId;
   const res = await authApi.post<ApiResponse<CommentDto>>(`${BASE}/posts/${postId}/comments`, body);
-  return res.data.data;
+  return CommentSchema.parse(res.data.data);
 };
 
 export type ReplyListParams = {
@@ -52,7 +58,7 @@ const getReplies = async (parentId: number, params: ReplyListParams): Promise<Co
 
 const update = async (id: number, content: string): Promise<CommentDto> => {
   const res = await authApi.patch<ApiResponse<CommentDto>>(`${BASE}/comments/${id}`, { content });
-  return res.data.data;
+  return CommentSchema.parse(res.data.data);
 };
 
 const remove = async (id: number): Promise<void> => {
