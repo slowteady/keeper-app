@@ -4,13 +4,13 @@ import { isAvailableAsync } from 'expo-apple-authentication';
 import { Route, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 
-import { agree, AgreeBodyDto, login, LoginDataDto, SocialLoginType } from '@/entities/auth';
+import { agree, AgreeBodyDto, login, SocialLoginType } from '@/entities/auth';
 import { publicApi } from '@/shared/api/instance';
-import { globalToast, saveAccessToken, saveRefreshToken, setUserContext } from '@/shared/lib';
+import { globalToast, setUserContext } from '@/shared/lib';
 import { ApiResponse } from '@/shared/model';
 import { useBottomSheet } from '@/shared/ui';
 
-import { PRIVACY_VERSION, TERMS_VERSION } from '../../lib/agreement';
+import { COMMUNITY_POLICY_VERSION, PRIVACY_VERSION, TERMS_VERSION } from '../../lib/agreement';
 import { useSetIsAuthenticated } from '../../lib/auth-state';
 import { completeAuth } from '../../lib/complete-auth';
 import { AgreementState, SignupAgreementSheet } from '../../signup/ui';
@@ -19,8 +19,6 @@ const resolveRedirect = (redirect?: Route): Route | undefined => {
   if (!redirect || redirect === '/login') return undefined;
   return redirect;
 };
-
-const INITIAL_AGREEMENT: AgreementState = { age14: false, terms: false, privacy: false };
 
 export const useLogin = () => {
   const { redirect } = useLocalSearchParams<{ redirect?: Route }>();
@@ -33,7 +31,7 @@ export const useLogin = () => {
 
   const queryClient = useQueryClient();
   const setIsAuthenticated = useSetIsAuthenticated();
-  const { present, dismiss, update } = useBottomSheet();
+  const { present, dismiss } = useBottomSheet();
 
   useEffect(() => {
     (async () => {
@@ -52,29 +50,25 @@ export const useLogin = () => {
   }, []);
 
   const openAgreementSheet = useCallback(
-    async (data: LoginDataDto) => {
-      const { accessToken, refreshToken, nickname } = data;
-      // agree API 가 authApi (JWT 필요) 라 BottomSheet 진입 전 저장. 닫기 시 agreed_at=NULL 로 다음 진입에서 다시 isNew.
-      await saveAccessToken(accessToken);
-      await saveRefreshToken(refreshToken);
-
-      let agreement: AgreementState = INITIAL_AGREEMENT;
-
-      const handleConfirm = async () => {
-        if (!(agreement.age14 && agreement.terms && agreement.privacy)) return;
+    (signupToken: string) => {
+      const handleConfirm = async (agreement: AgreementState) => {
+        if (!(agreement.age14 && agreement.terms && agreement.privacy && agreement.community)) return;
         const body: AgreeBodyDto = {
+          signupToken,
           agreedTermsVersion: TERMS_VERSION,
           agreedPrivacyVersion: PRIVACY_VERSION,
+          agreedCommunityPolicyVersion: COMMUNITY_POLICY_VERSION,
           agreedAt: new Date().toISOString()
         };
         const res = await agreeAsync(body);
         const result = res.data.data;
-        const { accessToken: nextAccess, refreshToken: nextRefresh, ...user } = result;
+        const { accessToken, refreshToken, ...user } = result;
+        if (!accessToken || !refreshToken) return;
         dismiss();
         await completeAuth({
-          accessToken: nextAccess,
-          refreshToken: nextRefresh,
-          user,
+          accessToken,
+          refreshToken,
+          user: user as Parameters<typeof setUserContext>[0],
           toastMessage: '회원가입이 완료되었어요',
           redirect: resolveRedirect(redirect) ?? '/',
           queryClient,
@@ -82,23 +76,12 @@ export const useLogin = () => {
         });
       };
 
-      const renderSheet = (current: AgreementState) => (
-        <SignupAgreementSheet
-          nickname={nickname ?? ''}
-          agreement={current}
-          onAgreementChange={(next) => {
-            agreement = next;
-            update(renderSheet(next));
-          }}
-          onConfirm={handleConfirm}
-          onClose={() => dismiss()}
-          isPending={isAgreePending}
-        />
-      );
-
-      present(renderSheet(INITIAL_AGREEMENT), { snapPoints: ['55%'], mandatory: true });
+      present(<SignupAgreementSheet onConfirm={handleConfirm} onClose={dismiss} isPending={isAgreePending} />, {
+        snapPoints: ['55%'],
+        mandatory: true
+      });
     },
-    [agreeAsync, dismiss, isAgreePending, present, queryClient, redirect, setIsAuthenticated, update]
+    [agreeAsync, dismiss, isAgreePending, present, queryClient, redirect, setIsAuthenticated]
   );
 
   const handleLogin = useCallback(
@@ -108,18 +91,22 @@ export const useLogin = () => {
         {
           onSuccess: async ({ data: resultData }) => {
             const { data } = resultData;
-            const { isNew } = data;
+            const { isNew, signupToken, accessToken, refreshToken, socialId: _s, isNew: _n, ...user } = data;
 
             if (isNew) {
-              await openAgreementSheet(data);
+              if (!signupToken) {
+                globalToast('회원가입 진행에 실패했어요', 'fail');
+                return;
+              }
+              openAgreementSheet(signupToken);
               return;
             }
 
-            const { accessToken, refreshToken, socialId: _s, isNew: _n, ...user } = data;
+            if (!accessToken || !refreshToken) return;
             await completeAuth({
               accessToken,
               refreshToken,
-              user,
+              user: user as Parameters<typeof setUserContext>[0],
               toastMessage: '로그인 되었어요',
               redirect: resolveRedirect(redirect) ?? '/',
               queryClient,
@@ -135,8 +122,6 @@ export const useLogin = () => {
     [mutate, openAgreementSheet, queryClient, redirect, setIsAuthenticated]
   );
 
-  // [DEV ONLY] 개발자 로그인 — 소셜 인증 우회. NODE_ENV=local 백엔드에서만 작동
-  // 운영 빌드(__DEV__=false)에선 UI 자체 노출 안 됨
   const handleDevLogin = useCallback(
     async (userId: number) => {
       try {

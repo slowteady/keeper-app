@@ -49,15 +49,6 @@ jest.mock('@/features/auth', () => ({
   })
 }));
 
-jest.mock('@/features/community/policy', () => ({
-  useRequireCommunityPolicy: () => ({
-    requirePolicy: async (cb?: () => void | Promise<void>) => {
-      await cb?.();
-      return true;
-    }
-  })
-}));
-
 type MenuProps = { data: { id: string; label: string }[]; onPress: (d: { id: string; label: string }) => void };
 const extractMenu = (call: unknown[]): MenuProps => {
   const node = call[0] as ReactElement<MenuProps>;

@@ -4,7 +4,6 @@ import { useCallback, useMemo } from 'react';
 
 import { communityApi, communityQueries } from '@/entities/community';
 import { useCurrentUser, useLoginRequired } from '@/features/auth';
-import { useRequireCommunityPolicy } from '@/features/community/policy';
 import { useBlock, useReportSheet } from '@/features/community/safety';
 import { globalToast } from '@/shared/lib';
 import { useShare } from '@/shared/model';
@@ -12,19 +11,18 @@ import { BottomSheetMenu, type BottomSheetMenuData, useBottomSheet, useModal } f
 
 import { ConfirmDeleteModal } from '../ui/confirm-delete-modal';
 
-export type PostMenuId = 'SHARE' | 'EDIT' | 'DELETE' | 'REPORT' | 'BLOCK';
+export type PostMenuId = 'EDIT' | 'DELETE' | 'REPORT' | 'BLOCK';
 
 export type PostMenuShareInfo = {
   title: string;
   image?: string;
 };
 
-const SHARE_ITEM: BottomSheetMenuData<PostMenuId> = { id: 'SHARE', label: '공유하기' };
-const MINE_TAIL: readonly BottomSheetMenuData<PostMenuId>[] = [
+const MINE_MENU: readonly BottomSheetMenuData<PostMenuId>[] = [
   { id: 'EDIT', label: '수정하기' },
   { id: 'DELETE', label: '삭제하기' }
 ] as const;
-const OTHER_TAIL: readonly BottomSheetMenuData<PostMenuId>[] = [
+const OTHER_MENU: readonly BottomSheetMenuData<PostMenuId>[] = [
   { id: 'REPORT', label: '신고하기' },
   { id: 'BLOCK', label: '차단하기' }
 ] as const;
@@ -40,7 +38,6 @@ export const usePostMenu = ({
 }) => {
   const { user } = useCurrentUser();
   const { requireLogin } = useLoginRequired();
-  const { requirePolicy } = useRequireCommunityPolicy();
   const { present, dismiss } = useBottomSheet();
   const { open: openModal, close: closeModal } = useModal();
   const { openReportSheet } = useReportSheet();
@@ -86,10 +83,6 @@ export const usePostMenu = ({
   const handlePress = useCallback(
     (data: BottomSheetMenuData<PostMenuId>) => {
       switch (data.id) {
-        case 'SHARE':
-          dismiss();
-          handleShare();
-          break;
         case 'EDIT':
           dismiss();
           router.push(`/(untabs)/community/${postId}/edit`);
@@ -99,29 +92,29 @@ export const usePostMenu = ({
           handleConfirmDelete();
           break;
         case 'REPORT':
-          requireLogin(async () => {
-            await requirePolicy(() => openReportSheet({ type: 'POST', id: postId }));
+          requireLogin(() => {
+            openReportSheet({ type: 'POST', id: postId });
           });
           break;
         case 'BLOCK':
           dismiss();
           if (authorId)
-            requireLogin(async () => {
-              await requirePolicy(() => block(authorId));
+            requireLogin(() => {
+              block(authorId);
             });
           break;
       }
     },
-    [dismiss, handleShare, handleConfirmDelete, openReportSheet, block, postId, authorId, requireLogin, requirePolicy]
+    [dismiss, handleConfirmDelete, openReportSheet, block, postId, authorId, requireLogin]
   );
 
-  const menuItems = useMemo(() => [SHARE_ITEM, ...(isMine ? MINE_TAIL : OTHER_TAIL)], [isMine]);
+  const menuItems = useMemo(() => (isMine ? MINE_MENU : OTHER_MENU), [isMine]);
 
   const openPostMenu = useCallback(() => {
     present(<BottomSheetMenu data={menuItems} value={'' as PostMenuId} onPress={handlePress} />, {
-      snapPoints: [240]
+      snapPoints: [200]
     });
   }, [present, menuItems, handlePress]);
 
-  return { openPostMenu, isDeleting: deleteMutation.isPending };
+  return { openPostMenu, sharePost: handleShare, isDeleting: deleteMutation.isPending };
 };

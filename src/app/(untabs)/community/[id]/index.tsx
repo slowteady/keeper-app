@@ -16,7 +16,6 @@ import {
   useCommunityCommentList,
   useCreateComment,
   usePostMenu,
-  useRequireCommunityPolicy,
   useUpdateComment
 } from '@/features/community';
 import { useLikePost } from '@/features/like-post';
@@ -71,7 +70,7 @@ const CommunityDetailContent = ({ id }: { id: string }) => {
   );
   const hasPhone = phoneContact.length > 0;
 
-  const { openPostMenu } = usePostMenu({
+  const { openPostMenu, sharePost } = usePostMenu({
     postId: numId,
     authorId,
     shareInfo: detailPost ? { title: detailPost.title, image: detailPost.images[0] } : undefined
@@ -85,7 +84,6 @@ const CommunityDetailContent = ({ id }: { id: string }) => {
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [replyTarget, setReplyTarget] = useState<{ parentId: number; nickname: string } | null>(null);
   const { requireLogin } = useLoginRequired();
-  const { requirePolicy } = useRequireCommunityPolicy();
   const createCommentMutation = useCreateComment({ postId: numId });
   const updateCommentMutation = useUpdateComment({ postId: numId });
 
@@ -102,15 +100,13 @@ const CommunityDetailContent = ({ id }: { id: string }) => {
 
   const handleEnterReplyMode = useCallback(
     async (target: { parentId: number; nickname: string }) => {
-      await requireLogin(async () => {
-        await requirePolicy(() => {
-          setEditingCommentId(null);
-          setReplyTarget(target);
-          setComment(`@${target.nickname} `);
-        });
+      await requireLogin(() => {
+        setEditingCommentId(null);
+        setReplyTarget(target);
+        setComment(`@${target.nickname} `);
       });
     },
-    [requireLogin, requirePolicy]
+    [requireLogin]
   );
 
   const handleCancelReply = useCallback(() => {
@@ -174,12 +170,10 @@ const CommunityDetailContent = ({ id }: { id: string }) => {
   const handleSubmitComment = useCallback(async () => {
     const content = comment.trim();
     if (!content) return;
-    await requireLogin(async () => {
-      await requirePolicy(() => {
-        submitComment(content);
-      });
+    await requireLogin(() => {
+      submitComment(content);
     });
-  }, [comment, requireLogin, requirePolicy, submitComment]);
+  }, [comment, requireLogin, submitComment]);
 
   const isEditing = editingCommentId !== null;
   const isReplying = replyTarget !== null;
@@ -257,6 +251,7 @@ const CommunityDetailContent = ({ id }: { id: string }) => {
                 <CommunityDetailOverviewSection
                   {...(data.overviews as Parameters<typeof CommunityDetailOverviewSection>[0])}
                   onPressLike={() => toggleLikePost(numId, isLiked)}
+                  onPressShare={sharePost}
                   onPressMore={openPostMenu}
                 />
               </View>
