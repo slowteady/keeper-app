@@ -18,12 +18,10 @@ export const useAddComment = (postId: number) => {
     try {
       await mutateAsync(content.trim());
       setContent('');
-      // 댓글 목록 + 게시글 디테일(comment count) 갱신
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['comment', 'list', postId] }),
         queryClient.invalidateQueries(communityQueries.detail(postId))
       ]);
-      globalToast('댓글이 작성되었어요.', 'success');
     } catch {
       globalToast('댓글 작성에 실패했어요. 다시 시도해주세요.', 'fail');
     }

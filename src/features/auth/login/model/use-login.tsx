@@ -69,7 +69,6 @@ export const useLogin = () => {
           accessToken,
           refreshToken,
           user: user as Parameters<typeof setUserContext>[0],
-          toastMessage: '회원가입이 완료되었어요',
           redirect: resolveRedirect(redirect) ?? '/',
           queryClient,
           setIsAuthenticated
@@ -107,7 +106,6 @@ export const useLogin = () => {
               accessToken,
               refreshToken,
               user: user as Parameters<typeof setUserContext>[0],
-              toastMessage: '로그인 되었어요',
               redirect: resolveRedirect(redirect) ?? '/',
               queryClient,
               setIsAuthenticated
@@ -133,7 +131,6 @@ export const useLogin = () => {
           accessToken,
           refreshToken,
           user: user as Parameters<typeof setUserContext>[0],
-          toastMessage: '개발자 로그인 되었어요',
           redirect: resolveRedirect(redirect) ?? '/',
           queryClient,
           setIsAuthenticated

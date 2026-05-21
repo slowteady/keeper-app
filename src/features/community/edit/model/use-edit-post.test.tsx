@@ -176,7 +176,7 @@ describe('useEditPost', () => {
     expect(router.back).not.toHaveBeenCalled();
   });
 
-  it('수정 성공 시 성공 토스트 + 캐시 invalidate + router.back', async () => {
+  it('수정 성공 시 캐시 invalidate + router.back (Instagram BP — 성공 토스트 X)', async () => {
     mockUpdate.mockResolvedValue(detail);
     const { wrapper, queryClient } = setup();
     const invalidateSpy = jest.spyOn(queryClient, 'invalidateQueries');
@@ -186,8 +186,8 @@ describe('useEditPost', () => {
       result.current.actions.handleSubmit(result.current.form.getValues());
     });
 
-    await waitFor(() => expect(mockToast).toHaveBeenCalledWith('게시글을 수정했어요', 'success'));
-    expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['community'] });
+    await waitFor(() => expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['community'] }));
     expect(router.back).toHaveBeenCalled();
+    expect(mockToast).not.toHaveBeenCalled();
   });
 });

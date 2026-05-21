@@ -75,7 +75,7 @@ describe('useCommentMenu', () => {
   it('타인 댓글이면 메뉴 = [신고, 차단]', () => {
     mockUser = { id: 99 };
     const { wrapper } = setup();
-    const { result } = renderHook(() => useCommentMenu({ postId: 10, onEdit: mockOnEdit }), { wrapper });
+    const { result } = renderHook(() => useCommentMenu({ onEdit: mockOnEdit }), { wrapper });
 
     act(() => result.current.openCommentMenu(baseTarget));
 
@@ -83,10 +83,21 @@ describe('useCommentMenu', () => {
     expect(data.map((d) => d.id)).toEqual(['REPORT', 'BLOCK']);
   });
 
+  it('탈퇴한 사용자(authorId=null)의 댓글이면 메뉴 = [신고] 만', () => {
+    mockUser = { id: 99 };
+    const { wrapper } = setup();
+    const { result } = renderHook(() => useCommentMenu({ onEdit: mockOnEdit }), { wrapper });
+
+    act(() => result.current.openCommentMenu({ commentId: 7, authorId: null, content: '본문' }));
+
+    const { data } = extractMenu(mockPresent.mock.calls[0]);
+    expect(data.map((d) => d.id)).toEqual(['REPORT']);
+  });
+
   it('본인 댓글이면 메뉴 = [수정, 삭제]', () => {
     mockUser = { id: 1 };
     const { wrapper } = setup();
-    const { result } = renderHook(() => useCommentMenu({ postId: 10, onEdit: mockOnEdit }), { wrapper });
+    const { result } = renderHook(() => useCommentMenu({ onEdit: mockOnEdit }), { wrapper });
 
     act(() => result.current.openCommentMenu(baseTarget));
 
@@ -97,7 +108,7 @@ describe('useCommentMenu', () => {
   it('EDIT 선택 시 onEdit({commentId, content}) 호출 + dismiss', () => {
     mockUser = { id: 1 };
     const { wrapper } = setup();
-    const { result } = renderHook(() => useCommentMenu({ postId: 10, onEdit: mockOnEdit }), { wrapper });
+    const { result } = renderHook(() => useCommentMenu({ onEdit: mockOnEdit }), { wrapper });
 
     act(() => result.current.openCommentMenu({ commentId: 7, authorId: 1, content: '원본' }));
     const { onPress } = extractMenu(mockPresent.mock.calls[0]);
@@ -111,7 +122,7 @@ describe('useCommentMenu', () => {
   it('REPORT 선택 시 openReportSheet 호출 + dismiss 안 함 (같은 시트 교체)', async () => {
     mockUser = { id: 99 };
     const { wrapper } = setup();
-    const { result } = renderHook(() => useCommentMenu({ postId: 10, onEdit: mockOnEdit }), { wrapper });
+    const { result } = renderHook(() => useCommentMenu({ onEdit: mockOnEdit }), { wrapper });
 
     act(() => result.current.openCommentMenu(baseTarget));
     const { onPress } = extractMenu(mockPresent.mock.calls[0]);
@@ -127,7 +138,7 @@ describe('useCommentMenu', () => {
   it('BLOCK 선택 시 block(authorId) 호출 + dismiss', async () => {
     mockUser = { id: 99 };
     const { wrapper } = setup();
-    const { result } = renderHook(() => useCommentMenu({ postId: 10, onEdit: mockOnEdit }), { wrapper });
+    const { result } = renderHook(() => useCommentMenu({ onEdit: mockOnEdit }), { wrapper });
 
     act(() => result.current.openCommentMenu({ commentId: 7, authorId: 5, content: '본문' }));
     const { onPress } = extractMenu(mockPresent.mock.calls[0]);
@@ -146,7 +157,7 @@ describe('useCommentMenu', () => {
     const { queryClient, wrapper } = setup();
     const invalidateSpy = jest.spyOn(queryClient, 'invalidateQueries');
 
-    const { result } = renderHook(() => useCommentMenu({ postId: 10, onEdit: mockOnEdit }), { wrapper });
+    const { result } = renderHook(() => useCommentMenu({ onEdit: mockOnEdit }), { wrapper });
 
     act(() => result.current.openCommentMenu(baseTarget));
     const { onPress } = extractMenu(mockPresent.mock.calls[0]);

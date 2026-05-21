@@ -95,6 +95,19 @@ describe('usePostMenu', () => {
     expect(data.map((d) => d.id)).toEqual(['REPORT', 'BLOCK']);
   });
 
+  it('탈퇴한 사용자(authorId=null)의 글이면 메뉴 = [신고] 만', () => {
+    mockUser = { id: 99 };
+    const { wrapper } = setup();
+    const { result } = renderHook(() => usePostMenu({ postId: 10, authorId: null, shareInfo: baseShareInfo }), {
+      wrapper
+    });
+
+    act(() => result.current.openPostMenu());
+
+    const { data } = extractMenu(mockPresent.mock.calls[0]);
+    expect(data.map((d) => d.id)).toEqual(['REPORT']);
+  });
+
   it('본인 글이면 메뉴 = [수정, 삭제]', () => {
     mockUser = { id: 1 };
     const { wrapper } = setup();

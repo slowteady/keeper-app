@@ -15,10 +15,8 @@ const MINE_MENU: readonly BottomSheetMenuData<CommentMenuId>[] = [
   { id: 'EDIT', label: '수정' },
   { id: 'DELETE', label: '삭제' }
 ] as const;
-const OTHER_MENU: readonly BottomSheetMenuData<CommentMenuId>[] = [
-  { id: 'REPORT', label: '신고' },
-  { id: 'BLOCK', label: '차단' }
-] as const;
+const REPORT_ITEM: BottomSheetMenuData<CommentMenuId> = { id: 'REPORT', label: '신고' };
+const BLOCK_ITEM: BottomSheetMenuData<CommentMenuId> = { id: 'BLOCK', label: '차단' };
 
 export type CommentMenuTarget = {
   commentId: number;
@@ -27,11 +25,10 @@ export type CommentMenuTarget = {
 };
 
 export type UseCommentMenuParams = {
-  postId: number;
   onEdit: (target: { commentId: number; content: string }) => void;
 };
 
-export const useCommentMenu = ({ postId, onEdit }: UseCommentMenuParams) => {
+export const useCommentMenu = ({ onEdit }: UseCommentMenuParams) => {
   const { user } = useCurrentUser();
   const { requireLogin } = useLoginRequired();
   const { present, dismiss } = useBottomSheet();
@@ -53,7 +50,11 @@ export const useCommentMenu = ({ postId, onEdit }: UseCommentMenuParams) => {
   const openCommentMenu = useCallback(
     ({ commentId, authorId, content }: CommentMenuTarget) => {
       const isMine = !!user && !!authorId && user.id === authorId;
-      const menuItems = isMine ? MINE_MENU : OTHER_MENU;
+      const menuItems: readonly BottomSheetMenuData<CommentMenuId>[] = isMine
+        ? MINE_MENU
+        : authorId
+          ? [REPORT_ITEM, BLOCK_ITEM]
+          : [REPORT_ITEM];
 
       const handlePress = (data: BottomSheetMenuData<CommentMenuId>) => {
         switch (data.id) {

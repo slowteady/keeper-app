@@ -48,21 +48,23 @@ describe('useUpdateComment', () => {
     expect(mockedUpdate).toHaveBeenCalledWith(5, '수정');
   });
 
-  it('성공 시 해당 postId 댓글 리스트 invalidate + 성공 토스트', async () => {
-    mockedUpdate.mockResolvedValue({ id: 1 });
+  it('성공 시 list / replies 캐시의 해당 댓글 즉시 갱신 — refetch 의존 X (성공 토스트 X)', async () => {
+    const updated = { id: 5, content: '수정후' };
+    mockedUpdate.mockResolvedValue(updated);
     const { queryClient, wrapper } = setup();
-    const invalidateSpy = jest.spyOn(queryClient, 'invalidateQueries');
+    const setSpy = jest.spyOn(queryClient, 'setQueriesData');
 
     const { result } = renderHook(() => useUpdateComment({ postId: 10 }), { wrapper });
 
     await act(async () => {
-      await result.current.mutateAsync({ commentId: 5, content: '내용' });
+      await result.current.mutateAsync({ commentId: 5, content: '수정후' });
     });
 
     await waitFor(() => {
-      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: [...commentQueries.all(), 'list', 10] });
-      expect(mockedToast).toHaveBeenCalledWith('댓글을 수정했어요.', 'success');
+      expect(setSpy).toHaveBeenCalledWith({ queryKey: [...commentQueries.all(), 'list', 10] }, expect.any(Function));
+      expect(setSpy).toHaveBeenCalledWith({ queryKey: [...commentQueries.all(), 'replies'] }, expect.any(Function));
     });
+    expect(mockedToast).not.toHaveBeenCalled();
   });
 
   it('실패 시 실패 토스트', async () => {

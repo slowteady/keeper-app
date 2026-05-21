@@ -22,10 +22,8 @@ const MINE_MENU: readonly BottomSheetMenuData<PostMenuId>[] = [
   { id: 'EDIT', label: '수정하기' },
   { id: 'DELETE', label: '삭제하기' }
 ] as const;
-const OTHER_MENU: readonly BottomSheetMenuData<PostMenuId>[] = [
-  { id: 'REPORT', label: '신고하기' },
-  { id: 'BLOCK', label: '차단하기' }
-] as const;
+const REPORT_ITEM: BottomSheetMenuData<PostMenuId> = { id: 'REPORT', label: '신고하기' };
+const BLOCK_ITEM: BottomSheetMenuData<PostMenuId> = { id: 'BLOCK', label: '차단하기' };
 
 export const usePostMenu = ({
   postId,
@@ -99,8 +97,9 @@ export const usePostMenu = ({
         case 'BLOCK':
           dismiss();
           if (authorId)
-            requireLogin(() => {
-              block(authorId);
+            requireLogin(async () => {
+              await block(authorId);
+              router.back();
             });
           break;
       }
@@ -108,7 +107,10 @@ export const usePostMenu = ({
     [dismiss, handleConfirmDelete, openReportSheet, block, postId, authorId, requireLogin]
   );
 
-  const menuItems = useMemo(() => (isMine ? MINE_MENU : OTHER_MENU), [isMine]);
+  const menuItems = useMemo<readonly BottomSheetMenuData<PostMenuId>[]>(() => {
+    if (isMine) return MINE_MENU;
+    return authorId ? [REPORT_ITEM, BLOCK_ITEM] : [REPORT_ITEM];
+  }, [isMine, authorId]);
 
   const openPostMenu = useCallback(() => {
     present(<BottomSheetMenu data={menuItems} value={'' as PostMenuId} onPress={handlePress} />, {

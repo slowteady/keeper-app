@@ -63,7 +63,6 @@ export const useCreatePost = () => {
       return createAdoptionPersonal(body);
     },
     onSuccess: (post) => {
-      globalToast('게시글이 등록되었어요', 'success');
       router.replace(`/(untabs)/community/${post.id}`);
     },
     onError: () => {

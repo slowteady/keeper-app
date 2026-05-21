@@ -14,7 +14,6 @@ const Page = () => {
     mutationFn: updateMe,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: authQueries.all() });
-      globalToast('닉네임이 변경되었어요', 'success');
       router.back();
     },
     onError: (error) => {

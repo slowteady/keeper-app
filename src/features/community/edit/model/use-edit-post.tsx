@@ -29,9 +29,11 @@ export const useEditPost = (postId: number) => {
       const body = toCreateAdoptionPersonalBody(data, data.images);
       return updateAdoptionPersonal(postId, body);
     },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: communityQueries.all() });
-      globalToast('게시글을 수정했어요', 'success');
+    onSuccess: (updated) => {
+      // 서버 응답 후 detail 캐시 즉시 갱신 (refetch 1초 지연 우회)
+      queryClient.setQueryData(communityQueries.detail(postId).queryKey, updated);
+      // 백그라운드 정합 (list 도 변경 반영)
+      queryClient.invalidateQueries({ queryKey: communityQueries.all() });
       router.back();
     },
     onError: () => {
