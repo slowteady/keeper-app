@@ -2,15 +2,14 @@ import { usePreventRemove } from '@react-navigation/native';
 import { router } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { FieldErrors } from 'react-hook-form';
-import { KeyboardAwareScrollView, KeyboardStickyView } from 'react-native-keyboard-controller';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { styled, View } from 'tamagui';
 
 import { CommunityAdoptFormDto } from '@/entities/community';
 import { LocationBottomSheet, useLocationBottomSheet } from '@/features/address';
 import { useCreatePost } from '@/features/community';
 import { globalToast } from '@/shared/lib';
-import { useLayout } from '@/shared/model';
-import { Button, CancelModal } from '@/shared/ui';
+import { BottomButton, CancelModal } from '@/shared/ui';
 import { CommunityAdoptForm } from '@/widgets/community-adopt-feed-section';
 
 // react-hook-form errors 의 키 순서가 zod schema 정의 순서와 다를 수 있어,
@@ -44,7 +43,6 @@ const findFirstError = (
 };
 
 const Page = () => {
-  const { bottom } = useLayout();
   const [buttonHeight, setButtonHeight] = useState(0);
 
   // 약관 동의 게이트는 진입점(community/_layout)에서 처리 — 이 페이지는 동의 후만 진입
@@ -127,19 +125,14 @@ const Page = () => {
         />
       </KeyboardAwareScrollView>
 
-      <KeyboardStickyView onLayout={(e) => setButtonHeight(e.nativeEvent.layout.height)}>
-        <StickyButtonWrapper pb={bottom}>
-          <Button
-            size="large"
-            style={{ borderRadius: 10 }}
-            onPress={form.handleSubmit(actions.handleSubmit, onInvalid)}
-            disabled={isSubmitting}
-            isLoading={isSubmitting}
-          >
-            등록하기
-          </Button>
-        </StickyButtonWrapper>
-      </KeyboardStickyView>
+      <BottomButton
+        onLayout={(e) => setButtonHeight(e.nativeEvent.layout.height)}
+        onPress={form.handleSubmit(actions.handleSubmit, onInvalid)}
+        disabled={isSubmitting}
+        isLoading={isSubmitting}
+      >
+        등록하기
+      </BottomButton>
 
       <LocationBottomSheet
         ref={locationRef}
@@ -166,10 +159,4 @@ export default Page;
 const Container = styled(View, {
   bg: '$pageBackground',
   flex: 1
-});
-
-const StickyButtonWrapper = styled(View, {
-  px: 20,
-  pt: 10,
-  bg: '$white900'
 });
