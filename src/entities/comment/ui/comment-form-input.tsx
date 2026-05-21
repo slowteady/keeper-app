@@ -1,4 +1,4 @@
-import { Pressable } from 'react-native';
+import { Pressable, StyleSheet } from 'react-native';
 import { styled, Text, TextAreaProps, View, XStack } from 'tamagui';
 
 import { Button, TextArea } from '@/shared/ui';
@@ -13,9 +13,10 @@ export type CommentFormInputProps = Omit<TextAreaProps, 'onSubmitEditing'> & {
   onChangeText: (text: string) => void;
   onSubmit: () => void;
   isPending?: boolean;
-  // 작성 외 모드(수정/답글) 시 상단 안내 바 + 취소 핸들러
   banner?: CommentFormBanner;
   submitLabel?: string;
+  disabled?: boolean;
+  onTapWhenDisabled?: () => void;
 };
 
 // 게시글 좋아요는 헤더 하트만 — 입력창에 좋아요 둘 필요 X (Instagram/Threads/29cm 표준).
@@ -26,9 +27,11 @@ export const CommentFormInput = ({
   isPending = false,
   banner,
   submitLabel = '등록',
+  disabled = false,
+  onTapWhenDisabled,
   ...rest
 }: CommentFormInputProps) => {
-  const canSubmit = value.trim().length > 0 && !isPending;
+  const canSubmit = value.trim().length > 0 && !isPending && !disabled;
 
   return (
     <Container>
@@ -41,7 +44,7 @@ export const CommentFormInput = ({
         </BannerRow>
       )}
       <InputRow>
-        <View flex={1} mr={6}>
+        <View flex={1} mr={6} position="relative">
           <TextArea
             placeholder="소중한 의견을 남겨주세요:)"
             value={value}
@@ -49,6 +52,9 @@ export const CommentFormInput = ({
             testID="comment-input"
             {...rest}
           />
+          {disabled && (
+            <Pressable style={StyleSheet.absoluteFill} onPress={onTapWhenDisabled} testID="comment-input-guard" />
+          )}
         </View>
 
         <Button
@@ -56,7 +62,7 @@ export const CommentFormInput = ({
           size="small"
           style={{ minWidth: 72 }}
           disabled={!canSubmit}
-          onPress={onSubmit}
+          onPress={disabled ? onTapWhenDisabled : onSubmit}
           testID="comment-submit"
         >
           {submitLabel}

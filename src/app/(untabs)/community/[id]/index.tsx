@@ -83,7 +83,11 @@ const CommunityDetailContent = ({ id }: { id: string }) => {
   const [comment, setComment] = useState('');
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [replyTarget, setReplyTarget] = useState<{ parentId: number; nickname: string } | null>(null);
-  const { requireLogin } = useLoginRequired();
+  const { requireLogin, isLoggedIn } = useLoginRequired();
+
+  const handleTapWhenLoggedOut = useCallback(() => {
+    requireLogin(() => {});
+  }, [requireLogin]);
   const createCommentMutation = useCreateComment({ postId: numId });
   const updateCommentMutation = useUpdateComment({ postId: numId });
 
@@ -125,7 +129,7 @@ const CommunityDetailContent = ({ id }: { id: string }) => {
     [replyTarget]
   );
 
-  const { openCommentMenu } = useCommentMenu({ postId: numId, onEdit: handleEnterEditMode });
+  const { openCommentMenu } = useCommentMenu({ onEdit: handleEnterEditMode });
   const { toggleHelpful } = useCommentHelpful();
 
   const handleToggleHelpful = useCallback(
@@ -142,26 +146,15 @@ const CommunityDetailContent = ({ id }: { id: string }) => {
   const submitComment = useCallback(
     (content: string) => {
       if (editingCommentId !== null) {
-        updateCommentMutation.mutate(
-          { commentId: editingCommentId, content },
-          {
-            onSuccess: () => {
-              setComment('');
-              setEditingCommentId(null);
-            }
-          }
-        );
+        const targetCommentId = editingCommentId;
+        setComment('');
+        setEditingCommentId(null);
+        updateCommentMutation.mutate({ commentId: targetCommentId, content });
       } else {
         const parentId = replyTarget?.parentId;
-        createCommentMutation.mutate(
-          { content, parentId },
-          {
-            onSuccess: () => {
-              setComment('');
-              setReplyTarget(null);
-            }
-          }
-        );
+        setComment('');
+        setReplyTarget(null);
+        createCommentMutation.mutate({ content, parentId });
       }
     },
     [editingCommentId, replyTarget, createCommentMutation, updateCommentMutation]
@@ -318,6 +311,8 @@ const CommunityDetailContent = ({ id }: { id: string }) => {
             banner={formBanner}
             submitLabel={submitLabel}
             isPending={isSubmitPending}
+            disabled={!isLoggedIn}
+            onTapWhenDisabled={handleTapWhenLoggedOut}
           />
           <ScrollUpButton visible={isButtonVisible} onPress={handlePressButton} bottom={inputHeight + 20} />
         </StickyInner>
