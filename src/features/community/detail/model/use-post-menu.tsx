@@ -49,7 +49,6 @@ export const usePostMenu = ({
     mutationFn: () => communityApi.deletePost(postId),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: communityQueries.all() });
-      globalToast('삭제했어요.', 'success');
       router.back();
     },
     onError: () => globalToast('삭제에 실패했어요. 다시 시도해주세요.', 'fail')

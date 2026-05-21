@@ -40,9 +40,7 @@ export const useCommentMenu = ({ onEdit }: UseCommentMenuParams) => {
   const deleteMutation = useMutation({
     mutationFn: (commentId: number) => commentApi.remove(commentId),
     onSuccess: async () => {
-      // 댓글 list + 답글(replies) 캐시 모두 무효화 — 답글 삭제 시에도 화면 즉시 갱신
       await queryClient.invalidateQueries({ queryKey: commentQueries.all() });
-      globalToast('삭제했어요.', 'success');
     },
     onError: () => globalToast('삭제에 실패했어요. 다시 시도해주세요.', 'fail')
   });
