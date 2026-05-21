@@ -25,6 +25,7 @@ export const NavigateHeader = ({ text, hideHome = false, showShadow = true }: Na
   }, []);
 
   const goHome = useCallback(() => {
+    if (router.canDismiss?.()) router.dismissAll();
     router.replace('/(tabs)/home');
   }, []);
 
