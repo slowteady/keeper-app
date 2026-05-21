@@ -1,7 +1,7 @@
 import { MoreVertical } from '@tamagui/lucide-icons';
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { Pressable } from 'react-native';
-import { styled, Text, XStack } from 'tamagui';
+import { styled, Text, useTheme, XStack } from 'tamagui';
 
 import {
   CommunityAdoptCardCarousel,
@@ -10,6 +10,7 @@ import {
   CommunityAdoptCardTitle
 } from '@/entities/community';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
+import { Share as ShareIcon } from '@/shared/ui/icons/outline';
 
 export type CommunityDetailOverviewSectionProps = {
   id: number;
@@ -22,6 +23,7 @@ export type CommunityDetailOverviewSectionProps = {
   content: string;
   isLiked?: boolean;
   onPressLike: () => void;
+  onPressShare?: () => void;
   onPressMore?: () => void;
 };
 
@@ -35,8 +37,10 @@ export const CommunityDetailOverviewSection = ({
   content,
   isLiked = false,
   onPressLike,
+  onPressShare,
   onPressMore
 }: CommunityDetailOverviewSectionProps) => {
+  const { black700 } = useTheme();
   const handlePressLike = () => {
     impactAsync(isLiked ? ImpactFeedbackStyle.Light : ImpactFeedbackStyle.Medium).catch(() => undefined);
     onPressLike();
@@ -46,10 +50,20 @@ export const CommunityDetailOverviewSection = ({
     <>
       <HeaderWrapper mb={20}>
         <CommunityAdoptCardHeader image={image} nickname={nickname} displayTime={displayTime} />
-        <XStack gap={16} items="center">
+        <XStack gap={16} items="center" style={{ flexShrink: 0 }}>
           <Pressable onPress={handlePressLike} hitSlop={10} testID="community-detail-heart">
             <AnimatedHeart size={26} isLiked={isLiked} />
           </Pressable>
+          {onPressShare && (
+            <Pressable
+              onPress={onPressShare}
+              hitSlop={10}
+              accessibilityLabel="공유하기"
+              testID="community-detail-share"
+            >
+              <ShareIcon width={24} height={24} color={black700.val} />
+            </Pressable>
+          )}
           {onPressMore && (
             <Pressable onPress={onPressMore} hitSlop={10} accessibilityLabel="더보기" testID="community-detail-more">
               <MoreVertical size={22} color="$black700" />

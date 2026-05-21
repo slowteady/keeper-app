@@ -29,7 +29,7 @@ export const ShelterDetailOverviewSection = ({
 
   return (
     <>
-      <TitleContainer mb={30} gap={8}>
+      <TitleContainer mb={30} gap={14}>
         <Text
           numberOfLines={2}
           ellipsizeMode="tail"

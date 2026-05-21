@@ -16,7 +16,7 @@ const Page = () => {
     <Container pt={48} px={20}>
       <YStack mb={40} gap={12}>
         <Text fontSize={26} lineHeight={28} fontWeight="600" color="$black900">
-          social login
+          로그인
         </Text>
         <Text fontSize={15} lineHeight={17} fontWeight="400" color="$black500">
           소셜로그인으로 Keeper와 함께하세요
@@ -62,7 +62,7 @@ const Page = () => {
         )}
         {__DEV__ && (
           <Pressable
-            onPress={() => devLogin(9)}
+            onPress={() => devLogin(11)}
             testID="dev-login-button"
             style={{
               alignItems: 'center',
@@ -76,7 +76,7 @@ const Page = () => {
             }}
           >
             <Text fontSize={14} color="$black500">
-              [DEV] 개발자 로그인 (user 9)
+              [DEV] 개발자 로그인 (user 11)
             </Text>
           </Pressable>
         )}

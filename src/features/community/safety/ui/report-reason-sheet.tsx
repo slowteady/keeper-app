@@ -1,5 +1,5 @@
-import { BottomSheetScrollView, BottomSheetTextInput } from '@gorhom/bottom-sheet';
-import { Pressable, StyleSheet } from 'react-native';
+import { BottomSheetScrollView, BottomSheetTextInput, TouchableOpacity } from '@gorhom/bottom-sheet';
+import { StyleSheet } from 'react-native';
 import { styled, Text, useTheme, View } from 'tamagui';
 
 import { Button } from '@/shared/ui';
@@ -22,10 +22,10 @@ export const ReportReasonSheetContent = () => {
         {REPORT_REASONS.map((item) => {
           const isActive = item.id === reason;
           return (
-            <Pressable key={item.id} style={styles.row} onPress={() => setReason(item.id)}>
+            <TouchableOpacity key={item.id} style={styles.row} onPress={() => setReason(item.id)} activeOpacity={0.7}>
               <StyledText style={{ color: isActive ? black800.val : black500.val }}>{item.label}</StyledText>
               {isActive && <Check width={17} height={20} color={black800.val} />}
-            </Pressable>
+            </TouchableOpacity>
           );
         })}
       </View>

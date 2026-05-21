@@ -10,15 +10,23 @@ export type CommunityAdoptCardHeaderProps = {
 
 export const CommunityAdoptCardHeader = ({ image, nickname, displayTime }: CommunityAdoptCardHeaderProps) => {
   return (
-    <XStack items="center">
+    <XStack items="center" flex={1} style={{ minWidth: 0 }}>
       <StyledAvatar>
         <Avatar.Image source={{ uri: image }} />
         <Avatar.Fallback backgroundColor="$black400" />
       </StyledAvatar>
-      <Text fontSize={14} fontWeight={600} ml={10} color="$black650">
+      <Text
+        fontSize={14}
+        fontWeight={600}
+        ml={10}
+        color="$black650"
+        numberOfLines={1}
+        ellipsizeMode="tail"
+        style={{ flexShrink: 1 }}
+      >
         {nickname}
       </Text>
-      <Text fontSize={14} fontWeight={500} ml={4} letterSpacing={-0.25} color="$black400">
+      <Text fontSize={14} fontWeight={500} ml={4} letterSpacing={-0.25} color="$black400" style={{ flexShrink: 0 }}>
         {formatTimeAgo(displayTime)}
       </Text>
     </XStack>

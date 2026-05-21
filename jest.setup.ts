@@ -199,3 +199,8 @@ jest.mock('@/shared/ui', () => ({
   useBottomSheet: jest.fn(() => ({ present: jest.fn(), dismiss: jest.fn() })),
   useModal: jest.fn(() => ({ open: jest.fn(), close: jest.fn() }))
 }));
+
+jest.mock('react-native-webview', () => {
+  const { View } = require('react-native');
+  return { WebView: View };
+});

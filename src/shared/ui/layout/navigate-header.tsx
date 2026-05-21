@@ -25,7 +25,7 @@ export const NavigateHeader = ({ text, hideHome = false, showShadow = true }: Na
   }, []);
 
   const goHome = useCallback(() => {
-    router.dismissTo('/(tabs)/home');
+    router.replace('/(tabs)/home');
   }, []);
 
   const left = (

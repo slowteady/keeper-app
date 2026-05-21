@@ -1,9 +1,11 @@
 import {
   BottomSheetBackdrop,
   BottomSheetBackdropProps,
+  BottomSheetFooter,
   BottomSheetFooterProps,
   BottomSheetModal,
-  BottomSheetModalProvider
+  BottomSheetModalProvider,
+  BottomSheetView
 } from '@gorhom/bottom-sheet';
 import { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { useTheme } from 'tamagui';
@@ -23,6 +25,7 @@ export type PresentOptions = {
 export type BottomSheetContextType = {
   present: (node: React.ReactNode, opts?: PresentOptions) => void;
   update: (node: React.ReactNode) => void;
+  setFooter: (render: SheetFooterRender | undefined) => void;
   dismiss: () => void;
   setSnapPoints: (pts: (string | number)[]) => void;
   ref: React.RefObject<BottomSheetModal | null>;
@@ -62,22 +65,24 @@ export const BottomSheetProvider = ({ children }: { children: React.ReactNode })
     requestAnimationFrame(() => sheetRef.current?.present());
   }, []);
   const update = useCallback((node: React.ReactNode) => setContent(node), []);
+  const setFooter = useCallback((render: SheetFooterRender | undefined) => setFooterRender(() => render), []);
   const dismiss = useCallback(() => sheetRef.current?.dismiss(), []);
 
   const value = useMemo<BottomSheetContextType>(
     () => ({
       present,
       update,
+      setFooter,
       dismiss,
       setSnapPoints,
       ref: sheetRef
     }),
-    [present, update, dismiss]
+    [present, update, setFooter, dismiss]
   );
 
   return (
-    <BottomSheetModalProvider>
-      <BottomSheetContext.Provider value={value}>
+    <BottomSheetContext.Provider value={value}>
+      <BottomSheetModalProvider>
         {children}
 
         <BottomSheetModal
@@ -85,7 +90,11 @@ export const BottomSheetProvider = ({ children }: { children: React.ReactNode })
           snapPoints={snapPoints}
           animationConfigs={{ duration: 100 }}
           backdropComponent={renderBackdrop}
-          footerComponent={footerRender}
+          footerComponent={
+            footerRender
+              ? (props) => <BottomSheetFooter {...props}>{footerRender(props)}</BottomSheetFooter>
+              : undefined
+          }
           // 키보드 BP: 시트가 키보드 위로 들리고 (interactive), blur 시 원래 snapPoint 복원
           keyboardBehavior="interactive"
           keyboardBlurBehavior="restore"
@@ -93,12 +102,12 @@ export const BottomSheetProvider = ({ children }: { children: React.ReactNode })
           // mandatory 모드: 스와이프 down / 핸들 드래그로 닫히지 않음. dismiss() 호출만 닫음.
           enablePanDownToClose={!mandatory}
           enableHandlePanningGesture={!mandatory}
+          handleComponent={mandatory ? null : undefined}
           handleIndicatorStyle={{
             width: 48,
             borderRadius: 30,
             backgroundColor: white800.val,
-            marginBottom: 12,
-            opacity: mandatory ? 0 : 1
+            marginBottom: 12
           }}
           backgroundStyle={{ borderTopLeftRadius: 20, borderTopRightRadius: 20 }}
           style={{ paddingHorizontal: 24 }}
@@ -111,10 +120,10 @@ export const BottomSheetProvider = ({ children }: { children: React.ReactNode })
           }}
           enableDynamicSizing={false}
         >
-          {content}
+          <BottomSheetView style={{ flex: 1 }}>{content}</BottomSheetView>
         </BottomSheetModal>
-      </BottomSheetContext.Provider>
-    </BottomSheetModalProvider>
+      </BottomSheetModalProvider>
+    </BottomSheetContext.Provider>
   );
 };
 

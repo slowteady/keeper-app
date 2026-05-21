@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react-native';
 import { router } from 'expo-router';
-import type { ReactNode } from 'react';
+import { type ReactNode, Suspense } from 'react';
 
 import { CommunityAdoptDetailDto, communityQueries } from '@/entities/community';
 
@@ -30,13 +30,11 @@ jest.mock('expo-router', () => ({
   router: { back: jest.fn(), push: jest.fn(), replace: jest.fn() }
 }));
 
-// communityQueries.detail → authApi.get 으로 흐름
 jest.mock('@/shared/api/instance', () => ({
   authApi: { get: (...args: unknown[]) => mockGetDetail(...args), patch: jest.fn(), post: jest.fn() },
   publicApi: { get: jest.fn() }
 }));
 
-// updateAdoptionPersonal 직접 mock — API 경계 검증은 사이클 2 (api.test.ts) 에서 끝남
 jest.mock('@/features/community/create/model/api', () => {
   const actual = jest.requireActual('@/features/community/create/model/api');
   return {
@@ -73,6 +71,8 @@ const detail: CommunityAdoptDetailDto = {
   isLiked: false
 };
 
+// useSuspenseQuery 가 cache hit 즉시 반환되도록 queryClient 에 prefill 한 상태로 hook 을 mount.
+// (cache miss 케이스는 Page 의 Suspense fallback 으로 분리되어 hook 자체는 항상 data 가 있는 상태에서만 실행)
 const setup = () => {
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -80,8 +80,12 @@ const setup = () => {
       mutations: { retry: false }
     }
   });
+  queryClient.setQueryData(communityQueries.detail(42).queryKey, detail);
+
   const wrapper = ({ children }: { children: ReactNode }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <Suspense fallback={null}>{children}</Suspense>
+    </QueryClientProvider>
   );
   return { wrapper, queryClient };
 };
@@ -92,24 +96,21 @@ describe('useEditPost', () => {
     mockGetDetail.mockResolvedValue({ data: { data: detail } });
   });
 
-  it('detail 도착 후 폼이 prefill 된다 — title/animalType/contact 매핑', async () => {
+  it('cache hit 시 마운트 즉시 prefill — default(빈 값) 노출 없이 동기 렌더', () => {
     const { wrapper } = setup();
     const { result } = renderHook(() => useEditPost(42), { wrapper });
 
-    await waitFor(() => expect(result.current.form.getValues('title')).toBe('귀여운 강아지 입양'));
-
-    const values = result.current.form.getValues();
-    expect(values.animalType).toBe('DOG');
-    expect(values.contact).toEqual([{ type: 'PHONE', value: '010-1111-2222' }]);
-    expect(values.images).toEqual(['https://img/1.png']);
+    // waitFor 없이 동기 검증 — useSuspenseQuery 가 cache 즉시 반환 → defaultValues 에 detail 주입
+    expect(result.current.form.getValues('title')).toBe('귀여운 강아지 입양');
+    expect(result.current.form.getValues('animalType')).toBe('DOG');
+    expect(result.current.form.getValues('contact')).toEqual([{ type: 'PHONE', value: '010-1111-2222' }]);
+    expect(result.current.form.getValues('images')).toEqual(['https://img/1.png']);
   });
 
   it('handleSubmit 호출 시 updateAdoptionPersonal(postId, body) — 이미지는 폼 값 그대로 재전송', async () => {
     mockUpdate.mockResolvedValue(detail);
     const { wrapper } = setup();
     const { result } = renderHook(() => useEditPost(42), { wrapper });
-
-    await waitFor(() => expect(result.current.form.getValues('title')).toBe('귀여운 강아지 입양'));
 
     act(() => {
       result.current.actions.handleSubmit(result.current.form.getValues());
@@ -122,22 +123,18 @@ describe('useEditPost', () => {
     expect(body.contacts).toEqual([{ type: 'PHONE', value: '010-1111-2222' }]);
   });
 
-  it('actions.openWeightSelector 호출 시 바텀시트 present 가 호출된다', async () => {
+  it('actions.openWeightSelector 호출 시 바텀시트 present 가 호출된다', () => {
     const { wrapper } = setup();
     const { result } = renderHook(() => useEditPost(42), { wrapper });
-
-    await waitFor(() => expect(result.current.form.getValues('title')).toBe('귀여운 강아지 입양'));
 
     act(() => result.current.actions.openWeightSelector());
 
     expect(mockPresent).toHaveBeenCalled();
   });
 
-  it('actions.openAgeSelector / openKindSelector 도 함수로 노출되고 호출 시 present 호출', async () => {
+  it('actions.openAgeSelector / openKindSelector 도 함수로 노출되고 호출 시 present 호출', () => {
     const { wrapper } = setup();
     const { result } = renderHook(() => useEditPost(42), { wrapper });
-
-    await waitFor(() => expect(result.current.form.getValues('title')).toBe('귀여운 강아지 입양'));
 
     expect(typeof result.current.actions.openAgeSelector).toBe('function');
     expect(typeof result.current.actions.openKindSelector).toBe('function');
@@ -148,24 +145,19 @@ describe('useEditPost', () => {
     expect(mockPresent).toHaveBeenCalledTimes(2);
   });
 
-  it('detail 가 다시 도착해도 사용자가 수정 중인 폼 값은 덮어쓰지 않는다', async () => {
+  it('detail cache invalidate 후에도 사용자가 수정 중인 폼 값은 덮어쓰지 않는다', async () => {
     const { wrapper, queryClient } = setup();
     const { result } = renderHook(() => useEditPost(42), { wrapper });
 
-    // 첫 prefill 완료 대기
-    await waitFor(() => expect(result.current.form.getValues('title')).toBe('귀여운 강아지 입양'));
-
-    // 사용자가 제목을 수정
     act(() => {
       result.current.form.setValue('title', '사용자가 직접 수정한 제목');
     });
 
-    // detail 재조회 (백엔드 응답은 그대로) — refetch
     await act(async () => {
       await queryClient.invalidateQueries({ queryKey: communityQueries.all() });
     });
 
-    // 사용자 입력이 보존되어야 함
+    // form 은 useSuspenseQuery 의 data 와 분리된 state — 재조회되어도 사용자 입력 보존
     expect(result.current.form.getValues('title')).toBe('사용자가 직접 수정한 제목');
   });
 
@@ -173,8 +165,6 @@ describe('useEditPost', () => {
     mockUpdate.mockRejectedValue(new Error('500'));
     const { wrapper } = setup();
     const { result } = renderHook(() => useEditPost(42), { wrapper });
-
-    await waitFor(() => expect(result.current.form.getValues('title')).toBe('귀여운 강아지 입양'));
 
     act(() => {
       result.current.actions.handleSubmit(result.current.form.getValues());
@@ -191,8 +181,6 @@ describe('useEditPost', () => {
     const { wrapper, queryClient } = setup();
     const invalidateSpy = jest.spyOn(queryClient, 'invalidateQueries');
     const { result } = renderHook(() => useEditPost(42), { wrapper });
-
-    await waitFor(() => expect(result.current.form.getValues('title')).toBe('귀여운 강아지 입양'));
 
     act(() => {
       result.current.actions.handleSubmit(result.current.form.getValues());
