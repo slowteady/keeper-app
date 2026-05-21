@@ -75,10 +75,11 @@ describe('signup', () => {
 });
 
 describe('deleteUser', () => {
-  it('authApi 로 DELETE /auth/me', async () => {
-    await deleteUser();
+  it('authApi 로 DELETE /auth/me + body (사유) 전달', async () => {
+    const body = { reason: 'OTHER' as const, reasonDetail: '테스트' };
+    await deleteUser(body);
 
-    expect(mockedAuthDelete).toHaveBeenCalledWith('/auth/me');
+    expect(mockedAuthDelete).toHaveBeenCalledWith('/auth/me', { data: body });
   });
 });
 

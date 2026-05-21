@@ -6,6 +6,7 @@ import { ApiResponse } from '@/shared/model';
 
 import {
   CheckNicknameBodyDto,
+  DeleteMeBodyDto,
   LoginDataDto,
   LoginParamsDto,
   RefreshDataDto,
@@ -54,21 +55,23 @@ export const signup = async (body: SignUpBodyDto): Promise<AxiosResponse<ApiResp
 };
 
 export type AgreeBodyDto = {
+  signupToken: string;
   agreedTermsVersion: string;
   agreedPrivacyVersion: string;
+  agreedCommunityPolicyVersion: string;
   agreedAt: string;
 };
 
 export const agree = async (body: AgreeBodyDto): Promise<AxiosResponse<ApiResponse<LoginDataDto>>> => {
   const endpoint = `${BASE_URL}/agree`;
 
-  return await authApi.post(endpoint, body);
+  return await publicApi.post(endpoint, body);
 };
 
-export const deleteUser = async (): Promise<AxiosResponse<ApiResponse<boolean>>> => {
+export const deleteUser = async (body: DeleteMeBodyDto): Promise<AxiosResponse<ApiResponse<boolean>>> => {
   const endpoint = `${BASE_URL}/me`;
 
-  return await authApi.delete(endpoint);
+  return await authApi.delete(endpoint, { data: body });
 };
 
 export const updateMe = async (body: UpdateMeBodyDto): Promise<AxiosResponse<ApiResponse<UserDto>>> => {
