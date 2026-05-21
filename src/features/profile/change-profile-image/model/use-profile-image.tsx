@@ -1,17 +1,16 @@
+import { BottomSheetFooter } from '@gorhom/bottom-sheet';
 import * as ImagePicker from 'expo-image-picker';
 import { useCallback } from 'react';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { compressImage } from '@/shared/lib';
 import { useBottomSheet } from '@/shared/ui';
 
-import { ProfileImageSheet } from '../ui/profile-image-sheet';
+import { ProfileImageSheet, ProfileImageSheetFooterButton } from '../ui/profile-image-sheet';
 
 const PROFILE_IMAGE_SIZE = 800;
 const PROFILE_IMAGE_QUALITY = 0.75;
 
 export const useProfileImage = () => {
-  const { bottom } = useSafeAreaInsets();
   const { present, dismiss } = useBottomSheet();
 
   const pickImage = useCallback(async () => {
@@ -40,8 +39,15 @@ export const useProfileImage = () => {
   }, [dismiss]);
 
   const changeProfileImage = useCallback(() => {
-    present(<ProfileImageSheet onConfirm={pickImage} bottomInset={bottom} />, { snapPoints: [280] });
-  }, [bottom, pickImage, present]);
+    present(<ProfileImageSheet />, {
+      snapPoints: [240],
+      footerComponent: (footerProps) => (
+        <BottomSheetFooter {...footerProps} bottomInset={0}>
+          <ProfileImageSheetFooterButton onConfirm={pickImage} />
+        </BottomSheetFooter>
+      )
+    });
+  }, [pickImage, present]);
 
   return { changeProfileImage };
 };
