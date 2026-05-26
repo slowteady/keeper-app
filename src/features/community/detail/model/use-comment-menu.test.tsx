@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react-native';
+import { router } from 'expo-router';
 import { isValidElement, type ReactElement, type ReactNode } from 'react';
 
 import { commentApi, commentQueries } from '@/entities/comment';
@@ -10,7 +11,6 @@ const mockPresent = jest.fn();
 const mockDismiss = jest.fn();
 const mockOpenModal = jest.fn();
 const mockCloseModal = jest.fn();
-const mockOpenReportSheet = jest.fn();
 const mockBlock = jest.fn();
 const mockOnEdit = jest.fn();
 
@@ -34,7 +34,6 @@ jest.mock('@/entities/comment', () => {
 });
 
 jest.mock('@/features/community/safety', () => ({
-  useReportSheet: () => ({ openReportSheet: mockOpenReportSheet, isPending: false }),
   useBlock: () => ({ block: mockBlock, unblock: jest.fn(), isPending: false })
 }));
 
@@ -113,13 +112,13 @@ describe('useCommentMenu', () => {
     act(() => result.current.openCommentMenu({ commentId: 7, authorId: 1, content: '원본' }));
     const { onPress } = extractMenu(mockPresent.mock.calls[0]);
 
-    act(() => onPress({ id: 'EDIT', label: '수정' }));
+    act(() => onPress({ id: 'EDIT', label: '수정하기' }));
 
     expect(mockDismiss).toHaveBeenCalled();
     expect(mockOnEdit).toHaveBeenCalledWith({ commentId: 7, content: '원본' });
   });
 
-  it('REPORT 선택 시 openReportSheet 호출 + dismiss 안 함 (같은 시트 교체)', async () => {
+  it('REPORT 선택 시 신고 모달 라우트로 push + dismiss', async () => {
     mockUser = { id: 99 };
     const { wrapper } = setup();
     const { result } = renderHook(() => useCommentMenu({ onEdit: mockOnEdit }), { wrapper });
@@ -128,11 +127,11 @@ describe('useCommentMenu', () => {
     const { onPress } = extractMenu(mockPresent.mock.calls[0]);
 
     await act(async () => {
-      await onPress({ id: 'REPORT', label: '신고' });
+      await onPress({ id: 'REPORT', label: '신고하기' });
     });
 
-    expect(mockDismiss).not.toHaveBeenCalled();
-    expect(mockOpenReportSheet).toHaveBeenCalledWith({ type: 'COMMENT', id: 7 });
+    expect(mockDismiss).toHaveBeenCalled();
+    expect(router.push).toHaveBeenCalledWith({ pathname: '/report', params: { type: 'COMMENT', id: 7 } });
   });
 
   it('BLOCK 선택 시 block(authorId) 호출 + dismiss', async () => {
@@ -144,7 +143,7 @@ describe('useCommentMenu', () => {
     const { onPress } = extractMenu(mockPresent.mock.calls[0]);
 
     await act(async () => {
-      await onPress({ id: 'BLOCK', label: '차단' });
+      await onPress({ id: 'BLOCK', label: '차단하기' });
     });
 
     expect(mockDismiss).toHaveBeenCalled();
@@ -162,7 +161,7 @@ describe('useCommentMenu', () => {
     act(() => result.current.openCommentMenu(baseTarget));
     const { onPress } = extractMenu(mockPresent.mock.calls[0]);
 
-    act(() => onPress({ id: 'DELETE', label: '삭제' }));
+    act(() => onPress({ id: 'DELETE', label: '삭제하기' }));
 
     expect(mockOpenModal).toHaveBeenCalledTimes(1);
     const confirmNode = mockOpenModal.mock.calls[0][0] as ReactElement<{ onConfirm: () => void }>;

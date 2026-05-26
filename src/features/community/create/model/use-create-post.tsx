@@ -15,26 +15,27 @@ export const useCreatePost = () => {
   const form = useForm<CommunityAdoptFormDto>({
     resolver: zodResolver(CommunityAdoptFormSchema),
     defaultValues: {
-      title: '',
+      // 필수
       animalType: CREATE_POST_OPTIONS.animalType[0].value,
-      gender: CREATE_POST_OPTIONS.gender[0].value,
-      neuterYn: CREATE_POST_OPTIONS.neuterYn[0].value,
-      healthCheck: CREATE_POST_OPTIONS.healthCheck[0].value,
       protectionType: CREATE_POST_OPTIONS.protectionType[0].value,
-      vaccinationCheck: CREATE_POST_OPTIONS.vaccinationCheck[0].value,
-      weight: '',
-      location: '',
-      age: '',
-      specificType: '',
-      specialMark: '',
+      title: '',
       content: '',
-      contact: [{ type: CREATE_POST_OPTIONS.contact[0].value, value: '' }],
       images: [],
-      // 선택 입력 필드
-      likes: '',
-      dislikes: '',
-      health: '',
-      relatedLink: ''
+      contact: [{ type: CREATE_POST_OPTIONS.contact[0].value, value: '' }],
+      // 선택 — 미선택은 undefined
+      gender: undefined,
+      neuterYn: undefined,
+      healthCheck: undefined,
+      vaccinationCheck: undefined,
+      weight: undefined,
+      location: undefined,
+      age: undefined,
+      specificType: undefined,
+      specialMark: undefined,
+      likes: undefined,
+      dislikes: undefined,
+      health: undefined,
+      relatedLink: undefined
     }
   });
 
@@ -45,12 +46,12 @@ export const useCreatePost = () => {
   const prevAnimalTypeRef = useRef(animalType);
   useEffect(() => {
     if (prevAnimalTypeRef.current !== animalType) {
-      form.setValue('specificType', '');
+      form.setValue('specificType', '', { shouldDirty: true });
       prevAnimalTypeRef.current = animalType;
     }
   }, [animalType, form]);
 
-  const { openWeightSelector, openAgeSelector, openKindSelector } = useAdoptFormSelectors(form, animalType);
+  const { openAgeSelector, openKindSelector } = useAdoptFormSelectors(form, animalType);
 
   // 게시글 등록 흐름: 이미지 presigned 업로드 → 백엔드 createPost → 상세로 이동
   // 백엔드 presigned 엔드포인트(/uploads/presign) 미구현 시 이미지 업로드 단계에서 실패하므로,
@@ -75,6 +76,6 @@ export const useCreatePost = () => {
   return {
     form,
     isSubmitting: submitMutation.isPending,
-    actions: { handleSubmit, openWeightSelector, openAgeSelector, openKindSelector }
+    actions: { handleSubmit, openAgeSelector, openKindSelector }
   };
 };

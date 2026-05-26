@@ -65,8 +65,8 @@ describe('resolveAdoptShelter', () => {
       name: '창녕 보호소',
       address: '서울 강남',
       tel: '010-5488-5003',
-      time: '정보 없음',
-      person: '정보 없음'
+      time: '운영시간 정보 없음',
+      person: '담당자 정보 없음'
     });
   });
 

@@ -12,8 +12,6 @@ export const useAdopt = ({ id }: UseAdoptProps) => {
 
   const { data: adoptData } = useSuspenseQuery({
     ...adoptQueries.detail(id),
-    // list cache 의 동일 id 항목을 initial 로 — 디테일 진입 즉시 낙관 update 된 isFavorited 노출.
-    // initialDataUpdatedAt=0 으로 즉시 stale → 진입 후 refetch 로 server 권위 재확정.
     initialData: () => findInListCache(queryClient, id),
     initialDataUpdatedAt: 0
   });

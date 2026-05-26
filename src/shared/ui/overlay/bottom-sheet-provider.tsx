@@ -8,7 +8,14 @@ import {
   BottomSheetView
 } from '@gorhom/bottom-sheet';
 import { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
+import { Platform } from 'react-native';
+import { FullWindowOverlay } from 'react-native-screens';
 import { useTheme } from 'tamagui';
+
+// iOS fullScreenModal native vc 위에 BottomSheet portal 표시 — react-native-screens 의 FullWindowOverlay 로 감싸야 함
+// (@gorhom/bottom-sheet types.d.ts 권장 BP, issue #832)
+const SheetContainer =
+  Platform.OS === 'ios' ? (FullWindowOverlay as React.ComponentType<{ children?: React.ReactNode }>) : undefined;
 
 export type SheetFooterRender = (props: BottomSheetFooterProps) => React.ReactNode;
 
@@ -20,6 +27,13 @@ export type PresentOptions = {
   // true 면 백드롭 탭 / 스와이프 down / 핸들 드래그로 닫히지 않음. 명시적 close() 호출만 닫음.
   // 회원가입 약관 동의처럼 반드시 응답 받아야 하는 시트에 사용.
   mandatory?: boolean;
+  // 컨텐츠 height 자동 측정 — 항목 수 가변 list 시트에 사용 (default false)
+  enableDynamicSizing?: boolean;
+  // dynamic sizing 시 max height (default 화면 70%)
+  maxDynamicContentSize?: number;
+  // BottomSheetView wrap 비활성화 — content 가 직접 BottomSheetScrollView 등을 wrap 하는 경우
+  // (dynamic sizing + 내부 스크롤 케이스 — 중첩 시 스크롤 안 됨)
+  disableViewWrap?: boolean;
 };
 
 export type BottomSheetContextType = {
@@ -35,9 +49,12 @@ const BottomSheetContext = createContext<BottomSheetContextType | null>(null);
 
 export const BottomSheetProvider = ({ children }: { children: React.ReactNode }) => {
   const [content, setContent] = useState<React.ReactNode>(null);
-  const [snapPoints, setSnapPoints] = useState<(string | number)[]>([200]);
+  const [snapPoints, setSnapPoints] = useState<(string | number)[] | undefined>([200]);
   const [footerRender, setFooterRender] = useState<SheetFooterRender | undefined>(undefined);
   const [mandatory, setMandatory] = useState(false);
+  const [dynamicSizing, setDynamicSizing] = useState(false);
+  const [maxDynamic, setMaxDynamic] = useState<number | undefined>(undefined);
+  const [disableViewWrap, setDisableViewWrap] = useState(false);
 
   const onDismissRef = useRef<(() => void) | undefined>(undefined);
   const sheetRef = useRef<BottomSheetModal>(null);
@@ -56,7 +73,10 @@ export const BottomSheetProvider = ({ children }: { children: React.ReactNode })
   );
 
   const present = useCallback((node: React.ReactNode, opts?: PresentOptions) => {
-    if (opts?.snapPoints) setSnapPoints(opts.snapPoints);
+    setSnapPoints(opts?.snapPoints);
+    setDynamicSizing(!!opts?.enableDynamicSizing);
+    setMaxDynamic(opts?.maxDynamicContentSize);
+    setDisableViewWrap(!!opts?.disableViewWrap);
     onDismissRef.current = opts?.onDismiss;
     setMandatory(!!opts?.mandatory);
     // setState 가 함수를 받으면 updater 로 해석하므로 래핑
@@ -90,6 +110,7 @@ export const BottomSheetProvider = ({ children }: { children: React.ReactNode })
           snapPoints={snapPoints}
           animationConfigs={{ duration: 100 }}
           backdropComponent={renderBackdrop}
+          containerComponent={SheetContainer}
           footerComponent={
             footerRender
               ? (props) => <BottomSheetFooter {...props}>{footerRender(props)}</BottomSheetFooter>
@@ -117,10 +138,16 @@ export const BottomSheetProvider = ({ children }: { children: React.ReactNode })
             setContent(null);
             setFooterRender(undefined);
             setMandatory(false);
+            setDisableViewWrap(false);
           }}
-          enableDynamicSizing={false}
+          enableDynamicSizing={dynamicSizing}
+          maxDynamicContentSize={maxDynamic}
         >
-          <BottomSheetView style={{ flex: 1 }}>{content}</BottomSheetView>
+          {disableViewWrap ? (
+            content
+          ) : (
+            <BottomSheetView style={dynamicSizing ? undefined : { flex: 1 }}>{content}</BottomSheetView>
+          )}
         </BottomSheetModal>
       </BottomSheetModalProvider>
     </BottomSheetContext.Provider>

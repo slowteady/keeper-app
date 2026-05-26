@@ -28,7 +28,7 @@ const formatOperatingTime = ({
   if (weekday) return weekday;
   if (weekend) return weekend;
 
-  return '정보 없음';
+  return '운영시간 정보 없음';
 };
 
 const buildTimeRange = (label: string, open?: string | null, close?: string | null) => {
@@ -50,5 +50,5 @@ const formatPerson = ({
   if (veterinarianCount > 0) return `수의사 ${veterinarianCount}명 외`;
   if (caretakerCount > 0) return `보조사 ${caretakerCount}명 외`;
 
-  return '정보 없음';
+  return '담당자 정보 없음';
 };

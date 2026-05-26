@@ -1,8 +1,8 @@
 import { useScrollToTop } from '@react-navigation/native';
-import { FlashList } from '@shopify/flash-list';
+import { FlashList, FlashListRef } from '@shopify/flash-list';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { RefreshControl } from 'react-native';
 import { styled, View } from 'tamagui';
 
@@ -10,8 +10,8 @@ import { ADOPT_OPTIONS, AdoptFilterDto, adoptQueries } from '@/entities/adopt';
 import { shelterQueries } from '@/entities/shelter';
 import { useAdoptList } from '@/features/adopt';
 import { useHomeShelter } from '@/features/shelter';
-import { useListRefreshing, useScrollUpButton } from '@/shared/model';
-import { RouteErrorBoundary, ScrollUpButton } from '@/shared/ui';
+import { useListRefreshing } from '@/shared/model';
+import { RouteErrorBoundary } from '@/shared/ui';
 import { HomeAdoptSection, HomeBannerSection, HomeFooterSection, HomeShelterSection } from '@/widgets/home-section';
 
 export const ErrorBoundary = RouteErrorBoundary;
@@ -22,7 +22,7 @@ const SECTIONS = [{ id: 'banner' }, { id: 'adopt' }, { id: 'shelter' }] as const
 
 const Page = () => {
   const router = useRouter();
-  const { isButtonVisible, handlePressButton, handleScroll, scrollRef } = useScrollUpButton();
+  const scrollRef = useRef<FlashListRef<(typeof SECTIONS)[number]>>(null);
   useScrollToTop(scrollRef);
 
   const [selectedFilter, setSelectedFilter] = useState<AdoptFilterDto>(ADOPT_OPTIONS.FILTER[0].id);
@@ -100,15 +100,12 @@ const Page = () => {
       <FlashList
         ref={scrollRef}
         data={SECTIONS}
-        onScroll={handleScroll}
         renderItem={renderItem}
         keyExtractor={({ id }) => id}
         getItemType={(item) => item.id}
         ListFooterComponent={<HomeFooterSection />}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
       />
-
-      <ScrollUpButton visible={isButtonVisible} onPress={handlePressButton} />
     </Container>
   );
 };

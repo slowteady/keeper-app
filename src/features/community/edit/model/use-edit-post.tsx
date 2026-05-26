@@ -22,7 +22,7 @@ export const useEditPost = (postId: number) => {
   });
 
   const animalType = useWatch({ control: form.control, name: 'animalType' });
-  const { openWeightSelector, openAgeSelector, openKindSelector } = useAdoptFormSelectors(form, animalType);
+  const { openAgeSelector, openKindSelector } = useAdoptFormSelectors(form, animalType);
 
   const submitMutation = useMutation({
     mutationFn: (data: CommunityAdoptFormDto) => {
@@ -46,6 +46,6 @@ export const useEditPost = (postId: number) => {
   return {
     form,
     isSubmitting: submitMutation.isPending,
-    actions: { handleSubmit, openWeightSelector, openAgeSelector, openKindSelector }
+    actions: { handleSubmit, openAgeSelector, openKindSelector }
   };
 };

@@ -40,8 +40,8 @@ export const useShelterAdoptList = ({ id, adoptsParams }: UseShelterAdoptListPro
     const hasValue = data && data?.value && data?.value.length > 0;
     if (!hasValue) return [];
 
-    return mapToAdoptList(data.value, selectedFilter);
-  }, [data, selectedFilter]);
+    return mapToAdoptList(data.value);
+  }, [data]);
 
   const changeFilter = useCallback((id: string) => router.setParams({ filter: id }), [router]);
 

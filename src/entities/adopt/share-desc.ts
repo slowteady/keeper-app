@@ -1,12 +1,19 @@
 import dayjs from 'dayjs';
 
+import { ADOPT_STATUS_INFO, isAdoptEnded } from './constant';
 import { convertGenderLabel, formatAge } from './mapper';
 import { AdoptDataDto } from './schema';
 
 const ADOPT_FALLBACK_DESC = '새 가족을 기다리는 아이예요';
 
 // 공유 시 desc 조립 — 각 segment 가 비어있으면 제외, 모두 비면 fallback.
+// 종료된 공고는 상태 라벨을 prefix 로 노출 (수신자가 헛걸음하지 않도록).
 export const buildAdoptShareDesc = (adopt: AdoptDataDto): string => {
+  if (isAdoptEnded(adopt.status)) {
+    const info = ADOPT_STATUS_INFO[adopt.status];
+    return `[${info.label}] ${adopt.orgName ?? ''}`.trim();
+  }
+
   const segments = [
     formatDDay(adopt.noticeEndDt),
     adopt.orgName,

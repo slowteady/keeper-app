@@ -1,20 +1,9 @@
-import { Stack, useRouter } from 'expo-router';
-import { useCallback } from 'react';
+import { Stack } from 'expo-router';
 
-import { CommunityWriteHeader } from '@/entities/community';
-import { useLoginRequired } from '@/features/auth';
+import { LogoHeader } from '@/shared/ui';
 
 const CommunityLayout = () => {
-  const router = useRouter();
-  const { requireLogin } = useLoginRequired();
-
-  const handlePressWrite = useCallback(async () => {
-    await requireLogin(() => {
-      router.push('/community/write');
-    });
-  }, [requireLogin, router]);
-
-  return <Stack screenOptions={{ header: () => <CommunityWriteHeader onPressWrite={handlePressWrite} /> }} />;
+  return <Stack screenOptions={{ header: () => <LogoHeader /> }} />;
 };
 
 export default CommunityLayout;

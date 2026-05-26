@@ -27,6 +27,7 @@ const Page = () => {
         <YStack px={20} mb={24}>
           <NavText mb={4}>계정설정</NavText>
           <Menu label="닉네임 설정" style={{ paddingVertical: 16 }} onPress={() => router.push('/nickname')} />
+          <Menu label="차단 관리" style={{ paddingVertical: 16 }} onPress={() => router.push('/profile/blocks')} />
         </YStack>
 
         <YStack px={20} mb={24}>

@@ -1,4 +1,3 @@
-import { BottomSheetView } from '@gorhom/bottom-sheet';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useMemo } from 'react';
 import { GestureResponderEvent } from 'react-native';
@@ -7,7 +6,7 @@ import { ADOPT_OPTIONS } from '@/entities/adopt';
 import { COMMUNITY_LIST_FILTER } from '@/entities/community';
 import { parseQueryParam } from '@/shared/lib';
 import { AnimalTypeDto } from '@/shared/model';
-import { BottomSheetMenu, useBottomSheet } from '@/shared/ui';
+import { useBottomSheetMenu } from '@/shared/ui';
 
 export type CommunityListFilterSchema = {
   animalType: AnimalTypeDto;
@@ -27,30 +26,17 @@ export const useCommunityListFilter = () => {
     [params.filter]
   );
 
-  const { present, dismiss } = useBottomSheet();
+  const { open: openFilterMenu } = useBottomSheetMenu({
+    data: COMMUNITY_LIST_FILTER,
+    value: selectedFilter,
+    onPress: (data) => router.setParams({ filter: data.id })
+  });
 
   const changeAnimalType = useCallback((id: AnimalTypeDto) => {
     router.setParams({ animalType: id });
   }, []);
 
-  const changeFilter = useCallback(
-    (_event: GestureResponderEvent) => {
-      present(
-        <BottomSheetView>
-          <BottomSheetMenu
-            data={COMMUNITY_LIST_FILTER}
-            value={selectedFilter}
-            onPress={(data) => {
-              router.setParams({ filter: data.id });
-              dismiss();
-            }}
-          />
-        </BottomSheetView>,
-        { snapPoints: [280] }
-      );
-    },
-    [present, selectedFilter, dismiss]
-  );
+  const changeFilter = useCallback((_event: GestureResponderEvent) => openFilterMenu(), [openFilterMenu]);
 
   return { selectedAnimalType, selectedFilter, changeAnimalType, changeFilter };
 };

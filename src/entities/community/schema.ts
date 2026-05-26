@@ -15,18 +15,12 @@ export const ProtectionTypeSchema = z.enum(['TEMPORARY', 'ADOPTION', 'BOTH']);
 export type ProtectionTypeDto = z.infer<typeof ProtectionTypeSchema>;
 
 export const CommunityAdoptFormSchema = z.object({
-  title: z.string().min(1, '제목을 입력해주세요'),
+  // 필수 6: 분류 / 보호유형 / 제목 / 소개글 / 이미지 / 연락처
   animalType: AnimalTypeSchema,
-  specificType: z.string().min(1, '품종을 입력해주세요'),
-  images: z.array(z.string()).min(1, '최소 1장의 이미지를 업로드해주세요'),
-  gender: GenderSchema,
-  neuterYn: NeuterYnSchema,
-  healthCheck: HealthCheckSchema,
-  age: z.string().min(1, '나이를 입력해주세요'),
-  weight: z.string().min(1, '몸무게를 입력해주세요'),
-  location: z.string().min(1, '지역을 입력해주세요'),
-  specialMark: z.string().min(1, '특징을 입력해주세요'),
+  protectionType: ProtectionTypeSchema,
+  title: z.string().min(1, '제목을 입력해주세요').max(50, '제목은 50자 이내로 입력해주세요'),
   content: z.string().min(1, '소개글을 입력해주세요'),
+  images: z.array(z.string()).min(1, '최소 1장의 이미지를 업로드해주세요'),
   // 선택한 chip 의 value 는 모두 필수 — chip 만 누르고 빈 값으로 제출 방지
   contact: z
     .array(
@@ -36,13 +30,24 @@ export const CommunityAdoptFormSchema = z.object({
       })
     )
     .min(1, '최소 1개의 연락 정보를 입력해주세요'),
-  // 선택 입력 필드
+  // 선택 9: 나머지
+  specificType: z.string().optional(),
+  gender: GenderSchema.optional(),
+  neuterYn: NeuterYnSchema.optional(),
+  healthCheck: HealthCheckSchema.optional(),
+  vaccinationCheck: VaccinationCheckSchema.optional(),
+  age: z.string().optional(),
+  // 정수 1~3자리 + 선택적 소수 1~2자리 (빈 문자열 허용)
+  weight: z
+    .string()
+    .regex(/^(\d{1,3}(\.\d{1,2})?)?$/, '몸무게는 99.99kg 까지 숫자로 입력해주세요')
+    .optional(),
+  location: z.string().optional(),
+  specialMark: z.string().optional(),
   likes: z.string().optional(),
   dislikes: z.string().optional(),
   health: z.string().optional(),
-  relatedLink: z.string().optional(),
-  protectionType: ProtectionTypeSchema,
-  vaccinationCheck: VaccinationCheckSchema
+  relatedLink: z.string().optional()
 });
 export type CommunityAdoptFormDto = z.infer<typeof CommunityAdoptFormSchema>;
 
@@ -68,14 +73,14 @@ export const CommunityAdoptDetailSchema = z.object({
   images: z.array(z.string()),
   // null + undefined 둘 다 허용 (nullish) — DB nullable 컬럼이 null 로 응답됨
   content: z.string().nullish(),
-  age: z.string(),
-  gender: z.string(),
-  weight: z.string(),
+  age: z.string().nullish(),
+  gender: z.string().nullish(),
+  weight: z.string().nullish(),
   animalType: AnimalTypeSchema,
-  specificType: z.string(),
-  location: z.string(),
+  specificType: z.string().nullish(),
+  location: z.string().nullish(),
   healthCheck: HealthCheckSchema.nullish(),
-  neuterYn: NeuterYnSchema,
+  neuterYn: NeuterYnSchema.nullish(),
   vaccinationCheck: VaccinationCheckSchema.nullish(),
   protectionType: ProtectionTypeSchema,
   specialMark: z.string().nullish(),
@@ -100,15 +105,16 @@ export const CommunityAdoptListSchema = z.object({
   displayTime: z.string(),
   title: z.string(),
   images: z.array(z.string()),
-  content: z.string().optional(),
+  content: z.string().nullish(),
   // 카테고리별 raw enum/원본 — 프론트 mapper 가 라벨로 변환
-  animalType: AnimalTypeSchema.optional(),
-  gender: z.string().optional(),
-  neuterYn: NeuterYnSchema.optional(),
-  protectionType: ProtectionTypeSchema.optional(),
-  vaccinationCheck: VaccinationCheckSchema.optional(),
+  // 선택 입력 필드는 백엔드가 null 반환 가능 (nullish = null + undefined 모두 허용)
+  animalType: AnimalTypeSchema.nullish(),
+  gender: z.string().nullish(),
+  neuterYn: NeuterYnSchema.nullish(),
+  protectionType: ProtectionTypeSchema.nullish(),
+  vaccinationCheck: VaccinationCheckSchema.nullish(),
   // 입양생활 자유 입력 키워드
-  keywords: z.array(z.string()).optional(),
+  keywords: z.array(z.string()).nullish(),
   counts: z.object({
     like: z.number(),
     view: z.number(),

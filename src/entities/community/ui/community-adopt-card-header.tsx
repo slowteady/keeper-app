@@ -1,5 +1,6 @@
-import { Avatar, styled, Text, XStack } from 'tamagui';
+import { Text, XStack } from 'tamagui';
 
+import { ProfileAvatar } from '@/entities/profile';
 import { formatTimeAgo } from '@/shared/lib';
 
 export type CommunityAdoptCardHeaderProps = {
@@ -11,10 +12,7 @@ export type CommunityAdoptCardHeaderProps = {
 export const CommunityAdoptCardHeader = ({ image, nickname, displayTime }: CommunityAdoptCardHeaderProps) => {
   return (
     <XStack items="center" flex={1} style={{ minWidth: 0 }}>
-      <StyledAvatar>
-        <Avatar.Image source={{ uri: image }} />
-        <Avatar.Fallback backgroundColor="$black400" />
-      </StyledAvatar>
+      <ProfileAvatar image={image} size={32} shape="rounded" />
       <Text
         fontSize={14}
         fontWeight={600}
@@ -32,8 +30,3 @@ export const CommunityAdoptCardHeader = ({ image, nickname, displayTime }: Commu
     </XStack>
   );
 };
-
-const StyledAvatar = styled(Avatar, {
-  size: 32,
-  rounded: 4
-});

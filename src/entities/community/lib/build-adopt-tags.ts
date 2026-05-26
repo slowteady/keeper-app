@@ -6,10 +6,10 @@ import type { ProtectionTypeDto } from '../schema';
 // 백엔드는 raw enum 만 응답하고, 카드/상세 표시용 라벨은 프론트가 생성한다 (관심사 분리).
 // NONE / 미상 / undefined 인 항목은 의미가 없으므로 생략한다.
 export type AdoptTagInput = {
-  animalType?: AnimalTypeDto;
-  gender?: string;
-  neuterYn?: NeuterYnDto;
-  protectionType?: ProtectionTypeDto;
+  animalType?: AnimalTypeDto | null;
+  gender?: string | null;
+  neuterYn?: NeuterYnDto | null;
+  protectionType?: ProtectionTypeDto | null;
   vaccinationCheck?: VaccinationCheckDto | null;
 };
 

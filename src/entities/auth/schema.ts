@@ -9,7 +9,8 @@ export const UserSchema = z.object({
   nickname: z.string(),
   email: z.string(),
   image: z.string(),
-  socialType: SocialLoginTypeSchema
+  socialType: SocialLoginTypeSchema,
+  createdAt: z.string().optional()
 });
 export type UserDto = z.infer<typeof UserSchema>;
 

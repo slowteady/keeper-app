@@ -1,10 +1,12 @@
+import { useRouter } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import { SceneRendererProps } from 'react-native-tab-view';
 import { styled, View } from 'tamagui';
 
 import { COMMUNITY_TAB_ROUTES } from '@/entities/community';
+import { useLoginRequired } from '@/features/auth';
 import { RouteErrorBoundary, Tab } from '@/shared/ui';
-import { CommunityAdoptFeed } from '@/widgets/community-adopt-feed-section';
+import { CommunityAdoptFeed, CommunityWriteFab } from '@/widgets/community-adopt-feed-section';
 import { CommunityLifeFeed } from '@/widgets/community-life-feed-section';
 import { CommunityQnAFeed } from '@/widgets/community-qna-feed-section';
 
@@ -25,6 +27,8 @@ const renderScene = ({ route }: SceneRendererProps & { route: { key: string } })
 
 const Page = () => {
   const [index, setIndex] = useState(0);
+  const router = useRouter();
+  const { requireLogin } = useLoginRequired();
 
   const navigationState = useMemo(() => ({ index, routes: COMMUNITY_TAB_ROUTES }), [index]);
 
@@ -32,9 +36,16 @@ const Page = () => {
     setIndex(nextIndex);
   }, []);
 
+  const handlePressWrite = useCallback(async () => {
+    await requireLogin(() => {
+      router.push('/community-write');
+    });
+  }, [requireLogin, router]);
+
   return (
     <Container>
       <Tab onIndexChange={handleIndexChange} navigationState={navigationState} renderScene={renderScene} />
+      <CommunityWriteFab onPress={handlePressWrite} />
     </Container>
   );
 };

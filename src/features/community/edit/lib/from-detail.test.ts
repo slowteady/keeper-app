@@ -46,21 +46,20 @@ describe('fromAdoptionPersonalDetail', () => {
     ]);
   });
 
-  it('healthCheck/vaccinationCheck 가 null 이면 폼에서는 "NONE" 으로 매핑한다', () => {
+  it('선택 enum(healthCheck/vaccinationCheck) 이 null 이면 undefined 로 매핑한다 (미선택 상태)', () => {
     const form = fromAdoptionPersonalDetail({
       ...base,
       healthCheck: null,
       vaccinationCheck: null
     });
 
-    expect(form.healthCheck).toBe('NONE');
-    expect(form.vaccinationCheck).toBe('NONE');
+    expect(form.healthCheck).toBeUndefined();
+    expect(form.vaccinationCheck).toBeUndefined();
   });
 
-  it('특징/소개글/likes/dislikes/health/relatedLink 가 null 이면 빈 문자열로 매핑한다', () => {
+  it('선택 텍스트(특징/likes/dislikes/health/relatedLink) 가 null 이면 undefined 로 매핑한다', () => {
     const form = fromAdoptionPersonalDetail({
       ...base,
-      content: null,
       specialMark: null,
       likes: null,
       dislikes: null,
@@ -68,12 +67,29 @@ describe('fromAdoptionPersonalDetail', () => {
       relatedLink: null
     });
 
+    expect(form.specialMark).toBeUndefined();
+    expect(form.likes).toBeUndefined();
+    expect(form.dislikes).toBeUndefined();
+    expect(form.health).toBeUndefined();
+    expect(form.relatedLink).toBeUndefined();
+  });
+
+  it('필수 텍스트(content) 가 null 이면 빈 문자열로 fallback', () => {
+    const form = fromAdoptionPersonalDetail({ ...base, content: null });
     expect(form.content).toBe('');
-    expect(form.specialMark).toBe('');
-    expect(form.likes).toBe('');
-    expect(form.dislikes).toBe('');
-    expect(form.health).toBe('');
-    expect(form.relatedLink).toBe('');
+  });
+
+  it('구버전 데이터 — 선택 enum 의 "NONE" 값을 undefined 로 정규화한다', () => {
+    const form = fromAdoptionPersonalDetail({
+      ...base,
+      neuterYn: 'NONE',
+      healthCheck: 'NONE',
+      vaccinationCheck: 'NONE'
+    });
+
+    expect(form.neuterYn).toBeUndefined();
+    expect(form.healthCheck).toBeUndefined();
+    expect(form.vaccinationCheck).toBeUndefined();
   });
 
   it('images URL 배열을 그대로 보존한다 (수정 시 read-only — 재전송 용도)', () => {
@@ -85,7 +101,7 @@ describe('fromAdoptionPersonalDetail', () => {
     expect(form.images).toEqual(['https://img/1.png', 'https://img/2.png']);
   });
 
-  it('필수 enum/값 필드(animalType, gender, weight, age, location, specificType, neuterYn, protectionType, title) 를 그대로 전달한다', () => {
+  it('전 필드(animalType, gender, weight, age, location, specificType, neuterYn, protectionType, title) 를 그대로 전달한다', () => {
     const form = fromAdoptionPersonalDetail({
       ...base,
       animalType: 'CAT',

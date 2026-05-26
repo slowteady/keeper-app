@@ -1,12 +1,21 @@
-import { FlashList, ListRenderItemInfo } from '@shopify/flash-list';
+import { useScrollToTop } from '@react-navigation/native';
+import { FlashList, FlashListRef, ListRenderItemInfo } from '@shopify/flash-list';
+import { useQueryClient } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
-import { Suspense, useCallback, useMemo, useState } from 'react';
-import { ActivityIndicator } from 'react-native';
+import { Suspense, useCallback, useMemo, useRef, useState } from 'react';
+import { ActivityIndicator, RefreshControl } from 'react-native';
 import { KeyboardStickyView } from 'react-native-keyboard-controller';
 import { styled, Text, View, YStack } from 'tamagui';
 
-import { CommentCard, CommentCardSkeleton, CommentDto, CommentFormInput, CommentListHeader } from '@/entities/comment';
-import { CommunityAdoptCardStats } from '@/entities/community';
+import {
+  CommentCard,
+  CommentCardSkeleton,
+  CommentDto,
+  CommentFormInput,
+  CommentListHeader,
+  commentQueries
+} from '@/entities/comment';
+import { CommunityAdoptCardStats, communityQueries } from '@/entities/community';
 import { useLoginRequired } from '@/features/auth';
 import {
   RepliesSection,
@@ -18,9 +27,10 @@ import {
   usePostMenu,
   useUpdateComment
 } from '@/features/community';
+import { ContactSheet } from '@/features/community/detail/ui/contact-sheet';
 import { useLikePost } from '@/features/like-post';
-import { useLayout, useScrollUpButton } from '@/shared/model';
-import { Button, CallModal, DetailErrorBoundary, ScrollUpButton } from '@/shared/ui';
+import { useLayout, useListRefreshing } from '@/shared/model';
+import { Button, DetailErrorBoundary, useBottomSheet } from '@/shared/ui';
 import { AdoptDetailInfoSection } from '@/widgets/adopt-section';
 import {
   CommunityDetailDescriptionSection,
@@ -36,21 +46,24 @@ const Page = () => {
 
   // Suspense — useSuspenseQuery 로 본문 도착 전 스켈레톤 fallback. 댓글창이 먼저 보이는 mount 깜빡임 제거.
   return (
-    <Suspense fallback={<PostDetailSkeleton />}>
-      <CommunityDetailContent id={id} />
-    </Suspense>
+    <Container>
+      <Suspense fallback={<PostDetailSkeleton />}>
+        <CommunityDetailContent id={id} />
+      </Suspense>
+    </Container>
   );
 };
 
 const CommunityDetailContent = ({ id }: { id: string }) => {
   const [inputHeight, setInputHeight] = useState(0);
-  const [callModalOpen, setCallModalOpen] = useState(false);
 
   const { bottom } = useLayout();
+  const { present, dismiss } = useBottomSheet();
 
   const numId = Number(id);
   const { data } = useCommunityAdoptDetailFeed(id);
-  const { handleScroll, handlePressButton, isButtonVisible, scrollRef } = useScrollUpButton();
+  const scrollRef = useRef<FlashListRef<CommentDto>>(null);
+  useScrollToTop(scrollRef);
   const {
     sortOrder,
     commentList,
@@ -61,14 +74,28 @@ const CommunityDetailContent = ({ id }: { id: string }) => {
   } = useCommunityCommentList(numId);
   const { toggleLikePost } = useLikePost();
 
+  // pull-to-refresh: 본문 + 카운트/좋아요 + 댓글 list 첫 페이지부터 fresh fetch (Twitter/Instagram BP)
+  const queryClient = useQueryClient();
+  const refresh = useCallback(async () => {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: [...communityQueries.all(), 'detail', numId] }),
+      queryClient.invalidateQueries({ queryKey: [...commentQueries.all(), 'list', numId] })
+    ]);
+  }, [queryClient, numId]);
+  const { refreshing, handleRefresh } = useListRefreshing(refresh);
+
   const detailPost = data.detailPost;
   const isLiked = detailPost?.isLiked ?? false;
   const authorId = detailPost?.user?.id ?? null;
-  const phoneContact = useMemo(
-    () => detailPost?.contacts.find((c) => c.type === 'PHONE')?.value ?? '',
+  const contacts = useMemo(
+    () => detailPost?.contacts?.filter((c) => c.value && c.value.length > 0) ?? [],
     [detailPost?.contacts]
   );
-  const hasPhone = phoneContact.length > 0;
+  const hasContact = contacts.length > 0;
+
+  const openContactSheet = useCallback(() => {
+    present(<ContactSheet contacts={contacts} />, { enableDynamicSizing: true, onDismiss: dismiss });
+  }, [present, dismiss, contacts]);
 
   const { openPostMenu, sharePost } = usePostMenu({
     postId: numId,
@@ -218,15 +245,14 @@ const CommunityDetailContent = ({ id }: { id: string }) => {
   );
 
   return (
-    <Container>
+    <ContentWrap>
       <FlashList
         data={commentList}
         keyExtractor={(item, i) => `${item.id}-${i}`}
         renderItem={renderItem}
-        onScroll={handleScroll}
         ref={scrollRef}
         showsVerticalScrollIndicator={false}
-        decelerationRate="fast"
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
         onEndReached={fetchNextPage}
         onEndReachedThreshold={0.5}
         ListFooterComponent={
@@ -262,9 +288,9 @@ const CommunityDetailContent = ({ id }: { id: string }) => {
                     {...(data.descriptions as Parameters<typeof CommunityDetailDescriptionSection>[0])}
                   />
                 </View>
-                {hasPhone && (
+                {hasContact && (
                   <View px={20} mb={20}>
-                    <Button onPress={() => setCallModalOpen((prev) => !prev)}>문의하기</Button>
+                    <Button onPress={openContactSheet}>문의하기</Button>
                   </View>
                 )}
                 <View px={20} mb={16}>
@@ -280,7 +306,11 @@ const CommunityDetailContent = ({ id }: { id: string }) => {
             />
           </>
         )}
-        contentContainerStyle={{ paddingBottom: inputHeight, paddingTop: 32, flexGrow: 1 }}
+        // 댓글 있을 때만 입력영역만큼 paddingBottom — nodata 시 빈 공백 방지
+        contentContainerStyle={{
+          paddingBottom: commentList.length > 0 ? inputHeight : 0,
+          paddingTop: 32
+        }}
         ListEmptyComponent={() =>
           isCommentLoading ? (
             <YStack>
@@ -292,7 +322,7 @@ const CommunityDetailContent = ({ id }: { id: string }) => {
               ))}
             </YStack>
           ) : (
-            <View items="center" justify="center" height={200}>
+            <View items="center" justify="center" py={64}>
               <EmptyText>{'아직 댓글이 없습니다\n여러분의 의견을 적어주세요:)'}</EmptyText>
             </View>
           )
@@ -314,18 +344,9 @@ const CommunityDetailContent = ({ id }: { id: string }) => {
             disabled={!isLoggedIn}
             onTapWhenDisabled={handleTapWhenLoggedOut}
           />
-          <ScrollUpButton visible={isButtonVisible} onPress={handlePressButton} bottom={inputHeight + 20} />
         </StickyInner>
       </KeyboardStickyView>
-
-      <CallModal
-        open={callModalOpen}
-        onClose={() => setCallModalOpen(false)}
-        tel={phoneContact}
-        title={`${detailPost?.user?.nickname ?? '탈퇴한 사용자'}님에게 문의하기`}
-        description={`*보호자에게 직접 문의해 정보를 확인할 수 있어요`}
-      />
-    </Container>
+    </ContentWrap>
   );
 };
 
@@ -333,6 +354,10 @@ export default Page;
 
 const Container = styled(View, {
   bg: '$pageBackground',
+  flex: 1
+});
+
+const ContentWrap = styled(View, {
   flex: 1
 });
 

@@ -1,7 +1,8 @@
 import { Heart, MoreVertical } from '@tamagui/lucide-icons';
 import { Pressable } from 'react-native';
-import { Avatar, styled, Text, XStack } from 'tamagui';
+import { styled, Text, XStack } from 'tamagui';
 
+import { ProfileAvatar } from '@/entities/profile';
 import { formatTimeAgo } from '@/shared/lib';
 
 import { CommentDto } from '../model';
@@ -74,10 +75,7 @@ type CommentCardHeaderProps = {
 const CommentCardHeader = ({ image, nickname, displayTime, isEdited }: CommentCardHeaderProps) => {
   return (
     <XStack items="center">
-      <StyledAvatar>
-        <Avatar.Image source={{ uri: image }} />
-        <Avatar.Fallback backgroundColor="$black400" />
-      </StyledAvatar>
+      <ProfileAvatar image={image} size={24} shape="rounded" />
       <Text fontSize={14} lineHeight={16} fontWeight={600} ml={8} color="$black700">
         {nickname}
       </Text>
@@ -88,11 +86,6 @@ const CommentCardHeader = ({ image, nickname, displayTime, isEdited }: CommentCa
     </XStack>
   );
 };
-
-const StyledAvatar = styled(Avatar, {
-  size: 24,
-  rounded: 4
-});
 
 const ActionButtonText = styled(Text, {
   fontSize: 13,

@@ -197,6 +197,7 @@ jest.mock('@/shared/api/instance', () => ({
 jest.mock('@/shared/ui', () => ({
   ...jest.requireActual('@/shared/ui'),
   useBottomSheet: jest.fn(() => ({ present: jest.fn(), dismiss: jest.fn() })),
+  useBottomSheetMenu: jest.fn(() => ({ open: jest.fn() })),
   useModal: jest.fn(() => ({ open: jest.fn(), close: jest.fn() }))
 }));
 

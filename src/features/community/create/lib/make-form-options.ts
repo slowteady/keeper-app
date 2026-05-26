@@ -15,12 +15,6 @@ const KIND_BY_ANIMAL_TYPE = {
 } as const satisfies Record<AnimalTypeDto, readonly { name: string }[]>;
 
 export const makeFormOptions = (animalType: AnimalTypeDto = 'DOG') => {
-  const makeWeightOption = () =>
-    Array.from({ length: 50 }, (_, index) => ({
-      id: index + 1,
-      label: `${index + 1}kg`
-    }));
-
   const makeAgeOption = () =>
     Array.from({ length: 25 }, (_, index) => {
       const year = dayjs().year() - index;
@@ -37,7 +31,6 @@ export const makeFormOptions = (animalType: AnimalTypeDto = 'DOG') => {
     }));
 
   return {
-    weightOption: makeWeightOption(),
     ageOption: makeAgeOption(),
     kindOption: makeKindOption()
   };

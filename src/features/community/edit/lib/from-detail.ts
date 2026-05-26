@@ -1,24 +1,29 @@
 import { CommunityAdoptDetailDto, CommunityAdoptFormDto } from '@/entities/community';
-import { GenderDto } from '@/shared/model';
+
+// 구버전 데이터(NONE chip default 시절) 호환 — 'NONE' / null / undefined 모두 미선택으로 정규화
+const orUndefined = <T>(value: T | 'NONE' | null | undefined): T | undefined =>
+  value === 'NONE' || value === null || value === undefined ? undefined : (value as T);
 
 export const fromAdoptionPersonalDetail = (detail: CommunityAdoptDetailDto): CommunityAdoptFormDto => ({
-  title: detail.title,
+  // 필수
   animalType: detail.animalType,
-  specificType: detail.specificType,
-  images: detail.images,
-  gender: detail.gender as GenderDto,
-  neuterYn: detail.neuterYn,
-  healthCheck: detail.healthCheck ?? 'NONE',
-  age: detail.age,
-  weight: detail.weight,
-  location: detail.location,
-  specialMark: detail.specialMark ?? '',
-  content: detail.content ?? '',
-  contact: detail.contacts.map((c) => ({ type: c.type, value: c.value })),
-  likes: detail.likes ?? '',
-  dislikes: detail.dislikes ?? '',
-  health: detail.health ?? '',
-  relatedLink: detail.relatedLink ?? '',
   protectionType: detail.protectionType,
-  vaccinationCheck: detail.vaccinationCheck ?? 'NONE'
+  title: detail.title,
+  content: detail.content ?? '',
+  images: detail.images,
+  contact: detail.contacts.map((c) => ({ type: c.type, value: c.value })),
+  // 선택 — null/undefined/'NONE' 모두 undefined 로 통일
+  specificType: orUndefined(detail.specificType),
+  gender: detail.gender === 'M' || detail.gender === 'F' ? detail.gender : undefined,
+  neuterYn: orUndefined(detail.neuterYn),
+  healthCheck: orUndefined(detail.healthCheck),
+  vaccinationCheck: orUndefined(detail.vaccinationCheck),
+  age: orUndefined(detail.age),
+  weight: orUndefined(detail.weight),
+  location: orUndefined(detail.location),
+  specialMark: orUndefined(detail.specialMark),
+  likes: orUndefined(detail.likes),
+  dislikes: orUndefined(detail.dislikes),
+  health: orUndefined(detail.health),
+  relatedLink: orUndefined(detail.relatedLink)
 });

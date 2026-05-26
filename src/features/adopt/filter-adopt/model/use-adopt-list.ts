@@ -31,8 +31,8 @@ export const useAdoptList = (params: AdoptListParams) => {
 
   const convertedData = useMemo(() => {
     if (!data?.value?.length) return [];
-    return mapToAdoptList(data.value, params.filter);
-  }, [data, params.filter]);
+    return mapToAdoptList(data.value);
+  }, [data]);
 
   const refresh = useCallback(async () => {
     await queryClient.invalidateQueries({ queryKey: adoptQueries.all() });

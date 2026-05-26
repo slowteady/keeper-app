@@ -1,26 +1,23 @@
 import { useScrollToTop } from '@react-navigation/native';
-import { FlashList } from '@shopify/flash-list';
+import { FlashList, FlashListRef } from '@shopify/flash-list';
+import { useRef } from 'react';
 import { styled, View, YStack } from 'tamagui';
 
-import { useScrollUpButton } from '@/shared/model';
-import { FeedNodata, ScrollUpButton } from '@/shared/ui';
+import { FeedNodata } from '@/shared/ui';
 
 export const CommunityLifeFeed = () => {
-  const { handleScroll, handlePressButton, isButtonVisible, scrollRef } = useScrollUpButton();
+  const scrollRef = useRef<FlashListRef<unknown>>(null);
   useScrollToTop(scrollRef);
 
   return (
     <Container>
       <FlashList
         ref={scrollRef}
-        onScroll={handleScroll}
         data={[]}
-        renderItem={({ item }) => <View></View>}
+        renderItem={() => <View />}
         ListEmptyComponent={<EmptyComponent />}
         contentContainerStyle={{ flexGrow: 1 }}
       />
-
-      <ScrollUpButton visible={isButtonVisible} onPress={handlePressButton} />
     </Container>
   );
 };

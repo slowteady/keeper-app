@@ -105,18 +105,32 @@ describe('CommunityAdoptFormSchema', () => {
   });
 
   describe('필수 string 필드', () => {
+    // BP 검토 후 필수는 title/content 만 (나머지는 선택)
     it.each([
       ['title', ''],
-      ['specificType', ''],
-      ['age', ''],
-      ['weight', ''],
-      ['location', ''],
-      ['specialMark', ''],
       ['content', '']
     ] as const)('%s 가 빈 문자열이면 에러', (field, value) => {
       const result = CommunityAdoptFormSchema.safeParse({ ...baseValid, [field]: value });
       expect(result.success).toBe(false);
     });
+  });
+
+  describe('선택 string 필드 (BP: 필수 6개로 축소)', () => {
+    it.each(['specificType', 'age', 'weight', 'location', 'specialMark'] as const)(
+      '%s 가 빈 문자열이어도 통과',
+      (field) => {
+        const result = CommunityAdoptFormSchema.safeParse({ ...baseValid, [field]: '' });
+        expect(result.success).toBe(true);
+      }
+    );
+
+    it.each(['specificType', 'age', 'weight', 'location', 'specialMark'] as const)(
+      '%s 가 undefined 여도 통과',
+      (field) => {
+        const result = CommunityAdoptFormSchema.safeParse({ ...baseValid, [field]: undefined });
+        expect(result.success).toBe(true);
+      }
+    );
   });
 
   describe('images', () => {

@@ -8,3 +8,4 @@ export * from './modal-buttons';
 export * from './modal-provider';
 export * from './share-guard';
 export * from './toast-content';
+export * from './use-bottom-sheet-menu';

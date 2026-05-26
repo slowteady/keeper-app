@@ -59,9 +59,8 @@ export const useDeleteUser = () => {
         clearUserContext();
         queryClient.removeQueries({ queryKey: authQueries.all() });
 
-        globalToast('회원탈퇴가 완료되었어요', 'success');
-        router.dismissTo('/(tabs)/home');
         setIsAuthenticated(false);
+        router.dismissTo('/(tabs)/profile');
       } catch {
         globalToast('회원탈퇴에 실패했어요 다시 시도해주세요', 'fail');
       }

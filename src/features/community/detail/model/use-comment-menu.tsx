@@ -1,9 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { router } from 'expo-router';
 import { useCallback } from 'react';
 
 import { commentApi, commentQueries } from '@/entities/comment';
 import { useCurrentUser, useLoginRequired } from '@/features/auth';
-import { useBlock, useReportSheet } from '@/features/community/safety';
+import { useBlock } from '@/features/community/safety';
 import { globalToast } from '@/shared/lib';
 import { BottomSheetMenu, type BottomSheetMenuData, useBottomSheet, useModal } from '@/shared/ui';
 
@@ -12,11 +13,11 @@ import { ConfirmDeleteModal } from '../ui/confirm-delete-modal';
 export type CommentMenuId = 'EDIT' | 'DELETE' | 'REPORT' | 'BLOCK';
 
 const MINE_MENU: readonly BottomSheetMenuData<CommentMenuId>[] = [
-  { id: 'EDIT', label: '수정' },
-  { id: 'DELETE', label: '삭제' }
+  { id: 'EDIT', label: '수정하기' },
+  { id: 'DELETE', label: '삭제하기' }
 ] as const;
-const REPORT_ITEM: BottomSheetMenuData<CommentMenuId> = { id: 'REPORT', label: '신고' };
-const BLOCK_ITEM: BottomSheetMenuData<CommentMenuId> = { id: 'BLOCK', label: '차단' };
+const REPORT_ITEM: BottomSheetMenuData<CommentMenuId> = { id: 'REPORT', label: '신고하기' };
+const BLOCK_ITEM: BottomSheetMenuData<CommentMenuId> = { id: 'BLOCK', label: '차단하기' };
 
 export type CommentMenuTarget = {
   commentId: number;
@@ -33,7 +34,6 @@ export const useCommentMenu = ({ onEdit }: UseCommentMenuParams) => {
   const { requireLogin } = useLoginRequired();
   const { present, dismiss } = useBottomSheet();
   const { open: openModal, close: closeModal } = useModal();
-  const { openReportSheet } = useReportSheet();
   const { block } = useBlock();
   const queryClient = useQueryClient();
 
@@ -75,8 +75,9 @@ export const useCommentMenu = ({ onEdit }: UseCommentMenuParams) => {
             );
             break;
           case 'REPORT':
+            dismiss();
             requireLogin(() => {
-              openReportSheet({ type: 'COMMENT', id: commentId });
+              router.push({ pathname: '/report', params: { type: 'COMMENT', id: commentId } });
             });
             break;
           case 'BLOCK':
@@ -90,10 +91,10 @@ export const useCommentMenu = ({ onEdit }: UseCommentMenuParams) => {
       };
 
       present(<BottomSheetMenu data={menuItems} value={'' as CommentMenuId} onPress={handlePress} />, {
-        snapPoints: [200]
+        enableDynamicSizing: true
       });
     },
-    [user, requireLogin, present, dismiss, openModal, closeModal, deleteMutation, openReportSheet, block, onEdit]
+    [user, requireLogin, present, dismiss, openModal, closeModal, deleteMutation, block, onEdit]
   );
 
   return { openCommentMenu, isDeleting: deleteMutation.isPending };

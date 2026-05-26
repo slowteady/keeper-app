@@ -4,7 +4,7 @@ import { useCallback, useMemo } from 'react';
 
 import { communityApi, communityQueries } from '@/entities/community';
 import { useCurrentUser, useLoginRequired } from '@/features/auth';
-import { useBlock, useReportSheet } from '@/features/community/safety';
+import { useBlock } from '@/features/community/safety';
 import { globalToast } from '@/shared/lib';
 import { useShare } from '@/shared/model';
 import { BottomSheetMenu, type BottomSheetMenuData, useBottomSheet, useModal } from '@/shared/ui';
@@ -38,7 +38,6 @@ export const usePostMenu = ({
   const { requireLogin } = useLoginRequired();
   const { present, dismiss } = useBottomSheet();
   const { open: openModal, close: closeModal } = useModal();
-  const { openReportSheet } = useReportSheet();
   const { block } = useBlock();
   const { share } = useShare();
   const queryClient = useQueryClient();
@@ -89,8 +88,9 @@ export const usePostMenu = ({
           handleConfirmDelete();
           break;
         case 'REPORT':
+          dismiss();
           requireLogin(() => {
-            openReportSheet({ type: 'POST', id: postId });
+            router.push({ pathname: '/report', params: { type: 'POST', id: postId } });
           });
           break;
         case 'BLOCK':
@@ -103,7 +103,7 @@ export const usePostMenu = ({
           break;
       }
     },
-    [dismiss, handleConfirmDelete, openReportSheet, block, postId, authorId, requireLogin]
+    [dismiss, handleConfirmDelete, block, postId, authorId, requireLogin]
   );
 
   const menuItems = useMemo<readonly BottomSheetMenuData<PostMenuId>[]>(() => {
@@ -113,7 +113,7 @@ export const usePostMenu = ({
 
   const openPostMenu = useCallback(() => {
     present(<BottomSheetMenu data={menuItems} value={'' as PostMenuId} onPress={handlePress} />, {
-      snapPoints: [200]
+      enableDynamicSizing: true
     });
   }, [present, menuItems, handlePress]);
 

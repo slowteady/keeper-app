@@ -165,7 +165,9 @@ const RootLayout = () => {
                 <BottomSheetProvider>
                   <ModalProvider>
                     <StatusBar style="dark" />
-                    <Stack screenOptions={{ headerShown: false }} />
+                    <Stack screenOptions={{ headerShown: false }}>
+                      <Stack.Screen name="community-write" options={{ presentation: 'fullScreenModal' }} />
+                    </Stack>
                     <ShareGuard />
                     <Toaster
                       position="top-center"

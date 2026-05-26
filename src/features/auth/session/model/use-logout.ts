@@ -57,8 +57,8 @@ export const useLogout = () => {
       // 권한 의존 캐시(하트/찜/내 글 등) 가 stale 인 상태로 남으면 비로그인인데 ON 보이는 버그 발생 → 전체 제거.
       qc.removeQueries();
 
-      router.dismissTo('/(tabs)/home');
       setIsAuthenticated(false);
+      router.dismissTo('/(tabs)/profile');
     } catch {
       globalToast('로그아웃에 실패했어요 다시 시도해주세요', 'fail');
     }

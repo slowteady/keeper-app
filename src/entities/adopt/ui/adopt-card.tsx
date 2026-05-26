@@ -2,10 +2,11 @@ import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { Image } from 'expo-image';
 import { useCallback, useState } from 'react';
 import { Dimensions, Pressable, StyleSheet } from 'react-native';
-import { styled, Text, View, XStack, YStack } from 'tamagui';
+import { styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
 
-import { ChipVariant } from '@/entities/adopt';
+import { ADOPT_STATUS_INFO, AdoptStatusDto, ChipVariant, isAdoptEnded } from '@/entities/adopt';
 import { Skeleton } from '@/shared/ui';
+import { NoImage } from '@/shared/ui/fallback/no-image';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
 export type AdoptCardProps = {
@@ -18,6 +19,7 @@ export type AdoptCardProps = {
   onPress?: () => void;
   isFavorited?: boolean;
   onPressFavorite?: () => void;
+  status?: AdoptStatusDto;
 };
 
 export const ADOPT_CARD_IMAGE_SIZES = {
@@ -33,10 +35,10 @@ export const AdoptCard = ({
   horizontal = false,
   onPress,
   isFavorited = false,
-  onPressFavorite
+  onPressFavorite,
+  status
 }: AdoptCardProps) => {
-  const [isLoaded, setIsLoaded] = useState(false);
-
+  const { black500 } = useTheme();
   const size = horizontal ? 'medium' : 'small';
   const hasChips = chips && chips.length > 0;
 
@@ -48,21 +50,10 @@ export const AdoptCard = ({
 
   return (
     <Container size={size}>
-      {/* 카드 전체 클릭 — Pressable. 하트는 형제 absolute Pressable 로 분리해 onPress 충돌 방지. */}
       <Pressable onPress={onPress} disabled={!onPress}>
         <ImageContainer size={size}>
-          {!isLoaded && (
-            <Skeleton style={{ position: 'absolute', top: 0, width: '100%', height: '100%', borderRadius: 8 }} />
-          )}
-          {uri && (
-            <Image
-              key={uri}
-              source={{ uri }}
-              onLoad={() => setIsLoaded(true)}
-              onError={() => setIsLoaded(false)}
-              style={styles.image}
-            />
-          )}
+          <ImageWithSkeleton key={uri} uri={uri} />
+          {status && <StatusBadge status={status} />}
         </ImageContainer>
 
         <Title size={size}>{title}</Title>
@@ -76,11 +67,52 @@ export const AdoptCard = ({
 
       {onPressFavorite && (
         <Pressable style={styles.favoriteButton} hitSlop={10} onPress={handlePressFavorite}>
-          {/* 사진 위 가독성 — 굵기 강조 */}
-          <AnimatedHeart isLiked={isFavorited} size={22} strokeWidth={2.5} />
+          <AnimatedHeart isLiked={isFavorited} size={18} strokeWidth={2} inactiveColor="#FFFFFF" />
         </Pressable>
       )}
     </Container>
+  );
+};
+
+const StatusBadge = ({ status }: { status: AdoptStatusDto }) => {
+  if (!isAdoptEnded(status)) return null;
+  const info = ADOPT_STATUS_INFO[status];
+  return (
+    <View
+      position="absolute"
+      t={8}
+      l={8}
+      px={8}
+      py={4}
+      rounded={999}
+      bg={info.tone === 'positive' ? '$successMain' : '$black700'}
+    >
+      <Text fontWeight={600} fontSize={11} lineHeight={13} color="#fff">
+        {info.label}
+      </Text>
+    </View>
+  );
+};
+
+type ImageStatus = 'loading' | 'loaded' | 'error';
+
+const ImageWithSkeleton = ({ uri }: { uri: string }) => {
+  const [status, setStatus] = useState<ImageStatus>('loading');
+
+  const handleLoad = useCallback(() => setStatus('loaded'), []);
+  const handleError = useCallback(() => setStatus('error'), []);
+
+  if (!uri || status === 'error') {
+    return <NoImage />;
+  }
+
+  return (
+    <>
+      {status === 'loading' && (
+        <Skeleton style={{ position: 'absolute', top: 0, width: '100%', height: '100%', borderRadius: 8 }} />
+      )}
+      <Image source={{ uri }} onLoad={handleLoad} onError={handleError} style={styles.image} />
+    </>
   );
 };
 
@@ -127,6 +159,7 @@ const Container = styled(View, {
 });
 
 const ImageContainer = styled(View, {
+  aspectRatio: 5 / 4,
   variants: {
     size: {
       small: {
@@ -269,15 +302,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 10,
     right: 10,
-    width: 32,
-    height: 32,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: 'rgba(0, 0, 0, 0.35)',
     alignItems: 'center',
-    justifyContent: 'center',
-    // 사진 위 가독성 — backdrop 없이 drop shadow 만으로 띄움
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3,
-    elevation: 3
+    justifyContent: 'center'
   }
 });

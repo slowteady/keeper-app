@@ -4,7 +4,7 @@ import { commentApi } from '@/entities/comment';
 import { communityApi } from '@/entities/community';
 import { globalToast } from '@/shared/lib';
 
-export type ReportReason = 'SPAM' | 'ABUSE' | 'SEXUAL' | 'COPYRIGHT' | 'OTHER';
+export type ReportReason = 'SPAM' | 'ABUSE' | 'FRAUD' | 'ANIMAL_ABUSE' | 'PRIVACY';
 
 export type ReportTarget = { type: 'POST'; id: number } | { type: 'COMMENT'; id: number };
 

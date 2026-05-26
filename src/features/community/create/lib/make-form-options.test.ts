@@ -4,18 +4,10 @@ import { CAT_BREEDS, DOG_BREEDS } from '@/shared/model';
 
 import { makeFormOptions } from './make-form-options';
 
-// 동물 종류별 품종 옵션 분기 + 몸무게/나이 옵션 생성 규칙 검증
+// 동물 종류별 품종 옵션 분기 + 나이 옵션 생성 규칙 검증
+// (몸무게는 BP 검토 후 자유 수치 입력으로 전환 — BS option 제거됨)
 // kindCd 매핑 데이터 보유는 추후 활용용. 현재는 name 만 노출 (id=label=name).
 describe('makeFormOptions', () => {
-  describe('weightOption', () => {
-    it('1~50kg 까지 50개 노출', () => {
-      const { weightOption } = makeFormOptions('DOG');
-      expect(weightOption).toHaveLength(50);
-      expect(weightOption[0]).toEqual({ id: 1, label: '1kg' });
-      expect(weightOption[49]).toEqual({ id: 50, label: '50kg' });
-    });
-  });
-
   describe('ageOption', () => {
     it('25년치 (올해 ~ 24년 전) 노출', () => {
       const { ageOption } = makeFormOptions('DOG');

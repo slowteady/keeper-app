@@ -40,7 +40,7 @@ export const CommunityDetailOverviewSection = ({
   onPressShare,
   onPressMore
 }: CommunityDetailOverviewSectionProps) => {
-  const { black700 } = useTheme();
+  const { black500 } = useTheme();
   const handlePressLike = () => {
     impactAsync(isLiked ? ImpactFeedbackStyle.Light : ImpactFeedbackStyle.Medium).catch(() => undefined);
     onPressLike();
@@ -52,7 +52,7 @@ export const CommunityDetailOverviewSection = ({
         <CommunityAdoptCardHeader image={image} nickname={nickname} displayTime={displayTime} />
         <XStack gap={16} items="center" style={{ flexShrink: 0 }}>
           <Pressable onPress={handlePressLike} hitSlop={10} testID="community-detail-heart">
-            <AnimatedHeart size={26} isLiked={isLiked} />
+            <AnimatedHeart size={26} isLiked={isLiked} inactiveColor={black500.val} />
           </Pressable>
           {onPressShare && (
             <Pressable
@@ -61,12 +61,12 @@ export const CommunityDetailOverviewSection = ({
               accessibilityLabel="공유하기"
               testID="community-detail-share"
             >
-              <ShareIcon width={24} height={24} color={black700.val} />
+              <ShareIcon width={24} height={24} color={black500.val} />
             </Pressable>
           )}
           {onPressMore && (
             <Pressable onPress={onPressMore} hitSlop={10} accessibilityLabel="더보기" testID="community-detail-more">
-              <MoreVertical size={22} color="$black700" />
+              <MoreVertical size={22} color="$black500" />
             </Pressable>
           )}
         </XStack>

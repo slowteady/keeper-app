@@ -27,7 +27,7 @@ export const SignupAgreement = ({
 }: SignupAgreementProps) => {
   const handleViewTerms = onViewTerms ?? (() => router.push('/terms'));
   const handleViewPrivacy = onViewPrivacy ?? (() => router.push('/privacy'));
-  const handleViewCommunity = onViewCommunity ?? (() => router.push('/community-policy'));
+  const handleViewCommunity = onViewCommunity ?? (() => router.push('/community-guideline'));
   const { age14, terms, privacy, community } = value;
   const allChecked = age14 && terms && privacy && community;
 

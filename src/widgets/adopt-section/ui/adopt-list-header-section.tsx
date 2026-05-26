@@ -29,12 +29,7 @@ export const AdoptListHeaderSection = ({
           전체공고
         </Text>
         <View mt={12}>
-          <Dropdown
-            data={ADOPT_OPTIONS.FILTER}
-            value={filterValue}
-            onChange={(value) => onChangeFilter(value.id)}
-            snapPoints={[200]}
-          />
+          <Dropdown data={ADOPT_OPTIONS.FILTER} value={filterValue} onChange={(value) => onChangeFilter(value.id)} />
         </View>
       </TitleContainer>
 

@@ -1,7 +1,21 @@
 import { z } from 'zod';
 
-export const AdoptFilterSchema = z.enum(['NEW', 'NEAR_DEADLINE']);
+export const AdoptFilterSchema = z.enum(['ALL', 'NEW', 'NEAR_DEADLINE']);
 export type AdoptFilterDto = z.infer<typeof AdoptFilterSchema>;
+
+export const AdoptStatusSchema = z.enum([
+  'PROTECTING',
+  'ADOPTED',
+  'RETURNED',
+  'NATURAL_DEATH',
+  'EUTHANIZED',
+  'DONATED',
+  'RELEASED'
+]);
+export type AdoptStatusDto = z.infer<typeof AdoptStatusSchema>;
+
+export const AdoptChipTypeSchema = z.enum(['NEW', 'NEAR_DEADLINE']);
+export type AdoptChipTypeDto = z.infer<typeof AdoptChipTypeSchema>;
 
 export const AdoptDataSchema = z.object({
   id: z.string(),
@@ -29,7 +43,9 @@ export const AdoptDataSchema = z.object({
   vaccinationCheck: z.string().nullable(),
   healthCheck: z.string().nullable(),
   // 백엔드 isFavorited 응답 추가 (abandonment_favorite 마이그레이션 동기화)
-  isFavorited: z.boolean().optional()
+  isFavorited: z.boolean().optional(),
+  status: AdoptStatusSchema.optional(),
+  chipType: AdoptChipTypeSchema.optional()
 });
 export type AdoptDataDto = z.infer<typeof AdoptDataSchema>;
 

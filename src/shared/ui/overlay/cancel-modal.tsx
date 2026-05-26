@@ -1,8 +1,7 @@
-import { useCallback, useEffect } from 'react';
+import { Pressable, StyleSheet } from 'react-native';
 import { styled, Text, View } from 'tamagui';
 
 import { ModalButtons } from './modal-buttons';
-import { useModal } from './modal-provider';
 
 export type CancelModalProps = {
   open: boolean;
@@ -19,47 +18,36 @@ export const CancelModal = ({
   title = '정말 나가시겠어요?',
   description
 }: CancelModalProps) => {
-  const { open: openModal, close: closeModal } = useModal();
+  if (!open) return null;
 
-  const executeClose = useCallback(() => {
-    closeModal();
-  }, [closeModal]);
-
-  const executeConfirm = useCallback(() => {
-    onConfirm();
-    closeModal();
-  }, [closeModal, onConfirm]);
-
-  useEffect(() => {
-    if (!open) {
-      closeModal();
-      return;
-    }
-
-    const modalContent = (
-      <Container>
-        <Text mb={description ? 12 : 32} fontSize={17} fontWeight="600" color="$black800" lineHeight={19}>
-          {title}
-        </Text>
-        {description && (
-          <Text mb={32} fontSize={14} fontWeight="400" color="$black500" lineHeight={19}>
-            {description}
+  return (
+    <View style={StyleSheet.absoluteFill} pointerEvents="box-none">
+      <Pressable onPress={onClose} style={[StyleSheet.absoluteFill, styles.dim]} />
+      <View style={styles.centered} pointerEvents="box-none">
+        <Container>
+          <Text mb={description ? 12 : 32} fontSize={17} fontWeight="600" color="$black800" lineHeight={19}>
+            {title}
           </Text>
-        )}
-
-        <ModalButtons
-          onPressSecondary={executeClose}
-          onPressPrimary={executeConfirm}
-          text={{ primary: '나가기', secondary: '닫기' }}
-        />
-      </Container>
-    );
-
-    openModal(modalContent, { onDismiss: onClose });
-  }, [open, title, description, openModal, closeModal, onClose, executeClose, executeConfirm]);
-
-  return null;
+          {description && (
+            <Text mb={32} fontSize={14} fontWeight="400" color="$black500" lineHeight={19}>
+              {description}
+            </Text>
+          )}
+          <ModalButtons
+            onPressSecondary={onClose}
+            onPressPrimary={onConfirm}
+            text={{ primary: '나가기', secondary: '닫기' }}
+          />
+        </Container>
+      </View>
+    </View>
+  );
 };
+
+const styles = StyleSheet.create({
+  dim: { backgroundColor: 'rgba(0, 0, 0, 0.5)' },
+  centered: { ...StyleSheet.absoluteFillObject, justifyContent: 'center', alignItems: 'center' }
+});
 
 const Container = styled(View, {
   width: '80%',

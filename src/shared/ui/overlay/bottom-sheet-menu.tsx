@@ -1,4 +1,5 @@
-import { Pressable, StyleSheet } from 'react-native';
+import { TouchableOpacity } from '@gorhom/bottom-sheet';
+import { StyleSheet } from 'react-native';
 import { styled, Text, useTheme, View } from 'tamagui';
 
 import { useLayout } from '@/shared/model';
@@ -28,7 +29,7 @@ export const BottomSheetMenu = <T,>({ data, value, onPress }: BottomSheetMenuPro
         const isActive = String(item.id) === String(value);
 
         return (
-          <Pressable
+          <TouchableOpacity
             key={key}
             style={styles.button}
             onPress={() => onPress(item)}
@@ -38,7 +39,7 @@ export const BottomSheetMenu = <T,>({ data, value, onPress }: BottomSheetMenuPro
           >
             <StyledText style={[{ color: isActive ? black800.val : black500.val }]}>{label}</StyledText>
             {isActive && <Check width={17} height={20} color={black800.val} />}
-          </Pressable>
+          </TouchableOpacity>
         );
       })}
     </View>

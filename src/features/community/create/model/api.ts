@@ -11,24 +11,28 @@ type CreateAdoptionPersonalBody = {
   title: string;
   content: string;
   animalType: CommunityAdoptFormDto['animalType'];
-  specificType: string;
-  age: string;
-  weight: string;
-  gender: string;
-  neuterYn: CommunityAdoptFormDto['neuterYn'];
-  healthCheck?: CommunityAdoptFormDto['healthCheck'];
   protectionType: CommunityAdoptFormDto['protectionType'];
-  vaccinationCheck?: CommunityAdoptFormDto['vaccinationCheck'];
-  location: string;
-  specialMark: string;
   contacts: { type: string; value: string }[];
   tags: string[];
+  images?: string[];
+  specificType?: string;
+  age?: string;
+  weight?: string;
+  gender?: string;
+  neuterYn?: CommunityAdoptFormDto['neuterYn'];
+  healthCheck?: CommunityAdoptFormDto['healthCheck'];
+  vaccinationCheck?: CommunityAdoptFormDto['vaccinationCheck'];
+  location?: string;
+  specialMark?: string;
   likes?: string;
   dislikes?: string;
   health?: string;
   relatedLink?: string;
-  images?: string[];
 };
+
+// 빈 문자열 / 'NONE' / null / undefined 모두 백엔드 NULL 로 — chip 미선택 / 구버전 데이터 호환
+const orUndefined = <T>(value: T | undefined | null | '' | 'NONE'): T | undefined =>
+  value === '' || value === 'NONE' || value === null || value === undefined ? undefined : (value as T);
 
 export const toCreateAdoptionPersonalBody = (
   form: CommunityAdoptFormDto,
@@ -38,23 +42,23 @@ export const toCreateAdoptionPersonalBody = (
   title: form.title,
   content: form.content,
   animalType: form.animalType,
-  specificType: form.specificType,
-  age: form.age,
-  weight: form.weight,
-  gender: form.gender,
-  neuterYn: form.neuterYn,
-  healthCheck: form.healthCheck === 'NONE' ? undefined : form.healthCheck,
   protectionType: form.protectionType,
-  vaccinationCheck: form.vaccinationCheck === 'NONE' ? undefined : form.vaccinationCheck,
-  location: form.location,
-  specialMark: form.specialMark,
   contacts: form.contact.map((c) => ({ type: c.type, value: c.value })),
   tags: [],
-  likes: form.likes || undefined,
-  dislikes: form.dislikes || undefined,
-  health: form.health || undefined,
-  relatedLink: form.relatedLink || undefined,
-  images: uploadedImageUrls
+  images: uploadedImageUrls,
+  specificType: orUndefined(form.specificType),
+  age: orUndefined(form.age),
+  weight: orUndefined(form.weight),
+  gender: orUndefined(form.gender),
+  neuterYn: orUndefined(form.neuterYn),
+  healthCheck: orUndefined(form.healthCheck),
+  vaccinationCheck: orUndefined(form.vaccinationCheck),
+  location: orUndefined(form.location),
+  specialMark: orUndefined(form.specialMark),
+  likes: orUndefined(form.likes),
+  dislikes: orUndefined(form.dislikes),
+  health: orUndefined(form.health),
+  relatedLink: orUndefined(form.relatedLink)
 });
 
 export const createAdoptionPersonal = async (body: CreateAdoptionPersonalBody): Promise<CommunityAdoptDetailDto> => {

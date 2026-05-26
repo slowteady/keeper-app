@@ -47,7 +47,6 @@ export const AdoptListSection = forwardRef<FlashListRef<AdoptItem>, AdoptListSec
         numColumns={2}
         keyExtractor={({ id }) => id}
         showsVerticalScrollIndicator={false}
-        decelerationRate="fast"
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
         ListHeaderComponent={header ?? null}
         ListFooterComponent={footer ?? null}

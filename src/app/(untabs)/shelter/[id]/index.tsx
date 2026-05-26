@@ -1,5 +1,5 @@
 import { NaverMapViewRef } from '@mj-studio/react-native-naver-map';
-import { ListRenderItemInfo } from '@shopify/flash-list';
+import { FlashListRef, ListRenderItemInfo } from '@shopify/flash-list';
 import { useLocalSearchParams } from 'expo-router';
 import { Suspense, useCallback, useRef, useState } from 'react';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
@@ -9,16 +9,8 @@ import { buildShelterShareDesc } from '@/entities/shelter';
 import { useFavoriteAbandonment } from '@/features/favorite-abandonment';
 import { useFavoriteShelter } from '@/features/favorite-shelter';
 import { useShelter, useShelterAdoptList } from '@/features/shelter';
-import { useLocation, useScrollUpButton, useShare } from '@/shared/model';
-import {
-  Button,
-  CallModal,
-  DetailErrorBoundary,
-  Dropdown,
-  ScrollUpButton,
-  ShowMoreButton,
-  SuspenseFallback
-} from '@/shared/ui';
+import { useLocation, useShare } from '@/shared/model';
+import { Button, CallModal, DetailErrorBoundary, Dropdown, ShowMoreButton, SuspenseFallback } from '@/shared/ui';
 import { AdoptListSection } from '@/widgets/adopt-section';
 import { ShelterDetailDescriptionSection, ShelterDetailOverviewSection } from '@/widgets/shelter-section';
 
@@ -71,7 +63,7 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
     fetchNextPage,
     goDetail
   } = useShelterAdoptList({ id });
-  const { handleScroll, handlePressButton, isButtonVisible, scrollRef } = useScrollUpButton();
+  const scrollRef = useRef<FlashListRef<AdoptItem>>(null);
 
   const handleMapInitialized = useCallback(() => {
     if (shelterData) {
@@ -98,6 +90,7 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
             description={item.description}
             chips={item.chips}
             isFavorited={item.isFavorited}
+            status={item.status}
             onPress={() => goDetail(item.id)}
             onPressFavorite={() => toggleFavoriteAbandonment(item.id, item.isFavorited ?? false)}
           />
@@ -115,7 +108,6 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
         ref={scrollRef}
         data={convertedData ?? []}
         isLoading={adoptsLoading}
-        onScroll={handleScroll}
         onRefreshCallback={refreshFetch}
         renderItem={renderItem}
         emptyComponentVariant="list"
@@ -167,7 +159,6 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
                 data={ADOPT_OPTIONS.FILTER}
                 value={selectedFilter}
                 onChange={(value) => changeFilter(value.id)}
-                snapPoints={[200]}
               />
             </XStack>
           </YStack>
@@ -180,8 +171,6 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
           ) : undefined
         }
       />
-
-      <ScrollUpButton visible={isButtonVisible} onPress={handlePressButton} />
 
       {hasCallNumber && (
         <CallModal

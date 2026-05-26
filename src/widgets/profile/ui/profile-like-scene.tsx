@@ -5,8 +5,7 @@ import { styled, View, YStack } from 'tamagui';
 import { AdoptCard, AdoptItem } from '@/entities/adopt';
 import { PROFILE_OPTIONS, ProfileLikeOption } from '@/entities/profile';
 import { useFavoriteAbandonment } from '@/features/favorite-abandonment';
-import { useScrollUpButton } from '@/shared/model';
-import { ButtonGroup, ScrollUpButton } from '@/shared/ui';
+import { ButtonGroup } from '@/shared/ui';
 import { AdoptListSection } from '@/widgets/adopt-section';
 
 export type ProfileLikeSceneProps = {
@@ -26,7 +25,6 @@ export const ProfileLikeScene = ({
   onGoDetail,
   onRefresh
 }: ProfileLikeSceneProps) => {
-  const { handleScroll, handlePressButton, isButtonVisible, scrollRef } = useScrollUpButton();
   const { toggleFavoriteAbandonment } = useFavoriteAbandonment();
 
   const renderItem = useCallback(
@@ -43,6 +41,7 @@ export const ProfileLikeScene = ({
                 description={item.description}
                 chips={item.chips}
                 isFavorited={item.isFavorited}
+                status={item.status}
                 onPress={() => onGoDetail(item.id)}
                 onPressFavorite={() => toggleFavoriteAbandonment(item.id, item.isFavorited ?? false)}
               />
@@ -60,10 +59,8 @@ export const ProfileLikeScene = ({
   return (
     <Container>
       <AdoptListSection
-        ref={scrollRef}
         data={convertedData ?? []}
         isLoading={isLoading}
-        onScroll={handleScroll}
         onRefreshCallback={onRefresh}
         renderItem={(p) => renderItem(p, filter)}
         header={
@@ -73,8 +70,6 @@ export const ProfileLikeScene = ({
         }
         contentContainerStyle={{ paddingHorizontal: 20 }}
       />
-
-      <ScrollUpButton visible={isButtonVisible} onPress={handlePressButton} />
     </Container>
   );
 };

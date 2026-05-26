@@ -11,7 +11,6 @@ const mockPresent = jest.fn();
 const mockDismiss = jest.fn();
 const mockOpenModal = jest.fn();
 const mockCloseModal = jest.fn();
-const mockOpenReportSheet = jest.fn();
 const mockBlock = jest.fn();
 const mockShare = jest.fn();
 
@@ -35,7 +34,6 @@ jest.mock('@/entities/community', () => {
 });
 
 jest.mock('@/features/community/safety', () => ({
-  useReportSheet: () => ({ openReportSheet: mockOpenReportSheet, isPending: false }),
   useBlock: () => ({ block: mockBlock, unblock: jest.fn(), isPending: false })
 }));
 
@@ -164,7 +162,7 @@ describe('usePostMenu', () => {
     );
   });
 
-  it('REPORT 선택 시 openReportSheet 호출 + 같은 시트 교체이므로 dismiss 안 함', async () => {
+  it('REPORT 선택 시 신고 모달 라우트로 push + dismiss', async () => {
     mockUser = { id: 99 };
     const { wrapper } = setup();
     const { result } = renderHook(() => usePostMenu({ postId: 42, authorId: 1, shareInfo: baseShareInfo }), {
@@ -178,8 +176,8 @@ describe('usePostMenu', () => {
       await onPress({ id: 'REPORT', label: '신고하기' });
     });
 
-    expect(mockDismiss).not.toHaveBeenCalled();
-    expect(mockOpenReportSheet).toHaveBeenCalledWith({ type: 'POST', id: 42 });
+    expect(mockDismiss).toHaveBeenCalled();
+    expect(router.push).toHaveBeenCalledWith({ pathname: '/report', params: { type: 'POST', id: 42 } });
   });
 
   it('BLOCK 선택 시 block(authorId) 호출 + dismiss', async () => {

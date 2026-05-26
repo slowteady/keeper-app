@@ -1,15 +1,14 @@
 import { useScrollToTop } from '@react-navigation/native';
-import { FlashList, ListRenderItemInfo } from '@shopify/flash-list';
+import { FlashList, FlashListRef, ListRenderItemInfo } from '@shopify/flash-list';
 import { router } from 'expo-router';
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import { styled, Text, View, YStack } from 'tamagui';
 
 import { ShelterCard, ShelterDto } from '@/entities/shelter';
 import { KakaoAddressDocumentDto, LocationBottomSheet, useLocationBottomSheet } from '@/features/address';
 import { useFavoriteShelter } from '@/features/favorite-shelter';
 import { useShelterMap } from '@/features/shelter';
-import { useScrollUpButton } from '@/shared/model';
-import { RouteErrorBoundary, ScrollUpButton, Skeleton } from '@/shared/ui';
+import { RouteErrorBoundary, Skeleton } from '@/shared/ui';
 import { ShelterListHeaderSection, ShelterMapSection } from '@/widgets/shelter-section';
 
 export const ErrorBoundary = RouteErrorBoundary;
@@ -32,7 +31,7 @@ const Page = () => {
     changeLocation,
     searchLocation
   } = useShelterMap();
-  const { isButtonVisible, handlePressButton, handleScroll, scrollRef } = useScrollUpButton();
+  const scrollRef = useRef<FlashListRef<ShelterDto>>(null);
   useScrollToTop(scrollRef);
 
   const {
@@ -69,10 +68,8 @@ const Page = () => {
       <FlashList
         ref={scrollRef}
         keyExtractor={({ id }) => id}
-        decelerationRate="fast"
         data={shelterList}
         renderItem={renderItem}
-        onScroll={handleScroll}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={
           <View px={20} mb={20}>
@@ -107,8 +104,6 @@ const Page = () => {
         onSelectAddress={getAddress}
         isPending={isLocationPending}
       />
-
-      <ScrollUpButton visible={isButtonVisible} onPress={handlePressButton} />
     </Container>
   );
 };

@@ -29,7 +29,7 @@ export const CommentListHeader = ({ commentCount = 0, sortOrder, onChangeSortOrd
             최신순
           </SortText>
           <SortText active={isCreated} onPress={() => onChangeSortOrder('OLDEST')} hitSlop={12}>
-            등록순
+            오래된순
           </SortText>
         </XStack>
       </OverViewWrapper>

@@ -2,7 +2,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { Suspense, useMemo, useState } from 'react';
 import { ScrollView, styled, Text, View } from 'tamagui';
 
-import { buildAdoptShareDesc } from '@/entities/adopt';
+import { ADOPT_STATUS_INFO, AdoptStatusDto, buildAdoptShareDesc, isAdoptEnded } from '@/entities/adopt';
 import { resolveAdoptShelter, useAdopt } from '@/features/adopt';
 import { useFavoriteAbandonment } from '@/features/favorite-abandonment';
 import { useShelter } from '@/features/shelter';
@@ -42,7 +42,8 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
 
   // 정책은 resolveAdoptShelter JSDoc 참조 (전화=공고 우선, 그 외=마스터 우선)
   const shelter = useMemo(() => resolveAdoptShelter(adopt, shelterData), [adopt, shelterData]);
-  const hasCallNumber = !!shelter.tel;
+  const ended = isAdoptEnded(adopt.status);
+  const hasCallNumber = !!shelter.tel && !ended;
 
   const handlePressShare = () => {
     share({
@@ -63,6 +64,8 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
           { position: 'relative', paddingTop: 48, paddingBottom: hasCallNumber ? buttonHeight : 0 } as any
         }
       >
+        {ended && adopt.status && <AdoptEndedBanner status={adopt.status} />}
+
         <View mb={30} px={20}>
           <AdoptDetailOverviewSection
             title={adopt.title}
@@ -100,7 +103,10 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
         <>
           <BottomButton
             onPress={() => setCallModalOpen((prev) => !prev)}
-            onLayout={(e) => setButtonHeight(e.nativeEvent.layout.height)}
+            onLayout={(e) => {
+              const h = e.nativeEvent.layout.height;
+              setButtonHeight((prev) => (prev === h ? prev : h));
+            }}
           >
             <Text fontSize={15} fontWeight={600} lineHeight={18} color="$black900">
               보호소에 문의하기
@@ -120,6 +126,18 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
   );
 };
 
+const AdoptEndedBanner = ({ status }: { status: AdoptStatusDto }) => {
+  if (status === 'PROTECTING') return null;
+  const info = ADOPT_STATUS_INFO[status];
+  if (!info) return null;
+  return (
+    <BannerWrap tone={info.tone}>
+      <BannerLabel tone={info.tone}>{info.label}</BannerLabel>
+      <BannerText tone={info.tone}>{info.bannerText}</BannerText>
+    </BannerWrap>
+  );
+};
+
 const Container = styled(View, {
   bg: '$pageBackground',
   flex: 1
@@ -128,4 +146,44 @@ const Container = styled(View, {
 const Divider = styled(View, {
   height: 8,
   bg: '$white850'
+});
+
+const BannerWrap = styled(View, {
+  mx: 20,
+  mt: -16,
+  mb: 24,
+  px: 16,
+  py: 14,
+  rounded: 10,
+  variants: {
+    tone: {
+      positive: { backgroundColor: '$successLightest' },
+      neutral: { backgroundColor: '$backgroundDefault' }
+    }
+  } as const
+});
+
+const BannerLabel = styled(Text, {
+  fontWeight: 700,
+  fontSize: 13,
+  lineHeight: 15,
+  mb: 4,
+  variants: {
+    tone: {
+      positive: { color: '$successMain' },
+      neutral: { color: '$black700' }
+    }
+  } as const
+});
+
+const BannerText = styled(Text, {
+  fontWeight: 500,
+  fontSize: 15,
+  lineHeight: 20,
+  variants: {
+    tone: {
+      positive: { color: '$black900' },
+      neutral: { color: '$black700' }
+    }
+  } as const
 });

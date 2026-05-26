@@ -1,12 +1,11 @@
 import { Image } from 'expo-image';
 import { forwardRef, useCallback, useEffect, useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { Pressable, StyleSheet } from 'react-native';
 import PagerView, { PagerViewOnPageSelectedEvent, PagerViewProps } from 'react-native-pager-view';
 import { styled, Text, useTheme, View, XStack } from 'tamagui';
 
 import { useIsSharing } from '@/shared/model';
 
-import { Button } from '../button';
 import { NoImage, Skeleton } from '../fallback';
 import { LeftLineArrow, RightLineArrow } from '../icons/mini';
 import { ImageViewer } from '../overlay/image-viewer';
@@ -33,17 +32,9 @@ const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>(
       setOpenImgViewer(true);
     }, [isSharing]);
 
-    const renderPage = (image: string) => {
-      const imageElement = <CarouselImage uri={image} />;
-
-      return showImageViewer ? (
-        <Button onPress={handleOpenViewer} style={styles.imageButton}>
-          {imageElement}
-        </Button>
-      ) : (
-        imageElement
-      );
-    };
+    const renderPage = (image: string) => (
+      <CarouselImage uri={image} onPress={showImageViewer ? handleOpenViewer : undefined} />
+    );
 
     return (
       <>
@@ -73,6 +64,7 @@ const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>(
 
 type CarouselImageProps = {
   uri: string;
+  onPress?: () => void;
 };
 
 const LOAD_TIMEOUT_MS = 5000;
@@ -83,9 +75,10 @@ const LOAD_TIMEOUT_MS = 5000;
 const failedUrls = new Set<string>();
 const loadedUrls = new Set<string>();
 
-const CarouselImage = ({ uri }: CarouselImageProps) => {
+const CarouselImage = ({ uri, onPress }: CarouselImageProps) => {
   const [hasError, setHasError] = useState(() => failedUrls.has(uri));
   const [isLoaded, setIsLoaded] = useState(() => loadedUrls.has(uri));
+  const canPress = !!onPress && !hasError;
 
   // onError 가 안 오는 invalid URL 케이스 timeout fallback.
   useEffect(() => {
@@ -110,7 +103,7 @@ const CarouselImage = ({ uri }: CarouselImageProps) => {
   // 3 layer 모두 항상 mount + opacity 만 0/1 전환 — conditional render(mount/unmount) 가 frame gap 의 원인.
   // Skeleton: 로딩 중 보임 / NoImage: 실패 시 보임 / Image: 성공 시 보임.
   const isLoading = !isLoaded && !hasError;
-  return (
+  const content = (
     <View style={styles.imageWrap}>
       <View style={[styles.image, { opacity: isLoading ? 1 : 0 }]}>
         <Skeleton style={styles.image} />
@@ -128,6 +121,13 @@ const CarouselImage = ({ uri }: CarouselImageProps) => {
         style={[styles.image, styles.overlay, { opacity: isLoaded ? 1 : 0 }]}
       />
     </View>
+  );
+
+  if (!canPress) return content;
+  return (
+    <Pressable onPress={onPress} style={styles.imageButton}>
+      {content}
+    </Pressable>
   );
 };
 

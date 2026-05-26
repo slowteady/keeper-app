@@ -1,16 +1,28 @@
 import dayjs from 'dayjs';
 
-import { AdoptDataDto, AdoptFilterDto } from './schema';
+import { AdoptChipTypeDto, AdoptDataDto } from './schema';
 
 export type AdoptItem = ReturnType<typeof mapToAdoptList>[number];
 
 export type ChipVariant = 'error' | 'success' | 'notice' | 'default';
 
-export const mapToAdoptList = (data: AdoptDataDto[], filter?: AdoptFilterDto) => {
+export const mapToAdoptList = (data: AdoptDataDto[]) => {
   return data.map((item) => {
-    const { neuterYn, age, weight, gender, happenPlace, images, orgName, noticeStartDt, noticeEndDt, fullName } = item;
+    const {
+      neuterYn,
+      age,
+      weight,
+      gender,
+      happenPlace,
+      images,
+      orgName,
+      noticeStartDt,
+      noticeEndDt,
+      fullName,
+      chipType
+    } = item;
 
-    const chips = convertChipLabel({ neuterYn, weight, gender, age, filter, noticeEndDt });
+    const chips = convertChipLabel({ neuterYn, weight, gender, age, chipType, noticeEndDt });
     const descriptions = convertDescription({ noticeStartDt, noticeEndDt, orgName, happenPlace });
 
     return {
@@ -41,18 +53,18 @@ type ChipLabelParams = {
   weight: AdoptDataDto['weight'];
   gender: AdoptDataDto['gender'];
   age: AdoptDataDto['age'];
-  filter?: AdoptFilterDto;
+  chipType?: AdoptChipTypeDto;
   noticeEndDt?: AdoptDataDto['noticeEndDt'];
 };
-const convertChipLabel = ({ neuterYn, weight, gender, age, filter, noticeEndDt }: ChipLabelParams) => {
+const convertChipLabel = ({ neuterYn, weight, gender, age, chipType, noticeEndDt }: ChipLabelParams) => {
   const chips: { id: string; value: string; sort: number; variant?: ChipVariant }[] = [];
 
-  const filterChip = filter ? FILTER_CHIP_MAP[filter] : undefined;
+  const filterChip = chipType ? CHIP_TYPE_MAP[chipType] : undefined;
   if (filterChip) {
     chips.push(filterChip);
   }
 
-  if (filter === 'NEAR_DEADLINE' && noticeEndDt) {
+  if (chipType === 'NEAR_DEADLINE' && noticeEndDt) {
     const dday = calcDday(noticeEndDt);
     if (dday !== null) {
       chips.push({ id: 'DDAY', value: dday, sort: 1.5, variant: 'error' });
@@ -78,7 +90,7 @@ const convertChipLabel = ({ neuterYn, weight, gender, age, filter, noticeEndDt }
   return chips;
 };
 
-const FILTER_CHIP_MAP: Record<AdoptFilterDto, { id: string; value: string; sort: number; variant: ChipVariant }> = {
+const CHIP_TYPE_MAP: Record<AdoptChipTypeDto, { id: string; value: string; sort: number; variant: ChipVariant }> = {
   NEAR_DEADLINE: { id: 'NEAR_DEADLINE', value: '공고마감임박', sort: 1, variant: 'error' },
   NEW: { id: 'NEW', value: '신규', sort: 1, variant: 'success' }
 };

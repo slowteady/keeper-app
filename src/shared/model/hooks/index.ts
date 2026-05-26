@@ -7,5 +7,4 @@ export * from './use-list-refreshing';
 export * from './use-location';
 export * from './use-permission';
 export * from './use-review';
-export * from './use-scroll-up-button';
 export * from './use-share';

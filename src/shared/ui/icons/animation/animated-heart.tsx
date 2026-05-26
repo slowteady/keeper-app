@@ -12,12 +12,21 @@ export interface AnimatedHeartProps extends Omit<SvgProps, 'onPress'> {
   size?: number;
   // 사진 위에 띄울 때 등 굵기 강조가 필요한 호출처에서 override.
   strokeWidth?: number;
+  // 헤더 액션 아이콘과 톤 맞출 때 등 호출처에서 override.
+  inactiveColor?: string;
 }
 
 const LikeHeart = Animated.createAnimatedComponent(Path);
 
-export const AnimatedHeart = ({ isLiked = false, size = 22, strokeWidth = 1.5, ...props }: AnimatedHeartProps) => {
+export const AnimatedHeart = ({
+  isLiked = false,
+  size = 22,
+  strokeWidth = 1.5,
+  inactiveColor,
+  ...props
+}: AnimatedHeartProps) => {
   const { primaryMain, white600 } = useTheme();
+  const inactive = inactiveColor ?? white600.val;
 
   const fillProgress = useSharedValue(isLiked ? 1 : 0);
 
@@ -26,7 +35,7 @@ export const AnimatedHeart = ({ isLiked = false, size = 22, strokeWidth = 1.5, .
   }, [isLiked, fillProgress]);
 
   const animatedPathProps = useAnimatedProps(() => {
-    const stroke = interpolateColor(fillProgress.value, [0, 1], [white600.val, primaryMain.val]);
+    const stroke = interpolateColor(fillProgress.value, [0, 1], [inactive, primaryMain.val]);
     const fill = interpolateColor(fillProgress.value, [0, 1], ['transparent', primaryMain.val]);
 
     return { fill, stroke };

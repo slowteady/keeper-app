@@ -19,6 +19,8 @@ export interface ChipGroupProps<T extends boolean = false> extends Omit<
   value?: ChipGroupValue<T>;
   onChange?: ChipGroupOnChange<T>;
   multiple?: T;
+  // single mode 에서 선택된 chip 재탭 시 해제 (선택 필드용)
+  clearable?: boolean;
   direction?: 'horizontal' | 'vertical';
   gap?: number;
 }
@@ -30,6 +32,7 @@ export const ChipGroup = <T extends boolean = false>({
   value,
   onChange,
   multiple = false as T,
+  clearable = false,
   direction = 'horizontal',
   gap = 4,
   ...chipProps
@@ -43,13 +46,13 @@ export const ChipGroup = <T extends boolean = false>({
           : [...currentValues, optionValue];
 
         (onChange as ChipGroupOnChange<true>)?.(newValues);
+      } else if (value === optionValue) {
+        if (clearable) (onChange as ChipGroupOnChange<false>)?.('' as string);
       } else {
-        if (value !== optionValue) {
-          (onChange as ChipGroupOnChange<false>)?.(optionValue);
-        }
+        (onChange as ChipGroupOnChange<false>)?.(optionValue);
       }
     },
-    [value, onChange, multiple]
+    [value, onChange, multiple, clearable]
   );
 
   const isSelected = (optionValue: string) => {

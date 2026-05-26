@@ -27,8 +27,9 @@ export const OptionSelectField = ({ name, control, label, required }: OptionSele
           <ChipGroup
             variant="secondary"
             options={CREATE_POST_OPTIONS[name]}
-            value={field.value as string}
-            onChange={field.onChange}
+            value={(field.value as string | undefined) ?? ''}
+            onChange={(v) => field.onChange(v === '' ? undefined : v)}
+            clearable={!required}
           />
           <FieldError message={fieldState.error?.message} />
         </YStack>

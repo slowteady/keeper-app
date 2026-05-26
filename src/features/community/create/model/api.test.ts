@@ -51,9 +51,9 @@ describe('toCreateAdoptionPersonalBody', () => {
     expect(body.images).toEqual([]);
   });
 
-  describe('NONE 옵셔널 처리', () => {
-    it('healthCheck NONE → undefined', () => {
-      const body = toCreateAdoptionPersonalBody({ ...fullForm, healthCheck: 'NONE' }, []);
+  describe('선택 enum 처리 (BP: chip 미선택 = undefined)', () => {
+    it('healthCheck undefined → undefined', () => {
+      const body = toCreateAdoptionPersonalBody({ ...fullForm, healthCheck: undefined }, []);
       expect(body.healthCheck).toBeUndefined();
     });
 
@@ -62,8 +62,8 @@ describe('toCreateAdoptionPersonalBody', () => {
       expect(body.healthCheck).toBe('Y');
     });
 
-    it('vaccinationCheck NONE → undefined', () => {
-      const body = toCreateAdoptionPersonalBody({ ...fullForm, vaccinationCheck: 'NONE' }, []);
+    it('vaccinationCheck undefined → undefined', () => {
+      const body = toCreateAdoptionPersonalBody({ ...fullForm, vaccinationCheck: undefined }, []);
       expect(body.vaccinationCheck).toBeUndefined();
     });
 

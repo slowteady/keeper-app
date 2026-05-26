@@ -17,7 +17,8 @@ jest.mock('@/shared/ui', () => {
   const actual = jest.requireActual('@/shared/ui');
   return {
     ...actual,
-    useBottomSheet: () => ({ present: mockPresent, dismiss: mockDismiss })
+    useBottomSheet: () => ({ present: mockPresent, dismiss: mockDismiss }),
+    useBottomSheetMenu: () => ({ open: mockPresent })
   };
 });
 
@@ -121,15 +122,6 @@ describe('useEditPost', () => {
     expect(calledId).toBe(42);
     expect(body.images).toEqual(['https://img/1.png']);
     expect(body.contacts).toEqual([{ type: 'PHONE', value: '010-1111-2222' }]);
-  });
-
-  it('actions.openWeightSelector 호출 시 바텀시트 present 가 호출된다', () => {
-    const { wrapper } = setup();
-    const { result } = renderHook(() => useEditPost(42), { wrapper });
-
-    act(() => result.current.actions.openWeightSelector());
-
-    expect(mockPresent).toHaveBeenCalled();
   });
 
   it('actions.openAgeSelector / openKindSelector 도 함수로 노출되고 호출 시 present 호출', () => {

@@ -1,5 +1,9 @@
 import { z } from 'zod';
 
+// 'NONE' enum 값은 구버전 데이터(chip default NONE 시절) 응답 호환용.
+// 신규 작성/수정 흐름에선 UI(constant.ts) 에서 NONE chip 제거됐고
+// from-detail.ts + api.ts orUndefined 가 NONE → undefined 로 정규화.
+
 export const AnimalTypeSchema = z.enum(['DOG', 'CAT', 'OTHER', 'ALL']);
 export type AnimalTypeDto = z.infer<typeof AnimalTypeSchema>;
 

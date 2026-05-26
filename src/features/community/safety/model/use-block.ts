@@ -66,6 +66,7 @@ export const useBlock = () => {
       removeBlockedFromCommentList(queryClient, userId);
       // 백그라운드 정합
       queryClient.invalidateQueries({ queryKey: communityQueries.all() });
+      globalToast('차단했어요', 'success');
     } catch {
       globalToast('차단에 실패했어요.', 'fail');
     }
@@ -75,6 +76,7 @@ export const useBlock = () => {
     try {
       await unblockMutation.mutateAsync(userId);
       await queryClient.invalidateQueries({ queryKey: communityQueries.all() });
+      await queryClient.invalidateQueries({ queryKey: commentQueries.all() });
       await queryClient.invalidateQueries({ queryKey: ['blocks'] });
       globalToast('차단 해제했어요.', 'success');
     } catch {

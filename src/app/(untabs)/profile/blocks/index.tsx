@@ -1,0 +1,55 @@
+import { FlashList, ListRenderItemInfo } from '@shopify/flash-list';
+import { useCallback } from 'react';
+import { ActivityIndicator } from 'react-native';
+import { styled, View, YStack } from 'tamagui';
+
+import type { BlockedUserDto } from '@/entities/community';
+import { BlockListRow, useBlockList } from '@/features/profile/blocks';
+import { FeedNodata, RouteErrorBoundary } from '@/shared/ui';
+
+export const ErrorBoundary = RouteErrorBoundary;
+
+const Page = () => {
+  const { items, isLoading, isFetchingNextPage, hasNext, fetchNextPage, unblock, isUnblockPending } = useBlockList();
+
+  const renderItem = useCallback(
+    ({ item }: ListRenderItemInfo<BlockedUserDto>) => (
+      <BlockListRow user={item} onUnblock={() => unblock(item.id)} isPending={isUnblockPending} />
+    ),
+    [unblock, isUnblockPending]
+  );
+
+  return (
+    <Container>
+      <FlashList
+        data={items}
+        keyExtractor={(item) => String(item.id)}
+        renderItem={renderItem}
+        onEndReached={hasNext ? fetchNextPage : undefined}
+        onEndReachedThreshold={0.5}
+        ListEmptyComponent={<EmptyComponent isLoading={isLoading} />}
+        ListFooterComponent={
+          isFetchingNextPage ? (
+            <View py={20} items="center">
+              <ActivityIndicator />
+            </View>
+          ) : null
+        }
+        contentContainerStyle={{ paddingVertical: 8, flexGrow: 1 }}
+      />
+    </Container>
+  );
+};
+
+export default Page;
+
+const EmptyComponent = ({ isLoading }: { isLoading: boolean }) => (
+  <View flex={1} items="center" justify="center">
+    {isLoading ? <ActivityIndicator /> : <FeedNodata text="차단한 사용자가 없어요" />}
+  </View>
+);
+
+const Container = styled(YStack, {
+  flex: 1,
+  bg: '$pageBackground'
+});

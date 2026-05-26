@@ -43,7 +43,7 @@ export const resolveAdoptShelter = (adopt: Adopt, shelterData: Shelter | undefin
     name: adopt.careNm ?? '',
     address: adopt.careAddr ?? '',
     tel: fallbackTel,
-    time: '정보 없음',
-    person: '정보 없음'
+    time: '운영시간 정보 없음',
+    person: '담당자 정보 없음'
   };
 };

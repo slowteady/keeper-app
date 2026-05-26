@@ -35,7 +35,7 @@ export const HomeAdoptSection = ({
 
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<AdoptItem>) => {
-      const { uri, title, description, chips, isFavorited } = item;
+      const { uri, title, description, chips, isFavorited, status } = item;
 
       return (
         <AdoptCard
@@ -45,6 +45,7 @@ export const HomeAdoptSection = ({
           description={description}
           chips={chips}
           isFavorited={isFavorited}
+          status={status}
           onPress={() => onGoDetail(item.id)}
           onPressFavorite={() => toggleFavoriteAbandonment(item.id, isFavorited ?? false)}
         />
@@ -67,12 +68,7 @@ export const HomeAdoptSection = ({
         </Text>
 
         <View mt={12}>
-          <Dropdown
-            data={ADOPT_OPTIONS.FILTER}
-            value={selectedFilter}
-            onChange={(value) => onChangeFilter(value.id)}
-            snapPoints={[200]}
-          />
+          <Dropdown data={ADOPT_OPTIONS.FILTER} value={selectedFilter} onChange={(value) => onChangeFilter(value.id)} />
         </View>
       </TitleContainer>
 

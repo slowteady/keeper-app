@@ -1,15 +1,14 @@
 import { useScrollToTop } from '@react-navigation/native';
-import { ListRenderItemInfo } from '@shopify/flash-list';
+import { FlashListRef, ListRenderItemInfo } from '@shopify/flash-list';
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { useRouter } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { styled, View } from 'tamagui';
 
 import { ADOPT_OPTIONS, AdoptCard, AdoptFilterDto, AdoptItem } from '@/entities/adopt';
 import { useAdoptList } from '@/features/adopt';
 import { useFavoriteAbandonment } from '@/features/favorite-abandonment';
-import { useScrollUpButton } from '@/shared/model';
-import { RouteErrorBoundary, ScrollUpButton, ShowMoreButton } from '@/shared/ui';
+import { RouteErrorBoundary, ShowMoreButton } from '@/shared/ui';
 import { AdoptListHeaderSection, AdoptListSection } from '@/widgets/adopt-section';
 
 export const ErrorBoundary = RouteErrorBoundary;
@@ -52,7 +51,7 @@ const Page = () => {
     fetchNextPageQuery();
   }, [fetchNextPageQuery]);
 
-  const { handleScroll, handlePressButton, isButtonVisible, scrollRef } = useScrollUpButton();
+  const scrollRef = useRef<FlashListRef<AdoptItem>>(null);
   useScrollToTop(scrollRef);
 
   useEffect(() => {
@@ -76,6 +75,7 @@ const Page = () => {
             description={item.description}
             chips={item.chips}
             isFavorited={item.isFavorited}
+            status={item.status}
             onPress={() => goDetail(item.id)}
             onPressFavorite={() => toggleFavoriteAbandonment(item.id, item.isFavorited ?? false)}
           />
@@ -91,7 +91,6 @@ const Page = () => {
         ref={scrollRef}
         data={convertedData ?? []}
         isLoading={isLoading}
-        onScroll={handleScroll}
         onRefreshCallback={refresh}
         renderItem={renderItem}
         header={
@@ -114,8 +113,6 @@ const Page = () => {
         }
         contentContainerStyle={{ paddingVertical: 32, paddingHorizontal: 20 }}
       />
-
-      <ScrollUpButton visible={isButtonVisible} onPress={handlePressButton} />
     </Container>
   );
 };

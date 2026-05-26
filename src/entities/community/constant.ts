@@ -9,23 +9,19 @@ export const COMMUNITY_TAB_ROUTES = [
 export const CREATE_POST_OPTIONS = {
   animalType: [
     { value: 'DOG', label: '강아지' },
-    { value: 'CAT', label: '고양이' },
-    { value: 'OTHER', label: '기타' }
+    { value: 'CAT', label: '고양이' }
   ] as const satisfies ChipOption[],
   gender: [
     { value: 'M', label: '남아' },
-    { value: 'F', label: '여아' },
-    { value: 'NONE', label: '정보없음' }
+    { value: 'F', label: '여아' }
   ] as const satisfies ChipOption[],
   neuterYn: [
     { value: 'Y', label: 'O' },
-    { value: 'N', label: 'X' },
-    { value: 'NONE', label: '정보없음' }
+    { value: 'N', label: 'X' }
   ] as const satisfies ChipOption[],
   healthCheck: [
     { value: 'Y', label: 'O' },
-    { value: 'N', label: 'X' },
-    { value: 'NONE', label: '정보없음' }
+    { value: 'N', label: 'X' }
   ] as const satisfies ChipOption[],
   protectionType: [
     { value: 'TEMPORARY', label: '임시보호' },
@@ -36,8 +32,7 @@ export const CREATE_POST_OPTIONS = {
     { value: 'NOT', label: '미접종' },
     { value: 'FIRST', label: '1차' },
     { value: 'SECOND', label: '2차' },
-    { value: 'THIRD', label: '3차' },
-    { value: 'NONE', label: '정보없음' }
+    { value: 'THIRD', label: '3차' }
   ] as const satisfies ChipOption[],
   contact: [
     // 백엔드 PostContactType 과 정합 — PHONE/EMAIL/SNS

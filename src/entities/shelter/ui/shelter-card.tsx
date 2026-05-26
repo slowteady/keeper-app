@@ -1,7 +1,7 @@
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { useCallback } from 'react';
 import { Pressable } from 'react-native';
-import { styled, Text, View, XStack } from 'tamagui';
+import { styled, Text, useTheme, View, XStack } from 'tamagui';
 
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
@@ -14,6 +14,7 @@ export type ShelterCardProps = {
 };
 
 export const ShelterCard = ({ data, onPress, onPressFavorite }: ShelterCardProps) => {
+  const { black500 } = useTheme();
   const { id, name, distance, address, isFavorited = false } = data;
   const convertedDistance = Math.round((distance ?? 0) * 10) / 10;
   const convertedAddress = address.split(' ').slice(0, 3).join(' ');
@@ -68,7 +69,7 @@ export const ShelterCard = ({ data, onPress, onPressFavorite }: ShelterCardProps
         onPress={handlePressFavorite}
         disabled={!onPressFavorite}
       >
-        <AnimatedHeart isLiked={isFavorited} size={20} />
+        <AnimatedHeart isLiked={isFavorited} size={20} inactiveColor={black500.val} />
       </Pressable>
     </Container>
   );

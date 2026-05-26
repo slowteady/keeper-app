@@ -47,7 +47,8 @@ describe('mapToAdoptList', () => {
   });
 
   it('includes filter chip for NEAR_DEADLINE', () => {
-    const result = mapToAdoptList([mockAdoptData], 'NEAR_DEADLINE');
+    const data = { ...mockAdoptData, chipType: 'NEAR_DEADLINE' as const };
+    const result = mapToAdoptList([data]);
     const filterChip = result[0].chips.find((c: { id: string }) => c.id === 'NEAR_DEADLINE');
 
     expect(filterChip).toBeDefined();
@@ -115,15 +116,16 @@ describe('mapToAdoptList — edge cases', () => {
     expect(result[0].uri).toBeUndefined();
   });
 
-  it('does not include D-day chip for NEW filter', () => {
-    const result = mapToAdoptList([mockAdoptData], 'NEW');
+  it('does not include D-day chip for NEW chipType', () => {
+    const data = { ...mockAdoptData, chipType: 'NEW' as const };
+    const result = mapToAdoptList([data]);
     const ddayChip = result[0].chips.find((c: { id: string }) => c.id === 'DDAY');
     expect(ddayChip).toBeUndefined();
   });
 
   it('does not include D-day chip when notice already expired', () => {
-    const data = { ...mockAdoptData, noticeEndDt: '20200101' };
-    const result = mapToAdoptList([data], 'NEAR_DEADLINE');
+    const data = { ...mockAdoptData, noticeEndDt: '20200101', chipType: 'NEAR_DEADLINE' as const };
+    const result = mapToAdoptList([data]);
     const ddayChip = result[0].chips.find((c: { id: string }) => c.id === 'DDAY');
     expect(ddayChip).toBeUndefined();
   });

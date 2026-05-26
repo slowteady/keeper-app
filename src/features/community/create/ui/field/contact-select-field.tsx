@@ -1,4 +1,5 @@
 import { Control, Controller, useFormState } from 'react-hook-form';
+import { KeyboardTypeOptions } from 'react-native';
 import { YStack } from 'tamagui';
 
 import { CommunityAdoptFormDto, CREATE_POST_OPTIONS } from '@/entities/community';
@@ -17,6 +18,33 @@ export type ContactSelectFieldProps = {
 // 1) root level (chip 0개 등): { message: '최소 1개의 연락 정보를...' }
 // 2) item level (특정 chip value 빈): [{ value: { message: '연락처를 입력해주세요' } }, ...]
 type ContactItemError = { value?: { message?: string } };
+
+// 국내 휴대폰 11자리(010XXXXXXXX) 까지 받고 3-4-4 로 포맷
+const formatPhone = (raw: string): string => {
+  const digits = raw.replace(/\D/g, '').slice(0, 11);
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+  return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
+};
+
+const getPlaceholder = (type: string): string => {
+  if (type === 'PHONE') return '예) 010-1234-5678';
+  if (type === 'EMAIL') return '예) keeper@example.com';
+  if (type === 'SNS') return '예) 카카오톡/인스타/페이스북 등 SNS 링크';
+  const option = CREATE_POST_OPTIONS.contact.find((opt) => opt.value === type);
+  return option?.label || '';
+};
+
+const getKeyboardType = (type: string): KeyboardTypeOptions => {
+  if (type === 'PHONE') return 'phone-pad';
+  if (type === 'EMAIL') return 'email-address';
+  return 'default';
+};
+
+// 010-1234-5678 = 13자 / 이메일·SNS 는 일반 max 100
+const getMaxLength = (type: string): number => (type === 'PHONE' ? 13 : 100);
+
+const formatValue = (type: string, value: string): string => (type === 'PHONE' ? formatPhone(value) : value);
 
 export const ContactSelectField = ({ control, label, required }: ContactSelectFieldProps) => {
   const { errors } = useFormState({ control, name: 'contact' });
@@ -44,13 +72,9 @@ export const ContactSelectField = ({ control, label, required }: ContactSelectFi
         };
 
         const handleValueChange = (type: string, value: string) => {
-          const updatedContact = field.value.map((item) => (item.type === type ? { ...item, value } : item));
+          const next = formatValue(type, value);
+          const updatedContact = field.value.map((item) => (item.type === type ? { ...item, value: next } : item));
           field.onChange(updatedContact);
-        };
-
-        const getPlaceholder = (type: string) => {
-          const option = CREATE_POST_OPTIONS.contact.find((opt) => opt.value === type);
-          return option?.label || '';
         };
 
         return (
@@ -72,6 +96,9 @@ export const ContactSelectField = ({ control, label, required }: ContactSelectFi
                     <YStack key={`${item.type}-${idx}`} gap={4}>
                       <TextField
                         placeholder={getPlaceholder(item.type)}
+                        keyboardType={getKeyboardType(item.type)}
+                        maxLength={getMaxLength(item.type)}
+                        autoCapitalize={item.type === 'EMAIL' ? 'none' : 'sentences'}
                         variant="fill"
                         value={item.value}
                         onChangeText={(text) => handleValueChange(item.type, text)}

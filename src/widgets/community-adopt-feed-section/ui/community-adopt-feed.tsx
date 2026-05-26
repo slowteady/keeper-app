@@ -1,6 +1,6 @@
 import { useScrollToTop } from '@react-navigation/native';
-import { FlashList, ListRenderItem } from '@shopify/flash-list';
-import { memo, useCallback, useEffect } from 'react';
+import { FlashList, FlashListRef, ListRenderItem } from '@shopify/flash-list';
+import { memo, useCallback, useEffect, useRef } from 'react';
 import { ActivityIndicator, RefreshControl } from 'react-native';
 import { styled, useTheme, View, XStack, YStack } from 'tamagui';
 
@@ -9,8 +9,8 @@ import type { CommunityAdoptListDto } from '@/entities/community';
 import { COMMUNITY_LIST_FILTER, CommunityAdoptCard, CommunityAdoptCardSkeleton } from '@/entities/community';
 import { useCommunityAdoptFeed, useCommunityListFilter } from '@/features/community';
 import { useIsLikePending, useLikePost } from '@/features/like-post';
-import { AnimalTypeDto, useListRefreshing, useScrollUpButton } from '@/shared/model';
-import { ButtonGroup, ChipButton, FeedNodata, ScrollUpButton } from '@/shared/ui';
+import { AnimalTypeDto, useListRefreshing } from '@/shared/model';
+import { ButtonGroup, ChipButton, FeedNodata } from '@/shared/ui';
 import { DownArrow } from '@/shared/ui/icons/mini';
 
 export const CommunityAdoptFeed = () => {
@@ -25,7 +25,7 @@ export const CommunityAdoptFeed = () => {
       sort: selectedFilter
     });
 
-  const { handleScroll, handlePressButton, isButtonVisible, scrollRef } = useScrollUpButton();
+  const scrollRef = useRef<FlashListRef<CommunityAdoptListDto>>(null);
   useScrollToTop(scrollRef);
   const { refreshing, handleRefresh } = useListRefreshing(refresh);
 
@@ -49,11 +49,8 @@ export const CommunityAdoptFeed = () => {
     <Container>
       <FlashList
         ref={scrollRef}
-        onScroll={handleScroll}
         keyExtractor={({ id }, i) => `${id}-${i}`}
         data={adoptList}
-        // 화면 밖 cell 더 멀리 keep — virtualization remount 시 이미지 reload 깜빡임 완화
-        drawDistance={1500}
         showsVerticalScrollIndicator={false}
         ItemSeparatorComponent={() => <Divider />}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
@@ -90,8 +87,6 @@ export const CommunityAdoptFeed = () => {
         renderItem={renderItem}
         contentContainerStyle={{ flexGrow: 1 }}
       />
-
-      <ScrollUpButton visible={isButtonVisible} onPress={handlePressButton} />
     </Container>
   );
 };

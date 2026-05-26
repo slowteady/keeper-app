@@ -1,3 +1,4 @@
+import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { Dimensions, Pressable } from 'react-native';
 import { styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
 
@@ -22,7 +23,12 @@ export const AdoptDetailOverviewSection = ({
   onPressFavorite,
   onPressShare
 }: AdoptDetailOverviewSectionProps) => {
-  const { black700 } = useTheme();
+  const { black500 } = useTheme();
+  const handlePressFavorite = () => {
+    if (!onPressFavorite) return;
+    impactAsync(isFavorited ? ImpactFeedbackStyle.Light : ImpactFeedbackStyle.Medium).catch(() => undefined);
+    onPressFavorite();
+  };
   return (
     <>
       <TitleContainer mb={20} gap={14}>
@@ -30,13 +36,13 @@ export const AdoptDetailOverviewSection = ({
           {title}
         </Text>
         {onPressFavorite && (
-          <Pressable hitSlop={10} onPress={onPressFavorite}>
-            <AnimatedHeart isLiked={isFavorited} size={26} />
+          <Pressable hitSlop={10} onPress={handlePressFavorite}>
+            <AnimatedHeart isLiked={isFavorited} size={26} inactiveColor={black500.val} />
           </Pressable>
         )}
         {onPressShare && (
           <Pressable hitSlop={10} onPress={onPressShare} accessibilityLabel="공유">
-            <ShareIcon width={24} height={24} color={black700.val} />
+            <ShareIcon width={24} height={24} color={black500.val} />
           </Pressable>
         )}
       </TitleContainer>

@@ -1,4 +1,5 @@
 import { NaverMapViewRef } from '@mj-studio/react-native-naver-map';
+import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { RefObject } from 'react';
 import { Pressable } from 'react-native';
 import { styled, Text, useTheme, XStack } from 'tamagui';
@@ -25,7 +26,12 @@ export const ShelterDetailOverviewSection = ({
   onPressShare
 }: ShelterDetailOverviewSectionProps) => {
   const { name, longitude, latitude, isFavorited = false } = data;
-  const { black700 } = useTheme();
+  const { black500 } = useTheme();
+  const handlePressFavorite = () => {
+    if (!onPressFavorite) return;
+    impactAsync(isFavorited ? ImpactFeedbackStyle.Light : ImpactFeedbackStyle.Medium).catch(() => undefined);
+    onPressFavorite();
+  };
 
   return (
     <>
@@ -42,13 +48,13 @@ export const ShelterDetailOverviewSection = ({
           {name}
         </Text>
         {onPressFavorite && (
-          <Pressable hitSlop={10} onPress={onPressFavorite}>
-            <AnimatedHeart isLiked={isFavorited} size={26} />
+          <Pressable hitSlop={10} onPress={handlePressFavorite}>
+            <AnimatedHeart isLiked={isFavorited} size={26} inactiveColor={black500.val} />
           </Pressable>
         )}
         {onPressShare && (
           <Pressable hitSlop={10} onPress={onPressShare} accessibilityLabel="공유">
-            <ShareIcon width={24} height={24} color={black700.val} />
+            <ShareIcon width={24} height={24} color={black500.val} />
           </Pressable>
         )}
       </TitleContainer>

@@ -2,7 +2,7 @@ import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { memo, useCallback, useMemo } from 'react';
 import { Dimensions } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import { styled, Text, TextProps, View, ViewProps, XStack, XStackProps } from 'tamagui';
+import { styled, Text, TextProps, useTheme, View, ViewProps, XStack, XStackProps } from 'tamagui';
 
 import { Carousel, Chip, NoImage } from '@/shared/ui';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
@@ -16,7 +16,6 @@ export interface CommunityAdoptCardProps extends CommunityAdoptListDto {
   onPressCard: (id: number) => void;
   onPressLike: (id: number, isLiked: boolean) => void;
   isLoading?: boolean;
-  isLoggedIn?: boolean;
 }
 
 const CommunityAdoptCardComponent = ({
@@ -31,7 +30,6 @@ const CommunityAdoptCardComponent = ({
   counts,
   onPressLike,
   isLoading = false,
-  isLoggedIn = false,
   animalType,
   gender,
   neuterYn,
@@ -39,6 +37,7 @@ const CommunityAdoptCardComponent = ({
   vaccinationCheck,
   keywords
 }: CommunityAdoptCardProps) => {
+  const { black500 } = useTheme();
   const handlePressCard = useCallback(() => onPressCard(id), [onPressCard, id]);
   const handlePressLike = useCallback(() => {
     // 좋아요 토글 시 햅틱 — 추가는 Medium, 해제는 Light
@@ -71,7 +70,7 @@ const CommunityAdoptCardComponent = ({
       .runOnJS(true);
 
     return { cardTap: card, heartTap: heart };
-  }, [handlePressCard, handlePressLike, isLoggedIn, isLoading]);
+  }, [handlePressCard, handlePressLike, isLoading]);
 
   // raw enum 을 라벨로 변환 (관심사 분리 — 백엔드는 enum 만 응답)
   // 입양생활은 사용자 자유 입력 keywords 를 그대로 노출, 그 외는 enum → 라벨 자동 생성
@@ -96,7 +95,7 @@ const CommunityAdoptCardComponent = ({
 
           <GestureDetector gesture={heartTap}>
             <View hitSlop={10} testID={`community-card-heart-${id}`}>
-              <AnimatedHeart isLiked={isLiked} size={28} />
+              <AnimatedHeart isLiked={isLiked} size={28} inactiveColor={black500.val} />
             </View>
           </GestureDetector>
         </XStack>

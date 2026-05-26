@@ -1,7 +1,7 @@
-import { usePreventRemove } from '@react-navigation/native';
 import { router, useLocalSearchParams } from 'expo-router';
-import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
+import { Suspense, useCallback, useState } from 'react';
 import { FieldErrors } from 'react-hook-form';
+import { Keyboard } from 'react-native';
 import { KeyboardAwareScrollView, KeyboardStickyView } from 'react-native-keyboard-controller';
 import { styled, View } from 'tamagui';
 
@@ -10,27 +10,19 @@ import { LocationBottomSheet, useLocationBottomSheet } from '@/features/address'
 import { useEditPost } from '@/features/community';
 import { globalToast } from '@/shared/lib';
 import { useLayout } from '@/shared/model';
-import { Button, CancelModal, DetailErrorBoundary } from '@/shared/ui';
+import { Button, CancelModal, DetailErrorBoundary, ModalPageHeader } from '@/shared/ui';
 import { CommunityAdoptForm, PostDetailSkeleton } from '@/widgets/community-adopt-feed-section';
 
 export const ErrorBoundary = DetailErrorBoundary;
 
+// write/index.tsx 와 동일 — CommunityAdoptForm 렌더 순서 따름 (필수 6개)
 const FIELD_ORDER: (keyof CommunityAdoptFormDto)[] = [
-  'animalType',
-  'gender',
-  'neuterYn',
-  'healthCheck',
+  'images',
   'protectionType',
-  'vaccinationCheck',
-  'weight',
-  'location',
-  'age',
-  'specificType',
   'title',
   'content',
-  'specialMark',
-  'contact',
-  'images'
+  'animalType',
+  'contact'
 ];
 
 const findFirstError = (
@@ -64,31 +56,21 @@ const EditContent = ({ postId }: { postId: number }) => {
   const { form, isSubmitting, actions } = useEditPost(postId);
 
   const isDirty = form.formState.isDirty;
-  const [allowLeave, setAllowLeave] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
-  const [pendingExit, setPendingExit] = useState(false);
-  const showCancelModalRef = useRef(showCancelModal);
-  useEffect(() => {
-    showCancelModalRef.current = showCancelModal;
-  }, [showCancelModal]);
 
-  const prevent = isDirty && !isSubmitting && !allowLeave;
-  usePreventRemove(prevent, () => {
-    if (!showCancelModalRef.current) setShowCancelModal(true);
-  });
+  const handleClose = useCallback(() => {
+    Keyboard.dismiss();
+    if (isDirty && !isSubmitting) {
+      setShowCancelModal(true);
+    } else {
+      router.back();
+    }
+  }, [isDirty, isSubmitting]);
 
   const handleConfirmExit = useCallback(() => {
     setShowCancelModal(false);
-    setAllowLeave(true);
-    setPendingExit(true);
+    router.back();
   }, []);
-
-  useEffect(() => {
-    if (allowLeave && pendingExit) {
-      router.back();
-      setPendingExit(false);
-    }
-  }, [allowLeave, pendingExit]);
 
   const {
     ref: locationRef,
@@ -99,11 +81,10 @@ const EditContent = ({ postId }: { postId: number }) => {
     getAddress,
     dismiss: dismissLocation
   } = useLocationBottomSheet((selectedAddress) => {
-    form.setValue('location', selectedAddress.address.address_name);
+    form.setValue('location', selectedAddress.address.address_name, { shouldDirty: true });
   });
 
   const selectTriggers: Partial<Record<keyof CommunityAdoptFormDto, () => void>> = {
-    weight: actions.openWeightSelector,
     age: actions.openAgeSelector,
     specificType: actions.openKindSelector,
     location: openBottomSheet
@@ -123,19 +104,24 @@ const EditContent = ({ postId }: { postId: number }) => {
 
   return (
     <Container>
+      <ModalPageHeader title="개인입양 홍보 수정" fullScreen onClose={handleClose} />
       <KeyboardAwareScrollView contentContainerStyle={{ paddingVertical: 40 }} bottomOffset={buttonHeight}>
         <CommunityAdoptForm
           form={form}
-          onPressWeight={actions.openWeightSelector}
           onPressAge={actions.openAgeSelector}
           onPressKind={actions.openKindSelector}
           onPressLocation={openBottomSheet}
           readOnlyImages
-          title="개인입양 홍보 수정"
         />
       </KeyboardAwareScrollView>
 
-      <KeyboardStickyView onLayout={(e) => setButtonHeight(e.nativeEvent.layout.height)}>
+      <KeyboardStickyView
+        // 동일 height 면 setState skip — kirillzyusko/react-native-keyboard-controller#1306
+        onLayout={(e) => {
+          const h = e.nativeEvent.layout.height;
+          setButtonHeight((prev) => (prev === h ? prev : h));
+        }}
+      >
         <StickyButtonWrapper pb={bottom}>
           <Button
             size="large"
