@@ -1,7 +1,13 @@
 import { styled, View } from 'tamagui';
 
+import { ProfileLikeScene } from '@/widgets/profile';
+
 const Page = () => {
-  return <Container />;
+  return (
+    <Container>
+      <ProfileLikeScene />
+    </Container>
+  );
 };
 
 export default Page;

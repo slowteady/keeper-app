@@ -12,6 +12,7 @@ type FavoriteResponse = { isFavorited: boolean };
 
 export const FAVORITE_SHELTER_MUTATION_KEY = ['favorite-shelter'] as const;
 const SHELTER_PREFIX = shelterQueries.all();
+const ME_FAVORITE_PREFIX = ['me-favorite-shelters'] as const;
 
 export const useFavoriteShelter = () => {
   const queryClient = useQueryClient();
@@ -23,12 +24,22 @@ export const useFavoriteShelter = () => {
       currentlyFavorited ? shelterApi.unfavorite(careRegNo) : shelterApi.favorite(careRegNo),
 
     onMutate: async ({ careRegNo, currentlyFavorited }) => {
-      await queryClient.cancelQueries({ queryKey: SHELTER_PREFIX });
-      const backup = queryClient.getQueriesData({ queryKey: SHELTER_PREFIX });
+      await Promise.all([
+        queryClient.cancelQueries({ queryKey: SHELTER_PREFIX }),
+        queryClient.cancelQueries({ queryKey: ME_FAVORITE_PREFIX })
+      ]);
+      const backup = [
+        ...queryClient.getQueriesData({ queryKey: SHELTER_PREFIX }),
+        ...queryClient.getQueriesData({ queryKey: ME_FAVORITE_PREFIX })
+      ];
 
       const next = !currentlyFavorited;
+      const matcher = (item: unknown) => (item as { id?: string }).id === careRegNo;
       queryClient.setQueriesData({ queryKey: SHELTER_PREFIX }, (old: unknown) =>
-        patchFavoritedCache(old, (item) => (item as { id?: string }).id === careRegNo, next)
+        patchFavoritedCache(old, matcher, next)
+      );
+      queryClient.setQueriesData({ queryKey: ME_FAVORITE_PREFIX }, (old: unknown) =>
+        patchFavoritedCache(old, matcher, next)
       );
 
       return { backup };
@@ -44,9 +55,12 @@ export const useFavoriteShelter = () => {
     },
 
     onSuccess: (data, { careRegNo }) => {
-      // 서버 권위 재정합 (현재 isFavorited 만 응답)
+      const matcher = (item: unknown) => (item as { id?: string }).id === careRegNo;
       queryClient.setQueriesData({ queryKey: SHELTER_PREFIX }, (old: unknown) =>
-        patchFavoritedCache(old, (item) => (item as { id?: string }).id === careRegNo, data.isFavorited)
+        patchFavoritedCache(old, matcher, data.isFavorited)
+      );
+      queryClient.setQueriesData({ queryKey: ME_FAVORITE_PREFIX }, (old: unknown) =>
+        patchFavoritedCache(old, matcher, data.isFavorited)
       );
     },
 

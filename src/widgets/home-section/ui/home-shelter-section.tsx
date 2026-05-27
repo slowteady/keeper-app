@@ -8,6 +8,7 @@ import { styled, Text, useTheme, View, XStack } from 'tamagui';
 
 import {
   DistanceIndicator,
+  DistancePermissionPrompt,
   HOME_SHELTER_CARD_SIZE,
   HomeShelterCard,
   ShelterCountDto,
@@ -90,11 +91,9 @@ export const HomeShelterSection = ({
         </XStack>
       </HeaderContainer>
 
-      {isGranted && (
-        <View px={20} mb={16}>
-          <DistanceIndicator value={shelterCounts ?? []} />
-        </View>
-      )}
+      <View px={20} mb={16}>
+        {isGranted ? <DistanceIndicator value={shelterCounts ?? []} /> : <DistancePermissionPrompt />}
+      </View>
 
       <View px={20} mb={16}>
         <ShelterMap
@@ -111,22 +110,24 @@ export const HomeShelterSection = ({
         />
       </View>
 
-      <Animated.View style={animatedListStyle}>
-        <FlashList
-          ref={listRef}
-          keyExtractor={({ id }) => id}
-          data={shelters}
-          renderItem={renderItem}
-          ItemSeparatorComponent={() => <View width={12} />}
-          ListEmptyComponent={<EmptyComponent isLoading={isLoading} />}
-          ListFooterComponent={() => <ViewAllButton onPress={() => router.push('/shelter')} />}
-          ListFooterComponentStyle={{ alignItems: 'center', justifyContent: 'center', paddingHorizontal: 40 }}
-          style={{ paddingLeft: 20, minHeight: SHELTER_CARD_MIN_HEIGHT }}
-          showsHorizontalScrollIndicator={false}
-          decelerationRate="fast"
-          horizontal
-        />
-      </Animated.View>
+      {isGranted && (
+        <Animated.View style={animatedListStyle}>
+          <FlashList
+            ref={listRef}
+            keyExtractor={({ id }) => id}
+            data={shelters}
+            renderItem={renderItem}
+            ItemSeparatorComponent={() => <View width={12} />}
+            ListEmptyComponent={<EmptyComponent isLoading={isLoading} />}
+            ListFooterComponent={() => <ViewAllButton onPress={() => router.push('/shelter')} />}
+            ListFooterComponentStyle={{ alignItems: 'center', justifyContent: 'center', paddingHorizontal: 40 }}
+            style={{ paddingLeft: 20, minHeight: SHELTER_CARD_MIN_HEIGHT }}
+            showsHorizontalScrollIndicator={false}
+            decelerationRate="fast"
+            horizontal
+          />
+        </Animated.View>
+      )}
     </>
   );
 };

@@ -66,6 +66,7 @@ export const useBlock = () => {
       removeBlockedFromCommentList(queryClient, userId);
       // 백그라운드 정합
       queryClient.invalidateQueries({ queryKey: communityQueries.all() });
+      queryClient.invalidateQueries({ queryKey: ['me-liked-posts'] });
       globalToast('차단했어요', 'success');
     } catch {
       globalToast('차단에 실패했어요.', 'fail');

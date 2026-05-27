@@ -71,8 +71,8 @@ export const useShelterMap = () => {
       searchMutate(
         {
           search: text,
-          userLatitude: base.camera?.latitude ?? 0,
-          userLongitude: base.camera?.longitude ?? 0
+          userLatitude: base.camera?.latitude,
+          userLongitude: base.camera?.longitude
         },
         {
           onSuccess: (data) => {

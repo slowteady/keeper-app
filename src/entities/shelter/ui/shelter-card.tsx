@@ -16,6 +16,7 @@ export type ShelterCardProps = {
 export const ShelterCard = ({ data, onPress, onPressFavorite }: ShelterCardProps) => {
   const { black500 } = useTheme();
   const { id, name, distance, address, isFavorited = false } = data;
+  const hasDistance = typeof distance === 'number' && distance > 0;
   const convertedDistance = Math.round((distance ?? 0) * 10) / 10;
   const convertedAddress = address.split(' ').slice(0, 3).join(' ');
 
@@ -45,9 +46,11 @@ export const ShelterCard = ({ data, onPress, onPressFavorite }: ShelterCardProps
           </XStack>
 
           <XStack items="center">
-            <Text fontSize={13} lineHeight={15} fontWeight="400" color="$black800">
-              {convertedDistance}km
-            </Text>
+            {hasDistance && (
+              <Text fontSize={13} lineHeight={15} fontWeight="400" color="$black800">
+                {convertedDistance}km
+              </Text>
+            )}
             <Text
               numberOfLines={1}
               ellipsizeMode="tail"
@@ -55,9 +58,9 @@ export const ShelterCard = ({ data, onPress, onPressFavorite }: ShelterCardProps
               lineHeight={15}
               fontWeight="400"
               color="$black500"
-              ml={4}
+              ml={hasDistance ? 4 : 0}
             >
-              | {convertedAddress}
+              {hasDistance ? `| ${convertedAddress}` : convertedAddress}
             </Text>
           </XStack>
         </View>

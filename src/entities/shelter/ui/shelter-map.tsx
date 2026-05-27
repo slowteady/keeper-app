@@ -56,16 +56,18 @@ const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
       onRefetch(cameraRef.current ?? undefined);
     }, [onRefetch]);
 
+    const onInitializedProp = props.onInitialized;
     const handleInitialized = useCallback(() => {
       setIsMapReady(true);
-      props.onInitialized?.();
-    }, [props]);
+      onInitializedProp?.();
+    }, [onInitializedProp]);
 
     const handleTapMarker = useCallback(
       (data: ShelterDto) => {
         (ref as React.RefObject<NaverMapViewRef>)?.current?.animateCameraTo({
           latitude: data.latitude,
-          longitude: data.longitude
+          longitude: data.longitude,
+          zoom: 15
         });
         onTapMarker?.(data);
       },
@@ -198,16 +200,14 @@ const Container = styled(XStack, {
 });
 
 const NoLocationContainer = styled(YStack, {
-  position: 'relative',
   width: '100%',
   flex: 1,
   items: 'center',
   justify: 'center',
-  bg: '$white900'
+  gap: 16
 });
 
 const SettingButton = styled(View, {
-  position: 'absolute',
   px: 32,
   py: 16,
   rounded: 30,

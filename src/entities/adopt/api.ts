@@ -3,7 +3,13 @@ import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
 import { authApi } from '@/shared/api';
 import { ApiResponse } from '@/shared/model';
 
-import { AdoptDataDto, AdoptParamsDto, AdoptResponseDto } from './schema';
+import {
+  AdoptDataDto,
+  AdoptMyFavoriteListDto,
+  AdoptMyFavoriteListSchema,
+  AdoptParamsDto,
+  AdoptResponseDto
+} from './schema';
 
 const BASE_URL = 'v2/abandonments';
 
@@ -20,6 +26,11 @@ const getAdopts = async (params: AdoptParamsDto): Promise<AdoptResponseDto> => {
 const getAdopt = async (id: string): Promise<AdoptDataDto> => {
   const res = await authApi.get<ApiResponse<AdoptDataDto>>(`${BASE_URL}/${id}`);
   return res.data.data;
+};
+
+const getMyFavoriteAbandonments = async (params: { page: number; size: number }): Promise<AdoptMyFavoriteListDto> => {
+  const res = await authApi.get<ApiResponse<AdoptMyFavoriteListDto>>('/me/favorite-abandonments', { params });
+  return AdoptMyFavoriteListSchema.parse(res.data.data);
 };
 
 // --- Query Options Factory ---
@@ -44,6 +55,21 @@ export const adoptQueries = {
     queryOptions({
       queryKey: [...adoptQueries.all(), 'detail', id] as const,
       queryFn: () => getAdopt(id)
+    }),
+
+  myFavoriteList: (size: number = 20) =>
+    infiniteQueryOptions({
+      queryKey: ['me-favorite-abandonments', { size }] as const,
+      queryFn: ({ pageParam }) => getMyFavoriteAbandonments({ page: pageParam, size }),
+      initialPageParam: 1,
+      getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.page + 1 : undefined),
+      select: (data) => ({
+        items: data.pages.flatMap((p) => p.items),
+        total: data.pages[data.pages.length - 1].total,
+        page: data.pages[data.pages.length - 1].page,
+        size: data.pages[data.pages.length - 1].size,
+        hasNext: data.pages[data.pages.length - 1].hasNext
+      })
     })
 };
 

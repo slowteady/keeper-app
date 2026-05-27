@@ -23,9 +23,9 @@ describe('useProfileLikeFilter', () => {
     const { result } = renderHook(() => useProfileLikeFilter());
 
     act(() => {
-      result.current.toggleFilter('post');
+      result.current.toggleFilter('shelter');
     });
 
-    expect(result.current.filter).toBe('post');
+    expect(result.current.filter).toBe('shelter');
   });
 });

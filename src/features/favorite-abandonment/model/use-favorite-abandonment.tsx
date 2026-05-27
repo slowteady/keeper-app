@@ -17,6 +17,8 @@ const ADOPT_PREFIX = adoptQueries.all();
 // 보호소 상세 안 공고 목록 (shelterQueries.adopts) 도 sync — id matcher 가 desertionNo 만 패치하므로
 // 보호소 list/detail cache 는 무영향 (no-op).
 const SHELTER_PREFIX = shelterQueries.all();
+// 마이페이지 관심 list 는 도메인 prefix 와 별도 namespace — optimistic patch 만, invalidate 는 안 함 (29cm 잔존).
+const ME_FAVORITE_PREFIX = ['me-favorite-abandonments'] as const;
 
 export const useFavoriteAbandonment = () => {
   const queryClient = useQueryClient();
@@ -30,17 +32,22 @@ export const useFavoriteAbandonment = () => {
     onMutate: async ({ desertionNo, currentlyFavorited }) => {
       await Promise.all([
         queryClient.cancelQueries({ queryKey: ADOPT_PREFIX }),
-        queryClient.cancelQueries({ queryKey: SHELTER_PREFIX })
+        queryClient.cancelQueries({ queryKey: SHELTER_PREFIX }),
+        queryClient.cancelQueries({ queryKey: ME_FAVORITE_PREFIX })
       ]);
       const backup = [
         ...queryClient.getQueriesData({ queryKey: ADOPT_PREFIX }),
-        ...queryClient.getQueriesData({ queryKey: SHELTER_PREFIX })
+        ...queryClient.getQueriesData({ queryKey: SHELTER_PREFIX }),
+        ...queryClient.getQueriesData({ queryKey: ME_FAVORITE_PREFIX })
       ];
 
       const next = !currentlyFavorited;
       const matcher = (item: unknown) => (item as { id?: string }).id === desertionNo;
       queryClient.setQueriesData({ queryKey: ADOPT_PREFIX }, (old: unknown) => patchFavoritedCache(old, matcher, next));
       queryClient.setQueriesData({ queryKey: SHELTER_PREFIX }, (old: unknown) =>
+        patchFavoritedCache(old, matcher, next)
+      );
+      queryClient.setQueriesData({ queryKey: ME_FAVORITE_PREFIX }, (old: unknown) =>
         patchFavoritedCache(old, matcher, next)
       );
 
@@ -62,6 +69,9 @@ export const useFavoriteAbandonment = () => {
         patchFavoritedCache(old, matcher, data.isFavorited)
       );
       queryClient.setQueriesData({ queryKey: SHELTER_PREFIX }, (old: unknown) =>
+        patchFavoritedCache(old, matcher, data.isFavorited)
+      );
+      queryClient.setQueriesData({ queryKey: ME_FAVORITE_PREFIX }, (old: unknown) =>
         patchFavoritedCache(old, matcher, data.isFavorited)
       );
     },

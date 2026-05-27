@@ -24,6 +24,15 @@ export const ShelterSchema = z.object({
 });
 export type ShelterDto = z.infer<typeof ShelterSchema>;
 
+export const ShelterMyFavoriteListSchema = z.object({
+  items: z.array(ShelterSchema),
+  total: z.number(),
+  page: z.number(),
+  size: z.number(),
+  hasNext: z.boolean()
+});
+export type ShelterMyFavoriteListDto = z.infer<typeof ShelterMyFavoriteListSchema>;
+
 export const ShelterCountSchema = z.object({
   distance: z.number(),
   count: z.number()
@@ -34,8 +43,8 @@ export const SheltersParamsSchema = z.object({
   latitude: z.number(),
   longitude: z.number(),
   distance: z.number(),
-  userLatitude: z.number(),
-  userLongitude: z.number()
+  userLatitude: z.number().optional(),
+  userLongitude: z.number().optional()
 });
 export type SheltersParamsDto = z.infer<typeof SheltersParamsSchema>;
 
@@ -54,7 +63,7 @@ export type ShelterAdoptsParamsDto = z.infer<typeof ShelterAdoptsParamsSchema>;
 
 export const ShelterSearchParamsSchema = z.object({
   search: z.string(),
-  userLatitude: z.number(),
-  userLongitude: z.number()
+  userLatitude: z.number().optional(),
+  userLongitude: z.number().optional()
 });
 export type ShelterSearchParamsDto = z.infer<typeof ShelterSearchParamsSchema>;

@@ -30,8 +30,8 @@ export const useHomeShelter = () => {
       latitude: queryCamera?.latitude ?? 0,
       longitude: queryCamera?.longitude ?? 0,
       distance,
-      userLatitude: userLocation?.latitude ?? 0,
-      userLongitude: userLocation?.longitude ?? 0
+      userLatitude: userLocation?.latitude,
+      userLongitude: userLocation?.longitude
     }),
     enabled: !!queryCamera && isMapReady
   });

@@ -58,6 +58,15 @@ export const AdoptResponseSchema = z.object({
 });
 export type AdoptResponseDto = z.infer<typeof AdoptResponseSchema>;
 
+export const AdoptMyFavoriteListSchema = z.object({
+  items: z.array(AdoptDataSchema),
+  total: z.number(),
+  page: z.number(),
+  size: z.number(),
+  hasNext: z.boolean()
+});
+export type AdoptMyFavoriteListDto = z.infer<typeof AdoptMyFavoriteListSchema>;
+
 export const AdoptParamsSchema = z.object({
   filter: AdoptFilterSchema,
   animalType: z.string(),

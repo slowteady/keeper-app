@@ -2,7 +2,13 @@ import { Camera, NaverMapViewRef } from '@mj-studio/react-native-naver-map';
 import { forwardRef } from 'react';
 import { styled, Text, View, XStack } from 'tamagui';
 
-import { DistanceIndicator, ShelterCountDto, ShelterDto, ShelterMap } from '@/entities/shelter';
+import {
+  DistanceIndicator,
+  DistancePermissionPrompt,
+  ShelterCountDto,
+  ShelterDto,
+  ShelterMap
+} from '@/entities/shelter';
 import { CameraParams } from '@/shared/model';
 
 export type ShelterMapSectionProps = {
@@ -33,11 +39,7 @@ export const ShelterMapSection = forwardRef<NaverMapViewRef, ShelterMapSectionPr
             </Text>
           </SearchResultBar>
         ) : (
-          isGranted && (
-            <View mb={16}>
-              <DistanceIndicator value={counts ?? []} />
-            </View>
-          )
+          <View mb={16}>{isGranted ? <DistanceIndicator value={counts ?? []} /> : <DistancePermissionPrompt />}</View>
         )}
 
         <View>

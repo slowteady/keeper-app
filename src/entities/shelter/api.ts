@@ -11,6 +11,8 @@ import {
   ShelterCountDto,
   ShelterCountsParamsDto,
   ShelterDto,
+  ShelterMyFavoriteListDto,
+  ShelterMyFavoriteListSchema,
   ShelterSearchParamsDto,
   SheltersParamsDto
 } from './schema';
@@ -47,6 +49,16 @@ const getShelterAdopts = async (id: string, params: ShelterAdoptsParamsDto): Pro
 export const searchShelters = async (params: ShelterSearchParamsDto): Promise<ShelterDto[]> => {
   const res = await authApi.get<ApiResponse<ShelterDto[]>>(`${BASE_URL}/search`, { params });
   return res.data.data;
+};
+
+const getMyFavoriteShelters = async (params: {
+  page: number;
+  size: number;
+  userLatitude?: number;
+  userLongitude?: number;
+}): Promise<ShelterMyFavoriteListDto> => {
+  const res = await authApi.get<ApiResponse<ShelterMyFavoriteListDto>>('/me/favorite-shelters', { params });
+  return ShelterMyFavoriteListSchema.parse(res.data.data);
 };
 
 // --- Favorite (찜) ---
@@ -106,5 +118,26 @@ export const shelterQueries = {
         const allData = data.pages.flatMap((page) => page.value);
         return { ...lastPage, value: allData };
       }
+    }),
+
+  myFavoriteList: (userLocation?: { latitude: number; longitude: number }, size: number = 20) =>
+    infiniteQueryOptions({
+      queryKey: ['me-favorite-shelters', { size, userLocation }] as const,
+      queryFn: ({ pageParam }) =>
+        getMyFavoriteShelters({
+          page: pageParam,
+          size,
+          userLatitude: userLocation?.latitude,
+          userLongitude: userLocation?.longitude
+        }),
+      initialPageParam: 1,
+      getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.page + 1 : undefined),
+      select: (data) => ({
+        items: data.pages.flatMap((p) => p.items),
+        total: data.pages[data.pages.length - 1].total,
+        page: data.pages[data.pages.length - 1].page,
+        size: data.pages[data.pages.length - 1].size,
+        hasNext: data.pages[data.pages.length - 1].hasNext
+      })
     })
 };

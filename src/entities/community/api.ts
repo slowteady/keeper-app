@@ -64,6 +64,11 @@ const reportPost = async (id: number, body: { reason: string; reasonDetail?: str
   await authApi.post<AxiosResponse>(`${COMMUNITY_BASE}/${id}/report`, body);
 };
 
+const getMyLikedPosts = async (params: { page: number; size: number }): Promise<CommunityListResponseDto> => {
+  const res = await authApi.get<ApiResponse<CommunityListResponseDto>>('/me/liked-posts', { params });
+  return CommunityListResponseSchema.parse(res.data.data);
+};
+
 export const communityApi = {
   getList,
   getDetail,
@@ -102,5 +107,20 @@ export const communityQueries = {
       queryKey: [...communityQueries.all(), 'detail', id] as const,
       queryFn: () => getDetail(id),
       enabled: !!id
+    }),
+
+  myLikedList: (size: number = 20) =>
+    infiniteQueryOptions({
+      queryKey: ['me-liked-posts', { size }] as const,
+      queryFn: ({ pageParam }) => getMyLikedPosts({ page: pageParam, size }),
+      initialPageParam: 1,
+      getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.page + 1 : undefined),
+      select: (data) => ({
+        items: data.pages.flatMap((p) => p.items),
+        total: data.pages[data.pages.length - 1].total,
+        page: data.pages[data.pages.length - 1].page,
+        size: data.pages[data.pages.length - 1].size,
+        hasNext: data.pages[data.pages.length - 1].hasNext
+      })
     })
 };
