@@ -4,6 +4,7 @@ import { useCallback } from 'react';
 import { Pressable } from 'react-native';
 import { styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
 
+import { formatTimeAgo } from '@/shared/lib';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
 import { CommunityAdoptListDto } from '../schema';
@@ -18,7 +19,6 @@ export type CommunityPostListItemProps = {
 export const CommunityPostListItem = ({ data, categoryLabel, onPress, onPressLike }: CommunityPostListItemProps) => {
   const { black500 } = useTheme();
   const thumbnail = data.images?.[0];
-  const previewText = data.content?.trim() || data.title;
 
   const handlePressLike = useCallback(() => {
     if (!onPressLike) return;
@@ -34,20 +34,22 @@ export const CommunityPostListItem = ({ data, categoryLabel, onPress, onPressLik
             <CategoryChip>
               <CategoryText>{categoryLabel}</CategoryText>
             </CategoryChip>
-            <DisplayTime>{data.displayTime}</DisplayTime>
+            <DisplayTime>{formatTimeAgo(data.displayTime)}</DisplayTime>
           </XStack>
-          <Preview numberOfLines={2}>{previewText}</Preview>
-          <Meta>{data.counts.like}명이 공감했어요</Meta>
+          <Preview numberOfLines={2} ellipsizeMode="tail">
+            {data.title}
+          </Preview>
+          <XStack items="center" gap={10}>
+            {onPressLike && (
+              <Pressable onPress={handlePressLike} hitSlop={8} testID={`me-liked-post-toggle-${data.id}`}>
+                <AnimatedHeart isLiked={data.isLiked} size={18} inactiveColor={black500.val} />
+              </Pressable>
+            )}
+            <Meta>{data.counts.like}명이 공감했어요</Meta>
+          </XStack>
         </YStack>
       </Pressable>
-      <View>
-        {thumbnail ? <Thumbnail source={{ uri: thumbnail }} contentFit="cover" /> : <ThumbnailPlaceholder />}
-        <HeartWrap>
-          <Pressable onPress={handlePressLike} hitSlop={8} disabled={!onPressLike}>
-            <AnimatedHeart isLiked={data.isLiked} size={20} inactiveColor={black500.val} />
-          </Pressable>
-        </HeartWrap>
-      </View>
+      {thumbnail ? <Thumbnail source={{ uri: thumbnail }} contentFit="cover" /> : <ThumbnailPlaceholder />}
     </Container>
   );
 };
@@ -57,7 +59,7 @@ const Container = styled(XStack, {
   gap: 16,
   borderBottomWidth: 1,
   borderBottomColor: '$white850',
-  items: 'flex-start'
+  items: 'center'
 });
 
 const CategoryChip = styled(View, {
@@ -106,10 +108,4 @@ const ThumbnailPlaceholder = styled(View, {
   height: 64,
   rounded: 8,
   bg: '$white850'
-});
-
-const HeartWrap = styled(View, {
-  position: 'absolute',
-  t: 4,
-  r: 4
 });

@@ -62,20 +62,23 @@ ALTER TABLE post_like            ADD INDEX idx_post_like_user_created           
 
 ### Controller / Service 변경
 
-| 파일                                                                              | 메서드                                                       | 변경 내용                                                                                                                                                                     |
-| --------------------------------------------------------------------------------- | ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `keeper-api/src/api/abandonment/controller/me-favorite-abandonment.controller.ts` | `findMyFavorites(user, query)`                               | **신규 controller**. `@Controller('/api/me/favorite-abandonments')` + `@Get('/')` + `JwtAuthGuard`. PageV2Request query. PageV2Response<AbandonmentListItemResponse> 반환     |
-| `keeper-api/src/api/abandonment/service/abandonment-favorite.service.ts`          | `+ findMyFavorites(userId, page, size)`                      | repository join 호출 + 응답 매핑                                                                                                                                              |
-| `keeper-api/src/api/abandonment/repository/abandonment-favorite.repository.ts`    | `+ findByUserPaginated(userId, page, size)`                  | `JOIN abandonment_v2 ON ...` `WHERE af.user_id=? ORDER BY af.created_at DESC LIMIT ? OFFSET ?`. count 별도 쿼리. (abandonment 는 차단 무관 — 작성자 user 가 없는 공공 데이터) |
-| `keeper-api/src/api/shelter/controller/me-favorite-shelter.controller.ts`         | `findMyFavorites(user, query)`                               | **신규 controller**. `@Controller('/api/me/favorite-shelters')`. PageV2 패턴                                                                                                  |
-| `keeper-api/src/api/shelter/service/shelter-favorite.service.ts`                  | `+ findMyFavorites(userId, page, size)`                      | repository join 호출 + 응답 매핑                                                                                                                                              |
-| `keeper-api/src/api/shelter/repository/shelter-favorite.repository.ts`            | `+ findByUserPaginated(userId, page, size)`                  | `JOIN shelter_v2 ON ...` `WHERE sf.user_id=? ORDER BY sf.created_at DESC`. (보호소도 차단 무관 — 공공 데이터)                                                                 |
-| `keeper-api/src/api/community/controller/me-liked-post.controller.ts`             | `findMyLikedPosts(user, query)`                              | **신규 controller**. `@Controller('/api/me/liked-posts')`. PageV2 패턴. service 호출 시 `excludeUserIds` 전달                                                                 |
-| `keeper-api/src/api/community/service/like.service.ts`                            | `+ findMyLikedPosts(userId, page, size, excludeUserIds)`     | repository join + `is_hidden=false` 필터 + 작성자 차단 필터. 응답 매핑                                                                                                        |
-| `keeper-api/src/api/community/repository/like.repository.ts`                      | `+ findLikedPostsByUser(userId, page, size, excludeUserIds)` | `JOIN post p ON ...` `WHERE pl.user_id=? AND p.is_hidden=false AND p.user_id NOT IN (:excludeUserIds)` `ORDER BY pl.created_at DESC`. `excludeUserIds` 빈 배열일 때 처리      |
-| `keeper-api/src/api/community/community.module.ts`                                | providers / controllers                                      | `MeLikedPostController` 등록                                                                                                                                                  |
-| `keeper-api/src/api/abandonment/abandonment.module.ts`                            | controllers                                                  | `MeFavoriteAbandonmentController` 등록                                                                                                                                        |
-| `keeper-api/src/api/shelter/shelter.module.ts`                                    | controllers                                                  | `MeFavoriteShelterController` 등록                                                                                                                                            |
+| 파일                                                                              | 메서드                                                            | 변경 내용                                                                                                                                                                     |
+| --------------------------------------------------------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `keeper-api/src/api/abandonment/controller/me-favorite-abandonment.controller.ts` | `findMyFavorites(user, query)`                                    | **신규 controller**. `@Controller('/api/me/favorite-abandonments')` + `@Get('/')` + `JwtAuthGuard`. PageV2Request query. PageV2Response<AbandonmentListItemResponse> 반환     |
+| `keeper-api/src/api/abandonment/service/abandonment-favorite.service.ts`          | `+ findMyFavorites(userId, page, size)`                           | repository join 호출 + 응답 매핑                                                                                                                                              |
+| `keeper-api/src/api/abandonment/repository/abandonment-favorite.repository.ts`    | `+ findByUserPaginated(userId, page, size)`                       | `JOIN abandonment_v2 ON ...` `WHERE af.user_id=? ORDER BY af.created_at DESC LIMIT ? OFFSET ?`. count 별도 쿼리. (abandonment 는 차단 무관 — 작성자 user 가 없는 공공 데이터) |
+| `keeper-api/src/api/shelter/controller/me-favorite-shelter.controller.ts`         | `findMyFavorites(user, query)`                                    | **신규 controller**. `@Controller('/api/me/favorite-shelters')`. PageV2 패턴                                                                                                  |
+| `keeper-api/src/api/shelter/service/shelter-favorite.service.ts`                  | `+ findMyFavorites(userId, page, size)`                           | repository join 호출 + 응답 매핑                                                                                                                                              |
+| `keeper-api/src/api/shelter/repository/shelter-favorite.repository.ts`            | `+ findByUserPaginated(userId, page, size)`                       | `JOIN shelter_v2 ON ...` `WHERE sf.user_id=? ORDER BY sf.created_at DESC`. (보호소도 차단 무관 — 공공 데이터)                                                                 |
+| `keeper-api/src/api/community/controller/me-liked-post.controller.ts`             | `findMyLikedPosts(user, query)`                                   | **신규 controller**. `@Controller('/api/me/liked-posts')`. PageV2 패턴                                                                                                        |
+| `keeper-api/src/api/community/service/like.service.ts`                            | `+ findMyLikedPosts(userId, page, size)`                          | repository join + `is_hidden=false` 필터. **차단 필터 미적용 (BP 옵션 B — 활동 기록 잔류)**. 응답 매핑                                                                        |
+| `keeper-api/src/api/community/repository/like.repository.ts`                      | `+ findLikedPostsByUser(userId, page, size)`                      | `JOIN post p ON ...` `WHERE pl.user_id=? AND p.is_hidden=false` `ORDER BY pl.created_at DESC`. 차단 필터 없음                                                                 |
+| `keeper-api/src/api/community/controller/me-helpful-comment.controller.ts`        | `findMyHelpfulComments(user, query)`                              | **신규 controller**. `@Controller('/api/me/helpful-comments')`. PageV2 패턴                                                                                                   |
+| `keeper-api/src/api/community/service/helpful.service.ts`                         | `+ findMyHelpfulComments(userId, page, size)`                     | repository join + `post.isHidden=false` 필터. bigint PK `comment.id` 는 `Number()` 변환. comment.userId 차단 시 제외, post.userId 차단은 잔류 (BP 옵션 B)                     |
+| `keeper-api/src/api/community/repository/helpful.repository.ts`                   | `+ findHelpfulCommentsByUser(userId, page, size, excludeUserIds)` | `INNER JOIN post_comment c, post p`. `WHERE h.user_id=? AND p.is_hidden=false AND (c.user_id IS NULL OR c.user_id NOT IN excludeUserIds)`. post.userId 차단 필터 없음         |
+| `keeper-api/src/api/community/community.module.ts`                                | providers / controllers                                           | `MeLikedPostController` 등록                                                                                                                                                  |
+| `keeper-api/src/api/abandonment/abandonment.module.ts`                            | controllers                                                       | `MeFavoriteAbandonmentController` 등록                                                                                                                                        |
+| `keeper-api/src/api/shelter/shelter.module.ts`                                    | controllers                                                       | `MeFavoriteShelterController` 등록                                                                                                                                            |
 
 ### DTO 변경
 
@@ -94,22 +97,23 @@ ALTER TABLE post_like            ADD INDEX idx_post_like_user_created           
 
 - **hard delete**: user / abandonment / shelter / post 의 ON DELETE CASCADE 가 favorite/like row 자동 정리. 영향 없음.
 - **모더레이션**: `post.is_hidden=true` 인 글은 list 에서 자동 제외 (운영자가 숨김 처리한 글).
-- **차단**: `BlockService.blockedIds(userId)` 로 `excludeUserIds: number[]` 받아 `liked-posts` join 단에 적용. abandonment/shelter 는 공공 데이터라 차단 무관.
+- **차단 (BP 옵션 B — 활동 기록 잔류)**: `liked-posts` 는 차단 필터 미적용. `helpful-comments` 는 `BlockService.blockedIds(userId)` 로 받아 **comment.userId 만** 차단 (직접 콘텐츠). `post.userId` 차단은 적용 안 함. abandonment/shelter 는 공공 데이터라 차단 무관. 둘러보기(`/community/posts`) 는 기존대로 `post.userId` 차단 유지.
 - **인증**: `JwtAuthGuard` 모든 me/\* 엔드포인트.
 
 ## 4. 프론트 API 호출 흐름
 
 ### Query / Mutation 위치
 
-| API                                    | 정의 위치                                                                 | queryKey / mutationFn                                                                                          |
-| -------------------------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| `useMyFavoriteAbandonments`            | `src/features/favorite-abandonment/model/use-my-favorite-abandonments.ts` | `favoriteAbandonmentQueries.myList()` → useInfiniteQuery, mutationFn 없음 (toggle 은 기존 hook)                |
-| `useMyFavoriteShelters`                | `src/features/favorite-shelter/model/use-my-favorite-shelters.ts`         | `favoriteShelterQueries.myList()`                                                                              |
-| `useMyLikedPosts`                      | `src/features/like-post/model/use-my-liked-posts.ts`                      | `likePostQueries.myList()`                                                                                     |
-| `useFavoriteAbandonment` (기존 toggle) | `src/features/favorite-abandonment/model/use-favorite-abandonment.ts`     | mutationFn: `abandonmentApi.favorite / unfavorite`. **invalidate 추가**: `favoriteAbandonmentQueries.myList()` |
-| `useFavoriteShelter` (기존 toggle)     | 동일                                                                      | **invalidate 추가**: `favoriteShelterQueries.myList()`                                                         |
-| `useLikePost` (기존 toggle)            | 동일                                                                      | **invalidate 추가**: `likePostQueries.myList()`                                                                |
-| `useBlockUser` (기존)                  | `src/features/community/safety/model/use-block.ts`                        | **invalidate 추가**: `likePostQueries.myList()` (차단 시 좋아요 list 도 갱신)                                  |
+| API                                    | 정의 위치                                                                 | queryKey / mutationFn                                                                                                              |
+| -------------------------------------- | ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `useMyFavoriteAbandonments`            | `src/features/favorite-abandonment/model/use-my-favorite-abandonments.ts` | `favoriteAbandonmentQueries.myList()` → useInfiniteQuery, mutationFn 없음 (toggle 은 기존 hook)                                    |
+| `useMyFavoriteShelters`                | `src/features/favorite-shelter/model/use-my-favorite-shelters.ts`         | `favoriteShelterQueries.myList()`                                                                                                  |
+| `useMyLikedPosts`                      | `src/features/like-post/model/use-my-liked-posts.ts`                      | `likePostQueries.myList()`                                                                                                         |
+| `useFavoriteAbandonment` (기존 toggle) | `src/features/favorite-abandonment/model/use-favorite-abandonment.ts`     | mutationFn: `abandonmentApi.favorite / unfavorite`. **invalidate 추가**: `favoriteAbandonmentQueries.myList()`                     |
+| `useFavoriteShelter` (기존 toggle)     | 동일                                                                      | **invalidate 추가**: `favoriteShelterQueries.myList()`                                                                             |
+| `useLikePost` (기존 toggle)            | 동일                                                                      | **invalidate 추가**: `likePostQueries.myList()`                                                                                    |
+| `useBlockUser` (기존)                  | `src/features/community/safety/model/use-block.ts`                        | **invalidate 불필요** (BP 옵션 B — list 잔류). `me/helpful-comments` 만 comment.userId 차단 시 갱신 필요하면 invalidate 가치 있음. |
+| `useMyHelpfulComments`                 | `src/features/helpful-comment/model/use-my-helpful-comments.tsx`          | `communityQueries.myHelpfulCommentList()` → useInfiniteQuery + useFocusEffect refetch                                              |
 
 ### queryKey factory 시그니처
 
@@ -129,7 +133,7 @@ export const favoriteAbandonmentQueries = {
   - 카드 우상단 하트 해제/재좋아요 (`useFavoriteX` mutation onSuccess) → **invalidate 안 함** (29cm 패턴 — list 잔존).
   - 단 toggle 자체의 optimistic UI 는 카드 isFavorited / isLiked prop 으로 즉시 갱신 (개별 카드 query 또는 React state).
   - pull-to-refresh 또는 page revisit (focus) 시 자동 refetch — react-query 표준.
-  - 차단 mutation (`useBlockUser`) onSuccess → `likePostQueries.myList()` invalidate (즉시 제외).
+  - 차단 mutation: invalidate 불필요 (BP 옵션 B — 활동 기록 잔류). `me/helpful-comments` 의 comment.userId 차단 케이스만 즉시 갱신 가치 있음.
 - **optimistic update**: 카드 하트 토글만 (개별 카드 캐시 update). myList query 자체는 invalidate 안 함.
 
 ### 에러 처리
@@ -194,11 +198,23 @@ export const favoriteAbandonmentQueries = {
 - When `GET /api/me/liked-posts`.
 - Then items.length=4 (숨김 글 제외).
 
-**T-4. 게시글 좋아요 list — 차단 사용자 작성 글 제외**
+**T-4. 게시글 좋아요 list — 차단 사용자 작성 글 잔류 (BP 옵션 B)**
 
 - Given 사용자가 post_like 5건, 그 중 2건의 post.user_id 가 user_block 에 등록된 사용자.
 - When `GET /api/me/liked-posts`.
-- Then items.length=3.
+- Then items.length=5 (차단 무관 잔류). 카드 탭 시 detail 차단 정책으로 fallback.
+
+**T-4b. 댓글 도움됨 list — comment 작성자 차단 시 제외, post 작성자 차단은 잔류**
+
+- Given 사용자가 post_comment_helpful 3건. 그 중 1건 comment.userId=차단대상, 1건 post.userId=차단대상, 1건 둘 다 무관.
+- When `GET /api/me/helpful-comments`.
+- Then items.length=2 (comment.userId 차단만 제외). post.userId 차단된 댓글은 잔류.
+
+**T-4c. 댓글 도움됨 list — bigint comment.id 응답 number 변환**
+
+- Given post_comment.id 가 bigint AUTO_INCREMENT 로 string 반환.
+- When `GET /api/me/helpful-comments`.
+- Then `items[*].id` 가 number 타입. frontend zod (`z.number()`) parse 성공.
 
 **T-5. 인증 없음**
 
@@ -206,11 +222,11 @@ export const favoriteAbandonmentQueries = {
 - When 위 3개 엔드포인트 호출.
 - Then 401.
 
-**T-6. 차단 mutation 후 좋아요 list invalidate (프론트)**
+**T-6. 차단 mutation 후 list 정책 (프론트)**
 
 - Given 좋아요 list 에 dev_11 작성 글 1건 포함.
 - When `useBlockUser` mutation 으로 dev_11 차단.
-- Then `likePostQueries.myList()` 자동 invalidate → refetch → 해당 글 제외.
+- Then `likePostQueries.myList()` invalidate 안 함 (BP 옵션 B — 잔류). 댓글 chip 에서 dev_11 직접 작성 댓글이 있으면 `useMyHelpfulComments` 만 invalidate 고려.
 
 **T-7. 카드 하트 해제 시 list 잔존 (29cm 패턴, 프론트)**
 
@@ -244,17 +260,18 @@ export const favoriteAbandonmentQueries = {
 
 ### 결정 기록
 
-| 결정                            | 옵션                                                      | 채택                       | 사유                                                                                |
-| ------------------------------- | --------------------------------------------------------- | -------------------------- | ----------------------------------------------------------------------------------- |
-| 인덱스                          | 단일 user_id 유지 vs 복합 (user_id, created_at DESC) 추가 | **복합 추가**              | EXPLAIN 결과 단일 인덱스만 — filesort 발생 가능. 정렬 비용 제거                     |
-| 마이그레이션 번호               | -                                                         | **025**                    | 현재 마지막 024 (table-column-comments) + 1                                         |
-| me-scoped controller 위치       | 통합 me 모듈 vs 도메인별 me controller                    | **도메인별**               | `BlockController` 가 community 모듈 안 `/api/me/blocks` 둔 선례. 도메인 응집 유지   |
-| paginated DTO 버전              | PageRequest (v1) vs PageV2Request                         | **PageV2**                 | community 도메인 표준. 1-base + camelCase. 신규 API 는 v2                           |
-| 응답 DTO                        | 신규 list item DTO 정의 vs 기존 재활용                    | **기존 재활용**            | feed/detail 의 list item 과 동일 데이터. DTO 중복 회피                              |
-| 차단 필터 위치                  | SQL join (LEFT JOIN user_block) vs service NOT IN         | **service NOT IN**         | keeper-api 기존 패턴 (`PostController.getList`). 일관성                             |
-| 캐시 invalidate 시점            | toggle 시 invalidate vs 안 함                             | **안 함 (29cm)**           | PRD/design 결정. 카드 optimistic 만                                                 |
-| 차단 mutation → list invalidate | yes / no                                                  | **yes**                    | 차단 = 콘텐츠 회피 의도 일관성                                                      |
-| post category 범위              | ADOPTION_PERSONAL 한정 vs LIFE/QNA 포함                   | **ADOPTION_PERSONAL 한정** | F-05 (LIFE/QNA) 기획 미정. 좋아요 list 도 ADOPTION_PERSONAL 만. F-05 활성화 시 확장 |
+| 결정                            | 옵션                                                      | 채택                       | 사유                                                                                                                                                                                                                                |
+| ------------------------------- | --------------------------------------------------------- | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 인덱스                          | 단일 user_id 유지 vs 복합 (user_id, created_at DESC) 추가 | **복합 추가**              | EXPLAIN 결과 단일 인덱스만 — filesort 발생 가능. 정렬 비용 제거                                                                                                                                                                     |
+| 마이그레이션 번호               | -                                                         | **025**                    | 현재 마지막 024 (table-column-comments) + 1                                                                                                                                                                                         |
+| me-scoped controller 위치       | 통합 me 모듈 vs 도메인별 me controller                    | **도메인별**               | `BlockController` 가 community 모듈 안 `/api/me/blocks` 둔 선례. 도메인 응집 유지                                                                                                                                                   |
+| paginated DTO 버전              | PageRequest (v1) vs PageV2Request                         | **PageV2**                 | community 도메인 표준. 1-base + camelCase. 신규 API 는 v2                                                                                                                                                                           |
+| 응답 DTO                        | 신규 list item DTO 정의 vs 기존 재활용                    | **기존 재활용**            | feed/detail 의 list item 과 동일 데이터. DTO 중복 회피                                                                                                                                                                              |
+| 차단 필터 정책                  | 활동 기록 list 에서 차단 적용 vs 잔류                     | **잔류 (BP 옵션 B)**       | Instagram/X/Reddit/Facebook/YouTube 5개 플랫폼 모두 잔류 표준 (1·2차 BP 조사). 차단 = 미래 추천 차단이지 과거 행위 소급 삭제 아님. `me/liked-posts` 차단 필터 미적용, `me/helpful-comments` 는 comment.userId 만 적용 (직접 콘텐츠) |
+| 차단 필터 위치                  | SQL join (LEFT JOIN user_block) vs service NOT IN         | **service NOT IN**         | 둘러보기(`/community/posts`) 와 `me/helpful-comments` 의 comment.userId 차단에 적용. keeper-api 기존 패턴 (`PostController.getList`)                                                                                                |
+| 캐시 invalidate 시점            | toggle 시 invalidate vs 안 함                             | **안 함 (29cm)**           | PRD/design 결정. 카드 optimistic 만                                                                                                                                                                                                 |
+| 차단 mutation → list invalidate | yes / no                                                  | **yes**                    | 차단 = 콘텐츠 회피 의도 일관성                                                                                                                                                                                                      |
+| post category 범위              | ADOPTION_PERSONAL 한정 vs LIFE/QNA 포함                   | **ADOPTION_PERSONAL 한정** | F-05 (LIFE/QNA) 기획 미정. 좋아요 list 도 ADOPTION_PERSONAL 만. F-05 활성화 시 확장                                                                                                                                                 |
 
 ### Open Issues
 

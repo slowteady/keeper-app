@@ -1,36 +1,36 @@
 import { FlashList, ListRenderItemInfo } from '@shopify/flash-list';
 import { router } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
-import { SceneRendererProps } from 'react-native-tab-view';
 import { styled, View, YStack } from 'tamagui';
 
 import { AdoptCard, mapToAdoptList } from '@/entities/adopt';
-import { PROFILE_LIKE_TAB_ROUTES } from '@/entities/profile';
+import {
+  CommentListItem,
+  CommunityAdoptListDto,
+  CommunityPostListItem,
+  MyHelpfulCommentItemDto
+} from '@/entities/community';
+import { PROFILE_OPTIONS, ProfileLikeOption } from '@/entities/profile';
 import { ShelterCard, ShelterDto } from '@/entities/shelter';
+import { useCommentHelpful } from '@/features/community';
 import { useFavoriteAbandonment, useMyFavoriteAbandonments } from '@/features/favorite-abandonment';
 import { useFavoriteShelter, useMyFavoriteShelters } from '@/features/favorite-shelter';
-import { FeedNodata, Tab } from '@/shared/ui';
-
-type RouteKey = (typeof PROFILE_LIKE_TAB_ROUTES)[number]['key'];
-
-const renderScene = ({ route }: SceneRendererProps & { route: { key: RouteKey } }) => {
-  switch (route.key) {
-    case 'adopt':
-      return <AdoptList />;
-    case 'shelter':
-      return <ShelterList />;
-    default:
-      return null;
-  }
-};
+import { useMyHelpfulComments } from '@/features/helpful-comment';
+import { useLikePost, useMyLikedPosts } from '@/features/like-post';
+import { ButtonGroup, FeedNodata } from '@/shared/ui';
 
 export const ProfileLikeScene = () => {
-  const [index, setIndex] = useState(0);
-  const navigationState = useMemo(() => ({ index, routes: [...PROFILE_LIKE_TAB_ROUTES] }), [index]);
+  const [selected, setSelected] = useState<ProfileLikeOption>('adopt');
 
   return (
     <Container>
-      <Tab onIndexChange={setIndex} navigationState={navigationState} renderScene={renderScene} />
+      <ButtonGroupWrap>
+        <ButtonGroup id={selected} data={PROFILE_OPTIONS.LIKE} onChange={setSelected} />
+      </ButtonGroupWrap>
+      {selected === 'adopt' && <AdoptList />}
+      {selected === 'shelter' && <ShelterList />}
+      {selected === 'post' && <PostList />}
+      {selected === 'comment' && <CommentList />}
     </Container>
   );
 };
@@ -133,8 +133,103 @@ const ShelterList = () => {
   );
 };
 
+const PostList = () => {
+  const { items, isLoading, isFetchingNextPage, fetchNextPage, refetch } = useMyLikedPosts();
+  const { toggleLikePost } = useLikePost();
+
+  const renderItem = useCallback(
+    ({ item }: ListRenderItemInfo<CommunityAdoptListDto>) => (
+      <CommunityPostListItem
+        data={item}
+        categoryLabel="개인입양"
+        onPress={(id) => router.push(`/(untabs)/community/${id}`)}
+        onPressLike={(id, currentlyLiked) => toggleLikePost(id, currentlyLiked)}
+      />
+    ),
+    [toggleLikePost]
+  );
+
+  if (!isLoading && items.length === 0) {
+    return (
+      <EmptyWrap>
+        <FeedNodata
+          text="관심 게시글이 없어요"
+          description="마음에 든 게시글에 하트를 눌러보세요"
+          cta={{ label: '커뮤니티 둘러보기', onPress: () => router.replace('/(tabs)/community') }}
+        />
+      </EmptyWrap>
+    );
+  }
+
+  return (
+    <FlashList
+      data={items}
+      keyExtractor={(item) => String(item.id)}
+      renderItem={renderItem}
+      onEndReached={fetchNextPage}
+      onEndReachedThreshold={0.5}
+      onRefresh={refetch}
+      refreshing={false}
+      contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 40 }}
+      ListFooterComponent={isFetchingNextPage ? <View py={20} /> : null}
+    />
+  );
+};
+
+const CommentList = () => {
+  const { items, isLoading, isFetchingNextPage, fetchNextPage, refetch } = useMyHelpfulComments();
+  const { toggleHelpful } = useCommentHelpful();
+
+  const renderItem = useCallback(
+    ({ item }: ListRenderItemInfo<MyHelpfulCommentItemDto>) => (
+      <CommentListItem
+        data={item}
+        onPress={(postId) =>
+          router.push({ pathname: '/(untabs)/community/[id]', params: { id: postId, scrollToComments: '1' } })
+        }
+        onPressHelpful={(c) =>
+          toggleHelpful({ commentId: c.id, currentlyHelpful: c.isHelpful, currentCount: c.helpfulCount })
+        }
+      />
+    ),
+    [toggleHelpful]
+  );
+
+  if (!isLoading && items.length === 0) {
+    return (
+      <EmptyWrap>
+        <FeedNodata
+          text="관심 댓글이 없어요"
+          description="마음에 든 댓글에 하트를 눌러보세요"
+          cta={{ label: '커뮤니티 둘러보기', onPress: () => router.replace('/(tabs)/community') }}
+        />
+      </EmptyWrap>
+    );
+  }
+
+  return (
+    <FlashList
+      data={items}
+      keyExtractor={(item) => String(item.id)}
+      renderItem={renderItem}
+      onEndReached={fetchNextPage}
+      onEndReachedThreshold={0.5}
+      onRefresh={refetch}
+      refreshing={false}
+      contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 40 }}
+      ListFooterComponent={isFetchingNextPage ? <View py={20} /> : null}
+    />
+  );
+};
+
 const Container = styled(YStack, {
   flex: 1
+});
+
+const ButtonGroupWrap = styled(View, {
+  px: 20,
+  pt: 16,
+  pb: 12
 });
 
 const EmptyWrap = styled(View, {

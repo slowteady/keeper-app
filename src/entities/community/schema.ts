@@ -132,3 +132,25 @@ export const CommunityListResponseSchema = z.object({
   hasNext: z.boolean()
 });
 export type CommunityListResponseDto = z.infer<typeof CommunityListResponseSchema>;
+
+export const MyHelpfulCommentItemSchema = z.object({
+  id: z.number(),
+  content: z.string(),
+  displayTime: z.string(),
+  helpfulCount: z.number(),
+  isHelpful: z.boolean(),
+  postId: z.number(),
+  postCategory: z.enum(['ADOPTION_PERSONAL', 'ADOPTION_LIFE', 'QNA']),
+  postTitle: z.string(),
+  postThumbnail: z.string().nullable()
+});
+export type MyHelpfulCommentItemDto = z.infer<typeof MyHelpfulCommentItemSchema>;
+
+export const MyHelpfulCommentListResponseSchema = z.object({
+  items: z.array(MyHelpfulCommentItemSchema),
+  total: z.number(),
+  page: z.number(),
+  size: z.number(),
+  hasNext: z.boolean()
+});
+export type MyHelpfulCommentListResponseDto = z.infer<typeof MyHelpfulCommentListResponseSchema>;

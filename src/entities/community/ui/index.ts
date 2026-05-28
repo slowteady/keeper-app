@@ -1,3 +1,4 @@
+export * from './comment-list-item';
 export * from './community-adopt-card';
 export * from './community-adopt-card-header';
 export * from './community-adopt-card-skeleton';

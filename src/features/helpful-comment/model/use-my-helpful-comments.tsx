@@ -4,9 +4,9 @@ import { useCallback } from 'react';
 
 import { communityQueries } from '@/entities/community';
 
-export const useMyLikedPosts = () => {
+export const useMyHelpfulComments = () => {
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useInfiniteQuery(
-    communityQueries.myLikedList()
+    communityQueries.myHelpfulCommentList()
   );
 
   useFocusEffect(

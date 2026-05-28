@@ -59,8 +59,10 @@
   Given 사용자가 입양공고 여러 개 좋아요함, When 프로필 → 관심 → 공고 chip 진입, Then 좋아요 한 공고가 카드 그리드로 노출되고 카드 탭 시 공고 상세로 이동한다.
 - **좋아요 해제 후 재좋아요 (29cm 패턴)**
   Given list 에 좋아요 한 공고가 노출됨, When 카드 우상단 하트 탭 (해제), Then 하트는 즉시 빈 상태로 토글되지만 카드는 list 에 잔존. 다시 누르면 좋아요 복구. pull-to-refresh 또는 page revisit 시 해제된 카드가 빠짐.
-- **차단 사용자 글**
-  Given 사용자가 다른 사용자 차단함, When 좋아요 list 의 게시글 chip 진입, Then 차단한 사용자가 작성한 글은 list 에 노출되지 않는다.
+- **차단 사용자 글 (BP 옵션 B — 잔류)**
+  Given 사용자가 다른 사용자 차단함, When 관심 list (게시글 chip / 댓글 chip) 진입, Then 차단 사용자가 작성한 글/그 글에 달린 댓글이라도 본인이 좋아요·도움됨 누른 활동 기록은 list 에 그대로 노출된다. 카드/아이템 탭 시 detail 진입은 `DetailErrorBoundary` 의 generic fallback ("문제가 발생했어요") 노출. 단 **차단 사용자가 직접 작성한 댓글** (= comment.userId 가 차단 대상) 은 댓글 chip 에서 숨김.
+- **차단 사용자 글 — 둘러보기**
+  Given 사용자가 다른 사용자 차단함, When 커뮤니티 list / 글 detail 진입, Then 차단 사용자가 작성한 글은 노출되지 않거나 404 fallback. (이전 정책 유지)
 - **삭제된 글 / 입양 status 변경**
   Given 좋아요 한 글이 운영자 숨김 처리됨, Then list 에서 자동 제외. Given 좋아요 한 공고가 자연사·반환·입양완료 status 로 변경됨, Then list 에 status chip 으로 노출 (제외 안 함).
 - **빈 상태**
@@ -75,7 +77,8 @@ UX 화면: Figma `1119:8918` (공고), `1721:11011` (보호소), `1721:11237` (�
 - **FR-1. 백엔드 list API 3개 추가** — As a 사용자, I want my favorite/liked items list 를 도메인별로 paginated 로 받기 위해.
   - 수용 기준: `GET /api/users/me/favorite-abandonments?page=N&size=20` — 본인의 abandonment_favorite join abandonment_v2 결과 반환. 차단 사용자 작성 글 / `process_state` 와 무관하게 row 자체 존재하면 노출 (입양 status 정보는 client 가 status chip 으로 렌더).
   - 수용 기준: `GET /api/users/me/favorite-shelters?page=N&size=20` — 본인의 shelter_favorite join shelter_v2 결과.
-  - 수용 기준: `GET /api/users/me/liked-posts?page=N&size=20` — 본인의 post_like join post (+ adoption_personal/life/qna 1:1). `is_hidden=true` 또는 작성자 user_id 가 본인의 user_block 목록에 있으면 제외.
+  - 수용 기준: `GET /api/users/me/liked-posts?page=N&size=20` — 본인의 post_like join post (+ adoption_personal/life/qna 1:1). `is_hidden=true` 면 제외. **차단 사용자(post.userId)가 작성한 글은 잔류** (BP 옵션 B — 활동 기록 보존). detail 진입은 기존 차단 정책으로 fallback.
+  - 수용 기준: `GET /api/users/me/helpful-comments?page=N&size=20` — 본인의 post_comment_helpful join post_comment join post. `post.isHidden=false` 필터. **comment.userId 차단 시 제외 (직접 콘텐츠), post.userId 차단 시 잔류** (BP 옵션 B). bigint PK `comment.id` 는 `Number()` 변환 후 응답.
   - 수용 기준: 모든 응답 정렬 = `created_at DESC` (찜한 순).
   - 수용 기준: 인증 필요. 401 시 client 가 로그인 화면으로 유도.
 
@@ -84,8 +87,8 @@ UX 화면: Figma `1119:8918` (공고), `1721:11011` (보호소), `1721:11237` (�
   - 수용 기준: 기존 'etc' 분기 dead code 제거.
 
 - **FR-3. 프론트 query hook 3개** — As a 개발자, I want 각 도메인별 list 를 React Query infinite query 로 가져오기 위해.
-  - 수용 기준: `useMyFavoriteAbandonments` / `useMyFavoriteShelters` / `useMyLikedPosts` — keeper 표준 size=20, useInfiniteQuery, 캐시 invalidate 패턴 (toggle / block 시).
-  - 수용 기준: 차단 시 좋아요 list 도 invalidate (`useBlockUser` mutation onSuccess 에 queryClient invalidate 추가).
+  - 수용 기준: `useMyFavoriteAbandonments` / `useMyFavoriteShelters` / `useMyLikedPosts` / `useMyHelpfulComments` — keeper 표준 size=20, useInfiniteQuery.
+  - 수용 기준: 차단 mutation 시 list invalidate 불필요 (BP 옵션 B — 활동 기록 잔류). 댓글 chip 의 comment.userId 차단 케이스만 invalidate 가치 있음 (직접 콘텐츠 노출 제거).
 
 - **FR-4. ProfileLikeScene 도메인 분기** — As a 사용자, I want chip 선택에 따라 다른 카드 layout 으로 좋아요 list 보기 위해.
   - 수용 기준: 공고 = 2-column AdoptCard 그리드 (기존 패턴). status chip 표시.
@@ -104,9 +107,10 @@ UX 화면: Figma `1119:8918` (공고), `1721:11011` (보호소), `1721:11237` (�
   - 수용 기준: 게시글 빈 상태 → "관심 게시글이 없어요" + [커뮤니티 둘러보기] → `(tabs)/community`.
   - 수용 기준: illustration 디자인 시안 없음 — 기존 EmptyState 컴포넌트 + 도메인 아이콘 재활용.
 
-- **FR-7. 차단 시 좋아요 list invalidate** — As a 사용자, I want 차단한 사용자 글이 좋아요 list 에서 즉시 사라지기 위해.
-  - 수용 기준: 차단 mutation onSuccess 시 `useMyLikedPosts` query invalidate.
-  - 수용 기준: 백엔드 list join 단에서도 user_block 으로 필터.
+- **FR-7. 관심 list 의 차단 정책 (BP 옵션 B)** — As a 사용자, I want 본인 활동 기록(좋아요·도움됨) 이 차단으로 소급 삭제되지 않기 위해.
+  - 수용 기준: `me/liked-posts` 와 `me/helpful-comments` 는 `post.userId` 차단 필터 적용 안 함 (잔류).
+  - 수용 기준: `me/helpful-comments` 는 `comment.userId` 차단만 적용 (차단 사용자의 직접 콘텐츠만 숨김).
+  - 수용 기준: list 카드/아이템 탭 → detail 차단 시 `DetailErrorBoundary` 의 generic fallback 노출.
 
 ### P1 (다음)
 
@@ -168,7 +172,7 @@ DTO 구조: 각 도메인 카드 렌더에 필요한 필드 + 좋아요 created_
 
 ### 영향 범위
 
-- 차단 사용자 필터: `liked-posts` join 단에 `LEFT JOIN user_block ON post.user_id = user_block.blocked_id AND user_block.blocker_id = :userId WHERE user_block.id IS NULL`.
+- 차단 사용자 필터: `liked-posts` 는 적용 안 함 (BP 옵션 B). `helpful-comments` 는 `comment.userId` 만 적용. 둘러보기(`/community/posts`) 는 기존대로 `post.userId` 차단 적용 유지.
 - `is_hidden` 필터: `WHERE post.is_hidden = false`.
 - 인증: 기존 `JwtAuthGuard` 패턴 재사용.
 - 모더레이션: 운영자가 숨김 처리한 글은 자동 제외 (`is_hidden=true`).
@@ -198,20 +202,20 @@ DTO 구조: 각 도메인 카드 렌더에 필요한 필드 + 좋아요 created_
 
 ### 결정 기록
 
-| 결정                        | 옵션                                    | 채택                         | 사유                                                                               |
-| --------------------------- | --------------------------------------- | ---------------------------- | ---------------------------------------------------------------------------------- |
-| 라벨                        | "관심" vs "즐겨찾기" vs "찜"            | **관심**                     | 입양 도메인에서 가장 가벼운 표현. keeper 톤에 맞고 시안 라벨과 정합                |
-| 라우트                      | `/profile/like` vs `/profile/favorites` | **`/profile/like`**          | 기존 placeholder 위치 재사용 — 코스트 최소                                         |
-| 도메인 chip                 | 4개 (기타 포함) vs 3개                  | **3개 (공고/보호소/게시글)** | "기타" 담을 데이터 모호. 후속 추가 시 chip 확장                                    |
-| 정렬                        | 단일 (찜한 순) vs dropdown              | **단일**                     | 좋아요 목록 표준 (Instagram/Pinterest/29cm). dropdown 은 노이즈                    |
-| 해제 동작                   | undo toast vs 29cm 잔존 vs 즉시 제거    | **29cm 잔존**                | 사용자 부담 최소 + 재좋아요 동선 자연. undo toast = global 패턴 변경 위험          |
-| 삭제된 글                   | 자동 제외 vs placeholder 카드           | **자동 제외**                | 죽은 카드 누적 방지. Instagram/Pinterest BP                                        |
-| 차단 사용자                 | 자동 제외 vs 마스킹 vs 무시             | **자동 제외**                | 차단 = 콘텐츠 회피 의도 일관. Instagram/TikTok BP. 이전 차단 cache 이슈도 같이 fix |
-| 입양 status 변경            | list 제외 vs status chip 노출           | **status chip 노출**         | "삭제" 아닌 도메인 상태 변경. Petfinder 패턴. 사용자가 결과 확인 가치              |
-| 빈 상태                     | placeholder X vs CTA 포함               | **CTA 포함**                 | 도메인 list 화면 진입 동선 닫음. UX Planet BP                                      |
-| 페이지 사이즈               | keeper 표준 (20)                        | **20**                       | 다른 list 화면 모두 20 (use-adopt-list, use-community-adopt-feed). 일관성          |
-| 무한 스크롤 vs 페이지네이션 | keeper 표준                             | **useInfiniteQuery**         | keeper 의 모든 list 가 useInfiniteQuery 사용                                       |
-| 지도 토글 (보호소)          | 포함 vs 후속                            | **후속**                     | F-04 원안 옵션이나 사용자 결정으로 보류                                            |
+| 결정                        | 옵션                                    | 채택                         | 사유                                                                                                                                                                                                                                                                                |
+| --------------------------- | --------------------------------------- | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 라벨                        | "관심" vs "즐겨찾기" vs "찜"            | **관심**                     | 입양 도메인에서 가장 가벼운 표현. keeper 톤에 맞고 시안 라벨과 정합                                                                                                                                                                                                                 |
+| 라우트                      | `/profile/like` vs `/profile/favorites` | **`/profile/like`**          | 기존 placeholder 위치 재사용 — 코스트 최소                                                                                                                                                                                                                                          |
+| 도메인 chip                 | 4개 (기타 포함) vs 3개                  | **3개 (공고/보호소/게시글)** | "기타" 담을 데이터 모호. 후속 추가 시 chip 확장                                                                                                                                                                                                                                     |
+| 정렬                        | 단일 (찜한 순) vs dropdown              | **단일**                     | 좋아요 목록 표준 (Instagram/Pinterest/29cm). dropdown 은 노이즈                                                                                                                                                                                                                     |
+| 해제 동작                   | undo toast vs 29cm 잔존 vs 즉시 제거    | **29cm 잔존**                | 사용자 부담 최소 + 재좋아요 동선 자연. undo toast = global 패턴 변경 위험                                                                                                                                                                                                           |
+| 삭제된 글                   | 자동 제외 vs placeholder 카드           | **자동 제외**                | 죽은 카드 누적 방지. Instagram/Pinterest BP                                                                                                                                                                                                                                         |
+| 차단 사용자                 | 자동 제외 vs 잔류(+detail fallback)     | **잔류 (BP 옵션 B)**         | 본인 활동 기록(좋아요·도움됨)은 차단으로 소급 삭제하지 않음. Instagram/X/Reddit/Facebook/YouTube 5개 플랫폼 모두 잔류 표준 (1·2차 BP 조사). 둘러보기(커뮤니티 목록) 만 차단 적용. detail 진입은 기존 `DetailErrorBoundary` 의 generic fallback ("문제가 발생했어요") 으로 일관 처리 |
+| 입양 status 변경            | list 제외 vs status chip 노출           | **status chip 노출**         | "삭제" 아닌 도메인 상태 변경. Petfinder 패턴. 사용자가 결과 확인 가치                                                                                                                                                                                                               |
+| 빈 상태                     | placeholder X vs CTA 포함               | **CTA 포함**                 | 도메인 list 화면 진입 동선 닫음. UX Planet BP                                                                                                                                                                                                                                       |
+| 페이지 사이즈               | keeper 표준 (20)                        | **20**                       | 다른 list 화면 모두 20 (use-adopt-list, use-community-adopt-feed). 일관성                                                                                                                                                                                                           |
+| 무한 스크롤 vs 페이지네이션 | keeper 표준                             | **useInfiniteQuery**         | keeper 의 모든 list 가 useInfiniteQuery 사용                                                                                                                                                                                                                                        |
+| 지도 토글 (보호소)          | 포함 vs 후속                            | **후속**                     | F-04 원안 옵션이나 사용자 결정으로 보류                                                                                                                                                                                                                                             |
 
 ### Open Issues
 

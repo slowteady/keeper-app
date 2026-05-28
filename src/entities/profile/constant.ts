@@ -6,13 +6,10 @@ export const PROFILE_OPTIONS = {
   ],
   LIKE: [
     { id: 'adopt', label: '공고' },
-    { id: 'shelter', label: '보호소' }
+    { id: 'shelter', label: '보호소' },
+    { id: 'post', label: '게시글' },
+    { id: 'comment', label: '댓글' }
   ] as const
 };
-
-export const PROFILE_LIKE_TAB_ROUTES = [
-  { key: 'adopt', title: '공고' },
-  { key: 'shelter', title: '보호소' }
-] as const;
 
 export type ProfileLikeOption = (typeof PROFILE_OPTIONS.LIKE)[number]['id'];

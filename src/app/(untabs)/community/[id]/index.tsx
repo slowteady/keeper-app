@@ -2,7 +2,7 @@ import { useScrollToTop } from '@react-navigation/native';
 import { FlashList, FlashListRef, ListRenderItemInfo } from '@shopify/flash-list';
 import { useQueryClient } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
-import { Suspense, useCallback, useMemo, useRef, useState } from 'react';
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, RefreshControl } from 'react-native';
 import { KeyboardStickyView } from 'react-native-keyboard-controller';
 import { styled, Text, View, YStack } from 'tamagui';
@@ -41,20 +41,20 @@ import {
 export const ErrorBoundary = DetailErrorBoundary;
 
 const Page = () => {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, scrollToComments } = useLocalSearchParams<{ id: string; scrollToComments?: string }>();
   if (!id) return null;
 
   // Suspense — useSuspenseQuery 로 본문 도착 전 스켈레톤 fallback. 댓글창이 먼저 보이는 mount 깜빡임 제거.
   return (
     <Container>
       <Suspense fallback={<PostDetailSkeleton />}>
-        <CommunityDetailContent id={id} />
+        <CommunityDetailContent id={id} scrollToComments={scrollToComments === '1'} />
       </Suspense>
     </Container>
   );
 };
 
-const CommunityDetailContent = ({ id }: { id: string }) => {
+const CommunityDetailContent = ({ id, scrollToComments }: { id: string; scrollToComments: boolean }) => {
   const [inputHeight, setInputHeight] = useState(0);
 
   const { bottom } = useLayout();
@@ -73,6 +73,17 @@ const CommunityDetailContent = ({ id }: { id: string }) => {
     isLoading: isCommentLoading
   } = useCommunityCommentList(numId);
   const { toggleLikePost } = useLikePost();
+
+  // 관심 댓글 chip 에서 진입 시 댓글 섹션까지 스크롤 — ListHeader(글 본문) 끝, 첫 댓글 위치로.
+  // 댓글 list 도착 후 1회만 트리거.
+  const scrolledRef = useRef(false);
+  useEffect(() => {
+    if (!scrollToComments || scrolledRef.current || isCommentLoading || commentList.length === 0) return;
+    scrolledRef.current = true;
+    requestAnimationFrame(() => {
+      scrollRef.current?.scrollToIndex({ index: 0, animated: true });
+    });
+  }, [scrollToComments, isCommentLoading, commentList.length]);
 
   // pull-to-refresh: 본문 + 카운트/좋아요 + 댓글 list 첫 페이지부터 fresh fetch (Twitter/Instagram BP)
   const queryClient = useQueryClient();

@@ -9,7 +9,9 @@ import {
   CommunityAdoptDetailSchema,
   CommunityAdoptFormDto,
   CommunityListResponseDto,
-  CommunityListResponseSchema
+  CommunityListResponseSchema,
+  MyHelpfulCommentListResponseDto,
+  MyHelpfulCommentListResponseSchema
 } from './schema';
 
 export type CommunityListParams = {
@@ -69,6 +71,14 @@ const getMyLikedPosts = async (params: { page: number; size: number }): Promise<
   return CommunityListResponseSchema.parse(res.data.data);
 };
 
+const getMyHelpfulComments = async (params: {
+  page: number;
+  size: number;
+}): Promise<MyHelpfulCommentListResponseDto> => {
+  const res = await authApi.get<ApiResponse<MyHelpfulCommentListResponseDto>>('/me/helpful-comments', { params });
+  return MyHelpfulCommentListResponseSchema.parse(res.data.data);
+};
+
 export const communityApi = {
   getList,
   getDetail,
@@ -113,6 +123,23 @@ export const communityQueries = {
     infiniteQueryOptions({
       queryKey: ['me-liked-posts', { size }] as const,
       queryFn: ({ pageParam }) => getMyLikedPosts({ page: pageParam, size }),
+      initialPageParam: 1,
+      getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.page + 1 : undefined),
+      select: (data) => ({
+        items: data.pages.flatMap((p) => p.items),
+        total: data.pages[data.pages.length - 1].total,
+        page: data.pages[data.pages.length - 1].page,
+        size: data.pages[data.pages.length - 1].size,
+        hasNext: data.pages[data.pages.length - 1].hasNext
+      })
+    }),
+
+  myHelpfulCommentList: (size: number = 20) =>
+    infiniteQueryOptions({
+      // 도메인 prefix(`['comment']`) 와 별도 namespace — useCommentHelpful 의 invalidate 휩쓸기 차단 (29cm 잔존 패턴).
+      // optimistic patch 는 useCommentHelpful 의 setQueriesData 가 이 prefix 도 명시적으로 호출.
+      queryKey: ['me-helpful-comments', { size }] as const,
+      queryFn: ({ pageParam }) => getMyHelpfulComments({ page: pageParam, size }),
       initialPageParam: 1,
       getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.page + 1 : undefined),
       select: (data) => ({
