@@ -3,7 +3,7 @@
   "main": "expo-router/entry",
   "private": true,
   "type": "module",
-  "version": "1.3.13",
+  "version": "1.3.18",
   "scripts": {
     "postinstall": "patch-package",
     "dev": "expo start --dev-client",
