@@ -44,3 +44,9 @@ service-account.json
 # Claude Code
 .claude/scheduled_tasks.lock
 .claude/settings.local.json
+
+# Playwright MCP — AWS 콘솔 자동화 캐시
+.playwright-mcp/
+
+# 루트 임시 스크린샷 (콘솔·디버깅용)
+/*.png
