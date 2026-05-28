@@ -33,9 +33,9 @@ export const useUpdateQnaPost = (id: number) => {
   const imageUpload = useImageUpload();
   const submitMutation = useMutation({
     mutationFn: async (data: CommunityQnaFormDto) => {
-      // 신규 local URI 만 업로드 (https 는 기존 publicUrl 유지)
-      const existing = (data.images ?? []).filter((u) => u.startsWith('http'));
-      const localUris = (data.images ?? []).filter((u) => !u.startsWith('http'));
+      // 신규 local URI 만 업로드 (CloudFront publicUrl 은 https 로만 시작 — 명시적 검사)
+      const existing = (data.images ?? []).filter((u) => u.startsWith('https://'));
+      const localUris = (data.images ?? []).filter((u) => !u.startsWith('https://'));
       const uploaded = localUris.length > 0 ? await imageUpload.mutateAsync(localUris) : [];
       return communityApi.updateQnaPost(id, { ...data, images: [...existing, ...uploaded] });
     },

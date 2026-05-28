@@ -37,14 +37,14 @@
 
 ### 3-2. 컴포넌트 매핑
 
-| 컴포넌트                                 | 출처                                                               | 재활용                                                                    |
-| ---------------------------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------- |
-| `FlashList`                              | `@shopify/flash-list`                                              | ✅                                                                        |
-| `CategoryChipRow` (가로 스크롤 5 chip)   | `shared/ui/ChipScrollRow` (신규 또는 ScrollView + ChipButton 조합) | 신규 — 기존 `ButtonGroup` 은 등간격 분할이라 5개 chip 가독성 ↓            |
-| `AnimalTypeChipRow` (가로 스크롤 3 chip) | 동일                                                               | 신규                                                                      |
-| `CommunityQnaCard`                       | `entities/community/ui/community-qna-card.tsx`                     | **신규** — adopt card 와 다른 필드 (카테고리 chip · 답변수 · 도움돼요 수) |
-| `FeedNodata`                             | `shared/ui`                                                        | ✅                                                                        |
-| `RefreshControl` / `ActivityIndicator`   | `react-native`                                                     | ✅                                                                        |
+| 컴포넌트                               | 출처                                           | 재활용                                                                    |
+| -------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------- |
+| `FlashList`                            | `@shopify/flash-list`                          | ✅                                                                        |
+| `ChipGroup` (5 chip 카테고리)          | `shared/ui` (기존)                             | ✅ — clearable + variant="secondary" 옵션으로 등간격 chip 그룹 처리       |
+| `ChipGroup` (3 chip 동물)              | 동일                                           | ✅                                                                        |
+| `CommunityQnaCard`                     | `entities/community/ui/community-qna-card.tsx` | **신규** — adopt card 와 다른 필드 (카테고리 chip · 답변수 · 도움돼요 수) |
+| `FeedNodata`                           | `shared/ui`                                    | ✅                                                                        |
+| `RefreshControl` / `ActivityIndicator` | `react-native`                                 | ✅                                                                        |
 
 ### 3-3. chip 배치 (2 row stacking)
 

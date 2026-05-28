@@ -59,14 +59,15 @@ export const CommunityQnAFeed = () => {
               variant="secondary"
               options={QNA_CATEGORY_OPTIONS}
               value={qnaType ?? ''}
-              onChange={(v) => v && toggleQnaType(v as QnaTypeDto)}
+              // clearable 시 '' 콜백 — toggle 의 idempotency 활용 위해 현재값 그대로 전달
+              onChange={(v) => toggleQnaType((v || qnaType) as QnaTypeDto)}
               clearable
             />
             <ChipGroup
               variant="secondary"
               options={QNA_ANIMAL_TYPE_OPTIONS}
               value={animalType ?? ''}
-              onChange={(v) => v && toggleAnimalType(v as AnimalTypeDto)}
+              onChange={(v) => toggleAnimalType((v || animalType) as AnimalTypeDto)}
               clearable
             />
           </YStack>
