@@ -34,11 +34,13 @@ export const CommunityQnaCard = ({ data, categoryLabel, animalLabel, onPress }: 
           <Title numberOfLines={1} ellipsizeMode="tail">
             {data.title}
           </Title>
-          <Preview numberOfLines={2} ellipsizeMode="tail">
-            {data.content}
-          </Preview>
+          {data.content ? (
+            <Preview numberOfLines={2} ellipsizeMode="tail">
+              {data.content}
+            </Preview>
+          ) : null}
           <XStack items="center" gap={10}>
-            <Meta>답변 {data.commentCount}</Meta>
+            <Meta>답변 {data.counts.comment}</Meta>
             <Meta>도움돼요 {data.helpfulCount}</Meta>
           </XStack>
         </YStack>

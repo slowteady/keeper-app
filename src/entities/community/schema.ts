@@ -150,17 +150,24 @@ export const CommunityQnaFormSchema = z.object({
 });
 export type CommunityQnaFormDto = z.infer<typeof CommunityQnaFormSchema>;
 
+// 백엔드 PostListItemResponse 는 QnA 필드를 qnaType 으로 노출 (detail 의 PostQnaResponse.type 과 다름).
+// frontend list 카드에서는 qnaType 으로 받음.
 export const CommunityQnaListItemSchema = z.object({
   id: z.number(),
   user: PostUserSummarySchema.nullable(),
   displayTime: z.string(),
   title: z.string(),
-  content: z.string(),
-  type: QnaTypeSchema,
+  content: z.string().nullish(),
+  qnaType: QnaTypeSchema,
   animalType: AnimalTypeSchema,
   images: z.array(z.string()),
   helpfulCount: z.number().default(0),
-  commentCount: z.number().default(0)
+  // 답변 수 = list 응답의 counts.comment 그대로 (parentId IS NULL 댓글 수는 백엔드 후속)
+  counts: z.object({
+    like: z.number(),
+    view: z.number(),
+    comment: z.number()
+  })
 });
 export type CommunityQnaListItemDto = z.infer<typeof CommunityQnaListItemSchema>;
 

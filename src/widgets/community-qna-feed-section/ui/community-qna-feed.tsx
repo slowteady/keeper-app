@@ -31,7 +31,7 @@ export const CommunityQnAFeed = () => {
       <View px={20}>
         <CommunityQnaCard
           data={item}
-          categoryLabel={QNA_CATEGORY_OPTIONS.find((o) => o.value === item.type)?.label ?? ''}
+          categoryLabel={QNA_CATEGORY_OPTIONS.find((o) => o.value === item.qnaType)?.label ?? ''}
           animalLabel={
             item.animalType !== 'OTHER'
               ? QNA_ANIMAL_TYPE_OPTIONS.find((o) => o.value === item.animalType)?.label
