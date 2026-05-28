@@ -48,3 +48,20 @@ export const COMMUNITY_LIST_FILTER = [
   { id: 'COMMENT', label: '댓글순' },
   { id: 'VIEW', label: '조회순' }
 ] as const;
+
+// ─── QnA (궁금해요) chip ─────────────────────────────────────────────
+// 백엔드 QnaType 5종 (MISSING/DONATION 제거, TRAINING 신규) — 마이그레이션 027
+export const QNA_CATEGORY_OPTIONS = [
+  { value: 'ADOPTION', label: '입양' },
+  { value: 'VOLUNTEER', label: '봉사' },
+  { value: 'TRAINING', label: '훈련' },
+  { value: 'HEALTH', label: '건강' },
+  { value: 'ETC', label: '기타' }
+] as const satisfies ChipOption[];
+
+// 동물 종류 — chip 미선택 = 백엔드 default 'OTHER'
+export const QNA_ANIMAL_TYPE_OPTIONS = [
+  { value: 'DOG', label: '강아지' },
+  { value: 'CAT', label: '고양이' },
+  { value: 'OTHER', label: '기타' }
+] as const satisfies ChipOption[];

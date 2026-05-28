@@ -10,8 +10,14 @@ import {
   CommunityAdoptFormDto,
   CommunityListResponseDto,
   CommunityListResponseSchema,
+  CommunityQnaDetailDto,
+  CommunityQnaDetailSchema,
+  CommunityQnaFormDto,
+  CommunityQnaListResponseDto,
+  CommunityQnaListResponseSchema,
   MyHelpfulCommentListResponseDto,
-  MyHelpfulCommentListResponseSchema
+  MyHelpfulCommentListResponseSchema,
+  QnaTypeDto
 } from './schema';
 
 export type CommunityListParams = {
@@ -71,6 +77,37 @@ const getMyLikedPosts = async (params: { page: number; size: number }): Promise<
   return CommunityListResponseSchema.parse(res.data.data);
 };
 
+// ─── QnA ───────────────────────────────────────────────
+export type QnaListParams = {
+  page?: number;
+  size?: number;
+  type?: QnaTypeDto;
+  animalType?: 'DOG' | 'CAT' | 'OTHER';
+};
+
+const getQnaList = async (params: QnaListParams): Promise<CommunityQnaListResponseDto> => {
+  // 백엔드 list endpoint 공유 — category=QNA 강제 + type/animalType 필터
+  const res = await authApi.get<ApiResponse<CommunityQnaListResponseDto>>(COMMUNITY_BASE, {
+    params: { ...params, category: 'QNA' }
+  });
+  return CommunityQnaListResponseSchema.parse(res.data.data);
+};
+
+const getQnaDetail = async (id: number): Promise<CommunityQnaDetailDto> => {
+  const res = await authApi.get<ApiResponse<CommunityQnaDetailDto>>(`${COMMUNITY_BASE}/${id}`);
+  return CommunityQnaDetailSchema.parse(res.data.data);
+};
+
+const createQnaPost = async (body: CommunityQnaFormDto): Promise<{ id: number }> => {
+  const res = await authApi.post<ApiResponse<{ id: number }>>(`${COMMUNITY_BASE}/qna`, body);
+  return { id: res.data.data.id };
+};
+
+const updateQnaPost = async (id: number, body: CommunityQnaFormDto): Promise<CommunityQnaDetailDto> => {
+  const res = await authApi.patch<ApiResponse<CommunityQnaDetailDto>>(`${COMMUNITY_BASE}/qna/${id}`, body);
+  return CommunityQnaDetailSchema.parse(res.data.data);
+};
+
 const getMyHelpfulComments = async (params: {
   page: number;
   size: number;
@@ -84,6 +121,10 @@ export const communityApi = {
   getDetail,
   createAdoptionPersonal,
   updateAdoptionPersonal,
+  getQnaList,
+  getQnaDetail,
+  createQnaPost,
+  updateQnaPost,
   deletePost,
   likePost,
   unlikePost,
@@ -116,6 +157,29 @@ export const communityQueries = {
     queryOptions({
       queryKey: [...communityQueries.all(), 'detail', id] as const,
       queryFn: () => getDetail(id),
+      enabled: !!id
+    }),
+
+  // QnA list — type/animalType chip 필터 + infinite scroll
+  qnaList: (params: Omit<QnaListParams, 'page'>) =>
+    infiniteQueryOptions({
+      queryKey: [...communityQueries.all(), 'qna', 'list', params] as const,
+      queryFn: ({ pageParam }) => getQnaList({ ...params, page: pageParam, size: params.size ?? 20 }),
+      initialPageParam: 1,
+      getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.page + 1 : undefined),
+      select: (data) => ({
+        items: data.pages.flatMap((p) => p.items),
+        total: data.pages[data.pages.length - 1].total,
+        page: data.pages[data.pages.length - 1].page,
+        size: data.pages[data.pages.length - 1].size,
+        hasNext: data.pages[data.pages.length - 1].hasNext
+      })
+    }),
+
+  qnaDetail: (id: number) =>
+    queryOptions({
+      queryKey: [...communityQueries.all(), 'qna', 'detail', id] as const,
+      queryFn: () => getQnaDetail(id),
       enabled: !!id
     }),
 

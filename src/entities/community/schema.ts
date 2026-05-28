@@ -133,6 +133,60 @@ export const CommunityListResponseSchema = z.object({
 });
 export type CommunityListResponseDto = z.infer<typeof CommunityListResponseSchema>;
 
+// ─── QnA (궁금해요) ─────────────────────────────────────────────
+// 백엔드 QnaType enum 5종 — MISSING/DONATION 제거 + TRAINING 신규 (마이그레이션 027)
+export const QnaTypeSchema = z.enum(['ADOPTION', 'VOLUNTEER', 'TRAINING', 'HEALTH', 'ETC']);
+export type QnaTypeDto = z.infer<typeof QnaTypeSchema>;
+
+// QnA 의 동물 종류 — keeper 표준 AnimalTypeSchema 와 동일 (DOG/CAT/OTHER)
+// chip 미선택 = 백엔드 default 'OTHER'
+
+export const CommunityQnaFormSchema = z.object({
+  title: z.string().min(2, '제목은 2자 이상이에요').max(50, '제목은 50자 이내로 입력해주세요'),
+  content: z.string().min(2, '본문은 2자 이상이에요').max(1000, '본문은 1000자 이내로 입력해주세요'),
+  type: QnaTypeSchema,
+  animalType: AnimalTypeSchema.optional(),
+  images: z.array(z.string()).max(10, '이미지는 최대 10장까지 첨부할 수 있어요').optional()
+});
+export type CommunityQnaFormDto = z.infer<typeof CommunityQnaFormSchema>;
+
+export const CommunityQnaListItemSchema = z.object({
+  id: z.number(),
+  user: PostUserSummarySchema.nullable(),
+  displayTime: z.string(),
+  title: z.string(),
+  content: z.string(),
+  type: QnaTypeSchema,
+  animalType: AnimalTypeSchema,
+  images: z.array(z.string()),
+  helpfulCount: z.number().default(0),
+  commentCount: z.number().default(0)
+});
+export type CommunityQnaListItemDto = z.infer<typeof CommunityQnaListItemSchema>;
+
+export const CommunityQnaListResponseSchema = z.object({
+  items: z.array(CommunityQnaListItemSchema),
+  total: z.number(),
+  page: z.number(),
+  size: z.number(),
+  hasNext: z.boolean()
+});
+export type CommunityQnaListResponseDto = z.infer<typeof CommunityQnaListResponseSchema>;
+
+export const CommunityQnaDetailSchema = z.object({
+  id: z.number(),
+  user: PostUserSummarySchema.nullable(),
+  displayTime: z.string(),
+  title: z.string(),
+  content: z.string(),
+  type: QnaTypeSchema,
+  animalType: AnimalTypeSchema,
+  images: z.array(z.string()),
+  helpfulCount: z.number().default(0),
+  commentCount: z.number().default(0)
+});
+export type CommunityQnaDetailDto = z.infer<typeof CommunityQnaDetailSchema>;
+
 export const MyHelpfulCommentItemSchema = z.object({
   id: z.number(),
   content: z.string(),
