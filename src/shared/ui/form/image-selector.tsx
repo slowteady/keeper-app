@@ -4,7 +4,6 @@ import { Image, StyleSheet } from 'react-native';
 import { ScrollView, Spinner, styled, View, XStack, YStack } from 'tamagui';
 
 import { logger } from '@/shared/lib';
-import { IS_MOCK_UPLOAD, MOCK_DOG_IMAGES } from '@/shared/lib/dev/mock-upload';
 
 import { Close } from '../icons/outline';
 import { ImageViewer } from '../overlay/image-viewer';
@@ -29,12 +28,6 @@ export const ImageSelector = ({ max = 10, size = 100, value = [], onChange, read
 
   const handlePickImage = async () => {
     if (value.length >= max) return;
-
-    if (IS_MOCK_UPLOAD) {
-      const next = MOCK_DOG_IMAGES[value.length];
-      if (next) onChange?.([...value, next]);
-      return;
-    }
 
     try {
       const result = await ImagePicker.launchImageLibraryAsync({

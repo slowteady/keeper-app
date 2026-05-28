@@ -1,4 +1,5 @@
 import { renderHook } from '@testing-library/react-native';
+import * as ImageManipulator from 'expo-image-manipulator';
 
 import { getPresignedUrls } from '@/entities/upload';
 import { createWrapper } from '@/test/create-wrapper';
@@ -9,7 +10,13 @@ jest.mock('@/entities/upload', () => ({
   getPresignedUrls: jest.fn()
 }));
 
+jest.mock('expo-image-manipulator', () => ({
+  manipulateAsync: jest.fn(),
+  SaveFormat: { JPEG: 'jpeg' }
+}));
+
 const mockedGetPresigned = jest.mocked(getPresignedUrls);
+const mockedManipulate = jest.mocked(ImageManipulator.manipulateAsync);
 
 const originalFetch = global.fetch;
 const mockedFetch = jest.fn();
@@ -87,7 +94,7 @@ describe('useImageUpload', () => {
     setupFetch();
     const { result } = renderHook(() => useImageUpload(), { wrapper: createWrapper() });
 
-    const urls = await result.current.mutateAsync(['file:///a', 'file:///b', 'file:///c']);
+    const urls = await result.current.mutateAsync(['file:///a.jpg', 'file:///b.jpg', 'file:///c.jpg']);
 
     expect(urls).toEqual(['https://s3/p1', 'https://s3/p2', 'https://s3/p3']);
   });
@@ -100,7 +107,7 @@ describe('useImageUpload', () => {
     });
     const { result } = renderHook(() => useImageUpload(), { wrapper: createWrapper() });
 
-    await expect(result.current.mutateAsync(['file:///a'])).rejects.toThrow('s3 down');
+    await expect(result.current.mutateAsync(['file:///a.jpg'])).rejects.toThrow('s3 down');
   });
 
   it('useMutation 인터페이스(mutateAsync, isPending)를 노출한다', () => {
@@ -108,5 +115,51 @@ describe('useImageUpload', () => {
 
     expect(typeof result.current.mutateAsync).toBe('function');
     expect(result.current.isPending).toBe(false);
+  });
+
+  it('JPEG URI 는 ImageManipulator 변환을 호출하지 않는다', async () => {
+    setPresignedItems([{ uploadUrl: 'https://s3/u1', publicUrl: 'https://s3/p1' }]);
+    setupFetch();
+    const { result } = renderHook(() => useImageUpload(), { wrapper: createWrapper() });
+
+    await result.current.mutateAsync(['file:///photo.jpg']);
+
+    expect(mockedManipulate).not.toHaveBeenCalled();
+  });
+
+  it('HEIC URI 는 ImageManipulator JPEG 변환 후 PUT 한다', async () => {
+    setPresignedItems([{ uploadUrl: 'https://s3/u1', publicUrl: 'https://s3/p1' }]);
+    setupFetch();
+    mockedManipulate.mockResolvedValue({
+      uri: 'file:///converted.jpg',
+      width: 100,
+      height: 100
+    } as never);
+    const { result } = renderHook(() => useImageUpload(), { wrapper: createWrapper() });
+
+    await result.current.mutateAsync(['file:///photo.HEIC']);
+
+    expect(mockedManipulate).toHaveBeenCalledWith(
+      'file:///photo.HEIC',
+      [],
+      expect.objectContaining({ format: 'jpeg' })
+    );
+    const blobCall = mockedFetch.mock.calls.find(([, init]) => !init || init.method !== 'PUT');
+    expect(blobCall?.[0]).toBe('file:///converted.jpg');
+  });
+
+  it('PNG URI 도 JPEG 변환을 호출한다', async () => {
+    setPresignedItems([{ uploadUrl: 'https://s3/u1', publicUrl: 'https://s3/p1' }]);
+    setupFetch();
+    mockedManipulate.mockResolvedValue({
+      uri: 'file:///converted2.jpg',
+      width: 100,
+      height: 100
+    } as never);
+    const { result } = renderHook(() => useImageUpload(), { wrapper: createWrapper() });
+
+    await result.current.mutateAsync(['file:///photo.png']);
+
+    expect(mockedManipulate).toHaveBeenCalledTimes(1);
   });
 });
