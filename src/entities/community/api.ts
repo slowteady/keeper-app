@@ -81,7 +81,7 @@ const getMyLikedPosts = async (params: { page: number; size: number }): Promise<
 export type QnaListParams = {
   page?: number;
   size?: number;
-  type?: QnaTypeDto;
+  qnaType?: QnaTypeDto;
   animalType?: 'DOG' | 'CAT' | 'OTHER';
 };
 

@@ -16,9 +16,9 @@ import { AnimalTypeDto, useListRefreshing } from '@/shared/model';
 import { ChipGroup, FeedNodata } from '@/shared/ui';
 
 export const CommunityQnAFeed = () => {
-  const { type, animalType, toggleType, toggleAnimalType } = useCommunityQnaFilter();
+  const { qnaType, animalType, toggleQnaType, toggleAnimalType } = useCommunityQnaFilter();
   const { qnaList, isLoading, isFetchingNextPage, hasNextPage, refresh, fetchNextPage, goDetailPage } =
-    useCommunityQnaFeed({ type, animalType });
+    useCommunityQnaFeed({ qnaType, animalType });
 
   const scrollRef = useRef<FlashListRef<CommunityQnaListItemDto>>(null);
   useScrollToTop(scrollRef);
@@ -58,8 +58,8 @@ export const CommunityQnAFeed = () => {
             <ChipGroup
               variant="secondary"
               options={QNA_CATEGORY_OPTIONS}
-              value={type ?? ''}
-              onChange={(v) => v && toggleType(v as QnaTypeDto)}
+              value={qnaType ?? ''}
+              onChange={(v) => v && toggleQnaType(v as QnaTypeDto)}
               clearable
             />
             <ChipGroup

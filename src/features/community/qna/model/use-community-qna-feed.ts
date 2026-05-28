@@ -6,7 +6,7 @@ import { communityQueries, QnaListParams, QnaTypeDto } from '@/entities/communit
 import { AnimalTypeDto } from '@/shared/model';
 
 type QnaFeedParams = {
-  type?: QnaTypeDto;
+  qnaType?: QnaTypeDto;
   animalType?: AnimalTypeDto;
   size?: number;
 };
@@ -20,12 +20,12 @@ export const useCommunityQnaFeed = (params: QnaFeedParams = {}) => {
   }, []);
 
   const goCreatePage = useCallback(() => {
-    router.push('/community/qna/create');
+    router.push('/community-qna-write');
   }, []);
 
   const queryParams: Omit<QnaListParams, 'page'> = {
     size,
-    ...(params.type ? { type: params.type } : {}),
+    ...(params.qnaType ? { qnaType: params.qnaType } : {}),
     ...(params.animalType ? { animalType: params.animalType as 'DOG' | 'CAT' | 'OTHER' } : {})
   };
 
