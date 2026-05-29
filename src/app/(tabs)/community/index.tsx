@@ -38,9 +38,10 @@ const Page = () => {
 
   const handlePressWrite = useCallback(async () => {
     await requireLogin(() => {
-      router.push('/community-write');
+      const currentKey = COMMUNITY_TAB_ROUTES[index]?.key;
+      router.push(currentKey === 'qna' ? '/community-qna-write' : '/community-write');
     });
-  }, [requireLogin, router]);
+  }, [requireLogin, router, index]);
 
   return (
     <Container>
