@@ -1,42 +1,50 @@
-import { Control, Controller } from 'react-hook-form';
+import { Control, Controller, FieldPath, FieldValues } from 'react-hook-form';
 import { YStack } from 'tamagui';
 
-import { CommunityAdoptFormDto } from '@/entities/community';
 import { TextField, TextFieldProps } from '@/shared/ui';
 
 import { FieldError } from './field-error';
 import { FieldLabel } from './field-label';
 
-export interface LabelTextFieldProps extends TextFieldProps {
+export interface LabelTextFieldProps<T extends FieldValues> extends TextFieldProps {
   label: string;
   required?: boolean;
-  name: keyof CommunityAdoptFormDto;
-  control: Control<CommunityAdoptFormDto>;
+  name: FieldPath<T>;
+  control: Control<T>;
 }
 
-export const LabelTextField = ({ label, required, name, value, control, ...props }: LabelTextFieldProps) => {
-  const hasValue = !!value;
-
+export const LabelTextField = <T extends FieldValues>({
+  label,
+  required,
+  name,
+  value,
+  control,
+  ...props
+}: LabelTextFieldProps<T>) => {
   return (
     <YStack>
       <FieldLabel title={label} required={required} />
       <Controller
         name={name}
         control={control}
-        render={({ field, fieldState }) => (
-          <>
-            <TextField
-              variant="fill"
-              value={value}
-              onChangeText={field.onChange}
-              onBlur={field.onBlur}
-              style={{ fontWeight: hasValue ? 500 : 400 }}
-              status={fieldState.error ? 'error' : 'default'}
-              {...props}
-            />
-            <FieldError message={fieldState.error?.message} />
-          </>
-        )}
+        render={({ field, fieldState }) => {
+          // value prop 우선 (외부 watch), 없으면 field.value fallback (재활용 폼)
+          const resolved = value ?? (typeof field.value === 'string' ? field.value : '');
+          return (
+            <>
+              <TextField
+                variant="fill"
+                value={resolved}
+                onChangeText={field.onChange}
+                onBlur={field.onBlur}
+                style={{ fontWeight: resolved ? 500 : 400 }}
+                status={fieldState.error ? 'error' : 'default'}
+                {...props}
+              />
+              <FieldError message={fieldState.error?.message} />
+            </>
+          );
+        }}
       />
     </YStack>
   );

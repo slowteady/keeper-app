@@ -92,7 +92,11 @@ export const ImageSelector = ({ max = 10, size = 100, value = [], onChange, read
           ))}
 
           {showAddButton && (
-            <View style={[styles.addButton, { width: size, height: size }]} onPress={handlePickImage}>
+            <View
+              testID="image-selector-add"
+              style={[styles.addButton, { width: size, height: size }]}
+              onPress={handlePickImage}
+            >
               <AddButton>
                 <PlusIcon>
                   <PlusVertical />

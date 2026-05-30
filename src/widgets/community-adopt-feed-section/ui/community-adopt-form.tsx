@@ -64,7 +64,7 @@ export const CommunityAdoptForm = ({
             maxLength={50}
             rows={3}
             minH={70}
-            placeholder="예)말랑말랑 댕댕이의 가족이 되어주세요 :)"
+            placeholder="예) 말랑말랑 댕댕이의 가족이 되어주세요 :)"
           />
           <LabelTextArea
             name="content"
@@ -74,7 +74,7 @@ export const CommunityAdoptForm = ({
             maxLength={1000}
             rows={6}
             minH={130}
-            placeholder="예)성격, 특별한 사연 등을 자유롭게 적어주세요"
+            placeholder="예) 사람을 잘 따르고 배변을 가리는 2살 강아지예요"
           />
           <LabelTextArea
             name="specialMark"
@@ -83,7 +83,7 @@ export const CommunityAdoptForm = ({
             rows={2}
             minH={80}
             maxLength={100}
-            placeholder="예)활발하고 사람을 좋아하는 친구예요"
+            placeholder="예) 활발하고 사람을 좋아하는 친구예요"
           />
         </YStack>
       </Section>

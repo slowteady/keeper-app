@@ -10,7 +10,7 @@ import { CommunityQnaForm, useCreateQnaPost } from '@/features/community';
 import { globalToast } from '@/shared/lib';
 import { BottomButton, CancelModal, ModalPageHeader } from '@/shared/ui';
 
-const FIELD_ORDER: (keyof CommunityQnaFormDto)[] = ['type', 'title', 'content', 'animalType', 'images'];
+const FIELD_ORDER: (keyof CommunityQnaFormDto)[] = ['type', 'animalType', 'title', 'content', 'images'];
 
 const findFirstError = (
   errors: FieldErrors<CommunityQnaFormDto>
@@ -35,16 +35,20 @@ const Page = () => {
     else router.back();
   }, [isDirty, isPending]);
 
-  const onInvalid = useCallback((errors: FieldErrors<CommunityQnaFormDto>) => {
-    const first = findFirstError(errors);
-    globalToast(first?.message ?? '필수 항목을 입력해주세요', 'fail');
-  }, []);
+  const onInvalid = useCallback(
+    (errors: FieldErrors<CommunityQnaFormDto>) => {
+      const first = findFirstError(errors);
+      globalToast(first?.message ?? '필수 항목을 입력해주세요', 'fail');
+      if (first) form.setFocus(first.name);
+    },
+    [form]
+  );
 
   return (
     <Container>
-      <ModalPageHeader title="궁금해요 작성" fullScreen onClose={handleClose} />
+      <ModalPageHeader title="궁금해요 글쓰기" fullScreen onClose={handleClose} />
       <KeyboardAwareScrollView
-        contentContainerStyle={{ paddingTop: 24, paddingBottom: buttonHeight + 40 }}
+        contentContainerStyle={{ paddingTop: 40, paddingBottom: buttonHeight + 40 }}
         bottomOffset={buttonHeight}
       >
         <CommunityQnaForm form={form} />

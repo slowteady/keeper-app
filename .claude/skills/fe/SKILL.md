@@ -99,8 +99,21 @@ design 의 컴포넌트 매핑 그대로:
 
 각 컴포넌트마다 superpowers TDD 사이클. RNTL 로 test.
 
-신규 컴포넌트 작성 전 **library-catalog.md 다시 확인** — 서드파티에 있는데
-직접 짜는 헛돌이 마지막 게이트.
+**컴포넌트 재활용 — 직접 짜기 전 2단 게이트 (순서대로):**
+
+1. **keeper 내부 컴포넌트 재활용 우선** — 비슷한 도메인이 이미 만든 컴포넌트를 먼저 찾는다:
+   - `shared/ui/**` (공용 — Button / TextField / ChipGroup / ButtonGroup 등)
+   - `features/<related-domain>/ui/**` (도메인 폼 필드 — `LabelTextField` / `LabelImageSelector` / `LabelChipGroup` 같은 Controller wrapper)
+   - `entities/<related-domain>/ui/**` (카드 / 헤더)
+   - 비슷한 화면 (예: adoption 폼 ↔ qna 폼) 은 **같은 필드 컴포넌트를 공유**해야 한다. 폼마다 TextField/ChipGroup 을 다시 조립하지 말 것.
+
+2. **재활용이 타입 강결합으로 막히면 → 직접 짜지 말고 generic 화 먼저**:
+   - 예: `LabelTextField` 가 `Control<CommunityAdoptFormDto>` 로 박혀 다른 폼에서 못 쓰는 경우
+   - **직접 재구현 (안티패턴) 이 아니라** `<T extends FieldValues>` 로 generic 화 → 양쪽 폼에서 공유
+   - generic 화는 기존 호출부 호환 유지 (T 추론) — adopt 도 그대로 동작
+   - 직접 짜기는 **마지막 수단** — 위 둘 다 불가능할 때만
+
+3. **서드파티 — library-catalog.md 다시 확인** — keeper 내부에 없으면 서드파티에 있는지 (KeyboardStickyView 등). 헛돌이 방지 마지막 게이트.
 
 검증: `npx jest src/features/<domain>/ src/widgets/<domain>/`
 
@@ -133,6 +146,14 @@ npx eslint src/            # 린트
 - **TDD 사이클 자체 재구현**: superpowers 위임. RED/GREEN 재설명 X.
 - **library-catalog 안 보고 신규 컴포넌트 작성**: 헛돌이의 주범. 4단계 시작
   전 다시 확인.
+- **재활용 가능한 컴포넌트를 타입 강결합 때문에 직접 재구현**: 가장 빈번한
+  헛돌이. 예) adopt 폼의 `LabelTextField` 가 `Control<CommunityAdoptFormDto>` 라
+  qna 폼에서 못 쓴다고 TextField 를 직접 다시 조립. **직접 짜지 말고 generic
+  화 (`<T extends FieldValues>`) 가 정공법** — 양쪽 폼이 같은 필드 컴포넌트를
+  공유. generic 화는 기존 호출부 호환 유지 (T 추론).
+- **비슷한 화면이 필드 컴포넌트를 각자 조립**: adoption 폼과 qna 폼이 같은
+  종류 입력 (제목/본문/이미지/chip) 인데 컴포넌트를 따로 만들면 일관성·유지보수
+  비용 ↑. 공유 필드 컴포넌트 (`Label*`) 로 통일.
 - **검증 실패 무시 / 워크어라운드**: 회귀 신호. spec/design 으로 돌아감.
 - **MCP 검수 생략**: 코드 검증만으로 UX 어색함 못 잡음. 시뮬에서 직접 봐야.
 - **keeper-app 컨벤션 깨기**: FSD 슬라이스 구조 / Container Hook / api-patterns

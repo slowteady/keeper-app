@@ -73,7 +73,7 @@ export const CommunityDetailOverviewSection = ({
       </HeaderWrapper>
 
       <CommunityAdoptCardTitle title={title} mb={20} />
-      <CommunityAdoptCardCarousel images={images} showImageViewer mb={16} />
+      {images.length > 0 && <CommunityAdoptCardCarousel images={images} showImageViewer mb={16} />}
       <CommunityAdoptCardTags tags={tags} mb={24} />
       <Content>{content}</Content>
     </>

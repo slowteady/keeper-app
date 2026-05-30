@@ -5,9 +5,10 @@ import { styled, View } from 'tamagui';
 
 import { COMMUNITY_TAB_ROUTES } from '@/entities/community';
 import { useLoginRequired } from '@/features/auth';
+import { globalToast } from '@/shared/lib';
 import { RouteErrorBoundary, Tab } from '@/shared/ui';
 import { CommunityAdoptFeed, CommunityWriteFab } from '@/widgets/community-adopt-feed-section';
-import { CommunityLifeFeed } from '@/widgets/community-life-feed-section';
+import { CommunityMissingFeed } from '@/widgets/community-missing-feed-section';
 import { CommunityQnAFeed } from '@/widgets/community-qna-feed-section';
 
 export const ErrorBoundary = RouteErrorBoundary;
@@ -16,8 +17,8 @@ const renderScene = ({ route }: SceneRendererProps & { route: { key: string } })
   switch (route.key) {
     case 'adopt':
       return <CommunityAdoptFeed />;
-    case 'life':
-      return <CommunityLifeFeed />;
+    case 'missing':
+      return <CommunityMissingFeed />;
     case 'qna':
       return <CommunityQnAFeed />;
     default:
@@ -39,7 +40,9 @@ const Page = () => {
   const handlePressWrite = useCallback(async () => {
     await requireLogin(() => {
       const currentKey = COMMUNITY_TAB_ROUTES[index]?.key;
-      router.push(currentKey === 'qna' ? '/community-qna-write' : '/community-write');
+      if (currentKey === 'qna') router.push('/community-qna-write');
+      else if (currentKey === 'missing') globalToast('실종분실 글쓰기는 곧 열려요');
+      else router.push('/community-write');
     });
   }, [requireLogin, router, index]);
 

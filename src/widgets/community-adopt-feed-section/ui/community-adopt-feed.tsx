@@ -128,7 +128,7 @@ const EmptyState = ({ isLoading }: { isLoading: boolean }) => {
   }
   return (
     <View flex={1} items="center" justify="center" mb={20} minH={300}>
-      <FeedNodata text="아직 공고가 없어요!" />
+      <FeedNodata text="아직 글이 없어요" />
     </View>
   );
 };
