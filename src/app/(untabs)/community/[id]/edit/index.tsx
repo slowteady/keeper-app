@@ -1,3 +1,4 @@
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Suspense, useCallback, useState } from 'react';
 import { FieldErrors } from 'react-hook-form';
@@ -5,9 +6,9 @@ import { Keyboard } from 'react-native';
 import { KeyboardAwareScrollView, KeyboardStickyView } from 'react-native-keyboard-controller';
 import { styled, View } from 'tamagui';
 
-import { CommunityAdoptFormDto } from '@/entities/community';
+import { CommunityAdoptFormDto, communityQueries } from '@/entities/community';
 import { LocationBottomSheet, useLocationBottomSheet } from '@/features/address';
-import { useEditPost } from '@/features/community';
+import { QnaEditContent, useEditPost } from '@/features/community';
 import { globalToast } from '@/shared/lib';
 import { useLayout } from '@/shared/model';
 import { Button, CancelModal, DetailErrorBoundary, ModalPageHeader } from '@/shared/ui';
@@ -44,9 +45,17 @@ const Page = () => {
   // EditContent mount 시점에 detail 동기 prefill, default 값 노출 0.
   return (
     <Suspense fallback={<PostDetailSkeleton />}>
-      <EditContent postId={postId} />
+      <EditRouter postId={postId} />
     </Suspense>
   );
+};
+
+// 응답 category 로 분기 — QNA 는 QnaEditContent, 그 외는 개인입양 수정.
+// detail 과 같은 queryKey(communityQueries.detail) 라 캐시 hit (네트워크 1 회).
+const EditRouter = ({ postId }: { postId: number }) => {
+  const { data } = useSuspenseQuery(communityQueries.detail(postId));
+  if (data.kind === 'QNA') return <QnaEditContent postId={postId} />;
+  return <EditContent postId={postId} />;
 };
 
 const EditContent = ({ postId }: { postId: number }) => {
@@ -104,7 +113,7 @@ const EditContent = ({ postId }: { postId: number }) => {
 
   return (
     <Container>
-      <ModalPageHeader title="개인입양 홍보 수정" fullScreen onClose={handleClose} />
+      <ModalPageHeader title="개인입양 글 수정" fullScreen onClose={handleClose} />
       <KeyboardAwareScrollView contentContainerStyle={{ paddingVertical: 40 }} bottomOffset={buttonHeight}>
         <CommunityAdoptForm
           form={form}

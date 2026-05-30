@@ -36,6 +36,15 @@ const isPostLike = (data: unknown): data is WithLike =>
   'isLiked' in (data as Record<string, unknown>) &&
   'counts' in (data as Record<string, unknown>);
 
+// detail 캐시는 카테고리 분기 union — { kind: 'ADOPT', adopt } | { kind: 'QNA', qna }
+type DetailUnion = { kind: 'ADOPT'; adopt: WithLike } | { kind: 'QNA'; qna: WithLike };
+
+const isDetailUnion = (data: unknown): data is DetailUnion => {
+  if (!data || typeof data !== 'object') return false;
+  const d = data as Record<string, unknown>;
+  return d.kind === 'ADOPT' ? isPostLike(d.adopt) : d.kind === 'QNA' ? isPostLike(d.qna) : false;
+};
+
 const patchItem = (item: WithLike, next: PostLikeState): WithLike => ({
   ...item,
   isLiked: next.isLiked,
@@ -60,6 +69,13 @@ export const patchLikeCache = <T>(data: T, postId: number, next: PostLikeState):
       return { ...page, items };
     });
     return changed ? ({ ...data, pages } as T) : data;
+  }
+
+  if (isDetailUnion(data)) {
+    if (data.kind === 'QNA') {
+      return (data.qna.id === postId ? { ...data, qna: patchItem(data.qna, next) } : data) as T;
+    }
+    return (data.adopt.id === postId ? { ...data, adopt: patchItem(data.adopt, next) } : data) as T;
   }
 
   if (isPostLike(data) && data.id === postId) {

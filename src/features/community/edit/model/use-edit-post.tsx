@@ -14,11 +14,13 @@ export const useEditPost = (postId: number) => {
   const queryClient = useQueryClient();
   // useSuspenseQuery — detail 도착이 hook 마운트 시점에 보장됨.
   // defaultValues 에 동기 주입하므로 default → 실제값 따닥거림 제거.
-  const { data: detail } = useSuspenseQuery(communityQueries.detail(postId));
+  // edit 라우트는 개인입양 전용 진입 → detail 은 항상 ADOPT.
+  const { data } = useSuspenseQuery(communityQueries.detail(postId));
+  const detail = data.kind === 'ADOPT' ? data.adopt : undefined;
 
   const form = useForm<CommunityAdoptFormDto>({
     resolver: zodResolver(CommunityAdoptFormSchema),
-    defaultValues: fromAdoptionPersonalDetail(detail)
+    defaultValues: detail ? fromAdoptionPersonalDetail(detail) : undefined
   });
 
   const animalType = useWatch({ control: form.control, name: 'animalType' });
@@ -31,7 +33,7 @@ export const useEditPost = (postId: number) => {
     },
     onSuccess: (updated) => {
       // 서버 응답 후 detail 캐시 즉시 갱신 (refetch 1초 지연 우회)
-      queryClient.setQueryData(communityQueries.detail(postId).queryKey, updated);
+      queryClient.setQueryData(communityQueries.detail(postId).queryKey, { kind: 'ADOPT' as const, adopt: updated });
       // 백그라운드 정합 (list 도 변경 반영)
       queryClient.invalidateQueries({ queryKey: communityQueries.all() });
       router.back();

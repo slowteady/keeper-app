@@ -155,12 +155,11 @@ describe('useLikePost', () => {
     });
   });
 
-  it('detail 캐시도 함께 patch 된다 (prefix 매칭)', async () => {
+  it('개인입양 detail 캐시(union ADOPT)도 함께 patch 된다 (prefix 매칭)', async () => {
     const { queryClient, wrapper } = setup();
     queryClient.setQueryData([...communityQueries.all(), 'detail', 1], {
-      id: 1,
-      isLiked: false,
-      counts: { like: 5, view: 0, comment: 0 }
+      kind: 'ADOPT',
+      adopt: { id: 1, isLiked: false, counts: { like: 5, view: 0, comment: 0 } }
     });
     mockedLikePost.mockResolvedValue({ isLiked: true, count: 6 });
 
@@ -168,13 +167,35 @@ describe('useLikePost', () => {
     act(() => result.current.toggleLikePost(1, false));
 
     await waitFor(() => {
-      const detail = queryClient.getQueryData<{ id: number; isLiked: boolean; counts: { like: number } }>([
+      const detail = queryClient.getQueryData<{ adopt: { isLiked: boolean; counts: { like: number } } }>([
         ...communityQueries.all(),
         'detail',
         1
       ]);
-      expect(detail?.isLiked).toBe(true);
-      expect(detail?.counts.like).toBe(6);
+      expect(detail?.adopt.isLiked).toBe(true);
+      expect(detail?.adopt.counts.like).toBe(6);
+    });
+  });
+
+  it('QnA detail 캐시(union QNA)도 함께 patch 된다', async () => {
+    const { queryClient, wrapper } = setup();
+    queryClient.setQueryData([...communityQueries.all(), 'detail', 1], {
+      kind: 'QNA',
+      qna: { id: 1, isLiked: false, counts: { like: 5, view: 0, comment: 0 } }
+    });
+    mockedLikePost.mockResolvedValue({ isLiked: true, count: 6 });
+
+    const { result } = renderHook(() => useLikePost(), { wrapper });
+    act(() => result.current.toggleLikePost(1, false));
+
+    await waitFor(() => {
+      const detail = queryClient.getQueryData<{ qna: { isLiked: boolean; counts: { like: number } } }>([
+        ...communityQueries.all(),
+        'detail',
+        1
+      ]);
+      expect(detail?.qna.isLiked).toBe(true);
+      expect(detail?.qna.counts.like).toBe(6);
     });
   });
 });

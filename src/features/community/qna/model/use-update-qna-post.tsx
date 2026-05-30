@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
@@ -10,7 +10,9 @@ import { globalToast } from '@/shared/lib';
 
 export const useUpdateQnaPost = (id: number) => {
   const queryClient = useQueryClient();
-  const { data: detail, isLoading } = useQuery(communityQueries.qnaDetail(id));
+  // edit 라우트가 category 분기 후 진입 → QNA 만 도달. 판별 query(communityQueries.detail)와 캐시 공유.
+  const { data } = useSuspenseQuery(communityQueries.detail(id));
+  const detail = data.kind === 'QNA' ? data.qna : undefined;
 
   const form = useForm<CommunityQnaFormDto>({
     resolver: zodResolver(CommunityQnaFormSchema),
@@ -53,7 +55,6 @@ export const useUpdateQnaPost = (id: number) => {
   return {
     form,
     onSubmit: form.handleSubmit(handleSubmit),
-    isPending: submitMutation.isPending || imageUpload.isPending,
-    isLoading
+    isPending: submitMutation.isPending || imageUpload.isPending
   };
 };

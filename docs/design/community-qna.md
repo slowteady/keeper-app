@@ -135,18 +135,38 @@ detail 화면 진입 (사용자가 자기 글 즉시 확인 + 답변 대기)
 
 ## 5. 화면 3: QnA detail
 
-기존 `app/(untabs)/community/[id]/index.tsx` 재활용.
+기존 `(untabs)/community/[id]/index.tsx` 는 개인입양 전용(`useCommunityAdoptDetailFeed` → `AdoptDetailSchema`)이라 "재활용" 불가. 라우트에서 **카테고리 분기** 후 QnA 전용 content 를 별도 렌더한다. UI 골격은 개인입양 detail 을 그대로 따르되, QnA 에 데이터 없는 섹션은 생략.
 
-### 5-1. 분기 추가
+### 5-1. 카테고리 분기 전략 (응답 category 기반 — A)
 
-| 영역           | 변경                                                                                         |
-| -------------- | -------------------------------------------------------------------------------------------- |
-| post 종류 판별 | `category === 'QNA'` 면 PostQnaResponse 분기                                                 |
-| 상단 chip      | 카테고리 chip + 동물 종류 chip (없으면 OTHER 표시 또는 생략)                                 |
-| 본문           | 동일                                                                                         |
-| 답변 섹션      | 기존 댓글 섹션 그대로 (`parentId IS NULL` = 답변, `parentId IS NOT NULL` = 답변에 대한 토론) |
-| 답변 정렬      | `helpfulCount` 기준 (PRD: 베스트 답변 자연 노출) — 또는 최신순 (기존 댓글 패턴) → P1 결정    |
-| 신고/차단      | 기존 인프라 그대로                                                                           |
+| 항목      | 결정                                                                                                          |
+| --------- | ------------------------------------------------------------------------------------------------------------- |
+| 분기 기준 | GET `/posts/:id` 응답의 `category` 필드                                                                       |
+| 백엔드    | `PostListItemResponse` + `fillListItem` 에 `category` 추가 → 개인입양 응답도 category 노출 (QnA 는 이미 노출) |
+| 프론트    | `getPostDetail` 이 raw 응답 `category` 로 `QnaDetailSchema` vs `AdoptDetailSchema` discriminated parse        |
+| 라우트    | `category === 'QNA'` → `QnaDetailContent`, else 기존 `CommunityDetailContent`                                 |
+| 사유      | 진입점/딥링크 무관, query 1 번. param 전달 방식은 진입점 다수 수정 + 새로고침 취약 → 컷                       |
+
+### 5-2. QnA detail 컴포넌트 트리 (개인입양 재활용 + 생략)
+
+| #   | 컴포넌트                                                      | 출처                                          | QnA 매핑                                                                |
+| --- | ------------------------------------------------------------- | --------------------------------------------- | ----------------------------------------------------------------------- |
+| 1   | `CommunityDetailOverviewSection`                              | 재활용 (widgets/community-adopt-feed-section) | 작성자/시간/제목/이미지/본문/좋아요/공유/메뉴. tags=카테고리(+동물종류) |
+| 2   | ~~`AdoptDetailInfoSection`~~                                  | 생략                                          | QnA 는 동물정보표 없음 (animalType 은 #1 tag)                           |
+| 3   | ~~`CommunityDetailDescriptionSection`~~                       | 생략                                          | QnA 는 좋아해요/싫어해요 등 세부필드 없음 (본문은 #1)                   |
+| 4   | ~~연락처 문의 버튼~~                                          | 생략                                          | QnA 는 연락처 없음                                                      |
+| 5   | `CommunityAdoptCardStats`                                     | 재활용                                        | 좋아요/조회/댓글                                                        |
+| 6   | 댓글 영역 (`CommentCard`/`CommentFormInput`/`RepliesSection`) | 재활용 그대로                                 | postId 기반이라 카테고리 무관                                           |
+
+→ 결과: **Overview + 통계 + 댓글**. 신규 `QnaDetailContent` + `use-community-qna-detail-feed` + qna mapper.
+
+### 5-3. 신고/차단/답변
+
+| 영역      | 변경                                                                                         |
+| --------- | -------------------------------------------------------------------------------------------- |
+| 답변 섹션 | 기존 댓글 섹션 그대로 (`parentId IS NULL` = 답변, `parentId IS NOT NULL` = 답변에 대한 토론) |
+| 답변 정렬 | 최신순 (아래 결정)                                                                           |
+| 신고/차단 | 기존 인프라 그대로                                                                           |
 
 ### 5-2. 답변 정렬 결정 (P0)
 

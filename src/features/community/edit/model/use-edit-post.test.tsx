@@ -81,7 +81,7 @@ const setup = () => {
       mutations: { retry: false }
     }
   });
-  queryClient.setQueryData(communityQueries.detail(42).queryKey, detail);
+  queryClient.setQueryData(communityQueries.detail(42).queryKey, { kind: 'ADOPT', adopt: detail });
 
   const wrapper = ({ children }: { children: ReactNode }) => (
     <QueryClientProvider client={queryClient}>

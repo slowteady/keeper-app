@@ -103,6 +103,12 @@ const readCurrentCount = (data: unknown, postId: number): number | undefined => 
     }
     return undefined;
   }
+  // detail 캐시 union — { kind: 'ADOPT', adopt } | { kind: 'QNA', qna }
+  if (d.kind === 'ADOPT' || d.kind === 'QNA') {
+    const inner = (d.kind === 'QNA' ? d.qna : d.adopt) as { id: number; counts?: { like: number } } | undefined;
+    if (inner && inner.id === postId && inner.counts) return inner.counts.like;
+    return undefined;
+  }
   if ('id' in d && 'counts' in d && (d.id as number) === postId) {
     return (d.counts as { like: number }).like;
   }

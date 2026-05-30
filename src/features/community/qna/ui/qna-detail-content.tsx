@@ -1,8 +1,7 @@
 import { useScrollToTop } from '@react-navigation/native';
 import { FlashList, FlashListRef, ListRenderItemInfo } from '@shopify/flash-list';
-import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
-import { useLocalSearchParams } from 'expo-router';
-import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, RefreshControl } from 'react-native';
 import { KeyboardStickyView } from 'react-native-keyboard-controller';
 import { styled, Text, View, YStack } from 'tamagui';
@@ -18,59 +17,27 @@ import {
 import { CommunityAdoptCardStats, communityQueries } from '@/entities/community';
 import { useLoginRequired } from '@/features/auth';
 import {
-  QnaDetailContent,
   RepliesSection,
   useCommentHelpful,
   useCommentMenu,
-  useCommunityAdoptDetailFeed,
   useCommunityCommentList,
   useCreateComment,
   usePostMenu,
   useUpdateComment
 } from '@/features/community';
-import { ContactSheet } from '@/features/community/detail/ui/contact-sheet';
 import { useLikePost } from '@/features/like-post';
 import { useLayout, useListRefreshing } from '@/shared/model';
-import { Button, DetailErrorBoundary, useBottomSheet } from '@/shared/ui';
-import { AdoptDetailInfoSection } from '@/widgets/adopt-section';
-import {
-  CommunityDetailDescriptionSection,
-  CommunityDetailOverviewSection,
-  PostDetailSkeleton
-} from '@/widgets/community-adopt-feed-section';
+import { CommunityDetailOverviewSection } from '@/widgets/community-adopt-feed-section';
 
-export const ErrorBoundary = DetailErrorBoundary;
+import { useCommunityQnaDetailFeed } from '../model/use-community-qna-detail-feed';
 
-const Page = () => {
-  const { id, scrollToComments } = useLocalSearchParams<{ id: string; scrollToComments?: string }>();
-  if (!id) return null;
-
-  // Suspense — useSuspenseQuery 로 본문 도착 전 스켈레톤 fallback. 댓글창이 먼저 보이는 mount 깜빡임 제거.
-  return (
-    <Container>
-      <Suspense fallback={<PostDetailSkeleton />}>
-        <DetailRouter id={id} scrollToComments={scrollToComments === '1'} />
-      </Suspense>
-    </Container>
-  );
-};
-
-// 응답 category 로 분기 — QNA 는 QnaDetailContent, 그 외는 개인입양 detail.
-// 같은 queryKey(communityQueries.detail) 라 하위 content 의 useSuspenseQuery 는 캐시 hit (네트워크 1 회).
-const DetailRouter = ({ id, scrollToComments }: { id: string; scrollToComments: boolean }) => {
-  const { data } = useSuspenseQuery(communityQueries.detail(Number(id)));
-  if (data.kind === 'QNA') return <QnaDetailContent id={id} scrollToComments={scrollToComments} />;
-  return <CommunityDetailContent id={id} scrollToComments={scrollToComments} />;
-};
-
-const CommunityDetailContent = ({ id, scrollToComments }: { id: string; scrollToComments: boolean }) => {
+export const QnaDetailContent = ({ id, scrollToComments }: { id: string; scrollToComments: boolean }) => {
   const [inputHeight, setInputHeight] = useState(0);
 
   const { bottom } = useLayout();
-  const { present, dismiss } = useBottomSheet();
 
   const numId = Number(id);
-  const { data } = useCommunityAdoptDetailFeed(id);
+  const { qna, overview } = useCommunityQnaDetailFeed(id);
   const scrollRef = useRef<FlashListRef<CommentDto>>(null);
   useScrollToTop(scrollRef);
   const {
@@ -83,8 +50,6 @@ const CommunityDetailContent = ({ id, scrollToComments }: { id: string; scrollTo
   } = useCommunityCommentList(numId);
   const { toggleLikePost } = useLikePost();
 
-  // 관심 댓글 chip 에서 진입 시 댓글 섹션까지 스크롤 — ListHeader(글 본문) 끝, 첫 댓글 위치로.
-  // 댓글 list 도착 후 1회만 트리거.
   const scrolledRef = useRef(false);
   useEffect(() => {
     if (!scrollToComments || scrolledRef.current || isCommentLoading || commentList.length === 0) return;
@@ -94,7 +59,6 @@ const CommunityDetailContent = ({ id, scrollToComments }: { id: string; scrollTo
     });
   }, [scrollToComments, isCommentLoading, commentList.length]);
 
-  // pull-to-refresh: 본문 + 카운트/좋아요 + 댓글 list 첫 페이지부터 fresh fetch (Twitter/Instagram BP)
   const queryClient = useQueryClient();
   const refresh = useCallback(async () => {
     await Promise.all([
@@ -104,29 +68,15 @@ const CommunityDetailContent = ({ id, scrollToComments }: { id: string; scrollTo
   }, [queryClient, numId]);
   const { refreshing, handleRefresh } = useListRefreshing(refresh);
 
-  const detailPost = data.detailPost;
-  const isLiked = detailPost?.isLiked ?? false;
-  const authorId = detailPost?.user?.id ?? null;
-  const contacts = useMemo(
-    () => detailPost?.contacts?.filter((c) => c.value && c.value.length > 0) ?? [],
-    [detailPost?.contacts]
-  );
-  const hasContact = contacts.length > 0;
-
-  const openContactSheet = useCallback(() => {
-    present(<ContactSheet contacts={contacts} />, { enableDynamicSizing: true, onDismiss: dismiss });
-  }, [present, dismiss, contacts]);
+  const isLiked = qna?.isLiked ?? false;
+  const authorId = qna?.user?.id ?? null;
 
   const { openPostMenu, sharePost } = usePostMenu({
     postId: numId,
     authorId,
-    shareInfo: detailPost ? { title: detailPost.title, image: detailPost.images[0] } : undefined
+    shareInfo: qna ? { title: qna.title, image: qna.images[0] } : undefined
   });
 
-  // 댓글 작성/수정/답글 인라인 모드 분기
-  // - editingCommentId 있으면 update
-  // - replyTarget 있으면 create (with parentId)
-  // - 둘 다 없으면 일반 create
   const [comment, setComment] = useState('');
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [replyTarget, setReplyTarget] = useState<{ parentId: number; nickname: string } | null>(null);
@@ -165,7 +115,6 @@ const CommunityDetailContent = ({ id, scrollToComments }: { id: string; scrollTo
     setComment('');
   }, []);
 
-  // 답글 모드에서 @닉네임 prefix 를 지우면 일반 댓글로 전환 (트위터/카톡 BP).
   const handleChangeComment = useCallback(
     (text: string) => {
       setComment(text);
@@ -181,11 +130,7 @@ const CommunityDetailContent = ({ id, scrollToComments }: { id: string; scrollTo
 
   const handleToggleHelpful = useCallback(
     (c: { id: number; isHelpful: boolean; helpfulCount: number }) => {
-      toggleHelpful({
-        commentId: c.id,
-        currentlyHelpful: c.isHelpful,
-        currentCount: c.helpfulCount
-      });
+      toggleHelpful({ commentId: c.id, currentlyHelpful: c.isHelpful, currentCount: c.helpfulCount });
     },
     [toggleHelpful]
   );
@@ -233,28 +178,17 @@ const CommunityDetailContent = ({ id, scrollToComments }: { id: string; scrollTo
           <CommentCard
             comment={item}
             onPressMore={() =>
-              openCommentMenu({
-                commentId: item.id,
-                authorId: item.user?.id ?? null,
-                content: item.content
-              })
+              openCommentMenu({ commentId: item.id, authorId: item.user?.id ?? null, content: item.content })
             }
             onPressReply={() =>
-              handleEnterReplyMode({
-                parentId: item.id,
-                nickname: item.user?.nickname ?? '탈퇴한 사용자'
-              })
+              handleEnterReplyMode({ parentId: item.id, nickname: item.user?.nickname ?? '탈퇴한 사용자' })
             }
             onPressHelpful={() => handleToggleHelpful(item)}
           />
           <RepliesSection
             parentComment={item}
             onPressReplyMore={(reply) =>
-              openCommentMenu({
-                commentId: reply.id,
-                authorId: reply.user?.id ?? null,
-                content: reply.content
-              })
+              openCommentMenu({ commentId: reply.id, authorId: reply.user?.id ?? null, content: reply.content })
             }
             onPressReplyHelpful={(reply) => handleToggleHelpful(reply)}
           />
@@ -285,48 +219,29 @@ const CommunityDetailContent = ({ id, scrollToComments }: { id: string; scrollTo
         ItemSeparatorComponent={() => <View height={1} bg="$backgroundDefault" />}
         ListHeaderComponent={() => (
           <>
-            {detailPost && (
-              <View px={20} mb={32}>
-                <CommunityDetailOverviewSection
-                  {...(data.overviews as Parameters<typeof CommunityDetailOverviewSection>[0])}
-                  onPressLike={() => toggleLikePost(numId, isLiked)}
-                  onPressShare={sharePost}
-                  onPressMore={openPostMenu}
-                />
-              </View>
-            )}
-
-            <Divider mb={32} />
-
-            {detailPost && (
+            {overview && qna && (
               <>
-                <YStack px={20} mb={40}>
-                  <AdoptDetailInfoSection {...(data.infos as Parameters<typeof AdoptDetailInfoSection>[0])} />
-                </YStack>
                 <View px={20} mb={32}>
-                  <CommunityDetailDescriptionSection
-                    {...(data.descriptions as Parameters<typeof CommunityDetailDescriptionSection>[0])}
+                  <CommunityDetailOverviewSection
+                    {...overview}
+                    onPressLike={() => toggleLikePost(numId, isLiked)}
+                    onPressShare={sharePost}
+                    onPressMore={openPostMenu}
                   />
                 </View>
-                {hasContact && (
-                  <View px={20} mb={20}>
-                    <Button onPress={openContactSheet}>문의하기</Button>
-                  </View>
-                )}
                 <View px={20} mb={16}>
-                  <CommunityAdoptCardStats {...detailPost.counts} />
+                  <CommunityAdoptCardStats {...qna.counts} />
                 </View>
               </>
             )}
 
             <CommentListHeader
-              commentCount={detailPost?.counts?.comment ?? 0}
+              commentCount={qna?.counts?.comment ?? 0}
               sortOrder={sortOrder}
               onChangeSortOrder={changeSortOrder}
             />
           </>
         )}
-        // 댓글 있을 때만 입력영역만큼 paddingBottom — nodata 시 빈 공백 방지
         contentContainerStyle={{
           paddingBottom: commentList.length > 0 ? inputHeight : 0,
           paddingTop: 32
@@ -343,13 +258,12 @@ const CommunityDetailContent = ({ id, scrollToComments }: { id: string; scrollTo
             </YStack>
           ) : (
             <View items="center" justify="center" py={64}>
-              <EmptyText>{'아직 댓글이 없습니다\n여러분의 의견을 적어주세요:)'}</EmptyText>
+              <EmptyText>{'아직 답변이 없습니다\n여러분의 의견을 적어주세요:)'}</EmptyText>
             </View>
           )
         }
       />
 
-      {/* offset.opened={bottom} — 키보드 열릴 때 safe-area padding 상쇄 (BP) */}
       <KeyboardStickyView offset={{ opened: bottom }}>
         <StickyInner onLayout={(event) => setInputHeight(event.nativeEvent.layout.height)} pb={bottom}>
           <CommentFormInput
@@ -370,20 +284,8 @@ const CommunityDetailContent = ({ id, scrollToComments }: { id: string; scrollTo
   );
 };
 
-export default Page;
-
-const Container = styled(View, {
-  bg: '$pageBackground',
-  flex: 1
-});
-
 const ContentWrap = styled(View, {
   flex: 1
-});
-
-const Divider = styled(View, {
-  height: 8,
-  bg: '$white850'
 });
 
 const EmptyText = styled(Text, {

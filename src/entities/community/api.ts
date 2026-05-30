@@ -36,9 +36,17 @@ const getList = async (params: CommunityListParams): Promise<CommunityListRespon
   return CommunityListResponseSchema.parse(res.data.data);
 };
 
-const getDetail = async (id: number): Promise<CommunityAdoptDetailDto> => {
-  const res = await authApi.get<ApiResponse<CommunityAdoptDetailDto>>(`${COMMUNITY_BASE}/${id}`);
-  return CommunityAdoptDetailSchema.parse(res.data.data);
+// 응답 category 로 카테고리별 스키마 분기 (discriminated). 진입점/딥링크 무관 + query 1 회.
+export type PostDetailUnion =
+  | { kind: 'QNA'; qna: CommunityQnaDetailDto }
+  | { kind: 'ADOPT'; adopt: CommunityAdoptDetailDto };
+
+const getPostDetail = async (id: number): Promise<PostDetailUnion> => {
+  const res = await authApi.get<ApiResponse<{ category: string }>>(`${COMMUNITY_BASE}/${id}`);
+  const raw = res.data.data;
+  return raw.category === 'QNA'
+    ? { kind: 'QNA', qna: CommunityQnaDetailSchema.parse(raw) }
+    : { kind: 'ADOPT', adopt: CommunityAdoptDetailSchema.parse(raw) };
 };
 
 const createAdoptionPersonal = async (body: CommunityAdoptFormDto): Promise<{ id: number }> => {
@@ -118,7 +126,7 @@ const getMyHelpfulComments = async (params: {
 
 export const communityApi = {
   getList,
-  getDetail,
+  getPostDetail,
   createAdoptionPersonal,
   updateAdoptionPersonal,
   getQnaList,
@@ -156,7 +164,7 @@ export const communityQueries = {
   detail: (id: number) =>
     queryOptions({
       queryKey: [...communityQueries.all(), 'detail', id] as const,
-      queryFn: () => getDetail(id),
+      queryFn: () => getPostDetail(id),
       enabled: !!id
     }),
 
