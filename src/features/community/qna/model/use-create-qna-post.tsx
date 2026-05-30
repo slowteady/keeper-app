@@ -33,9 +33,10 @@ export const useCreateQnaPost = () => {
       const uploadedUrls = data.images && data.images.length > 0 ? await imageUpload.mutateAsync(data.images) : [];
       return communityApi.createQnaPost({ ...data, images: uploadedUrls });
     },
-    onSuccess: async (post) => {
-      await queryClient.invalidateQueries({ queryKey: [...communityQueries.all(), 'qna', 'list'] });
-      router.replace(`/(untabs)/community/${post.id}`);
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: communityQueries.all() });
+      globalToast('글을 등록했어요', 'success');
+      router.back();
     },
     onError: () => {
       globalToast('등록에 실패했어요. 잠시 후 다시 시도해주세요', 'fail');

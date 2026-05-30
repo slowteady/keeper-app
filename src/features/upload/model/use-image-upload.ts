@@ -1,11 +1,22 @@
 import { useMutation } from '@tanstack/react-query';
 import * as ImageManipulator from 'expo-image-manipulator';
+import { Image } from 'react-native';
 
 import { getPresignedUrls } from '@/entities/upload';
 
-const ensureJpeg = async (uri: string): Promise<string> => {
-  if (/\.jpe?g($|\?)/i.test(uri)) return uri;
-  const result = await ImageManipulator.manipulateAsync(uri, [], {
+const MAX_DIMENSION = 1920;
+
+const getImageSize = (uri: string) =>
+  new Promise<{ width: number; height: number }>((resolve, reject) =>
+    Image.getSize(uri, (width, height) => resolve({ width, height }), reject)
+  );
+
+const processImage = async (uri: string): Promise<string> => {
+  const { width, height } = await getImageSize(uri);
+  const longest = Math.max(width, height);
+  const actions =
+    longest > MAX_DIMENSION ? [{ resize: width >= height ? { width: MAX_DIMENSION } : { height: MAX_DIMENSION } }] : [];
+  const result = await ImageManipulator.manipulateAsync(uri, actions, {
     format: ImageManipulator.SaveFormat.JPEG,
     compress: 0.85
   });
@@ -13,8 +24,8 @@ const ensureJpeg = async (uri: string): Promise<string> => {
 };
 
 const uploadOne = async (uri: string, uploadUrl: string) => {
-  const jpegUri = await ensureJpeg(uri);
-  const blob = await fetch(jpegUri).then((r) => r.blob());
+  const processed = await processImage(uri);
+  const blob = await fetch(processed).then((r) => r.blob());
   await fetch(uploadUrl, {
     method: 'PUT',
     headers: { 'Content-Type': 'image/jpeg' },

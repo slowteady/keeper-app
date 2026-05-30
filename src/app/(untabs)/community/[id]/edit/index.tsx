@@ -113,7 +113,7 @@ const EditContent = ({ postId }: { postId: number }) => {
 
   return (
     <Container>
-      <ModalPageHeader title="개인입양 글 수정" fullScreen onClose={handleClose} />
+      <ModalPageHeader title="개인입양 수정하기" fullScreen onClose={handleClose} />
       <KeyboardAwareScrollView contentContainerStyle={{ paddingVertical: 40 }} bottomOffset={buttonHeight}>
         <CommunityAdoptForm
           form={form}

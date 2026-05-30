@@ -1,10 +1,15 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { useEffect, useRef } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 
-import { CommunityAdoptFormDto, CommunityAdoptFormSchema, CREATE_POST_OPTIONS } from '@/entities/community';
+import {
+  CommunityAdoptFormDto,
+  CommunityAdoptFormSchema,
+  communityQueries,
+  CREATE_POST_OPTIONS
+} from '@/entities/community';
 import { useImageUpload } from '@/features/upload';
 import { globalToast } from '@/shared/lib';
 
@@ -12,6 +17,8 @@ import { createAdoptionPersonal, toCreateAdoptionPersonalBody } from './api';
 import { useAdoptFormSelectors } from './use-adopt-form-selectors';
 
 export const useCreatePost = () => {
+  const queryClient = useQueryClient();
+
   const form = useForm<CommunityAdoptFormDto>({
     resolver: zodResolver(CommunityAdoptFormSchema),
     defaultValues: {
@@ -63,8 +70,10 @@ export const useCreatePost = () => {
       const body = toCreateAdoptionPersonalBody(data, uploadedUrls);
       return createAdoptionPersonal(body);
     },
-    onSuccess: (post) => {
-      router.replace(`/(untabs)/community/${post.id}`);
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: communityQueries.all() });
+      globalToast('공고를 등록했어요', 'success');
+      router.back();
     },
     onError: () => {
       globalToast('게시글 등록에 실패했어요. 잠시 후 다시 시도해주세요', 'fail');

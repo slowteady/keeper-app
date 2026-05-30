@@ -41,9 +41,12 @@ export const useUpdateQnaPost = (id: number) => {
       const uploaded = localUris.length > 0 ? await imageUpload.mutateAsync(localUris) : [];
       return communityApi.updateQnaPost(id, { ...data, images: [...existing, ...uploaded] });
     },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: [...communityQueries.all(), 'qna'] });
-      router.replace(`/(untabs)/community/${id}`);
+    onSuccess: (updated) => {
+      // edit 는 detail 에서 push 로 진입 → back 으로 원래 detail 복귀 (replace 면 스택 중복).
+      // detail 캐시 즉시 갱신 + 전체 무효화 (list/detail 정합).
+      queryClient.setQueryData(communityQueries.detail(id).queryKey, { kind: 'QNA' as const, qna: updated });
+      queryClient.invalidateQueries({ queryKey: communityQueries.all() });
+      router.back();
     },
     onError: () => {
       globalToast('수정에 실패했어요. 잠시 후 다시 시도해주세요', 'fail');

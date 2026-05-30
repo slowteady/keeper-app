@@ -124,13 +124,13 @@
 ```
 폼 submit
   ↓
-useImageUpload 로 이미지 PUT → CloudFront URL[] 받음
+useImageUpload 로 이미지 PUT → R2/CloudFront URL[] 받음
   ↓
 POST /api/community/posts/qna { type, animalType, title, content, images }
   ↓
-응답의 postId 로 router.replace(`/(untabs)/community/${postId}`)
+invalidate(communityQueries.all()) + globalToast('등록했어요') + router.back()
   ↓
-detail 화면 진입 (사용자가 자기 글 즉시 확인 + 답변 대기)
+작성 모달 닫고 목록 복귀 (새 글이 목록 상단에 노출) — HIG: 모달 완료 = dismiss → 부모(목록)
 ```
 
 ## 5. 화면 3: QnA detail
@@ -206,15 +206,15 @@ detail 화면 진입 (사용자가 자기 글 즉시 확인 + 답변 대기)
 
 ### 결정 기록
 
-| 결정                        | 옵션                                             | 채택                   | 사유                                                                       |
-| --------------------------- | ------------------------------------------------ | ---------------------- | -------------------------------------------------------------------------- |
-| chip 배치                   | 1 row 통합 / 2 row stacking                      | **2 row stacking**     | chip 8개를 한 줄에 두면 가독성 ↓. Instagram/당근 패턴                      |
-| chip "전체" 항목            | 추가 / 미선택 default                            | **미선택 default**     | PRD 결정 (Instagram 패턴)                                                  |
-| 카테고리/동물 chip 컴포넌트 | ButtonGroup 등간격 / ChipScrollRow (가로 스크롤) | **ChipScrollRow**      | 5개 chip 등간격이면 텍스트 잘림 + 미선택 state 표현 어색. 가로 스크롤이 BP |
-| 답변 정렬                   | helpfulCount / 최신순                            | **최신순**             | 초기 트래픽엔 도움돼요 수 0~1 수준이라 정렬 의미 약함. 댓글 패턴 일관      |
-| QnA Card                    | Adopt Card 확장 / 별도 신규                      | **별도 신규**          | 메타 영역 (답변수 / 도움돼요 수) 다름. props 확장 시 복잡도 ↑              |
-| 글 등록 후 이동             | detail push / list 복귀                          | **detail push**        | 개인입양 패턴 일관 + 즉시 확인                                             |
-| 답변 노출 정렬              | helpfulCount / 최신순                            | **최신순** (위와 동일) |                                                                            |
+| 결정                        | 옵션                                             | 채택                    | 사유                                                                           |
+| --------------------------- | ------------------------------------------------ | ----------------------- | ------------------------------------------------------------------------------ |
+| chip 배치                   | 1 row 통합 / 2 row stacking                      | **2 row stacking**      | chip 8개를 한 줄에 두면 가독성 ↓. Instagram/당근 패턴                          |
+| chip "전체" 항목            | 추가 / 미선택 default                            | **미선택 default**      | PRD 결정 (Instagram 패턴)                                                      |
+| 카테고리/동물 chip 컴포넌트 | ButtonGroup 등간격 / ChipScrollRow (가로 스크롤) | **ChipScrollRow**       | 5개 chip 등간격이면 텍스트 잘림 + 미선택 state 표현 어색. 가로 스크롤이 BP     |
+| 답변 정렬                   | helpfulCount / 최신순                            | **최신순**              | 초기 트래픽엔 도움돼요 수 0~1 수준이라 정렬 의미 약함. 댓글 패턴 일관          |
+| QnA Card                    | Adopt Card 확장 / 별도 신규                      | **별도 신규**           | 메타 영역 (답변수 / 도움돼요 수) 다름. props 확장 시 복잡도 ↑                  |
+| 글 등록 후 이동             | detail push / list 복귀                          | **list 복귀 (dismiss)** | HIG: 모달 완료 = dismiss → 부모(목록). 새 글이 목록 상단 노출. 개인입양과 통일 |
+| 답변 노출 정렬              | helpfulCount / 최신순                            | **최신순** (위와 동일)  |                                                                                |
 
 ### 컷한 옵션
 

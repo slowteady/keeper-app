@@ -48,7 +48,7 @@ export const QnaEditContent = ({ postId }: { postId: number }) => {
 
   return (
     <Container>
-      <ModalPageHeader title="궁금해요 글 수정" fullScreen onClose={handleClose} />
+      <ModalPageHeader title="궁금해요 수정하기" fullScreen onClose={handleClose} />
       <KeyboardAwareScrollView
         contentContainerStyle={{ paddingTop: 40, paddingBottom: buttonHeight + 40 }}
         bottomOffset={buttonHeight}
