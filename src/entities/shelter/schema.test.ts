@@ -1,11 +1,4 @@
-import {
-  ShelterAdoptsParamsSchema,
-  ShelterCountSchema,
-  ShelterCountsParamsSchema,
-  ShelterSchema,
-  SheltersParamsSchema,
-  ShelterWithinParamsSchema
-} from './schema';
+import { ShelterAdoptsParamsSchema, ShelterSchema, SheltersParamsSchema, ShelterWithinParamsSchema } from './schema';
 
 const VALID_SHELTER = {
   id: 's1',
@@ -44,12 +37,6 @@ describe('ShelterSchema', () => {
   });
 });
 
-describe('ShelterCountSchema', () => {
-  it('distance/count 통과', () => {
-    expect(() => ShelterCountSchema.parse({ distance: 5, count: 3 })).not.toThrow();
-  });
-});
-
 describe('SheltersParamsSchema', () => {
   it('5개 좌표/거리 모두 통과', () => {
     expect(() =>
@@ -65,12 +52,6 @@ describe('SheltersParamsSchema', () => {
 
   it('필드 누락 시 실패', () => {
     expect(() => SheltersParamsSchema.parse({ latitude: 37.5, longitude: 127.0 })).toThrow();
-  });
-});
-
-describe('ShelterCountsParamsSchema', () => {
-  it('latitude/longitude 통과', () => {
-    expect(() => ShelterCountsParamsSchema.parse({ latitude: 37.5, longitude: 127.0 })).not.toThrow();
   });
 });
 

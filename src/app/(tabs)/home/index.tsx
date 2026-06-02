@@ -77,16 +77,8 @@ const Page = () => {
             <View pb={80}>
               <HomeShelterSection
                 shelters={shelter.shelters}
-                shelterCounts={shelter.shelterCounts}
-                mapRef={shelter.mapRef}
-                camera={shelter.camera}
-                selectedMarkerId={shelter.selectedMarkerId}
                 isGranted={shelter.isGranted}
                 isLoading={shelter.isLoading}
-                animatedListStyle={shelter.animatedListStyle}
-                onMapInitialized={shelter.onMapInitialized}
-                onRefetch={shelter.onRefetch}
-                onTapMarker={shelter.onTapMarker}
               />
             </View>
           );

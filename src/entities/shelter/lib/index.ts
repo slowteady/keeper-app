@@ -1,1 +1,1 @@
-export * from './open-today';
+export * from './operating-hours';

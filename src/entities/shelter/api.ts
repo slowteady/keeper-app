@@ -1,15 +1,11 @@
 import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
-import { AxiosResponse } from 'axios';
 
 import { AdoptResponseDto } from '@/entities/adopt';
 import { authApi } from '@/shared/api';
 import { ApiResponse } from '@/shared/model';
 
-import { SHELTER_DISTANCES } from './constant';
 import {
   ShelterAdoptsParamsDto,
-  ShelterCountDto,
-  ShelterCountsParamsDto,
   ShelterDto,
   ShelterMyFavoriteListDto,
   ShelterMyFavoriteListSchema,
@@ -20,13 +16,6 @@ import {
 const BASE_URL = '/shelters';
 
 // --- Service Functions ---
-
-const getShelterCounts = async (
-  params: ShelterCountsParamsDto
-): Promise<AxiosResponse<ApiResponse<ShelterCountDto[]>>> => {
-  const distances = SHELTER_DISTANCES.join(',');
-  return await authApi.get(`${BASE_URL}/nearby/count`, { params: { ...params, distances } });
-};
 
 // 낙관 업데이트 일관성 — list/within/detail 은 cache 에 view 모델(ShelterDto[] / ShelterDto) 직접 저장.
 // authApi 사용 이유 — 백엔드가 @CurrentUser 를 optional 로 받아 토큰이 있으면 isFavorited 를 채워준다.
@@ -82,13 +71,6 @@ export const shelterApi = {
 
 export const shelterQueries = {
   all: () => ['shelters'] as const,
-
-  counts: (params: ShelterCountsParamsDto) =>
-    queryOptions({
-      queryKey: [...shelterQueries.all(), 'counts', params] as const,
-      queryFn: () => getShelterCounts(params),
-      select: (res) => res.data.data
-    }),
 
   list: (params: SheltersParamsDto) =>
     queryOptions({

@@ -63,7 +63,7 @@ export const HomeAdoptSection = ({
   return (
     <>
       <TitleContainer mb={16} px={20}>
-        <Text fontSize={26} lineHeight={36} fontWeight="600" color="$black900" onPress={() => onGoList()}>
+        <Text fontSize={26} lineHeight={36} fontWeight="600" color="$black900">
           입양공고
         </Text>
 
@@ -83,6 +83,7 @@ export const HomeAdoptSection = ({
         renderItem={renderItem}
         horizontal
         snapToInterval={CARD_SNAP_INTERVAL}
+        snapToAlignment="start"
         decelerationRate="fast"
         showsHorizontalScrollIndicator={false}
         ItemSeparatorComponent={() => <View width={CARD_GAP} />}

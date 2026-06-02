@@ -1,7 +1,6 @@
 import { authApi } from '@/shared/api/instance';
 
 import { shelterApi, shelterQueries } from './api';
-import { SHELTER_DISTANCES } from './constant';
 
 const mockedAuthGet = jest.mocked(authApi.get);
 const mockedAuthPost = jest.mocked(authApi.post);
@@ -16,31 +15,6 @@ beforeEach(() => {
 describe('shelterQueries.all', () => {
   it('queryKey가 ["shelters"]이다', () => {
     expect(shelterQueries.all()).toEqual(['shelters']);
-  });
-});
-
-describe('shelterQueries.counts', () => {
-  it('/shelters/nearby/count 로 GET 요청하고 SHELTER_DISTANCES를 distances 파라미터에 포함한다', async () => {
-    const params = { lat: 37, lng: 127 } as never;
-    const opts = shelterQueries.counts(params);
-
-    await (opts.queryFn as never as () => Promise<unknown>)();
-
-    expect(mockedAuthGet).toHaveBeenCalledWith('/shelters/nearby/count', {
-      params: { lat: 37, lng: 127, distances: SHELTER_DISTANCES.join(',') }
-    });
-  });
-
-  it('queryKey에 params가 포함된다', () => {
-    const params = { latitude: 37, longitude: 127 };
-
-    expect(shelterQueries.counts(params).queryKey).toEqual(['shelters', 'counts', params]);
-  });
-
-  it('select 함수가 정의되어 있다', () => {
-    const opts = shelterQueries.counts({ latitude: 37, longitude: 127 });
-
-    expect(typeof opts.select).toBe('function');
   });
 });
 
