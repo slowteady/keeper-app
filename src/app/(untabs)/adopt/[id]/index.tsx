@@ -61,7 +61,7 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
         decelerationRate="fast"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={
-          { position: 'relative', paddingTop: 48, paddingBottom: hasCallNumber ? buttonHeight : 0 } as any
+          { position: 'relative', paddingTop: 48, paddingBottom: hasCallNumber ? buttonHeight : 48 } as any
         }
       >
         {ended && adopt.status && <AdoptEndedBanner status={adopt.status} />}
