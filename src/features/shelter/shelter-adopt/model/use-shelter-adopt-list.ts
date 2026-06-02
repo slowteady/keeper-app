@@ -30,17 +30,17 @@ export const useShelterAdoptList = ({ id, adoptsParams }: UseShelterAdoptListPro
   } = useInfiniteQuery(
     shelterQueries.adopts(id, {
       size: 16,
-      page: 0,
+      page: 1,
       filter: selectedFilter,
       ...adoptsParams
     })
   );
 
   const convertedData = useMemo(() => {
-    const hasValue = data && data?.value && data?.value.length > 0;
+    const hasValue = data && data?.items && data?.items.length > 0;
     if (!hasValue) return [];
 
-    return mapToAdoptList(data.value);
+    return mapToAdoptList(data.items);
   }, [data]);
 
   const changeFilter = useCallback((id: string) => router.setParams({ filter: id }), [router]);

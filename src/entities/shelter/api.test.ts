@@ -20,13 +20,13 @@ describe('shelterQueries.all', () => {
 });
 
 describe('shelterQueries.counts', () => {
-  it('/v2/shelters/nearby/count 로 GET 요청하고 SHELTER_DISTANCES를 distances 파라미터에 포함한다', async () => {
+  it('/shelters/nearby/count 로 GET 요청하고 SHELTER_DISTANCES를 distances 파라미터에 포함한다', async () => {
     const params = { lat: 37, lng: 127 } as never;
     const opts = shelterQueries.counts(params);
 
     await (opts.queryFn as never as () => Promise<unknown>)();
 
-    expect(mockedAuthGet).toHaveBeenCalledWith('/v2/shelters/nearby/count', {
+    expect(mockedAuthGet).toHaveBeenCalledWith('/shelters/nearby/count', {
       params: { lat: 37, lng: 127, distances: SHELTER_DISTANCES.join(',') }
     });
   });
@@ -45,13 +45,13 @@ describe('shelterQueries.counts', () => {
 });
 
 describe('shelterQueries.list', () => {
-  it('/v2/shelters 로 GET 요청하고 params를 전달한다', async () => {
+  it('/shelters 로 GET 요청하고 params를 전달한다', async () => {
     const params = { latitude: 37, longitude: 127, distance: 5, userLatitude: 37, userLongitude: 127 };
     const opts = shelterQueries.list(params);
 
     await (opts.queryFn as never as () => Promise<unknown>)();
 
-    expect(mockedAuthGet).toHaveBeenCalledWith('/v2/shelters', { params });
+    expect(mockedAuthGet).toHaveBeenCalledWith('/shelters', { params });
   });
 
   it('queryKey에 params가 포함된다', () => {
@@ -73,12 +73,12 @@ describe('shelterQueries.list', () => {
 });
 
 describe('shelterQueries.detail', () => {
-  it('/v2/shelters/:id 로 GET 요청한다', async () => {
+  it('/shelters/:id 로 GET 요청한다', async () => {
     const opts = shelterQueries.detail('s1');
 
     await (opts.queryFn as never as () => Promise<unknown>)();
 
-    expect(mockedAuthGet).toHaveBeenCalledWith('/v2/shelters/s1');
+    expect(mockedAuthGet).toHaveBeenCalledWith('/shelters/s1');
   });
 
   it('queryKey에 id가 포함된다', () => {
@@ -103,14 +103,14 @@ describe('shelterQueries.searchResult', () => {
 });
 
 describe('shelterQueries.adopts', () => {
-  const adoptParams = { size: 10, page: 0, filter: 'NEW' };
+  const adoptParams = { size: 10, page: 1, filter: 'NEW' };
 
-  it('/v2/shelters/:id/abandonments 로 GET 요청하고 params와 pageParam을 전달한다', async () => {
+  it('/shelters/:id/abandonments 로 GET 요청하고 params와 pageParam을 전달한다', async () => {
     const queryFn = shelterQueries.adopts('s1', adoptParams).queryFn;
 
     await (queryFn as never as (ctx: { pageParam: number }) => Promise<unknown>)({ pageParam: 2 });
 
-    expect(mockedAuthGet).toHaveBeenCalledWith('/v2/shelters/s1/abandonments', {
+    expect(mockedAuthGet).toHaveBeenCalledWith('/shelters/s1/abandonments', {
       params: { ...adoptParams, page: 2 }
     });
   });
@@ -119,22 +119,22 @@ describe('shelterQueries.adopts', () => {
     expect(shelterQueries.adopts('s1', adoptParams).queryKey).toEqual(['shelters', 'adopts', 's1', adoptParams]);
   });
 
-  it('getNextPageParam: has_next가 true이면 page + 1을 반환한다', () => {
+  it('getNextPageParam: hasNext가 true이면 page + 1을 반환한다', () => {
     const opts = shelterQueries.adopts('s1', adoptParams);
-    const lastPage = { has_next: true, page: 3 } as never;
+    const lastPage = { hasNext: true, page: 3 } as never;
 
     expect(opts.getNextPageParam(lastPage, [lastPage], 0, [0])).toBe(4);
   });
 
-  it('getNextPageParam: has_next가 false이면 undefined를 반환한다', () => {
+  it('getNextPageParam: hasNext가 false이면 undefined를 반환한다', () => {
     const opts = shelterQueries.adopts('s1', adoptParams);
-    const lastPage = { has_next: false, page: 3 } as never;
+    const lastPage = { hasNext: false, page: 3 } as never;
 
     expect(opts.getNextPageParam(lastPage, [lastPage], 0, [0])).toBeUndefined();
   });
 
   it('queryFn 이 ApiResponse 의 data.data (AdoptResponseDto) 를 직접 반환한다', async () => {
-    const response = { total: 0, page: 0, size: 16, has_next: false, value: [] };
+    const response = { total: 0, page: 1, size: 16, hasNext: false, items: [] };
     mockedAuthGet.mockResolvedValueOnce({ data: { data: response } } as never);
 
     const queryFn = shelterQueries.adopts('s1', adoptParams).queryFn;
@@ -145,13 +145,13 @@ describe('shelterQueries.adopts', () => {
 });
 
 describe('searchShelters', () => {
-  it('/v2/shelters/search 로 GET 요청하고 params를 전달한다', async () => {
+  it('/shelters/search 로 GET 요청하고 params를 전달한다', async () => {
     const params = { search: '강남', userLatitude: 37, userLongitude: 127 };
     mockedAuthGet.mockResolvedValueOnce({ data: { data: [] } } as never);
 
     await searchShelters(params);
 
-    expect(mockedAuthGet).toHaveBeenCalledWith('/v2/shelters/search', { params });
+    expect(mockedAuthGet).toHaveBeenCalledWith('/shelters/search', { params });
   });
 
   it('ApiResponse 의 data.data (ShelterDto[]) 를 직접 반환한다', async () => {

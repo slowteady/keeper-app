@@ -30,8 +30,8 @@ export const useAdoptList = (params: AdoptListParams) => {
   );
 
   const convertedData = useMemo(() => {
-    if (!data?.value?.length) return [];
-    return mapToAdoptList(data.value);
+    if (!data?.items?.length) return [];
+    return mapToAdoptList(data.items);
   }, [data]);
 
   const refresh = useCallback(async () => {

@@ -53,8 +53,8 @@ export const AdoptResponseSchema = z.object({
   total: z.number(),
   page: z.number(),
   size: z.number(),
-  has_next: z.boolean(),
-  value: z.array(AdoptDataSchema)
+  hasNext: z.boolean(),
+  items: z.array(AdoptDataSchema)
 });
 export type AdoptResponseDto = z.infer<typeof AdoptResponseSchema>;
 

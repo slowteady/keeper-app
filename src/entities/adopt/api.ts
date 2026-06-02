@@ -11,7 +11,7 @@ import {
   AdoptResponseDto
 } from './schema';
 
-const BASE_URL = 'v2/abandonments';
+const BASE_URL = '/abandonments';
 
 // --- Service Functions ---
 // 낙관 업데이트 일관성 — list/detail cache 에 view 모델 (AdoptResponseDto / AdoptDataDto) 직접 저장.
@@ -29,7 +29,7 @@ const getAdopt = async (id: string): Promise<AdoptDataDto> => {
 };
 
 const getMyFavoriteAbandonments = async (params: { page: number; size: number }): Promise<AdoptMyFavoriteListDto> => {
-  const res = await authApi.get<ApiResponse<AdoptMyFavoriteListDto>>('/me/favorite-abandonments', { params });
+  const res = await authApi.get<ApiResponse<AdoptMyFavoriteListDto>>(`${BASE_URL}/favorites`, { params });
   return AdoptMyFavoriteListSchema.parse(res.data.data);
 };
 
@@ -42,12 +42,12 @@ export const adoptQueries = {
     infiniteQueryOptions({
       queryKey: [...adoptQueries.all(), 'list', params] as const,
       queryFn: ({ pageParam }) => getAdopts({ ...params, page: pageParam }),
-      initialPageParam: 0,
-      getNextPageParam: (lastPage) => (lastPage.has_next ? lastPage.page + 1 : undefined),
+      initialPageParam: 1,
+      getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.page + 1 : undefined),
       select: (data) => {
         const lastPage = data.pages[data.pages.length - 1];
-        const allData = data.pages.flatMap((page) => page.value);
-        return { ...lastPage, value: allData };
+        const allData = data.pages.flatMap((page) => page.items);
+        return { ...lastPage, items: allData };
       }
     }),
 

@@ -52,14 +52,14 @@ describe('AdoptDataSchema', () => {
 });
 
 describe('AdoptResponseSchema', () => {
-  it('total/page/size/has_next/value 모두 있으면 통과', () => {
+  it('total/page/size/hasNext/items 모두 있으면 통과', () => {
     expect(() =>
       AdoptResponseSchema.parse({
         total: 10,
         page: 1,
         size: 20,
-        has_next: false,
-        value: [VALID_ADOPT]
+        hasNext: false,
+        items: [VALID_ADOPT]
       })
     ).not.toThrow();
   });

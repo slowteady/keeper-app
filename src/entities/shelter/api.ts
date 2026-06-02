@@ -17,7 +17,7 @@ import {
   SheltersParamsDto
 } from './schema';
 
-const BASE_URL = '/v2/shelters';
+const BASE_URL = '/shelters';
 
 // --- Service Functions ---
 
@@ -57,7 +57,7 @@ const getMyFavoriteShelters = async (params: {
   userLatitude?: number;
   userLongitude?: number;
 }): Promise<ShelterMyFavoriteListDto> => {
-  const res = await authApi.get<ApiResponse<ShelterMyFavoriteListDto>>('/me/favorite-shelters', { params });
+  const res = await authApi.get<ApiResponse<ShelterMyFavoriteListDto>>(`${BASE_URL}/favorites`, { params });
   return ShelterMyFavoriteListSchema.parse(res.data.data);
 };
 
@@ -110,13 +110,13 @@ export const shelterQueries = {
   adopts: (id: string, params: ShelterAdoptsParamsDto) =>
     infiniteQueryOptions({
       queryKey: [...shelterQueries.all(), 'adopts', id, params] as const,
-      queryFn: ({ pageParam = 0 }) => getShelterAdopts(id, { ...params, page: pageParam }),
-      initialPageParam: 0,
-      getNextPageParam: (lastPage) => (lastPage.has_next ? lastPage.page + 1 : undefined),
+      queryFn: ({ pageParam = 1 }) => getShelterAdopts(id, { ...params, page: pageParam }),
+      initialPageParam: 1,
+      getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.page + 1 : undefined),
       select: (data) => {
         const lastPage = data.pages[data.pages.length - 1];
-        const allData = data.pages.flatMap((page) => page.value);
-        return { ...lastPage, value: allData };
+        const allData = data.pages.flatMap((page) => page.items);
+        return { ...lastPage, items: allData };
       }
     }),
 

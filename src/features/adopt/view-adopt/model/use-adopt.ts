@@ -26,7 +26,7 @@ const findInListCache = (queryClient: ReturnType<typeof useQueryClient>, id: str
     queryKey: [...adoptQueries.all(), 'list']
   });
   for (const [, data] of lists) {
-    const item = data?.pages.flatMap((p) => p.value).find((a) => a.id === id);
+    const item = data?.pages.flatMap((p) => p.items).find((a) => a.id === id);
     if (item) return item;
   }
   return undefined;
