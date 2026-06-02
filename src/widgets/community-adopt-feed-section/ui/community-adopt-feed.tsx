@@ -37,8 +37,8 @@ export const CommunityAdoptFeed = () => {
   const filterText = COMMUNITY_LIST_FILTER.find((f) => f.id === selectedFilter)?.label || '';
 
   // 카드에 전달하는 콜백은 안정 ref 로 유지해야 매 스크롤/스트레치 시 카드 재렌더가 발생하지 않는다.
-  const handlePressCard = useCallback((id: number) => goDetailPage(String(id)), [goDetailPage]);
-  const handlePressLike = useCallback((id: number, isLiked: boolean) => toggleLikePost(id, isLiked), [toggleLikePost]);
+  const handlePressCard = useCallback((id: string) => goDetailPage(id), [goDetailPage]);
+  const handlePressLike = useCallback((id: string, isLiked: boolean) => toggleLikePost(id, isLiked), [toggleLikePost]);
 
   const renderItem = useCallback<ListRenderItem<CommunityAdoptListDto>>(
     ({ item }) => <FeedCardItem item={item} onPressCard={handlePressCard} onPressLike={handlePressLike} />,
@@ -94,8 +94,8 @@ export const CommunityAdoptFeed = () => {
 // 카드별 isPending 격리 — useIsLikePending 으로 그 postId 의 mutation 만 추적해 다른 카드 영향 없음.
 type FeedCardItemProps = {
   item: CommunityAdoptListDto;
-  onPressCard: (id: number) => void;
-  onPressLike: (id: number, isLiked: boolean) => void;
+  onPressCard: (id: string) => void;
+  onPressLike: (id: string, isLiked: boolean) => void;
 };
 const FeedCardItem = memo(({ item, onPressCard, onPressLike }: FeedCardItemProps) => {
   const isPending = useIsLikePending(item.id);

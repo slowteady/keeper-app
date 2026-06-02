@@ -1,7 +1,7 @@
 import * as Sentry from '@sentry/react-native';
 
 type SentryUser = {
-  id: number;
+  id: string;
   name: string;
   nickname: string;
   email: string;

@@ -38,27 +38,26 @@ const findFirstError = (
 
 const Page = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const postId = Number(id);
-  if (!postId) return null;
+  if (!id) return null;
 
   // useSuspenseQuery 가 detail 도착까지 fallback (PostDetailSkeleton) 으로 가림 →
   // EditContent mount 시점에 detail 동기 prefill, default 값 노출 0.
   return (
     <Suspense fallback={<PostDetailSkeleton />}>
-      <EditRouter postId={postId} />
+      <EditRouter postId={id} />
     </Suspense>
   );
 };
 
 // 응답 category 로 분기 — QNA 는 QnaEditContent, 그 외는 개인입양 수정.
 // detail 과 같은 queryKey(communityQueries.detail) 라 캐시 hit (네트워크 1 회).
-const EditRouter = ({ postId }: { postId: number }) => {
+const EditRouter = ({ postId }: { postId: string }) => {
   const { data } = useSuspenseQuery(communityQueries.detail(postId));
   if (data.kind === 'QNA') return <QnaEditContent postId={postId} />;
   return <EditContent postId={postId} />;
 };
 
-const EditContent = ({ postId }: { postId: number }) => {
+const EditContent = ({ postId }: { postId: string }) => {
   const { bottom } = useLayout();
   const [buttonHeight, setButtonHeight] = useState(0);
 

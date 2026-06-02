@@ -15,7 +15,7 @@ export type PostLikeState = {
 };
 
 type WithLike = {
-  id: number;
+  id: string;
   isLiked: boolean;
   counts: { like: number; [k: string]: number };
 };
@@ -51,7 +51,7 @@ const patchItem = (item: WithLike, next: PostLikeState): WithLike => ({
   counts: { ...item.counts, like: next.count }
 });
 
-export const patchLikeCache = <T>(data: T, postId: number, next: PostLikeState): T => {
+export const patchLikeCache = <T>(data: T, postId: string, next: PostLikeState): T => {
   if (data === undefined || data === null) return data;
 
   if (isInfinite(data)) {

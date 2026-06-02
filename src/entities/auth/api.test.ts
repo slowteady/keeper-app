@@ -1,11 +1,12 @@
 import { authApi, publicApi } from '@/shared/api/instance';
 
-import { authQueries, checkNickname, deleteUser, getRefresh, getUser, login, logout, signup, updateMe } from './api';
+import { authQueries, checkNickname, deleteUser, getRefresh, getUser, login, logout, updateMe } from './api';
 
 const mockedAuthGet = jest.mocked(authApi.get);
 const mockedAuthPost = jest.mocked(authApi.post);
 const mockedAuthDelete = jest.mocked(authApi.delete);
 const mockedAuthPatch = jest.mocked(authApi.patch);
+const mockedPublicGet = jest.mocked(publicApi.get);
 const mockedPublicPost = jest.mocked(publicApi.post);
 
 beforeEach(() => {
@@ -15,6 +16,7 @@ beforeEach(() => {
   mockedAuthPost.mockResolvedValue(noop);
   mockedAuthDelete.mockResolvedValue(noop);
   mockedAuthPatch.mockResolvedValue(noop);
+  mockedPublicGet.mockResolvedValue(noop);
   mockedPublicPost.mockResolvedValue(noop);
 });
 
@@ -35,10 +37,10 @@ describe('logout', () => {
 });
 
 describe('getUser', () => {
-  it('authApi 로 GET /auth/me', async () => {
+  it('authApi 로 GET /users/me', async () => {
     await getUser();
 
-    expect(mockedAuthGet).toHaveBeenCalledWith('/auth/me');
+    expect(mockedAuthGet).toHaveBeenCalledWith('/users/me');
   });
 });
 
@@ -51,55 +53,39 @@ describe('getRefresh', () => {
 });
 
 describe('checkNickname', () => {
-  it('publicApi 로 POST /auth/check-nickname + body 전달', async () => {
+  it('publicApi 로 GET /users/check-nickname + params 전달', async () => {
     await checkNickname({ nickname: 'keeper' });
 
-    expect(mockedPublicPost).toHaveBeenCalledWith('/auth/check-nickname', { nickname: 'keeper' });
-  });
-});
-
-describe('signup', () => {
-  it('publicApi 로 POST /auth/signup + body 전달', async () => {
-    const body = {
-      socialType: 'KAKAO' as const,
-      socialId: 's1',
-      nickname: 'keeper',
-      agreedTermsVersion: 'v1.0',
-      agreedPrivacyVersion: 'v1.0',
-      agreedAt: '2026-05-04T00:00:00Z'
-    };
-    await signup(body);
-
-    expect(mockedPublicPost).toHaveBeenCalledWith('/auth/signup', body);
+    expect(mockedPublicGet).toHaveBeenCalledWith('/users/check-nickname', { params: { nickname: 'keeper' } });
   });
 });
 
 describe('deleteUser', () => {
-  it('authApi 로 DELETE /auth/me + body (사유) 전달', async () => {
+  it('authApi 로 DELETE /users/me + body (사유) 전달', async () => {
     const body = { reason: 'OTHER' as const, reasonDetail: '테스트' };
     await deleteUser(body);
 
-    expect(mockedAuthDelete).toHaveBeenCalledWith('/auth/me', { data: body });
+    expect(mockedAuthDelete).toHaveBeenCalledWith('/users/me', { data: body });
   });
 });
 
 describe('updateMe', () => {
-  it('authApi 로 PATCH /auth/me + body 전달 (image)', async () => {
+  it('authApi 로 PATCH /users/me + body 전달 (image)', async () => {
     await updateMe({ image: 'https://x.jpg' });
 
-    expect(mockedAuthPatch).toHaveBeenCalledWith('/auth/me', { image: 'https://x.jpg' });
+    expect(mockedAuthPatch).toHaveBeenCalledWith('/users/me', { image: 'https://x.jpg' });
   });
 
-  it('authApi 로 PATCH /auth/me + body 전달 (nickname)', async () => {
+  it('authApi 로 PATCH /users/me + body 전달 (nickname)', async () => {
     await updateMe({ nickname: 'keeper2' });
 
-    expect(mockedAuthPatch).toHaveBeenCalledWith('/auth/me', { nickname: 'keeper2' });
+    expect(mockedAuthPatch).toHaveBeenCalledWith('/users/me', { nickname: 'keeper2' });
   });
 
   it('빈 body 도 그대로 전달', async () => {
     await updateMe({});
 
-    expect(mockedAuthPatch).toHaveBeenCalledWith('/auth/me', {});
+    expect(mockedAuthPatch).toHaveBeenCalledWith('/users/me', {});
   });
 });
 

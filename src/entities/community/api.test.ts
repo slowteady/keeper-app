@@ -17,9 +17,9 @@ const makeListResponse = (overrides?: object) => ({
   }
 });
 
-const makeItem = (id: number) => ({
+const makeItem = (id: string) => ({
   id,
-  user: { id: 1, image: 'img.png', nickname: '닉네임' },
+  user: { id: '1', image: 'img.png', nickname: '닉네임' },
   displayTime: '방금 전',
   title: `제목${id}`,
   images: [],
@@ -125,14 +125,14 @@ describe('communityQueries.list', () => {
     const pagesData = {
       pages: [
         {
-          items: [makeItem(1), makeItem(2)],
+          items: [makeItem('1'), makeItem('2')],
           total: 4,
           page: 1,
           size: 2,
           hasNext: true
         },
         {
-          items: [makeItem(3), makeItem(4)],
+          items: [makeItem('3'), makeItem('4')],
           total: 4,
           page: 2,
           size: 2,
@@ -145,7 +145,7 @@ describe('communityQueries.list', () => {
     const selected = opts.select!(pagesData);
 
     expect(selected.items).toHaveLength(4);
-    expect(selected.items.map((i: { id: number }) => i.id)).toEqual([1, 2, 3, 4]);
+    expect(selected.items.map((i: { id: string }) => i.id)).toEqual(['1', '2', '3', '4']);
     expect(selected.total).toBe(4);
     expect(selected.page).toBe(2);
     expect(selected.size).toBe(2);
@@ -155,26 +155,26 @@ describe('communityQueries.list', () => {
 
 describe('communityQueries.detail', () => {
   it('queryKey에 id가 포함된다', () => {
-    expect(communityQueries.detail(5).queryKey).toEqual(['community', 'detail', 5]);
+    expect(communityQueries.detail('5').queryKey).toEqual(['community', 'detail', '5']);
   });
 
-  it('id=0 이면 enabled=false이다', () => {
-    expect(communityQueries.detail(0).enabled).toBe(false);
+  it('id 가 빈 문자열이면 enabled=false이다', () => {
+    expect(communityQueries.detail('').enabled).toBe(false);
   });
 
-  it('id>0 이면 enabled=true이다', () => {
-    expect(communityQueries.detail(1).enabled).toBe(true);
+  it('id 가 있으면 enabled=true이다', () => {
+    expect(communityQueries.detail('1').enabled).toBe(true);
   });
 });
 
 describe('communityApi.getList', () => {
   it('valid 응답이면 schema parse 결과를 반환한다', async () => {
-    mockedAuthGet.mockResolvedValue(makeListResponse({ items: [makeItem(1)], total: 1 }) as never);
+    mockedAuthGet.mockResolvedValue(makeListResponse({ items: [makeItem('1')], total: 1 }) as never);
 
     const result = await communityApi.getList({ sort: 'NEW' });
 
     expect(result.items).toHaveLength(1);
-    expect(result.items[0].id).toBe(1);
+    expect(result.items[0].id).toBe('1');
     expect(result.total).toBe(1);
   });
 

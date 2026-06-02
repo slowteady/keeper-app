@@ -92,8 +92,8 @@ describe('toCreateAdoptionPersonalBody', () => {
 
   describe('updateAdoptionPersonal', () => {
     const detailResponse = {
-      id: 42,
-      user: { id: 1, image: '', nickname: 't' },
+      id: '42',
+      user: { id: '1', image: '', nickname: 't' },
       displayTime: '',
       title: '말티즈 가족 찾아요',
       images: ['https://s3/1.jpg'],
@@ -127,7 +127,7 @@ describe('toCreateAdoptionPersonalBody', () => {
       (authApi.patch as jest.Mock).mockResolvedValue({ data: { data: detailResponse } });
       const body = toCreateAdoptionPersonalBody(fullForm, ['https://s3/1.jpg']);
 
-      await updateAdoptionPersonal(42, body);
+      await updateAdoptionPersonal('42', body);
 
       expect(authApi.patch).toHaveBeenCalledWith('/community/posts/adoption-personal/42', body);
     });
@@ -136,9 +136,9 @@ describe('toCreateAdoptionPersonalBody', () => {
       (authApi.patch as jest.Mock).mockResolvedValue({ data: { data: detailResponse } });
       const body = toCreateAdoptionPersonalBody(fullForm, ['https://s3/1.jpg']);
 
-      const result = await updateAdoptionPersonal(42, body);
+      const result = await updateAdoptionPersonal('42', body);
 
-      expect(result.id).toBe(42);
+      expect(result.id).toBe('42');
       expect(result.title).toBe('말티즈 가족 찾아요');
       expect(result.contacts).toEqual([{ type: 'PHONE', value: '010-1234-5678' }]);
     });
@@ -147,7 +147,7 @@ describe('toCreateAdoptionPersonalBody', () => {
       (authApi.patch as jest.Mock).mockResolvedValue({ data: { data: { id: 'not-a-number' } } });
       const body = toCreateAdoptionPersonalBody(fullForm, []);
 
-      await expect(updateAdoptionPersonal(42, body)).rejects.toThrow();
+      await expect(updateAdoptionPersonal('42', body)).rejects.toThrow();
     });
   });
 

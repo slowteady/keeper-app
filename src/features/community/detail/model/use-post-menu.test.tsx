@@ -14,7 +14,7 @@ const mockCloseModal = jest.fn();
 const mockBlock = jest.fn();
 const mockShare = jest.fn();
 
-let mockUser: { id: number } | null = { id: 1 };
+let mockUser: { id: string } | null = { id: '1' };
 
 jest.mock('@/shared/ui', () => {
   const actual = jest.requireActual('@/shared/ui');
@@ -76,14 +76,14 @@ const baseShareInfo = { title: '강아지 입양', image: 'https://img/1.png' };
 
 beforeEach(() => {
   jest.clearAllMocks();
-  mockUser = { id: 1 };
+  mockUser = { id: '1' };
 });
 
 describe('usePostMenu', () => {
   it('타인 글이면 메뉴 = [신고, 차단]', () => {
-    mockUser = { id: 99 };
+    mockUser = { id: '99' };
     const { wrapper } = setup();
-    const { result } = renderHook(() => usePostMenu({ postId: 10, authorId: 1, shareInfo: baseShareInfo }), {
+    const { result } = renderHook(() => usePostMenu({ postId: '10', authorId: '1', shareInfo: baseShareInfo }), {
       wrapper
     });
 
@@ -94,9 +94,9 @@ describe('usePostMenu', () => {
   });
 
   it('탈퇴한 사용자(authorId=null)의 글이면 메뉴 = [신고] 만', () => {
-    mockUser = { id: 99 };
+    mockUser = { id: '99' };
     const { wrapper } = setup();
-    const { result } = renderHook(() => usePostMenu({ postId: 10, authorId: null, shareInfo: baseShareInfo }), {
+    const { result } = renderHook(() => usePostMenu({ postId: '10', authorId: null, shareInfo: baseShareInfo }), {
       wrapper
     });
 
@@ -107,9 +107,9 @@ describe('usePostMenu', () => {
   });
 
   it('본인 글이면 메뉴 = [수정, 삭제]', () => {
-    mockUser = { id: 1 };
+    mockUser = { id: '1' };
     const { wrapper } = setup();
-    const { result } = renderHook(() => usePostMenu({ postId: 10, authorId: 1, shareInfo: baseShareInfo }), {
+    const { result } = renderHook(() => usePostMenu({ postId: '10', authorId: '1', shareInfo: baseShareInfo }), {
       wrapper
     });
 
@@ -120,9 +120,9 @@ describe('usePostMenu', () => {
   });
 
   it('EDIT 선택 시 수정 페이지로 push + 시트 dismiss', () => {
-    mockUser = { id: 1 };
+    mockUser = { id: '1' };
     const { wrapper } = setup();
-    const { result } = renderHook(() => usePostMenu({ postId: 42, authorId: 1, shareInfo: baseShareInfo }), {
+    const { result } = renderHook(() => usePostMenu({ postId: '42', authorId: '1', shareInfo: baseShareInfo }), {
       wrapper
     });
 
@@ -138,7 +138,7 @@ describe('usePostMenu', () => {
   it('로그인 정보가 없으면 본인 판정 false → [신고, 차단]', () => {
     mockUser = null;
     const { wrapper } = setup();
-    const { result } = renderHook(() => usePostMenu({ postId: 10, authorId: 1, shareInfo: baseShareInfo }), {
+    const { result } = renderHook(() => usePostMenu({ postId: '10', authorId: '1', shareInfo: baseShareInfo }), {
       wrapper
     });
 
@@ -149,9 +149,9 @@ describe('usePostMenu', () => {
   });
 
   it('sharePost 호출 시 share 가 호출됨', () => {
-    mockUser = { id: 99 };
+    mockUser = { id: '99' };
     const { wrapper } = setup();
-    const { result } = renderHook(() => usePostMenu({ postId: 42, authorId: 1, shareInfo: baseShareInfo }), {
+    const { result } = renderHook(() => usePostMenu({ postId: '42', authorId: '1', shareInfo: baseShareInfo }), {
       wrapper
     });
 
@@ -163,9 +163,9 @@ describe('usePostMenu', () => {
   });
 
   it('REPORT 선택 시 신고 모달 라우트로 push + dismiss', async () => {
-    mockUser = { id: 99 };
+    mockUser = { id: '99' };
     const { wrapper } = setup();
-    const { result } = renderHook(() => usePostMenu({ postId: 42, authorId: 1, shareInfo: baseShareInfo }), {
+    const { result } = renderHook(() => usePostMenu({ postId: '42', authorId: '1', shareInfo: baseShareInfo }), {
       wrapper
     });
 
@@ -177,13 +177,13 @@ describe('usePostMenu', () => {
     });
 
     expect(mockDismiss).toHaveBeenCalled();
-    expect(router.push).toHaveBeenCalledWith({ pathname: '/report', params: { type: 'POST', id: 42 } });
+    expect(router.push).toHaveBeenCalledWith({ pathname: '/report', params: { type: 'POST', id: '42' } });
   });
 
   it('BLOCK 선택 시 block(authorId) 호출 + dismiss', async () => {
-    mockUser = { id: 99 };
+    mockUser = { id: '99' };
     const { wrapper } = setup();
-    const { result } = renderHook(() => usePostMenu({ postId: 42, authorId: 7, shareInfo: baseShareInfo }), {
+    const { result } = renderHook(() => usePostMenu({ postId: '42', authorId: '7', shareInfo: baseShareInfo }), {
       wrapper
     });
 
@@ -195,16 +195,16 @@ describe('usePostMenu', () => {
     });
 
     expect(mockDismiss).toHaveBeenCalled();
-    expect(mockBlock).toHaveBeenCalledWith(7);
+    expect(mockBlock).toHaveBeenCalledWith('7');
   });
 
   it('DELETE 선택 시 confirm 모달 → 확인 시 deletePost 호출 + invalidate + router.back', async () => {
-    mockUser = { id: 1 };
+    mockUser = { id: '1' };
     (communityApi.deletePost as jest.Mock).mockResolvedValue(undefined);
     const { queryClient, wrapper } = setup();
     const invalidateSpy = jest.spyOn(queryClient, 'invalidateQueries');
 
-    const { result } = renderHook(() => usePostMenu({ postId: 42, authorId: 1, shareInfo: baseShareInfo }), {
+    const { result } = renderHook(() => usePostMenu({ postId: '42', authorId: '1', shareInfo: baseShareInfo }), {
       wrapper
     });
 
@@ -221,7 +221,7 @@ describe('usePostMenu', () => {
       confirmNode.props.onConfirm();
     });
 
-    await waitFor(() => expect(communityApi.deletePost).toHaveBeenCalledWith(42));
+    await waitFor(() => expect(communityApi.deletePost).toHaveBeenCalledWith('42'));
     expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: communityQueries.all() });
     expect(router.back).toHaveBeenCalled();
   });

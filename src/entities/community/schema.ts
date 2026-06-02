@@ -52,7 +52,7 @@ export const CommunityAdoptFormSchema = z.object({
 export type CommunityAdoptFormDto = z.infer<typeof CommunityAdoptFormSchema>;
 
 export const PostUserSummarySchema = z.object({
-  id: z.number(),
+  id: z.string(),
   image: z.string(),
   nickname: z.string()
 });
@@ -66,7 +66,7 @@ export const PostContactSchema = z.object({
 export type PostContactDto = z.infer<typeof PostContactSchema>;
 
 export const CommunityAdoptDetailSchema = z.object({
-  id: z.number(),
+  id: z.string(),
   user: PostUserSummarySchema.nullable(),
   displayTime: z.string(),
   title: z.string(),
@@ -100,7 +100,7 @@ export const CommunityAdoptDetailSchema = z.object({
 export type CommunityAdoptDetailDto = z.infer<typeof CommunityAdoptDetailSchema>;
 
 export const CommunityAdoptListSchema = z.object({
-  id: z.number(),
+  id: z.string(),
   user: PostUserSummarySchema.nullable(),
   displayTime: z.string(),
   title: z.string(),
@@ -157,7 +157,7 @@ export type CommunityQnaFormDto = z.infer<typeof CommunityQnaFormSchema>;
 // 백엔드 PostListItemResponse 는 QnA 필드를 qnaType 으로 노출 (detail 의 PostQnaResponse.type 과 다름).
 // frontend list 카드에서는 qnaType 으로 받음.
 export const CommunityQnaListItemSchema = z.object({
-  id: z.number(),
+  id: z.string(),
   user: PostUserSummarySchema.nullable(),
   displayTime: z.string(),
   title: z.string(),
@@ -186,7 +186,7 @@ export const CommunityQnaListResponseSchema = z.object({
 export type CommunityQnaListResponseDto = z.infer<typeof CommunityQnaListResponseSchema>;
 
 export const CommunityQnaDetailSchema = z.object({
-  id: z.number(),
+  id: z.string(),
   user: PostUserSummarySchema.nullable(),
   displayTime: z.string(),
   title: z.string(),
@@ -206,12 +206,12 @@ export const CommunityQnaDetailSchema = z.object({
 export type CommunityQnaDetailDto = z.infer<typeof CommunityQnaDetailSchema>;
 
 export const MyHelpfulCommentItemSchema = z.object({
-  id: z.number(),
+  id: z.string(),
   content: z.string(),
   displayTime: z.string(),
   helpfulCount: z.number(),
   isHelpful: z.boolean(),
-  postId: z.number(),
+  postId: z.string(),
   postCategory: z.enum(['ADOPTION_PERSONAL', 'ADOPTION_LIFE', 'QNA']),
   postTitle: z.string(),
   postThumbnail: z.string().nullable()

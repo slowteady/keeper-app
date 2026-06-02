@@ -15,7 +15,7 @@ beforeEach(() => {
 describe('setUserContext', () => {
   it('id 를 string 으로 변환하고 email/username/nickname 을 그대로 전달', () => {
     setUserContext({
-      id: 42,
+      id: '42',
       name: 'Lee',
       nickname: 'keeper',
       email: 'a@b.com'

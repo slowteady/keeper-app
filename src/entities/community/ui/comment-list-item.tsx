@@ -15,7 +15,7 @@ const CATEGORY_LABEL: Record<MyHelpfulCommentItemDto['postCategory'], string> = 
 
 export type CommentListItemProps = {
   data: MyHelpfulCommentItemDto;
-  onPress: (postId: number, commentId: number) => void;
+  onPress: (postId: string, commentId: string) => void;
   onPressHelpful?: (data: MyHelpfulCommentItemDto) => void;
 };
 

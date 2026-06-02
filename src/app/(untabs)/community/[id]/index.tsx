@@ -58,7 +58,7 @@ const Page = () => {
 // 응답 category 로 분기 — QNA 는 QnaDetailContent, 그 외는 개인입양 detail.
 // 같은 queryKey(communityQueries.detail) 라 하위 content 의 useSuspenseQuery 는 캐시 hit (네트워크 1 회).
 const DetailRouter = ({ id, scrollToComments }: { id: string; scrollToComments: boolean }) => {
-  const { data } = useSuspenseQuery(communityQueries.detail(Number(id)));
+  const { data } = useSuspenseQuery(communityQueries.detail(id));
   if (data.kind === 'QNA') return <QnaDetailContent id={id} scrollToComments={scrollToComments} />;
   return <CommunityDetailContent id={id} scrollToComments={scrollToComments} />;
 };
@@ -69,7 +69,6 @@ const CommunityDetailContent = ({ id, scrollToComments }: { id: string; scrollTo
   const { bottom } = useLayout();
   const { present, dismiss } = useBottomSheet();
 
-  const numId = Number(id);
   const { data } = useCommunityAdoptDetailFeed(id);
   const scrollRef = useRef<FlashListRef<CommentDto>>(null);
   useScrollToTop(scrollRef);
@@ -80,7 +79,7 @@ const CommunityDetailContent = ({ id, scrollToComments }: { id: string; scrollTo
     fetchNextPage,
     isFetchingNextPage,
     isLoading: isCommentLoading
-  } = useCommunityCommentList(numId);
+  } = useCommunityCommentList(id);
   const { toggleLikePost } = useLikePost();
 
   // 관심 댓글 chip 에서 진입 시 댓글 섹션까지 스크롤 — ListHeader(글 본문) 끝, 첫 댓글 위치로.
@@ -98,10 +97,10 @@ const CommunityDetailContent = ({ id, scrollToComments }: { id: string; scrollTo
   const queryClient = useQueryClient();
   const refresh = useCallback(async () => {
     await Promise.all([
-      queryClient.invalidateQueries({ queryKey: [...communityQueries.all(), 'detail', numId] }),
-      queryClient.invalidateQueries({ queryKey: [...commentQueries.all(), 'list', numId] })
+      queryClient.invalidateQueries({ queryKey: [...communityQueries.all(), 'detail', id] }),
+      queryClient.invalidateQueries({ queryKey: [...commentQueries.all(), 'list', id] })
     ]);
-  }, [queryClient, numId]);
+  }, [queryClient, id]);
   const { refreshing, handleRefresh } = useListRefreshing(refresh);
 
   const detailPost = data.detailPost;
@@ -118,7 +117,7 @@ const CommunityDetailContent = ({ id, scrollToComments }: { id: string; scrollTo
   }, [present, dismiss, contacts]);
 
   const { openPostMenu, sharePost } = usePostMenu({
-    postId: numId,
+    postId: id,
     authorId,
     shareInfo: detailPost ? { title: detailPost.title, image: detailPost.images[0] } : undefined
   });
@@ -128,17 +127,17 @@ const CommunityDetailContent = ({ id, scrollToComments }: { id: string; scrollTo
   // - replyTarget 있으면 create (with parentId)
   // - 둘 다 없으면 일반 create
   const [comment, setComment] = useState('');
-  const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
-  const [replyTarget, setReplyTarget] = useState<{ parentId: number; nickname: string } | null>(null);
+  const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
+  const [replyTarget, setReplyTarget] = useState<{ parentId: string; nickname: string } | null>(null);
   const { requireLogin, isLoggedIn } = useLoginRequired();
 
   const handleTapWhenLoggedOut = useCallback(() => {
     requireLogin(() => {});
   }, [requireLogin]);
-  const createCommentMutation = useCreateComment({ postId: numId });
-  const updateCommentMutation = useUpdateComment({ postId: numId });
+  const createCommentMutation = useCreateComment({ postId: id });
+  const updateCommentMutation = useUpdateComment({ postId: id });
 
-  const handleEnterEditMode = useCallback((target: { commentId: number; content: string }) => {
+  const handleEnterEditMode = useCallback((target: { commentId: string; content: string }) => {
     setReplyTarget(null);
     setEditingCommentId(target.commentId);
     setComment(target.content);
@@ -150,7 +149,7 @@ const CommunityDetailContent = ({ id, scrollToComments }: { id: string; scrollTo
   }, []);
 
   const handleEnterReplyMode = useCallback(
-    async (target: { parentId: number; nickname: string }) => {
+    async (target: { parentId: string; nickname: string }) => {
       await requireLogin(() => {
         setEditingCommentId(null);
         setReplyTarget(target);
@@ -180,7 +179,7 @@ const CommunityDetailContent = ({ id, scrollToComments }: { id: string; scrollTo
   const { toggleHelpful } = useCommentHelpful();
 
   const handleToggleHelpful = useCallback(
-    (c: { id: number; isHelpful: boolean; helpfulCount: number }) => {
+    (c: { id: string; isHelpful: boolean; helpfulCount: number }) => {
       toggleHelpful({
         commentId: c.id,
         currentlyHelpful: c.isHelpful,
@@ -289,7 +288,7 @@ const CommunityDetailContent = ({ id, scrollToComments }: { id: string; scrollTo
               <View px={20} mb={32}>
                 <CommunityDetailOverviewSection
                   {...(data.overviews as Parameters<typeof CommunityDetailOverviewSection>[0])}
-                  onPressLike={() => toggleLikePost(numId, isLiked)}
+                  onPressLike={() => toggleLikePost(id, isLiked)}
                   onPressShare={sharePost}
                   onPressMore={openPostMenu}
                 />

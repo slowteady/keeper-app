@@ -5,7 +5,7 @@ import { commentQueries, CommentSortOrderDto } from '@/entities/comment';
 
 const PAGE_SIZE = 20;
 
-export const useCommunityCommentList = (postId: number) => {
+export const useCommunityCommentList = (postId: string) => {
   const [sortOrder, setSortOrder] = useState<CommentSortOrderDto>('LATEST');
 
   const filter = useMemo(() => ({ sort: sortOrder, size: PAGE_SIZE }), [sortOrder]);

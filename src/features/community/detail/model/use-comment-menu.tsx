@@ -20,13 +20,13 @@ const REPORT_ITEM: BottomSheetMenuData<CommentMenuId> = { id: 'REPORT', label: '
 const BLOCK_ITEM: BottomSheetMenuData<CommentMenuId> = { id: 'BLOCK', label: '차단하기' };
 
 export type CommentMenuTarget = {
-  commentId: number;
-  authorId: number | null | undefined;
+  commentId: string;
+  authorId: string | null | undefined;
   content: string;
 };
 
 export type UseCommentMenuParams = {
-  onEdit: (target: { commentId: number; content: string }) => void;
+  onEdit: (target: { commentId: string; content: string }) => void;
 };
 
 export const useCommentMenu = ({ onEdit }: UseCommentMenuParams) => {
@@ -38,7 +38,7 @@ export const useCommentMenu = ({ onEdit }: UseCommentMenuParams) => {
   const queryClient = useQueryClient();
 
   const deleteMutation = useMutation({
-    mutationFn: (commentId: number) => commentApi.remove(commentId),
+    mutationFn: (commentId: string) => commentApi.remove(commentId),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: commentQueries.all() });
     },

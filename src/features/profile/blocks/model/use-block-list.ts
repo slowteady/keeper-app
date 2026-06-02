@@ -16,7 +16,7 @@ export const useBlockList = () => {
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const handleUnblock = useCallback(
-    async (userId: number) => {
+    async (userId: string) => {
       await unblock(userId);
       await queryClient.invalidateQueries({ queryKey: blockQueries.all() });
     },

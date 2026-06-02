@@ -3,14 +3,19 @@ import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-q
 import { router } from 'expo-router';
 import { useForm, useWatch } from 'react-hook-form';
 
-import { CommunityAdoptFormDto, CommunityAdoptFormSchema, communityQueries } from '@/entities/community';
+import {
+  CommunityAdoptFormDto,
+  CommunityAdoptFormSchema,
+  communityQueries,
+  type PostDetailUnion
+} from '@/entities/community';
 import { toCreateAdoptionPersonalBody, updateAdoptionPersonal } from '@/features/community/create/model/api';
 import { useAdoptFormSelectors } from '@/features/community/create/model/use-adopt-form-selectors';
 import { globalToast } from '@/shared/lib';
 
 import { fromAdoptionPersonalDetail } from '../lib/from-detail';
 
-export const useEditPost = (postId: number) => {
+export const useEditPost = (postId: string) => {
   const queryClient = useQueryClient();
   // useSuspenseQuery — detail 도착이 hook 마운트 시점에 보장됨.
   // defaultValues 에 동기 주입하므로 default → 실제값 따닥거림 제거.
@@ -33,7 +38,8 @@ export const useEditPost = (postId: number) => {
     },
     onSuccess: (updated) => {
       // 서버 응답 후 detail 캐시 즉시 갱신 (refetch 1초 지연 우회)
-      queryClient.setQueryData(communityQueries.detail(postId).queryKey, { kind: 'ADOPT' as const, adopt: updated });
+      const next: PostDetailUnion = { kind: 'ADOPT', adopt: updated };
+      queryClient.setQueryData(communityQueries.detail(postId).queryKey, next);
       // 백그라운드 정합 (list 도 변경 반영)
       queryClient.invalidateQueries({ queryKey: communityQueries.all() });
       router.back();

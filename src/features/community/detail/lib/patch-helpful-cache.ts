@@ -6,7 +6,7 @@ type InfinitePages<T> = { pages: { items?: T[] }[] };
 // 해당 commentId 에 helpfulCount/isHelpful 패치. 일치 노드 없으면 cache 그대로 반환.
 export const patchHelpfulCache = (
   data: unknown,
-  commentId: number,
+  commentId: string,
   next: { isHelpful: boolean; count: number }
 ): unknown => {
   if (!data || typeof data !== 'object') return data;
@@ -17,7 +17,7 @@ export const patchHelpfulCache = (
   const pages = d.pages.map((page) => {
     if (!page.items) return page;
     const items = page.items.map((c) => {
-      if (Number(c.id) !== commentId) return c;
+      if (c.id !== commentId) return c;
       touched = true;
       return { ...c, helpfulCount: next.count, isHelpful: next.isHelpful };
     });

@@ -8,7 +8,7 @@ import { globalToast } from '@/shared/lib';
 
 import { patchHelpfulCache } from '../lib/patch-helpful-cache';
 
-type ToggleVars = { commentId: number; currentlyHelpful: boolean; currentCount: number };
+type ToggleVars = { commentId: string; currentlyHelpful: boolean; currentCount: number };
 
 const COMMENT_PREFIX = commentQueries.all();
 // 마이페이지 관심 댓글 list 는 도메인 prefix 와 별도 namespace — optimistic patch 만, invalidate 는 안 함 (29cm 잔존).

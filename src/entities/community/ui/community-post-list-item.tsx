@@ -12,8 +12,8 @@ import { CommunityAdoptListDto } from '../schema';
 export type CommunityPostListItemProps = {
   data: CommunityAdoptListDto;
   categoryLabel: string;
-  onPress: (id: number) => void;
-  onPressLike?: (id: number, currentlyLiked: boolean) => void;
+  onPress: (id: string) => void;
+  onPressLike?: (id: string, currentlyLiked: boolean) => void;
 };
 
 export const CommunityPostListItem = ({ data, categoryLabel, onPress, onPressLike }: CommunityPostListItemProps) => {

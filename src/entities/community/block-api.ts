@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { authApi } from '@/shared/api/instance';
 
 export const BlockedUserSchema = z.object({
-  id: z.number(),
+  id: z.string(),
   nickname: z.string(),
   image: z.string(),
   blockedAt: z.string()
@@ -21,7 +21,7 @@ export const BlockListResponseSchema = z.object({
 export type BlockListResponseDto = z.infer<typeof BlockListResponseSchema>;
 
 const getBlocks = async ({ page, size }: { page: number; size: number }): Promise<BlockListResponseDto> => {
-  const { data } = await authApi.get('/me/blocks', { params: { page, size } });
+  const { data } = await authApi.get('/community/me/blocks', { params: { page, size } });
   return BlockListResponseSchema.parse(data.data);
 };
 

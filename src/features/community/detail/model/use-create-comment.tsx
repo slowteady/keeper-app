@@ -5,12 +5,12 @@ import { globalToast } from '@/shared/lib';
 
 export type CreateCommentVars = {
   content: string;
-  parentId?: number | null;
+  parentId?: string | null;
 };
 
 type CommentPage = { items: CommentDto[] } & Record<string, unknown>;
 
-export const useCreateComment = ({ postId }: { postId: number }) => {
+export const useCreateComment = ({ postId }: { postId: string }) => {
   const queryClient = useQueryClient();
 
   return useMutation({

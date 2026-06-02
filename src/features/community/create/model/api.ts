@@ -67,7 +67,7 @@ export const createAdoptionPersonal = async (body: CreateAdoptionPersonalBody): 
 };
 
 export const updateAdoptionPersonal = async (
-  id: number,
+  id: string,
   body: CreateAdoptionPersonalBody
 ): Promise<CommunityAdoptDetailDto> => {
   const res: AxiosResponse<ApiResponse<unknown>> = await authApi.patch(`${BASE}/adoption-personal/${id}`, body);

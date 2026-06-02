@@ -12,8 +12,8 @@ import { CommunityAdoptCardStats } from './community-adopt-card-stats';
 export type CommunityQnaCardProps = {
   data: CommunityQnaListItemDto;
   categoryLabel: string;
-  onPress: (id: number) => void;
-  onPressLike?: (id: number, isLiked: boolean) => void;
+  onPress: (id: string) => void;
+  onPressLike?: (id: string, isLiked: boolean) => void;
 };
 
 export const CommunityQnaCard = ({ data, categoryLabel, onPress, onPressLike }: CommunityQnaCardProps) => {

@@ -36,7 +36,6 @@ export const QnaDetailContent = ({ id, scrollToComments }: { id: string; scrollT
 
   const { bottom } = useLayout();
 
-  const numId = Number(id);
   const { qna, overview } = useCommunityQnaDetailFeed(id);
   const scrollRef = useRef<FlashListRef<CommentDto>>(null);
   useScrollToTop(scrollRef);
@@ -47,7 +46,7 @@ export const QnaDetailContent = ({ id, scrollToComments }: { id: string; scrollT
     fetchNextPage,
     isFetchingNextPage,
     isLoading: isCommentLoading
-  } = useCommunityCommentList(numId);
+  } = useCommunityCommentList(id);
   const { toggleLikePost } = useLikePost();
 
   const scrolledRef = useRef(false);
@@ -62,33 +61,33 @@ export const QnaDetailContent = ({ id, scrollToComments }: { id: string; scrollT
   const queryClient = useQueryClient();
   const refresh = useCallback(async () => {
     await Promise.all([
-      queryClient.invalidateQueries({ queryKey: [...communityQueries.all(), 'detail', numId] }),
-      queryClient.invalidateQueries({ queryKey: [...commentQueries.all(), 'list', numId] })
+      queryClient.invalidateQueries({ queryKey: [...communityQueries.all(), 'detail', id] }),
+      queryClient.invalidateQueries({ queryKey: [...commentQueries.all(), 'list', id] })
     ]);
-  }, [queryClient, numId]);
+  }, [queryClient, id]);
   const { refreshing, handleRefresh } = useListRefreshing(refresh);
 
   const isLiked = qna?.isLiked ?? false;
   const authorId = qna?.user?.id ?? null;
 
   const { openPostMenu, sharePost } = usePostMenu({
-    postId: numId,
+    postId: id,
     authorId,
     shareInfo: qna ? { title: qna.title, image: qna.images[0] } : undefined
   });
 
   const [comment, setComment] = useState('');
-  const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
-  const [replyTarget, setReplyTarget] = useState<{ parentId: number; nickname: string } | null>(null);
+  const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
+  const [replyTarget, setReplyTarget] = useState<{ parentId: string; nickname: string } | null>(null);
   const { requireLogin, isLoggedIn } = useLoginRequired();
 
   const handleTapWhenLoggedOut = useCallback(() => {
     requireLogin(() => {});
   }, [requireLogin]);
-  const createCommentMutation = useCreateComment({ postId: numId });
-  const updateCommentMutation = useUpdateComment({ postId: numId });
+  const createCommentMutation = useCreateComment({ postId: id });
+  const updateCommentMutation = useUpdateComment({ postId: id });
 
-  const handleEnterEditMode = useCallback((target: { commentId: number; content: string }) => {
+  const handleEnterEditMode = useCallback((target: { commentId: string; content: string }) => {
     setReplyTarget(null);
     setEditingCommentId(target.commentId);
     setComment(target.content);
@@ -100,7 +99,7 @@ export const QnaDetailContent = ({ id, scrollToComments }: { id: string; scrollT
   }, []);
 
   const handleEnterReplyMode = useCallback(
-    async (target: { parentId: number; nickname: string }) => {
+    async (target: { parentId: string; nickname: string }) => {
       await requireLogin(() => {
         setEditingCommentId(null);
         setReplyTarget(target);
@@ -129,7 +128,7 @@ export const QnaDetailContent = ({ id, scrollToComments }: { id: string; scrollT
   const { toggleHelpful } = useCommentHelpful();
 
   const handleToggleHelpful = useCallback(
-    (c: { id: number; isHelpful: boolean; helpfulCount: number }) => {
+    (c: { id: string; isHelpful: boolean; helpfulCount: number }) => {
       toggleHelpful({ commentId: c.id, currentlyHelpful: c.isHelpful, currentCount: c.helpfulCount });
     },
     [toggleHelpful]
@@ -224,7 +223,7 @@ export const QnaDetailContent = ({ id, scrollToComments }: { id: string; scrollT
                 <View px={20} mb={32}>
                   <CommunityDetailOverviewSection
                     {...overview}
-                    onPressLike={() => toggleLikePost(numId, isLiked)}
+                    onPressLike={() => toggleLikePost(id, isLiked)}
                     onPressShare={sharePost}
                     onPressMore={openPostMenu}
                   />

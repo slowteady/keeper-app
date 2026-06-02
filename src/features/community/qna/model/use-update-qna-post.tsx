@@ -4,11 +4,17 @@ import { router } from 'expo-router';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { communityApi, CommunityQnaFormDto, CommunityQnaFormSchema, communityQueries } from '@/entities/community';
+import {
+  communityApi,
+  CommunityQnaFormDto,
+  CommunityQnaFormSchema,
+  communityQueries,
+  type PostDetailUnion
+} from '@/entities/community';
 import { useImageUpload } from '@/features/upload';
 import { globalToast } from '@/shared/lib';
 
-export const useUpdateQnaPost = (id: number) => {
+export const useUpdateQnaPost = (id: string) => {
   const queryClient = useQueryClient();
   // edit 라우트가 category 분기 후 진입 → QNA 만 도달. 판별 query(communityQueries.detail)와 캐시 공유.
   const { data } = useSuspenseQuery(communityQueries.detail(id));
@@ -44,7 +50,8 @@ export const useUpdateQnaPost = (id: number) => {
     onSuccess: (updated) => {
       // edit 는 detail 에서 push 로 진입 → back 으로 원래 detail 복귀 (replace 면 스택 중복).
       // detail 캐시 즉시 갱신 + 전체 무효화 (list/detail 정합).
-      queryClient.setQueryData(communityQueries.detail(id).queryKey, { kind: 'QNA' as const, qna: updated });
+      const next: PostDetailUnion = { kind: 'QNA', qna: updated };
+      queryClient.setQueryData(communityQueries.detail(id).queryKey, next);
       queryClient.invalidateQueries({ queryKey: communityQueries.all() });
       router.back();
     },

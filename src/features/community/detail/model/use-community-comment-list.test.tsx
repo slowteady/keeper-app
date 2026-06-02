@@ -11,14 +11,14 @@ const wrapper = ({ children }: { children: React.ReactNode }) => {
 
 describe('useCommunityCommentList', () => {
   it('returns initial sortOrder LATEST and commentList[]', () => {
-    const { result } = renderHook(() => useCommunityCommentList(1), { wrapper });
+    const { result } = renderHook(() => useCommunityCommentList('1'), { wrapper });
     expect(result.current.sortOrder).toBe('LATEST');
     expect(Array.isArray(result.current.commentList)).toBe(true);
     expect(typeof result.current.changeSortOrder).toBe('function');
   });
 
   it('changeSortOrder switches between LATEST and OLDEST', () => {
-    const { result } = renderHook(() => useCommunityCommentList(1), { wrapper });
+    const { result } = renderHook(() => useCommunityCommentList('1'), { wrapper });
     act(() => {
       result.current.changeSortOrder('OLDEST');
     });

@@ -6,7 +6,7 @@ import { globalToast } from '@/shared/lib';
 
 export type ReportReason = 'SPAM' | 'ABUSE' | 'FRAUD' | 'ANIMAL_ABUSE' | 'PRIVACY';
 
-export type ReportTarget = { type: 'POST'; id: number } | { type: 'COMMENT'; id: number };
+export type ReportTarget = { type: 'POST'; id: string } | { type: 'COMMENT'; id: string };
 
 export const useReport = () => {
   const { mutateAsync, isPending } = useMutation({

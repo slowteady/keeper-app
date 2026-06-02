@@ -5,7 +5,7 @@ import { commentApi } from '@/entities/comment';
 import { communityQueries } from '@/entities/community';
 import { globalToast } from '@/shared/lib';
 
-export const useAddComment = (postId: number) => {
+export const useAddComment = (postId: string) => {
   const queryClient = useQueryClient();
   const [content, setContent] = useState('');
 

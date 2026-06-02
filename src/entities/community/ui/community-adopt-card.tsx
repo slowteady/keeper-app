@@ -13,8 +13,8 @@ import { CommunityAdoptCardHeader } from './community-adopt-card-header';
 import { CommunityAdoptCardStats } from './community-adopt-card-stats';
 
 export interface CommunityAdoptCardProps extends CommunityAdoptListDto {
-  onPressCard: (id: number) => void;
-  onPressLike: (id: number, isLiked: boolean) => void;
+  onPressCard: (id: string) => void;
+  onPressLike: (id: string, isLiked: boolean) => void;
   isLoading?: boolean;
 }
 

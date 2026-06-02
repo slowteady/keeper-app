@@ -6,19 +6,19 @@ import { authApi } from '@/shared/api/instance';
 import { globalToast } from '@/shared/lib';
 
 const blockApi = {
-  block: async (userId: number) => {
-    await authApi.post(`/users/${userId}/block`);
+  block: async (userId: string) => {
+    await authApi.post(`/community/users/${userId}/block`);
   },
-  unblock: async (userId: number) => {
-    await authApi.delete(`/users/${userId}/block`);
+  unblock: async (userId: string) => {
+    await authApi.delete(`/community/users/${userId}/block`);
   }
 };
 
-type WithUser = { user?: { id: number } | null };
+type WithUser = { user?: { id: string } | null };
 type CommunityPage = { items: WithUser[] } & Record<string, unknown>;
 type CommentPage = { items: WithUser[] } & Record<string, unknown>;
 
-const removeBlockedFromCommunityList = (queryClient: ReturnType<typeof useQueryClient>, blockedUserId: number) => {
+const removeBlockedFromCommunityList = (queryClient: ReturnType<typeof useQueryClient>, blockedUserId: string) => {
   queryClient.setQueriesData<InfiniteData<CommunityPage>>(
     { queryKey: [...communityQueries.all(), 'list'] },
     (old) =>
@@ -29,7 +29,7 @@ const removeBlockedFromCommunityList = (queryClient: ReturnType<typeof useQueryC
   );
 };
 
-const removeBlockedFromCommentList = (queryClient: ReturnType<typeof useQueryClient>, blockedUserId: number) => {
+const removeBlockedFromCommentList = (queryClient: ReturnType<typeof useQueryClient>, blockedUserId: string) => {
   queryClient.setQueriesData<InfiniteData<CommentPage>>(
     { queryKey: [...commentQueries.all(), 'list'] },
     (old) =>
@@ -52,13 +52,13 @@ export const useBlock = () => {
   const queryClient = useQueryClient();
 
   const blockMutation = useMutation({
-    mutationFn: (userId: number) => blockApi.block(userId)
+    mutationFn: (userId: string) => blockApi.block(userId)
   });
   const unblockMutation = useMutation({
-    mutationFn: (userId: number) => blockApi.unblock(userId)
+    mutationFn: (userId: string) => blockApi.unblock(userId)
   });
 
-  const block = async (userId: number) => {
+  const block = async (userId: string) => {
     try {
       await blockMutation.mutateAsync(userId);
       // 서버 응답 후 캐시 직접 수정 — refetch 1초 지연 우회 (BP for destructive action)
@@ -73,7 +73,7 @@ export const useBlock = () => {
     }
   };
 
-  const unblock = async (userId: number) => {
+  const unblock = async (userId: string) => {
     try {
       await unblockMutation.mutateAsync(userId);
       await queryClient.invalidateQueries({ queryKey: communityQueries.all() });

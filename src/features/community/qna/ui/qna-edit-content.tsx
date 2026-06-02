@@ -24,7 +24,7 @@ const findFirstError = (
   return null;
 };
 
-export const QnaEditContent = ({ postId }: { postId: number }) => {
+export const QnaEditContent = ({ postId }: { postId: string }) => {
   const [buttonHeight, setButtonHeight] = useState(0);
   const { form, onSubmit, isPending } = useUpdateQnaPost(postId);
 

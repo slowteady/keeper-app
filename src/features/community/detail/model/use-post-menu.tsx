@@ -30,8 +30,8 @@ export const usePostMenu = ({
   authorId,
   shareInfo
 }: {
-  postId: number;
-  authorId: number | null | undefined;
+  postId: string;
+  authorId: string | null | undefined;
   shareInfo?: PostMenuShareInfo;
 }) => {
   const { user } = useCurrentUser();

@@ -29,8 +29,8 @@ export const CommunityQnAFeed = () => {
   useScrollToTop(scrollRef);
   const { refreshing, handleRefresh } = useListRefreshing(refresh);
 
-  const handlePressCard = useCallback((id: number) => goDetailPage(String(id)), [goDetailPage]);
-  const handlePressLike = useCallback((id: number, isLiked: boolean) => toggleLikePost(id, isLiked), [toggleLikePost]);
+  const handlePressCard = useCallback((id: string) => goDetailPage(id), [goDetailPage]);
+  const handlePressLike = useCallback((id: string, isLiked: boolean) => toggleLikePost(id, isLiked), [toggleLikePost]);
 
   const renderItem = useCallback<ListRenderItem<CommunityQnaListItemDto>>(
     ({ item }) => (

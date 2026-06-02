@@ -13,7 +13,7 @@ import { AnimatedHeart } from '@/shared/ui/icons/animation';
 import { Share as ShareIcon } from '@/shared/ui/icons/outline';
 
 export type CommunityDetailOverviewSectionProps = {
-  id: number;
+  id: string;
   image: string;
   nickname: string;
   displayTime: string;

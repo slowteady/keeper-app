@@ -36,8 +36,8 @@ const mockedToast = globalToast as jest.Mock;
 
 const makeListPage = (overrides?: Partial<{ items: unknown[] }>) => ({
   items: [
-    { id: 1, isLiked: false, counts: { like: 5, view: 0, comment: 0 } },
-    { id: 2, isLiked: true, counts: { like: 10, view: 0, comment: 0 } }
+    { id: '1', isLiked: false, counts: { like: 5, view: 0, comment: 0 } },
+    { id: '2', isLiked: true, counts: { like: 10, view: 0, comment: 0 } }
   ],
   total: 2,
   page: 1,
@@ -86,19 +86,19 @@ describe('useLikePost', () => {
 
     const { result } = renderHook(() => useLikePost(), { wrapper });
 
-    act(() => result.current.toggleLikePost(1, false));
+    act(() => result.current.toggleLikePost('1', false));
 
     // onMutate 는 async — setQueriesData 적용까지 마이크로태스크 yield 필요
     await waitFor(() => {
       const cached = queryClient.getQueryData<{
-        pages: { items: { id: number; isLiked: boolean; counts: { like: number } }[] }[];
+        pages: { items: { id: string; isLiked: boolean; counts: { like: number } }[] }[];
       }>([...communityQueries.all(), 'list', { category: 'ADOPTION_PERSONAL' }]);
       // 낙관: like 5 → 6, isLiked false → true
       expect(cached?.pages[0].items[0].isLiked).toBe(true);
       expect(cached?.pages[0].items[0].counts.like).toBe(6);
     });
 
-    expect(mockedLikePost).toHaveBeenCalledWith(1);
+    expect(mockedLikePost).toHaveBeenCalledWith('1');
   });
 
   it('unlike 토글 시 count 가 1 감소한다 (음수 가드)', async () => {
@@ -106,17 +106,17 @@ describe('useLikePost', () => {
     mockedUnlikePost.mockResolvedValue({ isLiked: false, count: 9 });
 
     const { result } = renderHook(() => useLikePost(), { wrapper });
-    act(() => result.current.toggleLikePost(2, true));
+    act(() => result.current.toggleLikePost('2', true));
 
     await waitFor(() => {
       const cached = queryClient.getQueryData<{
-        pages: { items: { id: number; isLiked: boolean; counts: { like: number } }[] }[];
+        pages: { items: { id: string; isLiked: boolean; counts: { like: number } }[] }[];
       }>([...communityQueries.all(), 'list', { category: 'ADOPTION_PERSONAL' }]);
       expect(cached?.pages[0].items[1].isLiked).toBe(false);
       expect(cached?.pages[0].items[1].counts.like).toBe(9);
     });
 
-    expect(mockedUnlikePost).toHaveBeenCalledWith(2);
+    expect(mockedUnlikePost).toHaveBeenCalledWith('2');
   });
 
   it('서버 onSuccess 응답으로 count 가 재정합된다 (서버 권위)', async () => {
@@ -125,7 +125,7 @@ describe('useLikePost', () => {
     mockedLikePost.mockResolvedValue({ isLiked: true, count: 7 });
 
     const { result } = renderHook(() => useLikePost(), { wrapper });
-    act(() => result.current.toggleLikePost(1, false));
+    act(() => result.current.toggleLikePost('1', false));
 
     await waitFor(() => {
       const cached = queryClient.getQueryData<{
@@ -140,16 +140,16 @@ describe('useLikePost', () => {
     mockedLikePost.mockRejectedValue(new Error('network'));
 
     const { result } = renderHook(() => useLikePost(), { wrapper });
-    act(() => result.current.toggleLikePost(1, false));
+    act(() => result.current.toggleLikePost('1', false));
 
     await waitFor(() => expect(mockedToast).toHaveBeenCalled());
 
     const cached = queryClient.getQueryData<{
-      pages: { items: { id: number; isLiked: boolean; counts: { like: number } }[] }[];
+      pages: { items: { id: string; isLiked: boolean; counts: { like: number } }[] }[];
     }>([...communityQueries.all(), 'list', { category: 'ADOPTION_PERSONAL' }]);
     // 원래 상태(isLiked: false, like: 5) 로 복원
     expect(cached?.pages[0].items[0]).toEqual({
-      id: 1,
+      id: '1',
       isLiked: false,
       counts: { like: 5, view: 0, comment: 0 }
     });
@@ -157,20 +157,20 @@ describe('useLikePost', () => {
 
   it('개인입양 detail 캐시(union ADOPT)도 함께 patch 된다 (prefix 매칭)', async () => {
     const { queryClient, wrapper } = setup();
-    queryClient.setQueryData([...communityQueries.all(), 'detail', 1], {
+    queryClient.setQueryData([...communityQueries.all(), 'detail', '1'], {
       kind: 'ADOPT',
-      adopt: { id: 1, isLiked: false, counts: { like: 5, view: 0, comment: 0 } }
+      adopt: { id: '1', isLiked: false, counts: { like: 5, view: 0, comment: 0 } }
     });
     mockedLikePost.mockResolvedValue({ isLiked: true, count: 6 });
 
     const { result } = renderHook(() => useLikePost(), { wrapper });
-    act(() => result.current.toggleLikePost(1, false));
+    act(() => result.current.toggleLikePost('1', false));
 
     await waitFor(() => {
       const detail = queryClient.getQueryData<{ adopt: { isLiked: boolean; counts: { like: number } } }>([
         ...communityQueries.all(),
         'detail',
-        1
+        '1'
       ]);
       expect(detail?.adopt.isLiked).toBe(true);
       expect(detail?.adopt.counts.like).toBe(6);
@@ -179,20 +179,20 @@ describe('useLikePost', () => {
 
   it('QnA detail 캐시(union QNA)도 함께 patch 된다', async () => {
     const { queryClient, wrapper } = setup();
-    queryClient.setQueryData([...communityQueries.all(), 'detail', 1], {
+    queryClient.setQueryData([...communityQueries.all(), 'detail', '1'], {
       kind: 'QNA',
-      qna: { id: 1, isLiked: false, counts: { like: 5, view: 0, comment: 0 } }
+      qna: { id: '1', isLiked: false, counts: { like: 5, view: 0, comment: 0 } }
     });
     mockedLikePost.mockResolvedValue({ isLiked: true, count: 6 });
 
     const { result } = renderHook(() => useLikePost(), { wrapper });
-    act(() => result.current.toggleLikePost(1, false));
+    act(() => result.current.toggleLikePost('1', false));
 
     await waitFor(() => {
       const detail = queryClient.getQueryData<{ qna: { isLiked: boolean; counts: { like: number } } }>([
         ...communityQueries.all(),
         'detail',
-        1
+        '1'
       ]);
       expect(detail?.qna.isLiked).toBe(true);
       expect(detail?.qna.counts.like).toBe(6);

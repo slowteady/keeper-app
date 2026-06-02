@@ -39,25 +39,25 @@ describe('useCreateComment', () => {
   it('mutate({content}) 호출 시 commentApi.create(postId, content, undefined) 호출', async () => {
     mockedCreate.mockResolvedValue({ id: 1 });
     const { wrapper } = setup();
-    const { result } = renderHook(() => useCreateComment({ postId: 10 }), { wrapper });
+    const { result } = renderHook(() => useCreateComment({ postId: '10' }), { wrapper });
 
     await act(async () => {
       await result.current.mutateAsync({ content: '첫 댓글' });
     });
 
-    expect(mockedCreate).toHaveBeenCalledWith(10, '첫 댓글', undefined);
+    expect(mockedCreate).toHaveBeenCalledWith('10', '첫 댓글', undefined);
   });
 
   it('mutate({content, parentId}) 호출 시 commentApi.create 에 parentId 전달', async () => {
     mockedCreate.mockResolvedValue({ id: 1 });
     const { wrapper } = setup();
-    const { result } = renderHook(() => useCreateComment({ postId: 10 }), { wrapper });
+    const { result } = renderHook(() => useCreateComment({ postId: '10' }), { wrapper });
 
     await act(async () => {
-      await result.current.mutateAsync({ content: '답글', parentId: 5 });
+      await result.current.mutateAsync({ content: '답글', parentId: '5' });
     });
 
-    expect(mockedCreate).toHaveBeenCalledWith(10, '답글', 5);
+    expect(mockedCreate).toHaveBeenCalledWith('10', '답글', '5');
   });
 
   it('성공 시 해당 postId 댓글 리스트 invalidate (성공 토스트는 띄우지 않음 — Instagram BP)', async () => {
@@ -65,14 +65,14 @@ describe('useCreateComment', () => {
     const { queryClient, wrapper } = setup();
     const invalidateSpy = jest.spyOn(queryClient, 'invalidateQueries');
 
-    const { result } = renderHook(() => useCreateComment({ postId: 10 }), { wrapper });
+    const { result } = renderHook(() => useCreateComment({ postId: '10' }), { wrapper });
 
     await act(async () => {
       await result.current.mutateAsync({ content: '내용' });
     });
 
     await waitFor(() => {
-      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: [...commentQueries.all(), 'list', 10] });
+      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: [...commentQueries.all(), 'list', '10'] });
     });
     expect(mockedToast).not.toHaveBeenCalled();
   });
@@ -80,7 +80,7 @@ describe('useCreateComment', () => {
   it('실패 시 실패 토스트 노출', async () => {
     mockedCreate.mockRejectedValue(new Error('network'));
     const { wrapper } = setup();
-    const { result } = renderHook(() => useCreateComment({ postId: 10 }), { wrapper });
+    const { result } = renderHook(() => useCreateComment({ postId: '10' }), { wrapper });
 
     await act(async () => {
       try {

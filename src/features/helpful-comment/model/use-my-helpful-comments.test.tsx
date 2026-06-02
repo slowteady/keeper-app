@@ -20,12 +20,12 @@ const makePage = (overrides?: Partial<{ items: unknown[]; total: number; page: n
     data: {
       items: [
         {
-          id: 1,
+          id: '1',
           content: '도움된 댓글',
           displayTime: '2026-05-26T00:00:00.000Z',
           helpfulCount: 30,
           isHelpful: true,
-          postId: 10,
+          postId: '10',
           postCategory: 'ADOPTION_PERSONAL',
           postTitle: '골든 리트리버 입양',
           postThumbnail: 'https://img/1.jpg'
@@ -77,7 +77,7 @@ describe('useMyHelpfulComments', () => {
 
     expect(result.current.items).toHaveLength(1);
     expect(result.current.items[0]).toMatchObject({
-      id: 1,
+      id: '1',
       postTitle: '골든 리트리버 입양',
       helpfulCount: 30
     });
@@ -91,7 +91,7 @@ describe('useMyHelpfulComments', () => {
     renderHook(() => useMyHelpfulComments(), { wrapper });
 
     await waitFor(() => {
-      expect(mockAuthApiGet).toHaveBeenCalledWith('/me/helpful-comments', {
+      expect(mockAuthApiGet).toHaveBeenCalledWith('/community/me/helpful-comments', {
         params: { page: 1, size: 20 }
       });
     });

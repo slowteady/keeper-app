@@ -8,7 +8,7 @@ import { globalToast } from '@/shared/lib';
 
 import { patchLikeCache } from '../lib/patch-like-cache';
 
-type ToggleVars = { postId: number; currentlyLiked: boolean };
+type ToggleVars = { postId: string; currentlyLiked: boolean };
 type LikeResponse = { count: number; isLiked: boolean };
 
 // 좋아요 mutation key — 카드별 isPending 격리는 variables 의 postId 로 predicate 매칭.
@@ -67,7 +67,7 @@ export const useLikePost = () => {
   });
 
   const toggleLikePost = useCallback(
-    (postId: number, currentlyLiked: boolean) => {
+    (postId: string, currentlyLiked: boolean) => {
       impactAsync(currentlyLiked ? ImpactFeedbackStyle.Light : ImpactFeedbackStyle.Medium).catch(() => undefined);
       requireLogin(() => mutation.mutate({ postId, currentlyLiked }));
     },
@@ -84,7 +84,7 @@ export const useLikePost = () => {
 
 // 특정 postId 의 좋아요 mutation 이 진행 중인지 — 카드별 isLoading 노출용.
 // useMutation 자체는 단일 인스턴스 지만 variables 의 postId 로 predicate 매칭해 격리.
-export const useIsLikePending = (postId: number): boolean => {
+export const useIsLikePending = (postId: string): boolean => {
   const count = useIsMutating({
     mutationKey: [...LIKE_POST_MUTATION_KEY],
     predicate: (m) => (m.state.variables as ToggleVars | undefined)?.postId === postId
@@ -93,11 +93,11 @@ export const useIsLikePending = (postId: number): boolean => {
 };
 
 // 캐시 안에서 해당 id 의 현재 like count 를 찾아 반환. 못 찾으면 undefined.
-const readCurrentCount = (data: unknown, postId: number): number | undefined => {
+const readCurrentCount = (data: unknown, postId: string): number | undefined => {
   if (!data || typeof data !== 'object') return undefined;
   const d = data as Record<string, unknown>;
   if (Array.isArray(d.pages)) {
-    for (const page of d.pages as { items?: { id: number; counts?: { like: number } }[] }[]) {
+    for (const page of d.pages as { items?: { id: string; counts?: { like: number } }[] }[]) {
       const found = page.items?.find((i) => i.id === postId);
       if (found?.counts) return found.counts.like;
     }
@@ -105,11 +105,11 @@ const readCurrentCount = (data: unknown, postId: number): number | undefined => 
   }
   // detail 캐시 union — { kind: 'ADOPT', adopt } | { kind: 'QNA', qna }
   if (d.kind === 'ADOPT' || d.kind === 'QNA') {
-    const inner = (d.kind === 'QNA' ? d.qna : d.adopt) as { id: number; counts?: { like: number } } | undefined;
+    const inner = (d.kind === 'QNA' ? d.qna : d.adopt) as { id: string; counts?: { like: number } } | undefined;
     if (inner && inner.id === postId && inner.counts) return inner.counts.like;
     return undefined;
   }
-  if ('id' in d && 'counts' in d && (d.id as number) === postId) {
+  if ('id' in d && 'counts' in d && (d.id as string) === postId) {
     return (d.counts as { like: number }).like;
   }
   return undefined;

@@ -1,9 +1,9 @@
 import { CommentSchema, CommentSortOrderSchema } from './schema';
 
 const VALID_COMMENT = {
-  id: 1,
+  id: '1',
   user: {
-    id: 1,
+    id: '1',
     nickname: 'keeper',
     image: 'https://x'
   },

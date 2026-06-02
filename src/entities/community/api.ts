@@ -41,7 +41,7 @@ export type PostDetailUnion =
   | { kind: 'QNA'; qna: CommunityQnaDetailDto }
   | { kind: 'ADOPT'; adopt: CommunityAdoptDetailDto };
 
-const getPostDetail = async (id: number): Promise<PostDetailUnion> => {
+const getPostDetail = async (id: string): Promise<PostDetailUnion> => {
   const res = await authApi.get<ApiResponse<{ category: string }>>(`${COMMUNITY_BASE}/${id}`);
   const raw = res.data.data;
   return raw.category === 'QNA'
@@ -49,12 +49,12 @@ const getPostDetail = async (id: number): Promise<PostDetailUnion> => {
     : { kind: 'ADOPT', adopt: CommunityAdoptDetailSchema.parse(raw) };
 };
 
-const createAdoptionPersonal = async (body: CommunityAdoptFormDto): Promise<{ id: number }> => {
+const createAdoptionPersonal = async (body: CommunityAdoptFormDto): Promise<{ id: string }> => {
   const res = await authApi.post<ApiResponse<CommunityAdoptDetailDto>>(`${COMMUNITY_BASE}/adoption-personal`, body);
   return { id: res.data.data.id };
 };
 
-const updateAdoptionPersonal = async (id: number, body: CommunityAdoptFormDto): Promise<CommunityAdoptDetailDto> => {
+const updateAdoptionPersonal = async (id: string, body: CommunityAdoptFormDto): Promise<CommunityAdoptDetailDto> => {
   const res = await authApi.patch<ApiResponse<CommunityAdoptDetailDto>>(
     `${COMMUNITY_BASE}/adoption-personal/${id}`,
     body
@@ -62,26 +62,26 @@ const updateAdoptionPersonal = async (id: number, body: CommunityAdoptFormDto): 
   return CommunityAdoptDetailSchema.parse(res.data.data);
 };
 
-const deletePost = async (id: number): Promise<void> => {
+const deletePost = async (id: string): Promise<void> => {
   await authApi.delete<AxiosResponse>(`${COMMUNITY_BASE}/${id}`);
 };
 
-const likePost = async (id: number): Promise<{ count: number; isLiked: boolean }> => {
+const likePost = async (id: string): Promise<{ count: number; isLiked: boolean }> => {
   const res = await authApi.post<ApiResponse<{ count: number; isLiked: boolean }>>(`${COMMUNITY_BASE}/${id}/like`);
   return res.data.data;
 };
 
-const unlikePost = async (id: number): Promise<{ count: number; isLiked: boolean }> => {
+const unlikePost = async (id: string): Promise<{ count: number; isLiked: boolean }> => {
   const res = await authApi.delete<ApiResponse<{ count: number; isLiked: boolean }>>(`${COMMUNITY_BASE}/${id}/like`);
   return res.data.data;
 };
 
-const reportPost = async (id: number, body: { reason: string; reasonDetail?: string }): Promise<void> => {
+const reportPost = async (id: string, body: { reason: string; reasonDetail?: string }): Promise<void> => {
   await authApi.post<AxiosResponse>(`${COMMUNITY_BASE}/${id}/report`, body);
 };
 
 const getMyLikedPosts = async (params: { page: number; size: number }): Promise<CommunityListResponseDto> => {
-  const res = await authApi.get<ApiResponse<CommunityListResponseDto>>('/me/liked-posts', { params });
+  const res = await authApi.get<ApiResponse<CommunityListResponseDto>>(`${COMMUNITY_BASE}/my/liked-posts`, { params });
   return CommunityListResponseSchema.parse(res.data.data);
 };
 
@@ -101,17 +101,17 @@ const getQnaList = async (params: QnaListParams): Promise<CommunityQnaListRespon
   return CommunityQnaListResponseSchema.parse(res.data.data);
 };
 
-const getQnaDetail = async (id: number): Promise<CommunityQnaDetailDto> => {
+const getQnaDetail = async (id: string): Promise<CommunityQnaDetailDto> => {
   const res = await authApi.get<ApiResponse<CommunityQnaDetailDto>>(`${COMMUNITY_BASE}/${id}`);
   return CommunityQnaDetailSchema.parse(res.data.data);
 };
 
-const createQnaPost = async (body: CommunityQnaFormDto): Promise<{ id: number }> => {
-  const res = await authApi.post<ApiResponse<{ id: number }>>(`${COMMUNITY_BASE}/qna`, body);
+const createQnaPost = async (body: CommunityQnaFormDto): Promise<{ id: string }> => {
+  const res = await authApi.post<ApiResponse<{ id: string }>>(`${COMMUNITY_BASE}/qna`, body);
   return { id: res.data.data.id };
 };
 
-const updateQnaPost = async (id: number, body: CommunityQnaFormDto): Promise<CommunityQnaDetailDto> => {
+const updateQnaPost = async (id: string, body: CommunityQnaFormDto): Promise<CommunityQnaDetailDto> => {
   const res = await authApi.patch<ApiResponse<CommunityQnaDetailDto>>(`${COMMUNITY_BASE}/qna/${id}`, body);
   return CommunityQnaDetailSchema.parse(res.data.data);
 };
@@ -120,7 +120,9 @@ const getMyHelpfulComments = async (params: {
   page: number;
   size: number;
 }): Promise<MyHelpfulCommentListResponseDto> => {
-  const res = await authApi.get<ApiResponse<MyHelpfulCommentListResponseDto>>('/me/helpful-comments', { params });
+  const res = await authApi.get<ApiResponse<MyHelpfulCommentListResponseDto>>('/community/me/helpful-comments', {
+    params
+  });
   return MyHelpfulCommentListResponseSchema.parse(res.data.data);
 };
 
@@ -161,7 +163,7 @@ export const communityQueries = {
       })
     }),
 
-  detail: (id: number) =>
+  detail: (id: string) =>
     queryOptions({
       queryKey: [...communityQueries.all(), 'detail', id] as const,
       queryFn: () => getPostDetail(id),
@@ -184,7 +186,7 @@ export const communityQueries = {
       })
     }),
 
-  qnaDetail: (id: number) =>
+  qnaDetail: (id: string) =>
     queryOptions({
       queryKey: [...communityQueries.all(), 'qna', 'detail', id] as const,
       queryFn: () => getQnaDetail(id),

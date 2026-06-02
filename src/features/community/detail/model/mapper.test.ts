@@ -3,8 +3,8 @@ import { CommunityAdoptDetailDto } from '@/entities/community';
 import { convertToAdoptDetailOverviewData } from './mapper';
 
 const baseDetail: CommunityAdoptDetailDto = {
-  id: 1,
-  user: { id: 10, nickname: '닉네임', image: '' },
+  id: '1',
+  user: { id: '10', nickname: '닉네임', image: '' },
   displayTime: '방금',
   title: '말티즈 뭉치 가족 찾아요',
   images: ['https://example.com/a.jpg'],

@@ -10,11 +10,9 @@ import {
 } from './mapper';
 
 export const useCommunityAdoptDetailFeed = (id: string) => {
-  const numId = Number(id);
-
   // useSuspenseQuery — 본문/댓글 mount 시점에 데이터 도착 보장 (Suspense fallback 으로 스켈레톤 노출).
   // 라우트가 category 분기 후 진입하므로 ADOPT 만 도달 (QNA 는 QnaDetailContent 로 분기됨).
-  const { data, refetch } = useSuspenseQuery(communityQueries.detail(numId));
+  const { data, refetch } = useSuspenseQuery(communityQueries.detail(id));
   const detailPost = data.kind === 'ADOPT' ? data.adopt : undefined;
 
   const overviews = useMemo(() => (detailPost ? convertToAdoptDetailOverviewData(detailPost) : []), [detailPost]);

@@ -3,8 +3,8 @@ import { CommunityAdoptDetailDto } from '@/entities/community';
 import { fromAdoptionPersonalDetail } from './from-detail';
 
 const base: CommunityAdoptDetailDto = {
-  id: 1,
-  user: { id: 1, image: '', nickname: 't' },
+  id: '1',
+  user: { id: '1', image: '', nickname: 't' },
   displayTime: '',
   title: '제목',
   images: ['https://img/a.png'],

@@ -10,7 +10,6 @@ import {
   LoginDataDto,
   LoginParamsDto,
   RefreshDataDto,
-  SignUpBodyDto,
   UpdateMeBodyDto,
   UserDto
 } from './schema';
@@ -30,7 +29,7 @@ export const logout = async (): Promise<AxiosResponse<ApiResponse<boolean>>> => 
 };
 
 export const getUser = async (): Promise<AxiosResponse<ApiResponse<UserDto>>> => {
-  const endpoint = `${BASE_URL}/me`;
+  const endpoint = `/users/me`;
 
   return await authApi.get(endpoint);
 };
@@ -43,15 +42,7 @@ export const getRefresh = async (token: string): Promise<AxiosResponse<ApiRespon
 };
 
 export const checkNickname = async (body: CheckNicknameBodyDto): Promise<AxiosResponse<ApiResponse<boolean>>> => {
-  const endpoint = `${BASE_URL}/check-nickname`;
-
-  return await publicApi.post(endpoint, body);
-};
-
-export const signup = async (body: SignUpBodyDto): Promise<AxiosResponse<ApiResponse<LoginDataDto>>> => {
-  const endpoint = `${BASE_URL}/signup`;
-
-  return await publicApi.post(endpoint, body);
+  return await publicApi.get(`/users/check-nickname`, { params: { nickname: body.nickname } });
 };
 
 export type AgreeBodyDto = {
@@ -69,13 +60,13 @@ export const agree = async (body: AgreeBodyDto): Promise<AxiosResponse<ApiRespon
 };
 
 export const deleteUser = async (body: DeleteMeBodyDto): Promise<AxiosResponse<ApiResponse<boolean>>> => {
-  const endpoint = `${BASE_URL}/me`;
+  const endpoint = `/users/me`;
 
   return await authApi.delete(endpoint, { data: body });
 };
 
 export const updateMe = async (body: UpdateMeBodyDto): Promise<AxiosResponse<ApiResponse<UserDto>>> => {
-  const endpoint = `${BASE_URL}/me`;
+  const endpoint = `/users/me`;
 
   return await authApi.patch(endpoint, body);
 };

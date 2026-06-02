@@ -3,8 +3,7 @@ import { z } from 'zod';
 import { PostUserSummarySchema } from '@/entities/community/schema';
 
 export const CommentSchema = z.object({
-  // 백엔드 bigint 컬럼이 JSON 직렬화 시 string("3") 으로 옴 — coerce 로 양쪽 호환
-  id: z.coerce.number(),
+  id: z.string(),
   user: PostUserSummarySchema.nullable(),
   content: z.string(),
   displayTime: z.string(),
@@ -12,7 +11,7 @@ export const CommentSchema = z.object({
   // 구버전 호환을 위해 default false
   isEdited: z.boolean().default(false),
   // 대댓글 부모 댓글 id (root 면 null)
-  parentId: z.coerce.number().nullable().default(null),
+  parentId: z.string().nullable().default(null),
   // 대댓글 개수 (root 만 의미. reply 자신은 항상 0)
   replyCount: z.coerce.number().default(0),
   // 도움돼요 카운트 (root/reply 동일하게 적용)
@@ -29,7 +28,7 @@ export type CommentDto = z.infer<typeof CommentSchema>;
  */
 export const CommentListResponseSchema = z.object({
   items: z.array(CommentSchema),
-  nextCursor: z.coerce.number().nullable(),
+  nextCursor: z.string().nullable(),
   hasNext: z.boolean()
 });
 export type CommentListResponseDto = z.infer<typeof CommentListResponseSchema>;

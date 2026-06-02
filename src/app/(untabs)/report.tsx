@@ -8,11 +8,11 @@ import { Menu, ModalPageHeader } from '@/shared/ui';
 const Page = () => {
   const params = useLocalSearchParams<{ type?: string; id?: string }>();
   const targetType: 'POST' | 'COMMENT' = params.type === 'COMMENT' ? 'COMMENT' : 'POST';
-  const targetId = Number(params.id);
+  const targetId = params.id;
 
   const { report, isPending } = useReport();
 
-  if (!params.id || Number.isNaN(targetId)) {
+  if (!targetId) {
     router.back();
     return null;
   }
