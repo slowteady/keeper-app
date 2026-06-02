@@ -13,8 +13,8 @@ import {
   ShelterDto,
   ShelterMyFavoriteListDto,
   ShelterMyFavoriteListSchema,
-  ShelterSearchParamsDto,
-  SheltersParamsDto
+  SheltersParamsDto,
+  ShelterWithinParamsDto
 } from './schema';
 
 const BASE_URL = '/shelters';
@@ -28,11 +28,16 @@ const getShelterCounts = async (
   return await authApi.get(`${BASE_URL}/nearby/count`, { params: { ...params, distances } });
 };
 
-// 낙관 업데이트 일관성 — list/detail/search 는 cache 에 view 모델(ShelterDto[] / ShelterDto) 직접 저장.
+// 낙관 업데이트 일관성 — list/within/detail 은 cache 에 view 모델(ShelterDto[] / ShelterDto) 직접 저장.
 // authApi 사용 이유 — 백엔드가 @CurrentUser 를 optional 로 받아 토큰이 있으면 isFavorited 를 채워준다.
 // publicApi (토큰 미첨부) 로 호출하면 user=undefined 가 되어 isFavorited 가 항상 false 로 떨어진다.
 const getShelters = async (params: SheltersParamsDto): Promise<ShelterDto[]> => {
   const res = await authApi.get<ApiResponse<ShelterDto[]>>(BASE_URL, { params });
+  return res.data.data;
+};
+
+const getSheltersWithin = async (params: ShelterWithinParamsDto): Promise<ShelterDto[]> => {
+  const res = await authApi.get<ApiResponse<ShelterDto[]>>(`${BASE_URL}/within`, { params });
   return res.data.data;
 };
 
@@ -43,11 +48,6 @@ const getShelter = async (id: string): Promise<ShelterDto> => {
 
 const getShelterAdopts = async (id: string, params: ShelterAdoptsParamsDto): Promise<AdoptResponseDto> => {
   const res = await authApi.get<ApiResponse<AdoptResponseDto>>(`${BASE_URL}/${id}/abandonments`, { params });
-  return res.data.data;
-};
-
-export const searchShelters = async (params: ShelterSearchParamsDto): Promise<ShelterDto[]> => {
-  const res = await authApi.get<ApiResponse<ShelterDto[]>>(`${BASE_URL}/search`, { params });
   return res.data.data;
 };
 
@@ -96,16 +96,18 @@ export const shelterQueries = {
       queryFn: () => getShelters(params)
     }),
 
+  // viewport(지도 영역) 조회 — 보호소 탭. ['shelters'] prefix 유지로 찜 낙관 업데이트 자동 적용.
+  within: (params: ShelterWithinParamsDto) =>
+    queryOptions({
+      queryKey: [...shelterQueries.all(), 'within', params] as const,
+      queryFn: () => getSheltersWithin(params)
+    }),
+
   detail: (id: string) =>
     queryOptions({
       queryKey: [...shelterQueries.all(), 'detail', id] as const,
       queryFn: () => getShelter(id)
     }),
-
-  // 검색 결과 cache key — useMutation 으로 갱신하지만 setQueryData 로 cache 에 저장.
-  // 별도 cache 키로 두어야 list 와 충돌 없이 검색 모드 ↔ 일반 모드 전환 가능.
-  // useFavoriteShelter 의 setQueriesData(['shelters']) prefix 매칭으로 낙관 업데이트 자동 적용.
-  searchResult: () => [...shelterQueries.all(), 'search-result'] as const,
 
   adopts: (id: string, params: ShelterAdoptsParamsDto) =>
     infiniteQueryOptions({

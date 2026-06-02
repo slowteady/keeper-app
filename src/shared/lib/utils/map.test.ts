@@ -1,4 +1,4 @@
-import { calcMapRadiusKm } from './map';
+import { calcMapBounds, calcMapRadiusKm } from './map';
 
 describe('calcMapRadiusKm', () => {
   it('returns 0 for zero deltas', () => {
@@ -72,5 +72,21 @@ describe('calcMapRadiusKm', () => {
     });
 
     expect(equator).toBeGreaterThan(highLat);
+  });
+});
+
+describe('calcMapBounds', () => {
+  it('region center ± delta/2 로 사각 bounds를 만든다', () => {
+    const bounds = calcMapBounds({
+      latitude: 37.5,
+      longitude: 127.0,
+      latitudeDelta: 0.2,
+      longitudeDelta: 0.4
+    });
+
+    expect(bounds.minLatitude).toBeCloseTo(37.4);
+    expect(bounds.maxLatitude).toBeCloseTo(37.6);
+    expect(bounds.minLongitude).toBeCloseTo(126.8);
+    expect(bounds.maxLongitude).toBeCloseTo(127.2);
   });
 });

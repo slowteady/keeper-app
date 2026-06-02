@@ -18,3 +18,16 @@ export const calcMapRadiusKm = (region: Region) => {
 
   return Math.floor(Math.sqrt(halfLatKm ** 2 + halfLngKm ** 2));
 };
+
+/** 지도 viewport(region) → bounds 사각 좌표. 보호소 탭 viewport 자동 로드용. */
+export const calcMapBounds = (region: Region) => {
+  const halfLat = region.latitudeDelta / 2;
+  const halfLng = region.longitudeDelta / 2;
+
+  return {
+    minLatitude: region.latitude - halfLat,
+    maxLatitude: region.latitude + halfLat,
+    minLongitude: region.longitude - halfLng,
+    maxLongitude: region.longitude + halfLng
+  };
+};

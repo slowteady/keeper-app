@@ -18,6 +18,7 @@ export const ShelterSchema = z.object({
   weekdayCellCloseTime: z.string().nullable().optional(),
   weekendCellOpenTime: z.string().nullable().optional(),
   weekendCellCloseTime: z.string().nullable().optional(),
+  closeDay: z.string().nullable(),
   distance: z.number().optional(),
   // 백엔드 isFavorited 추가 (마이그레이션 014 + shelter v2 controller 변경 동기화)
   isFavorited: z.boolean().optional()
@@ -61,9 +62,12 @@ export const ShelterAdoptsParamsSchema = z.object({
 });
 export type ShelterAdoptsParamsDto = z.infer<typeof ShelterAdoptsParamsSchema>;
 
-export const ShelterSearchParamsSchema = z.object({
-  search: z.string(),
+export const ShelterWithinParamsSchema = z.object({
+  minLatitude: z.number(),
+  maxLatitude: z.number(),
+  minLongitude: z.number(),
+  maxLongitude: z.number(),
   userLatitude: z.number().optional(),
   userLongitude: z.number().optional()
 });
-export type ShelterSearchParamsDto = z.infer<typeof ShelterSearchParamsSchema>;
+export type ShelterWithinParamsDto = z.infer<typeof ShelterWithinParamsSchema>;

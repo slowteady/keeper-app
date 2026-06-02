@@ -1,6 +1,6 @@
 import { authApi } from '@/shared/api/instance';
 
-import { searchShelters, shelterApi, shelterQueries } from './api';
+import { shelterApi, shelterQueries } from './api';
 import { SHELTER_DISTANCES } from './constant';
 
 const mockedAuthGet = jest.mocked(authApi.get);
@@ -72,6 +72,40 @@ describe('shelterQueries.list', () => {
   });
 });
 
+describe('shelterQueries.within', () => {
+  it('/shelters/within 로 GET 요청하고 bounds params를 전달한다', async () => {
+    const params = {
+      minLatitude: 37,
+      maxLatitude: 38,
+      minLongitude: 126,
+      maxLongitude: 128,
+      userLatitude: 37.5,
+      userLongitude: 127
+    };
+    const opts = shelterQueries.within(params);
+
+    await (opts.queryFn as never as () => Promise<unknown>)();
+
+    expect(mockedAuthGet).toHaveBeenCalledWith('/shelters/within', { params });
+  });
+
+  it('queryKey가 ["shelters","within",params] — 찜 prefix 유지', () => {
+    const params = { minLatitude: 37, maxLatitude: 38, minLongitude: 126, maxLongitude: 128 };
+
+    expect(shelterQueries.within(params).queryKey).toEqual(['shelters', 'within', params]);
+  });
+
+  it('queryFn 이 data.data (ShelterDto[]) 를 직접 반환한다', async () => {
+    const params = { minLatitude: 37, maxLatitude: 38, minLongitude: 126, maxLongitude: 128 };
+    const items = [{ id: 'S1' }, { id: 'S2' }];
+    mockedAuthGet.mockResolvedValueOnce({ data: { data: items } } as never);
+
+    const result = await (shelterQueries.within(params).queryFn as never as () => Promise<unknown>)();
+
+    expect(result).toEqual(items);
+  });
+});
+
 describe('shelterQueries.detail', () => {
   it('/shelters/:id 로 GET 요청한다', async () => {
     const opts = shelterQueries.detail('s1');
@@ -93,12 +127,6 @@ describe('shelterQueries.detail', () => {
     const result = await (opts.queryFn as never as () => Promise<unknown>)();
 
     expect(result).toEqual(detail);
-  });
-});
-
-describe('shelterQueries.searchResult', () => {
-  it('cache key 가 ["shelters", "search-result"] 이다', () => {
-    expect(shelterQueries.searchResult()).toEqual(['shelters', 'search-result']);
   });
 });
 
@@ -141,26 +169,6 @@ describe('shelterQueries.adopts', () => {
     const result = await (queryFn as never as (ctx: { pageParam: number }) => Promise<unknown>)({ pageParam: 0 });
 
     expect(result).toEqual(response);
-  });
-});
-
-describe('searchShelters', () => {
-  it('/shelters/search 로 GET 요청하고 params를 전달한다', async () => {
-    const params = { search: '강남', userLatitude: 37, userLongitude: 127 };
-    mockedAuthGet.mockResolvedValueOnce({ data: { data: [] } } as never);
-
-    await searchShelters(params);
-
-    expect(mockedAuthGet).toHaveBeenCalledWith('/shelters/search', { params });
-  });
-
-  it('ApiResponse 의 data.data (ShelterDto[]) 를 직접 반환한다', async () => {
-    const items = [{ id: 'A' }, { id: 'B' }];
-    mockedAuthGet.mockResolvedValueOnce({ data: { data: items } } as never);
-
-    const result = await searchShelters({ search: '강남', userLatitude: 37, userLongitude: 127 });
-
-    expect(result).toEqual(items);
   });
 });
 

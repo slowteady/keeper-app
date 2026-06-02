@@ -5,7 +5,9 @@ import { styled, Text, useTheme, View, XStack } from 'tamagui';
 
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
+import { isOpenToday } from '../lib';
 import { ShelterDto } from '../schema';
+import { OpenTodayBadge } from './open-today-badge';
 
 export type ShelterCardProps = {
   data: ShelterDto;
@@ -16,6 +18,7 @@ export type ShelterCardProps = {
 export const ShelterCard = ({ data, onPress, onPressFavorite }: ShelterCardProps) => {
   const { black500 } = useTheme();
   const { id, name, distance, address, isFavorited = false } = data;
+  const openToday = isOpenToday(data);
   const hasDistance = typeof distance === 'number' && distance > 0;
   const convertedDistance = Math.round((distance ?? 0) * 10) / 10;
   const convertedAddress = address.split(' ').slice(0, 3).join(' ');
@@ -45,23 +48,26 @@ export const ShelterCard = ({ data, onPress, onPressFavorite }: ShelterCardProps
             </Text>
           </XStack>
 
-          <XStack items="center">
-            {hasDistance && (
-              <Text fontSize={13} lineHeight={15} fontWeight="400" color="$black800">
-                {convertedDistance}km
+          <XStack items="center" gap={6}>
+            <OpenTodayBadge open={openToday} />
+            <XStack items="center" flex={1}>
+              {hasDistance && (
+                <Text fontSize={13} lineHeight={15} fontWeight="400" color="$black800">
+                  {convertedDistance}km
+                </Text>
+              )}
+              <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                fontSize={13}
+                lineHeight={15}
+                fontWeight="400"
+                color="$black500"
+                ml={hasDistance ? 4 : 0}
+              >
+                {hasDistance ? `| ${convertedAddress}` : convertedAddress}
               </Text>
-            )}
-            <Text
-              numberOfLines={1}
-              ellipsizeMode="tail"
-              fontSize={13}
-              lineHeight={15}
-              fontWeight="400"
-              color="$black500"
-              ml={hasDistance ? 4 : 0}
-            >
-              {hasDistance ? `| ${convertedAddress}` : convertedAddress}
-            </Text>
+            </XStack>
           </XStack>
         </View>
       </Pressable>

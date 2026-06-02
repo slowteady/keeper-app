@@ -11,7 +11,8 @@ const BASE_SHELTER: ShelterDto = {
   weekdayOpenTime: null,
   weekdayCloseTime: null,
   weekendOpenTime: null,
-  weekendCloseTime: null
+  weekendCloseTime: null,
+  closeDay: null
 };
 
 describe('mapToShelter - time 변환', () => {

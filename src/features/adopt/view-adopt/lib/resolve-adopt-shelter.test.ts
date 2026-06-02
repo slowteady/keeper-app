@@ -18,6 +18,7 @@ const makeShelter = (overrides: Partial<ShelterDto> = {}) =>
     weekdayCloseTime: '18:00',
     weekendOpenTime: null,
     weekendCloseTime: null,
+    closeDay: null,
     ...overrides
   });
 

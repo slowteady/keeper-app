@@ -29,7 +29,7 @@ export const useShelter = ({ id }: UseShelterProps) => {
   return { shelterData, isLoading, hasCallNumber, refresh };
 };
 
-// shelter list cache 들 (list params 다양) + search-result cache 를 훑어 동일 id 찾기.
+// shelter list(홈 반경) + within(보호소 탭 viewport) cache 들을 훑어 동일 id 찾기.
 const findInListCache = (queryClient: ReturnType<typeof useQueryClient>, id: string): ShelterDto | undefined => {
   const candidates: ShelterDto[][] = [];
 
@@ -38,8 +38,10 @@ const findInListCache = (queryClient: ReturnType<typeof useQueryClient>, id: str
     if (data) candidates.push(data);
   }
 
-  const search = queryClient.getQueryData<ShelterDto[]>(shelterQueries.searchResult());
-  if (search) candidates.push(search);
+  const withins = queryClient.getQueriesData<ShelterDto[]>({ queryKey: [...shelterQueries.all(), 'within'] });
+  for (const [, data] of withins) {
+    if (data) candidates.push(data);
+  }
 
   for (const arr of candidates) {
     const item = arr.find((s) => s.id === id);
