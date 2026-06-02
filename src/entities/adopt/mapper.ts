@@ -9,7 +9,7 @@ dayjs.extend(timezone);
 
 export type AdoptItem = ReturnType<typeof mapToAdoptList>[number];
 
-export type ChipVariant = 'error' | 'success' | 'notice' | 'default';
+export type ChipVariant = 'error' | 'success' | 'notice' | 'default' | 'dog' | 'cat' | 'etc';
 
 export const mapToAdoptList = (data: AdoptDataDto[]) => {
   return data.map((item) => {
@@ -27,13 +27,14 @@ export const mapToAdoptList = (data: AdoptDataDto[]) => {
       chipType
     } = item;
 
-    const chips = convertChipLabel({ neuterYn, weight, gender, age, chipType, noticeEndDt });
+    const { animal, name } = convertFullName(fullName);
+    const chips = convertChipLabel({ neuterYn, weight, gender, age, chipType, noticeEndDt, animal });
     const descriptions = convertDescription({ noticeStartDt, noticeEndDt, orgName, happenPlace });
 
     return {
       ...item,
       uri: images[0],
-      title: convertFullName(fullName),
+      title: name,
       chips,
       description: descriptions
     };
@@ -45,7 +46,7 @@ export const mapToAdopt = (data: AdoptDataDto) => {
 
   return {
     ...data,
-    title: convertFullName(fullName),
+    title: convertFullName(fullName).name,
     age: formatAge(age) ?? '',
     gender: convertGenderLabel(gender),
     weight: formatWeight(weight),
@@ -60,9 +61,16 @@ type ChipLabelParams = {
   age: AdoptDataDto['age'];
   chipType?: AdoptChipTypeDto;
   noticeEndDt?: AdoptDataDto['noticeEndDt'];
+  animal?: string | null;
 };
-const convertChipLabel = ({ neuterYn, weight, gender, age, chipType, noticeEndDt }: ChipLabelParams) => {
+const convertChipLabel = ({ neuterYn, weight, gender, age, chipType, noticeEndDt, animal }: ChipLabelParams) => {
   const chips: { id: string; value: string; sort: number; variant?: ChipVariant }[] = [];
+
+  if (animal) {
+    const animalVariant: ChipVariant = animal === '강아지' ? 'dog' : animal === '고양이' ? 'cat' : 'etc';
+    const animalLabel = animalVariant === 'etc' ? '기타' : animal;
+    chips.push({ id: 'ANIMAL', value: animalLabel, sort: 0, variant: animalVariant });
+  }
 
   const filterChip = chipType ? CHIP_TYPE_MAP[chipType] : undefined;
   if (filterChip && chipType !== 'NEAR_DEADLINE') {
@@ -140,8 +148,13 @@ const convertDescription = ({ noticeStartDt, noticeEndDt, orgName, happenPlace, 
   ];
 };
 
-const convertFullName = (fullName: AdoptDataDto['fullName']) => {
-  return fullName.replace('[개]', '[강아지]');
+const convertFullName = (fullName: AdoptDataDto['fullName']): { animal: string | null; name: string } => {
+  const replaced = fullName.replace('[개]', '[강아지]');
+  const match = replaced.match(/^\[(.+?)\]\s*(.*)$/);
+  if (match) {
+    return { animal: match[1], name: match[2].trim() || match[1] };
+  }
+  return { animal: null, name: replaced };
 };
 
 const calcDday = (noticeEndDt: string): string | null => {

@@ -31,7 +31,6 @@ export const ShelterCard = ({ data, size = 'full', onPress, onPressFavorite }: S
 
   return (
     <Container size={size}>
-      {/* 카드 전체 클릭은 Pressable, 하트는 형제 Pressable 로 분리 — 부모/자식 onPress 충돌 방지 */}
       <Pressable onPress={() => onPress(id)}>
         <YStack px={16} py={18} gap={8}>
           <Text

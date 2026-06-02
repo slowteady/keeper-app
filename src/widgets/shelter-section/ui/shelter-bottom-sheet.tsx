@@ -25,7 +25,6 @@ export const ShelterBottomSheet = ({
   const snapPoints = useMemo(() => ['12%', '45%', '90%'], []);
   const count = shelters?.length ?? 0;
 
-  // 마커 선택 → 해당 카드로 스크롤 (마커 → 카드 동기화)
   useEffect(() => {
     if (!selectedShelterId || !shelters?.length) return;
     const index = shelters.findIndex((item) => item.id === selectedShelterId);

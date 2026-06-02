@@ -5,7 +5,6 @@ import { useLocation } from '@/shared/model';
 
 const DEFAULT_DISTANCE = 7;
 
-// 홈 "근처 보호소" 섹션 — 현위치 반경 list. 지도·거리카운트는 보호소 탭(useShelterViewport)으로 이관됨.
 export const useHomeShelter = () => {
   const { userLocation, isGranted } = useLocation();
 

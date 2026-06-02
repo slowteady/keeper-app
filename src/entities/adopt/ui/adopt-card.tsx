@@ -281,6 +281,15 @@ const ChipItem = styled(View, {
       },
       default: {
         backgroundColor: '$backgroundDefault'
+      },
+      dog: {
+        backgroundColor: '$dogLightest'
+      },
+      cat: {
+        backgroundColor: '$catLightest'
+      },
+      etc: {
+        backgroundColor: '$etcLightest'
       }
     }
   } as const
@@ -303,6 +312,15 @@ const ChipText = styled(Text, {
       },
       default: {
         color: '$black600'
+      },
+      dog: {
+        color: '$dogMain'
+      },
+      cat: {
+        color: '$catMain'
+      },
+      etc: {
+        color: '$etcMain'
       }
     }
   } as const
@@ -317,7 +335,10 @@ const OverlayBadge = styled(View, {
       error: { backgroundColor: '$errorMain' },
       success: { backgroundColor: '$successMain' },
       notice: { backgroundColor: '$noticeMain' },
-      default: { backgroundColor: '$black700' }
+      default: { backgroundColor: '$black700' },
+      dog: { backgroundColor: '$dogMain' },
+      cat: { backgroundColor: '$catMain' },
+      etc: { backgroundColor: '$etcMain' }
     }
   } as const
 });
@@ -337,8 +358,8 @@ const styles = StyleSheet.create({
   },
   favoriteButton: {
     position: 'absolute',
-    top: 10,
-    right: 10,
+    top: 6,
+    right: 8,
     width: 28,
     height: 28,
     borderRadius: 14,

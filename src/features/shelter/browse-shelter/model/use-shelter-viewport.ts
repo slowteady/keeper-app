@@ -28,7 +28,6 @@ export const useShelterViewport = () => {
     enabled: !!bounds && isMapReady
   });
 
-  // 지도 idle(debounce) 시 viewport 갱신. 선택/시트 상태는 유지(NN/g — 배경 갱신, 리셋 금지).
   const handleRefetch = useCallback((params?: CameraParams) => {
     if (!params?.region) return;
     setBounds(calcMapBounds(params.region));
@@ -50,7 +49,6 @@ export const useShelterViewport = () => {
     }
   }, [userLocation]);
 
-  // 검색 = 지도 위치 이동. 이동 후 onCameraChanged → viewport 자동 로드가 결과를 채운다.
   const moveTo = useCallback((coord: { latitude: number; longitude: number }) => {
     mapRef.current?.animateCameraTo({ ...coord, zoom: DEFAULT_ZOOM });
   }, []);

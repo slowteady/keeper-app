@@ -35,7 +35,7 @@ describe('mapToAdoptList', () => {
     expect(result[0]).toHaveProperty('title');
     expect(result[0]).toHaveProperty('chips');
     expect(result[0]).toHaveProperty('description');
-    expect(result[0].title).toBe('[강아지] 믹스견');
+    expect(result[0].title).toBe('믹스견');
   });
 
   it('includes neuter chip when neuterYn is Y', () => {
@@ -129,16 +129,18 @@ describe('mapToAdoptList — edge cases', () => {
     expect(ddayChip).toBeUndefined();
   });
 
-  it('converts [개] to [강아지] in fullName', () => {
+  it('[개] prefix 를 분리해 title 은 이름만, ANIMAL 칩은 강아지', () => {
     const data = { ...mockAdoptData, fullName: '[개] 포메라니안' };
     const result = mapToAdoptList([data]);
-    expect(result[0].title).toBe('[강아지] 포메라니안');
+    expect(result[0].title).toBe('포메라니안');
+    expect(result[0].chips.find((c: { id: string }) => c.id === 'ANIMAL')?.value).toBe('강아지');
   });
 
-  it('does not convert [고양이] in fullName', () => {
+  it('[고양이] prefix 를 분리해 title 은 이름만, ANIMAL 칩은 고양이', () => {
     const data = { ...mockAdoptData, fullName: '[고양이] 코리안숏헤어' };
     const result = mapToAdoptList([data]);
-    expect(result[0].title).toBe('[고양이] 코리안숏헤어');
+    expect(result[0].title).toBe('코리안숏헤어');
+    expect(result[0].chips.find((c: { id: string }) => c.id === 'ANIMAL')?.value).toBe('고양이');
   });
 });
 
@@ -146,7 +148,7 @@ describe('mapToAdopt', () => {
   it('transforms single adopt data with formatted fields', () => {
     const result = mapToAdopt(mockAdoptData);
 
-    expect(result.title).toBe('[강아지] 믹스견');
+    expect(result.title).toBe('믹스견');
     expect(result.gender).toBe('남아');
     expect(result.age).toBe('2023년생');
     expect(result.weight).toBe('5.2kg');

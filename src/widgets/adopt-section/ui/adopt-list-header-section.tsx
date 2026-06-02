@@ -26,7 +26,7 @@ export const AdoptListHeaderSection = ({
     <>
       <TitleContainer mb={24}>
         <Text fontSize={32} lineHeight={34} fontWeight="500" color="$black900">
-          전체공고
+          입양공고
         </Text>
         <View mt={12}>
           <Dropdown data={ADOPT_OPTIONS.FILTER} value={filterValue} onChange={(value) => onChangeFilter(value.id)} />

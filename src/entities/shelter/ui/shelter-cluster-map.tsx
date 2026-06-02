@@ -44,8 +44,6 @@ const Map = forwardRef<NaverMapViewRef, ShelterClusterMapProps>(
       [data, selectedMarkerId]
     );
 
-    // viewport 자동 로드 — Gesture(패닝)/Developer(animateCameraTo, 검색 이동) 처리.
-    // Location(자동 추적)만 제외 — 최초 마운트/추적 시 불필요한 fetch 방지.
     const handleCameraChanged = useDebounceFunc((params: CameraParams) => {
       if (params.reason === 'Location') return;
       onRefetch(params);

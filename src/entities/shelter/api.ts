@@ -78,7 +78,6 @@ export const shelterQueries = {
       queryFn: () => getShelters(params)
     }),
 
-  // viewport(지도 영역) 조회 — 보호소 탭. ['shelters'] prefix 유지로 찜 낙관 업데이트 자동 적용.
   within: (params: ShelterWithinParamsDto) =>
     queryOptions({
       queryKey: [...shelterQueries.all(), 'within', params] as const,
