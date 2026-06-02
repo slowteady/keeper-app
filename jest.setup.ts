@@ -1,3 +1,5 @@
+jest.mock('react-native-worklets', () => require('react-native-worklets/src/mock'));
+
 jest.mock('expo-router', () => ({
   useLocalSearchParams: jest.fn(() => ({})),
   useRouter: jest.fn(() => ({
