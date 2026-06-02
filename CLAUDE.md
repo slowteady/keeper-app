@@ -11,4 +11,4 @@
 
 ## 백엔드 참조
 
-- `keeper-api/` (NestJS) — DTO, 타입, 마이그레이션 확인용
+- `keeper-backend/` — DTO, 타입, 마이그레이션 확인용 (v2 스택 전환 진행 중)
