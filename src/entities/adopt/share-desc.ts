@@ -1,8 +1,13 @@
 import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
 
 import { ADOPT_STATUS_INFO, isAdoptEnded } from './constant';
 import { convertGenderLabel, formatAge } from './mapper';
 import { AdoptDataDto } from './schema';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const ADOPT_FALLBACK_DESC = '새 가족을 기다리는 아이예요';
 
@@ -26,10 +31,10 @@ export const buildAdoptShareDesc = (adopt: AdoptDataDto): string => {
 
 const formatDDay = (noticeEndDt?: string): string => {
   if (!noticeEndDt) return '';
-  const today = dayjs().startOf('day');
-  const end = dayjs(noticeEndDt).startOf('day');
-  if (!end.isValid()) return '';
-  const diff = end.diff(today, 'day');
+  const parsed = dayjs.utc(noticeEndDt);
+  if (!parsed.isValid()) return '';
+  const today = dayjs().tz('Asia/Seoul').format('YYYY-MM-DD');
+  const diff = dayjs(parsed.format('YYYY-MM-DD')).diff(dayjs(today), 'day');
   if (diff < 0) return '';
   if (diff === 0) return '공고마감 D-Day';
   return `공고마감 D-${diff}`;

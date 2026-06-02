@@ -9,6 +9,8 @@ import { Skeleton } from '@/shared/ui';
 import { NoImage } from '@/shared/ui/fallback/no-image';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
+const STATUS_CHIP_IDS = ['NEAR_DEADLINE', 'NEW', 'DDAY'];
+
 export type AdoptCardProps = {
   uri: string;
   title: string;
@@ -40,7 +42,8 @@ export const AdoptCard = ({
 }: AdoptCardProps) => {
   const { black500 } = useTheme();
   const size = horizontal ? 'medium' : 'small';
-  const hasChips = chips && chips.length > 0;
+  const statusChips = chips?.filter((c) => STATUS_CHIP_IDS.includes(c.id)) ?? [];
+  const attributeChips = chips?.filter((c) => !STATUS_CHIP_IDS.includes(c.id)) ?? [];
 
   const handlePressFavorite = useCallback(() => {
     if (!onPressFavorite) return;
@@ -54,6 +57,7 @@ export const AdoptCard = ({
         <ImageContainer size={size}>
           <ImageWithSkeleton key={uri} uri={uri} />
           {status && <StatusBadge status={status} />}
+          {statusChips.length > 0 && <StatusChipOverlay data={statusChips} />}
         </ImageContainer>
 
         <Title size={size}>{title}</Title>
@@ -62,7 +66,7 @@ export const AdoptCard = ({
           <AdoptCardDescriptions data={description} size={size} />
         </DescriptionContainer>
 
-        {hasChips && <AdoptCardChips data={chips} />}
+        {attributeChips.length > 0 && <AdoptCardChips data={attributeChips} />}
       </Pressable>
 
       {onPressFavorite && (
@@ -135,13 +139,25 @@ type AdoptCardChipsProps = {
 };
 const AdoptCardChips = ({ data }: AdoptCardChipsProps) => {
   return (
-    <ChipContainer gap={4}>
+    <ChipContainer>
       {data.map(({ id, value, variant = 'default' }, idx) => (
         <ChipItem key={`${id}-${idx}`} variant={variant}>
           <ChipText variant={variant}>{value}</ChipText>
         </ChipItem>
       ))}
     </ChipContainer>
+  );
+};
+
+const StatusChipOverlay = ({ data }: AdoptCardChipsProps) => {
+  return (
+    <XStack position="absolute" t={8} l={8} gap={4}>
+      {data.map(({ id, value, variant = 'default' }, idx) => (
+        <OverlayBadge key={`${id}-${idx}`} variant={variant}>
+          <OverlayBadgeText>{value}</OverlayBadgeText>
+        </OverlayBadge>
+      ))}
+    </XStack>
   );
 };
 
@@ -243,8 +259,8 @@ const DescriptionValue = styled(Text, {
 });
 
 const ChipContainer = styled(XStack, {
-  rowGap: 8,
-  flexWrap: 'wrap'
+  gap: 4,
+  overflow: 'hidden'
 });
 
 const ChipItem = styled(View, {
@@ -290,6 +306,27 @@ const ChipText = styled(Text, {
       }
     }
   } as const
+});
+
+const OverlayBadge = styled(View, {
+  px: 8,
+  py: 4,
+  rounded: 999,
+  variants: {
+    variant: {
+      error: { backgroundColor: '$errorMain' },
+      success: { backgroundColor: '$successMain' },
+      notice: { backgroundColor: '$noticeMain' },
+      default: { backgroundColor: '$black700' }
+    }
+  } as const
+});
+
+const OverlayBadgeText = styled(Text, {
+  fontWeight: 600,
+  fontSize: 11,
+  lineHeight: 13,
+  color: '#fff'
 });
 
 const styles = StyleSheet.create({

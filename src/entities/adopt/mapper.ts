@@ -1,6 +1,11 @@
 import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
 
 import { AdoptChipTypeDto, AdoptDataDto } from './schema';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 export type AdoptItem = ReturnType<typeof mapToAdoptList>[number];
 
@@ -60,7 +65,7 @@ const convertChipLabel = ({ neuterYn, weight, gender, age, chipType, noticeEndDt
   const chips: { id: string; value: string; sort: number; variant?: ChipVariant }[] = [];
 
   const filterChip = chipType ? CHIP_TYPE_MAP[chipType] : undefined;
-  if (filterChip) {
+  if (filterChip && chipType !== 'NEAR_DEADLINE') {
     chips.push(filterChip);
   }
 
@@ -140,9 +145,9 @@ const convertFullName = (fullName: AdoptDataDto['fullName']) => {
 };
 
 const calcDday = (noticeEndDt: string): string | null => {
-  const today = dayjs().startOf('day');
-  const endDate = dayjs(noticeEndDt).startOf('day');
-  const diff = endDate.diff(today, 'day');
+  const today = dayjs().tz('Asia/Seoul').format('YYYY-MM-DD');
+  const end = dayjs.utc(noticeEndDt).format('YYYY-MM-DD');
+  const diff = dayjs(end).diff(dayjs(today), 'day');
 
   if (diff < 0) return null;
   if (diff === 0) return 'D-Day';

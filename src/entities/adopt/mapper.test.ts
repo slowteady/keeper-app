@@ -46,13 +46,12 @@ describe('mapToAdoptList', () => {
     expect(neuterChip?.value).toBe('중성화');
   });
 
-  it('includes filter chip for NEAR_DEADLINE', () => {
+  it('NEAR_DEADLINE 은 공고마감임박 라벨 칩을 넣지 않는다 (D-day 로 대체)', () => {
     const data = { ...mockAdoptData, chipType: 'NEAR_DEADLINE' as const };
     const result = mapToAdoptList([data]);
     const filterChip = result[0].chips.find((c: { id: string }) => c.id === 'NEAR_DEADLINE');
 
-    expect(filterChip).toBeDefined();
-    expect(filterChip?.value).toBe('공고마감임박');
+    expect(filterChip).toBeUndefined();
   });
 });
 
