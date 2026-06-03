@@ -12,7 +12,7 @@ export const ShelterSearchBar = ({ onPress }: ShelterSearchBarProps) => {
       <Bar>
         <Search size={18} color="$black500" />
         <Text fontSize={15} lineHeight={18} fontWeight="400" color="$black500">
-          지역·주소로 검색
+          지역·주소·장소로 검색
         </Text>
       </Bar>
     </Pressable>

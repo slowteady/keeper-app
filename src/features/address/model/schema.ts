@@ -60,6 +60,34 @@ export const KakaoGeocodeResponseSchema = z.object({
 });
 export type KakaoGeocodeResponseDto = z.infer<typeof KakaoGeocodeResponseSchema>;
 
+/**
+ * 카카오 키워드 장소 문서
+ */
+export const KakaoKeywordDocumentSchema = z.object({
+  id: z.string(),
+  place_name: z.string(),
+  category_name: z.string(),
+  category_group_code: z.string(),
+  category_group_name: z.string(),
+  phone: z.string(),
+  address_name: z.string(),
+  road_address_name: z.string(),
+  x: z.string(),
+  y: z.string(),
+  place_url: z.string(),
+  distance: z.string()
+});
+export type KakaoKeywordDocumentDto = z.infer<typeof KakaoKeywordDocumentSchema>;
+
+/**
+ * Kakao 키워드 장소 검색 응답
+ */
+export const KakaoKeywordResponseSchema = z.object({
+  documents: z.array(KakaoKeywordDocumentSchema),
+  meta: KakaoGeocodeMetaSchema
+});
+export type KakaoKeywordResponseDto = z.infer<typeof KakaoKeywordResponseSchema>;
+
 export const KakaoGeocodeOptionalParamsSchema = z.object({
   /** 페이지 번호 (1~45, 기본 1) */
   page: z.number().optional(),

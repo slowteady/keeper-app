@@ -1,4 +1,4 @@
-import { Camera, CameraChangeReason, Region } from '@mj-studio/react-native-naver-map';
+import { Camera, CameraChangeReason } from '@mj-studio/react-native-naver-map';
 import { UseMutationOptions } from '@tanstack/react-query';
 
 export type ApiResponse<T> = {
@@ -16,5 +16,4 @@ export type UseMutationCustomOptions<
 
 export type CameraParams = Camera & {
   reason?: CameraChangeReason;
-  region?: Region;
 };

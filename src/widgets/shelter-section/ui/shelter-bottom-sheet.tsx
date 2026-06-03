@@ -1,7 +1,8 @@
 import BottomSheet, { BottomSheetFlatList, type BottomSheetFlatListMethods } from '@gorhom/bottom-sheet';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { ListRenderItemInfo } from 'react-native';
-import { styled, Text, View, YStack } from 'tamagui';
+import { SharedValue } from 'react-native-reanimated';
+import { styled, Text, useTheme, View, YStack } from 'tamagui';
 
 import { ShelterCard, ShelterDto } from '@/entities/shelter';
 import { Skeleton } from '@/shared/ui';
@@ -10,6 +11,9 @@ type ShelterBottomSheetProps = {
   shelters?: ShelterDto[];
   selectedShelterId?: string;
   isLoading: boolean;
+  isViewport: boolean;
+  animatedIndex?: SharedValue<number>;
+  topInset?: number;
   onPressCard: (id: string) => void;
   onPressFavorite: (careRegNo: string, currentlyFavorited: boolean) => void;
 };
@@ -18,12 +22,16 @@ export const ShelterBottomSheet = ({
   shelters,
   selectedShelterId,
   isLoading,
+  isViewport,
+  animatedIndex,
+  topInset,
   onPressCard,
   onPressFavorite
 }: ShelterBottomSheetProps) => {
   const listRef = useRef<BottomSheetFlatListMethods>(null);
   const snapPoints = useMemo(() => ['12%', '45%', '90%'], []);
   const count = shelters?.length ?? 0;
+  const { white800 } = useTheme();
 
   useEffect(() => {
     if (!selectedShelterId || !shelters?.length) return;
@@ -34,17 +42,29 @@ export const ShelterBottomSheet = ({
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<ShelterDto>) => (
       <View px={20} py={5}>
-        <ShelterCard data={item} onPress={onPressCard} onPressFavorite={onPressFavorite} />
+        <ShelterCard
+          data={item}
+          isSelected={item.id === selectedShelterId}
+          onPress={onPressCard}
+          onPressFavorite={onPressFavorite}
+        />
       </View>
     ),
-    [onPressCard, onPressFavorite]
+    [onPressCard, onPressFavorite, selectedShelterId]
   );
 
   return (
-    <BottomSheet index={1} snapPoints={snapPoints} enableDynamicSizing={false}>
+    <BottomSheet
+      index={0}
+      snapPoints={snapPoints}
+      enableDynamicSizing={false}
+      animatedIndex={animatedIndex}
+      topInset={topInset}
+      handleIndicatorStyle={{ width: 48, borderRadius: 30, backgroundColor: white800.val }}
+    >
       <Header>
         <Text fontSize={15} lineHeight={18} fontWeight="600" color="$black900">
-          내 주변 보호소 {count}곳
+          {isViewport ? `이 지역 보호소 ${count}곳` : '내 주변 보호소'}
         </Text>
       </Header>
       <BottomSheetFlatList
@@ -53,7 +73,7 @@ export const ShelterBottomSheet = ({
         keyExtractor={(item: ShelterDto) => item.id}
         renderItem={renderItem}
         onScrollToIndexFailed={() => undefined}
-        ItemSeparatorComponent={() => <View height={10} />}
+        ItemSeparatorComponent={() => <View height={6} />}
         contentContainerStyle={{ paddingBottom: 24 }}
         ListEmptyComponent={<EmptyComponent isLoading={isLoading} />}
         showsVerticalScrollIndicator={false}

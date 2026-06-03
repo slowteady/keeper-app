@@ -11,11 +11,18 @@ import { ShelterDto } from '../schema';
 export type ShelterCardProps = {
   data: ShelterDto;
   size?: 'compact' | 'full';
+  isSelected?: boolean;
   onPress: (id: string) => void;
   onPressFavorite?: (careRegNo: string, currentlyFavorited: boolean) => void;
 };
 
-export const ShelterCard = ({ data, size = 'full', onPress, onPressFavorite }: ShelterCardProps) => {
+export const ShelterCard = ({
+  data,
+  size = 'full',
+  isSelected = false,
+  onPress,
+  onPressFavorite
+}: ShelterCardProps) => {
   const { black500 } = useTheme();
   const { id, name, distance, address, isFavorited = false } = data;
   const hasDistance = typeof distance === 'number' && distance > 0;
@@ -30,7 +37,7 @@ export const ShelterCard = ({ data, size = 'full', onPress, onPressFavorite }: S
   }, [id, isFavorited, onPressFavorite]);
 
   return (
-    <Container size={size}>
+    <Container size={size} borderColor={isSelected ? '$primaryMain' : '$white800'}>
       <Pressable onPress={() => onPress(id)}>
         <YStack px={16} py={18} gap={8}>
           <Text

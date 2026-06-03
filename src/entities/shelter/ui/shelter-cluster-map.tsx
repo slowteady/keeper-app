@@ -1,7 +1,13 @@
-import { NaverMapView, NaverMapViewProps, NaverMapViewRef } from '@mj-studio/react-native-naver-map';
-import { forwardRef, useCallback, useMemo, useState } from 'react';
+import {
+  NaverMapMarkerOverlay,
+  NaverMapView,
+  NaverMapViewProps,
+  NaverMapViewRef
+} from '@mj-studio/react-native-naver-map';
+import { forwardRef, useCallback, useRef, useState } from 'react';
 import { StyleSheet } from 'react-native';
-import { styled, Text, View, YStack } from 'tamagui';
+import Supercluster from 'supercluster';
+import { styled, Text, useTheme, View, YStack } from 'tamagui';
 
 import { CameraParams, useDebounceFunc, usePermission } from '@/shared/model';
 import { Skeleton } from '@/shared/ui';
@@ -10,51 +16,56 @@ import { ShelterDto } from '../schema';
 
 const MARKER = require('@/assets/images/marker.png');
 
+export type ShelterProps = { shelter: ShelterDto };
+export type ClusterPointFeature =
+  | Supercluster.PointFeature<ShelterProps>
+  | Supercluster.ClusterFeature<Supercluster.AnyProps>;
+
+const clusterSymbol = (count: number) =>
+  count >= 100 ? 'highDensityCluster' : count >= 10 ? 'mediumDensityCluster' : 'lowDensityCluster';
+
 export type ShelterClusterMapProps = {
   hasLocation: boolean;
-  data?: ShelterDto[];
-  onRefetch: (params?: CameraParams) => void;
-  onTapMarker?: (data: ShelterDto) => void;
+  userLocation?: { latitude: number; longitude: number };
+  clusters?: ClusterPointFeature[];
   selectedMarkerId?: string;
+  bottomPadding?: number;
+  onCameraChange: (zoom?: number) => void;
+  onTapMarker?: (id: string) => void;
+  onTapCluster?: (clusterId: number, latitude: number, longitude: number) => void;
 } & Omit<NaverMapViewProps, 'onCameraChanged' | 'clusters' | 'onTapClusterLeaf'>;
 
 const Map = forwardRef<NaverMapViewRef, ShelterClusterMapProps>(
-  ({ hasLocation, data, onRefetch, onTapMarker, selectedMarkerId, ...props }, ref) => {
+  (
+    {
+      hasLocation,
+      userLocation,
+      clusters,
+      selectedMarkerId,
+      bottomPadding,
+      onCameraChange,
+      onTapMarker,
+      onTapCluster,
+      ...props
+    },
+    ref
+  ) => {
     const [isMapReady, setIsMapReady] = useState(false);
+    const { primaryMain } = useTheme();
 
-    const clusters = useMemo(
-      () => [
-        {
-          markers: (data ?? []).map((item) => ({
-            identifier: item.id,
-            latitude: item.latitude,
-            longitude: item.longitude,
-            image: MARKER,
-            width: item.id === selectedMarkerId ? 38 : 28,
-            height: item.id === selectedMarkerId ? 42 : 32
-          })),
-          width: 40,
-          height: 40,
-          screenDistance: 70,
-          minZoom: 0,
-          maxZoom: 16,
-          animate: true
+    const isFirstCamera = useRef(true);
+    const debouncedChange = useDebounceFunc((zoom?: number) => onCameraChange(zoom), 300);
+    const handleCameraChanged = useCallback(
+      (params: CameraParams) => {
+        if (params.reason === 'Location') return;
+        if (isFirstCamera.current) {
+          isFirstCamera.current = false;
+          onCameraChange(params.zoom);
+          return;
         }
-      ],
-      [data, selectedMarkerId]
-    );
-
-    const handleCameraChanged = useDebounceFunc((params: CameraParams) => {
-      if (params.reason === 'Location') return;
-      onRefetch(params);
-    }, 600);
-
-    const handleTapLeaf = useCallback(
-      ({ markerIdentifier }: { markerIdentifier: string }) => {
-        const found = data?.find((item) => item.id === markerIdentifier);
-        if (found) onTapMarker?.(found);
+        debouncedChange(params.zoom);
       },
-      [data, onTapMarker]
+      [debouncedChange, onCameraChange]
     );
 
     const onInitializedProp = props.onInitialized;
@@ -71,14 +82,63 @@ const Map = forwardRef<NaverMapViewRef, ShelterClusterMapProps>(
           ref={ref}
           onCameraChanged={handleCameraChanged}
           isExtentBoundedInKorea
-          animationDuration={500}
+          locationOverlay={userLocation ? { isVisible: true, position: userLocation } : undefined}
+          mapPadding={bottomPadding ? { bottom: bottomPadding } : undefined}
+          animationDuration={400}
           style={StyleSheet.absoluteFill}
-          clusters={clusters}
-          onTapClusterLeaf={handleTapLeaf}
-          minZoom={10}
+          minZoom={6}
           {...props}
           onInitialized={handleInitialized}
-        />
+        >
+          {clusters?.map((feature) => {
+            const [longitude, latitude] = feature.geometry.coordinates;
+            if ('cluster' in feature.properties && feature.properties.cluster) {
+              const count = feature.properties.point_count;
+              const clusterId = feature.properties.cluster_id;
+              return (
+                <NaverMapMarkerOverlay
+                  key={`cluster-${clusterId}`}
+                  latitude={latitude}
+                  longitude={longitude}
+                  image={{ symbol: clusterSymbol(count) }}
+                  width={44}
+                  height={44}
+                  anchor={{ x: 0.5, y: 0.5 }}
+                  caption={{
+                    text: String(count),
+                    align: 'Center',
+                    textSize: 14,
+                    color: '#161717',
+                    haloColor: '#FFFFFF'
+                  }}
+                  onTap={() => onTapCluster?.(clusterId, latitude, longitude)}
+                />
+              );
+            }
+            const { shelter } = feature.properties as ShelterProps;
+            const selected = shelter.id === selectedMarkerId;
+            return (
+              <NaverMapMarkerOverlay
+                key={shelter.id}
+                latitude={latitude}
+                longitude={longitude}
+                image={MARKER}
+                width={28}
+                height={32}
+                zIndex={selected ? 100 : 0}
+                anchor={{ x: 0.5, y: 1 }}
+                isHideCollidedCaptions={!selected}
+                caption={{
+                  text: shelter.name,
+                  textSize: 13,
+                  color: selected ? primaryMain.val : '#161717',
+                  haloColor: '#FFFFFF'
+                }}
+                onTap={() => onTapMarker?.(shelter.id)}
+              />
+            );
+          })}
+        </NaverMapView>
         {!isMapReady && (
           <View style={StyleSheet.absoluteFill} pointerEvents="none">
             <Skeleton style={StyleSheet.absoluteFill} />
