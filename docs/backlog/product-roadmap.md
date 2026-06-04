@@ -2,6 +2,8 @@
 
 > 작성일: 2026-05-19 · 기준 브랜치: `feature/community`
 > 본 문서는 코드베이스 인벤토리와 국내외 유기동물 입양 서비스 벤치마킹을 바탕으로 정리된 keeper 의 제품 백로그다. 우선순위(Tier)·의존 관계·컷 사유까지 한 곳에 모은다.
+>
+> **연결 문서**: 이번 출시 스코프·구현 순서 → [release-plan](./release-plan.md) · 정보구조(IA) → [ia-redesign](./ia-redesign.md) · 기능 상세 → `features/`.
 
 ---
 
