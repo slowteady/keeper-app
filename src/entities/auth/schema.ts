@@ -66,7 +66,7 @@ export const WithdrawReasonSchema = z.enum([
 export type WithdrawReason = z.infer<typeof WithdrawReasonSchema>;
 
 export const DeleteMeBodySchema = z.object({
-  reason: WithdrawReasonSchema,
+  reason: WithdrawReasonSchema.optional(),
   reasonDetail: z.string().max(500).optional()
 });
 export type DeleteMeBodyDto = z.infer<typeof DeleteMeBodySchema>;

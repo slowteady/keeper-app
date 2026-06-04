@@ -21,18 +21,16 @@ export const useWithdrawForm = () => {
 
   const selected = selectedIndex !== null ? WITHDRAW_REASONS[selectedIndex] : null;
   const isOther = selected?.code === 'OTHER';
-  const canSubmit = selected !== null && (!isOther || detail.trim().length > 0);
 
   const submit = useCallback(() => {
-    if (!canSubmit || !selected) return;
     const body: DeleteMeBodyDto = {
-      reason: selected.code,
-      reasonDetail: isOther ? detail.trim() : undefined
+      reason: selected?.code,
+      reasonDetail: isOther && detail.trim().length > 0 ? detail.trim() : undefined
     };
     openWithdrawModal(() => {
       void deleteUser(body);
     });
-  }, [canSubmit, selected, isOther, detail, openWithdrawModal, deleteUser]);
+  }, [selected, isOther, detail, openWithdrawModal, deleteUser]);
 
   return useMemo(
     () => ({
@@ -42,9 +40,8 @@ export const useWithdrawForm = () => {
       detail,
       setDetail,
       isOther,
-      canSubmit,
       submit
     }),
-    [selectedIndex, detail, isOther, canSubmit, submit]
+    [selectedIndex, detail, isOther, submit]
   );
 };

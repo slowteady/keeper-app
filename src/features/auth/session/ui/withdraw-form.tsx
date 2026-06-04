@@ -1,15 +1,14 @@
-import { router } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, TextInput } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
-import { styled, Text, View, XStack, YStack } from 'tamagui';
+import { styled, Text, View, YStack } from 'tamagui';
 
 import { Button, StickyFooter } from '@/shared/ui';
 
 import { useWithdrawForm } from '../model/use-withdraw-form';
 
 export const WithdrawForm = () => {
-  const { reasons, selectedIndex, selectReason, detail, setDetail, isOther, canSubmit, submit } = useWithdrawForm();
+  const { reasons, selectedIndex, selectReason, detail, setDetail, isOther, submit } = useWithdrawForm();
   const [footerHeight, setFooterHeight] = useState(0);
 
   return (
@@ -51,14 +50,9 @@ export const WithdrawForm = () => {
       </KeyboardAwareScrollView>
 
       <StickyFooter onLayout={(e) => setFooterHeight(e.nativeEvent.layout.height)}>
-        <XStack gap={8}>
-          <Button style={{ flex: 1 }} color="tertiary" onPress={() => router.back()}>
-            돌아가기
-          </Button>
-          <Button style={{ flex: 1 }} color="destructive" disabled={!canSubmit} onPress={submit}>
-            탈퇴하기
-          </Button>
-        </XStack>
+        <Button color="destructive" onPress={submit}>
+          탈퇴하기
+        </Button>
       </StickyFooter>
     </View>
   );
