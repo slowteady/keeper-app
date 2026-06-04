@@ -6,7 +6,7 @@ import { router } from 'expo-router';
 import { useCallback } from 'react';
 
 import { authQueries, DeleteMeBodyDto, deleteUser, SocialLoginType, UserDto } from '@/entities/auth';
-import { clearUserContext, globalToast, logger, removeToken } from '@/shared/lib';
+import { globalToast, logger, removeToken } from '@/shared/lib';
 import { useModal } from '@/shared/ui';
 
 import { useSetIsAuthenticated } from '../../lib/auth-state';
@@ -56,7 +56,6 @@ export const useDeleteUser = () => {
           await signOutSocialSession(cachedUser.socialType);
         }
         await removeToken();
-        clearUserContext();
         queryClient.removeQueries({ queryKey: authQueries.all() });
 
         setIsAuthenticated(false);

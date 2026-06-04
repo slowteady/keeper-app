@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { agree, AgreeBodyDto, login, SocialLoginType } from '@/entities/auth';
 import { publicApi } from '@/shared/api/instance';
-import { globalToast, setUserContext } from '@/shared/lib';
+import { globalToast } from '@/shared/lib';
 import { ApiResponse } from '@/shared/model';
 import { useBottomSheet } from '@/shared/ui';
 
@@ -62,13 +62,12 @@ export const useLogin = () => {
         };
         const res = await agreeAsync(body);
         const result = res.data.data;
-        const { accessToken, refreshToken, ...user } = result;
+        const { accessToken, refreshToken } = result;
         if (!accessToken || !refreshToken) return;
         dismiss();
         await completeAuth({
           accessToken,
           refreshToken,
-          user: user as Parameters<typeof setUserContext>[0],
           redirect: resolveRedirect(redirect) ?? '/',
           queryClient,
           setIsAuthenticated
@@ -90,7 +89,7 @@ export const useLogin = () => {
         {
           onSuccess: async ({ data: resultData }) => {
             const { data } = resultData;
-            const { isNew, signupToken, accessToken, refreshToken, socialId: _s, isNew: _n, ...user } = data;
+            const { isNew, signupToken, accessToken, refreshToken } = data;
 
             if (isNew) {
               if (!signupToken) {
@@ -105,7 +104,6 @@ export const useLogin = () => {
             await completeAuth({
               accessToken,
               refreshToken,
-              user: user as Parameters<typeof setUserContext>[0],
               redirect: resolveRedirect(redirect) ?? '/',
               queryClient,
               setIsAuthenticated
@@ -126,11 +124,10 @@ export const useLogin = () => {
         const res = await publicApi.post<
           ApiResponse<{ accessToken: string; refreshToken: string; [k: string]: unknown }>
         >(`/auth/dev-login/${userId}`);
-        const { accessToken, refreshToken, socialId: _s, isNew: _n, ...user } = res.data.data;
+        const { accessToken, refreshToken } = res.data.data;
         await completeAuth({
           accessToken,
           refreshToken,
-          user: user as Parameters<typeof setUserContext>[0],
           redirect: resolveRedirect(redirect) ?? '/',
           queryClient,
           setIsAuthenticated

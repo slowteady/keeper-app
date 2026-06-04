@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/react-native';
 import { AxiosError } from 'axios';
 
 export const logger = {
@@ -11,28 +10,12 @@ export const logger = {
   warn: (...args: unknown[]) => {
     if (__DEV__) {
       console.warn(...args);
-    } else {
-      Sentry.addBreadcrumb({
-        message: args.map(String).join(' '),
-        level: 'warning'
-      });
     }
   },
 
   error: (...args: unknown[]) => {
     if (__DEV__) {
       console.error(...args);
-    } else {
-      const error = args[0];
-      if (error instanceof Error) {
-        Sentry.captureException(error, {
-          extra: {
-            additionalData: args.slice(1)
-          }
-        });
-      } else {
-        Sentry.captureMessage(args.map(String).join(' '), 'error');
-      }
     }
   },
 
@@ -45,11 +28,6 @@ export const logger = {
   info: (...args: unknown[]) => {
     if (__DEV__) {
       console.info('[INFO]', ...args);
-    } else {
-      Sentry.addBreadcrumb({
-        message: args.map(String).join(' '),
-        level: 'info'
-      });
     }
   }
 };
