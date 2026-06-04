@@ -6,6 +6,7 @@ import Constants from 'expo-constants';
 const resolveBaseUrl = () => {
   const configured = process.env.EXPO_PUBLIC_API_URL;
   if (!__DEV__ || !configured) return configured;
+  if (configured.startsWith('https://')) return configured;
   const hostUri = Constants.expoConfig?.hostUri ?? Constants.expoGoConfig?.debuggerHost;
   if (!hostUri) return configured;
   const host = hostUri.split(':')[0];

@@ -5,7 +5,6 @@ export type SocialLoginType = z.infer<typeof SocialLoginTypeSchema>;
 
 export const UserSchema = z.object({
   id: z.string(),
-  name: z.string(),
   nickname: z.string(),
   email: z.string(),
   image: z.string(),
@@ -17,7 +16,6 @@ export type UserDto = z.infer<typeof UserSchema>;
 // signupToken 응답(isNew=true) 도 같은 endpoint 라 id/nickname/accessToken/refreshToken 이 없을 수 있음.
 export const LoginUserPartialSchema = z.object({
   id: z.string().optional(),
-  name: z.string(),
   nickname: z.string().nullable().optional(),
   email: z.string(),
   image: z.string(),
