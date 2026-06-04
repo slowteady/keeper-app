@@ -163,7 +163,6 @@ const RootLayout = () => {
                     <Stack screenOptions={{ headerShown: false }}>
                       <Stack.Screen name="community-write" options={{ presentation: 'fullScreenModal' }} />
                       <Stack.Screen name="community-qna-write" options={{ presentation: 'fullScreenModal' }} />
-                      <Stack.Screen name="withdraw" options={{ presentation: 'fullScreenModal' }} />
                     </Stack>
                     <ShareGuard />
                     <Toaster
