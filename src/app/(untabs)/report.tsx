@@ -1,4 +1,5 @@
 import { router, useLocalSearchParams } from 'expo-router';
+import { useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { styled, Text, View, YStack } from 'tamagui';
 
@@ -12,10 +13,11 @@ const Page = () => {
 
   const { report, isPending } = useReport();
 
-  if (!targetId) {
-    router.back();
-    return null;
-  }
+  useEffect(() => {
+    if (!targetId) router.back();
+  }, [targetId]);
+
+  if (!targetId) return null;
 
   const handleSelect = async (reason: ReportReason) => {
     if (isPending) return;
