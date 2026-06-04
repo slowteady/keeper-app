@@ -1,6 +1,6 @@
 # 서비스 운영 인프라 — 점검 모드 / 강제 업데이트 / 운영자 알림
 
-> 상태: 백로그 (기능 구현 완료 후 착수). 단 **강제 업데이트 버전 게이트(2번)는 한번 배포된 앱엔 소급 적용 불가**하므로, 출시 전/이번 업데이트 빌드에 포함 여부를 우선 검토.
+> 상태: **강제 업데이트 게이트(2번) = 이번 출시 P0 착수 확정** (2026-06-04 딥리서치 완료 → 자체 백엔드 구현). 소급 적용 불가라 이번 빌드 필수. **점검 모드(1번)는 같은 부트스트랩에 통합.** 운영자 알림+admin(3번)은 P1.
 
 ## 배경
 
@@ -20,7 +20,7 @@
 - ⚠️ **안티패턴**: 앱 심사 기간에 백엔드를 끄면 placeholder/크래시로 간주되어 **Apple Guideline 2.1 리젝**. 심사 중엔 백엔드를 켜둘 것.
 - 소규모도 "안전망"으로 권장. 단 keeper는 EC2→Railway 전환이 무중단 가능(공공데이터 재적재 + 신규기능)이라 **실사용 빈도는 낮은 비상용**.
 
-**작업(예정)**: 서버 점검 플래그(config/status) → 앱 부트스트랩 시 조회 → 점검 화면 컴포넌트.
+**작업(예정)**: **통합 부트스트랩(2번)에 흡수** — 같은 `GET /bootstrap` 응답의 `maintenance` 플래그로 점검 화면 분기 (우선순위 maintenance > hard > soft > none).
 
 **출처**: Firebase Remote Config, Apple App Store Review Guidelines 2.1.
 
@@ -40,6 +40,17 @@
 **작업(예정)**: 서버 min-version API + 앱 부트스트랩 버전 비교 + soft/hard 안내 화면 + 스토어 이동. **이번 업데이트 빌드에 게이트만이라도 심는 것 권장.**
 
 **출처**: Expo EAS Update docs(`runtime-versions`, `download-updates`), Android Play Core In-App Updates, appsidekit.
+
+**결정 확정 (2026-06-04, 딥리서치 24/25 검증)** — [[project_force_update_gate]]
+
+- **자체 백엔드** (`app_config` 단일 테이블). Firebase Remote Config 미도입 — 관리 파이프라인 분산·네이티브 의존성(`@react-native-firebase`) 회피. keeper는 자체 백엔드 이미 있고 운영자=개발자라 Firebase 강점(백엔드 부재/퍼센트 롤아웃/비개발자 GUI) 미해당.
+- **통합 부트스트랩** `GET /bootstrap`(public): 점검+버전 한 응답. 우선순위 maintenance > hard > soft > none.
+- **서버 판정**: 클라가 platform+version 전송 → 서버가 semver 비교해 `updateType`('none'|'soft'|'hard') + storeUrl 내려줌. 클라는 렌더만 → 정책 변경이 서버 배포만으로 끝(앱 재배포 X).
+- **fail-open**: API 도달 불가/오프라인 시 통과(가용성). 의도적 차단은 점검 모드만.
+- **순수 JS DIY**: expo-application(`nativeApplicationVersion`, app config `version` 기준) + `semver`(포맷검증 필수) + 자체 update-wall 화면 + Linking 스토어 이동. in-app-update 라이브러리 미사용(스토어 최신버전 체크라 자체 min-version 판정과 충돌 + 네이티브 의존성). iOS는 네이티브 강제업데이트 API 부재라 어차피 자체 게이트.
+- 클라 UX: hard=닫기 불가(단 force-quit 금지, Apple 심사), soft=닫기 가능+빈도제한(하루 1회, secure-store `lastPromptedAt`). 스토어 딥링크 iOS `itms-apps://` / Android `market://`(https 폴백).
+- **admin 수정**: 출시엔 Prisma Studio 또는 보호된 `PATCH /admin/app-config`. admin UI는 P1(신고 백오피스와 함께).
+- ⭐ **소급 불가** → 게이트는 이번 출시 빌드에 반드시. 게이트 없는 첫 릴리스는 영원히 강제 불가.
 
 ---
 
