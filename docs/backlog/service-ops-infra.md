@@ -64,7 +64,7 @@
 - 이벤트 발생(신고 등) → 서버가 **admin role 유저들의 토큰으로 Expo Push 전송** → admin 폰 keeper 앱에 알림.
 - admin 관리 화면 자체는 웹으로 두고, **알림 수신만 admin 계정으로 로그인한 keeper 앱**이 담당(채널 분리 패턴).
 
-**작업(예정)**: 유저 `role` + push token 저장 → 신고/공지 이벤트 훅 → admin 대상 Expo Push. admin 웹 페이지(공지 관리, 신고 처리)는 별도.
+**작업(예정)**: 유저 `role` + push token 저장 → 신고/공지 이벤트 훅 → admin 대상 Expo Push. admin 웹 페이지(공지 관리, 신고 처리) 기능 목록은 [[admin-console]] 로 통합.
 
 **출처**: Expo Push Notifications. (Slack/Discord incoming webhook은 대안이나 "내 앱으로 받기" 요구로 미채택.)
 
