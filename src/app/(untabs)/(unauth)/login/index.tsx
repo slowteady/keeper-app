@@ -3,7 +3,7 @@ import { styled, Text, View, YStack } from 'tamagui';
 
 import { SocialLoginButton, useLogin } from '@/features/auth';
 import { SocialAuthResult } from '@/shared/api';
-import { Apple, Google, Kakao, Naver } from '@/shared/ui/icons/etc';
+import { Apple, Google, Kakao } from '@/shared/ui/icons/etc';
 
 const Page = () => {
   const { login, devLogin, isGoogleAvailable, isAppleAvailable } = useLogin();
@@ -29,14 +29,6 @@ const Page = () => {
           label="Kakao로 로그인"
           icon={Kakao}
           bg="#FEE500"
-          onResponse={handleResponse}
-        />
-        <SocialLoginButton
-          provider="naver"
-          label="Naver로 로그인"
-          icon={Naver}
-          bg="#03C75A"
-          textColor="$white900"
           onResponse={handleResponse}
         />
         {isGoogleAvailable && (

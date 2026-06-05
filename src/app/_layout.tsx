@@ -5,7 +5,6 @@ import 'react-native-reanimated';
 import { useReactQueryDevTools } from '@dev-plugins/react-query';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { initializeKakaoSDK } from '@react-native-kakao/core';
-import NaverLogin from '@react-native-seoul/naver-login';
 import { MutationCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { extend } from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
@@ -95,13 +94,6 @@ const RootLayout = () => {
       });
 
       initializeKakaoSDK(process.env.EXPO_PUBLIC_KAKAO_NATIVE_KEY || '');
-      NaverLogin.initialize({
-        appName: process.env.EXPO_PUBLIC_NAVER_APP_NAME || '',
-        consumerKey: process.env.EXPO_PUBLIC_NAVER_CLIENT_ID || '',
-        consumerSecret: process.env.EXPO_PUBLIC_NAVER_CLIENT_SECRET || '',
-        serviceUrlSchemeIOS: process.env.EXPO_PUBLIC_NAVER_URL_SCHEME || '',
-        disableNaverAppAuthIOS: true
-      });
       GoogleSignin.configure({
         webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID || '',
         iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID || ''

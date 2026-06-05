@@ -127,10 +127,6 @@ jest.mock('@react-native-kakao/core', () => ({
   initializeKakaoSDK: jest.fn()
 }));
 
-jest.mock('@react-native-seoul/naver-login', () => ({
-  default: { initialize: jest.fn(), login: jest.fn() }
-}));
-
 jest.mock('@mj-studio/react-native-naver-map', () => ({}));
 
 jest.mock('react-native-gesture-handler', () => ({

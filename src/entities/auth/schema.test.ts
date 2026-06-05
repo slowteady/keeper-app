@@ -34,8 +34,8 @@ describe('UserSchema', () => {
 });
 
 describe('SocialLoginTypeSchema', () => {
-  it('GOOGLE/APPLE/KAKAO/NAVER 만 통과', () => {
-    ['GOOGLE', 'APPLE', 'KAKAO', 'NAVER'].forEach((v) => {
+  it('GOOGLE/APPLE/KAKAO 만 통과', () => {
+    ['GOOGLE', 'APPLE', 'KAKAO'].forEach((v) => {
       expect(() => SocialLoginTypeSchema.parse(v)).not.toThrow();
     });
   });

@@ -1,9 +1,8 @@
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { login as kakaoLogin } from '@react-native-kakao/user';
-import NaverLogin from '@react-native-seoul/naver-login';
 import { AppleAuthenticationScope, signInAsync } from 'expo-apple-authentication';
 
-type SocialLoginType = 'GOOGLE' | 'APPLE' | 'KAKAO' | 'NAVER';
+type SocialLoginType = 'GOOGLE' | 'APPLE' | 'KAKAO';
 
 export type SocialAuthResult = {
   token: string;
@@ -27,13 +26,6 @@ export const socialAuth: Record<Lowercase<SocialLoginType>, SocialAuthProvider> 
       const result = await GoogleSignin.signIn();
       if (!result.data?.idToken) throw new Error('Google login failed');
       return { token: result.data.idToken, socialType: 'GOOGLE' };
-    }
-  },
-  naver: {
-    login: async () => {
-      const result = await NaverLogin.login();
-      if (!result.successResponse) throw new Error('Naver login failed');
-      return { token: result.successResponse.accessToken, socialType: 'NAVER' };
     }
   },
   apple: {

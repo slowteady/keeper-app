@@ -1,6 +1,5 @@
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { logout as kakaoLogout } from '@react-native-kakao/user';
-import NaverLogin from '@react-native-seoul/naver-login';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { useCallback } from 'react';
@@ -19,9 +18,6 @@ const signOutSocialSession = async (socialType: SocialLoginType) => {
     switch (socialType) {
       case 'KAKAO':
         await kakaoLogout();
-        break;
-      case 'NAVER':
-        await NaverLogin.logout();
         break;
       case 'GOOGLE':
         await GoogleSignin.signOut();

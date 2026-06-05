@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const SocialLoginTypeSchema = z.enum(['GOOGLE', 'APPLE', 'KAKAO', 'NAVER']);
+export const SocialLoginTypeSchema = z.enum(['GOOGLE', 'APPLE', 'KAKAO']);
 export type SocialLoginType = z.infer<typeof SocialLoginTypeSchema>;
 
 export const UserSchema = z.object({
