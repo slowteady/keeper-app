@@ -1,7 +1,7 @@
-import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { Dimensions, Pressable } from 'react-native';
 import { styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
 
+import { toggleHaptic } from '@/shared/lib';
 import { Carousel } from '@/shared/ui';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 import { Share as ShareIcon } from '@/shared/ui/icons/outline';
@@ -26,7 +26,7 @@ export const AdoptDetailOverviewSection = ({
   const { black500 } = useTheme();
   const handlePressFavorite = () => {
     if (!onPressFavorite) return;
-    impactAsync(isFavorited ? ImpactFeedbackStyle.Light : ImpactFeedbackStyle.Medium).catch(() => undefined);
+    toggleHaptic(isFavorited);
     onPressFavorite();
   };
   return (

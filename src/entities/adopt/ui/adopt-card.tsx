@@ -1,10 +1,10 @@
-import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { Image } from 'expo-image';
 import { useCallback, useState } from 'react';
 import { Dimensions, Pressable, StyleSheet } from 'react-native';
-import { styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
+import { styled, Text, View, XStack, YStack } from 'tamagui';
 
 import { ADOPT_STATUS_INFO, AdoptStatusDto, ChipVariant, isAdoptEnded } from '@/entities/adopt';
+import { toggleHaptic } from '@/shared/lib';
 import { Skeleton } from '@/shared/ui';
 import { NoImage } from '@/shared/ui/fallback/no-image';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
@@ -40,14 +40,13 @@ export const AdoptCard = ({
   onPressFavorite,
   status
 }: AdoptCardProps) => {
-  const { black500 } = useTheme();
   const size = horizontal ? 'medium' : 'small';
   const statusChips = chips?.filter((c) => STATUS_CHIP_IDS.includes(c.id)) ?? [];
   const attributeChips = chips?.filter((c) => !STATUS_CHIP_IDS.includes(c.id)) ?? [];
 
   const handlePressFavorite = useCallback(() => {
     if (!onPressFavorite) return;
-    impactAsync(isFavorited ? ImpactFeedbackStyle.Light : ImpactFeedbackStyle.Medium).catch(() => undefined);
+    toggleHaptic(isFavorited);
     onPressFavorite();
   }, [isFavorited, onPressFavorite]);
 

@@ -1,10 +1,10 @@
 import { NaverMapViewRef } from '@mj-studio/react-native-naver-map';
-import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { RefObject } from 'react';
 import { Pressable } from 'react-native';
 import { styled, Text, useTheme, XStack } from 'tamagui';
 
 import { ShelterDto, ShelterMap } from '@/entities/shelter';
+import { toggleHaptic } from '@/shared/lib';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 import { Share as ShareIcon } from '@/shared/ui/icons/outline';
 
@@ -29,7 +29,7 @@ export const ShelterDetailOverviewSection = ({
   const { black500 } = useTheme();
   const handlePressFavorite = () => {
     if (!onPressFavorite) return;
-    impactAsync(isFavorited ? ImpactFeedbackStyle.Light : ImpactFeedbackStyle.Medium).catch(() => undefined);
+    toggleHaptic(isFavorited);
     onPressFavorite();
   };
 

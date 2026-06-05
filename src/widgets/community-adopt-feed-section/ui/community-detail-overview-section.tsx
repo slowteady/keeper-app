@@ -1,5 +1,4 @@
 import { MoreVertical } from '@tamagui/lucide-icons';
-import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { Pressable } from 'react-native';
 import { styled, Text, useTheme, XStack } from 'tamagui';
 
@@ -9,6 +8,7 @@ import {
   CommunityAdoptCardTags,
   CommunityAdoptCardTitle
 } from '@/entities/community';
+import { toggleHaptic } from '@/shared/lib';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 import { Share as ShareIcon } from '@/shared/ui/icons/outline';
 
@@ -42,7 +42,7 @@ export const CommunityDetailOverviewSection = ({
 }: CommunityDetailOverviewSectionProps) => {
   const { black500 } = useTheme();
   const handlePressLike = () => {
-    impactAsync(isLiked ? ImpactFeedbackStyle.Light : ImpactFeedbackStyle.Medium).catch(() => undefined);
+    toggleHaptic(isLiked);
     onPressLike();
   };
 

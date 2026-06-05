@@ -1,11 +1,10 @@
 import { useIsMutating, useMutation, useQueryClient } from '@tanstack/react-query';
-import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { useCallback } from 'react';
 
 import { adoptApi, adoptQueries } from '@/entities/adopt';
 import { shelterQueries } from '@/entities/shelter';
 import { useLoginRequired } from '@/features/auth';
-import { globalToast } from '@/shared/lib';
+import { globalToast, toggleHaptic } from '@/shared/lib';
 
 import { patchFavoritedCache } from '../lib/patch-favorited-cache';
 
@@ -88,7 +87,7 @@ export const useFavoriteAbandonment = () => {
 
   const toggleFavoriteAbandonment = useCallback(
     (desertionNo: string, currentlyFavorited: boolean) => {
-      impactAsync(currentlyFavorited ? ImpactFeedbackStyle.Light : ImpactFeedbackStyle.Medium).catch(() => undefined);
+      toggleHaptic(currentlyFavorited);
       requireLogin(() => mutation.mutate({ desertionNo, currentlyFavorited }));
     },
     [mutation, requireLogin]

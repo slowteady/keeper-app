@@ -1,10 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { useCallback } from 'react';
 
 import { commentApi, commentQueries, type HelpfulToggleResponseDto } from '@/entities/comment';
 import { useLoginRequired } from '@/features/auth';
-import { globalToast } from '@/shared/lib';
+import { globalToast, toggleHaptic } from '@/shared/lib';
 
 import { patchHelpfulCache } from '../lib/patch-helpful-cache';
 
@@ -72,9 +71,7 @@ export const useCommentHelpful = () => {
 
   const toggleHelpful = useCallback(
     (vars: ToggleVars) => {
-      impactAsync(vars.currentlyHelpful ? ImpactFeedbackStyle.Light : ImpactFeedbackStyle.Medium).catch(
-        () => undefined
-      );
+      toggleHaptic(vars.currentlyHelpful);
       requireLogin(() => mutation.mutate(vars));
     },
     [mutation, requireLogin]

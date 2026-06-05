@@ -1,10 +1,9 @@
 import { useIsMutating, useMutation, useQueryClient } from '@tanstack/react-query';
-import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { useCallback } from 'react';
 
 import { communityApi, communityQueries } from '@/entities/community';
 import { useLoginRequired } from '@/features/auth';
-import { globalToast } from '@/shared/lib';
+import { globalToast, toggleHaptic } from '@/shared/lib';
 
 import { patchLikeCache } from '../lib/patch-like-cache';
 
@@ -68,7 +67,7 @@ export const useLikePost = () => {
 
   const toggleLikePost = useCallback(
     (postId: string, currentlyLiked: boolean) => {
-      impactAsync(currentlyLiked ? ImpactFeedbackStyle.Light : ImpactFeedbackStyle.Medium).catch(() => undefined);
+      toggleHaptic(currentlyLiked);
       requireLogin(() => mutation.mutate({ postId, currentlyLiked }));
     },
     [mutation, requireLogin]

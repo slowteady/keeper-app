@@ -1,9 +1,9 @@
-import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { Image } from 'expo-image';
 import { useCallback } from 'react';
 import { Pressable } from 'react-native';
 import { styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
 
+import { toggleHaptic } from '@/shared/lib';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
 import { CommunityQnaListItemDto } from '../schema';
@@ -22,7 +22,7 @@ export const CommunityQnaCard = ({ data, categoryLabel, onPress, onPressLike }: 
 
   const handlePressLike = useCallback(() => {
     if (!onPressLike) return;
-    impactAsync(data.isLiked ? ImpactFeedbackStyle.Light : ImpactFeedbackStyle.Medium).catch(() => undefined);
+    toggleHaptic(data.isLiked);
     onPressLike(data.id, data.isLiked);
   }, [data.id, data.isLiked, onPressLike]);
 

@@ -1,9 +1,9 @@
-import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { memo, useCallback, useMemo } from 'react';
 import { Dimensions } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { styled, Text, TextProps, useTheme, View, ViewProps, XStack, XStackProps } from 'tamagui';
 
+import { toggleHaptic } from '@/shared/lib';
 import { Carousel, Chip, NoImage } from '@/shared/ui';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
@@ -40,8 +40,7 @@ const CommunityAdoptCardComponent = ({
   const { black500 } = useTheme();
   const handlePressCard = useCallback(() => onPressCard(id), [onPressCard, id]);
   const handlePressLike = useCallback(() => {
-    // 좋아요 토글 시 햅틱 — 추가는 Medium, 해제는 Light
-    impactAsync(isLiked ? ImpactFeedbackStyle.Light : ImpactFeedbackStyle.Medium).catch(() => undefined);
+    toggleHaptic(isLiked);
     onPressLike(id, isLiked);
   }, [id, isLiked, onPressLike]);
 

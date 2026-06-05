@@ -1,9 +1,9 @@
-import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { useCallback, useMemo } from 'react';
 import { Pressable } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
 
+import { toggleHaptic } from '@/shared/lib';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
 import { formatShelterHours } from '../lib';
@@ -33,7 +33,7 @@ export const ShelterCard = ({
 
   const handlePressFavorite = useCallback(() => {
     if (!onPressFavorite) return;
-    impactAsync(isFavorited ? ImpactFeedbackStyle.Light : ImpactFeedbackStyle.Medium).catch(() => undefined);
+    toggleHaptic(isFavorited);
     onPressFavorite(id, isFavorited);
   }, [id, isFavorited, onPressFavorite]);
 

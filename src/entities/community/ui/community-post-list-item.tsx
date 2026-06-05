@@ -1,10 +1,9 @@
-import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { Image } from 'expo-image';
 import { useCallback } from 'react';
 import { Pressable } from 'react-native';
 import { styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
 
-import { formatTimeAgo } from '@/shared/lib';
+import { formatTimeAgo, toggleHaptic } from '@/shared/lib';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
 import { CommunityAdoptListDto } from '../schema';
@@ -22,7 +21,7 @@ export const CommunityPostListItem = ({ data, categoryLabel, onPress, onPressLik
 
   const handlePressLike = useCallback(() => {
     if (!onPressLike) return;
-    impactAsync(data.isLiked ? ImpactFeedbackStyle.Light : ImpactFeedbackStyle.Medium).catch(() => undefined);
+    toggleHaptic(data.isLiked);
     onPressLike(data.id, data.isLiked);
   }, [data.id, data.isLiked, onPressLike]);
 
