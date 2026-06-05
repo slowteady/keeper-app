@@ -1,0 +1,134 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Route } from 'expo-router';
+import * as WebBrowser from 'expo-web-browser';
+import { useAtom } from 'jotai';
+import { useCallback } from 'react';
+import { Platform } from 'react-native';
+
+import { agree, AgreeBodyDto, login } from '@/entities/auth';
+import { SocialAuthResult } from '@/shared/api';
+import { publicApi } from '@/shared/api/instance';
+import { globalToast } from '@/shared/lib';
+import { ApiResponse } from '@/shared/model';
+import { useBottomSheet } from '@/shared/ui';
+
+import { COMMUNITY_POLICY_VERSION, PRIVACY_VERSION, TERMS_VERSION } from '../../lib/agreement';
+import { useSetIsAuthenticated } from '../../lib/auth-state';
+import { completeAuth } from '../../lib/complete-auth';
+import type { AgreementState } from '../../signup/ui';
+import { INITIAL_LOGIN_SHEET, loginSheetAtom } from './login-sheet-atom';
+
+const SHARE_URL = process.env.EXPO_PUBLIC_SHARE_URL;
+
+export type PolicyType = 'terms' | 'privacy' | 'community';
+
+// 소셜 구성: iOS=카카오·애플 / 안드=카카오·구글
+const isAppleAvailable = Platform.OS === 'ios';
+const isGoogleAvailable = Platform.OS === 'android';
+
+export const useLoginSheet = (redirect?: Route) => {
+  const [sheet, setSheet] = useAtom(loginSheetAtom);
+  const queryClient = useQueryClient();
+  const setIsAuthenticated = useSetIsAuthenticated();
+  const { dismiss } = useBottomSheet();
+
+  const { mutate: loginMutate, isPending: isLoginPending } = useMutation({ mutationFn: login });
+  const { mutateAsync: agreeAsync, isPending: isAgreePending } = useMutation({ mutationFn: agree });
+
+  const finish = useCallback(
+    async (accessToken: string, refreshToken: string) => {
+      dismiss();
+      setSheet(INITIAL_LOGIN_SHEET);
+      await completeAuth({ accessToken, refreshToken, redirect: redirect ?? '/', queryClient, setIsAuthenticated });
+    },
+    [dismiss, setSheet, redirect, queryClient, setIsAuthenticated]
+  );
+
+  const onSocialResponse = useCallback(
+    ({ socialType, token }: SocialAuthResult) => {
+      loginMutate(
+        { socialType, token },
+        {
+          onSuccess: async ({ data: resultData }) => {
+            const { isNew, signupToken, accessToken, refreshToken } = resultData.data;
+
+            if (isNew) {
+              if (!signupToken) {
+                globalToast('회원가입 진행에 실패했어요', 'fail');
+                return;
+              }
+              setSheet((prev) => ({ ...prev, step: 'agreement', signupToken }));
+              return;
+            }
+
+            if (!accessToken || !refreshToken) return;
+            await finish(accessToken, refreshToken);
+          },
+          onError: () => globalToast('로그인에 실패했어요 다시 시도해주세요', 'fail')
+        }
+      );
+    },
+    [loginMutate, setSheet, finish]
+  );
+
+  const devLogin = useCallback(
+    async (userId: number) => {
+      try {
+        const res = await publicApi.post<ApiResponse<{ accessToken: string; refreshToken: string }>>(
+          `/auth/dev-login/${userId}`
+        );
+        const { accessToken, refreshToken } = res.data.data;
+        await finish(accessToken, refreshToken);
+      } catch {
+        globalToast('개발자 로그인 실패 — 백엔드 NODE_ENV=local 확인', 'fail');
+      }
+    },
+    [finish]
+  );
+
+  const setAgreements = useCallback(
+    (next: AgreementState) => setSheet((prev) => ({ ...prev, agreements: next })),
+    [setSheet]
+  );
+
+  const { age14, terms, privacy, community } = sheet.agreements;
+  const allRequiredAgreed = age14 && terms && privacy && community;
+
+  const submitAgreement = useCallback(async () => {
+    if (!allRequiredAgreed || !sheet.signupToken) return;
+
+    const body: AgreeBodyDto = {
+      signupToken: sheet.signupToken,
+      agreedTermsVersion: TERMS_VERSION,
+      agreedPrivacyVersion: PRIVACY_VERSION,
+      agreedCommunityPolicyVersion: COMMUNITY_POLICY_VERSION,
+      agreedAt: new Date().toISOString()
+    };
+
+    const res = await agreeAsync(body);
+    const { accessToken, refreshToken } = res.data.data;
+    if (!accessToken || !refreshToken) return;
+    await finish(accessToken, refreshToken);
+  }, [allRequiredAgreed, sheet.signupToken, agreeAsync, finish]);
+
+  const viewPolicy = useCallback((type: PolicyType) => {
+    WebBrowser.openBrowserAsync(`${SHARE_URL}/policy/${type}`);
+  }, []);
+
+  const back = useCallback(() => setSheet((prev) => ({ ...prev, step: 'social' })), [setSheet]);
+
+  return {
+    step: sheet.step,
+    isAppleAvailable,
+    isGoogleAvailable,
+    onSocialResponse,
+    devLogin,
+    agreements: sheet.agreements,
+    setAgreements,
+    allRequiredAgreed,
+    submitAgreement,
+    viewPolicy,
+    back,
+    isPending: isLoginPending || isAgreePending
+  };
+};
