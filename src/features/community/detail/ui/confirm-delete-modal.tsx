@@ -97,13 +97,13 @@ const styles = StyleSheet.create({
 const ButtonText = styled(Text, {
   fontSize: 14,
   fontWeight: '600',
-  lineHeight: 14,
+  lineHeight: 18,
   color: '#222423'
 });
 
 const PrimaryButtonText = styled(Text, {
   fontSize: 14,
   fontWeight: '600',
-  lineHeight: 14,
+  lineHeight: 18,
   color: '#FFFFFF'
 });

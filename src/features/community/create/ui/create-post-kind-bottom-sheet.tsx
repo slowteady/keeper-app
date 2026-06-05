@@ -258,13 +258,13 @@ const styles = StyleSheet.create({
 const ChipText = styled(Text, {
   fontSize: 13,
   fontWeight: '600',
-  lineHeight: 13
+  lineHeight: 17
 });
 
 const RowText = styled(Text, {
   fontSize: 16,
   fontWeight: '500',
-  lineHeight: 16
+  lineHeight: 20
 });
 
 const SectionTitle = styled(Text, {
