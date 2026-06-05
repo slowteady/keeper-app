@@ -15,7 +15,7 @@ import Animated, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { styled, View } from 'tamagui';
 
-import { ShelterCard, ShelterClusterMap, ShelterDto } from '@/entities/shelter';
+import { DistancePermissionPrompt, ShelterCard, ShelterClusterMap, ShelterDto } from '@/entities/shelter';
 import { useFavoriteShelter } from '@/features/favorite-shelter';
 import { ShelterSearchBar, useShelterViewport } from '@/features/shelter';
 import { RouteErrorBoundary } from '@/shared/ui';
@@ -93,6 +93,14 @@ const Page = () => {
     },
     [selectShelter]
   );
+
+  if (!isGranted) {
+    return (
+      <Container items="center" justify="center" px={32}>
+        <DistancePermissionPrompt variant="fullscreen" />
+      </Container>
+    );
+  }
 
   return (
     <Container>
