@@ -16,6 +16,7 @@ type SignupAgreementProps = {
   onViewTerms?: () => void;
   onViewPrivacy?: () => void;
   onViewCommunity?: () => void;
+  marginTop?: number;
 };
 
 export const SignupAgreement = ({
@@ -23,7 +24,8 @@ export const SignupAgreement = ({
   onChange,
   onViewTerms,
   onViewPrivacy,
-  onViewCommunity
+  onViewCommunity,
+  marginTop = 32
 }: SignupAgreementProps) => {
   const handleViewTerms = onViewTerms ?? (() => router.push('/terms'));
   const handleViewPrivacy = onViewPrivacy ?? (() => router.push('/privacy'));
@@ -41,7 +43,7 @@ export const SignupAgreement = ({
   const setCommunity = (next: boolean) => onChange({ ...value, community: next });
 
   return (
-    <YStack gap={16} mt={32}>
+    <YStack gap={16} mt={marginTop}>
       <SummaryBox onPress={() => toggleAll(!allChecked)}>
         <Checkbox variant="circle" size={24} checked={allChecked} onChange={toggleAll} />
         <SummaryLabel>약관에 모두 동의합니다</SummaryLabel>
@@ -100,7 +102,7 @@ const SummaryBox = styled(XStack, {
 
 const SummaryLabel = styled(Text, {
   fontSize: 16,
-  lineHeight: 16,
+  lineHeight: 22,
   fontWeight: '600',
   color: '$black800',
   letterSpacing: -0.32
@@ -120,7 +122,7 @@ const ItemLeft = styled(XStack, {
 
 const ItemLabel = styled(Text, {
   fontSize: 15,
-  lineHeight: 15,
+  lineHeight: 20,
   fontWeight: '500',
   color: '$black500',
   letterSpacing: -0.15

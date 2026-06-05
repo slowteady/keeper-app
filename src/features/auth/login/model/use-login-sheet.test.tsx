@@ -15,12 +15,12 @@ jest.mock('@/entities/auth', () => ({
   agree: jest.fn()
 }));
 jest.mock('../../lib/complete-auth', () => ({ completeAuth: jest.fn().mockResolvedValue(undefined) }));
-jest.mock('expo-web-browser', () => ({ openBrowserAsync: jest.fn() }));
+jest.mock('expo-web-browser', () => ({ openBrowserAsync: jest.fn().mockResolvedValue(undefined) }));
 
 const mockDismiss = jest.fn();
 jest.mock('@/shared/ui', () => ({
   ...jest.requireActual('@/shared/ui'),
-  useBottomSheet: () => ({ dismiss: mockDismiss, present: jest.fn() })
+  useBottomSheet: () => ({ dismiss: mockDismiss, present: jest.fn(), ref: { current: { present: jest.fn() } } })
 }));
 
 const mockLogin = login as jest.Mock;
@@ -96,11 +96,14 @@ describe('useLoginSheet', () => {
     expect(result.current.allRequiredAgreed).toBe(true);
   });
 
-  it('viewPolicy → 정책 URL 을 expo-web-browser 로 오픈', () => {
+  it('viewPolicy → 시트 닫고 정책 URL 오픈', async () => {
     const { result } = renderUseLoginSheet();
 
-    act(() => result.current.viewPolicy('terms'));
+    await act(async () => {
+      await result.current.viewPolicy('terms');
+    });
 
+    expect(mockDismiss).toHaveBeenCalled();
     expect(WebBrowser.openBrowserAsync).toHaveBeenCalledWith(expect.stringContaining('/policy/terms'));
   });
 

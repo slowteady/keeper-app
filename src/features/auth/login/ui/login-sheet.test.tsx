@@ -5,13 +5,12 @@ import { createWrapper } from '@/test/create-wrapper';
 import { LoginSheetView } from './login-sheet';
 
 describe('LoginSheetView', () => {
-  it('카카오 버튼과 약관 고지를 렌더한다', () => {
+  it('카카오 버튼을 렌더한다', () => {
     render(<LoginSheetView onResponse={jest.fn()} isGoogleAvailable={false} isAppleAvailable={false} />, {
       wrapper: createWrapper()
     });
 
     expect(screen.getByText('카카오로 계속하기')).toBeTruthy();
-    expect(screen.getByText(/이용약관/)).toBeTruthy();
   });
 
   it('isGoogleAvailable·isAppleAvailable 가 true면 구글·애플 버튼도 렌더한다', () => {

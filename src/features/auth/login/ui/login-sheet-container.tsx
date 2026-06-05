@@ -1,10 +1,13 @@
-import { Route } from 'expo-router';
+import { useEffect } from 'react';
+
+import { useBottomSheet } from '@/shared/ui';
 
 import { useLoginSheet } from '../model/use-login-sheet';
+import { AgreementFooter } from './agreement-footer';
 import { AgreementStep } from './agreement-step';
 import { LoginSheetView } from './login-sheet';
 
-export const LoginSheet = ({ redirect }: { redirect?: Route }) => {
+export const LoginSheet = () => {
   const {
     step,
     isGoogleAvailable,
@@ -17,19 +20,23 @@ export const LoginSheet = ({ redirect }: { redirect?: Route }) => {
     submitAgreement,
     viewPolicy,
     isPending
-  } = useLoginSheet(redirect);
+  } = useLoginSheet();
+
+  const { setFooter } = useBottomSheet();
+
+  useEffect(() => {
+    if (step !== 'agreement') {
+      setFooter(undefined);
+      return;
+    }
+    setFooter(() => (
+      <AgreementFooter allRequiredAgreed={allRequiredAgreed} onSubmit={submitAgreement} isPending={isPending} />
+    ));
+    return () => setFooter(undefined);
+  }, [step, allRequiredAgreed, isPending, submitAgreement, setFooter]);
 
   if (step === 'agreement') {
-    return (
-      <AgreementStep
-        agreements={agreements}
-        onChange={setAgreements}
-        allRequiredAgreed={allRequiredAgreed}
-        onSubmit={submitAgreement}
-        onViewPolicy={viewPolicy}
-        isPending={isPending}
-      />
-    );
+    return <AgreementStep agreements={agreements} onChange={setAgreements} onViewPolicy={viewPolicy} />;
   }
 
   return (

@@ -1,3 +1,4 @@
+import LottieView from 'lottie-react-native';
 import { Pressable } from 'react-native';
 import { Text, YStack } from 'tamagui';
 
@@ -19,7 +20,14 @@ export const LoginSheetView = ({
   isAppleAvailable,
   onDevLogin
 }: LoginSheetViewProps) => (
-  <YStack px={20} pt={8} pb={12} gap={20}>
+  <YStack pt={8} pb={12} gap={20}>
+    <LottieView
+      source={require('@/assets/animations/puppy.json')}
+      autoPlay
+      loop
+      style={{ width: 132, height: 132, alignSelf: 'center' }}
+    />
+
     <YStack gap={8}>
       <Text fontSize={22} lineHeight={28} fontWeight="600" color="$black900">
         keeper와 함께할까요?
@@ -72,9 +80,5 @@ export const LoginSheetView = ({
         </Pressable>
       )}
     </YStack>
-
-    <Text fontSize={12} lineHeight={16} color="$black400" style={{ textAlign: 'center' }}>
-      계속하면 이용약관 및 개인정보처리방침에 동의하게 돼요
-    </Text>
   </YStack>
 );

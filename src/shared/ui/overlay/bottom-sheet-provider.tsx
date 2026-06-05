@@ -124,7 +124,6 @@ export const BottomSheetProvider = ({ children }: { children: React.ReactNode })
           onDismiss={() => {
             onDismissRef.current?.();
             onDismissRef.current = undefined;
-            setContent(null);
             setFooterRender(undefined);
             setMandatory(false);
             setDisableViewWrap(false);

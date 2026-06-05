@@ -23,7 +23,7 @@ import { TamaguiProvider } from 'tamagui';
 import { getRefresh } from '@/entities/auth';
 import { AppGateScreen, useAppGate } from '@/features/app-gate';
 import { authApi, setupInterceptor } from '@/shared/api';
-import { getCurrentPathname, globalToast, logger, setCurrentPathname, throwToErrorBoundary } from '@/shared/lib';
+import { globalToast, logger, setCurrentPathname, throwToErrorBoundary } from '@/shared/lib';
 import { BottomSheetProvider, ModalProvider, ShareGuard } from '@/shared/ui';
 
 import { config } from '../../tamagui.config';
@@ -89,7 +89,6 @@ const RootLayout = () => {
         onRefreshFailed: () => {
           queryClient.removeQueries({ queryKey: ['auth'] });
           globalToast('세션이 만료되었어요 다시 로그인해주세요', 'fail');
-          router.replace({ pathname: '/login', params: { redirect: getCurrentPathname() } });
         }
       });
 

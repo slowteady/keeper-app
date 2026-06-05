@@ -1,15 +1,11 @@
-import { router, usePathname } from 'expo-router';
 import { useCallback } from 'react';
 
-import { useModal } from '@/shared/ui';
-
-import { LoginRequiredModal } from '../ui/login-required-modal';
+import { useOpenLoginSheet } from '../../login/model/use-open-login-sheet';
 import { useCurrentUser } from './use-current-user';
 
 export const useLoginRequired = () => {
   const { user } = useCurrentUser();
-  const { open, close } = useModal();
-  const pathname = usePathname();
+  const openLoginSheet = useOpenLoginSheet();
   const isLoggedIn = !!user;
 
   const requireLogin = useCallback(
@@ -19,22 +15,10 @@ export const useLoginRequired = () => {
         return true;
       }
 
-      return new Promise((resolve) => {
-        const handlePressLogin = () => {
-          close();
-          router.push({ pathname: '/login', params: { redirect: pathname } });
-          resolve(true);
-        };
-
-        const handlePressCancel = () => {
-          close();
-          resolve(false);
-        };
-
-        open(<LoginRequiredModal onLogin={handlePressLogin} onCancel={handlePressCancel} />);
-      });
+      openLoginSheet();
+      return false;
     },
-    [close, isLoggedIn, open, pathname]
+    [isLoggedIn, openLoginSheet]
   );
 
   return { requireLogin, isLoggedIn };

@@ -1,5 +1,4 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Route } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import { useAtom } from 'jotai';
 import { useCallback } from 'react';
@@ -22,15 +21,14 @@ const SHARE_URL = process.env.EXPO_PUBLIC_SHARE_URL;
 
 export type PolicyType = 'terms' | 'privacy' | 'community';
 
-// 소셜 구성: iOS=카카오·애플 / 안드=카카오·구글
 const isAppleAvailable = Platform.OS === 'ios';
 const isGoogleAvailable = Platform.OS === 'android';
 
-export const useLoginSheet = (redirect?: Route) => {
+export const useLoginSheet = () => {
   const [sheet, setSheet] = useAtom(loginSheetAtom);
   const queryClient = useQueryClient();
   const setIsAuthenticated = useSetIsAuthenticated();
-  const { dismiss } = useBottomSheet();
+  const { dismiss, ref } = useBottomSheet();
 
   const { mutate: loginMutate, isPending: isLoginPending } = useMutation({ mutationFn: login });
   const { mutateAsync: agreeAsync, isPending: isAgreePending } = useMutation({ mutationFn: agree });
@@ -39,9 +37,9 @@ export const useLoginSheet = (redirect?: Route) => {
     async (accessToken: string, refreshToken: string) => {
       dismiss();
       setSheet(INITIAL_LOGIN_SHEET);
-      await completeAuth({ accessToken, refreshToken, redirect: redirect ?? '/', queryClient, setIsAuthenticated });
+      await completeAuth({ accessToken, refreshToken, queryClient, setIsAuthenticated });
     },
-    [dismiss, setSheet, redirect, queryClient, setIsAuthenticated]
+    [dismiss, setSheet, queryClient, setIsAuthenticated]
   );
 
   const onSocialResponse = useCallback(
@@ -111,9 +109,14 @@ export const useLoginSheet = (redirect?: Route) => {
     await finish(accessToken, refreshToken);
   }, [allRequiredAgreed, sheet.signupToken, agreeAsync, finish]);
 
-  const viewPolicy = useCallback((type: PolicyType) => {
-    WebBrowser.openBrowserAsync(`${SHARE_URL}/policy/${type}`);
-  }, []);
+  const viewPolicy = useCallback(
+    async (type: PolicyType) => {
+      dismiss();
+      await WebBrowser.openBrowserAsync(`${SHARE_URL}/policy/${type}`);
+      ref.current?.present();
+    },
+    [dismiss, ref]
+  );
 
   const back = useCallback(() => setSheet((prev) => ({ ...prev, step: 'social' })), [setSheet]);
 

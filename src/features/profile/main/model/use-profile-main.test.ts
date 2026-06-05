@@ -7,8 +7,10 @@ import { useReview, useShare } from '@/shared/model';
 import { SHARE_DESC, SHARE_TITLE } from './constants';
 import { useProfileMain } from './use-profile-main';
 
+const mockOpenLoginSheet = jest.fn();
 jest.mock('@/features/auth', () => ({
-  useCurrentUser: jest.fn()
+  useCurrentUser: jest.fn(),
+  useOpenLoginSheet: () => mockOpenLoginSheet
 }));
 jest.mock('@/shared/model', () => ({
   useShare: jest.fn(),
@@ -62,20 +64,12 @@ describe('useProfileMain', () => {
     expect(share).toHaveBeenCalledWith({ title: SHARE_TITLE, desc: SHARE_DESC });
   });
 
-  it('goLogin() 기본 redirect 는 "/profile"', () => {
+  it('goLogin() → 로그인 시트 오픈', () => {
     const { result } = setupHook();
 
     result.current.goLogin();
 
-    expect(mockedPush).toHaveBeenCalledWith({ pathname: '/login', params: { redirect: '/profile' } });
-  });
-
-  it('goLogin(path) 로 redirect 지정 가능', () => {
-    const { result } = setupHook();
-
-    result.current.goLogin('/profile/like');
-
-    expect(mockedPush).toHaveBeenCalledWith({ pathname: '/login', params: { redirect: '/profile/like' } });
+    expect(mockOpenLoginSheet).toHaveBeenCalledWith();
   });
 
   it('goAccount 호출 시 /profile/account 로 push', () => {
@@ -86,15 +80,12 @@ describe('useProfileMain', () => {
     expect(mockedPush).toHaveBeenCalledWith({ pathname: '/profile/account' });
   });
 
-  it('goMenu(requireAuth=true) + 미로그인이면 login redirect 로 push', () => {
+  it('goMenu(requireAuth=true) + 미로그인이면 로그인 시트 오픈', () => {
     const { result } = setupHook({ user: null });
 
     result.current.goMenu('like', true);
 
-    expect(mockedPush).toHaveBeenCalledWith({
-      pathname: '/login',
-      params: { redirect: '/profile/like' }
-    });
+    expect(mockOpenLoginSheet).toHaveBeenCalledWith();
   });
 
   it('goMenu(requireAuth=true) + 로그인 상태면 해당 path 로 push', () => {
