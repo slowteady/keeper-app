@@ -6,13 +6,9 @@ import {
   BottomSheetView
 } from '@gorhom/bottom-sheet';
 import { forwardRef, useCallback } from 'react';
-import { Platform } from 'react-native';
-import { FullWindowOverlay } from 'react-native-screens';
 import { useTheme } from 'tamagui';
 
-// iOS fullScreenModal native vc 위에 BottomSheet portal 표시 — @gorhom/bottom-sheet #832
-const SheetContainer =
-  Platform.OS === 'ios' ? (FullWindowOverlay as React.ComponentType<{ children?: React.ReactNode }>) : undefined;
+import { SHEET_BACKGROUND_STYLE, SheetContainer, sheetHandleIndicatorStyle } from './sheet-base';
 
 export interface BottomSheetLayoutProps extends Omit<BottomSheetModalProps, 'children'> {
   children?: React.ReactNode;
@@ -32,10 +28,9 @@ export const BottomSheet = forwardRef<BottomSheetModal, BottomSheetLayoutProps>(
       ref={ref}
       index={0}
       enableDynamicSizing={false}
-      animationConfigs={{ duration: 100 }}
-      handleIndicatorStyle={{ width: 48, borderRadius: 30, backgroundColor: white800.val }}
+      handleIndicatorStyle={sheetHandleIndicatorStyle(white800.val)}
       style={{ paddingHorizontal: 24 }}
-      backgroundStyle={{ borderTopLeftRadius: 20, borderTopRightRadius: 20 }}
+      backgroundStyle={SHEET_BACKGROUND_STYLE}
       backdropComponent={renderBackdrop}
       containerComponent={SheetContainer}
       {...rest}

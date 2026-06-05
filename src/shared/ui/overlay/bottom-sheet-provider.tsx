@@ -8,14 +8,9 @@ import {
   BottomSheetView
 } from '@gorhom/bottom-sheet';
 import { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
-import { Platform } from 'react-native';
-import { FullWindowOverlay } from 'react-native-screens';
 import { useTheme } from 'tamagui';
 
-// iOS fullScreenModal native vc 위에 BottomSheet portal 표시 — react-native-screens 의 FullWindowOverlay 로 감싸야 함
-// (@gorhom/bottom-sheet types.d.ts 권장 BP, issue #832)
-const SheetContainer =
-  Platform.OS === 'ios' ? (FullWindowOverlay as React.ComponentType<{ children?: React.ReactNode }>) : undefined;
+import { SHEET_BACKGROUND_STYLE, SheetContainer, sheetHandleIndicatorStyle } from './sheet-base';
 
 export type SheetFooterRender = (props: BottomSheetFooterProps) => React.ReactNode;
 
@@ -108,7 +103,6 @@ export const BottomSheetProvider = ({ children }: { children: React.ReactNode })
         <BottomSheetModal
           ref={sheetRef}
           snapPoints={snapPoints}
-          animationConfigs={{ duration: 100 }}
           backdropComponent={renderBackdrop}
           containerComponent={SheetContainer}
           footerComponent={
@@ -124,13 +118,8 @@ export const BottomSheetProvider = ({ children }: { children: React.ReactNode })
           enablePanDownToClose={!mandatory}
           enableHandlePanningGesture={!mandatory}
           handleComponent={mandatory ? null : undefined}
-          handleIndicatorStyle={{
-            width: 48,
-            borderRadius: 30,
-            backgroundColor: white800.val,
-            marginBottom: 12
-          }}
-          backgroundStyle={{ borderTopLeftRadius: 20, borderTopRightRadius: 20 }}
+          handleIndicatorStyle={{ ...sheetHandleIndicatorStyle(white800.val), marginBottom: 12 }}
+          backgroundStyle={SHEET_BACKGROUND_STYLE}
           style={{ paddingHorizontal: 24 }}
           onDismiss={() => {
             onDismissRef.current?.();

@@ -1,6 +1,7 @@
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { Pressable } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
 
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
@@ -36,9 +37,19 @@ export const ShelterCard = ({
     onPressFavorite(id, isFavorited);
   }, [id, isFavorited, onPressFavorite]);
 
+  // 탭만 디테일 이동 — 드래그(>10px)는 무시해 스와이프 오작동 방지
+  const tapGesture = useMemo(
+    () =>
+      Gesture.Tap()
+        .maxDistance(10)
+        .runOnJS(true)
+        .onEnd(() => onPress(id)),
+    [id, onPress]
+  );
+
   return (
     <Container size={size} borderColor={isSelected ? '$primaryMain' : '$white800'}>
-      <Pressable onPress={() => onPress(id)}>
+      <GestureDetector gesture={tapGesture}>
         <YStack px={16} py={18} gap={8}>
           <Text
             numberOfLines={1}
@@ -80,7 +91,7 @@ export const ShelterCard = ({
             <View height={15} />
           )}
         </YStack>
-      </Pressable>
+      </GestureDetector>
 
       <Pressable
         style={{ position: 'absolute', top: 16, right: 16 }}
