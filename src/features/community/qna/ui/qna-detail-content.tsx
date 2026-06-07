@@ -1,6 +1,7 @@
 import { useScrollToTop } from '@react-navigation/native';
 import { FlashList, FlashListRef, ListRenderItemInfo } from '@shopify/flash-list';
 import { useQueryClient } from '@tanstack/react-query';
+import { router } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, RefreshControl } from 'react-native';
 import { KeyboardStickyView } from 'react-native-keyboard-controller';
@@ -26,10 +27,18 @@ import { useCommunityCommentList } from '../../detail/model/use-community-commen
 import { useCreateComment } from '../../detail/model/use-create-comment';
 import { usePostMenu } from '../../detail/model/use-post-menu';
 import { useUpdateComment } from '../../detail/model/use-update-comment';
+import { FocusedCommentContext } from '../../detail/ui/focused-comment-context';
 import { RepliesSection } from '../../detail/ui/replies-section';
 import { useCommunityQnaDetailFeed } from '../model/use-community-qna-detail-feed';
 
-export const QnaDetailContent = ({ id, scrollToComments }: { id: string; scrollToComments: boolean }) => {
+type QnaDetailContentProps = {
+  id: string;
+  scrollToComments: boolean;
+  commentId?: string;
+  editCommentId?: string;
+};
+
+export const QnaDetailContent = ({ id, scrollToComments, commentId, editCommentId }: QnaDetailContentProps) => {
   const [inputHeight, setInputHeight] = useState(0);
 
   const { bottom } = useLayout();
@@ -166,6 +175,9 @@ export const QnaDetailContent = ({ id, scrollToComments }: { id: string; scrollT
       ? { label: `@${replyTarget!.nickname}에게 답글 작성 중`, onCancel: handleCancelReply }
       : undefined;
   const submitLabel = isEditing ? '수정' : '등록';
+  const showAllComments = useCallback(() => {
+    router.replace({ pathname: '/(untabs)/community/[id]', params: { id } });
+  }, [id]);
 
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<CommentDto>) => {
@@ -197,13 +209,13 @@ export const QnaDetailContent = ({ id, scrollToComments }: { id: string; scrollT
   return (
     <ContentWrap>
       <FlashList
-        data={commentList}
+        data={commentId ? [] : commentList}
         keyExtractor={(item, i) => `${item.id}-${i}`}
         renderItem={renderItem}
         ref={scrollRef}
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
-        onEndReached={fetchNextPage}
+        onEndReached={commentId ? undefined : fetchNextPage}
         onEndReachedThreshold={0.5}
         ListFooterComponent={
           isFetchingNextPage ? (
@@ -231,11 +243,21 @@ export const QnaDetailContent = ({ id, scrollToComments }: { id: string; scrollT
               </>
             )}
 
-            <CommentListHeader
-              commentCount={qna?.counts?.comment ?? 0}
-              sortOrder={sortOrder}
-              onChangeSortOrder={changeSortOrder}
-            />
+            {commentId ? (
+              <FocusedCommentContext
+                postId={id}
+                commentId={commentId}
+                autoEdit={editCommentId === commentId}
+                onEdit={handleEnterEditMode}
+                onShowAll={showAllComments}
+              />
+            ) : (
+              <CommentListHeader
+                commentCount={qna?.counts?.comment ?? 0}
+                sortOrder={sortOrder}
+                onChangeSortOrder={changeSortOrder}
+              />
+            )}
           </>
         )}
         contentContainerStyle={{
@@ -243,7 +265,7 @@ export const QnaDetailContent = ({ id, scrollToComments }: { id: string; scrollT
           paddingTop: 32
         }}
         ListEmptyComponent={() =>
-          isCommentLoading ? (
+          commentId ? null : isCommentLoading ? (
             <YStack>
               {Array.from({ length: 3 }).map((_, idx) => (
                 <View key={idx}>

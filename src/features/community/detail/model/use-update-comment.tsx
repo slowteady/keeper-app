@@ -1,9 +1,11 @@
 import { InfiniteData, useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { commentApi, CommentDto, commentQueries } from '@/entities/comment';
+import { communityQueries, MyCommentItemDto } from '@/entities/community';
 import { globalToast } from '@/shared/lib';
 
 type CommentPage = { items: CommentDto[] } & Record<string, unknown>;
+type MyCommentPage = { items: MyCommentItemDto[] } & Record<string, unknown>;
 
 export const useUpdateComment = ({ postId }: { postId: string }) => {
   const queryClient = useQueryClient();
@@ -28,6 +30,17 @@ export const useUpdateComment = ({ postId }: { postId: string }) => {
       queryClient.setQueriesData<InfiniteData<CommentPage>>(
         { queryKey: [...commentQueries.all(), 'replies'] },
         replacer
+      );
+      queryClient.setQueriesData<InfiniteData<MyCommentPage>>(
+        { queryKey: communityQueries.myCommentList().queryKey },
+        (old) =>
+          old && {
+            ...old,
+            pages: old.pages.map((p) => ({
+              ...p,
+              items: p.items.map((c) => (c.id === updated.id ? { ...c, content: updated.content } : c))
+            }))
+          }
       );
     },
     onError: () => globalToast('댓글 수정에 실패했어요. 다시 시도해주세요.', 'fail')

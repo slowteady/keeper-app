@@ -33,5 +33,12 @@ export const CommentListResponseSchema = z.object({
 });
 export type CommentListResponseDto = z.infer<typeof CommentListResponseSchema>;
 
+export const CommentContextSchema = z.object({
+  postId: z.string(),
+  rootComment: CommentSchema,
+  targetComment: CommentSchema
+});
+export type CommentContextDto = z.infer<typeof CommentContextSchema>;
+
 export const CommentSortOrderSchema = z.enum(['LATEST', 'OLDEST']);
 export type CommentSortOrderDto = z.infer<typeof CommentSortOrderSchema>;

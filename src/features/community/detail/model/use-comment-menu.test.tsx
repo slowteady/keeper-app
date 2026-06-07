@@ -4,6 +4,7 @@ import { router } from 'expo-router';
 import { isValidElement, type ReactElement, type ReactNode } from 'react';
 
 import { commentApi, commentQueries } from '@/entities/comment';
+import { communityQueries } from '@/entities/community';
 
 import { useCommentMenu } from './use-comment-menu';
 
@@ -155,6 +156,7 @@ describe('useCommentMenu', () => {
     (commentApi.remove as jest.Mock).mockResolvedValue(undefined);
     const { queryClient, wrapper } = setup();
     const invalidateSpy = jest.spyOn(queryClient, 'invalidateQueries');
+    const setSpy = jest.spyOn(queryClient, 'setQueriesData');
 
     const { result } = renderHook(() => useCommentMenu({ onEdit: mockOnEdit }), { wrapper });
 
@@ -172,6 +174,8 @@ describe('useCommentMenu', () => {
     });
 
     await waitFor(() => expect(commentApi.remove).toHaveBeenCalledWith('7'));
+    expect(setSpy).toHaveBeenCalledWith({ queryKey: communityQueries.myCommentList().queryKey }, expect.any(Function));
     expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: commentQueries.all() });
+    expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: communityQueries.myCommentList().queryKey });
   });
 });

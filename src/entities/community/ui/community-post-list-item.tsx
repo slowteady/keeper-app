@@ -1,3 +1,4 @@
+import { MoreVertical } from '@tamagui/lucide-icons';
 import { Image } from 'expo-image';
 import { useCallback } from 'react';
 import { Pressable } from 'react-native';
@@ -13,9 +14,16 @@ export type CommunityPostListItemProps = {
   categoryLabel: string;
   onPress: (id: string) => void;
   onPressLike?: (id: string, currentlyLiked: boolean) => void;
+  onPressMore?: () => void;
 };
 
-export const CommunityPostListItem = ({ data, categoryLabel, onPress, onPressLike }: CommunityPostListItemProps) => {
+export const CommunityPostListItem = ({
+  data,
+  categoryLabel,
+  onPress,
+  onPressLike,
+  onPressMore
+}: CommunityPostListItemProps) => {
   const { black500 } = useTheme();
   const thumbnail = data.images?.[0];
 
@@ -48,7 +56,14 @@ export const CommunityPostListItem = ({ data, categoryLabel, onPress, onPressLik
           </XStack>
         </YStack>
       </Pressable>
-      {thumbnail ? <Thumbnail source={{ uri: thumbnail }} contentFit="cover" /> : <ThumbnailPlaceholder />}
+      <XStack items="center" gap={8}>
+        {thumbnail ? <Thumbnail source={{ uri: thumbnail }} contentFit="cover" /> : <ThumbnailPlaceholder />}
+        {onPressMore ? (
+          <Pressable onPress={onPressMore} hitSlop={10} accessibilityLabel="더보기" testID={`my-post-more-${data.id}`}>
+            <MoreVertical size={18} color="$black700" />
+          </Pressable>
+        ) : null}
+      </XStack>
     </Container>
   );
 };

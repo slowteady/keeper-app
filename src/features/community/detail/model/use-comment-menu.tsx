@@ -1,8 +1,9 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { InfiniteData, useMutation, useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { useCallback } from 'react';
 
 import { commentApi, commentQueries } from '@/entities/comment';
+import { communityQueries, MyCommentItemDto } from '@/entities/community';
 import { useCurrentUser, useLoginRequired } from '@/features/auth';
 import { useBlock } from '@/features/community/safety';
 import { globalToast } from '@/shared/lib';
@@ -23,13 +24,17 @@ export type CommentMenuTarget = {
   commentId: string;
   authorId: string | null | undefined;
   content: string;
+  postId?: string;
 };
 
 export type UseCommentMenuParams = {
-  onEdit: (target: { commentId: string; content: string }) => void;
+  onEdit: (target: { commentId: string; content: string; postId?: string }) => void;
+  onDeleteSuccess?: () => void;
 };
 
-export const useCommentMenu = ({ onEdit }: UseCommentMenuParams) => {
+type MyCommentPage = { items: MyCommentItemDto[]; total: number } & Record<string, unknown>;
+
+export const useCommentMenu = ({ onEdit, onDeleteSuccess }: UseCommentMenuParams) => {
   const { user } = useCurrentUser();
   const { requireLogin } = useLoginRequired();
   const { present, dismiss } = useBottomSheet();
@@ -39,14 +44,30 @@ export const useCommentMenu = ({ onEdit }: UseCommentMenuParams) => {
 
   const deleteMutation = useMutation({
     mutationFn: (commentId: string) => commentApi.remove(commentId),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: commentQueries.all() });
+    onSuccess: async (_, commentId) => {
+      queryClient.setQueriesData<InfiniteData<MyCommentPage>>(
+        { queryKey: communityQueries.myCommentList().queryKey },
+        (old) =>
+          old && {
+            ...old,
+            pages: old.pages.map((page) => ({
+              ...page,
+              items: page.items.filter((comment) => comment.id !== commentId),
+              total: Math.max(0, page.total - 1)
+            }))
+          }
+      );
+      onDeleteSuccess?.();
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: commentQueries.all() }),
+        queryClient.invalidateQueries({ queryKey: communityQueries.myCommentList().queryKey })
+      ]);
     },
     onError: () => globalToast('삭제에 실패했어요. 다시 시도해주세요.', 'fail')
   });
 
   const openCommentMenu = useCallback(
-    ({ commentId, authorId, content }: CommentMenuTarget) => {
+    ({ commentId, authorId, content, postId }: CommentMenuTarget) => {
       const isMine = !!user && !!authorId && user.id === authorId;
       const menuItems: readonly BottomSheetMenuData<CommentMenuId>[] = isMine
         ? MINE_MENU
@@ -58,7 +79,7 @@ export const useCommentMenu = ({ onEdit }: UseCommentMenuParams) => {
         switch (data.id) {
           case 'EDIT':
             dismiss();
-            onEdit({ commentId, content });
+            onEdit({ commentId, content, ...(postId ? { postId } : {}) });
             break;
           case 'DELETE':
             dismiss();

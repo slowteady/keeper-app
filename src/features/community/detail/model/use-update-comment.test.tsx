@@ -3,6 +3,7 @@ import { act, renderHook, waitFor } from '@testing-library/react-native';
 import { type ReactNode } from 'react';
 
 import { commentApi, commentQueries } from '@/entities/comment';
+import { communityQueries } from '@/entities/community';
 import { globalToast } from '@/shared/lib';
 
 import { useUpdateComment } from './use-update-comment';
@@ -63,6 +64,10 @@ describe('useUpdateComment', () => {
     await waitFor(() => {
       expect(setSpy).toHaveBeenCalledWith({ queryKey: [...commentQueries.all(), 'list', '10'] }, expect.any(Function));
       expect(setSpy).toHaveBeenCalledWith({ queryKey: [...commentQueries.all(), 'replies'] }, expect.any(Function));
+      expect(setSpy).toHaveBeenCalledWith(
+        { queryKey: communityQueries.myCommentList().queryKey },
+        expect.any(Function)
+      );
     });
     expect(mockedToast).not.toHaveBeenCalled();
   });

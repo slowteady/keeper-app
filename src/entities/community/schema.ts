@@ -227,10 +227,14 @@ export const MyHelpfulCommentListResponseSchema = z.object({
 });
 export type MyHelpfulCommentListResponseDto = z.infer<typeof MyHelpfulCommentListResponseSchema>;
 
-export const MyCommentItemSchema = MyHelpfulCommentItemSchema;
+export const MyCommentItemSchema = MyHelpfulCommentItemSchema.extend({
+  parentId: z.string().nullable().default(null)
+});
 export type MyCommentItemDto = z.infer<typeof MyCommentItemSchema>;
 
-export const MyCommentListResponseSchema = MyHelpfulCommentListResponseSchema;
+export const MyCommentListResponseSchema = MyHelpfulCommentListResponseSchema.extend({
+  items: z.array(MyCommentItemSchema)
+});
 export type MyCommentListResponseDto = z.infer<typeof MyCommentListResponseSchema>;
 
 export const MyPostItemSchema = CommunityAdoptListSchema.extend({

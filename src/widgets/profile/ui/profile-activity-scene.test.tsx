@@ -15,7 +15,8 @@ jest.mock('@shopify/flash-list', () => ({
 }));
 
 jest.mock('@/entities/comment', () => ({
-  CommentCardSkeleton: () => <MockView testID="activity-skeleton" />
+  CommentCardSkeleton: () => <MockView testID="activity-skeleton" />,
+  commentQueries: { all: () => ['comment'] }
 }));
 
 jest.mock('@/entities/community', () => ({
@@ -26,6 +27,15 @@ jest.mock('@/entities/community', () => ({
 jest.mock('@/features/profile', () => ({
   useMyPosts: () => mockLoadingList(),
   useMyComments: () => mockLoadingList()
+}));
+
+jest.mock('@/features/auth', () => ({
+  useCurrentUser: () => ({ user: { id: '1' } })
+}));
+
+jest.mock('@/features/community', () => ({
+  useCommentMenu: () => ({ openCommentMenu: jest.fn() }),
+  usePostMenu: () => ({ openPostMenu: jest.fn() })
 }));
 
 jest.mock('@/shared/ui', () => ({

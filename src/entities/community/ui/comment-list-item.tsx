@@ -1,3 +1,4 @@
+import { MoreVertical } from '@tamagui/lucide-icons';
 import { Image } from 'expo-image';
 import { Pressable } from 'react-native';
 import { styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
@@ -17,9 +18,10 @@ export type CommentListItemProps = {
   data: MyHelpfulCommentItemDto;
   onPress: (postId: string, commentId: string) => void;
   onPressHelpful?: (data: MyHelpfulCommentItemDto) => void;
+  onPressMore?: (data: MyHelpfulCommentItemDto) => void;
 };
 
-export const CommentListItem = ({ data, onPress, onPressHelpful }: CommentListItemProps) => {
+export const CommentListItem = ({ data, onPress, onPressHelpful, onPressMore }: CommentListItemProps) => {
   const { black500 } = useTheme();
 
   return (
@@ -51,11 +53,23 @@ export const CommentListItem = ({ data, onPress, onPressHelpful }: CommentListIt
           </XStack>
         </YStack>
       </Pressable>
-      {data.postThumbnail ? (
-        <Thumbnail source={{ uri: data.postThumbnail }} contentFit="cover" />
-      ) : (
-        <ThumbnailPlaceholder />
-      )}
+      <XStack items="center" gap={8}>
+        {data.postThumbnail ? (
+          <Thumbnail source={{ uri: data.postThumbnail }} contentFit="cover" />
+        ) : (
+          <ThumbnailPlaceholder />
+        )}
+        {onPressMore ? (
+          <Pressable
+            onPress={() => onPressMore(data)}
+            hitSlop={10}
+            accessibilityLabel="더보기"
+            testID={`my-comment-more-${data.id}`}
+          >
+            <MoreVertical size={18} color="$black700" />
+          </Pressable>
+        ) : null}
+      </XStack>
     </Container>
   );
 };

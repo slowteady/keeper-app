@@ -4,6 +4,8 @@ import { useCallback, useState } from 'react';
 import { styled, View, YStack } from 'tamagui';
 
 import { CommentListItem, CommunityPostListItem, MyCommentItemDto, MyPostItemDto } from '@/entities/community';
+import { useCurrentUser } from '@/features/auth';
+import { useCommentMenu, usePostMenu } from '@/features/community';
 import { useMyComments, useMyPosts } from '@/features/profile';
 import { ButtonGroup } from '@/shared/ui';
 
@@ -39,16 +41,7 @@ export const ProfileActivityScene = () => {
 const MyPostList = () => {
   const { items, isLoading, isFetchingNextPage, fetchNextPage, refetch } = useMyPosts();
 
-  const renderItem = useCallback(
-    ({ item }: ListRenderItemInfo<MyPostItemDto>) => (
-      <CommunityPostListItem
-        data={item}
-        categoryLabel={CATEGORY_LABEL[item.category]}
-        onPress={(id) => router.push(`/(untabs)/community/${id}`)}
-      />
-    ),
-    []
-  );
+  const renderItem = useCallback(({ item }: ListRenderItemInfo<MyPostItemDto>) => <MyPostListItem item={item} />, []);
 
   if (!isLoading && items.length === 0) {
     return (
@@ -76,19 +69,51 @@ const MyPostList = () => {
   );
 };
 
+const MyPostListItem = ({ item }: { item: MyPostItemDto }) => {
+  const { user } = useCurrentUser();
+  const { openPostMenu } = usePostMenu({ postId: item.id, authorId: user?.id, stayOnDelete: true });
+
+  return (
+    <CommunityPostListItem
+      data={item}
+      categoryLabel={CATEGORY_LABEL[item.category]}
+      onPress={(id) => router.push(`/(untabs)/community/${id}`)}
+      onPressMore={openPostMenu}
+    />
+  );
+};
+
 const MyCommentList = () => {
   const { items, isLoading, isFetchingNextPage, fetchNextPage, refetch } = useMyComments();
+  const { user } = useCurrentUser();
+  const { openCommentMenu } = useCommentMenu({
+    onEdit: ({ commentId, postId }) => {
+      if (!postId) return;
+      router.push({
+        pathname: '/(untabs)/community/[id]',
+        params: { id: postId, commentId, editCommentId: commentId }
+      });
+    }
+  });
 
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<MyCommentItemDto>) => (
       <CommentListItem
         data={item}
-        onPress={(postId) =>
-          router.push({ pathname: '/(untabs)/community/[id]', params: { id: postId, scrollToComments: '1' } })
+        onPress={(postId, commentId) =>
+          router.push({ pathname: '/(untabs)/community/[id]', params: { id: postId, commentId } })
+        }
+        onPressMore={(comment) =>
+          openCommentMenu({
+            commentId: comment.id,
+            authorId: user?.id,
+            content: comment.content,
+            postId: comment.postId
+          })
         }
       />
     ),
-    []
+    [openCommentMenu, user?.id]
   );
 
   if (!isLoading && items.length === 0) {

@@ -1,7 +1,7 @@
 import { useScrollToTop } from '@react-navigation/native';
 import { FlashList, FlashListRef, ListRenderItemInfo } from '@shopify/flash-list';
 import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, RefreshControl } from 'react-native';
 import { KeyboardStickyView } from 'react-native-keyboard-controller';
@@ -18,6 +18,7 @@ import {
 import { CommunityAdoptCardStats, communityQueries } from '@/entities/community';
 import { useLoginRequired } from '@/features/auth';
 import {
+  FocusedCommentContext,
   QnaDetailContent,
   RepliesSection,
   useCommentHelpful,
@@ -42,14 +43,24 @@ import {
 export const ErrorBoundary = DetailErrorBoundary;
 
 const Page = () => {
-  const { id, scrollToComments } = useLocalSearchParams<{ id: string; scrollToComments?: string }>();
+  const { id, scrollToComments, commentId, editCommentId } = useLocalSearchParams<{
+    id: string;
+    scrollToComments?: string;
+    commentId?: string;
+    editCommentId?: string;
+  }>();
   if (!id) return null;
 
   // Suspense — useSuspenseQuery 로 본문 도착 전 스켈레톤 fallback. 댓글창이 먼저 보이는 mount 깜빡임 제거.
   return (
     <Container>
       <Suspense fallback={<PostDetailSkeleton />}>
-        <DetailRouter id={id} scrollToComments={scrollToComments === '1'} />
+        <DetailRouter
+          id={id}
+          scrollToComments={scrollToComments === '1'}
+          commentId={commentId}
+          editCommentId={editCommentId}
+        />
       </Suspense>
     </Container>
   );
@@ -57,13 +68,35 @@ const Page = () => {
 
 // 응답 category 로 분기 — QNA 는 QnaDetailContent, 그 외는 개인입양 detail.
 // 같은 queryKey(communityQueries.detail) 라 하위 content 의 useSuspenseQuery 는 캐시 hit (네트워크 1 회).
-const DetailRouter = ({ id, scrollToComments }: { id: string; scrollToComments: boolean }) => {
-  const { data } = useSuspenseQuery(communityQueries.detail(id));
-  if (data.kind === 'QNA') return <QnaDetailContent id={id} scrollToComments={scrollToComments} />;
-  return <CommunityDetailContent id={id} scrollToComments={scrollToComments} />;
+type DetailRouterProps = {
+  id: string;
+  scrollToComments: boolean;
+  commentId?: string;
+  editCommentId?: string;
 };
 
-const CommunityDetailContent = ({ id, scrollToComments }: { id: string; scrollToComments: boolean }) => {
+const DetailRouter = ({ id, scrollToComments, commentId, editCommentId }: DetailRouterProps) => {
+  const { data } = useSuspenseQuery(communityQueries.detail(id));
+  if (data.kind === 'QNA')
+    return (
+      <QnaDetailContent
+        id={id}
+        scrollToComments={scrollToComments}
+        commentId={commentId}
+        editCommentId={editCommentId}
+      />
+    );
+  return (
+    <CommunityDetailContent
+      id={id}
+      scrollToComments={scrollToComments}
+      commentId={commentId}
+      editCommentId={editCommentId}
+    />
+  );
+};
+
+const CommunityDetailContent = ({ id, scrollToComments, commentId, editCommentId }: DetailRouterProps) => {
   const [inputHeight, setInputHeight] = useState(0);
 
   const { bottom } = useLayout();
@@ -223,6 +256,9 @@ const CommunityDetailContent = ({ id, scrollToComments }: { id: string; scrollTo
       ? { label: `@${replyTarget!.nickname}에게 답글 작성 중`, onCancel: handleCancelReply }
       : undefined;
   const submitLabel = isEditing ? '수정' : '등록';
+  const showAllComments = useCallback(() => {
+    router.replace({ pathname: '/(untabs)/community/[id]', params: { id } });
+  }, [id]);
 
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<CommentDto>) => {
@@ -265,13 +301,13 @@ const CommunityDetailContent = ({ id, scrollToComments }: { id: string; scrollTo
   return (
     <ContentWrap>
       <FlashList
-        data={commentList}
+        data={commentId ? [] : commentList}
         keyExtractor={(item, i) => `${item.id}-${i}`}
         renderItem={renderItem}
         ref={scrollRef}
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
-        onEndReached={fetchNextPage}
+        onEndReached={commentId ? undefined : fetchNextPage}
         onEndReachedThreshold={0.5}
         ListFooterComponent={
           isFetchingNextPage ? (
@@ -317,11 +353,21 @@ const CommunityDetailContent = ({ id, scrollToComments }: { id: string; scrollTo
               </>
             )}
 
-            <CommentListHeader
-              commentCount={detailPost?.counts?.comment ?? 0}
-              sortOrder={sortOrder}
-              onChangeSortOrder={changeSortOrder}
-            />
+            {commentId ? (
+              <FocusedCommentContext
+                postId={id}
+                commentId={commentId}
+                autoEdit={editCommentId === commentId}
+                onEdit={handleEnterEditMode}
+                onShowAll={showAllComments}
+              />
+            ) : (
+              <CommentListHeader
+                commentCount={detailPost?.counts?.comment ?? 0}
+                sortOrder={sortOrder}
+                onChangeSortOrder={changeSortOrder}
+              />
+            )}
           </>
         )}
         // 댓글 있을 때만 입력영역만큼 paddingBottom — nodata 시 빈 공백 방지
@@ -330,7 +376,7 @@ const CommunityDetailContent = ({ id, scrollToComments }: { id: string; scrollTo
           paddingTop: 32
         }}
         ListEmptyComponent={() =>
-          isCommentLoading ? (
+          commentId ? null : isCommentLoading ? (
             <YStack>
               {Array.from({ length: 3 }).map((_, idx) => (
                 <View key={idx}>

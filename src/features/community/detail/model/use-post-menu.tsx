@@ -20,7 +20,13 @@ const MINE_MENU: readonly BottomSheetMenuData<PostMenuId>[] = [
 const REPORT_ITEM: BottomSheetMenuData<PostMenuId> = { id: 'REPORT', label: '신고하기' };
 const BLOCK_ITEM: BottomSheetMenuData<PostMenuId> = { id: 'BLOCK', label: '차단하기' };
 
-export const usePostMenu = ({ postId, authorId }: { postId: string; authorId: string | null | undefined }) => {
+type UsePostMenuParams = {
+  postId: string;
+  authorId: string | null | undefined;
+  stayOnDelete?: boolean;
+};
+
+export const usePostMenu = ({ postId, authorId, stayOnDelete = false }: UsePostMenuParams) => {
   const { user } = useCurrentUser();
   const { requireLogin } = useLoginRequired();
   const { present, dismiss } = useBottomSheet();
@@ -34,8 +40,11 @@ export const usePostMenu = ({ postId, authorId }: { postId: string; authorId: st
   const deleteMutation = useMutation({
     mutationFn: () => communityApi.deletePost(postId),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: communityQueries.all() });
-      router.back();
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: communityQueries.all() }),
+        queryClient.invalidateQueries({ queryKey: communityQueries.myPostList().queryKey })
+      ]);
+      if (!stayOnDelete) router.back();
     },
     onError: () => globalToast('삭제에 실패했어요. 다시 시도해주세요.', 'fail')
   });

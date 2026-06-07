@@ -1,10 +1,12 @@
-import { infiniteQueryOptions, keepPreviousData } from '@tanstack/react-query';
+import { infiniteQueryOptions, keepPreviousData, queryOptions } from '@tanstack/react-query';
 import { AxiosResponse } from 'axios';
 
 import { authApi } from '@/shared/api/instance';
 import { ApiResponse } from '@/shared/model';
 
 import {
+  CommentContextDto,
+  CommentContextSchema,
   CommentDto,
   CommentListResponseDto,
   CommentListResponseSchema,
@@ -55,6 +57,11 @@ const getReplies = async (parentId: string, params: ReplyListParams): Promise<Co
   return CommentListResponseSchema.parse(res.data.data);
 };
 
+const getContext = async (postId: string, id: string): Promise<CommentContextDto> => {
+  const res = await authApi.get<ApiResponse<CommentContextDto>>(`${BASE}/posts/${postId}/comments/${id}/context`);
+  return CommentContextSchema.parse(res.data.data);
+};
+
 const update = async (id: string, content: string): Promise<CommentDto> => {
   const res = await authApi.patch<ApiResponse<CommentDto>>(`${BASE}/comments/${id}`, { content });
   return CommentSchema.parse(res.data.data);
@@ -80,13 +87,19 @@ const unhelpful = async (id: string): Promise<HelpfulToggleResponseDto> => {
   return res.data.data;
 };
 
-export const commentApi = { getList, getReplies, create, update, remove, report, helpful, unhelpful };
+export const commentApi = { getList, getReplies, getContext, create, update, remove, report, helpful, unhelpful };
 
 // queryKey 는 cursor 제외한 안정 키 (sort/size 만) — cursor 는 pageParam 으로 흘러감
 export type CommentListFilter = { sort: CommentSortOrderDto; size: number };
 
 export const commentQueries = {
   all: () => ['comment'] as const,
+  context: (postId: string, id: string) =>
+    queryOptions({
+      queryKey: [...commentQueries.all(), 'context', postId, id] as const,
+      queryFn: () => getContext(postId, id),
+      enabled: !!postId && !!id
+    }),
   list: (postId: string, filter: CommentListFilter) =>
     infiniteQueryOptions({
       queryKey: [...commentQueries.all(), 'list', postId, filter] as const,

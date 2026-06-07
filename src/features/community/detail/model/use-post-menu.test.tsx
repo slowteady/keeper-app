@@ -221,4 +221,25 @@ describe('usePostMenu', () => {
     expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: communityQueries.all() });
     expect(router.back).toHaveBeenCalled();
   });
+
+  it('목록 카드에서 삭제하면 현재 화면에 머문다', async () => {
+    mockUser = { id: '1' };
+    (communityApi.deletePost as jest.Mock).mockResolvedValue(undefined);
+    const { wrapper } = setup();
+    const { result } = renderHook(() => usePostMenu({ postId: '42', authorId: '1', stayOnDelete: true }), {
+      wrapper
+    });
+
+    act(() => result.current.openPostMenu());
+    const { onPress } = extractMenu(mockPresent.mock.calls[0]);
+    act(() => onPress({ id: 'DELETE', label: '삭제하기' }));
+    const confirmNode = mockOpenModal.mock.calls[0][0] as ReactElement<{ onConfirm: () => void }>;
+
+    await act(async () => {
+      confirmNode.props.onConfirm();
+    });
+
+    await waitFor(() => expect(communityApi.deletePost).toHaveBeenCalledWith('42'));
+    expect(router.back).not.toHaveBeenCalled();
+  });
 });
