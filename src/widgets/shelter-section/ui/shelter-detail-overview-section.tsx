@@ -12,6 +12,7 @@ export type ShelterDetailOverviewSectionProps = {
   data: ShelterDto;
   mapRef: RefObject<NaverMapViewRef | null>;
   isGranted: boolean;
+  isLocationPending?: boolean;
   onMapInitialized: () => void;
   onPressFavorite?: () => void;
   onPressShare?: () => void;
@@ -21,6 +22,7 @@ export const ShelterDetailOverviewSection = ({
   data,
   mapRef,
   isGranted,
+  isLocationPending,
   onMapInitialized,
   onPressFavorite,
   onPressShare
@@ -62,6 +64,7 @@ export const ShelterDetailOverviewSection = ({
       <ShelterMap
         ref={mapRef}
         hasLocation={isGranted}
+        isLocationPending={isLocationPending}
         data={[data]}
         camera={{ latitude, longitude, zoom: 15 }}
         onRefetch={() => {}}

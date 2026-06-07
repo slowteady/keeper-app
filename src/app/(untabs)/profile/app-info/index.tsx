@@ -8,14 +8,13 @@ import { ScrollView, Separator, styled, Text, View, XStack, YStack } from 'tamag
 
 import { ConfirmDeleteModal } from '@/features/community/detail/ui/confirm-delete-modal';
 import { globalToast } from '@/shared/lib';
-import { formatBytes, useCacheSize, useReview } from '@/shared/model';
+import { formatBytes, useCacheSize } from '@/shared/model';
 import { Menu, useModal } from '@/shared/ui';
 
 const Page = () => {
   const version = Application.nativeApplicationVersion;
   const { open: openModal, close: closeModal } = useModal();
   const { bytes, refresh } = useCacheSize();
-  const { promptReview } = useReview();
 
   const handleConfirmClear = useCallback(async () => {
     closeModal();
@@ -52,13 +51,6 @@ const Page = () => {
             style={{ paddingVertical: 14 }}
             onPress={() => router.push('/community-guideline')}
           />
-        </YStack>
-
-        <Separator borderColor="$backgroundDefault" mb={24} />
-
-        <YStack px={20} mb={24}>
-          <NavText mb={6}>지원</NavText>
-          <Menu label="앱 평가하기" style={{ paddingVertical: 14 }} onPress={promptReview} />
         </YStack>
 
         <Separator borderColor="$backgroundDefault" mb={24} />

@@ -2,7 +2,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { Suspense, useMemo, useState } from 'react';
 import { ScrollView, styled, Text, View } from 'tamagui';
 
-import { ADOPT_STATUS_INFO, AdoptStatusDto, buildAdoptShareDesc, isAdoptEnded } from '@/entities/adopt';
+import { ADOPT_STATUS_INFO, AdoptStatusDto, isAdoptEnded } from '@/entities/adopt';
 import { resolveAdoptShelter, useAdopt } from '@/features/adopt';
 import { useFavoriteAbandonment } from '@/features/favorite-abandonment';
 import { useShelter } from '@/features/shelter';
@@ -46,13 +46,7 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
   const hasCallNumber = !!shelter.tel && !ended;
 
   const handlePressShare = () => {
-    share({
-      title: adopt.title,
-      desc: buildAdoptShareDesc(adopt),
-      path: 'adopt',
-      id: adopt.id,
-      image: adopt.images[0]
-    });
+    share({ type: 'adopt', id: adopt.id });
   };
 
   return (

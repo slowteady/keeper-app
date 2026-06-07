@@ -1,4 +1,4 @@
-import { NaverMapViewRef } from '@mj-studio/react-native-naver-map';
+import { NaverMapViewRef, Region } from '@mj-studio/react-native-naver-map';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Supercluster from 'supercluster';
@@ -25,15 +25,8 @@ const NATION_BOUNDS: Omit<ShelterWithinParamsDto, 'userLatitude' | 'userLongitud
   maxLongitude: 131.9
 };
 
-type VisibleInsets = {
-  visibleTop: number;
-  visibleBottom: number;
-  screenWidth: number;
-  screenHeight: number;
-};
-
-export const useShelterViewport = ({ visibleTop, visibleBottom, screenWidth, screenHeight }: VisibleInsets) => {
-  const { userLocation, isGranted } = useLocation();
+export const useShelterViewport = () => {
+  const { userLocation, isGranted, permissionStatus } = useLocation();
   const mapRef = useRef<NaverMapViewRef>(null);
 
   const searchCoord = useShelterSearchCoord();
@@ -42,6 +35,7 @@ export const useShelterViewport = ({ visibleTop, visibleBottom, screenWidth, scr
   const [selectedShelterId, setSelectedShelterId] = useState<string>();
   const [isMapReady, setIsMapReady] = useState(false);
   const zoomRef = useRef(DEFAULT_ZOOM);
+  const regionRef = useRef<Region | undefined>(undefined);
 
   const { data: allShelters, isLoading } = useQuery({
     ...shelterQueries.within({
@@ -67,23 +61,15 @@ export const useShelterViewport = ({ visibleTop, visibleBottom, screenWidth, scr
 
   const [clusters, setClusters] = useState<ClusterPointFeature[]>([]);
   const [shelters, setShelters] = useState<ShelterDto[]>();
-  const [hasViewport, setHasViewport] = useState(false);
 
-  const recompute = useCallback(async () => {
-    const map = mapRef.current;
-    if (!map || !index) return;
-    try {
-      const topLeft = await map.screenToCoordinate({ screenX: 0, screenY: visibleTop });
-      const bottomRight = await map.screenToCoordinate({
-        screenX: screenWidth,
-        screenY: screenHeight - visibleBottom
-      });
-      if (!topLeft.isValid || !bottomRight.isValid) return;
+  const recompute = useCallback(
+    (region: Region) => {
+      if (!index) return;
       const bbox: [number, number, number, number] = [
-        topLeft.longitude,
-        bottomRight.latitude,
-        bottomRight.longitude,
-        topLeft.latitude
+        region.longitude,
+        region.latitude,
+        region.longitude + region.longitudeDelta,
+        region.latitude + region.latitudeDelta
       ];
       const result = index.getClusters(bbox, Math.min(Math.round(zoomRef.current), CLUSTER_MAX_ZOOM));
       setClusters(result);
@@ -94,23 +80,24 @@ export const useShelterViewport = ({ visibleTop, visibleBottom, screenWidth, scr
       );
       flat.sort((a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity));
       setShelters(flat);
-      setHasViewport(true);
-    } catch {
-      // map ref not ready yet
-    }
-  }, [index, visibleTop, visibleBottom, screenWidth, screenHeight]);
-
-  useEffect(() => {
-    recompute();
-  }, [recompute]);
+    },
+    [index]
+  );
 
   const handleCameraChange = useCallback(
-    (zoom?: number) => {
+    (zoom?: number, region?: Region) => {
       if (zoom !== undefined) zoomRef.current = zoom;
-      recompute();
+      if (region) {
+        regionRef.current = region;
+        recompute(region);
+      }
     },
     [recompute]
   );
+
+  useEffect(() => {
+    if (regionRef.current) recompute(regionRef.current);
+  }, [index, recompute]);
 
   const handleTapMarker = useCallback(
     (id: string) => {
@@ -173,14 +160,14 @@ export const useShelterViewport = ({ visibleTop, visibleBottom, screenWidth, scr
     userLocation,
     selectedShelterId,
     isGranted,
-    isLoading,
+    permissionStatus,
+    isInitializing: isLoading || shelters === undefined,
     onMapInitialized: handleMapInitialized,
     onCameraChange: handleCameraChange,
     onTapMarker: handleTapMarker,
     onTapCluster: handleTapCluster,
     onDeselect: handleDeselect,
     selectShelter: setSelectedShelterId,
-    moveToCurrentLocation,
-    isViewport: hasViewport
+    moveToCurrentLocation
   };
 };

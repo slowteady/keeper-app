@@ -7,7 +7,7 @@ import { ProfileContentSection, ProfileHeader, ProfileMenuList } from '@/widgets
 export const ErrorBoundary = RouteErrorBoundary;
 
 const Page = () => {
-  const { user, isLoading, promptReview, shareApp, goLogin, goAccount, goMenu } = useProfileMain();
+  const { user, isLoading, promptReview, shareApp, goLogin, goAccount, goLike, goActivity, goMenu } = useProfileMain();
   const { changeProfileImage } = useProfileImage();
 
   return (
@@ -17,10 +17,12 @@ const Page = () => {
         isLoading={isLoading}
         onLogin={() => goLogin()}
         onAccount={goAccount}
+        onLike={goLike}
+        onActivity={goActivity}
         onChangeProfileImage={changeProfileImage}
       />
       <ProfileContentSection onReview={promptReview} onShare={shareApp} />
-      <ProfileMenuList items={MENU_ITEMS} onSelect={goMenu} />
+      <ProfileMenuList items={MENU_ITEMS} isLoggedIn={Boolean(user)} onSelect={goMenu} />
     </Container>
   );
 };

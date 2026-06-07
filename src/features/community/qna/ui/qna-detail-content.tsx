@@ -16,19 +16,17 @@ import {
 } from '@/entities/comment';
 import { CommunityAdoptCardStats, communityQueries } from '@/entities/community';
 import { useLoginRequired } from '@/features/auth';
-import {
-  RepliesSection,
-  useCommentHelpful,
-  useCommentMenu,
-  useCommunityCommentList,
-  useCreateComment,
-  usePostMenu,
-  useUpdateComment
-} from '@/features/community';
 import { useLikePost } from '@/features/like-post';
 import { useLayout, useListRefreshing } from '@/shared/model';
-import { CommunityDetailOverviewSection } from '@/widgets/community-adopt-feed-section';
+import { CommunityDetailOverviewSection } from '@/widgets/community-adopt-feed-section/ui/community-detail-overview-section';
 
+import { useCommentHelpful } from '../../detail/model/use-comment-helpful';
+import { useCommentMenu } from '../../detail/model/use-comment-menu';
+import { useCommunityCommentList } from '../../detail/model/use-community-comment-list';
+import { useCreateComment } from '../../detail/model/use-create-comment';
+import { usePostMenu } from '../../detail/model/use-post-menu';
+import { useUpdateComment } from '../../detail/model/use-update-comment';
+import { RepliesSection } from '../../detail/ui/replies-section';
 import { useCommunityQnaDetailFeed } from '../model/use-community-qna-detail-feed';
 
 export const QnaDetailContent = ({ id, scrollToComments }: { id: string; scrollToComments: boolean }) => {
@@ -72,8 +70,7 @@ export const QnaDetailContent = ({ id, scrollToComments }: { id: string; scrollT
 
   const { openPostMenu, sharePost } = usePostMenu({
     postId: id,
-    authorId,
-    shareInfo: qna ? { title: qna.title, image: qna.images[0] } : undefined
+    authorId
   });
 
   const [comment, setComment] = useState('');

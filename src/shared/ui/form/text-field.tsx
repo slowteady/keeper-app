@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { forwardRef, useEffect } from 'react';
 import { Pressable } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { GetProps, Input, styled, Text, useTheme, XStack } from 'tamagui';
@@ -14,67 +14,75 @@ export interface TextFieldProps extends GetProps<typeof CustomTextField> {
   right?: React.ReactNode;
 }
 
-export const TextField = ({
-  helperText,
-  status = 'default',
-  variant = 'default',
-  size = '$4',
-  value = '',
-  onChangeText,
-  onPress,
-  onPressReset,
-  disabled,
-  left,
-  right,
-  ...props
-}: TextFieldProps) => {
-  const closeButtonOpacity = useSharedValue(0);
-  const { black500 } = useTheme();
+export const TextField = forwardRef<React.ElementRef<typeof CustomTextField>, TextFieldProps>(
+  (
+    {
+      helperText,
+      status = 'default',
+      variant = 'default',
+      size = '$4',
+      value = '',
+      onChangeText,
+      onPress,
+      onPressReset,
+      disabled,
+      left,
+      right,
+      ...props
+    },
+    ref
+  ) => {
+    const closeButtonOpacity = useSharedValue(0);
+    const { black500 } = useTheme();
 
-  useEffect(() => {
-    closeButtonOpacity.value = value?.length > 0 ? 1 : 0;
-  }, [closeButtonOpacity, value]);
+    useEffect(() => {
+      closeButtonOpacity.value = value?.length > 0 ? 1 : 0;
+    }, [closeButtonOpacity, value]);
 
-  const animatedCloseButtonStyle = useAnimatedStyle(() => ({
-    opacity: withTiming(closeButtonOpacity.value, { duration: 200 }),
-    transform: [{ scale: withTiming(closeButtonOpacity.value, { duration: 200 }) }]
-  }));
+    const animatedCloseButtonStyle = useAnimatedStyle(() => ({
+      opacity: withTiming(closeButtonOpacity.value, { duration: 200 }),
+      transform: [{ scale: withTiming(closeButtonOpacity.value, { duration: 200 }) }]
+    }));
 
-  return (
-    <>
-      <Container variant={variant} onPress={disabled ? onPress : undefined}>
-        {left ? <LeftElementWrapper>{left}</LeftElementWrapper> : null}
+    return (
+      <>
+        <Container variant={variant} onPress={disabled ? onPress : undefined}>
+          {left ? <LeftElementWrapper>{left}</LeftElementWrapper> : null}
 
-        <CustomTextField
-          variant={variant}
-          value={value}
-          onChangeText={onChangeText}
-          pointerEvents={disabled ? 'none' : 'auto'}
-          height={48}
-          {...props}
-        />
+          <CustomTextField
+            ref={ref}
+            variant={variant}
+            value={value}
+            onChangeText={onChangeText}
+            pointerEvents={disabled ? 'none' : 'auto'}
+            height={48}
+            {...props}
+          />
 
-        {onPressReset && (
-          <Animated.View style={[animatedCloseButtonStyle]}>
-            <Pressable onPress={onPressReset} style={{ paddingHorizontal: 16 }}>
-              <CircleX width={16} height={16} color={black500.val} />
-            </Pressable>
-          </Animated.View>
+          {onPressReset && (
+            <Animated.View style={[animatedCloseButtonStyle]}>
+              <Pressable onPress={onPressReset} style={{ paddingHorizontal: 16 }}>
+                <CircleX width={16} height={16} color={black500.val} />
+              </Pressable>
+            </Animated.View>
+          )}
+
+          {right && <RightElementWrapper>{right}</RightElementWrapper>}
+        </Container>
+
+        {helperText && typeof helperText === 'string' ? (
+          <HelperText size={size as any} status={status}>
+            {helperText}
+          </HelperText>
+        ) : (
+          helperText
         )}
+      </>
+    );
+  }
+);
 
-        {right && <RightElementWrapper>{right}</RightElementWrapper>}
-      </Container>
-
-      {helperText && typeof helperText === 'string' ? (
-        <HelperText size={size as any} status={status}>
-          {helperText}
-        </HelperText>
-      ) : (
-        helperText
-      )}
-    </>
-  );
-};
+TextField.displayName = 'TextField';
 
 const Container = styled(XStack, {
   items: 'center',

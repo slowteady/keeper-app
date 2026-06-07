@@ -13,6 +13,10 @@ type InterceptorConfig = {
   onRefreshFailed?: () => void;
 };
 
+type AuthAxiosError = AxiosError & {
+  isAuthError: true;
+};
+
 let refreshTokenPromise: Promise<string> | null = null;
 let requestInterceptorId: number | null = null;
 let responseInterceptorId: number | null = null;
@@ -62,12 +66,10 @@ export const setupInterceptor = (authApi: AxiosInstance, config: InterceptorConf
 
         return authApi(originalRequest);
       } catch (refreshError) {
-        const authError = {
-          ...error,
-          isAuthError: true,
-          message: '인증이 만료되었습니다 다시 로그인해주세요',
-          cause: refreshError
-        };
+        const authError = error as AuthAxiosError;
+        authError.isAuthError = true;
+        authError.message = '인증이 만료되었습니다 다시 로그인해주세요';
+        authError.cause = refreshError instanceof Error ? refreshError : new Error(String(refreshError));
         return Promise.reject(authError);
       }
     }
@@ -85,11 +87,14 @@ async function refreshAccessToken(config: InterceptorConfig): Promise<string> {
       throw new Error('RefreshToken이 없습니다');
     }
 
-    const timeoutPromise = new Promise<never>((_, reject) =>
-      setTimeout(() => reject(new Error('토큰 갱신 타임아웃')), REFRESH_TIMEOUT)
-    );
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      timeoutId = setTimeout(() => reject(new Error('토큰 갱신 타임아웃')), REFRESH_TIMEOUT);
+    });
 
-    const tokens = await Promise.race([config.refreshFn(refreshToken), timeoutPromise]);
+    const tokens = await Promise.race([config.refreshFn(refreshToken), timeoutPromise]).finally(() => {
+      if (timeoutId) clearTimeout(timeoutId);
+    });
 
     await Promise.all([saveAccessToken(tokens.accessToken), saveRefreshToken(tokens.refreshToken)]);
 

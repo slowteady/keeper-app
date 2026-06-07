@@ -11,7 +11,6 @@ type ShelterBottomSheetProps = {
   shelters?: ShelterDto[];
   selectedShelterId?: string;
   isLoading: boolean;
-  isViewport: boolean;
   animatedIndex?: SharedValue<number>;
   topInset?: number;
   onPressCard: (id: string) => void;
@@ -22,7 +21,6 @@ export const ShelterBottomSheet = ({
   shelters,
   selectedShelterId,
   isLoading,
-  isViewport,
   animatedIndex,
   topInset,
   onPressCard,
@@ -64,7 +62,7 @@ export const ShelterBottomSheet = ({
     >
       <Header>
         <Text fontSize={15} lineHeight={18} fontWeight="600" color="$black900">
-          {isViewport ? `이 지역 보호소 ${count}곳` : '내 주변 보호소'}
+          이 지역 보호소 {count}곳
         </Text>
       </Header>
       <BottomSheetFlatList

@@ -18,6 +18,7 @@ export const useCreateQnaPost = () => {
 
   const form = useForm<CommunityQnaFormDto>({
     resolver: zodResolver(CommunityQnaFormSchema),
+    mode: 'onChange',
     defaultValues: {
       type: QNA_CATEGORY_OPTIONS[0].value,
       animalType: undefined,

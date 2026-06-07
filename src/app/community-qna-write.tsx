@@ -1,13 +1,13 @@
 import { router } from 'expo-router';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { FieldErrors } from 'react-hook-form';
-import { Keyboard } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { Keyboard, View as NativeView } from 'react-native';
+import { KeyboardAwareScrollView, KeyboardAwareScrollViewRef } from 'react-native-keyboard-controller';
 import { styled, View } from 'tamagui';
 
 import { CommunityQnaFormDto } from '@/entities/community';
 import { CommunityQnaForm, useCreateQnaPost } from '@/features/community';
-import { globalToast } from '@/shared/lib';
+import { getFormErrorMessage, globalToast, scrollToView } from '@/shared/lib';
 import { BottomButton, CancelModal, ModalPageHeader } from '@/shared/ui';
 
 const FIELD_ORDER: (keyof CommunityQnaFormDto)[] = ['type', 'animalType', 'title', 'content', 'images'];
@@ -16,14 +16,16 @@ const findFirstError = (
   errors: FieldErrors<CommunityQnaFormDto>
 ): { name: keyof CommunityQnaFormDto; message: string } | null => {
   for (const name of FIELD_ORDER) {
-    const err = errors[name] as { message?: string } | undefined;
-    if (err?.message) return { name, message: err.message };
+    const message = getFormErrorMessage(errors[name]);
+    if (message) return { name, message };
   }
   return null;
 };
 
 const Page = () => {
   const [buttonHeight, setButtonHeight] = useState(0);
+  const scrollRef = useRef<KeyboardAwareScrollViewRef>(null);
+  const animalTypeRef = useRef<React.ElementRef<typeof NativeView>>(null);
   const { form, onSubmit, isPending } = useCreateQnaPost();
 
   const isDirty = form.formState.isDirty;
@@ -39,7 +41,13 @@ const Page = () => {
     (errors: FieldErrors<CommunityQnaFormDto>) => {
       const first = findFirstError(errors);
       globalToast(first?.message ?? '필수 항목을 입력해주세요', 'fail');
-      if (first) form.setFocus(first.name);
+      if (!first) return;
+      if (first.name === 'animalType') {
+        Keyboard.dismiss();
+        scrollToView(scrollRef, animalTypeRef);
+        return;
+      }
+      form.setFocus(first.name);
     },
     [form]
   );
@@ -48,10 +56,11 @@ const Page = () => {
     <Container>
       <ModalPageHeader title="궁금해요 작성하기" fullScreen onClose={handleClose} />
       <KeyboardAwareScrollView
+        ref={scrollRef}
         contentContainerStyle={{ paddingTop: 40, paddingBottom: buttonHeight + 40 }}
         bottomOffset={buttonHeight}
       >
-        <CommunityQnaForm form={form} />
+        <CommunityQnaForm form={form} animalTypeRef={animalTypeRef} />
       </KeyboardAwareScrollView>
 
       <BottomButton

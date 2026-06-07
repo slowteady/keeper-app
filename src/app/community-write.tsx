@@ -1,14 +1,14 @@
 import { router } from 'expo-router';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { FieldErrors } from 'react-hook-form';
-import { Keyboard } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { Keyboard, TextInput, View as NativeView } from 'react-native';
+import { KeyboardAwareScrollView, KeyboardAwareScrollViewRef } from 'react-native-keyboard-controller';
 import { styled, View } from 'tamagui';
 
 import { CommunityAdoptFormDto } from '@/entities/community';
 import { LocationBottomSheet, useLocationBottomSheet } from '@/features/address';
 import { useCreatePost } from '@/features/community';
-import { globalToast } from '@/shared/lib';
+import { getFormErrorMessage, globalToast, scrollToView } from '@/shared/lib';
 import { BottomButton, CancelModal, ModalPageHeader } from '@/shared/ui';
 import { CommunityAdoptForm } from '@/widgets/community-adopt-feed-section';
 
@@ -26,14 +26,18 @@ const findFirstError = (
   errors: FieldErrors<CommunityAdoptFormDto>
 ): { name: keyof CommunityAdoptFormDto; message: string } | null => {
   for (const name of FIELD_ORDER) {
-    const err = errors[name] as { message?: string } | undefined;
-    if (err?.message) return { name, message: err.message };
+    const message = getFormErrorMessage(errors[name]);
+    if (message) return { name, message };
   }
   return null;
 };
 
 const Page = () => {
   const [buttonHeight, setButtonHeight] = useState(0);
+  const scrollRef = useRef<KeyboardAwareScrollViewRef>(null);
+  const imagesRef = useRef<React.ElementRef<typeof NativeView>>(null);
+  const contactInputRef = useRef<TextInput>(null);
+  const contactOffsetRef = useRef(0);
 
   // 약관 동의 게이트는 진입점(community/_layout)에서 처리 — 이 페이지는 동의 후만 진입
   const { form, isSubmitting, actions } = useCreatePost();
@@ -84,6 +88,21 @@ const Page = () => {
       const first = findFirstError(errors);
       globalToast(first?.message ?? '필수 항목을 입력해주세요', 'fail');
       if (!first) return;
+      if (first.name === 'contact') {
+        Keyboard.dismiss();
+        scrollRef.current?.scrollTo({ y: Math.max(contactOffsetRef.current - 20, 0), animated: true });
+        requestAnimationFrame(() => contactInputRef.current?.focus());
+        return;
+      }
+      const fieldRefs: Partial<Record<keyof CommunityAdoptFormDto, typeof imagesRef>> = {
+        images: imagesRef
+      };
+      const fieldRef = fieldRefs[first.name];
+      if (fieldRef) {
+        Keyboard.dismiss();
+        scrollToView(scrollRef, fieldRef);
+        return;
+      }
       const trigger = selectTriggers[first.name];
       if (trigger) trigger();
       else form.setFocus(first.name);
@@ -96,6 +115,7 @@ const Page = () => {
     <Container>
       <ModalPageHeader title="개인입양 작성하기" fullScreen onClose={handleClose} />
       <KeyboardAwareScrollView
+        ref={scrollRef}
         contentContainerStyle={{ paddingTop: 40, paddingBottom: buttonHeight + 40 }}
         bottomOffset={buttonHeight}
       >
@@ -104,6 +124,10 @@ const Page = () => {
           onPressAge={actions.openAgeSelector}
           onPressKind={actions.openKindSelector}
           onPressLocation={openBottomSheet}
+          fieldRefs={{ images: imagesRef, contactInput: contactInputRef }}
+          onContactLayout={(event) => {
+            contactOffsetRef.current = event.nativeEvent.layout.y;
+          }}
         />
       </KeyboardAwareScrollView>
 

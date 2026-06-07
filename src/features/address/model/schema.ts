@@ -88,6 +88,13 @@ export const KakaoKeywordResponseSchema = z.object({
 });
 export type KakaoKeywordResponseDto = z.infer<typeof KakaoKeywordResponseSchema>;
 
+export const KakaoKeywordParamsSchema = z.object({
+  query: z.string(),
+  page: z.number().min(1).max(45).optional(),
+  size: z.number().min(1).max(15).optional()
+});
+export type KakaoKeywordParamsDto = z.infer<typeof KakaoKeywordParamsSchema>;
+
 export const KakaoGeocodeOptionalParamsSchema = z.object({
   /** 페이지 번호 (1~45, 기본 1) */
   page: z.number().optional(),

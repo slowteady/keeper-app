@@ -19,17 +19,19 @@ describe('makeFormOptions', () => {
   });
 
   describe('kindOption — animalType 분기', () => {
-    it('DOG → DOG_BREEDS(206종)', () => {
+    it('DOG → 기타를 제외한 DOG_BREEDS', () => {
       const { kindOption } = makeFormOptions('DOG');
       expect(kindOption).toHaveLength(DOG_BREEDS.length);
       // 표준 코드 데이터 정합 — 1차 원소가 DOG_BREEDS 1차 원소 name 과 일치
       expect(kindOption[0].label).toBe(DOG_BREEDS[0].name);
+      expect(kindOption).not.toContainEqual({ id: '기타', label: '기타' });
     });
 
-    it('CAT → CAT_BREEDS(38종)', () => {
+    it('CAT → 기타를 제외한 CAT_BREEDS', () => {
       const { kindOption } = makeFormOptions('CAT');
       expect(kindOption).toHaveLength(CAT_BREEDS.length);
       expect(kindOption[0].label).toBe(CAT_BREEDS[0].name);
+      expect(kindOption).not.toContainEqual({ id: '기타', label: '기타' });
     });
 
     it('OTHER → 빈 리스트 (사용자 자유 입력)', () => {

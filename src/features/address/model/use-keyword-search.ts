@@ -1,39 +1,39 @@
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { useCallback, useState } from 'react';
 
-import { useKakaoKeywordMutation } from './mutation';
-import { KakaoKeywordDocumentDto } from './schema';
+import { kakaoKeywordQueries } from './api';
 
 export const useKeywordSearch = () => {
-  const [results, setResults] = useState<KakaoKeywordDocumentDto[]>();
+  const [query, setQuery] = useState('');
 
-  const { mutate, isPending } = useKakaoKeywordMutation();
+  const {
+    data,
+    isLoading,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage: fetchNextPageQuery
+  } = useInfiniteQuery(kakaoKeywordQueries.list(query));
 
-  const submitSearch = useCallback(
-    (value: string) => {
-      if (value.trim().length === 0) return;
-
-      mutate(
-        { query: value },
-        {
-          onSuccess: ({ data }) => {
-            setResults(data.documents);
-          },
-          onError: () => {
-            setResults(undefined);
-          }
-        }
-      );
-    },
-    [mutate]
-  );
-
-  const reset = useCallback(() => {
-    setResults(undefined);
+  const submitSearch = useCallback((value: string) => {
+    const trimmed = value.trim();
+    if (trimmed.length === 0) return;
+    setQuery(trimmed);
   }, []);
 
+  const reset = useCallback(() => {
+    setQuery('');
+  }, []);
+
+  const fetchNextPage = useCallback(async () => {
+    if (hasNextPage && !isFetchingNextPage) await fetchNextPageQuery();
+  }, [fetchNextPageQuery, hasNextPage, isFetchingNextPage]);
+
   return {
-    results,
-    isPending,
+    results: query ? data?.documents : undefined,
+    isPending: isLoading,
+    isFetchingNextPage,
+    hasNextPage: hasNextPage ?? false,
+    fetchNextPage,
     submitSearch,
     reset
   };

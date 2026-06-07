@@ -2,14 +2,8 @@ import { act, renderHook } from '@testing-library/react-native';
 
 import { useShare } from './use-share';
 
-const mockImpactAsync = jest.fn().mockResolvedValue(undefined);
 const mockShare = jest.fn().mockResolvedValue({ action: 'sharedAction' });
 const mockSetIsSharing = jest.fn();
-
-jest.mock('expo-haptics', () => ({
-  impactAsync: (...args: unknown[]) => mockImpactAsync(...args),
-  ImpactFeedbackStyle: { Light: 'light', Medium: 'medium', Heavy: 'heavy' }
-}));
 
 jest.mock('react-native', () => ({
   Platform: { OS: 'ios' },
@@ -24,7 +18,6 @@ jest.mock('../share/share-atom', () => ({
 
 describe('useShare', () => {
   beforeEach(() => {
-    mockImpactAsync.mockClear();
     mockShare.mockClear();
     mockSetIsSharing.mockClear();
   });
@@ -42,32 +35,17 @@ describe('useShare', () => {
     expect(result.current).not.toHaveProperty('actions');
   });
 
-  it('share 호출 시 Light haptic 한 번 — 일회성 trigger 피드백', async () => {
+  it('공유 URL은 token 없이 type/id 의미형 경로를 사용한다', async () => {
     const { result } = renderHook(() => useShare());
 
     await act(async () => {
-      await result.current.share({ title: '테스트', desc: '설명' });
+      await result.current.share({ type: 'community', id: 'post 1' });
     });
 
-    expect(mockImpactAsync).toHaveBeenCalledTimes(1);
-    expect(mockImpactAsync).toHaveBeenCalledWith('light');
-  });
-
-  it('share sheet 표시 전에 haptic 이 먼저 발생 — 사용자가 "눌렸나?" 의문 갖기 전에', async () => {
-    const callOrder: string[] = [];
-    mockImpactAsync.mockImplementationOnce(async () => {
-      callOrder.push('haptic');
+    expect(mockShare).toHaveBeenCalledWith({
+      message: 'Keeper에서 확인해보세요',
+      url: 'https://our-keeper.com/share/community/post%201',
+      title: 'Keeper'
     });
-    mockShare.mockImplementationOnce(async () => {
-      callOrder.push('sheet');
-      return { action: 'sharedAction' };
-    });
-
-    const { result } = renderHook(() => useShare());
-    await act(async () => {
-      await result.current.share({ title: 't', desc: 'd' });
-    });
-
-    expect(callOrder).toEqual(['haptic', 'sheet']);
   });
 });

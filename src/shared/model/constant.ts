@@ -5,7 +5,7 @@ export type Breed = {
   name: string;
 };
 
-// 206종 — 공공데이터 동물보호관리시스템 kind_v2 API (up_kind_cd=417000)
+// 205종 — 공공데이터 동물보호관리시스템 kind_v2 API (up_kind_cd=417000), 기타 제외
 export const DOG_BREEDS: Breed[] = [
   { kindCd: '000245', name: '고든 세터' },
   { kindCd: '000054', name: '골든 리트리버' },
@@ -13,7 +13,6 @@ export const DOG_BREEDS: Breed[] = [
   { kindCd: '000055', name: '그레이트 덴' },
   { kindCd: '000118', name: '그레이트 피레니즈' },
   { kindCd: '000249', name: '그리펀 벨지언' },
-  { kindCd: '000115', name: '기타' },
   { kindCd: '000037', name: '꼬똥 드 뚤레아' },
   { kindCd: '000081', name: '네오폴리탄 마스티프' },
   { kindCd: '000204', name: '노르포크 테리어' },
@@ -215,10 +214,9 @@ export const DOG_BREEDS: Breed[] = [
   { kindCd: '000111', name: '휘펫' }
 ] as const;
 
-// 38종 — 공공데이터 동물보호관리시스템 kind_v2 API (up_kind_cd=422400)
+// 37종 — 공공데이터 동물보호관리시스템 kind_v2 API (up_kind_cd=422400), 기타 제외
 export const CAT_BREEDS: Breed[] = [
   { kindCd: '000116', name: '고양이' },
-  { kindCd: '000201', name: '기타' },
   { kindCd: '000170', name: '노르웨이 숲' },
   { kindCd: '000218', name: '니벨룽' },
   { kindCd: '000171', name: '데본 렉스' },

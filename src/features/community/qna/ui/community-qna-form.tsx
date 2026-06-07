@@ -1,15 +1,21 @@
+import { RefObject } from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { Form, styled, Text, YStack } from 'tamagui';
+import { Form, styled, Text, View, YStack } from 'tamagui';
 
 import { CommunityQnaFormDto, QNA_ANIMAL_TYPE_OPTIONS, QNA_CATEGORY_OPTIONS } from '@/entities/community';
-import { LabelChipGroup, LabelImageSelector, LabelTextArea, LabelTextField } from '@/features/community';
+
+import { LabelChipGroup } from '../../create/ui/field/label-chip-group';
+import { LabelImageSelector } from '../../create/ui/field/label-image-selector';
+import { LabelTextArea } from '../../create/ui/field/label-text-area';
+import { LabelTextField } from '../../create/ui/field/label-text-field';
 
 export type CommunityQnaFormProps = {
   form: UseFormReturn<CommunityQnaFormDto>;
   readOnlyImages?: boolean;
+  animalTypeRef?: RefObject<React.ElementRef<typeof View> | null>;
 };
 
-export const CommunityQnaForm = ({ form, readOnlyImages = false }: CommunityQnaFormProps) => {
+export const CommunityQnaForm = ({ form, readOnlyImages = false, animalTypeRef }: CommunityQnaFormProps) => {
   const { control } = form;
 
   return (
@@ -26,13 +32,15 @@ export const CommunityQnaForm = ({ form, readOnlyImages = false }: CommunityQnaF
             readOnly={readOnlyImages}
           />
           <LabelChipGroup name="type" control={control} label="카테고리" required options={QNA_CATEGORY_OPTIONS} />
-          <LabelChipGroup
-            name="animalType"
-            control={control}
-            label="동물 종류"
-            required
-            options={QNA_ANIMAL_TYPE_OPTIONS}
-          />
+          <View ref={animalTypeRef}>
+            <LabelChipGroup
+              name="animalType"
+              control={control}
+              label="동물 종류"
+              required
+              options={QNA_ANIMAL_TYPE_OPTIONS}
+            />
+          </View>
           <LabelTextField
             name="title"
             control={control}

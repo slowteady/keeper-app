@@ -2,7 +2,8 @@ import {
   NaverMapMarkerOverlay,
   NaverMapView,
   NaverMapViewProps,
-  NaverMapViewRef
+  NaverMapViewRef,
+  Region
 } from '@mj-studio/react-native-naver-map';
 import { forwardRef, useCallback, useRef, useState } from 'react';
 import { StyleSheet } from 'react-native';
@@ -30,7 +31,8 @@ export type ShelterClusterMapProps = {
   clusters?: ClusterPointFeature[];
   selectedMarkerId?: string;
   bottomPadding?: number;
-  onCameraChange: (zoom?: number) => void;
+  isInitializing?: boolean;
+  onCameraChange: (zoom?: number, region?: Region) => void;
   onTapMarker?: (id: string) => void;
   onTapCluster?: (clusterId: number, latitude: number, longitude: number) => void;
 } & Omit<NaverMapViewProps, 'onCameraChanged' | 'clusters' | 'onTapClusterLeaf'>;
@@ -43,6 +45,7 @@ const Map = forwardRef<NaverMapViewRef, ShelterClusterMapProps>(
       clusters,
       selectedMarkerId,
       bottomPadding,
+      isInitializing,
       onCameraChange,
       onTapMarker,
       onTapCluster,
@@ -54,16 +57,16 @@ const Map = forwardRef<NaverMapViewRef, ShelterClusterMapProps>(
     const { primaryMain } = useTheme();
 
     const isFirstCamera = useRef(true);
-    const debouncedChange = useDebounceFunc((zoom?: number) => onCameraChange(zoom), 300);
+    const debouncedChange = useDebounceFunc((zoom?: number, region?: Region) => onCameraChange(zoom, region), 300);
     const handleCameraChanged = useCallback(
       (params: CameraParams) => {
-        if (params.reason === 'Location') return;
         if (isFirstCamera.current) {
           isFirstCamera.current = false;
-          onCameraChange(params.zoom);
+          onCameraChange(params.zoom, params.region);
           return;
         }
-        debouncedChange(params.zoom);
+        if (params.reason === 'Location') return;
+        debouncedChange(params.zoom, params.region);
       },
       [debouncedChange, onCameraChange]
     );
@@ -139,7 +142,7 @@ const Map = forwardRef<NaverMapViewRef, ShelterClusterMapProps>(
             );
           })}
         </NaverMapView>
-        {!isMapReady && (
+        {(!isMapReady || isInitializing) && (
           <View style={StyleSheet.absoluteFill} pointerEvents="none">
             <Skeleton style={StyleSheet.absoluteFill} />
           </View>

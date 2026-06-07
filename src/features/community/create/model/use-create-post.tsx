@@ -21,6 +21,7 @@ export const useCreatePost = () => {
 
   const form = useForm<CommunityAdoptFormDto>({
     resolver: zodResolver(CommunityAdoptFormSchema),
+    mode: 'onChange',
     defaultValues: {
       // 필수
       animalType: CREATE_POST_OPTIONS.animalType[0].value,

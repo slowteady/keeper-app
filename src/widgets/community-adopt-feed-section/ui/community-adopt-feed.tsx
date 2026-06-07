@@ -4,10 +4,11 @@ import { memo, useCallback, useEffect, useRef } from 'react';
 import { ActivityIndicator, RefreshControl } from 'react-native';
 import { styled, useTheme, View, XStack, YStack } from 'tamagui';
 
-import { ADOPT_OPTIONS } from '@/entities/adopt';
+import { ADOPT_OPTIONS } from '@/entities/adopt/constant';
 import type { CommunityAdoptListDto } from '@/entities/community';
 import { COMMUNITY_LIST_FILTER, CommunityAdoptCard, CommunityAdoptCardSkeleton } from '@/entities/community';
-import { useCommunityAdoptFeed, useCommunityListFilter } from '@/features/community';
+import { useCommunityAdoptFeed } from '@/features/community/feed/model/use-community-adopt-feed';
+import { useCommunityListFilter } from '@/features/community/feed/model/use-community-list-filter';
 import { useIsLikePending, useLikePost } from '@/features/like-post';
 import { AnimalTypeDto, useListRefreshing } from '@/shared/model';
 import { ButtonGroup, ChipButton, FeedNodata } from '@/shared/ui';

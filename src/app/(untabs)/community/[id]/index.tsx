@@ -118,8 +118,7 @@ const CommunityDetailContent = ({ id, scrollToComments }: { id: string; scrollTo
 
   const { openPostMenu, sharePost } = usePostMenu({
     postId: id,
-    authorId,
-    shareInfo: detailPost ? { title: detailPost.title, image: detailPost.images[0] } : undefined
+    authorId
   });
 
   // 댓글 작성/수정/답글 인라인 모드 분기

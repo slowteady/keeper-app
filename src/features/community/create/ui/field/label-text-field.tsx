@@ -33,6 +33,7 @@ export const LabelTextField = <T extends FieldValues>({
           return (
             <>
               <TextField
+                ref={field.ref}
                 variant="fill"
                 value={resolved}
                 onChangeText={field.onChange}

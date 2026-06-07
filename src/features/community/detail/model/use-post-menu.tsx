@@ -13,11 +13,6 @@ import { ConfirmDeleteModal } from '../ui/confirm-delete-modal';
 
 export type PostMenuId = 'EDIT' | 'DELETE' | 'REPORT' | 'BLOCK';
 
-export type PostMenuShareInfo = {
-  title: string;
-  image?: string;
-};
-
 const MINE_MENU: readonly BottomSheetMenuData<PostMenuId>[] = [
   { id: 'EDIT', label: '수정하기' },
   { id: 'DELETE', label: '삭제하기' }
@@ -25,15 +20,7 @@ const MINE_MENU: readonly BottomSheetMenuData<PostMenuId>[] = [
 const REPORT_ITEM: BottomSheetMenuData<PostMenuId> = { id: 'REPORT', label: '신고하기' };
 const BLOCK_ITEM: BottomSheetMenuData<PostMenuId> = { id: 'BLOCK', label: '차단하기' };
 
-export const usePostMenu = ({
-  postId,
-  authorId,
-  shareInfo
-}: {
-  postId: string;
-  authorId: string | null | undefined;
-  shareInfo?: PostMenuShareInfo;
-}) => {
+export const usePostMenu = ({ postId, authorId }: { postId: string; authorId: string | null | undefined }) => {
   const { user } = useCurrentUser();
   const { requireLogin } = useLoginRequired();
   const { present, dismiss } = useBottomSheet();
@@ -66,15 +53,8 @@ export const usePostMenu = ({
   }, [openModal, closeModal, deleteMutation]);
 
   const handleShare = useCallback(() => {
-    if (!shareInfo) return;
-    share({
-      id: String(postId),
-      path: 'community',
-      title: shareInfo.title,
-      desc: '유기동물들의 가족이 되어주세요',
-      image: shareInfo.image
-    });
-  }, [share, postId, shareInfo]);
+    share({ type: 'community', id: postId });
+  }, [share, postId]);
 
   const handlePress = useCallback(
     (data: BottomSheetMenuData<PostMenuId>) => {

@@ -1,7 +1,7 @@
 import { FlashList } from '@shopify/flash-list';
 import { styled, View, YStack } from 'tamagui';
 
-import { FeedNodata } from '@/shared/ui';
+import { ProfileEmptyState } from './profile-empty-state';
 
 export const InquiryHistoryScene = () => {
   return (
@@ -17,9 +17,7 @@ export const InquiryHistoryScene = () => {
 };
 
 const EmptyComponent = () => (
-  <View flex={1} items="center" justify="center">
-    <FeedNodata text="아직 문의 내역이 없어요!" />
-  </View>
+  <ProfileEmptyState text="문의 내역이 없어요" description="문의한 내용과 답변을 여기에서 확인할 수 있어요" />
 );
 
 const Container = styled(YStack, {

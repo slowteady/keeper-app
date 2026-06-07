@@ -72,8 +72,6 @@ const setup = () => {
   return { queryClient, wrapper };
 };
 
-const baseShareInfo = { title: '강아지 입양', image: 'https://img/1.png' };
-
 beforeEach(() => {
   jest.clearAllMocks();
   mockUser = { id: '1' };
@@ -83,7 +81,7 @@ describe('usePostMenu', () => {
   it('타인 글이면 메뉴 = [신고, 차단]', () => {
     mockUser = { id: '99' };
     const { wrapper } = setup();
-    const { result } = renderHook(() => usePostMenu({ postId: '10', authorId: '1', shareInfo: baseShareInfo }), {
+    const { result } = renderHook(() => usePostMenu({ postId: '10', authorId: '1' }), {
       wrapper
     });
 
@@ -96,7 +94,7 @@ describe('usePostMenu', () => {
   it('탈퇴한 사용자(authorId=null)의 글이면 메뉴 = [신고] 만', () => {
     mockUser = { id: '99' };
     const { wrapper } = setup();
-    const { result } = renderHook(() => usePostMenu({ postId: '10', authorId: null, shareInfo: baseShareInfo }), {
+    const { result } = renderHook(() => usePostMenu({ postId: '10', authorId: null }), {
       wrapper
     });
 
@@ -109,7 +107,7 @@ describe('usePostMenu', () => {
   it('본인 글이면 메뉴 = [수정, 삭제]', () => {
     mockUser = { id: '1' };
     const { wrapper } = setup();
-    const { result } = renderHook(() => usePostMenu({ postId: '10', authorId: '1', shareInfo: baseShareInfo }), {
+    const { result } = renderHook(() => usePostMenu({ postId: '10', authorId: '1' }), {
       wrapper
     });
 
@@ -122,7 +120,7 @@ describe('usePostMenu', () => {
   it('EDIT 선택 시 수정 페이지로 push + 시트 dismiss', () => {
     mockUser = { id: '1' };
     const { wrapper } = setup();
-    const { result } = renderHook(() => usePostMenu({ postId: '42', authorId: '1', shareInfo: baseShareInfo }), {
+    const { result } = renderHook(() => usePostMenu({ postId: '42', authorId: '1' }), {
       wrapper
     });
 
@@ -138,7 +136,7 @@ describe('usePostMenu', () => {
   it('로그인 정보가 없으면 본인 판정 false → [신고, 차단]', () => {
     mockUser = null;
     const { wrapper } = setup();
-    const { result } = renderHook(() => usePostMenu({ postId: '10', authorId: '1', shareInfo: baseShareInfo }), {
+    const { result } = renderHook(() => usePostMenu({ postId: '10', authorId: '1' }), {
       wrapper
     });
 
@@ -151,21 +149,19 @@ describe('usePostMenu', () => {
   it('sharePost 호출 시 share 가 호출됨', () => {
     mockUser = { id: '99' };
     const { wrapper } = setup();
-    const { result } = renderHook(() => usePostMenu({ postId: '42', authorId: '1', shareInfo: baseShareInfo }), {
+    const { result } = renderHook(() => usePostMenu({ postId: '42', authorId: '1' }), {
       wrapper
     });
 
     act(() => result.current.sharePost());
 
-    expect(mockShare).toHaveBeenCalledWith(
-      expect.objectContaining({ id: '42', path: 'community', title: '강아지 입양', image: 'https://img/1.png' })
-    );
+    expect(mockShare).toHaveBeenCalledWith({ type: 'community', id: '42' });
   });
 
   it('REPORT 선택 시 신고 모달 라우트로 push + dismiss', async () => {
     mockUser = { id: '99' };
     const { wrapper } = setup();
-    const { result } = renderHook(() => usePostMenu({ postId: '42', authorId: '1', shareInfo: baseShareInfo }), {
+    const { result } = renderHook(() => usePostMenu({ postId: '42', authorId: '1' }), {
       wrapper
     });
 
@@ -183,7 +179,7 @@ describe('usePostMenu', () => {
   it('BLOCK 선택 시 block(authorId) 호출 + dismiss', async () => {
     mockUser = { id: '99' };
     const { wrapper } = setup();
-    const { result } = renderHook(() => usePostMenu({ postId: '42', authorId: '7', shareInfo: baseShareInfo }), {
+    const { result } = renderHook(() => usePostMenu({ postId: '42', authorId: '7' }), {
       wrapper
     });
 
@@ -204,7 +200,7 @@ describe('usePostMenu', () => {
     const { queryClient, wrapper } = setup();
     const invalidateSpy = jest.spyOn(queryClient, 'invalidateQueries');
 
-    const { result } = renderHook(() => usePostMenu({ postId: '42', authorId: '1', shareInfo: baseShareInfo }), {
+    const { result } = renderHook(() => usePostMenu({ postId: '42', authorId: '1' }), {
       wrapper
     });
 

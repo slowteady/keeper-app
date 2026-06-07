@@ -5,7 +5,8 @@ import { styled, View, YStack } from 'tamagui';
 
 import type { BlockedUserDto } from '@/entities/community';
 import { BlockListRow, useBlockList } from '@/features/profile/blocks';
-import { FeedNodata, RouteErrorBoundary } from '@/shared/ui';
+import { RouteErrorBoundary } from '@/shared/ui';
+import { ProfileEmptyState } from '@/widgets/profile';
 
 export const ErrorBoundary = RouteErrorBoundary;
 
@@ -44,9 +45,15 @@ const Page = () => {
 export default Page;
 
 const EmptyComponent = ({ isLoading }: { isLoading: boolean }) => (
-  <View flex={1} items="center" justify="center">
-    {isLoading ? <ActivityIndicator /> : <FeedNodata text="차단한 사용자가 없어요" />}
-  </View>
+  <>
+    {isLoading ? (
+      <View flex={1} items="center" justify="center">
+        <ActivityIndicator />
+      </View>
+    ) : (
+      <ProfileEmptyState text="차단한 사용자가 없어요" description="차단한 사용자는 이곳에서 관리할 수 있어요" />
+    )}
+  </>
 );
 
 const Container = styled(YStack, {

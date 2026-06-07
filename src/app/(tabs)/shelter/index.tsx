@@ -18,7 +18,7 @@ import { styled, View } from 'tamagui';
 import { DistancePermissionPrompt, ShelterCard, ShelterClusterMap, ShelterDto } from '@/entities/shelter';
 import { useFavoriteShelter } from '@/features/favorite-shelter';
 import { ShelterSearchBar, useShelterViewport } from '@/features/shelter';
-import { RouteErrorBoundary } from '@/shared/ui';
+import { RouteErrorBoundary, Skeleton } from '@/shared/ui';
 import { ShelterBottomSheet } from '@/widgets/shelter-section';
 
 export const ErrorBoundary = RouteErrorBoundary;
@@ -29,7 +29,7 @@ const CONTROL_HIDE_THRESHOLD = 0.15;
 
 const Page = () => {
   const insets = useSafeAreaInsets();
-  const { width, height } = useWindowDimensions();
+  const { height } = useWindowDimensions();
   const peekHeight = height * SHEET_PEEK_RATIO;
   const topInset = insets.top + SEARCH_BAR_AREA;
 
@@ -42,21 +42,16 @@ const Page = () => {
     userLocation,
     selectedShelterId,
     isGranted,
-    isLoading,
+    permissionStatus,
+    isInitializing,
     onMapInitialized,
     onCameraChange,
     onTapMarker,
     onTapCluster,
     onDeselect,
     selectShelter,
-    moveToCurrentLocation,
-    isViewport
-  } = useShelterViewport({
-    visibleTop: topInset,
-    visibleBottom: peekHeight,
-    screenWidth: width,
-    screenHeight: height
-  });
+    moveToCurrentLocation
+  } = useShelterViewport();
   const { toggleFavoriteShelter } = useFavoriteShelter();
 
   const animatedIndex = useSharedValue(0);
@@ -94,6 +89,14 @@ const Page = () => {
     [selectShelter]
   );
 
+  if (permissionStatus === undefined || (isGranted && userLocation === undefined)) {
+    return (
+      <Container>
+        <Skeleton style={{ flex: 1 }} />
+      </Container>
+    );
+  }
+
   if (!isGranted) {
     return (
       <Container items="center" justify="center" px={32}>
@@ -110,13 +113,14 @@ const Page = () => {
         userLocation={userLocation}
         clusters={clusters}
         selectedMarkerId={selectedShelterId}
-        camera={camera}
+        initialCamera={camera}
         bottomPadding={peekHeight}
         onCameraChange={onCameraChange}
         onTapMarker={onTapMarker}
         onTapCluster={onTapCluster}
         onTapMap={onDeselect}
         onInitialized={onMapInitialized}
+        isInitializing={isInitializing}
         isShowCompass={false}
         isShowZoomControls={controlsActive}
       />
@@ -165,8 +169,7 @@ const Page = () => {
       <ShelterBottomSheet
         shelters={shelters}
         selectedShelterId={selectedShelterId}
-        isLoading={isLoading}
-        isViewport={isViewport}
+        isLoading={isInitializing}
         animatedIndex={animatedIndex}
         topInset={topInset}
         onPressCard={handlePressCard}

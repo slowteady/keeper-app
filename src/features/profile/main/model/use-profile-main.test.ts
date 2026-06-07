@@ -4,7 +4,6 @@ import { router } from 'expo-router';
 import { useCurrentUser } from '@/features/auth';
 import { useReview, useShare } from '@/shared/model';
 
-import { SHARE_DESC, SHARE_TITLE } from './constants';
 import { useProfileMain } from './use-profile-main';
 
 const mockOpenLoginSheet = jest.fn();
@@ -56,12 +55,12 @@ describe('useProfileMain', () => {
     expect(result.current.isLoading).toBe(true);
   });
 
-  it('shareApp 호출 시 SHARE_TITLE/SHARE_DESC 로 share', () => {
+  it('shareApp 호출 시 앱 링크를 share', () => {
     const { result, share } = setupHook();
 
     result.current.shareApp();
 
-    expect(share).toHaveBeenCalledWith({ title: SHARE_TITLE, desc: SHARE_DESC });
+    expect(share).toHaveBeenCalledWith({ type: 'app' });
   });
 
   it('goLogin() → 로그인 시트 오픈', () => {
@@ -78,6 +77,14 @@ describe('useProfileMain', () => {
     result.current.goAccount();
 
     expect(mockedPush).toHaveBeenCalledWith({ pathname: '/profile/account' });
+  });
+
+  it('goActivity 호출 시 /profile/activity 로 push', () => {
+    const { result } = setupHook();
+
+    result.current.goActivity();
+
+    expect(mockedPush).toHaveBeenCalledWith({ pathname: '/profile/activity' });
   });
 
   it('goMenu(requireAuth=true) + 미로그인이면 로그인 시트 오픈', () => {

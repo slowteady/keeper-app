@@ -1,4 +1,4 @@
-import { convertGenderLabel, formatAge } from '@/entities/adopt';
+import { convertGenderLabel, formatAge } from '@/entities/adopt/mapper';
 import { buildAdoptTags, CommunityAdoptDetailDto } from '@/entities/community';
 
 export const convertToAdoptDetailOverviewData = (detailPost: CommunityAdoptDetailDto) => {

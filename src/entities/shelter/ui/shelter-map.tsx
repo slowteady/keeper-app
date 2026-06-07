@@ -17,6 +17,7 @@ import { ShelterDto } from '../schema';
 
 export type ShelterMapProps = {
   hasLocation: boolean;
+  isLocationPending?: boolean;
   data?: ShelterDto[];
   onRefetch: (params?: CameraParams) => void;
   onTapMarker?: (data: ShelterDto) => void;
@@ -25,7 +26,7 @@ export type ShelterMapProps = {
 } & Omit<NaverMapViewProps, 'onCameraChanged'>;
 
 const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
-  ({ hasLocation, data, onRefetch, onTapMarker, selectedMarkerId, readOnly, ...props }, ref) => {
+  ({ hasLocation, isLocationPending, data, onRefetch, onTapMarker, selectedMarkerId, readOnly, ...props }, ref) => {
     const [isRefetchVisible, setIsRefetchVisible] = useState(false);
     const [isMapReady, setIsMapReady] = useState(false);
     const cameraRef = useRef<CameraParams | null>(null);
@@ -76,7 +77,9 @@ const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
 
     return (
       <Container>
-        {hasLocation ? (
+        {isLocationPending ? (
+          <Skeleton style={styles.map} />
+        ) : hasLocation ? (
           <>
             <NaverMapView
               ref={ref}

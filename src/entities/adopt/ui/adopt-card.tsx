@@ -3,11 +3,14 @@ import { useCallback, useState } from 'react';
 import { Dimensions, Pressable, StyleSheet } from 'react-native';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
-import { ADOPT_STATUS_INFO, AdoptStatusDto, ChipVariant, isAdoptEnded } from '@/entities/adopt';
 import { toggleHaptic } from '@/shared/lib';
 import { Skeleton } from '@/shared/ui';
 import { NoImage } from '@/shared/ui/fallback/no-image';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
+
+import { ADOPT_STATUS_INFO, isAdoptEnded } from '../constant';
+import type { ChipVariant } from '../mapper';
+import type { AdoptStatusDto } from '../schema';
 
 const STATUS_CHIP_IDS = ['NEAR_DEADLINE', 'NEW', 'DDAY'];
 

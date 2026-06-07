@@ -5,7 +5,6 @@ import { Suspense, useCallback, useRef, useState } from 'react';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
 import { ADOPT_OPTIONS, AdoptCard, AdoptItem } from '@/entities/adopt';
-import { buildShelterShareDesc } from '@/entities/shelter';
 import { useFavoriteAbandonment } from '@/features/favorite-abandonment';
 import { useFavoriteShelter } from '@/features/favorite-shelter';
 import { useShelter, useShelterAdoptList } from '@/features/shelter';
@@ -33,7 +32,7 @@ export default Page;
 
 const ShelterDetailContent = ({ id }: { id: string }) => {
   const [callModalOpen, setCallModalOpen] = useState(false);
-  const { isGranted } = useLocation();
+  const { isGranted, permissionStatus } = useLocation();
   const mapRef = useRef<NaverMapViewRef>(null);
 
   const { shelterData, refresh: refreshShelter, hasCallNumber } = useShelter({ id });
@@ -43,13 +42,7 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
 
   const handlePressShare = () => {
     if (!shelterData) return;
-    share({
-      title: shelterData.name,
-      desc: buildShelterShareDesc(shelterData),
-      path: 'shelter',
-      id: shelterData.id
-      // image 미지정 — keeper-web 이 keeper-og.png 로 fallback
-    });
+    share({ type: 'shelter', id: shelterData.id });
   };
   const {
     selectedFilter,
@@ -119,6 +112,7 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
                 data={shelterData}
                 mapRef={mapRef}
                 isGranted={isGranted}
+                isLocationPending={permissionStatus === undefined}
                 onMapInitialized={handleMapInitialized}
                 onPressFavorite={() => toggleFavoriteShelter(shelterData.id, shelterData.isFavorited ?? false)}
                 onPressShare={handlePressShare}

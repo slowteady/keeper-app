@@ -1,5 +1,3 @@
-import { Buffer } from 'buffer';
-import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { useCallback } from 'react';
 import { Alert, Platform, Share } from 'react-native';
 
@@ -8,15 +6,16 @@ import { useIsSharing, useSetIsSharing } from '../share/share-atom';
 // Native share sheet dismiss 직후 underlying view 로 touch 가 새는 race 보호. iOS UIActivityViewController dismiss 애니메이션이 ~400ms.
 const POST_SHARE_GUARD_MS = 600;
 
-const WEB_BASE_URL = process.env.EXPO_PUBLIC_SHARE_URL;
+const WEB_BASE_URL = process.env.EXPO_PUBLIC_SHARE_URL ?? 'https://our-keeper.com';
 
-type ShareParams = {
-  title: string;
-  desc: string;
-  path?: string;
-  id?: number | string;
-  image?: string;
-};
+type ShareParams =
+  | {
+      type: 'adopt' | 'shelter' | 'community';
+      id: number | string;
+    }
+  | {
+      type: 'app';
+    };
 
 export const useShare = () => {
   const isSharing = useIsSharing();
@@ -24,34 +23,23 @@ export const useShare = () => {
 
   const share = useCallback(
     async (params: ShareParams) => {
-      // share sheet 표시까지 short 지연 + ShareGuard 600ms 가드가 있어 사용자 "눌렸나?" 의문 방지용 Light 진동
-      await impactAsync(ImpactFeedbackStyle.Light);
       setIsSharing(true);
       try {
-        const { title, desc, path, id, image } = params;
-
-        const tokenData = {
-          title,
-          desc,
-          path: path || null,
-          id: id ? id.toString() : null,
-          image: image || null
-        };
-
-        const jsonString = JSON.stringify(tokenData);
-        const base64 = Buffer.from(jsonString, 'utf-8').toString('base64');
-        const token = base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-        const shareUrl = `${WEB_BASE_URL}/share?token=${token}`;
+        const shareUrl =
+          params.type === 'app'
+            ? WEB_BASE_URL
+            : `${WEB_BASE_URL}/share/${params.type}/${encodeURIComponent(params.id.toString())}`;
 
         if (Platform.OS === 'ios') {
           await Share.share({
             url: shareUrl,
-            title
+            message: 'Keeper에서 확인해보세요',
+            title: 'Keeper'
           });
         } else {
           await Share.share({
-            message: `${title}\n${shareUrl}`,
-            title
+            message: `Keeper에서 확인해보세요\n${shareUrl}`,
+            title: 'Keeper'
           });
         }
       } catch {

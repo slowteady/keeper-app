@@ -1,15 +1,15 @@
+import { RefObject } from 'react';
 import { UseFormReturn, useWatch } from 'react-hook-form';
+import { LayoutChangeEvent, TextInput } from 'react-native';
 import { Accordion, Form, Paragraph, Square, styled, Text, useTheme, View, YStack } from 'tamagui';
 
 import { CommunityAdoptFormDto } from '@/entities/community';
-import {
-  ContactSelectField,
-  LabelImageSelector,
-  LabelSelectField,
-  LabelTextArea,
-  LabelTextField,
-  OptionSelectField
-} from '@/features/community';
+import { ContactSelectField } from '@/features/community/create/ui/field/contact-select-field';
+import { LabelImageSelector } from '@/features/community/create/ui/field/label-image-selector';
+import { LabelSelectField } from '@/features/community/create/ui/field/label-select-field';
+import { LabelTextArea } from '@/features/community/create/ui/field/label-text-area';
+import { LabelTextField } from '@/features/community/create/ui/field/label-text-field';
+import { OptionSelectField } from '@/features/community/create/ui/field/option-select-field';
 import { DownArrow } from '@/shared/ui/icons/mini';
 
 export type CommunityAdoptFormProps = {
@@ -18,6 +18,11 @@ export type CommunityAdoptFormProps = {
   onPressKind: () => void;
   onPressLocation: () => void;
   readOnlyImages?: boolean;
+  fieldRefs?: {
+    images?: RefObject<React.ElementRef<typeof View> | null>;
+    contactInput?: RefObject<TextInput | null>;
+  };
+  onContactLayout?: (event: LayoutChangeEvent) => void;
 };
 
 export const CommunityAdoptForm = ({
@@ -25,7 +30,9 @@ export const CommunityAdoptForm = ({
   onPressAge,
   onPressKind,
   onPressLocation,
-  readOnlyImages = false
+  readOnlyImages = false,
+  fieldRefs,
+  onContactLayout
 }: CommunityAdoptFormProps) => {
   const { black500 } = useTheme();
 
@@ -38,7 +45,7 @@ export const CommunityAdoptForm = ({
       <Caption>*은 필수 표기 정보입니다</Caption>
 
       {/* ① 사진 — 최상단 (BP) */}
-      <Section>
+      <Section ref={fieldRefs?.images}>
         <LabelImageSelector
           name="images"
           control={control}
@@ -134,11 +141,11 @@ export const CommunityAdoptForm = ({
 
           <Accordion type="single" collapsible>
             <Accordion.Item value="optional-section">
-              <Accordion.Header>
-                <AccordionTrigger>
+              <Accordion.Header unstyled>
+                <AccordionTrigger unstyled>
                   {({ open }: { open: boolean }) => (
                     <>
-                      <Paragraph fontSize={14} fontWeight="500" flex={1} color="$black600">
+                      <Paragraph fontSize={14} lineHeight={20} fontWeight="500" flex={1} color="$black600">
                         추가 정보 적기 (선택)
                       </Paragraph>
                       <Square animation="quick" rotate={open ? '180deg' : '0deg'}>
@@ -191,10 +198,10 @@ export const CommunityAdoptForm = ({
       <Divider />
 
       {/* ④ 연락처 */}
-      <Section>
+      <Section onLayout={onContactLayout}>
         <SectionTitle>연락처</SectionTitle>
         <ContactHint>여러 개 선택할 수 있어요</ContactHint>
-        <ContactSelectField control={control} label="연락 정보" required />
+        <ContactSelectField control={control} label="연락 정보" required inputRef={fieldRefs?.contactInput} />
       </Section>
     </Form>
   );
@@ -237,7 +244,7 @@ const Caption = styled(Text, {
 
 const AccordionTrigger = styled(Accordion.Trigger, {
   px: 16,
-  py: 12,
+  height: 48,
   rounded: 4,
   borderWidth: 1,
   borderColor: '$white800',

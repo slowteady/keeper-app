@@ -1,5 +1,6 @@
 export * from './chosung';
 export * from './current-route';
+export * from './form-error';
 export * from './format';
 export * from './handle-error';
 export * from './handle-toast';
@@ -7,4 +8,5 @@ export * from './handle-token';
 export * from './haptic';
 export * from './image';
 export * from './make-query';
+export * from './scroll-to-view';
 export * from './validation';

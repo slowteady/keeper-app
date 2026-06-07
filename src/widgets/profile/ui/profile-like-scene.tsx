@@ -3,7 +3,7 @@ import { router } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import { styled, View, YStack } from 'tamagui';
 
-import { AdoptCard, mapToAdoptList } from '@/entities/adopt';
+import { ADOPT_CARD_IMAGE_SIZES, AdoptCard, AdoptCardSkeleton, mapToAdoptList } from '@/entities/adopt';
 import {
   CommentListItem,
   CommunityAdoptListDto,
@@ -11,13 +11,16 @@ import {
   MyHelpfulCommentItemDto
 } from '@/entities/community';
 import { PROFILE_OPTIONS, ProfileLikeOption } from '@/entities/profile';
-import { ShelterCard, ShelterDto } from '@/entities/shelter';
+import { ShelterCard, ShelterCardSkeleton, ShelterDto } from '@/entities/shelter';
 import { useCommentHelpful } from '@/features/community';
 import { useFavoriteAbandonment, useMyFavoriteAbandonments } from '@/features/favorite-abandonment';
 import { useFavoriteShelter, useMyFavoriteShelters } from '@/features/favorite-shelter';
 import { useMyHelpfulComments } from '@/features/helpful-comment';
 import { useLikePost, useMyLikedPosts } from '@/features/like-post';
-import { ButtonGroup, FeedNodata } from '@/shared/ui';
+import { ButtonGroup } from '@/shared/ui';
+
+import { ProfileCommentListSkeleton } from './profile-comment-list-skeleton';
+import { ProfileEmptyState } from './profile-empty-state';
 
 export const ProfileLikeScene = () => {
   const [selected, setSelected] = useState<ProfileLikeOption>('adopt');
@@ -64,13 +67,11 @@ const AdoptList = () => {
 
   if (!isLoading && converted.length === 0) {
     return (
-      <EmptyWrap>
-        <FeedNodata
-          text="관심 있는 공고가 없어요"
-          description="마음에 드는 친구를 찾아 하트를 눌러보세요"
-          cta={{ label: '입양 공고 둘러보기', onPress: () => router.replace('/(tabs)/adopt') }}
-        />
-      </EmptyWrap>
+      <ProfileEmptyState
+        text="관심 있는 공고가 없어요"
+        description="마음에 드는 친구를 저장해보세요"
+        cta={{ label: '입양 공고 둘러보기', onPress: () => router.replace('/(tabs)/adopt') }}
+      />
     );
   }
 
@@ -85,7 +86,8 @@ const AdoptList = () => {
       onRefresh={refetch}
       refreshing={false}
       contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 40 }}
-      ListFooterComponent={isFetchingNextPage ? <View py={20} /> : null}
+      ListEmptyComponent={isLoading ? <AdoptLoading /> : null}
+      ListFooterComponent={isFetchingNextPage ? <AdoptLoading count={2} /> : null}
     />
   );
 };
@@ -107,13 +109,11 @@ const ShelterList = () => {
 
   if (!isLoading && items.length === 0) {
     return (
-      <EmptyWrap>
-        <FeedNodata
-          text="관심 보호소가 없어요"
-          description="가까운 보호소를 찾아 하트를 눌러보세요"
-          cta={{ label: '보호소 둘러보기', onPress: () => router.replace('/(tabs)/shelter') }}
-        />
-      </EmptyWrap>
+      <ProfileEmptyState
+        text="관심 보호소가 없어요"
+        description="가까운 보호소를 저장해보세요"
+        cta={{ label: '보호소 둘러보기', onPress: () => router.replace('/(tabs)/shelter') }}
+      />
     );
   }
 
@@ -128,7 +128,8 @@ const ShelterList = () => {
       refreshing={false}
       ItemSeparatorComponent={() => <View height={12} />}
       contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 40 }}
-      ListFooterComponent={isFetchingNextPage ? <View py={20} /> : null}
+      ListEmptyComponent={isLoading ? <ShelterLoading /> : null}
+      ListFooterComponent={isFetchingNextPage ? <ShelterLoading count={1} /> : null}
     />
   );
 };
@@ -151,13 +152,11 @@ const PostList = () => {
 
   if (!isLoading && items.length === 0) {
     return (
-      <EmptyWrap>
-        <FeedNodata
-          text="관심 게시글이 없어요"
-          description="마음에 든 게시글에 하트를 눌러보세요"
-          cta={{ label: '커뮤니티 둘러보기', onPress: () => router.replace('/(tabs)/community') }}
-        />
-      </EmptyWrap>
+      <ProfileEmptyState
+        text="관심 게시글이 없어요"
+        description="마음에 든 게시글을 저장해보세요"
+        cta={{ label: '커뮤니티 둘러보기', onPress: () => router.replace('/(tabs)/community') }}
+      />
     );
   }
 
@@ -171,7 +170,8 @@ const PostList = () => {
       onRefresh={refetch}
       refreshing={false}
       contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 40 }}
-      ListFooterComponent={isFetchingNextPage ? <View py={20} /> : null}
+      ListEmptyComponent={isLoading ? <ProfileCommentListSkeleton /> : null}
+      ListFooterComponent={isFetchingNextPage ? <ProfileCommentListSkeleton count={1} /> : null}
     />
   );
 };
@@ -197,13 +197,11 @@ const CommentList = () => {
 
   if (!isLoading && items.length === 0) {
     return (
-      <EmptyWrap>
-        <FeedNodata
-          text="관심 댓글이 없어요"
-          description="마음에 든 댓글에 하트를 눌러보세요"
-          cta={{ label: '커뮤니티 둘러보기', onPress: () => router.replace('/(tabs)/community') }}
-        />
-      </EmptyWrap>
+      <ProfileEmptyState
+        text="관심 댓글이 없어요"
+        description="도움됐던 댓글을 저장해보세요"
+        cta={{ label: '커뮤니티 둘러보기', onPress: () => router.replace('/(tabs)/community') }}
+      />
     );
   }
 
@@ -217,10 +215,29 @@ const CommentList = () => {
       onRefresh={refetch}
       refreshing={false}
       contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 40 }}
-      ListFooterComponent={isFetchingNextPage ? <View py={20} /> : null}
+      ListEmptyComponent={isLoading ? <ProfileCommentListSkeleton /> : null}
+      ListFooterComponent={isFetchingNextPage ? <ProfileCommentListSkeleton count={1} /> : null}
     />
   );
 };
+
+const AdoptLoading = ({ count = 4 }: { count?: number }) => (
+  <AdoptSkeletonGrid>
+    {Array.from({ length: count }).map((_, index) => (
+      <View key={index} width={ADOPT_CARD_IMAGE_SIZES.small} mb={32}>
+        <AdoptCardSkeleton width={ADOPT_CARD_IMAGE_SIZES.small} />
+      </View>
+    ))}
+  </AdoptSkeletonGrid>
+);
+
+const ShelterLoading = ({ count = 4 }: { count?: number }) => (
+  <YStack gap={12}>
+    {Array.from({ length: count }).map((_, index) => (
+      <ShelterCardSkeleton key={index} />
+    ))}
+  </YStack>
+);
 
 const Container = styled(YStack, {
   flex: 1
@@ -232,9 +249,8 @@ const ButtonGroupWrap = styled(View, {
   pb: 12
 });
 
-const EmptyWrap = styled(View, {
-  flex: 1,
-  items: 'center',
-  justify: 'center',
-  py: 60
+const AdoptSkeletonGrid = styled(View, {
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  justify: 'space-between'
 });

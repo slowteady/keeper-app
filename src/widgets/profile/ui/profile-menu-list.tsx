@@ -5,13 +5,16 @@ import { Menu } from '@/shared/ui';
 
 type ProfileMenuListProps = {
   items: typeof MENU_ITEMS;
+  isLoggedIn: boolean;
   onSelect: (path: string, requireAuth: boolean) => void;
 };
 
-export const ProfileMenuList = ({ items, onSelect }: ProfileMenuListProps) => {
+export const ProfileMenuList = ({ items, isLoggedIn, onSelect }: ProfileMenuListProps) => {
+  const visibleItems = items.filter((item) => isLoggedIn || !item.requireAuth);
+
   return (
     <YStack>
-      {items.map((item, idx) => {
+      {visibleItems.map((item, idx) => {
         const key = `${item.label}-${idx}`;
 
         return (
@@ -20,7 +23,7 @@ export const ProfileMenuList = ({ items, onSelect }: ProfileMenuListProps) => {
               <Menu icon={<item.icon size={20} />} label={item.label} />
             </View>
 
-            {idx !== items.length - 1 && <Separator borderColor="$backgroundDefault" />}
+            {idx !== visibleItems.length - 1 && <Separator borderColor="$backgroundDefault" />}
           </View>
         );
       })}

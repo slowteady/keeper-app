@@ -8,6 +8,7 @@ import {
   BottomSheetView
 } from '@gorhom/bottom-sheet';
 import { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from 'tamagui';
 
 import { SHEET_BACKGROUND_STYLE, SheetContainer, sheetHandleIndicatorStyle } from './sheet-base';
@@ -54,6 +55,7 @@ export const BottomSheetProvider = ({ children }: { children: React.ReactNode })
   const onDismissRef = useRef<(() => void) | undefined>(undefined);
   const sheetRef = useRef<BottomSheetModal>(null);
   const { white800 } = useTheme();
+  const { bottom } = useSafeAreaInsets();
 
   const renderBackdrop = useCallback(
     (props: BottomSheetBackdropProps) => (
@@ -107,7 +109,11 @@ export const BottomSheetProvider = ({ children }: { children: React.ReactNode })
           containerComponent={SheetContainer}
           footerComponent={
             footerRender
-              ? (props) => <BottomSheetFooter {...props}>{footerRender(props)}</BottomSheetFooter>
+              ? (props) => (
+                  <BottomSheetFooter {...props} bottomInset={bottom}>
+                    {footerRender(props)}
+                  </BottomSheetFooter>
+                )
               : undefined
           }
           // 키보드 BP: 시트가 키보드 위로 들리고 (interactive), blur 시 원래 snapPoint 복원

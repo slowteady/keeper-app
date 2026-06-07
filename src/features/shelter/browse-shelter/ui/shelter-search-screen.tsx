@@ -17,7 +17,7 @@ export const ShelterSearchScreen = ({ onClose, onSelect }: ShelterSearchScreenPr
   const insets = useSafeAreaInsets();
   const { black900 } = useTheme();
   const [value, setValue] = useState('');
-  const { results, isPending, submitSearch } = useKeywordSearch();
+  const { results, isPending, isFetchingNextPage, hasNextPage, fetchNextPage, submitSearch } = useKeywordSearch();
 
   const handleSelect = useCallback(
     (item: KakaoKeywordDocumentDto) => {
@@ -63,6 +63,17 @@ export const ShelterSearchScreen = ({ onClose, onSelect }: ShelterSearchScreenPr
           keyExtractor={(item) => item.id}
           renderItem={renderItem}
           keyboardShouldPersistTaps="handled"
+          onEndReached={hasNextPage ? fetchNextPage : undefined}
+          onEndReachedThreshold={0.5}
+          contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
+          style={{ flex: 1 }}
+          ListFooterComponent={
+            isFetchingNextPage ? (
+              <View py={20} items="center">
+                <ActivityIndicator />
+              </View>
+            ) : null
+          }
           ListEmptyComponent={
             <EmptyContainer>
               <EmptyText>{results === undefined ? '지역·주소·장소를 검색해보세요' : '검색 결과가 없습니다'}</EmptyText>

@@ -2,7 +2,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useMemo } from 'react';
 import { GestureResponderEvent } from 'react-native';
 
-import { ADOPT_OPTIONS } from '@/entities/adopt';
+import { ADOPT_OPTIONS } from '@/entities/adopt/constant';
 import { COMMUNITY_LIST_FILTER } from '@/entities/community';
 import { parseQueryParam } from '@/shared/lib';
 import { AnimalTypeDto } from '@/shared/model';

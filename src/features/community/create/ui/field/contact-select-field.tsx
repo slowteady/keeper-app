@@ -1,5 +1,6 @@
+import { RefObject } from 'react';
 import { Control, Controller, useFormState } from 'react-hook-form';
-import { KeyboardTypeOptions } from 'react-native';
+import { KeyboardTypeOptions, TextInput } from 'react-native';
 import { YStack } from 'tamagui';
 
 import { CommunityAdoptFormDto, CREATE_POST_OPTIONS } from '@/entities/community';
@@ -12,6 +13,7 @@ export type ContactSelectFieldProps = {
   label: string;
   required?: boolean;
   control: Control<CommunityAdoptFormDto>;
+  inputRef?: RefObject<TextInput | null>;
 };
 
 // react-hook-form 의 errors.contact 는 두 형태로 옴
@@ -46,7 +48,7 @@ const getMaxLength = (type: string): number => (type === 'PHONE' ? 13 : 100);
 
 const formatValue = (type: string, value: string): string => (type === 'PHONE' ? formatPhone(value) : value);
 
-export const ContactSelectField = ({ control, label, required }: ContactSelectFieldProps) => {
+export const ContactSelectField = ({ control, label, required, inputRef }: ContactSelectFieldProps) => {
   const { errors } = useFormState({ control, name: 'contact' });
   const contactError = errors.contact;
   const rootMessage =
@@ -95,6 +97,7 @@ export const ContactSelectField = ({ control, label, required }: ContactSelectFi
                   return (
                     <YStack key={`${item.type}-${idx}`} gap={4}>
                       <TextField
+                        ref={idx === 0 ? inputRef : undefined}
                         placeholder={getPlaceholder(item.type)}
                         keyboardType={getKeyboardType(item.type)}
                         maxLength={getMaxLength(item.type)}

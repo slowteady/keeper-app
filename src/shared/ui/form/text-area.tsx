@@ -3,6 +3,7 @@ import { styled, TextArea as TamaguiTextArea } from 'tamagui';
 export type TextAreaSize = 'medium' | 'large';
 
 export const TextArea = styled(TamaguiTextArea, {
+  textAlignVertical: 'top',
   variants: {
     size: {
       medium: {

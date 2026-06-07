@@ -1,5 +1,4 @@
 import { useCallback, useMemo } from 'react';
-import { Pressable } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
 
@@ -37,19 +36,30 @@ export const ShelterCard = ({
     onPressFavorite(id, isFavorited);
   }, [id, isFavorited, onPressFavorite]);
 
-  // 탭만 디테일 이동 — 드래그(>10px)는 무시해 스와이프 오작동 방지
-  const tapGesture = useMemo(
-    () =>
-      Gesture.Tap()
-        .maxDistance(10)
-        .runOnJS(true)
-        .onEnd(() => onPress(id)),
-    [id, onPress]
-  );
+  const { cardTap, heartTap } = useMemo(() => {
+    const heart = Gesture.Tap()
+      .maxDuration(250)
+      .maxDeltaX(8)
+      .maxDeltaY(8)
+      .onEnd((_e, success) => {
+        if (success) handlePressFavorite();
+      })
+      .runOnJS(true);
+
+    const card = Gesture.Tap()
+      .maxDistance(10)
+      .requireExternalGestureToFail(heart)
+      .onEnd((_e, success) => {
+        if (success) onPress(id);
+      })
+      .runOnJS(true);
+
+    return { cardTap: card, heartTap: heart };
+  }, [handlePressFavorite, id, onPress]);
 
   return (
     <Container size={size} borderColor={isSelected ? '$primaryMain' : '$white800'}>
-      <GestureDetector gesture={tapGesture}>
+      <GestureDetector gesture={cardTap}>
         <YStack px={16} py={18} gap={8}>
           <Text
             numberOfLines={1}
@@ -93,14 +103,11 @@ export const ShelterCard = ({
         </YStack>
       </GestureDetector>
 
-      <Pressable
-        style={{ position: 'absolute', top: 16, right: 16 }}
-        hitSlop={10}
-        onPress={handlePressFavorite}
-        disabled={!onPressFavorite}
-      >
-        <AnimatedHeart isLiked={isFavorited} size={20} inactiveColor={black500.val} />
-      </Pressable>
+      <GestureDetector gesture={heartTap}>
+        <View style={{ position: 'absolute', top: 16, right: 16 }} hitSlop={10}>
+          <AnimatedHeart isLiked={isFavorited} size={20} inactiveColor={black500.val} />
+        </View>
+      </GestureDetector>
     </Container>
   );
 };

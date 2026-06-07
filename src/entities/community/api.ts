@@ -15,8 +15,12 @@ import {
   CommunityQnaFormDto,
   CommunityQnaListResponseDto,
   CommunityQnaListResponseSchema,
+  MyCommentListResponseDto,
+  MyCommentListResponseSchema,
   MyHelpfulCommentListResponseDto,
   MyHelpfulCommentListResponseSchema,
+  MyPostListResponseDto,
+  MyPostListResponseSchema,
   QnaTypeDto
 } from './schema';
 
@@ -85,6 +89,11 @@ const getMyLikedPosts = async (params: { page: number; size: number }): Promise<
   return CommunityListResponseSchema.parse(res.data.data);
 };
 
+const getMyPosts = async (params: { page: number; size: number }): Promise<MyPostListResponseDto> => {
+  const res = await authApi.get<ApiResponse<MyPostListResponseDto>>(`${COMMUNITY_BASE}/my/posts`, { params });
+  return MyPostListResponseSchema.parse(res.data.data);
+};
+
 // ─── QnA ───────────────────────────────────────────────
 export type QnaListParams = {
   page?: number;
@@ -124,6 +133,11 @@ const getMyHelpfulComments = async (params: {
     params
   });
   return MyHelpfulCommentListResponseSchema.parse(res.data.data);
+};
+
+const getMyComments = async (params: { page: number; size: number }): Promise<MyCommentListResponseDto> => {
+  const res = await authApi.get<ApiResponse<MyCommentListResponseDto>>('/community/me/comments', { params });
+  return MyCommentListResponseSchema.parse(res.data.data);
 };
 
 export const communityApi = {
@@ -197,6 +211,36 @@ export const communityQueries = {
     infiniteQueryOptions({
       queryKey: ['me-liked-posts', { size }] as const,
       queryFn: ({ pageParam }) => getMyLikedPosts({ page: pageParam, size }),
+      initialPageParam: 1,
+      getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.page + 1 : undefined),
+      select: (data) => ({
+        items: data.pages.flatMap((p) => p.items),
+        total: data.pages[data.pages.length - 1].total,
+        page: data.pages[data.pages.length - 1].page,
+        size: data.pages[data.pages.length - 1].size,
+        hasNext: data.pages[data.pages.length - 1].hasNext
+      })
+    }),
+
+  myPostList: (size: number = 20) =>
+    infiniteQueryOptions({
+      queryKey: ['me-posts', { size }] as const,
+      queryFn: ({ pageParam }) => getMyPosts({ page: pageParam, size }),
+      initialPageParam: 1,
+      getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.page + 1 : undefined),
+      select: (data) => ({
+        items: data.pages.flatMap((p) => p.items),
+        total: data.pages[data.pages.length - 1].total,
+        page: data.pages[data.pages.length - 1].page,
+        size: data.pages[data.pages.length - 1].size,
+        hasNext: data.pages[data.pages.length - 1].hasNext
+      })
+    }),
+
+  myCommentList: (size: number = 20) =>
+    infiniteQueryOptions({
+      queryKey: ['me-comments', { size }] as const,
+      queryFn: ({ pageParam }) => getMyComments({ page: pageParam, size }),
       initialPageParam: 1,
       getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.page + 1 : undefined),
       select: (data) => ({
