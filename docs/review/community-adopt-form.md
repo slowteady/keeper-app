@@ -100,19 +100,19 @@
 
 ### P1 (fix 권장)
 
-| #   | 영역 | 위치                                         | 항목                                                                           | 처리                                           |
-| --- | ---- | -------------------------------------------- | ------------------------------------------------------------------------------ | ---------------------------------------------- |
-| 1   | 문서 | backlog/00-community-adopt-mvp.md §2-2       | specialMark 제거 + contact optional 변경 미반영                                | 다음 사이클 문서 업데이트                      |
-| 2   | 문서 | spec 파일 없음                               | relatedLink URL 검증 + maxLength 결정 미기록                                   | 다음 사이클 spec 보강                          |
-| 3   | 코드 | features/community/detail/model/mapper.ts:49 | `convertToAdoptDetailBehaviorData` UI 미연결 — 성격·행동 상세 표시 미구현 보류 | backlog에 "성격·행동 상세 표시 구현" 항목 추가 |
-| 4   | 코드 | features/community/create/model/api.ts       | `relatedLink` 빈 문자열 → undefined 변환 → 백엔드 null 처리 확인 필요          | 백엔드 API 연동 시 검증                        |
+| #   | 영역 | 위치                                         | 항목                                                                           | 처리                                                                |
+| --- | ---- | -------------------------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------- |
+| 1   | 문서 | backlog/00-community-adopt-mvp.md §2-2       | specialMark 제거 + contact optional 변경 미반영                                | ✅ 2026-06-11 코드 기준 전면 반영 완료 (§2-2·§2-3·§3-3)             |
+| 2   | 문서 | spec 파일 없음                               | relatedLink URL 검증 + maxLength 결정 미기록                                   | 다음 사이클 spec 보강                                               |
+| 3   | 코드 | features/community/detail/model/mapper.ts:49 | `convertToAdoptDetailBehaviorData` UI 미연결 — 성격·행동 상세 표시 미구현 보류 | ⬆️ 2026-06-11 **P0 승격** — 상세 표시 구현 예정 (backlog §3-3 반영) |
+| 4   | 코드 | features/community/create/model/api.ts       | `relatedLink` 빈 문자열 → undefined 변환 → 백엔드 null 처리 확인 필요          | 백엔드 API 연동 시 검증                                             |
 
 ### P2 (다음 사이클 보강)
 
 | #   | 영역 | 위치                                                  | 항목                                           |
 | --- | ---- | ----------------------------------------------------- | ---------------------------------------------- |
 | 1   | 코드 | community-adopt-form.tsx activityLevel LabelChipGroup | `stretch` prop 누락 — 다른 chip group과 불일치 |
-| 2   | 문서 | backlog/00-community-adopt-mvp.md §3                  | 성격·행동 상세 표시 미구현 상태 명시 필요      |
+| 2   | 문서 | backlog/00-community-adopt-mvp.md §3                  | ✅ 2026-06-11 §3-3에 구현상태(⏳/✅) 명시 완료 |
 | 3   | 코드 | detail/model/mapper.ts:9                              | user image 빈 문자열 fallback — UI 확인        |
 
 ---
