@@ -4,6 +4,7 @@ import * as Linking from 'expo-linking';
 import { Pressable, StyleSheet } from 'react-native';
 import { styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
 
+import { MoneyWarningBanner } from '@/features/community/safety';
 import { globalToast } from '@/shared/lib';
 import { useCall, useLayout } from '@/shared/model';
 
@@ -47,6 +48,7 @@ export const ContactSheet = ({ contacts }: ContactSheetProps) => {
 
   return (
     <YStack pb={bottom || 16} pt={4}>
+      <MoneyWarningBanner />
       {contacts.map((item, idx) => (
         <View key={`${item.type}-${idx}`} style={styles.row}>
           <XStack items="center" gap={12} flex={1} style={{ minWidth: 0 }}>

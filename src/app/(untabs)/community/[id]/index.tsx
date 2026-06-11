@@ -18,6 +18,7 @@ import {
 import { CommunityAdoptCardStats, communityQueries } from '@/entities/community';
 import { useLoginRequired } from '@/features/auth';
 import {
+  DisclaimerNotice,
   FocusedCommentContext,
   QnaDetailContent,
   RepliesSection,
@@ -137,6 +138,8 @@ const CommunityDetailContent = ({ id, scrollToComments, commentId, editCommentId
   const { refreshing, handleRefresh } = useListRefreshing(refresh);
 
   const detailPost = data.detailPost;
+  const descriptions = data.descriptions as Parameters<typeof CommunityDetailDescriptionSection>[0];
+  const hasDescription = !!(descriptions?.health?.trim() || descriptions?.relatedLink?.trim());
   const isLiked = detailPost?.isLiked ?? false;
   const authorId = detailPost?.user?.id ?? null;
   const contacts = useMemo(
@@ -336,13 +339,16 @@ const CommunityDetailContent = ({ id, scrollToComments, commentId, editCommentId
 
             {detailPost && (
               <>
-                <YStack px={20} mb={40}>
+                <YStack px={20} mb={hasDescription ? 40 : 24}>
                   <AdoptDetailInfoSection {...(data.infos as Parameters<typeof AdoptDetailInfoSection>[0])} />
                 </YStack>
-                <View px={20} mb={32}>
-                  <CommunityDetailDescriptionSection
-                    {...(data.descriptions as Parameters<typeof CommunityDetailDescriptionSection>[0])}
-                  />
+                {hasDescription && (
+                  <View px={20} mb={32}>
+                    <CommunityDetailDescriptionSection {...descriptions} />
+                  </View>
+                )}
+                <View px={20} mb={20}>
+                  <DisclaimerNotice />
                 </View>
                 {hasContact && (
                   <View px={20} mb={20}>
