@@ -85,7 +85,7 @@ describe('CommunityAdoptFormSchema', () => {
         contact: [
           { type: 'PHONE', value: '010-1234-5678' },
           { type: 'EMAIL', value: 'a@b.co' },
-          { type: 'SNS', value: '@kakao_id' }
+          { type: 'SNS', value: 'https://instagram.com/kakao_id' }
         ]
       });
       expect(result.success).toBe(true);
@@ -97,6 +97,34 @@ describe('CommunityAdoptFormSchema', () => {
         contact: [{ type: 'TEL' as 'PHONE', value: '010-1234-5678' }]
       });
       expect(result.success).toBe(false);
+    });
+
+    it('SNS 는 URL 형식이면 통과', () => {
+      const result = CommunityAdoptFormSchema.safeParse({
+        ...baseValid,
+        contact: [{ type: 'SNS', value: 'https://open.kakao.com/o/abc123' }]
+      });
+      expect(result.success).toBe(true);
+    });
+
+    it('SNS 가 URL 형식이 아니면 "SNS는 https:// 링크로 입력해주세요" 에러', () => {
+      const result = CommunityAdoptFormSchema.safeParse({
+        ...baseValid,
+        contact: [{ type: 'SNS', value: '@keeper_official' }]
+      });
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        const issue = result.error.issues.find((i) => i.path[0] === 'contact' && i.path[2] === 'value');
+        expect(issue?.message).toBe('SNS는 https:// 링크로 입력해주세요');
+      }
+    });
+
+    it('PHONE 은 URL 이 아니어도 통과', () => {
+      const result = CommunityAdoptFormSchema.safeParse({
+        ...baseValid,
+        contact: [{ type: 'PHONE', value: '010-1234-5678' }]
+      });
+      expect(result.success).toBe(true);
     });
   });
 

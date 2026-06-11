@@ -32,7 +32,7 @@ const formatPhone = (raw: string): string => {
 const getPlaceholder = (type: string): string => {
   if (type === 'PHONE') return '예) 010-1234-5678';
   if (type === 'EMAIL') return '예) keeper@example.com';
-  if (type === 'SNS') return '예) 카카오톡/인스타/페이스북 등 SNS 링크';
+  if (type === 'SNS') return '예) https://open.kakao.com/... (오픈채팅·인스타 링크)';
   const option = CREATE_POST_OPTIONS.contact.find((opt) => opt.value === type);
   return option?.label || '';
 };
@@ -40,6 +40,7 @@ const getPlaceholder = (type: string): string => {
 const getKeyboardType = (type: string): KeyboardTypeOptions => {
   if (type === 'PHONE') return 'phone-pad';
   if (type === 'EMAIL') return 'email-address';
+  if (type === 'SNS') return 'url';
   return 'default';
 };
 

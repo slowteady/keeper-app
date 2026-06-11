@@ -41,8 +41,7 @@ export const ContactSheet = ({ contacts }: ContactSheetProps) => {
     try {
       await Linking.openURL(item.value);
     } catch {
-      await Clipboard.setStringAsync(item.value);
-      globalToast('SNS 링크를 복사했어요', 'success');
+      globalToast('링크를 열 수 없어요', 'fail');
     }
   };
 

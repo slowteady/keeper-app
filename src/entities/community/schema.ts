@@ -21,10 +21,15 @@ export const CommunityAdoptFormSchema = z.object({
   content: z.string().min(1, '소개글을 입력해주세요'),
   images: z.array(z.string()).min(1, '최소 1장의 이미지를 업로드해주세요'),
   contact: z.array(
-    z.object({
-      type: z.enum([...CREATE_POST_OPTIONS.contact.map((option) => option.value)] as const),
-      value: z.string().trim().min(1, '연락처를 입력해주세요')
-    })
+    z
+      .object({
+        type: z.enum([...CREATE_POST_OPTIONS.contact.map((option) => option.value)] as const),
+        value: z.string().trim().min(1, '연락처를 입력해주세요')
+      })
+      .refine((c) => c.type !== 'SNS' || z.string().url().safeParse(c.value).success, {
+        message: 'SNS는 https:// 링크로 입력해주세요',
+        path: ['value']
+      })
   ),
   specificType: z.string().optional(),
   gender: GenderSchema.optional(),
