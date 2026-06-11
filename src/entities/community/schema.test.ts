@@ -188,4 +188,34 @@ describe('CommunityAdoptFormSchema', () => {
       expect(result.success).toBe(true);
     });
   });
+
+  describe('relatedLink URL 검증', () => {
+    it('유효한 URL 은 통과', () => {
+      const result = CommunityAdoptFormSchema.safeParse({
+        ...baseValid,
+        relatedLink: 'https://example.com/adopt/123'
+      });
+      expect(result.success).toBe(true);
+    });
+
+    it('빈 문자열은 통과 (미입력 허용)', () => {
+      const result = CommunityAdoptFormSchema.safeParse({ ...baseValid, relatedLink: '' });
+      expect(result.success).toBe(true);
+    });
+
+    it('URL 형식이 아니면 "올바른 URL을 입력해주세요" 에러', () => {
+      const result = CommunityAdoptFormSchema.safeParse({ ...baseValid, relatedLink: 'not-a-url' });
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        const issue = result.error.issues.find((i) => i.path[0] === 'relatedLink');
+        expect(issue?.message).toBe('올바른 URL을 입력해주세요');
+      }
+    });
+
+    it('500자를 초과하는 URL 은 거부', () => {
+      const longUrl = `https://example.com/${'a'.repeat(500)}`;
+      const result = CommunityAdoptFormSchema.safeParse({ ...baseValid, relatedLink: longUrl });
+      expect(result.success).toBe(false);
+    });
+  });
 });
