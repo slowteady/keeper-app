@@ -1,5 +1,7 @@
 import { convertGenderLabel, formatAge } from '@/entities/adopt/mapper';
-import { buildAdoptTags, CommunityAdoptDetailDto } from '@/entities/community';
+import { buildAdoptTags, CommunityAdoptDetailDto, CREATE_POST_OPTIONS } from '@/entities/community';
+
+export type BehaviorItem = { label: string; value: string };
 
 export const convertToAdoptDetailOverviewData = (detailPost: CommunityAdoptDetailDto) => {
   return {
@@ -39,10 +41,28 @@ const formatWeight = (weight?: string): string => {
 
 export const convertToAdoptDetailDescriptionData = (detailPost: CommunityAdoptDetailDto) => {
   return {
-    specialMark: detailPost.specialMark ?? '',
-    likes: detailPost.likes ?? '',
-    dislikes: detailPost.dislikes ?? '',
     health: detailPost.health ?? '',
     relatedLink: detailPost.relatedLink ?? ''
   };
+};
+
+export const convertToAdoptDetailBehaviorData = (detailPost: CommunityAdoptDetailDto): BehaviorItem[] => {
+  const lookup = (options: readonly { value: string; label: string }[], v: string | null | undefined) =>
+    options.find((o) => o.value === v)?.label;
+
+  const items: BehaviorItem[] = [];
+  const add = (label: string, options: readonly { value: string; label: string }[], v: string | null | undefined) => {
+    const found = lookup(options, v);
+    if (found) items.push({ label, value: found });
+  };
+
+  add('배변훈련', CREATE_POST_OPTIONS.toiletTraining, detailPost.toiletTraining);
+  add('혼자 있기', CREATE_POST_OPTIONS.separationAnxiety, detailPost.separationAnxiety);
+  add('짖음', CREATE_POST_OPTIONS.barking, detailPost.barking);
+  add('활동량', CREATE_POST_OPTIONS.activityLevel, detailPost.activityLevel);
+  add('아이와', CREATE_POST_OPTIONS.socialCompatibility, detailPost.withChildren);
+  add('강아지와', CREATE_POST_OPTIONS.socialCompatibility, detailPost.withDogs);
+  add('고양이와', CREATE_POST_OPTIONS.socialCompatibility, detailPost.withCats);
+
+  return items;
 };

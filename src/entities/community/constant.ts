@@ -36,10 +36,36 @@ export const CREATE_POST_OPTIONS = {
     { value: 'THIRD', label: '3차' }
   ] as const satisfies ChipOption[],
   contact: [
-    // 백엔드 PostContactType 과 정합 — PHONE/EMAIL/SNS
     { value: 'PHONE', label: '전화번호' },
     { value: 'EMAIL', label: '이메일' },
     { value: 'SNS', label: 'SNS' }
+  ] as const satisfies ChipOption[],
+  toiletTraining: [
+    { value: 'COMPLETE', label: '완료' },
+    { value: 'IN_PROGRESS', label: '진행 중' },
+    { value: 'NEEDED', label: '필요해요' }
+  ] as const satisfies ChipOption[],
+  separationAnxiety: [
+    { value: 'NONE', label: '잘 있어요' },
+    { value: 'SOMETIMES', label: '가끔 불안해요' },
+    { value: 'SEVERE', label: '힘들어요' }
+  ] as const satisfies ChipOption[],
+  barking: [
+    { value: 'NONE', label: '없어요' },
+    { value: 'SOMETIMES', label: '가끔' },
+    { value: 'OFTEN', label: '자주' }
+  ] as const satisfies ChipOption[],
+  activityLevel: [
+    { value: 'VERY_CALM', label: '매우 얌전' },
+    { value: 'CALM', label: '얌전' },
+    { value: 'NORMAL', label: '보통' },
+    { value: 'ACTIVE', label: '활발' },
+    { value: 'VERY_ACTIVE', label: '매우 활발' }
+  ] as const satisfies ChipOption[],
+  socialCompatibility: [
+    { value: 'GOOD', label: '잘 지내요' },
+    { value: 'SHY', label: '낯가림 있어요' },
+    { value: 'HARD', label: '어려워요' }
   ] as const satisfies ChipOption[]
 } as const;
 

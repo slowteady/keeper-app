@@ -145,10 +145,6 @@ const CommunityDetailContent = ({ id, scrollToComments, commentId, editCommentId
   );
   const hasContact = contacts.length > 0;
 
-  const openContactSheet = useCallback(() => {
-    present(<ContactSheet contacts={contacts} />, { enableDynamicSizing: true, onDismiss: dismiss });
-  }, [present, dismiss, contacts]);
-
   const { openPostMenu, sharePost } = usePostMenu({
     postId: id,
     authorId
@@ -162,6 +158,12 @@ const CommunityDetailContent = ({ id, scrollToComments, commentId, editCommentId
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [replyTarget, setReplyTarget] = useState<{ parentId: string; nickname: string } | null>(null);
   const { requireLogin, isLoggedIn } = useLoginRequired();
+
+  const openContactSheet = useCallback(() => {
+    requireLogin(() => {
+      present(<ContactSheet contacts={contacts} />, { enableDynamicSizing: true, onDismiss: dismiss });
+    });
+  }, [requireLogin, present, dismiss, contacts]);
 
   const handleTapWhenLoggedOut = useCallback(() => {
     requireLogin(() => {});

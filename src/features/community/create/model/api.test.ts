@@ -20,13 +20,10 @@ const fullForm: CommunityAdoptFormDto = {
   age: '2023',
   weight: '5',
   location: '서울특별시',
-  specialMark: '온순함',
   content: '소개글 본문',
   protectionType: 'ADOPTION',
   vaccinationCheck: 'THIRD',
   contact: [{ type: 'PHONE', value: '010-1234-5678' }],
-  likes: '산책',
-  dislikes: '소음',
   health: '피부 케어',
   relatedLink: 'https://example.com'
 };
@@ -74,19 +71,36 @@ describe('toCreateAdoptionPersonalBody', () => {
   });
 
   describe('선택 입력 필드 — 빈 문자열은 undefined 로 변환', () => {
-    it('likes 빈 문자열 → undefined', () => {
-      const body = toCreateAdoptionPersonalBody({ ...fullForm, likes: '' }, []);
-      expect(body.likes).toBeUndefined();
-    });
-
-    it('dislikes 채워짐 → 그대로 송신', () => {
-      const body = toCreateAdoptionPersonalBody({ ...fullForm, dislikes: '큰 소음' }, []);
-      expect(body.dislikes).toBe('큰 소음');
-    });
-
     it('relatedLink 빈 문자열 → undefined', () => {
       const body = toCreateAdoptionPersonalBody({ ...fullForm, relatedLink: '' }, []);
       expect(body.relatedLink).toBeUndefined();
+    });
+  });
+
+  describe('행동 필드 — chip 미선택(undefined)과 선택값 매핑', () => {
+    it('toiletTraining undefined → undefined', () => {
+      const body = toCreateAdoptionPersonalBody({ ...fullForm, toiletTraining: undefined }, []);
+      expect(body.toiletTraining).toBeUndefined();
+    });
+
+    it('toiletTraining COMPLETE → 그대로 송신', () => {
+      const body = toCreateAdoptionPersonalBody({ ...fullForm, toiletTraining: 'COMPLETE' }, []);
+      expect(body.toiletTraining).toBe('COMPLETE');
+    });
+
+    it('activityLevel VERY_ACTIVE → 그대로 송신', () => {
+      const body = toCreateAdoptionPersonalBody({ ...fullForm, activityLevel: 'VERY_ACTIVE' }, []);
+      expect(body.activityLevel).toBe('VERY_ACTIVE');
+    });
+
+    it('withDogs SHY → 그대로 송신', () => {
+      const body = toCreateAdoptionPersonalBody({ ...fullForm, withDogs: 'SHY' }, []);
+      expect(body.withDogs).toBe('SHY');
+    });
+
+    it('withCats undefined → undefined (미선택 상태 보존)', () => {
+      const body = toCreateAdoptionPersonalBody({ ...fullForm, withCats: undefined }, []);
+      expect(body.withCats).toBeUndefined();
     });
   });
 
@@ -108,9 +122,6 @@ describe('toCreateAdoptionPersonalBody', () => {
       neuterYn: 'Y',
       vaccinationCheck: 'THIRD',
       protectionType: 'ADOPTION',
-      specialMark: '온순',
-      likes: null,
-      dislikes: null,
       health: null,
       relatedLink: null,
       rfid: null,

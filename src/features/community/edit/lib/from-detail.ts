@@ -21,9 +21,13 @@ export const fromAdoptionPersonalDetail = (detail: CommunityAdoptDetailDto): Com
   age: orUndefined(detail.age),
   weight: orUndefined(detail.weight),
   location: orUndefined(detail.location),
-  specialMark: orUndefined(detail.specialMark),
-  likes: orUndefined(detail.likes),
-  dislikes: orUndefined(detail.dislikes),
   health: orUndefined(detail.health),
-  relatedLink: orUndefined(detail.relatedLink)
+  relatedLink: orUndefined(detail.relatedLink),
+  toiletTraining: orUndefined(detail.toiletTraining),
+  separationAnxiety: orUndefined(detail.separationAnxiety),
+  barking: orUndefined(detail.barking),
+  activityLevel: orUndefined(detail.activityLevel),
+  withChildren: orUndefined(detail.withChildren),
+  withDogs: orUndefined(detail.withDogs),
+  withCats: orUndefined(detail.withCats)
 });

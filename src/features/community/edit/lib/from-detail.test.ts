@@ -19,9 +19,6 @@ const base: CommunityAdoptDetailDto = {
   neuterYn: 'Y',
   vaccinationCheck: 'FIRST',
   protectionType: 'ADOPTION',
-  specialMark: '겁이 많음',
-  likes: '간식',
-  dislikes: '천둥',
   health: '없음',
   relatedLink: 'https://x',
   rfid: null,
@@ -57,19 +54,13 @@ describe('fromAdoptionPersonalDetail', () => {
     expect(form.vaccinationCheck).toBeUndefined();
   });
 
-  it('선택 텍스트(특징/likes/dislikes/health/relatedLink) 가 null 이면 undefined 로 매핑한다', () => {
+  it('선택 텍스트(health/relatedLink) 가 null 이면 undefined 로 매핑한다', () => {
     const form = fromAdoptionPersonalDetail({
       ...base,
-      specialMark: null,
-      likes: null,
-      dislikes: null,
       health: null,
       relatedLink: null
     });
 
-    expect(form.specialMark).toBeUndefined();
-    expect(form.likes).toBeUndefined();
-    expect(form.dislikes).toBeUndefined();
     expect(form.health).toBeUndefined();
     expect(form.relatedLink).toBeUndefined();
   });

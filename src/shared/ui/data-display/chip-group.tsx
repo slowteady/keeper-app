@@ -19,10 +19,10 @@ export interface ChipGroupProps<T extends boolean = false> extends Omit<
   value?: ChipGroupValue<T>;
   onChange?: ChipGroupOnChange<T>;
   multiple?: T;
-  // single mode 에서 선택된 chip 재탭 시 해제 (선택 필드용)
   clearable?: boolean;
   direction?: 'horizontal' | 'vertical';
   gap?: number;
+  stretch?: boolean;
 }
 
 const DIRECTION_MAP = { horizontal: XStack, vertical: YStack } as const;
@@ -35,6 +35,8 @@ export const ChipGroup = <T extends boolean = false>({
   clearable = false,
   direction = 'horizontal',
   gap = 4,
+  stretch = false,
+  style: chipStyle,
   ...chipProps
 }: ChipGroupProps<T>) => {
   const handleChipPress = useCallback(
@@ -65,13 +67,18 @@ export const ChipGroup = <T extends boolean = false>({
   const Container = DIRECTION_MAP[direction];
 
   return (
-    <Container flexWrap="wrap" gap={gap} items={direction === 'horizontal' ? 'center' : 'flex-start'}>
+    <Container
+      flexWrap={stretch ? 'nowrap' : 'wrap'}
+      gap={gap}
+      items={direction === 'horizontal' ? 'center' : 'flex-start'}
+    >
       {options.map((option) => (
         <ChipButton
           key={option.value}
+          {...chipProps}
           selected={isSelected(option.value)}
           onPress={() => handleChipPress(option.value)}
-          {...chipProps}
+          style={stretch ? { flex: 1 } : chipStyle}
         >
           {option.label}
         </ChipButton>

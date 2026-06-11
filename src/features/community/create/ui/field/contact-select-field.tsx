@@ -63,9 +63,6 @@ export const ContactSelectField = ({ control, label, required, inputRef }: Conta
         const selectedTypes = field.value.map((item) => item.type);
 
         const handleChipChange = (newTypes: string[]) => {
-          // 최소 1개는 선택되어야 함 — chip 모두 해제 시도 시 silent fail
-          if (newTypes.length === 0) return;
-
           const updatedContact = newTypes.map((type) => {
             const existingItem = field.value.find((item) => item.type === type);
             return existingItem || { type, value: '' };

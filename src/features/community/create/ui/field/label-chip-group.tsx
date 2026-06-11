@@ -13,16 +13,17 @@ export interface LabelChipGroupProps<T extends FieldValues> {
   control: Control<T>;
   options: readonly ChipOption[];
   clearable?: boolean;
+  stretch?: boolean;
 }
 
-// 임의 폼 DTO 에 재활용 가능한 chip 선택 필드 (FieldLabel + ChipGroup + FieldError)
 export const LabelChipGroup = <T extends FieldValues>({
   label,
   required,
   name,
   control,
   options,
-  clearable
+  clearable,
+  stretch
 }: LabelChipGroupProps<T>) => {
   return (
     <Controller
@@ -37,6 +38,7 @@ export const LabelChipGroup = <T extends FieldValues>({
             value={(field.value as string | undefined) ?? ''}
             onChange={(v) => field.onChange(v === '' ? undefined : v)}
             clearable={clearable}
+            stretch={stretch}
           />
           <FieldError message={fieldState.error?.message} />
         </YStack>

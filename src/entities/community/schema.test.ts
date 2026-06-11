@@ -29,13 +29,9 @@ describe('CommunityAdoptFormSchema', () => {
   });
 
   describe('contact (chip + value)', () => {
-    it('chip 0개면 "최소 1개의 연락 정보를 입력해주세요"', () => {
+    it('chip 0개(연락처 미입력)여도 통과 — 연락처는 선택', () => {
       const result = CommunityAdoptFormSchema.safeParse({ ...baseValid, contact: [] });
-      expect(result.success).toBe(false);
-      if (!result.success) {
-        const issue = result.error.issues.find((i) => i.path[0] === 'contact');
-        expect(issue?.message).toBe('최소 1개의 연락 정보를 입력해주세요');
-      }
+      expect(result.success).toBe(true);
     });
 
     it('chip 1개 + value 빈 문자열이면 item value 에러', () => {

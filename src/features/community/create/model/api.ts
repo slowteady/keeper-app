@@ -23,11 +23,15 @@ type CreateAdoptionPersonalBody = {
   healthCheck?: CommunityAdoptFormDto['healthCheck'];
   vaccinationCheck?: CommunityAdoptFormDto['vaccinationCheck'];
   location?: string;
-  specialMark?: string;
-  likes?: string;
-  dislikes?: string;
   health?: string;
   relatedLink?: string;
+  toiletTraining?: CommunityAdoptFormDto['toiletTraining'];
+  separationAnxiety?: CommunityAdoptFormDto['separationAnxiety'];
+  barking?: CommunityAdoptFormDto['barking'];
+  activityLevel?: CommunityAdoptFormDto['activityLevel'];
+  withChildren?: CommunityAdoptFormDto['withChildren'];
+  withDogs?: CommunityAdoptFormDto['withDogs'];
+  withCats?: CommunityAdoptFormDto['withCats'];
 };
 
 // 빈 문자열 / 'NONE' / null / undefined 모두 백엔드 NULL 로 — chip 미선택 / 구버전 데이터 호환
@@ -54,11 +58,15 @@ export const toCreateAdoptionPersonalBody = (
   healthCheck: orUndefined(form.healthCheck),
   vaccinationCheck: orUndefined(form.vaccinationCheck),
   location: orUndefined(form.location),
-  specialMark: orUndefined(form.specialMark),
-  likes: orUndefined(form.likes),
-  dislikes: orUndefined(form.dislikes),
   health: orUndefined(form.health),
-  relatedLink: orUndefined(form.relatedLink)
+  relatedLink: orUndefined(form.relatedLink),
+  toiletTraining: orUndefined(form.toiletTraining),
+  separationAnxiety: orUndefined(form.separationAnxiety),
+  barking: orUndefined(form.barking),
+  activityLevel: orUndefined(form.activityLevel),
+  withChildren: orUndefined(form.withChildren),
+  withDogs: orUndefined(form.withDogs),
+  withCats: orUndefined(form.withCats)
 });
 
 export const createAdoptionPersonal = async (body: CreateAdoptionPersonalBody): Promise<CommunityAdoptDetailDto> => {

@@ -1,16 +1,17 @@
-import { Pressable, PressableProps } from 'react-native';
+import { Pressable, PressableProps, StyleProp, ViewStyle } from 'react-native';
 import { Text, useTheme, XStack } from 'tamagui';
 
 type Variant = 'primary' | 'secondary';
 type Size = 'small' | 'medium' | 'large';
 
-export interface ChipButtonProps extends PressableProps {
+export interface ChipButtonProps extends Omit<PressableProps, 'style'> {
   children: React.ReactNode;
   variant?: Variant;
   size?: Size;
   selected?: boolean;
   left?: React.ReactNode;
   right?: React.ReactNode;
+  style?: StyleProp<ViewStyle>;
 }
 
 const SIZE_STYLES = {
@@ -36,6 +37,7 @@ export const ChipButton = ({
   left,
   right,
   onPress,
+  style,
   ...props
 }: ChipButtonProps) => {
   const theme = useTheme();
@@ -55,7 +57,8 @@ export const ChipButton = ({
           backgroundColor: colors.bg,
           borderColor: colors.border
         },
-        sizeStyle.button
+        sizeStyle.button,
+        style
       ]}
     >
       <XStack items="center">

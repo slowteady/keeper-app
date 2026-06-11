@@ -3,29 +3,14 @@ import { styled, Text, YStack } from 'tamagui';
 import { Link } from '@/shared/ui';
 
 export type CommunityDetailDescriptionSectionProps = {
-  specialMark: string;
-  likes: string;
-  dislikes: string;
   health: string;
   relatedLink: string;
 };
 
 const hasValue = (value?: string) => !!value && value.trim().length > 0;
 
-export const CommunityDetailDescriptionSection = ({
-  specialMark,
-  likes,
-  dislikes,
-  health,
-  relatedLink
-}: CommunityDetailDescriptionSectionProps) => {
-  // 미작성 자유 서술은 "모름"이 아니므로 미상/하이픈 대신 항목 자체를 숨김
-  const items = [
-    { label: '특징', value: specialMark },
-    { label: '좋아해요', value: likes },
-    { label: '싫어해요', value: dislikes },
-    { label: '아파요', value: health }
-  ].filter((item) => hasValue(item.value));
+export const CommunityDetailDescriptionSection = ({ health, relatedLink }: CommunityDetailDescriptionSectionProps) => {
+  const items = [{ label: '아파요', value: health }].filter((item) => hasValue(item.value));
 
   return (
     <Container>

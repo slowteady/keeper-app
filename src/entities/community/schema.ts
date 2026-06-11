@@ -15,22 +15,17 @@ export const ProtectionTypeSchema = z.enum(['TEMPORARY', 'ADOPTION', 'BOTH']);
 export type ProtectionTypeDto = z.infer<typeof ProtectionTypeSchema>;
 
 export const CommunityAdoptFormSchema = z.object({
-  // 필수 6: 분류 / 보호유형 / 제목 / 소개글 / 이미지 / 연락처
   animalType: AnimalTypeSchema,
   protectionType: ProtectionTypeSchema,
   title: z.string().min(1, '제목을 입력해주세요').max(50, '제목은 50자 이내로 입력해주세요'),
   content: z.string().min(1, '소개글을 입력해주세요'),
   images: z.array(z.string()).min(1, '최소 1장의 이미지를 업로드해주세요'),
-  // 선택한 chip 의 value 는 모두 필수 — chip 만 누르고 빈 값으로 제출 방지
-  contact: z
-    .array(
-      z.object({
-        type: z.enum([...CREATE_POST_OPTIONS.contact.map((option) => option.value)] as const),
-        value: z.string().trim().min(1, '연락처를 입력해주세요')
-      })
-    )
-    .min(1, '최소 1개의 연락 정보를 입력해주세요'),
-  // 선택 9: 나머지
+  contact: z.array(
+    z.object({
+      type: z.enum([...CREATE_POST_OPTIONS.contact.map((option) => option.value)] as const),
+      value: z.string().trim().min(1, '연락처를 입력해주세요')
+    })
+  ),
   specificType: z.string().optional(),
   gender: GenderSchema.optional(),
   neuterYn: NeuterYnSchema.optional(),
@@ -43,11 +38,15 @@ export const CommunityAdoptFormSchema = z.object({
     .regex(/^(\d{1,3}(\.\d{1,2})?)?$/, '몸무게는 99.99kg 까지 숫자로 입력해주세요')
     .optional(),
   location: z.string().optional(),
-  specialMark: z.string().optional(),
-  likes: z.string().optional(),
-  dislikes: z.string().optional(),
   health: z.string().optional(),
-  relatedLink: z.string().optional()
+  relatedLink: z.union([z.string().url('올바른 URL을 입력해주세요').max(500), z.literal('')]).optional(),
+  toiletTraining: z.enum(['COMPLETE', 'IN_PROGRESS', 'NEEDED']).optional(),
+  separationAnxiety: z.enum(['NONE', 'SOMETIMES', 'SEVERE']).optional(),
+  barking: z.enum(['NONE', 'SOMETIMES', 'OFTEN']).optional(),
+  activityLevel: z.enum(['VERY_CALM', 'CALM', 'NORMAL', 'ACTIVE', 'VERY_ACTIVE']).optional(),
+  withChildren: z.enum(['GOOD', 'SHY', 'HARD']).optional(),
+  withDogs: z.enum(['GOOD', 'SHY', 'HARD']).optional(),
+  withCats: z.enum(['GOOD', 'SHY', 'HARD']).optional()
 });
 export type CommunityAdoptFormDto = z.infer<typeof CommunityAdoptFormSchema>;
 
@@ -83,12 +82,16 @@ export const CommunityAdoptDetailSchema = z.object({
   neuterYn: NeuterYnSchema.nullish(),
   vaccinationCheck: VaccinationCheckSchema.nullish(),
   protectionType: ProtectionTypeSchema,
-  specialMark: z.string().nullish(),
-  likes: z.string().nullish(),
-  dislikes: z.string().nullish(),
   health: z.string().nullish(),
   relatedLink: z.string().nullish(),
   rfid: z.string().nullish(),
+  toiletTraining: z.enum(['COMPLETE', 'IN_PROGRESS', 'NEEDED']).nullish(),
+  separationAnxiety: z.enum(['NONE', 'SOMETIMES', 'SEVERE']).nullish(),
+  barking: z.enum(['NONE', 'SOMETIMES', 'OFTEN']).nullish(),
+  activityLevel: z.enum(['VERY_CALM', 'CALM', 'NORMAL', 'ACTIVE', 'VERY_ACTIVE']).nullish(),
+  withChildren: z.enum(['GOOD', 'SHY', 'HARD']).nullish(),
+  withDogs: z.enum(['GOOD', 'SHY', 'HARD']).nullish(),
+  withCats: z.enum(['GOOD', 'SHY', 'HARD']).nullish(),
   contacts: z.array(PostContactSchema),
   counts: z.object({
     like: z.number(),

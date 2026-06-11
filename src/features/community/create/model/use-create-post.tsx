@@ -29,7 +29,7 @@ export const useCreatePost = () => {
       title: '',
       content: '',
       images: [],
-      contact: [{ type: CREATE_POST_OPTIONS.contact[0].value, value: '' }],
+      contact: [],
       // 선택 — 미선택은 undefined
       gender: undefined,
       neuterYn: undefined,
@@ -39,11 +39,15 @@ export const useCreatePost = () => {
       location: undefined,
       age: undefined,
       specificType: undefined,
-      specialMark: undefined,
-      likes: undefined,
-      dislikes: undefined,
       health: undefined,
-      relatedLink: undefined
+      relatedLink: undefined,
+      toiletTraining: undefined,
+      separationAnxiety: undefined,
+      barking: undefined,
+      activityLevel: undefined,
+      withChildren: undefined,
+      withDogs: undefined,
+      withCats: undefined
     }
   });
 
