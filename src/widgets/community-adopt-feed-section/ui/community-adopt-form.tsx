@@ -1,7 +1,7 @@
 import { RefObject } from 'react';
 import { UseFormReturn, useWatch } from 'react-hook-form';
 import { LayoutChangeEvent, TextInput } from 'react-native';
-import { Accordion, Form, Paragraph, Square, styled, Text, useTheme, View, YStack } from 'tamagui';
+import { Accordion, Form, Square, styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
 
 import { CommunityAdoptFormDto, CREATE_POST_OPTIONS } from '@/entities/community';
 import { ContactSelectField } from '@/features/community/create/ui/field/contact-select-field';
@@ -38,6 +38,12 @@ export const CommunityAdoptForm = ({
   const { black500 } = useTheme();
   const { control } = form;
   const weight = useWatch({ control, name: 'weight' });
+
+  const renderArrow = (open: boolean) => (
+    <Square animation="quick" rotate={open ? '180deg' : '0deg'}>
+      <DownArrow width={16} height={16} color={black500.val} />
+    </Square>
+  );
 
   return (
     <Form>
@@ -81,21 +87,29 @@ export const CommunityAdoptForm = ({
             minH={130}
             placeholder="예) 사람을 잘 따르고 배변을 가리는 2살 강아지예요"
           />
+          <LabelSelectField
+            name="location"
+            control={control}
+            label="지역"
+            placeholder="지역을 선택해주세요"
+            onPress={onPressLocation}
+          />
+          <LabelTextField name="relatedLink" control={control} label="관련 링크" placeholder="URL" maxLength={500} />
         </YStack>
       </Section>
 
       <Divider />
 
       <Accordion type="single" collapsible>
-        <Accordion.Item value="child-info">
+        <Accordion.Item value="appearance">
           <Accordion.Header unstyled>
             <AccordionSectionTrigger unstyled>
               {({ open }: { open: boolean }) => (
                 <>
-                  <SectionTitle mb={0}>아이 정보 (선택)</SectionTitle>
-                  <Square animation="quick" rotate={open ? '180deg' : '0deg'}>
-                    <DownArrow width={16} height={16} color={black500.val} />
-                  </Square>
+                  <TriggerTitleWrap>
+                    <SectionTitle mb={0}>외형 (선택)</SectionTitle>
+                  </TriggerTitleWrap>
+                  {renderArrow(open)}
                 </>
               )}
             </AccordionSectionTrigger>
@@ -104,9 +118,14 @@ export const CommunityAdoptForm = ({
             <Accordion.HeightAnimator animation="quick" exitStyle={{ opacity: 0, height: 0 }}>
               <YStack px={20} pb={24} gap={16}>
                 <OptionSelectField name="gender" control={control} label="성별" />
-                <OptionSelectField name="neuterYn" control={control} label="중성화" />
-                <OptionSelectField name="healthCheck" control={control} label="건강검진" />
-                <OptionSelectField name="vaccinationCheck" control={control} label="예방접종" />
+                <LabelSelectField
+                  name="age"
+                  control={control}
+                  label="나이"
+                  right={<Text color="$black500">년생</Text>}
+                  placeholder="나이를 선택해주세요"
+                  onPress={onPressAge}
+                />
                 <LabelTextField
                   label="몸무게"
                   name="weight"
@@ -118,68 +137,49 @@ export const CommunityAdoptForm = ({
                   right={<Text color="$black500">kg</Text>}
                 />
                 <LabelSelectField
-                  name="age"
-                  control={control}
-                  label="나이"
-                  right={<Text color="$black500">년생</Text>}
-                  placeholder="나이를 선택해주세요"
-                  onPress={onPressAge}
-                />
-                <LabelSelectField
-                  name="location"
-                  control={control}
-                  label="지역"
-                  placeholder="지역을 선택해주세요"
-                  onPress={onPressLocation}
-                />
-                <LabelSelectField
                   name="specificType"
                   control={control}
                   label="품종"
                   placeholder="품종을 선택해주세요"
                   onPress={onPressKind}
                 />
+              </YStack>
+            </Accordion.HeightAnimator>
+          </Accordion.Content>
+        </Accordion.Item>
+      </Accordion>
 
-                <Accordion type="single" collapsible>
-                  <Accordion.Item value="optional-section">
-                    <Accordion.Header unstyled>
-                      <AccordionTrigger unstyled>
-                        {({ open }: { open: boolean }) => (
-                          <>
-                            <Paragraph fontSize={14} lineHeight={20} fontWeight="500" flex={1} color="$black600">
-                              추가 정보 적기 (선택)
-                            </Paragraph>
-                            <Square animation="quick" rotate={open ? '180deg' : '0deg'}>
-                              <DownArrow width={14} height={14} color={black500.val} />
-                            </Square>
-                          </>
-                        )}
-                      </AccordionTrigger>
-                    </Accordion.Header>
-                    <Accordion.Content bg="transparent" p={0}>
-                      <Accordion.HeightAnimator animation="quick" exitStyle={{ opacity: 0, height: 0 }}>
-                        <YStack gap={16} pt={16}>
-                          <LabelTextArea
-                            name="health"
-                            control={control}
-                            label="아파요"
-                            rows={3}
-                            minH={70}
-                            maxLength={100}
-                            placeholder="예) 피부병이 있어서 하루에 두 번 연고를 발라줘야해요"
-                          />
-                          <LabelTextField
-                            name="relatedLink"
-                            control={control}
-                            label="관련 링크"
-                            placeholder="URL"
-                            maxLength={500}
-                          />
-                        </YStack>
-                      </Accordion.HeightAnimator>
-                    </Accordion.Content>
-                  </Accordion.Item>
-                </Accordion>
+      <Divider />
+
+      <Accordion type="single" collapsible>
+        <Accordion.Item value="health">
+          <Accordion.Header unstyled>
+            <AccordionSectionTrigger unstyled>
+              {({ open }: { open: boolean }) => (
+                <>
+                  <TriggerTitleWrap>
+                    <SectionTitle mb={0}>건강 (선택)</SectionTitle>
+                  </TriggerTitleWrap>
+                  {renderArrow(open)}
+                </>
+              )}
+            </AccordionSectionTrigger>
+          </Accordion.Header>
+          <Accordion.Content bg="transparent" p={0}>
+            <Accordion.HeightAnimator animation="quick" exitStyle={{ opacity: 0, height: 0 }}>
+              <YStack px={20} pb={24} gap={16}>
+                <OptionSelectField name="neuterYn" control={control} label="중성화" />
+                <OptionSelectField name="healthCheck" control={control} label="건강검진" />
+                <OptionSelectField name="vaccinationCheck" control={control} label="예방접종" />
+                <LabelTextArea
+                  name="health"
+                  control={control}
+                  label="아파요"
+                  rows={3}
+                  minH={70}
+                  maxLength={100}
+                  placeholder="예) 피부병이 있어서 하루에 두 번 연고를 발라줘야해요"
+                />
               </YStack>
             </Accordion.HeightAnimator>
           </Accordion.Content>
@@ -194,10 +194,10 @@ export const CommunityAdoptForm = ({
             <AccordionSectionTrigger unstyled>
               {({ open }: { open: boolean }) => (
                 <>
-                  <SectionTitle mb={0}>성격·생활 습관 (선택)</SectionTitle>
-                  <Square animation="quick" rotate={open ? '180deg' : '0deg'}>
-                    <DownArrow width={16} height={16} color={black500.val} />
-                  </Square>
+                  <TriggerTitleWrap>
+                    <SectionTitle mb={0}>성격·생활 습관 (선택)</SectionTitle>
+                  </TriggerTitleWrap>
+                  {renderArrow(open)}
                 </>
               )}
             </AccordionSectionTrigger>
@@ -236,55 +236,30 @@ export const CommunityAdoptForm = ({
                   clearable
                   options={CREATE_POST_OPTIONS.activityLevel}
                 />
-
-                <Accordion type="single" collapsible>
-                  <Accordion.Item value="social-section">
-                    <Accordion.Header unstyled>
-                      <AccordionTrigger unstyled>
-                        {({ open }: { open: boolean }) => (
-                          <>
-                            <Paragraph fontSize={14} lineHeight={20} fontWeight="500" flex={1} color="$black600">
-                              사회성 (선택)
-                            </Paragraph>
-                            <Square animation="quick" rotate={open ? '180deg' : '0deg'}>
-                              <DownArrow width={14} height={14} color={black500.val} />
-                            </Square>
-                          </>
-                        )}
-                      </AccordionTrigger>
-                    </Accordion.Header>
-                    <Accordion.Content bg="transparent" p={0}>
-                      <Accordion.HeightAnimator animation="quick" exitStyle={{ opacity: 0, height: 0 }}>
-                        <YStack gap={16} pt={16}>
-                          <LabelChipGroup
-                            name="withChildren"
-                            control={control}
-                            label="아이와"
-                            clearable
-                            stretch
-                            options={CREATE_POST_OPTIONS.socialCompatibility}
-                          />
-                          <LabelChipGroup
-                            name="withDogs"
-                            control={control}
-                            label="강아지와"
-                            clearable
-                            stretch
-                            options={CREATE_POST_OPTIONS.socialCompatibility}
-                          />
-                          <LabelChipGroup
-                            name="withCats"
-                            control={control}
-                            label="고양이와"
-                            clearable
-                            stretch
-                            options={CREATE_POST_OPTIONS.socialCompatibility}
-                          />
-                        </YStack>
-                      </Accordion.HeightAnimator>
-                    </Accordion.Content>
-                  </Accordion.Item>
-                </Accordion>
+                <LabelChipGroup
+                  name="withChildren"
+                  control={control}
+                  label="아이와"
+                  clearable
+                  stretch
+                  options={CREATE_POST_OPTIONS.socialCompatibility}
+                />
+                <LabelChipGroup
+                  name="withDogs"
+                  control={control}
+                  label="강아지와"
+                  clearable
+                  stretch
+                  options={CREATE_POST_OPTIONS.socialCompatibility}
+                />
+                <LabelChipGroup
+                  name="withCats"
+                  control={control}
+                  label="고양이와"
+                  clearable
+                  stretch
+                  options={CREATE_POST_OPTIONS.socialCompatibility}
+                />
               </YStack>
             </Accordion.HeightAnimator>
           </Accordion.Content>
@@ -293,16 +268,20 @@ export const CommunityAdoptForm = ({
 
       <Divider />
 
-      <Accordion type="single" collapsible onLayout={onContactLayout}>
+      <Accordion type="single" collapsible defaultValue="contact" onLayout={onContactLayout}>
         <Accordion.Item value="contact">
           <Accordion.Header unstyled>
             <AccordionSectionTrigger unstyled>
               {({ open }: { open: boolean }) => (
                 <>
-                  <SectionTitle mb={0}>연락처 (선택)</SectionTitle>
-                  <Square animation="quick" rotate={open ? '180deg' : '0deg'}>
-                    <DownArrow width={16} height={16} color={black500.val} />
-                  </Square>
+                  <TriggerTitleWrap>
+                    <XStack items="center" gap={4}>
+                      <SectionTitle mb={0}>연락처</SectionTitle>
+                      <RequiredMark>*</RequiredMark>
+                    </XStack>
+                    <TriggerSubtitle>여러 개 선택할 수 있어요</TriggerSubtitle>
+                  </TriggerTitleWrap>
+                  {renderArrow(open)}
                 </>
               )}
             </AccordionSectionTrigger>
@@ -310,8 +289,7 @@ export const CommunityAdoptForm = ({
           <Accordion.Content bg="transparent" p={0}>
             <Accordion.HeightAnimator animation="quick" exitStyle={{ opacity: 0, height: 0 }}>
               <YStack px={20} pb={24}>
-                <ContactHint>여러 개 선택할 수 있어요</ContactHint>
-                <ContactSelectField control={control} label="연락 정보" inputRef={fieldRefs?.contactInput} />
+                <ContactSelectField control={control} label="연락 정보" required inputRef={fieldRefs?.contactInput} />
               </YStack>
             </Accordion.HeightAnimator>
           </Accordion.Content>
@@ -339,11 +317,21 @@ const SectionTitle = styled(Text, {
   mb: 16
 });
 
-const ContactHint = styled(Text, {
+const RequiredMark = styled(Text, {
+  fontSize: 18,
+  fontWeight: '600',
+  color: '$errorMain'
+});
+
+const TriggerTitleWrap = styled(YStack, {
+  flex: 1,
+  gap: 4
+});
+
+const TriggerSubtitle = styled(Text, {
   fontSize: 13,
   lineHeight: 18,
-  color: '$black500',
-  mb: 12
+  color: '$black500'
 });
 
 const Caption = styled(Text, {
@@ -353,18 +341,6 @@ const Caption = styled(Text, {
   color: '$black500',
   px: 20,
   mb: 8
-});
-
-const AccordionTrigger = styled(Accordion.Trigger, {
-  px: 16,
-  height: 48,
-  rounded: 4,
-  borderWidth: 1,
-  borderColor: '$white800',
-  flexDirection: 'row',
-  items: 'center',
-  justify: 'space-between',
-  bg: '$white850'
 });
 
 const AccordionSectionTrigger = styled(Accordion.Trigger, {

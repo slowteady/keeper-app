@@ -16,12 +16,8 @@ export type ContactSelectFieldProps = {
   inputRef?: RefObject<TextInput | null>;
 };
 
-// react-hook-form 의 errors.contact 는 두 형태로 옴
-// 1) root level (chip 0개 등): { message: '최소 1개의 연락 정보를...' }
-// 2) item level (특정 chip value 빈): [{ value: { message: '연락처를 입력해주세요' } }, ...]
 type ContactItemError = { value?: { message?: string } };
 
-// 국내 휴대폰 11자리(010XXXXXXXX) 까지 받고 3-4-4 로 포맷
 const formatPhone = (raw: string): string => {
   const digits = raw.replace(/\D/g, '').slice(0, 11);
   if (digits.length <= 3) return digits;
@@ -44,13 +40,13 @@ const getKeyboardType = (type: string): KeyboardTypeOptions => {
   return 'default';
 };
 
-// 010-1234-5678 = 13자 / 이메일·SNS 는 일반 max 100
 const getMaxLength = (type: string): number => (type === 'PHONE' ? 13 : 100);
 
 const formatValue = (type: string, value: string): string => (type === 'PHONE' ? formatPhone(value) : value);
 
 export const ContactSelectField = ({ control, label, required, inputRef }: ContactSelectFieldProps) => {
-  const { errors } = useFormState({ control, name: 'contact' });
+  const { errors, submitCount } = useFormState({ control, name: 'contact' });
+  const showErrors = submitCount > 0;
   const contactError = errors.contact;
   const rootMessage =
     contactError && 'message' in contactError ? (contactError as { message?: string }).message : undefined;
@@ -91,7 +87,7 @@ export const ContactSelectField = ({ control, label, required, inputRef }: Conta
             {field.value.length > 0 && (
               <YStack gap={10} mt={12}>
                 {field.value.map((item, idx) => {
-                  const itemMessage = itemErrors?.[idx]?.value?.message;
+                  const itemMessage = showErrors ? itemErrors?.[idx]?.value?.message : undefined;
                   return (
                     <YStack key={`${item.type}-${idx}`} gap={4}>
                       <TextField
@@ -111,7 +107,7 @@ export const ContactSelectField = ({ control, label, required, inputRef }: Conta
                 })}
               </YStack>
             )}
-            <FieldError message={rootMessage} />
+            <FieldError message={showErrors ? rootMessage : undefined} />
           </YStack>
         );
       }}

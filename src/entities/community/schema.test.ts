@@ -29,9 +29,13 @@ describe('CommunityAdoptFormSchema', () => {
   });
 
   describe('contact (chip + value)', () => {
-    it('chip 0개(연락처 미입력)여도 통과 — 연락처는 선택', () => {
+    it('chip 0개(연락처 미입력)면 에러 — 연락처는 최소 1개 필수', () => {
       const result = CommunityAdoptFormSchema.safeParse({ ...baseValid, contact: [] });
-      expect(result.success).toBe(true);
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        const issue = result.error.issues.find((i) => i.path[0] === 'contact');
+        expect(issue?.message).toBe('연락처를 최소 1개 입력해주세요');
+      }
     });
 
     it('chip 1개 + value 빈 문자열이면 item value 에러', () => {

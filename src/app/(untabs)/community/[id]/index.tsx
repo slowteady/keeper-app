@@ -18,7 +18,6 @@ import {
 import { CommunityAdoptCardStats, communityQueries } from '@/entities/community';
 import { useLoginRequired } from '@/features/auth';
 import {
-  DisclaimerNotice,
   FocusedCommentContext,
   QnaDetailContent,
   RepliesSection,
@@ -347,9 +346,6 @@ const CommunityDetailContent = ({ id, scrollToComments, commentId, editCommentId
                     <CommunityDetailDescriptionSection {...descriptions} />
                   </View>
                 )}
-                <View px={20} mb={20}>
-                  <DisclaimerNotice />
-                </View>
                 {hasContact && (
                   <View px={20} mb={20}>
                     <Button onPress={openContactSheet}>문의하기</Button>
