@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { communityQueries } from '@/entities/community';
 
 import {
+  convertToAdoptDetailBehaviorData,
   convertToAdoptDetailDescriptionData,
   convertToAdoptDetailInfoData,
   convertToAdoptDetailOverviewData
@@ -18,9 +19,10 @@ export const useCommunityAdoptDetailFeed = (id: string) => {
   const overviews = useMemo(() => (detailPost ? convertToAdoptDetailOverviewData(detailPost) : []), [detailPost]);
   const infos = useMemo(() => (detailPost ? convertToAdoptDetailInfoData(detailPost) : []), [detailPost]);
   const descriptions = useMemo(() => (detailPost ? convertToAdoptDetailDescriptionData(detailPost) : []), [detailPost]);
+  const behaviors = useMemo(() => (detailPost ? convertToAdoptDetailBehaviorData(detailPost) : []), [detailPost]);
 
   return {
-    data: { detailPost, overviews, infos, descriptions },
+    data: { detailPost, overviews, infos, descriptions, behaviors },
     isLoading: false,
     isError: false,
     refetch

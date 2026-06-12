@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { Pressable, StyleSheet } from 'react-native';
 import { styled, Text, TextAreaProps, View, XStack } from 'tamagui';
 
@@ -17,6 +18,7 @@ export type CommentFormInputProps = Omit<TextAreaProps, 'onSubmitEditing'> & {
   submitLabel?: string;
   disabled?: boolean;
   onTapWhenDisabled?: () => void;
+  leading?: ReactNode;
 };
 
 // 게시글 좋아요는 헤더 하트만 — 입력창에 좋아요 둘 필요 X (Instagram/Threads/29cm 표준).
@@ -29,6 +31,7 @@ export const CommentFormInput = ({
   submitLabel = '등록',
   disabled = false,
   onTapWhenDisabled,
+  leading,
   ...rest
 }: CommentFormInputProps) => {
   const canSubmit = value.trim().length > 0 && !isPending && !disabled;
@@ -44,6 +47,7 @@ export const CommentFormInput = ({
         </BannerRow>
       )}
       <InputRow>
+        {leading && <View mr={8}>{leading}</View>}
         <View flex={1} mr={6} position="relative">
           <TextArea
             placeholder="소중한 의견을 남겨주세요:)"

@@ -33,9 +33,11 @@ import { ContactSheet } from '@/features/community/detail/ui/contact-sheet';
 import { useLikePost } from '@/features/like-post';
 import { useLayout, useListRefreshing } from '@/shared/model';
 import { Button, DetailErrorBoundary, useBottomSheet } from '@/shared/ui';
-import { AdoptDetailInfoSection } from '@/widgets/adopt-section';
+import { AdoptBasicInfoGrid } from '@/widgets/adopt-section';
 import {
+  CommunityDetailBehaviorSection,
   CommunityDetailDescriptionSection,
+  CommunityDetailHealthSection,
   CommunityDetailOverviewSection,
   PostDetailSkeleton
 } from '@/widgets/community-adopt-feed-section';
@@ -137,8 +139,18 @@ const CommunityDetailContent = ({ id, scrollToComments, commentId, editCommentId
   const { refreshing, handleRefresh } = useListRefreshing(refresh);
 
   const detailPost = data.detailPost;
-  const descriptions = data.descriptions as Parameters<typeof CommunityDetailDescriptionSection>[0];
-  const hasDescription = !!(descriptions?.health?.trim() || descriptions?.relatedLink?.trim());
+  const infos = data.infos as {
+    age: string;
+    gender: string;
+    weight: string;
+    healthCheck?: string;
+    neuterYn?: string;
+    vaccinationCheck?: string;
+  };
+  const descriptions = data.descriptions as { health: string; relatedLink: string };
+  const behaviors = data.behaviors as { label: string; value: string }[];
+  const healthText = descriptions?.health ?? '';
+  const hasRelatedLink = !!descriptions?.relatedLink?.trim();
   const isLiked = detailPost?.isLiked ?? false;
   const authorId = detailPost?.user?.id ?? null;
   const contacts = useMemo(
@@ -338,16 +350,29 @@ const CommunityDetailContent = ({ id, scrollToComments, commentId, editCommentId
 
             {detailPost && (
               <>
-                <YStack px={20} mb={hasDescription ? 40 : 24}>
-                  <AdoptDetailInfoSection {...(data.infos as Parameters<typeof AdoptDetailInfoSection>[0])} />
+                <YStack px={20} mb={32}>
+                  <AdoptBasicInfoGrid age={infos.age} gender={infos.gender} weight={infos.weight} />
                 </YStack>
-                {hasDescription && (
+                {behaviors.length > 0 && (
                   <View px={20} mb={32}>
-                    <CommunityDetailDescriptionSection {...descriptions} />
+                    <CommunityDetailBehaviorSection items={behaviors} />
+                  </View>
+                )}
+                <View px={20} mb={32}>
+                  <CommunityDetailHealthSection
+                    neuterYn={infos.neuterYn}
+                    vaccinationCheck={infos.vaccinationCheck}
+                    healthCheck={infos.healthCheck}
+                    health={healthText}
+                  />
+                </View>
+                {hasRelatedLink && (
+                  <View px={20} mb={32}>
+                    <CommunityDetailDescriptionSection relatedLink={descriptions.relatedLink} />
                   </View>
                 )}
                 {hasContact && (
-                  <View px={20} mb={20}>
+                  <View px={20} mb={24}>
                     <Button onPress={openContactSheet}>문의하기</Button>
                   </View>
                 )}
