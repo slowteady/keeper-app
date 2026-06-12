@@ -23,7 +23,7 @@ const Page = () => {
       refresh();
       globalToast('캐시를 삭제했어요', 'success');
     } catch {
-      globalToast('캐시 삭제에 실패했어요', 'fail');
+      globalToast('캐시를 삭제하지 못했어요', 'fail');
     }
   }, [closeModal, refresh]);
 

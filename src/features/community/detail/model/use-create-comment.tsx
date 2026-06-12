@@ -37,6 +37,6 @@ export const useCreateComment = ({ postId }: { postId: string }) => {
       // 백그라운드 정합 (정렬·페이지 합치기 등)
       queryClient.invalidateQueries({ queryKey: [...commentQueries.all(), 'list', postId] });
     },
-    onError: () => globalToast('댓글 등록에 실패했어요. 다시 시도해주세요.', 'fail')
+    onError: () => globalToast('댓글을 등록하지 못했어요', 'fail')
   });
 };

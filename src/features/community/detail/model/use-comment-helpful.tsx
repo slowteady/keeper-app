@@ -50,7 +50,7 @@ export const useCommentHelpful = () => {
           queryClient.setQueryData(key, value);
         }
       }
-      globalToast('도움돼요 처리에 실패했어요. 잠시 후 다시 시도해주세요', 'fail');
+      globalToast('도움돼요를 처리하지 못했어요', 'fail');
     },
 
     onSuccess: (data, { commentId }) => {

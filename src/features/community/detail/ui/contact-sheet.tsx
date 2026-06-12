@@ -41,7 +41,7 @@ export const ContactSheet = ({ contacts }: ContactSheetProps) => {
     try {
       await Linking.openURL(item.value);
     } catch {
-      globalToast('링크를 열 수 없어요', 'fail');
+      globalToast('링크를 열지 못했어요', 'fail');
     }
   };
 

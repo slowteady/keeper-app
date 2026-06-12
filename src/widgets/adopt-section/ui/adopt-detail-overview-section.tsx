@@ -23,7 +23,7 @@ export const AdoptDetailOverviewSection = ({
   onPressFavorite,
   onPressShare
 }: AdoptDetailOverviewSectionProps) => {
-  const { black500 } = useTheme();
+  const { black600 } = useTheme();
   const handlePressFavorite = () => {
     if (!onPressFavorite) return;
     toggleHaptic(isFavorited);
@@ -37,12 +37,12 @@ export const AdoptDetailOverviewSection = ({
         </Text>
         {onPressFavorite && (
           <Pressable hitSlop={10} onPress={handlePressFavorite}>
-            <AnimatedHeart isLiked={isFavorited} size={26} inactiveColor={black500.val} />
+            <AnimatedHeart isLiked={isFavorited} size={26} inactiveColor={black600.val} />
           </Pressable>
         )}
         {onPressShare && (
           <Pressable hitSlop={10} onPress={onPressShare} accessibilityLabel="공유">
-            <ShareIcon width={24} height={24} color={black500.val} />
+            <ShareIcon width={24} height={24} color={black600.val} />
           </Pressable>
         )}
       </TitleContainer>

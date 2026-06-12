@@ -55,7 +55,7 @@ export const useLogout = () => {
       setIsAuthenticated(false);
       router.dismissTo('/(tabs)/profile');
     } catch {
-      globalToast('로그아웃에 실패했어요 다시 시도해주세요', 'fail');
+      globalToast('로그아웃하지 못했어요', 'fail');
     }
   }, [isPending, mutateAsync, qc, setIsAuthenticated]);
 

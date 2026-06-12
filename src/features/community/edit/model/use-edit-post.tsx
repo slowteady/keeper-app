@@ -45,7 +45,7 @@ export const useEditPost = (postId: string) => {
       router.back();
     },
     onError: () => {
-      globalToast('게시글 수정에 실패했어요. 잠시 후 다시 시도해주세요', 'fail');
+      globalToast('공고를 수정하지 못했어요', 'fail');
     }
   });
 

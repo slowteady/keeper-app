@@ -56,7 +56,7 @@ export const useUpdateQnaPost = (id: string) => {
       router.back();
     },
     onError: () => {
-      globalToast('수정에 실패했어요. 잠시 후 다시 시도해주세요', 'fail');
+      globalToast('글을 수정하지 못했어요', 'fail');
     }
   });
 

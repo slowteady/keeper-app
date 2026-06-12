@@ -86,7 +86,7 @@ describe('useUpdateComment', () => {
     });
 
     await waitFor(() => {
-      expect(mockedToast).toHaveBeenCalledWith(expect.stringMatching(/실패/), 'fail');
+      expect(mockedToast).toHaveBeenCalledWith('댓글을 수정하지 못했어요', 'fail');
     });
   });
 });

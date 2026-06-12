@@ -51,7 +51,7 @@ export const useFavoriteShelter = () => {
           queryClient.setQueryData(key, value);
         }
       }
-      globalToast('찜 처리에 실패했어요. 잠시 후 다시 시도해주세요', 'fail');
+      globalToast('찜을 처리하지 못했어요', 'fail');
     },
 
     onSuccess: (data, { careRegNo }) => {

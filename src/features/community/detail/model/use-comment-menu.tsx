@@ -15,10 +15,10 @@ export type CommentMenuId = 'EDIT' | 'DELETE' | 'REPORT' | 'BLOCK';
 
 const MINE_MENU: readonly BottomSheetMenuData<CommentMenuId>[] = [
   { id: 'EDIT', label: '수정하기' },
-  { id: 'DELETE', label: '삭제하기' }
+  { id: 'DELETE', label: '삭제하기', destructive: true }
 ] as const;
-const REPORT_ITEM: BottomSheetMenuData<CommentMenuId> = { id: 'REPORT', label: '신고하기' };
-const BLOCK_ITEM: BottomSheetMenuData<CommentMenuId> = { id: 'BLOCK', label: '차단하기' };
+const REPORT_ITEM: BottomSheetMenuData<CommentMenuId> = { id: 'REPORT', label: '신고하기', destructive: true };
+const BLOCK_ITEM: BottomSheetMenuData<CommentMenuId> = { id: 'BLOCK', label: '차단하기', destructive: true };
 
 export type CommentMenuTarget = {
   commentId: string;
@@ -63,7 +63,7 @@ export const useCommentMenu = ({ onEdit, onDeleteSuccess }: UseCommentMenuParams
         queryClient.invalidateQueries({ queryKey: communityQueries.myCommentList().queryKey })
       ]);
     },
-    onError: () => globalToast('삭제에 실패했어요. 다시 시도해주세요.', 'fail')
+    onError: () => globalToast('댓글을 삭제하지 못했어요', 'fail')
   });
 
   const openCommentMenu = useCallback(
@@ -111,7 +111,7 @@ export const useCommentMenu = ({ onEdit, onDeleteSuccess }: UseCommentMenuParams
         }
       };
 
-      present(<BottomSheetMenu data={menuItems} value={'' as CommentMenuId} onPress={handlePress} />, {
+      present(<BottomSheetMenu data={menuItems} value={'' as CommentMenuId} onPress={handlePress} mode="action" />, {
         enableDynamicSizing: true
       });
     },

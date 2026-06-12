@@ -69,7 +69,7 @@ export const useBlock = () => {
       queryClient.invalidateQueries({ queryKey: ['me-liked-posts'] });
       globalToast('차단했어요', 'success');
     } catch {
-      globalToast('차단에 실패했어요.', 'fail');
+      globalToast('차단하지 못했어요', 'fail');
     }
   };
 
@@ -79,9 +79,9 @@ export const useBlock = () => {
       await queryClient.invalidateQueries({ queryKey: communityQueries.all() });
       await queryClient.invalidateQueries({ queryKey: commentQueries.all() });
       await queryClient.invalidateQueries({ queryKey: ['blocks'] });
-      globalToast('차단 해제했어요.', 'success');
+      globalToast('차단 해제했어요', 'success');
     } catch {
-      globalToast('차단 해제에 실패했어요.', 'fail');
+      globalToast('차단 해제하지 못했어요', 'fail');
     }
   };
 

@@ -23,7 +23,7 @@ export const useAddComment = (postId: string) => {
         queryClient.invalidateQueries(communityQueries.detail(postId))
       ]);
     } catch {
-      globalToast('댓글 작성에 실패했어요. 다시 시도해주세요.', 'fail');
+      globalToast('댓글을 등록하지 못했어요', 'fail');
     }
   };
 

@@ -23,9 +23,9 @@ export const useReport = () => {
   const report = async (target: ReportTarget, reason: ReportReason, reasonDetail?: string) => {
     try {
       await mutateAsync({ target, reason, reasonDetail });
-      globalToast('신고가 접수되었어요.', 'success');
+      globalToast('신고가 접수됐어요', 'success');
     } catch {
-      globalToast('신고에 실패했어요. 다시 시도해주세요.', 'fail');
+      globalToast('신고하지 못했어요', 'fail');
     }
   };
 

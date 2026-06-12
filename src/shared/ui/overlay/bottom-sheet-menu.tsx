@@ -9,16 +9,18 @@ import { Check } from '../icons/solid';
 export type BottomSheetMenuData<T> = {
   id: T;
   label: string;
+  destructive?: boolean;
 };
 
 export type BottomSheetMenuProps<T> = {
   data: readonly BottomSheetMenuData<T>[];
   value: T;
   onPress: (data: BottomSheetMenuData<T>) => void;
+  mode?: 'select' | 'action';
 };
 
-export const BottomSheetMenu = <T,>({ data, value, onPress }: BottomSheetMenuProps<T>) => {
-  const { black800, black500 } = useTheme();
+export const BottomSheetMenu = <T,>({ data, value, onPress, mode = 'select' }: BottomSheetMenuProps<T>) => {
+  const { black800, black500, destructive } = useTheme();
   const { bottom } = useLayout();
 
   return (
@@ -27,6 +29,8 @@ export const BottomSheetMenu = <T,>({ data, value, onPress }: BottomSheetMenuPro
         const { label } = item;
         const key = `${label}-${idx}`;
         const isActive = String(item.id) === String(value);
+        const showCheck = mode === 'select' && isActive;
+        const color = item.destructive ? destructive.val : mode === 'action' || isActive ? black800.val : black500.val;
 
         return (
           <TouchableOpacity
@@ -37,8 +41,8 @@ export const BottomSheetMenu = <T,>({ data, value, onPress }: BottomSheetMenuPro
             accessibilityRole="button"
             testID={`menu-${String(item.id)}`}
           >
-            <StyledText style={[{ color: isActive ? black800.val : black500.val }]}>{label}</StyledText>
-            {isActive && <Check width={17} height={20} color={black800.val} />}
+            <StyledText style={[{ color }, mode === 'action' && { fontWeight: '600' }]}>{label}</StyledText>
+            {showCheck && <Check width={17} height={20} color={black800.val} />}
           </TouchableOpacity>
         );
       })}

@@ -46,7 +46,7 @@ export const CommunityAdoptFormSchema = z.object({
     .optional(),
   location: z.string().optional(),
   health: z.string().optional(),
-  relatedLink: z.union([z.string().url('올바른 URL을 입력해주세요').max(500), z.literal('')]).optional(),
+  relatedLink: z.string().max(500).optional(),
   toiletTraining: z.enum(['COMPLETE', 'IN_PROGRESS', 'NEEDED']).optional(),
   separationAnxiety: z.enum(['NONE', 'SOMETIMES', 'SEVERE']).optional(),
   barking: z.enum(['NONE', 'SOMETIMES', 'OFTEN']).optional(),

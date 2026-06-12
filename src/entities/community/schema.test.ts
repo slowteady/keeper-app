@@ -221,7 +221,7 @@ describe('CommunityAdoptFormSchema', () => {
     });
   });
 
-  describe('relatedLink URL 검증', () => {
+  describe('relatedLink 검증', () => {
     it('유효한 URL 은 통과', () => {
       const result = CommunityAdoptFormSchema.safeParse({
         ...baseValid,
@@ -235,18 +235,14 @@ describe('CommunityAdoptFormSchema', () => {
       expect(result.success).toBe(true);
     });
 
-    it('URL 형식이 아니면 "올바른 URL을 입력해주세요" 에러', () => {
+    it('URL 형식이 아니어도 통과', () => {
       const result = CommunityAdoptFormSchema.safeParse({ ...baseValid, relatedLink: 'not-a-url' });
-      expect(result.success).toBe(false);
-      if (!result.success) {
-        const issue = result.error.issues.find((i) => i.path[0] === 'relatedLink');
-        expect(issue?.message).toBe('올바른 URL을 입력해주세요');
-      }
+      expect(result.success).toBe(true);
     });
 
-    it('500자를 초과하는 URL 은 거부', () => {
-      const longUrl = `https://example.com/${'a'.repeat(500)}`;
-      const result = CommunityAdoptFormSchema.safeParse({ ...baseValid, relatedLink: longUrl });
+    it('500자를 초과하면 거부', () => {
+      const longLink = 'a'.repeat(501);
+      const result = CommunityAdoptFormSchema.safeParse({ ...baseValid, relatedLink: longLink });
       expect(result.success).toBe(false);
     });
   });

@@ -52,7 +52,7 @@ export const useLoginSheet = () => {
 
             if (isNew) {
               if (!signupToken) {
-                globalToast('회원가입 진행에 실패했어요', 'fail');
+                globalToast('회원가입하지 못했어요', 'fail');
                 return;
               }
               setSheet((prev) => ({ ...prev, step: 'agreement', signupToken }));
@@ -62,7 +62,7 @@ export const useLoginSheet = () => {
             if (!accessToken || !refreshToken) return;
             await finish(accessToken, refreshToken);
           },
-          onError: () => globalToast('로그인에 실패했어요 다시 시도해주세요', 'fail')
+          onError: () => globalToast('로그인하지 못했어요', 'fail')
         }
       );
     },

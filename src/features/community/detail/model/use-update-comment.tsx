@@ -43,6 +43,6 @@ export const useUpdateComment = ({ postId }: { postId: string }) => {
           }
       );
     },
-    onError: () => globalToast('댓글 수정에 실패했어요. 다시 시도해주세요.', 'fail')
+    onError: () => globalToast('댓글을 수정하지 못했어요', 'fail')
   });
 };

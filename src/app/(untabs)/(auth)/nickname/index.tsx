@@ -18,7 +18,7 @@ const Page = () => {
     },
     onError: (error) => {
       const isConflict = axios.isAxiosError(error) && error.response?.status === 409;
-      globalToast(isConflict ? '이미 사용 중인 닉네임이에요' : '닉네임 변경에 실패했어요 다시 시도해주세요', 'fail');
+      globalToast(isConflict ? '이미 사용 중인 닉네임이에요' : '닉네임을 변경하지 못했어요', 'fail');
     }
   });
 

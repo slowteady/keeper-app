@@ -15,10 +15,10 @@ export type PostMenuId = 'EDIT' | 'DELETE' | 'REPORT' | 'BLOCK';
 
 const MINE_MENU: readonly BottomSheetMenuData<PostMenuId>[] = [
   { id: 'EDIT', label: '수정하기' },
-  { id: 'DELETE', label: '삭제하기' }
+  { id: 'DELETE', label: '삭제하기', destructive: true }
 ] as const;
-const REPORT_ITEM: BottomSheetMenuData<PostMenuId> = { id: 'REPORT', label: '신고하기' };
-const BLOCK_ITEM: BottomSheetMenuData<PostMenuId> = { id: 'BLOCK', label: '차단하기' };
+const REPORT_ITEM: BottomSheetMenuData<PostMenuId> = { id: 'REPORT', label: '신고하기', destructive: true };
+const BLOCK_ITEM: BottomSheetMenuData<PostMenuId> = { id: 'BLOCK', label: '차단하기', destructive: true };
 
 type UsePostMenuParams = {
   postId: string;
@@ -46,7 +46,7 @@ export const usePostMenu = ({ postId, authorId, stayOnDelete = false }: UsePostM
       ]);
       if (!stayOnDelete) router.back();
     },
-    onError: () => globalToast('삭제에 실패했어요. 다시 시도해주세요.', 'fail')
+    onError: () => globalToast('게시글을 삭제하지 못했어요', 'fail')
   });
 
   const handleConfirmDelete = useCallback(() => {
@@ -101,7 +101,7 @@ export const usePostMenu = ({ postId, authorId, stayOnDelete = false }: UsePostM
   }, [isMine, authorId]);
 
   const openPostMenu = useCallback(() => {
-    present(<BottomSheetMenu data={menuItems} value={'' as PostMenuId} onPress={handlePress} />, {
+    present(<BottomSheetMenu data={menuItems} value={'' as PostMenuId} onPress={handlePress} mode="action" />, {
       enableDynamicSizing: true
     });
   }, [present, menuItems, handlePress]);

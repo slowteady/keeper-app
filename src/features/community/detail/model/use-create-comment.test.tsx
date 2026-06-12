@@ -91,7 +91,7 @@ describe('useCreateComment', () => {
     });
 
     await waitFor(() => {
-      expect(mockedToast).toHaveBeenCalledWith(expect.stringMatching(/실패/), 'fail');
+      expect(mockedToast).toHaveBeenCalledWith('댓글을 등록하지 못했어요', 'fail');
     });
   });
 });

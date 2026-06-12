@@ -57,7 +57,7 @@ export const useDeleteUser = () => {
         setIsAuthenticated(false);
         router.dismissTo('/(tabs)/profile');
       } catch {
-        globalToast('회원탈퇴에 실패했어요 다시 시도해주세요', 'fail');
+        globalToast('회원탈퇴하지 못했어요', 'fail');
       }
     },
     [isPending, mutateAsync, queryClient, setIsAuthenticated]

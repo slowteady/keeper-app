@@ -67,6 +67,7 @@ export const config = createTamagui({
       errorMain: '#FF4C47',
       errorLight: '#FFD7D6',
       errorLightest: '#FFD7D6',
+      destructive: '#FF3B30',
       successMain: '#0A7FFF',
       successLightest: '#CFE6FF',
       noticeMain: '#FFB800',
@@ -140,6 +141,7 @@ export const config = createTamagui({
       errorMain: '#FF4C47',
       errorLight: '#FFD7D6',
       errorLightest: '#FFD7D6',
+      destructive: '#FF3B30',
 
       successMain: '#0A7FFF',
       successLightest: '#CFE6FF',

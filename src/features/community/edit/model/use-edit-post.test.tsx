@@ -160,9 +160,7 @@ describe('useEditPost', () => {
       result.current.actions.handleSubmit(result.current.form.getValues());
     });
 
-    await waitFor(() =>
-      expect(mockToast).toHaveBeenCalledWith('게시글 수정에 실패했어요. 잠시 후 다시 시도해주세요', 'fail')
-    );
+    await waitFor(() => expect(mockToast).toHaveBeenCalledWith('공고를 수정하지 못했어요', 'fail'));
     expect(router.back).not.toHaveBeenCalled();
   });
 
