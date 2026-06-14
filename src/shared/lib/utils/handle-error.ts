@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react-native';
 import { AxiosError } from 'axios';
 
 export const logger = {
@@ -17,6 +18,8 @@ export const logger = {
     if (__DEV__) {
       console.error(...args);
     }
+    const cause = args.find((arg) => arg instanceof Error);
+    Sentry.captureException(cause ?? new Error(args.map(String).join(' ')));
   },
 
   debug: (...args: unknown[]) => {

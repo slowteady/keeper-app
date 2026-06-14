@@ -5,6 +5,7 @@ import 'react-native-reanimated';
 import { useReactQueryDevTools } from '@dev-plugins/react-query';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { initializeKakaoSDK } from '@react-native-kakao/core';
+import * as Sentry from '@sentry/react-native';
 import { MutationCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { extend } from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
@@ -32,6 +33,14 @@ import ErrorBoundary from './_error-boundary';
 import ErrorFallback from './_error-fallback';
 
 SplashScreen.preventAutoHideAsync();
+
+Sentry.init({
+  dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
+  enabled: !__DEV__ && !!process.env.EXPO_PUBLIC_SENTRY_DSN,
+  environment: __DEV__ ? 'development' : 'production',
+  tracesSampleRate: 0.1,
+  sendDefaultPii: false
+});
 
 const RootLayout = () => {
   const [queryClient] = useState(
@@ -177,4 +186,4 @@ const RootLayout = () => {
   );
 };
 
-export default RootLayout;
+export default Sentry.wrap(RootLayout);

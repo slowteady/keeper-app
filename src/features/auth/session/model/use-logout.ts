@@ -1,5 +1,6 @@
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { logout as kakaoLogout } from '@react-native-kakao/user';
+import * as Sentry from '@sentry/react-native';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { useCallback } from 'react';
@@ -49,6 +50,7 @@ export const useLogout = () => {
         await signOutSocialSession(cachedUser.socialType);
       }
       await removeToken();
+      Sentry.setUser(null);
       // 권한 의존 캐시(하트/찜/내 글 등) 가 stale 인 상태로 남으면 비로그인인데 ON 보이는 버그 발생 → 전체 제거.
       qc.removeQueries();
 

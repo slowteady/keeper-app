@@ -127,7 +127,7 @@ graph TD
   - **점검 모드** = 서버 점검/장애 시 _진입 차단_ (닫을 수 없는 화면)
   - **강제 업데이트 게이트** = 네이티브·호환 깨짐 시 _구버전 차단_ → 스토어 유도 (soft/hard)
   - **expo-updates OTA** = JS/에셋 _무중단 핫픽스_ (강제 차단은 못 함 — 그래서 게이트와 별개로 둘 다 필요)
-- **에러 모니터링(Sentry)** — 기존 임시 세팅(metro/expo plugin/init/user context)은 정리·제거됨. 출시 전 딥리서치(context7) 후 재셋업: 네이티브 통합은 빌드 포함 필요, DSN·환경(dev/prod) 분리, 소스맵 업로드, `logger`(현재 dev 콘솔 only) 백엔드 재연결, ErrorBoundary 연동 복구. OTA로 갱신 안 되는 네이티브 부분이 있어 빌드 타이밍 유의.
+- **에러 모니터링(Sentry)** — ✅ **코드 wiring 완료(2026-06-14)**: `@sentry/react-native ~7.2.0`, metro `getSentryExpoConfig`(소스맵), expo 플러그인(org/project·자동업로드), `Sentry.init`(dsn=env·prod-only·env분리·PII off)+`Sentry.wrap`, `logger.error→captureException` funnel(ErrorBoundary/mutation/interceptor 포섭), user context(로그인 set/로그아웃 clear). 재귀 BP 재검수 통과. **대기**: 기존 프로젝트 DSN 재활용 + env(`EXPO_PUBLIC_SENTRY_DSN`/빌드용 `SENTRY_ORG`·`SENTRY_PROJECT`·`SENTRY_AUTH_TOKEN`) + 새 빌드. 보류: 네비게이션 계측(v7.2 정확 API 확인 후).
 - **알림 시스템(push 인프라 + 인앱) = 이번 출시 P0** (2026-06-14 승격). 소비자: 운영자 push(새 신고) · 사용자 통지(§44-2) · 마감 D-day. admin 콘솔=웹, 운영자도 앱 설치해 push 수신. `00-notification-system.md` 참조.
 - 착수 시 expo-updates(EAS Update) `runtimeVersion`·채널·롤백 전략은 공식 docs(context7) 확인 후 셋업.
 
