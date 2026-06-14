@@ -124,11 +124,11 @@ graph TD
 
 Sentry/OTA 코드는 완료됐으나 실제 동작·법규엔 아래가 남음.
 
-| #   | 작업                                                             | 등급 | 비고                                                                                                                                                            |
-| --- | ---------------------------------------------------------------- | ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | **개인정보처리방침 갱신** (keeper-web `our-keeper.com/policy/*`) | P0   | Sentry(IP·에러 시 화면 리플레이) + PostHog(행동 데이터, 붙일 때) 수집 항목·목적·보관 명시. 법규                                                                 |
-| 2   | **Sentry/OTA 활성화**                                            | P0   | 기존 Sentry 프로젝트 DSN 재활용 + env(`EXPO_PUBLIC_SENTRY_DSN`/빌드용 `SENTRY_ORG`·`SENTRY_PROJECT`·`SENTRY_AUTH_TOKEN`) + 새 dev/EAS 빌드. 빌드 전엔 dev no-op |
-| 3   | react-native-worklets/keyboard-controller 버전                   | 낮음 | 확인됨 — worklets 0.7.4는 reanimated 4.1.7과 짝(정상, 내리면 깨짐). keyboard-controller 1.21.11만 선택적으로 Expo pin(1.18.5) 정렬 가능. 비이슈                 |
+| #   | 작업                                           | 등급 | 비고                                                                                                                                                            |
+| --- | ---------------------------------------------- | ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | ~~개인정보처리방침 갱신~~ ✅ 완료(2026-06-14)  | P0   | keeper-web privacy.md v1.2 커밋·푸시(`fae9644`): Sentry IP·화면 리플레이 반영. **남은 것**: §16 사전 공지 7일 후 리플레이 활성화 / PostHog 도입 시 추가         |
+| 2   | **Sentry/OTA 활성화**                          | P0   | 기존 Sentry 프로젝트 DSN 재활용 + env(`EXPO_PUBLIC_SENTRY_DSN`/빌드용 `SENTRY_ORG`·`SENTRY_PROJECT`·`SENTRY_AUTH_TOKEN`) + 새 dev/EAS 빌드. 빌드 전엔 dev no-op |
+| 3   | react-native-worklets/keyboard-controller 버전 | 낮음 | 확인됨 — worklets 0.7.4는 reanimated 4.1.7과 짝(정상, 내리면 깨짐). keyboard-controller 1.21.11만 선택적으로 Expo pin(1.18.5) 정렬 가능. 비이슈                 |
 
 ---
 
