@@ -6,7 +6,7 @@ import { useCallback, useRef, useState } from 'react';
 import { RefreshControl } from 'react-native';
 import { styled, View } from 'tamagui';
 
-import { ADOPT_OPTIONS, AdoptFilterDto, adoptQueries } from '@/entities/adopt';
+import { ADOPT_OPTIONS, adoptQueries } from '@/entities/adopt';
 import { shelterQueries } from '@/entities/shelter';
 import { useAdoptList } from '@/features/adopt';
 import { useHomeShelter } from '@/features/shelter';
@@ -25,11 +25,10 @@ const Page = () => {
   const scrollRef = useRef<FlashListRef<(typeof SECTIONS)[number]>>(null);
   useScrollToTop(scrollRef);
 
-  const [selectedFilter, setSelectedFilter] = useState<AdoptFilterDto>(ADOPT_OPTIONS.FILTER[0].id);
   const [selectedType, setSelectedType] = useState<string>(ADOPT_OPTIONS.ANIMAL[0].id);
 
   const { convertedData, isLoading } = useAdoptList({
-    filter: selectedFilter,
+    filter: ADOPT_OPTIONS.FILTER[0].id,
     animalType: selectedType
   });
 
@@ -37,7 +36,10 @@ const Page = () => {
   const queryClient = useQueryClient();
 
   const goDetail = useCallback((id: string) => router.push({ pathname: '/adopt/[id]', params: { id } }), [router]);
-  const goList = useCallback(() => router.push('/adopt'), [router]);
+  const goList = useCallback(
+    () => router.push({ pathname: '/adopt', params: { animalType: selectedType } }),
+    [router, selectedType]
+  );
 
   const refreshCallback = useCallback(async () => {
     await Promise.all([
@@ -61,13 +63,11 @@ const Page = () => {
           return (
             <View pb={40}>
               <HomeAdoptSection
-                selectedFilter={selectedFilter}
                 selectedType={selectedType}
                 convertedData={convertedData}
                 isLoading={isLoading}
                 onGoDetail={goDetail}
                 onGoList={goList}
-                onChangeFilter={(id) => setSelectedFilter(id as AdoptFilterDto)}
                 onChangeType={setSelectedType}
               />
             </View>
@@ -84,7 +84,7 @@ const Page = () => {
           );
       }
     },
-    [selectedFilter, selectedType, convertedData, isLoading, goDetail, goList, shelter]
+    [selectedType, convertedData, isLoading, goDetail, goList, shelter]
   );
 
   return (

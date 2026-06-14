@@ -1,7 +1,7 @@
 import { useScrollToTop } from '@react-navigation/native';
 import { FlashListRef, ListRenderItemInfo } from '@shopify/flash-list';
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { styled, View } from 'tamagui';
 
@@ -17,9 +17,10 @@ const LIST_SIZE = 16;
 
 const Page = () => {
   const router = useRouter();
+  const { animalType } = useLocalSearchParams<{ animalType?: string }>();
 
   const [selectedFilter, setSelectedFilter] = useState<AdoptFilterDto>(ADOPT_OPTIONS.FILTER[0].id);
-  const [selectedType, setSelectedType] = useState<string>(ADOPT_OPTIONS.ANIMAL[0].id);
+  const [selectedType, setSelectedType] = useState<string>(animalType ?? ADOPT_OPTIONS.ANIMAL[0].id);
   const [searchInput, setSearchInput] = useState('');
   const [searchValue, setSearchValue] = useState('');
 
@@ -53,6 +54,10 @@ const Page = () => {
 
   const scrollRef = useRef<FlashListRef<AdoptItem>>(null);
   useScrollToTop(scrollRef);
+
+  useEffect(() => {
+    if (animalType) setSelectedType(animalType);
+  }, [animalType]);
 
   useEffect(() => {
     if (scrollRef.current) {

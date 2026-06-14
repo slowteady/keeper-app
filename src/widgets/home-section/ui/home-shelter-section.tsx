@@ -5,7 +5,7 @@ import { styled, Text, useTheme, View, XStack } from 'tamagui';
 
 import { DistancePermissionPrompt, ShelterCard, ShelterDto } from '@/entities/shelter';
 import { useFavoriteShelter } from '@/features/favorite-shelter';
-import { Skeleton, ViewAllButton } from '@/shared/ui';
+import { Skeleton } from '@/shared/ui';
 import { DownArrow } from '@/shared/ui/icons/mini';
 
 const CARD_WIDTH = 270;
@@ -60,8 +60,7 @@ export const HomeShelterSection = ({ shelters, isGranted, isLoading }: HomeShelt
           renderItem={renderItem}
           ItemSeparatorComponent={() => <View width={CARD_GAP} />}
           ListEmptyComponent={<EmptyComponent isLoading={isLoading} />}
-          ListFooterComponent={() => <ViewAllButton onPress={() => router.push('/shelter')} />}
-          ListFooterComponentStyle={{ alignItems: 'center', justifyContent: 'center', paddingHorizontal: 40 }}
+          contentContainerStyle={{ paddingRight: 20 }}
           style={{ paddingLeft: 20, minHeight: CARD_MIN_HEIGHT }}
           snapToInterval={CARD_SNAP_INTERVAL}
           snapToAlignment="start"
