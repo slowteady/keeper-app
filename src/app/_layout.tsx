@@ -10,7 +10,7 @@ import { MutationCache, QueryClient, QueryClientProvider } from '@tanstack/react
 import { extend } from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useFonts } from 'expo-font';
-import { router, Stack, usePathname } from 'expo-router';
+import { router, Stack, useNavigationContainerRef, usePathname } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
@@ -34,12 +34,15 @@ import ErrorFallback from './_error-fallback';
 
 SplashScreen.preventAutoHideAsync();
 
+const navigationIntegration = Sentry.reactNavigationIntegration();
+
 Sentry.init({
   dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
   enabled: !__DEV__ && !!process.env.EXPO_PUBLIC_SENTRY_DSN,
   environment: __DEV__ ? 'development' : 'production',
   tracesSampleRate: 0.1,
-  sendDefaultPii: false
+  sendDefaultPii: false,
+  integrations: [navigationIntegration]
 });
 
 const RootLayout = () => {
@@ -129,6 +132,13 @@ const RootLayout = () => {
 
     return () => sub.remove();
   }, []);
+
+  const navigationRef = useNavigationContainerRef();
+  useEffect(() => {
+    if (navigationRef?.current) {
+      navigationIntegration.registerNavigationContainer(navigationRef);
+    }
+  }, [navigationRef]);
 
   const pathname = usePathname();
   useEffect(() => {
