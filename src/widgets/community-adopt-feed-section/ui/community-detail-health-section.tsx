@@ -1,7 +1,5 @@
 import { styled, Text, XStack, YStack } from 'tamagui';
 
-import { CREATE_POST_OPTIONS } from '@/entities/community';
-
 export type CommunityDetailHealthSectionProps = {
   neuterYn?: string;
   vaccinationCheck?: string;
@@ -11,15 +9,15 @@ export type CommunityDetailHealthSectionProps = {
 
 const hasValue = (value?: string) => !!value && value.trim().length > 0;
 
-const lookup = (options: readonly { value: string; label: string }[], v?: string) =>
-  options.find((o) => o.value === v)?.label ?? '모름';
+const ynText = (v?: string) => (v === 'Y' ? '했어요' : v === 'N' ? '안 했어요' : '알 수 없어요');
 
 const VACCINE_LABEL: Record<string, string> = {
-  NOT: '미접종',
-  FIRST: '1차접종',
-  SECOND: '2차접종',
-  THIRD: '3차접종'
+  NOT: '안 했어요',
+  FIRST: '1차',
+  SECOND: '2차',
+  THIRD: '3차'
 };
+const vaccineText = (v?: string) => (v ? (VACCINE_LABEL[v] ?? '알 수 없어요') : '알 수 없어요');
 
 export const CommunityDetailHealthSection = ({
   neuterYn,
@@ -27,22 +25,13 @@ export const CommunityDetailHealthSection = ({
   healthCheck,
   health
 }: CommunityDetailHealthSectionProps) => {
-  const chips = [
-    { label: '중성화', value: lookup(CREATE_POST_OPTIONS.neuterYn, neuterYn) },
-    { label: '백신접종', value: (vaccinationCheck && VACCINE_LABEL[vaccinationCheck]) || '모름' },
-    { label: '건강검진', value: lookup(CREATE_POST_OPTIONS.healthCheck, healthCheck) }
-  ];
-
   return (
-    <YStack gap={24}>
-      <ChipRow>
-        {chips.map((chip) => (
-          <YStack key={chip.label} items="center" gap={4}>
-            <ChipLabel>{chip.label}</ChipLabel>
-            <ChipValue>{chip.value}</ChipValue>
-          </YStack>
-        ))}
-      </ChipRow>
+    <YStack gap={20}>
+      <Box>
+        <InfoRow label="중성화" value={ynText(neuterYn)} />
+        <InfoRow label="예방접종" value={vaccineText(vaccinationCheck)} />
+        <InfoRow label="건강검진" value={ynText(healthCheck)} />
+      </Box>
       {hasValue(health) && (
         <YStack gap={8}>
           <Label>아파요</Label>
@@ -53,27 +42,32 @@ export const CommunityDetailHealthSection = ({
   );
 };
 
-const ChipRow = styled(XStack, {
-  flex: 1,
-  rounded: 8,
+const InfoRow = ({ label, value }: { label: string; value: string }) => (
+  <XStack justify="space-between" items="center">
+    <RowLabel>{label}</RowLabel>
+    <RowValue>{value}</RowValue>
+  </XStack>
+);
+
+const Box = styled(YStack, {
   bg: '$backgroundDefault',
-  py: 14,
-  px: 24,
-  justify: 'space-between'
+  rounded: 12,
+  p: 20,
+  gap: 16
 });
 
-const ChipLabel = styled(Text, {
-  fontSize: 14,
-  fontWeight: 400,
-  lineHeight: 18,
-  color: '$black600'
-});
-
-const ChipValue = styled(Text, {
+const RowLabel = styled(Text, {
   fontSize: 15,
   fontWeight: 600,
   lineHeight: 20,
   color: '$black800'
+});
+
+const RowValue = styled(Text, {
+  fontSize: 15,
+  fontWeight: 500,
+  lineHeight: 20,
+  color: '$black600'
 });
 
 const Label = styled(Text, {

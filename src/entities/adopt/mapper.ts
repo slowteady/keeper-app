@@ -42,15 +42,15 @@ export const mapToAdoptList = (data: AdoptDataDto[]) => {
 };
 
 export const mapToAdopt = (data: AdoptDataDto) => {
-  const { age, weight, happenPlace, orgName, noticeStartDt, noticeEndDt, fullName, gender, specificType } = data;
+  const { age, weight, happenPlace, orgName, noticeStartDt, noticeEndDt, fullName, gender } = data;
 
   return {
     ...data,
     title: convertFullName(fullName).name,
-    age: formatAge(age) ?? '',
+    age: formatAge(age) ?? '모름',
     gender: convertGenderLabel(gender),
-    weight: formatWeight(weight),
-    description: convertDescription({ noticeStartDt, noticeEndDt, orgName, happenPlace, specificType })
+    weight: formatWeight(weight) || '모름',
+    description: convertDescription({ noticeStartDt, noticeEndDt, orgName, happenPlace })
   };
 };
 
@@ -111,7 +111,7 @@ const CHIP_TYPE_MAP: Record<AdoptChipTypeDto, { id: string; value: string; sort:
 export const convertGenderLabel = (gender?: AdoptDataDto['gender']) => {
   if (gender === 'F') return '여아';
   if (gender === 'M') return '남아';
-  return '미상';
+  return '모름';
 };
 
 export const formatAge = (age?: string): string | null => {
@@ -134,17 +134,15 @@ type DescriptionParams = {
   noticeEndDt: AdoptDataDto['noticeEndDt'];
   orgName: AdoptDataDto['orgName'];
   happenPlace: AdoptDataDto['happenPlace'];
-  specificType?: AdoptDataDto['specificType'];
 };
-const convertDescription = ({ noticeStartDt, noticeEndDt, orgName, happenPlace, specificType }: DescriptionParams) => {
+const convertDescription = ({ noticeStartDt, noticeEndDt, orgName, happenPlace }: DescriptionParams) => {
   const startDt = dayjs(noticeStartDt).format('YY.MM.DD');
   const endDt = dayjs(noticeEndDt).format('YY.MM.DD');
 
   return [
     { label: '공고기간', value: `${startDt}-${endDt}` },
     { label: '지역', value: orgName },
-    { label: '구조장소', value: happenPlace },
-    ...(specificType ? [{ label: '품종', value: specificType }] : [])
+    { label: '구조장소', value: happenPlace }
   ];
 };
 

@@ -50,7 +50,7 @@ const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>(
             <View key={image}>{renderPage(image)}</View>
           ))}
         </PagerView>
-        {showIndicator && <Indicator currentIndex={currentIndex} maxIndex={data.length} />}
+        {showIndicator && data.length > 1 && <Indicator currentIndex={currentIndex} maxIndex={data.length} />}
         <ImageViewer
           open={openImgViewer}
           onClose={() => setOpenImgViewer(false)}

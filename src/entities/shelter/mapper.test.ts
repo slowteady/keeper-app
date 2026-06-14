@@ -62,7 +62,7 @@ describe('mapToShelter - time 변환', () => {
   it('평일/주말 둘 다 없을 때 "정보 없음"을 반환한다', () => {
     const result = mapToShelter(BASE_SHELTER);
 
-    expect(result.time).toBe('운영시간 정보 없음');
+    expect(result.time).toBe('운영시간 정보가 없어요');
   });
 
   it('open만 있고 close 없을 때 "평일 HH:MM ~" 형태로 반환한다', () => {
@@ -86,7 +86,7 @@ describe('mapToShelter - time 변환', () => {
 
     const result = mapToShelter(input);
 
-    expect(result.time).toBe('운영시간 정보 없음');
+    expect(result.time).toBe('운영시간 정보가 없어요');
   });
 });
 
@@ -112,13 +112,13 @@ describe('mapToShelter - person 변환 (formatPerson)', () => {
 
     const result = mapToShelter(input);
 
-    expect(result.person).toBe('담당자 정보 없음');
+    expect(result.person).toBe('담당자 정보가 없어요');
   });
 
   it('veterinarianCount/caretakerCount 미제공 시 "정보 없음" 반환한다', () => {
     const result = mapToShelter(BASE_SHELTER);
 
-    expect(result.person).toBe('담당자 정보 없음');
+    expect(result.person).toBe('담당자 정보가 없어요');
   });
 
   it('veterinarianCount가 caretakerCount보다 우선한다', () => {

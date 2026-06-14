@@ -123,7 +123,7 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
                 time={shelterData.time}
                 address={shelterData.address}
                 person={shelterData.person}
-                tel={shelterData.tel ?? '정보 없음'}
+                tel={shelterData.tel ?? '연락처 정보가 없어요'}
               />
             </View>
 

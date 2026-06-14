@@ -1,5 +1,5 @@
-import { Image } from 'expo-image';
-import { styled, Text, XStack, YStack } from 'tamagui';
+import { Clock, MapPin, Phone, Stethoscope } from '@tamagui/lucide-icons';
+import { styled, Text, useTheme, XStack, YStack } from 'tamagui';
 
 export type ShelterDetailDescriptionSectionProps = {
   time: string;
@@ -14,6 +14,9 @@ export const ShelterDetailDescriptionSection = ({
   person,
   tel
 }: ShelterDetailDescriptionSectionProps) => {
+  const { black500 } = useTheme();
+  const iconColor = black500.val as never;
+
   return (
     <YStack>
       <Text fontSize={20} fontWeight="600" lineHeight={22} color="$black800" letterSpacing={-0.25} mb={20}>
@@ -22,30 +25,22 @@ export const ShelterDetailDescriptionSection = ({
 
       <YStack gap={16}>
         <DescriptionWrap>
-          <Image source={require('@/assets/images/clock.png')} contentFit="contain" style={{ width: 20, height: 20 }} />
+          <Clock size={20} color={iconColor} />
           <DescriptionText>{time}</DescriptionText>
         </DescriptionWrap>
 
         <DescriptionWrap>
-          <Image source={require('@/assets/images/phone.png')} contentFit="contain" style={{ width: 20, height: 20 }} />
+          <Phone size={20} color={iconColor} />
           <DescriptionText>{tel}</DescriptionText>
         </DescriptionWrap>
 
         <DescriptionWrap>
-          <Image
-            source={require('@/assets/images/stethoscope.png')}
-            contentFit="contain"
-            style={{ width: 20, height: 20 }}
-          />
+          <Stethoscope size={20} color={iconColor} />
           <DescriptionText>{person}</DescriptionText>
         </DescriptionWrap>
 
         <DescriptionWrap>
-          <Image
-            source={require('@/assets/images/noticebar.png')}
-            contentFit="contain"
-            style={{ width: 20, height: 20 }}
-          />
+          <MapPin size={20} color={iconColor} />
           <DescriptionText lineHeight={24}>{address}</DescriptionText>
         </DescriptionWrap>
       </YStack>
@@ -54,7 +49,8 @@ export const ShelterDetailDescriptionSection = ({
 };
 
 const DescriptionWrap = styled(XStack, {
-  items: 'flex-start'
+  items: 'flex-start',
+  gap: 12
 });
 
 const DescriptionText = styled(Text, {
@@ -63,6 +59,5 @@ const DescriptionText = styled(Text, {
   fontWeight: 500,
   color: '#505050',
   letterSpacing: -0.25,
-  ml: 20,
   flex: 1
 });

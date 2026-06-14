@@ -1,8 +1,8 @@
-import { useMemo } from 'react';
-import { XStack, YStack } from 'tamagui';
+import { styled, Text, useTheme, XStack, YStack } from 'tamagui';
+
+import { Check } from '@/shared/ui/icons/solid';
 
 import { InfoItem } from './info-item';
-import { StatusList } from './status-list';
 
 export type AdoptBasicInfoGridProps = {
   age: string;
@@ -24,6 +24,14 @@ export type AdoptDetailInfoSectionProps = AdoptBasicInfoGridProps & {
   vaccinationCheck: string;
 };
 
+const splitItems = (raw?: string) =>
+  (raw ?? '')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+const neuterText = (v?: string) => (v === 'Y' ? '했어요' : v === 'N' ? '안 했어요' : '알 수 없어요');
+
 export const AdoptDetailInfoSection = ({
   age,
   gender,
@@ -32,19 +40,82 @@ export const AdoptDetailInfoSection = ({
   neuterYn,
   vaccinationCheck
 }: AdoptDetailInfoSectionProps) => {
-  const statusList = useMemo(
-    () => [
-      { label: '중성화', status: neuterYn },
-      { label: '백신접종', status: vaccinationCheck },
-      { label: '건강검진', status: healthCheck }
-    ],
-    [healthCheck, neuterYn, vaccinationCheck]
-  );
+  const vaccines = splitItems(vaccinationCheck);
+  const healthItems = splitItems(healthCheck);
 
   return (
-    <YStack gap={12}>
+    <YStack gap={20}>
       <AdoptBasicInfoGrid age={age} gender={gender} weight={weight} />
-      <StatusList data={statusList} />
+      <Box>
+        <InfoRow label="중성화" value={neuterText(neuterYn)} />
+        <InfoRow label="예방접종" items={vaccines} />
+        <InfoRow label="건강검진" items={healthItems} />
+      </Box>
     </YStack>
   );
 };
+
+const InfoRow = ({ label, value, items }: { label: string; value?: string; items?: string[] }) => {
+  const { primaryMain } = useTheme();
+  const chips = items ?? [];
+
+  return (
+    <XStack items="flex-start" gap={12}>
+      <RowLabel>{label}</RowLabel>
+      <Content>
+        {chips.length > 0 ? (
+          chips.map((item) => (
+            <Chip key={item}>
+              <Check width={16} height={16} color={primaryMain.val} />
+              <ChipText>{item}</ChipText>
+            </Chip>
+          ))
+        ) : (
+          <RowValue>{value ?? '알 수 없어요'}</RowValue>
+        )}
+      </Content>
+    </XStack>
+  );
+};
+
+const Box = styled(YStack, {
+  bg: '$backgroundDefault',
+  rounded: 12,
+  p: 20,
+  gap: 16
+});
+
+const RowLabel = styled(Text, {
+  width: 76,
+  fontSize: 15,
+  fontWeight: 600,
+  lineHeight: 24,
+  color: '$black800'
+});
+
+const Content = styled(XStack, {
+  flex: 1,
+  flexWrap: 'wrap',
+  justify: 'flex-end',
+  items: 'center',
+  gap: 8
+});
+
+const Chip = styled(XStack, {
+  items: 'center',
+  gap: 4
+});
+
+const ChipText = styled(Text, {
+  fontSize: 15,
+  fontWeight: 500,
+  lineHeight: 24,
+  color: '$black800'
+});
+
+const RowValue = styled(Text, {
+  fontSize: 15,
+  fontWeight: 500,
+  lineHeight: 24,
+  color: '$black600'
+});

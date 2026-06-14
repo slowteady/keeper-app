@@ -93,7 +93,7 @@ describe('mapToAdoptList — edge cases', () => {
     const data = { ...mockAdoptData, gender: 'Q' as any };
     const result = mapToAdoptList([data]);
     const genderChip = result[0].chips.find((c: { id: string }) => c.id === 'GENDER');
-    expect(genderChip?.value).toBe('미상');
+    expect(genderChip?.value).toBe('모름');
   });
 
   it('handles female gender', () => {
@@ -157,13 +157,13 @@ describe('mapToAdopt', () => {
   it('handles missing age', () => {
     const data = { ...mockAdoptData, age: '' };
     const result = mapToAdopt(data);
-    expect(result.age).toBe('');
+    expect(result.age).toBe('모름');
   });
 
   it('handles missing weight', () => {
     const data = { ...mockAdoptData, weight: '' };
     const result = mapToAdopt(data);
-    expect(result.weight).toBe('');
+    expect(result.weight).toBe('모름');
   });
 
   it('formats weight without trailing .0', () => {

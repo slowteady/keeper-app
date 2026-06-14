@@ -55,7 +55,7 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
         decelerationRate="fast"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={
-          { position: 'relative', paddingTop: 48, paddingBottom: hasCallNumber ? buttonHeight : 48 } as any
+          { position: 'relative', paddingTop: 48, paddingBottom: hasCallNumber ? buttonHeight + 40 : 48 } as any
         }
       >
         {ended && adopt.status && <AdoptEndedBanner status={adopt.status} />}
@@ -73,7 +73,7 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
 
         <Divider mb={30} />
 
-        <View px={20} pb={48}>
+        <View px={20} pb={28}>
           <AdoptDetailInfoSection
             age={adopt.age}
             gender={adopt.gender}

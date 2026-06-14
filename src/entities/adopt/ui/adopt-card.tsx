@@ -261,8 +261,8 @@ const DescriptionValue = styled(Text, {
 });
 
 const ChipContainer = styled(XStack, {
-  gap: 4,
-  overflow: 'hidden'
+  flexWrap: 'wrap',
+  gap: 4
 });
 
 const ChipItem = styled(View, {
