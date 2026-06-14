@@ -13,6 +13,7 @@ import { useFonts } from 'expo-font';
 import { router, Stack, useNavigationContainerRef, usePathname } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
+import * as Updates from 'expo-updates';
 import { useEffect, useState } from 'react';
 import { Linking } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -46,6 +47,22 @@ Sentry.init({
   replaysOnErrorSampleRate: 0.3,
   integrations: [navigationIntegration, Sentry.mobileReplayIntegration()]
 });
+
+const applyOtaUpdate = async () => {
+  if (__DEV__ || !Updates.isEnabled) return;
+  try {
+    const result = await Promise.race([
+      Updates.checkForUpdateAsync(),
+      new Promise<never>((_, reject) => setTimeout(() => reject(new Error('ota-check-timeout')), 5000))
+    ]);
+    if (result.isAvailable) {
+      await Updates.fetchUpdateAsync();
+      await Updates.reloadAsync();
+    }
+  } catch (e) {
+    logger.warn('OTA 업데이트 확인 실패', e);
+  }
+};
 
 const RootLayout = () => {
   const [queryClient] = useState(
@@ -93,6 +110,8 @@ const RootLayout = () => {
   useEffect(() => {
     const init = async () => {
       if (!fontLoaded) return;
+
+      await applyOtaUpdate();
 
       extend(customParseFormat);
       setupInterceptor(authApi, {

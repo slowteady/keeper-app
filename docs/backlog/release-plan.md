@@ -99,7 +99,7 @@ graph TD
 
 - [ ] **점검 모드(진입 막기)** — 원격 플래그(서버 config/status) → 부트스트랩 시 조회 → 닫을 수 없는 점검 화면
 - [ ] **강제 업데이트 버전 게이트** (소급 불가 — 반드시 이번 빌드) — min-version API + 부트스트랩 버전 비교 + soft/hard + 스토어 이동
-- [ ] **expo-updates(EAS Update) OTA** — 핫픽스 패치 채널 설정(runtimeVersion, 채널) + 부팅 시 업데이트 확인
+- [x] **expo-updates(EAS Update) OTA** — 채널(eas.json 3종)·runtimeVersion(appVersion) 기존 완비 + **부팅 시 즉시 적용**(스플래시 중 check→fetch→reload, `__DEV__`/`isEnabled` 가드·fail-open·5s 타임아웃) 2026-06-14 추가
 - [ ] **에러 모니터링(Sentry) 재셋업** — 네이티브 통합(빌드 포함) + DSN·환경(dev/prod) 분리 + 소스맵 업로드 + `logger` 백엔드 재연결 + 출시 전 동작 검증. 기존 임시 세팅 제거됨 → context7 딥리서치 후 재구성
 - [ ] Railway 전환, EC2 무중단 확인
 
