@@ -43,7 +43,7 @@ Sentry.init({
   tracesSampleRate: 0.1,
   sendDefaultPii: true,
   replaysSessionSampleRate: 0,
-  replaysOnErrorSampleRate: 1.0,
+  replaysOnErrorSampleRate: 0.3,
   integrations: [navigationIntegration, Sentry.mobileReplayIntegration()]
 });
 
