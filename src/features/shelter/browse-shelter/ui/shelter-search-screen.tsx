@@ -76,7 +76,7 @@ export const ShelterSearchScreen = ({ onClose, onSelect }: ShelterSearchScreenPr
           }
           ListEmptyComponent={
             <EmptyContainer>
-              <EmptyText>{results === undefined ? '지역·주소·장소를 검색해보세요' : '검색 결과가 없습니다'}</EmptyText>
+              <EmptyText>{results === undefined ? '지역·주소·장소를 검색해보세요' : '검색 결과가 없어요'}</EmptyText>
             </EmptyContainer>
           }
         />

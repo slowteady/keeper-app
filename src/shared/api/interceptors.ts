@@ -68,7 +68,7 @@ export const setupInterceptor = (authApi: AxiosInstance, config: InterceptorConf
       } catch (refreshError) {
         const authError = error as AuthAxiosError;
         authError.isAuthError = true;
-        authError.message = '인증이 만료되었습니다 다시 로그인해주세요';
+        authError.message = '인증이 만료됐어요 다시 로그인해주세요';
         authError.cause = refreshError instanceof Error ? refreshError : new Error(String(refreshError));
         return Promise.reject(authError);
       }

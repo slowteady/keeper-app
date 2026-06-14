@@ -276,7 +276,7 @@ export const QnaDetailContent = ({ id, scrollToComments, commentId, editCommentI
             </YStack>
           ) : (
             <View items="center" justify="center" py={64}>
-              <EmptyText>{'아직 답변이 없습니다\n여러분의 의견을 적어주세요:)'}</EmptyText>
+              <EmptyText>{'아직 답변이 없어요\n여러분의 의견을 적어주세요:)'}</EmptyText>
             </View>
           )
         }

@@ -63,7 +63,7 @@ export const LocationBottomSheet = forwardRef<BottomSheetModal, LocationBottomSh
               {addresses === undefined ? (
                 <NodataText>주소를 검색해주세요</NodataText>
               ) : (
-                <NodataText>검색 결과가 없습니다</NodataText>
+                <NodataText>검색 결과가 없어요</NodataText>
               )}
             </NodataContainer>
           }

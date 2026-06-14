@@ -47,7 +47,7 @@ describe('setupInterceptor', () => {
     expect(error).toBeInstanceOf(AxiosError);
     expect(error).toMatchObject({
       isAuthError: true,
-      message: '인증이 만료되었습니다 다시 로그인해주세요'
+      message: '인증이 만료됐어요 다시 로그인해주세요'
     });
     expect(throwToErrorBoundary(error)).toBe(false);
     expect(mockedRemoveToken).toHaveBeenCalledTimes(1);

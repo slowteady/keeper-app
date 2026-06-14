@@ -56,7 +56,7 @@ const ErrorFallback = ({ error, resetError }: ErrorFallbackProps) => {
         </SecondaryButton>
         <PrimaryButton onPress={resetError}>
           <Text fontSize={14} fontWeight="500" lineHeight={16} color="$white900">
-            다시시도
+            다시 시도
           </Text>
         </PrimaryButton>
       </XStack>

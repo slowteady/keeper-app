@@ -43,7 +43,7 @@ export const useShare = () => {
           });
         }
       } catch {
-        Alert.alert('공유 실패', '공유 중 오류가 발생했습니다');
+        Alert.alert('공유하지 못했어요', '공유 중 오류가 생겼어요');
       } finally {
         setTimeout(() => setIsSharing(false), POST_SHARE_GUARD_MS);
       }

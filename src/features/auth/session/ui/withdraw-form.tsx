@@ -19,7 +19,7 @@ export const WithdrawForm = () => {
         contentContainerStyle={styles.content}
       >
         <Title>{'Keeper를 탈퇴하는\n이유를 알려주세요'}</Title>
-        <Description>더 나은 서비스를 위해 노력하겠습니다</Description>
+        <Description>더 나은 서비스를 위해 노력할게요</Description>
 
         <YStack gap={12}>
           {reasons.map((item, index) => {
