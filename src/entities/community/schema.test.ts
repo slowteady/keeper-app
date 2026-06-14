@@ -203,20 +203,31 @@ describe('CommunityAdoptFormSchema', () => {
   });
 
   describe('선택 입력 필드', () => {
-    it('likes/dislikes/health/relatedLink 가 모두 비어 있어도 통과', () => {
+    it('성격(behavior)·health·relatedLink 가 생략돼도 통과', () => {
       const result = CommunityAdoptFormSchema.safeParse({
         ...baseValid,
-        likes: '',
-        dislikes: '',
         health: '',
         relatedLink: ''
       });
       expect(result.success).toBe(true);
     });
 
-    it('likes/dislikes/health/relatedLink 가 undefined 여도 통과', () => {
-      // baseValid 자체에 선택 필드가 없으므로 그대로 parse 시 옵셔널 검증
+    it('선택 필드가 모두 undefined 여도 통과', () => {
       const result = CommunityAdoptFormSchema.safeParse(baseValid);
+      expect(result.success).toBe(true);
+    });
+
+    it('성격(behavior) enum 유효값 통과', () => {
+      const result = CommunityAdoptFormSchema.safeParse({
+        ...baseValid,
+        toiletTraining: 'COMPLETE',
+        separationAnxiety: 'NONE',
+        barking: 'SOMETIMES',
+        activityLevel: 'VERY_ACTIVE',
+        withChildren: 'GOOD',
+        withDogs: 'SHY',
+        withCats: 'HARD'
+      });
       expect(result.success).toBe(true);
     });
   });
