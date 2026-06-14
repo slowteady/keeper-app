@@ -120,6 +120,18 @@ graph TD
 
 ---
 
+## 3-2. 출시 전 활성화·컴플라이언스 후속 (2026-06-14 트래킹)
+
+Sentry/OTA 코드는 완료됐으나 실제 동작·법규엔 아래가 남음.
+
+| #   | 작업                                                             | 등급 | 비고                                                                                                                                                            |
+| --- | ---------------------------------------------------------------- | ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | **개인정보처리방침 갱신** (keeper-web `our-keeper.com/policy/*`) | P0   | Sentry(IP·에러 시 화면 리플레이) + PostHog(행동 데이터, 붙일 때) 수집 항목·목적·보관 명시. 법규                                                                 |
+| 2   | **Sentry/OTA 활성화**                                            | P0   | 기존 Sentry 프로젝트 DSN 재활용 + env(`EXPO_PUBLIC_SENTRY_DSN`/빌드용 `SENTRY_ORG`·`SENTRY_PROJECT`·`SENTRY_AUTH_TOKEN`) + 새 dev/EAS 빌드. 빌드 전엔 dev no-op |
+| 3   | react-native-worklets/keyboard-controller 버전                   | 낮음 | 확인됨 — worklets 0.7.4는 reanimated 4.1.7과 짝(정상, 내리면 깨짐). keyboard-controller 1.21.11만 선택적으로 Expo pin(1.18.5) 정렬 가능. 비이슈                 |
+
+---
+
 ## 4. 인프라·운영 (병행)
 
 - **Railway 백엔드 전환** — 운영 중 EC2(공공데이터 제공) 유지하며 로그인·커뮤니티 신규를 Railway로. `service-ops-infra.md` 참조.
