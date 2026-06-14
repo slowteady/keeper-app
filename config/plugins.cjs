@@ -54,7 +54,7 @@ module.exports = [
     }
   ],
   [
-    '@sentry/react-native/expo',
+    '@sentry/react-native',
     {
       organization: process.env.SENTRY_ORG,
       project: process.env.SENTRY_PROJECT
