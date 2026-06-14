@@ -41,8 +41,10 @@ Sentry.init({
   enabled: !__DEV__ && !!process.env.EXPO_PUBLIC_SENTRY_DSN,
   environment: __DEV__ ? 'development' : 'production',
   tracesSampleRate: 0.1,
-  sendDefaultPii: false,
-  integrations: [navigationIntegration]
+  sendDefaultPii: true,
+  replaysSessionSampleRate: 0,
+  replaysOnErrorSampleRate: 1.0,
+  integrations: [navigationIntegration, Sentry.mobileReplayIntegration()]
 });
 
 const RootLayout = () => {
