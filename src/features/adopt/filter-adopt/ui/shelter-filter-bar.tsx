@@ -1,5 +1,5 @@
-import { Pressable, ScrollView } from 'react-native';
-import { styled, Text, useTheme, XStack } from 'tamagui';
+import { ScrollView } from 'react-native';
+import { XStack } from 'tamagui';
 
 import {
   ADOPT_OPTIONS,
@@ -10,9 +10,9 @@ import {
 } from '@/entities/adopt';
 import { CAT_BREEDS, DOG_BREEDS } from '@/shared/model';
 import { Dropdown, useBottomSheet, useBottomSheetMenu } from '@/shared/ui';
-import { DownArrow } from '@/shared/ui/icons/mini';
 
 import { ShelterFilterController } from '../model/use-shelter-filter';
+import { FilterChip, ResetChip } from './filter-chip';
 import { SearchableSelectSheet } from './searchable-select-sheet';
 
 export type ShelterFilterBarProps = {
@@ -74,13 +74,7 @@ export const ShelterFilterBar = ({ filter, animalType, sortValue, onChangeSort }
         style={{ flex: 1 }}
         contentContainerStyle={{ gap: 6, alignItems: 'center', paddingRight: 12 }}
       >
-        {activeCount > 0 && (
-          <Pressable onPress={reset}>
-            <ResetPill>
-              <ResetText>초기화</ResetText>
-            </ResetPill>
-          </Pressable>
-        )}
+        {activeCount > 0 && <ResetChip onPress={reset} />}
         <FilterChip label={labels.region ?? '지역'} active={!!applied.region} onPress={openRegion} />
         <FilterChip label={labels.age ?? '연령'} active={!!applied.age} onPress={openAge} />
         <FilterChip label={labels.gender ?? '성별'} active={!!applied.gender} onPress={openGender} />
@@ -92,57 +86,3 @@ export const ShelterFilterBar = ({ filter, animalType, sortValue, onChangeSort }
     </XStack>
   );
 };
-
-type FilterChipProps = { label: string; active: boolean; onPress: () => void };
-const FilterChip = ({ label, active, onPress }: FilterChipProps) => {
-  const { black900, black500 } = useTheme();
-  return (
-    <Pressable onPress={onPress}>
-      <ChipPill active={active}>
-        <ChipLabel active={active}>{label}</ChipLabel>
-        <DownArrow width={10} height={6} color={active ? black900.val : black500.val} style={{ marginLeft: 4 }} />
-      </ChipPill>
-    </Pressable>
-  );
-};
-
-const ChipPill = styled(XStack, {
-  items: 'center',
-  px: 14,
-  py: 10,
-  rounded: 44,
-  borderWidth: 1,
-  bg: 'transparent',
-  variants: {
-    active: {
-      true: { borderColor: '$black900' },
-      false: { borderColor: '$white600' }
-    }
-  } as const
-});
-
-const ChipLabel = styled(Text, {
-  fontSize: 14,
-  lineHeight: 16,
-  variants: {
-    active: {
-      true: { color: '$black900', fontWeight: '600' },
-      false: { color: '$black600', fontWeight: '500' }
-    }
-  } as const
-});
-
-const ResetPill = styled(XStack, {
-  items: 'center',
-  px: 14,
-  py: 10,
-  rounded: 44,
-  borderWidth: 1,
-  borderColor: '$white600'
-});
-
-const ResetText = styled(Text, {
-  fontSize: 14,
-  fontWeight: '500',
-  color: '$black500'
-});
