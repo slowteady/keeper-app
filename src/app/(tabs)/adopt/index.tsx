@@ -1,123 +1,64 @@
-import { useScrollToTop } from '@react-navigation/native';
-import { FlashListRef, ListRenderItemInfo } from '@shopify/flash-list';
-import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useRouter } from 'expo-router';
+import { useCallback, useMemo, useState } from 'react';
+import { useSharedValue } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SceneRendererProps } from 'react-native-tab-view';
 import { styled, View } from 'tamagui';
 
-import { ADOPT_OPTIONS, AdoptCard, AdoptFilterDto, AdoptItem } from '@/entities/adopt';
-import { useAdoptList } from '@/features/adopt';
-import { useFavoriteAbandonment } from '@/features/favorite-abandonment';
-import { RouteErrorBoundary, ShowMoreButton } from '@/shared/ui';
-import { AdoptListHeaderSection, AdoptListSection } from '@/widgets/adopt-section';
+import { useLoginRequired } from '@/features/auth';
+import { RouteErrorBoundary, Tab } from '@/shared/ui';
+import { AdoptPersonalScene, AdoptShelterScene, AdoptWriteFab } from '@/widgets/adopt-section';
 
 export const ErrorBoundary = RouteErrorBoundary;
 
-const LIST_SIZE = 16;
+const ADOPT_SOURCE_ROUTES = [
+  { key: 'shelter', title: '보호소' },
+  { key: 'personal', title: '개인' }
+];
 
 const Page = () => {
   const router = useRouter();
-  const { animalType } = useLocalSearchParams<{ animalType?: string }>();
+  const insets = useSafeAreaInsets();
+  const { requireLogin } = useLoginRequired();
+  const [index, setIndex] = useState(0);
+  const scrollY = useSharedValue(0);
 
-  const [selectedFilter, setSelectedFilter] = useState<AdoptFilterDto>(ADOPT_OPTIONS.FILTER[0].id);
-  const [selectedType, setSelectedType] = useState<string>(animalType ?? ADOPT_OPTIONS.ANIMAL[0].id);
-  const [searchInput, setSearchInput] = useState('');
-  const [searchValue, setSearchValue] = useState('');
-
-  const handleSearchChange = useCallback((text: string) => {
-    setSearchInput(text);
-  }, []);
-
-  const handleSearchSubmit = useCallback((text: string) => {
-    setSearchValue(text);
-  }, []);
-
-  const {
-    convertedData,
-    moreButtonText,
-    isLoading,
-    isFetchingNextPage,
-    hasNextPage,
-    refresh,
-    fetchNextPage: fetchNextPageQuery
-  } = useAdoptList({
-    filter: selectedFilter,
-    animalType: selectedType,
-    search: searchValue || undefined,
-    size: LIST_SIZE
-  });
-
-  const fetchNextPage = useCallback(() => {
-    impactAsync(ImpactFeedbackStyle.Medium);
-    fetchNextPageQuery();
-  }, [fetchNextPageQuery]);
-
-  const scrollRef = useRef<FlashListRef<AdoptItem>>(null);
-  useScrollToTop(scrollRef);
-
-  useEffect(() => {
-    if (animalType) setSelectedType(animalType);
-  }, [animalType]);
-
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollToOffset({ animated: false, offset: 0 });
-    }
-  }, [selectedFilter, selectedType, scrollRef]);
-
-  const goDetail = useCallback((id: string) => router.push({ pathname: '/adopt/[id]', params: { id } }), [router]);
-  const { toggleFavoriteAbandonment } = useFavoriteAbandonment();
-
-  const renderItem = useCallback(
-    ({ item, index }: ListRenderItemInfo<AdoptItem>) => {
-      const isLeft = index % 2 === 0;
-
-      return (
-        <View pl={isLeft ? 0 : 4} pr={isLeft ? 4 : 0} mb={32}>
-          <AdoptCard
-            uri={item.uri}
-            title={item.title}
-            description={item.description}
-            chips={item.chips}
-            isFavorited={item.isFavorited}
-            status={item.status}
-            onPress={() => goDetail(item.id)}
-            onPressFavorite={() => toggleFavoriteAbandonment(item.id, item.isFavorited ?? false)}
-          />
-        </View>
-      );
+  const navigationState = useMemo(() => ({ index, routes: ADOPT_SOURCE_ROUTES }), [index]);
+  const handleIndexChange = useCallback(
+    (next: number) => {
+      scrollY.value = 0;
+      setIndex(next);
     },
-    [goDetail, toggleFavoriteAbandonment]
+    [scrollY]
   );
 
+  const renderScene = useCallback(
+    ({ route }: SceneRendererProps & { route: { key: string } }) => {
+      switch (route.key) {
+        case 'shelter':
+          return <AdoptShelterScene scrollY={scrollY} />;
+        case 'personal':
+          return <AdoptPersonalScene scrollY={scrollY} />;
+        default:
+          return null;
+      }
+    },
+    [scrollY]
+  );
+
+  const handlePressWrite = useCallback(() => {
+    requireLogin(() => router.push('/community-write'));
+  }, [requireLogin, router]);
+
   return (
-    <Container>
-      <AdoptListSection
-        ref={scrollRef}
-        data={convertedData ?? []}
-        isLoading={isLoading}
-        onRefreshCallback={refresh}
-        renderItem={renderItem}
-        header={
-          <AdoptListHeaderSection
-            filterValue={selectedFilter}
-            animalType={selectedType}
-            searchValue={searchInput}
-            onChangeFilter={(id) => setSelectedFilter(id as AdoptFilterDto)}
-            onChangeAnimalType={setSelectedType}
-            onChangeSearch={handleSearchChange}
-            onSearch={handleSearchSubmit}
-          />
-        }
-        footer={
-          hasNextPage ? (
-            <View mb={24} justify="center">
-              <ShowMoreButton text={moreButtonText} onPress={fetchNextPage} isLoading={isFetchingNextPage} />
-            </View>
-          ) : undefined
-        }
-        contentContainerStyle={{ paddingVertical: 32, paddingHorizontal: 20 }}
+    <Container style={{ paddingTop: insets.top }}>
+      <Tab
+        tabBarVariant="text"
+        onIndexChange={handleIndexChange}
+        navigationState={navigationState}
+        renderScene={renderScene}
       />
+      <AdoptWriteFab onPress={handlePressWrite} scrollY={scrollY} />
     </Container>
   );
 };

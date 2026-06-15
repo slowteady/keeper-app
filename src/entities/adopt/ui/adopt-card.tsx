@@ -25,6 +25,8 @@ export type AdoptCardProps = {
   isFavorited?: boolean;
   onPressFavorite?: () => void;
   status?: AdoptStatusDto;
+  // 개인 공고 전용 — 입양완료 시 이미지 딤 + 뱃지. 보호소 카드는 사용하지 않는다.
+  completed?: boolean;
 };
 
 export const ADOPT_CARD_IMAGE_SIZES = {
@@ -41,7 +43,8 @@ export const AdoptCard = ({
   onPress,
   isFavorited = false,
   onPressFavorite,
-  status
+  status,
+  completed = false
 }: AdoptCardProps) => {
   const size = horizontal ? 'medium' : 'small';
   const statusChips = chips?.filter((c) => STATUS_CHIP_IDS.includes(c.id)) ?? [];
@@ -59,6 +62,7 @@ export const AdoptCard = ({
         <ImageContainer size={size}>
           <ImageWithSkeleton key={uri} uri={uri} />
           {status && <StatusBadge status={status} />}
+          {completed && <CompletedOverlay />}
           {statusChips.length > 0 && <StatusChipOverlay data={statusChips} />}
         </ImageContainer>
 
@@ -97,6 +101,21 @@ const StatusBadge = ({ status }: { status: AdoptStatusDto }) => {
         {info.label}
       </Text>
     </View>
+  );
+};
+
+const CompletedOverlay = () => {
+  return (
+    <>
+      <View position="absolute" t={0} l={0} r={0} b={0} rounded={8} bg="$black900" opacity={0.45} />
+      <View position="absolute" t={0} l={0} r={0} b={0} justify="center" items="center">
+        <View px={10} py={5} rounded={999} bg="$black800">
+          <Text fontWeight={600} fontSize={12} lineHeight={14} color="#fff">
+            입양완료
+          </Text>
+        </View>
+      </View>
+    </>
   );
 };
 

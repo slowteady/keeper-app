@@ -122,7 +122,6 @@ const RootLayout = () => {
         onRefreshFailed: () => {
           queryClient.removeQueries();
           router.dismissTo('/(tabs)/profile');
-          globalToast('세션이 만료됐어요 다시 로그인해주세요', 'fail');
         }
       });
 

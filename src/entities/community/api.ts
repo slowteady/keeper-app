@@ -30,6 +30,7 @@ export type CommunityListParams = {
   category?: 'ADOPTION_PERSONAL' | 'ADOPTION_LIFE' | 'QNA';
   animalType?: 'DOG' | 'CAT' | 'OTHER';
   sort?: 'NEW' | 'LIKE' | 'COMMENT' | 'VIEW';
+  search?: string;
 };
 
 const COMMUNITY_BASE = '/community/posts';
@@ -68,6 +69,16 @@ const updateAdoptionPersonal = async (id: string, body: CommunityAdoptFormDto): 
 
 const deletePost = async (id: string): Promise<void> => {
   await authApi.delete<AxiosResponse>(`${COMMUNITY_BASE}/${id}`);
+};
+
+const updateAdoptionStatus = async (
+  id: string,
+  status: 'IN_PROGRESS' | 'COMPLETED'
+): Promise<CommunityAdoptDetailDto> => {
+  const res = await authApi.patch<ApiResponse<CommunityAdoptDetailDto>>(`${COMMUNITY_BASE}/${id}/adoption-status`, {
+    status
+  });
+  return CommunityAdoptDetailSchema.parse(res.data.data);
 };
 
 const likePost = async (id: string): Promise<{ count: number; isLiked: boolean }> => {
@@ -150,6 +161,7 @@ export const communityApi = {
   createQnaPost,
   updateQnaPost,
   deletePost,
+  updateAdoptionStatus,
   likePost,
   unlikePost,
   reportPost

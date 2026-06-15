@@ -10,11 +10,12 @@ export type AnimalTypeDto = z.infer<typeof AnimalTypeSchema>;
 export const GenderSchema = z.enum(['M', 'F', 'NONE']);
 export type GenderDto = z.infer<typeof GenderSchema>;
 
-export const NeuterYnSchema = z.enum(['Y', 'N', 'NONE']);
+// 'U'(미상) 는 DB YnType·백엔드 DTO 가 허용하는 값 — 프론트도 받아야 정합 (없으면 U 응답에 파싱 크래시).
+export const NeuterYnSchema = z.enum(['Y', 'N', 'U', 'NONE']);
 export type NeuterYnDto = z.infer<typeof NeuterYnSchema>;
 
 export const VaccinationCheckSchema = z.enum(['NOT', 'FIRST', 'SECOND', 'THIRD', 'NONE']);
 export type VaccinationCheckDto = z.infer<typeof VaccinationCheckSchema>;
 
-export const HealthCheckSchema = z.enum(['Y', 'N', 'NONE']);
+export const HealthCheckSchema = z.enum(['Y', 'N', 'U', 'NONE']);
 export type HealthCheckDto = z.infer<typeof HealthCheckSchema>;

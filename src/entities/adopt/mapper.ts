@@ -2,6 +2,8 @@ import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 
+import { formatTimeAgo } from '@/shared/lib';
+
 import { AdoptChipTypeDto, AdoptDataDto } from './schema';
 
 dayjs.extend(utc);
@@ -106,6 +108,61 @@ const convertChipLabel = ({ neuterYn, weight, gender, age, chipType, noticeEndDt
 const CHIP_TYPE_MAP: Record<AdoptChipTypeDto, { id: string; value: string; sort: number; variant: ChipVariant }> = {
   NEAR_DEADLINE: { id: 'NEAR_DEADLINE', value: '공고마감임박', sort: 1, variant: 'error' },
   NEW: { id: 'NEW', value: '신규', sort: 1, variant: 'success' }
+};
+
+// 개인 공고(community) → 입양 탭 개인 카드(PersonalAdoptCard) props 정규화.
+// 필수값(사진/제목/소개/입양·임보)은 고정, 선택값은 보호소처럼 칩으로 가변 노출.
+export type PersonalAdoptSource = {
+  id: string;
+  title: string;
+  content?: string | null;
+  images: string[];
+  animalType?: string | null;
+  specificType?: string | null;
+  gender?: string | null;
+  neuterYn?: string | null;
+  age?: string | null;
+  weight?: string | null;
+  location?: string | null;
+  protectionType?: string | null;
+  displayTime: string;
+  isLiked: boolean;
+  adoptionStatus?: 'IN_PROGRESS' | 'COMPLETED' | null;
+};
+
+export type PersonalAdoptItem = ReturnType<typeof mapToPersonalAdoptList>[number];
+
+const PERSONAL_ANIMAL: Record<string, { label: string; variant: ChipVariant }> = {
+  DOG: { label: '강아지', variant: 'dog' },
+  CAT: { label: '고양이', variant: 'cat' }
+};
+
+export const mapToPersonalAdoptList = (data: PersonalAdoptSource[]) => {
+  return data.map((item) => ({
+    id: item.id,
+    uri: item.images[0],
+    title: item.title,
+    intro: item.content?.trim() || '',
+    protectionType: item.protectionType ?? null,
+    region: item.location?.trim() || '',
+    dateText: formatTimeAgo(item.displayTime),
+    chips: buildPersonalChips(item),
+    isLiked: item.isLiked,
+    completed: item.adoptionStatus === 'COMPLETED'
+  }));
+};
+
+const buildPersonalChips = (item: PersonalAdoptSource) => {
+  const animal = item.animalType ? PERSONAL_ANIMAL[item.animalType] : undefined;
+  const chips: { id: string; value: string; variant: ChipVariant }[] = [
+    { id: 'KIND', value: item.specificType || animal?.label || '기타', variant: animal?.variant ?? 'etc' }
+  ];
+  const gender = convertGenderLabel(item.gender ?? undefined);
+  if (gender !== '모름') chips.push({ id: 'GENDER', value: gender, variant: 'default' });
+  if (item.age) chips.push({ id: 'AGE', value: item.age, variant: 'default' });
+  if (item.neuterYn === 'Y') chips.push({ id: 'NEUTER', value: '중성화', variant: 'notice' });
+  if (item.weight) chips.push({ id: 'WEIGHT', value: item.weight, variant: 'default' });
+  return chips;
 };
 
 export const convertGenderLabel = (gender?: AdoptDataDto['gender']) => {

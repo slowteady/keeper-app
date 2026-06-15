@@ -11,8 +11,15 @@ export const ADOPT_OPTIONS = {
     { id: 'ALL', label: '전체' },
     { id: 'NEAR_DEADLINE', label: '마감임박' },
     { id: 'NEW', label: '신규' }
+  ] as const,
+  // 입양 탭 출처 세그먼트 — 보호소(공공)/개인 전환
+  SOURCE: [
+    { id: 'SHELTER', label: '보호소' },
+    { id: 'PERSONAL', label: '개인' }
   ] as const
 } as const;
+
+export type AdoptSourceDto = (typeof ADOPT_OPTIONS.SOURCE)[number]['id'];
 
 type AdoptStatusInfo = {
   label: string;

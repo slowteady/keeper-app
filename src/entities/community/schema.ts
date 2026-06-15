@@ -99,6 +99,7 @@ export const CommunityAdoptDetailSchema = z.object({
   withChildren: z.enum(['GOOD', 'SHY', 'HARD']).nullish(),
   withDogs: z.enum(['GOOD', 'SHY', 'HARD']).nullish(),
   withCats: z.enum(['GOOD', 'SHY', 'HARD']).nullish(),
+  adoptionStatus: z.enum(['IN_PROGRESS', 'COMPLETED']).nullish(),
   contacts: z.array(PostContactSchema),
   counts: z.object({
     like: z.number(),
@@ -123,6 +124,12 @@ export const CommunityAdoptListSchema = z.object({
   neuterYn: NeuterYnSchema.nullish(),
   protectionType: ProtectionTypeSchema.nullish(),
   vaccinationCheck: VaccinationCheckSchema.nullish(),
+  // 개인 공고 카드용 (입양 탭 개인 세그먼트) — 백엔드 PostListItem 확장과 정합
+  specificType: z.string().nullish(),
+  age: z.string().nullish(),
+  weight: z.string().nullish(),
+  location: z.string().nullish(),
+  adoptionStatus: z.enum(['IN_PROGRESS', 'COMPLETED']).nullish(),
   // 입양생활 자유 입력 키워드
   keywords: z.array(z.string()).nullish(),
   counts: z.object({

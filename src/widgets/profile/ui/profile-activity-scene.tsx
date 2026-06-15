@@ -20,7 +20,7 @@ const ACTIVITY_OPTIONS = [
 type ActivityOption = (typeof ACTIVITY_OPTIONS)[number]['id'];
 
 const CATEGORY_LABEL: Record<MyPostItemDto['category'], string> = {
-  ADOPTION_PERSONAL: '개인입양',
+  ADOPTION_PERSONAL: '내 공고',
   ADOPTION_LIFE: '입양생활',
   QNA: '궁금해요'
 };

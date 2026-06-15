@@ -1,5 +1,83 @@
-import { mapToAdopt, mapToAdoptList } from './mapper';
+import { mapToAdopt, mapToAdoptList, mapToPersonalAdoptList, PersonalAdoptSource } from './mapper';
 import { AdoptDataDto } from './schema';
+
+const personalSource = (over: Partial<PersonalAdoptSource> = {}): PersonalAdoptSource => ({
+  id: 'p1',
+  title: '코숏 나비 입양 보내요',
+  content: '사람을 잘 따르는 순둥이예요',
+  images: ['https://example.com/p.jpg'],
+  animalType: 'CAT',
+  specificType: '코숏',
+  gender: 'F',
+  neuterYn: 'N',
+  age: '1살',
+  weight: '3kg',
+  location: '서울 마포구',
+  displayTime: '2026-05-12T00:00:00.000Z',
+  isLiked: false,
+  adoptionStatus: 'IN_PROGRESS',
+  ...over
+});
+
+describe('mapToPersonalAdoptList', () => {
+  it('개인 공고를 카드 props로 변환 — 글 제목 헤드라인·선택값 칩·지역·시간 메타', () => {
+    const [item] = mapToPersonalAdoptList([personalSource()]);
+
+    expect(item.uri).toBe('https://example.com/p.jpg');
+    // 헤드라인 = 작성 글 제목(필수값)
+    expect(item.title).toBe('코숏 나비 입양 보내요');
+    expect(item.intro).toBe('사람을 잘 따르는 순둥이예요');
+    expect(item.isLiked).toBe(false);
+    expect(item.completed).toBe(false);
+    // 선택값 칩: 품종(고양이=cat) 선두 + 중성화 N → 생략
+    const kind = item.chips.find((c) => c.id === 'KIND');
+    expect(kind).toMatchObject({ value: '코숏', variant: 'cat' });
+    expect(item.chips.find((c) => c.id === 'GENDER')?.value).toBe('여아');
+    expect(item.chips.find((c) => c.id === 'AGE')?.value).toBe('1살');
+    expect(item.chips.find((c) => c.id === 'WEIGHT')?.value).toBe('3kg');
+    expect(item.chips.find((c) => c.id === 'NEUTER')).toBeUndefined();
+    // 지역·날짜는 분리 (묶지 않음)
+    expect(item.region).toBe('서울 마포구');
+    expect(item.dateText.length).toBeGreaterThan(0);
+  });
+
+  it('중성화 Y면 중성화 칩(notice) 포함', () => {
+    const [item] = mapToPersonalAdoptList([personalSource({ neuterYn: 'Y' })]);
+    expect(item.chips.find((c) => c.id === 'NEUTER')).toMatchObject({ value: '중성화', variant: 'notice' });
+  });
+
+  it('성별 모름이면 성별 칩 생략', () => {
+    const [item] = mapToPersonalAdoptList([personalSource({ gender: null })]);
+    expect(item.chips.find((c) => c.id === 'GENDER')).toBeUndefined();
+  });
+
+  it('protectionType 을 그대로 전달 (없으면 null)', () => {
+    expect(mapToPersonalAdoptList([personalSource({ protectionType: 'ADOPTION' })])[0].protectionType).toBe('ADOPTION');
+    expect(mapToPersonalAdoptList([personalSource()])[0].protectionType).toBeNull();
+  });
+
+  it('소개글이 없으면 intro 는 빈 문자열', () => {
+    const [item] = mapToPersonalAdoptList([personalSource({ content: null })]);
+    expect(item.intro).toBe('');
+  });
+
+  it('입양완료면 completed=true', () => {
+    const [item] = mapToPersonalAdoptList([personalSource({ adoptionStatus: 'COMPLETED' })]);
+    expect(item.completed).toBe(true);
+  });
+
+  it('품종이 없으면 KIND 칩에 동물 라벨 폴백 (title 은 글 제목 유지)', () => {
+    const [item] = mapToPersonalAdoptList([personalSource({ specificType: null, animalType: 'OTHER' })]);
+    expect(item.title).toBe('코숏 나비 입양 보내요');
+    expect(item.chips.find((c) => c.id === 'KIND')).toMatchObject({ value: '기타', variant: 'etc' });
+  });
+
+  it('지역이 없으면 region 은 빈 문자열 (날짜만 노출)', () => {
+    const [item] = mapToPersonalAdoptList([personalSource({ location: null })]);
+    expect(item.region).toBe('');
+    expect(item.dateText.length).toBeGreaterThan(0);
+  });
+});
 
 const mockAdoptData: AdoptDataDto = {
   id: '1',
