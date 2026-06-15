@@ -67,11 +67,19 @@ export const AdoptMyFavoriteListSchema = z.object({
 });
 export type AdoptMyFavoriteListDto = z.infer<typeof AdoptMyFavoriteListSchema>;
 
+export const AdoptAgeBucketSchema = z.enum(['UNDER_1', 'AGE_1_3', 'AGE_3_7', 'OVER_7']);
+export type AdoptAgeBucketDto = z.infer<typeof AdoptAgeBucketSchema>;
+
 export const AdoptParamsSchema = z.object({
   filter: AdoptFilterSchema,
   animalType: z.string(),
   size: z.number(),
   page: z.number().optional(),
-  search: z.string().optional()
+  // 보호소 구조화 필터 (검색 인풋 대체)
+  region: z.string().optional(),
+  breed: z.string().optional(),
+  gender: z.enum(['M', 'F', 'Q']).optional(),
+  neuter: z.enum(['Y', 'N', 'U']).optional(),
+  ageBuckets: z.array(AdoptAgeBucketSchema).optional()
 });
 export type AdoptParamsDto = z.infer<typeof AdoptParamsSchema>;

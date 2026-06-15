@@ -19,7 +19,9 @@ const BASE_URL = '/abandonments';
 // publicApi (토큰 미첨부) 로 호출하면 user=undefined 가 되어 isFavorited 가 항상 false 로 떨어진다.
 
 const getAdopts = async (params: AdoptParamsDto): Promise<AdoptResponseDto> => {
-  const res = await authApi.get<ApiResponse<AdoptResponseDto>>(BASE_URL, { params });
+  const { ageBuckets, ...rest } = params;
+  const query = { ...rest, ...(ageBuckets?.length ? { ageBuckets: ageBuckets.join(',') } : {}) };
+  const res = await authApi.get<ApiResponse<AdoptResponseDto>>(BASE_URL, { params: query });
   return res.data.data;
 };
 

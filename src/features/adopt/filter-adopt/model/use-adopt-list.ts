@@ -1,12 +1,16 @@
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 
-import { AdoptFilterDto, adoptQueries, mapToAdoptList } from '@/entities/adopt';
+import { AdoptAgeBucketDto, AdoptFilterDto, adoptQueries, mapToAdoptList } from '@/entities/adopt';
 
 export type AdoptListParams = {
   filter: AdoptFilterDto;
   animalType: string;
-  search?: string;
+  region?: string;
+  breed?: string;
+  gender?: 'M' | 'F' | 'Q';
+  neuter?: 'Y' | 'N' | 'U';
+  ageBuckets?: AdoptAgeBucketDto[];
   size?: number;
 };
 
@@ -24,7 +28,11 @@ export const useAdoptList = (params: AdoptListParams) => {
     adoptQueries.list({
       filter: params.filter,
       animalType: params.animalType,
-      search: params.search,
+      region: params.region,
+      breed: params.breed,
+      gender: params.gender,
+      neuter: params.neuter,
+      ageBuckets: params.ageBuckets,
       size
     })
   );

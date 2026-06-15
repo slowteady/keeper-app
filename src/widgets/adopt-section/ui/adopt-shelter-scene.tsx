@@ -5,14 +5,13 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
 import type { SharedValue } from 'react-native-reanimated';
-import { View } from 'tamagui';
+import { View, YStack } from 'tamagui';
 
 import { ADOPT_OPTIONS, AdoptCard, AdoptFilterDto, AdoptItem } from '@/entities/adopt';
-import { useAdoptList } from '@/features/adopt';
+import { ShelterFilterBar, useAdoptList, useShelterFilter } from '@/features/adopt';
 import { useFavoriteAbandonment } from '@/features/favorite-abandonment';
-import { ShowMoreButton } from '@/shared/ui';
+import { ButtonGroup, ShowMoreButton } from '@/shared/ui';
 
-import { AdoptListHeaderSection } from './adopt-list-header-section';
 import { AdoptListSection } from './adopt-list-section';
 
 const LIST_SIZE = 16;
@@ -23,23 +22,36 @@ export const AdoptShelterScene = ({ scrollY }: { scrollY: SharedValue<number> })
 
   const [selectedFilter, setSelectedFilter] = useState<AdoptFilterDto>(ADOPT_OPTIONS.FILTER[0].id);
   const [selectedType, setSelectedType] = useState<string>(animalType ?? ADOPT_OPTIONS.ANIMAL[0].id);
-  const [searchInput, setSearchInput] = useState('');
-  const [searchValue, setSearchValue] = useState('');
+
+  const shelterFilter = useShelterFilter();
+  const { applied, setBreed } = shelterFilter;
 
   useEffect(() => {
     if (animalType) setSelectedType(animalType);
   }, [animalType]);
 
+  useEffect(() => {
+    setBreed(undefined);
+  }, [selectedType, setBreed]);
+
   const { convertedData, moreButtonText, isLoading, isFetchingNextPage, hasNextPage, refresh, fetchNextPage } =
     useAdoptList({
       filter: selectedFilter,
       animalType: selectedType,
-      search: searchValue || undefined,
+      region: applied.region,
+      breed: applied.breed,
+      gender: applied.gender,
+      neuter: applied.neuter,
+      ageBuckets: applied.age ? [applied.age] : undefined,
       size: LIST_SIZE
     });
 
   const scrollRef = useRef<FlashListRef<AdoptItem>>(null);
   useScrollToTop(scrollRef);
+
+  useEffect(() => {
+    scrollRef.current?.scrollToOffset({ offset: 0, animated: false });
+  }, [selectedType, selectedFilter, applied]);
 
   const goDetail = useCallback((id: string) => router.push({ pathname: '/adopt/[id]', params: { id } }), [router]);
   const { toggleFavoriteAbandonment } = useFavoriteAbandonment();
@@ -86,15 +98,15 @@ export const AdoptShelterScene = ({ scrollY }: { scrollY: SharedValue<number> })
       onScroll={handleScroll}
       renderItem={renderItem}
       header={
-        <AdoptListHeaderSection
-          filterValue={selectedFilter}
-          animalType={selectedType}
-          searchValue={searchInput}
-          onChangeFilter={(id) => setSelectedFilter(id as AdoptFilterDto)}
-          onChangeAnimalType={setSelectedType}
-          onChangeSearch={setSearchInput}
-          onSearch={setSearchValue}
-        />
+        <YStack mb={16} gap={14}>
+          <ButtonGroup data={ADOPT_OPTIONS.ANIMAL} id={selectedType} onChange={(id) => setSelectedType(id)} />
+          <ShelterFilterBar
+            filter={shelterFilter}
+            animalType={selectedType}
+            sortValue={selectedFilter}
+            onChangeSort={setSelectedFilter}
+          />
+        </YStack>
       }
       footer={
         hasNextPage ? (
