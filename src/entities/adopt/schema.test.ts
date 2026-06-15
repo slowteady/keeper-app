@@ -66,7 +66,7 @@ describe('AdoptResponseSchema', () => {
 });
 
 describe('AdoptParamsSchema', () => {
-  it('필수: filter/animalType/size 통과 (page/search optional)', () => {
+  it('필수: filter/animalType/size 통과 (page optional)', () => {
     expect(() => AdoptParamsSchema.parse({ filter: 'NEW', animalType: '개', size: 20 })).not.toThrow();
   });
 

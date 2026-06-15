@@ -2,33 +2,54 @@ import { useScrollToTop } from '@react-navigation/native';
 import { FlashListRef, ListRenderItemInfo } from '@shopify/flash-list';
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { useRouter } from 'expo-router';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
 import type { SharedValue } from 'react-native-reanimated';
-import { View } from 'tamagui';
+import { View, YStack } from 'tamagui';
 
-import { ADOPT_OPTIONS, PersonalAdoptCard, PersonalAdoptItem } from '@/entities/adopt';
-import { usePersonalAdoptList } from '@/features/adopt';
+import { ADOPT_OPTIONS, PersonalAdoptCard, PersonalAdoptItem, PersonalSort } from '@/entities/adopt';
+import { PersonalFilterBar, usePersonalAdoptList, usePersonalFilter } from '@/features/adopt';
 import { useLikePost } from '@/features/like-post';
-import { ShowMoreButton } from '@/shared/ui';
+import { ButtonGroup, ShowMoreButton } from '@/shared/ui';
 
-import { AdoptListHeaderSection } from './adopt-list-header-section';
 import { AdoptListSection } from './adopt-list-section';
 
 const LIST_SIZE = 16;
-const noop = () => {};
 
 export const AdoptPersonalScene = ({ scrollY }: { scrollY: SharedValue<number> }) => {
   const router = useRouter();
   const [selectedType, setSelectedType] = useState<string>(ADOPT_OPTIONS.ANIMAL[0].id);
-  const [searchInput, setSearchInput] = useState('');
-  const [searchValue, setSearchValue] = useState('');
+  const [sortValue, setSortValue] = useState<PersonalSort>('NEW');
+
+  const personalFilter = usePersonalFilter();
+  const { applied, setBreed } = personalFilter;
+
+  useEffect(() => {
+    setBreed(undefined);
+  }, [selectedType, setBreed]);
 
   const { convertedData, moreButtonText, isLoading, isFetchingNextPage, hasNextPage, refresh, fetchNextPage } =
-    usePersonalAdoptList({ animalType: selectedType, search: searchValue || undefined, size: LIST_SIZE });
+    usePersonalAdoptList({
+      animalType: selectedType,
+      region: applied.region,
+      breed: applied.breed,
+      gender: applied.gender,
+      neuter: applied.neuter,
+      age: applied.age,
+      protectionType: applied.protectionType,
+      adoptionStatus: applied.adoptionStatus,
+      vaccination: applied.vaccination,
+      healthCheck: applied.healthCheck,
+      sort: sortValue,
+      size: LIST_SIZE
+    });
 
   const scrollRef = useRef<FlashListRef<PersonalAdoptItem>>(null);
   useScrollToTop(scrollRef);
+
+  useEffect(() => {
+    scrollRef.current?.scrollToOffset({ offset: 0, animated: false });
+  }, [selectedType, sortValue, applied]);
 
   const goDetail = useCallback(
     (id: string) => router.push({ pathname: '/(untabs)/adopt-personal/[id]', params: { id } }),
@@ -38,11 +59,13 @@ export const AdoptPersonalScene = ({ scrollY }: { scrollY: SharedValue<number> }
 
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<PersonalAdoptItem>) => (
-      <View mb={28}>
+      <View mb={32}>
         <PersonalAdoptCard
           uri={item.uri}
           title={item.title}
           intro={item.intro}
+          animalLabel={item.animalLabel}
+          animalVariant={item.animalVariant}
           region={item.region}
           dateText={item.dateText}
           chips={item.chips}
@@ -79,16 +102,15 @@ export const AdoptPersonalScene = ({ scrollY }: { scrollY: SharedValue<number> }
       onScroll={handleScroll}
       renderItem={renderItem}
       header={
-        <AdoptListHeaderSection
-          filterValue=""
-          animalType={selectedType}
-          searchValue={searchInput}
-          onChangeFilter={noop}
-          onChangeAnimalType={setSelectedType}
-          onChangeSearch={setSearchInput}
-          onSearch={setSearchValue}
-          showFilter={false}
-        />
+        <YStack mb={16} gap={14}>
+          <ButtonGroup data={ADOPT_OPTIONS.ANIMAL} id={selectedType} onChange={(id) => setSelectedType(id)} />
+          <PersonalFilterBar
+            filter={personalFilter}
+            animalType={selectedType}
+            sortValue={sortValue}
+            onChangeSort={setSortValue}
+          />
+        </YStack>
       }
       footer={
         hasNextPage ? (

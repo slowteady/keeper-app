@@ -16,7 +16,7 @@ export const Dropdown = <T,>({ data, value, onChange }: DropdownProps<T>) => {
   const matchedValue = data.find((item) => item.id === value);
 
   return (
-    <Container onPress={open} hitSlop={12}>
+    <Container onPress={open} hitSlop={12} style={{ minWidth: 74 }}>
       <Text fontSize={15} fontWeight="500" lineHeight={21} color="$black500">
         {matchedValue?.label}
       </Text>
@@ -27,5 +27,7 @@ export const Dropdown = <T,>({ data, value, onChange }: DropdownProps<T>) => {
 
 const Container = styled(XStack, {
   items: 'center',
-  gap: 4
+  justify: 'flex-end',
+  gap: 4,
+  py: 10
 });

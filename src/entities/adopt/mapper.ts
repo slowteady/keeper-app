@@ -134,29 +134,36 @@ export type PersonalAdoptItem = ReturnType<typeof mapToPersonalAdoptList>[number
 
 const PERSONAL_ANIMAL: Record<string, { label: string; variant: ChipVariant }> = {
   DOG: { label: '강아지', variant: 'dog' },
-  CAT: { label: '고양이', variant: 'cat' }
+  CAT: { label: '고양이', variant: 'cat' },
+  OTHER: { label: '기타', variant: 'etc' }
 };
 
+const personalAnimal = (animalType?: string | null) =>
+  (animalType && PERSONAL_ANIMAL[animalType]) || { label: '기타', variant: 'etc' as ChipVariant };
+
 export const mapToPersonalAdoptList = (data: PersonalAdoptSource[]) => {
-  return data.map((item) => ({
-    id: item.id,
-    uri: item.images[0],
-    title: item.title,
-    intro: item.content?.trim() || '',
-    protectionType: item.protectionType ?? null,
-    region: item.location?.trim() || '',
-    dateText: formatTimeAgo(item.displayTime),
-    chips: buildPersonalChips(item),
-    isLiked: item.isLiked,
-    completed: item.adoptionStatus === 'COMPLETED'
-  }));
+  return data.map((item) => {
+    const animal = personalAnimal(item.animalType);
+    return {
+      id: item.id,
+      uri: item.images[0],
+      title: item.title,
+      intro: item.content?.trim() || '',
+      animalLabel: animal.label,
+      animalVariant: animal.variant,
+      protectionType: item.protectionType ?? null,
+      region: item.location?.trim() || '',
+      dateText: formatTimeAgo(item.displayTime),
+      chips: buildPersonalChips(item),
+      isLiked: item.isLiked,
+      completed: item.adoptionStatus === 'COMPLETED'
+    };
+  });
 };
 
 const buildPersonalChips = (item: PersonalAdoptSource) => {
-  const animal = item.animalType ? PERSONAL_ANIMAL[item.animalType] : undefined;
-  const chips: { id: string; value: string; variant: ChipVariant }[] = [
-    { id: 'KIND', value: item.specificType || animal?.label || '기타', variant: animal?.variant ?? 'etc' }
-  ];
+  const chips: { id: string; value: string; variant: ChipVariant }[] = [];
+  if (item.specificType) chips.push({ id: 'KIND', value: item.specificType, variant: 'default' });
   const gender = convertGenderLabel(item.gender ?? undefined);
   if (gender !== '모름') chips.push({ id: 'GENDER', value: gender, variant: 'default' });
   if (item.age) chips.push({ id: 'AGE', value: item.age, variant: 'default' });

@@ -1,12 +1,31 @@
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 
-import { mapToPersonalAdoptList } from '@/entities/adopt';
+import {
+  mapToPersonalAdoptList,
+  PersonalAdoptionStatus,
+  PersonalGender,
+  PersonalHealth,
+  PersonalNeuter,
+  PersonalProtection,
+  PersonalSort,
+  PersonalVaccination,
+  ShelterAgeBucket
+} from '@/entities/adopt';
 import { communityQueries } from '@/entities/community';
 
 export type PersonalAdoptListParams = {
   animalType: string;
-  search?: string;
+  region?: string;
+  breed?: string;
+  gender?: PersonalGender;
+  neuter?: PersonalNeuter;
+  age?: ShelterAgeBucket;
+  protectionType?: PersonalProtection;
+  adoptionStatus?: PersonalAdoptionStatus;
+  vaccination?: PersonalVaccination;
+  healthCheck?: PersonalHealth;
+  sort?: PersonalSort;
   size?: number;
 };
 
@@ -22,7 +41,21 @@ export const usePersonalAdoptList = (params: PersonalAdoptListParams) => {
     fetchNextPage: fetchNextPageQuery,
     hasNextPage
   } = useInfiniteQuery(
-    communityQueries.list({ category: 'ADOPTION_PERSONAL', animalType, search: params.search, sort: 'NEW', size })
+    communityQueries.list({
+      category: 'ADOPTION_PERSONAL',
+      animalType,
+      region: params.region,
+      breed: params.breed,
+      gender: params.gender,
+      neuter: params.neuter,
+      protectionType: params.protectionType,
+      adoptionStatus: params.adoptionStatus,
+      vaccination: params.vaccination,
+      healthCheck: params.healthCheck,
+      ageBuckets: params.age ? [params.age] : undefined,
+      sort: params.sort ?? 'NEW',
+      size
+    })
   );
 
   const convertedData = useMemo(() => {

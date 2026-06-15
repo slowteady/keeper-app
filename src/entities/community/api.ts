@@ -29,15 +29,26 @@ export type CommunityListParams = {
   size?: number;
   category?: 'ADOPTION_PERSONAL' | 'ADOPTION_LIFE' | 'QNA';
   animalType?: 'DOG' | 'CAT' | 'OTHER';
-  sort?: 'NEW' | 'LIKE' | 'COMMENT' | 'VIEW';
-  search?: string;
+  sort?: 'NEW' | 'OLD' | 'LIKE' | 'COMMENT' | 'VIEW';
+  region?: string;
+  breed?: string;
+  gender?: 'M' | 'F' | 'NONE';
+  neuter?: 'Y' | 'N';
+  protectionType?: 'ADOPTION' | 'TEMPORARY';
+  adoptionStatus?: 'IN_PROGRESS' | 'COMPLETED';
+  vaccination?: 'VACCINATED' | 'NOT';
+  healthCheck?: 'Y' | 'N';
+  ageBuckets?: string[];
 };
 
 const COMMUNITY_BASE = '/community/posts';
 
 const getList = async (params: CommunityListParams): Promise<CommunityListResponseDto> => {
+  const { ageBuckets, ...rest } = params;
   // authApi 사용 — 토큰 첨부 시 server 가 isLiked 정확히 반환. publicApi 면 invalidate refetch 후 isLiked=false 로 cache 덮어쓰기 → 하트 리셋 버그.
-  const res = await authApi.get<ApiResponse<CommunityListResponseDto>>(COMMUNITY_BASE, { params });
+  const res = await authApi.get<ApiResponse<CommunityListResponseDto>>(COMMUNITY_BASE, {
+    params: { ...rest, ageBuckets: ageBuckets?.length ? ageBuckets.join(',') : undefined }
+  });
   return CommunityListResponseSchema.parse(res.data.data);
 };
 

@@ -29,9 +29,11 @@ describe('mapToPersonalAdoptList', () => {
     expect(item.intro).toBe('사람을 잘 따르는 순둥이예요');
     expect(item.isLiked).toBe(false);
     expect(item.completed).toBe(false);
-    // 선택값 칩: 품종(고양이=cat) 선두 + 중성화 N → 생략
-    const kind = item.chips.find((c) => c.id === 'KIND');
-    expect(kind).toMatchObject({ value: '코숏', variant: 'cat' });
+    // 분류는 칩이 아닌 라벨(overline) — 고양이=cat 색
+    expect(item.animalLabel).toBe('고양이');
+    expect(item.animalVariant).toBe('cat');
+    // 품종 칩(중립) + 중성화 N → 생략
+    expect(item.chips.find((c) => c.id === 'KIND')).toMatchObject({ value: '코숏', variant: 'default' });
     expect(item.chips.find((c) => c.id === 'GENDER')?.value).toBe('여아');
     expect(item.chips.find((c) => c.id === 'AGE')?.value).toBe('1살');
     expect(item.chips.find((c) => c.id === 'WEIGHT')?.value).toBe('3kg');
@@ -66,10 +68,12 @@ describe('mapToPersonalAdoptList', () => {
     expect(item.completed).toBe(true);
   });
 
-  it('품종이 없으면 KIND 칩에 동물 라벨 폴백 (title 은 글 제목 유지)', () => {
+  it('품종이 없으면 KIND 칩 생략, 분류 라벨은 기타(etc 색)', () => {
     const [item] = mapToPersonalAdoptList([personalSource({ specificType: null, animalType: 'OTHER' })]);
     expect(item.title).toBe('코숏 나비 입양 보내요');
-    expect(item.chips.find((c) => c.id === 'KIND')).toMatchObject({ value: '기타', variant: 'etc' });
+    expect(item.animalLabel).toBe('기타');
+    expect(item.animalVariant).toBe('etc');
+    expect(item.chips.find((c) => c.id === 'KIND')).toBeUndefined();
   });
 
   it('지역이 없으면 region 은 빈 문자열 (날짜만 노출)', () => {

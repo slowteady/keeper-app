@@ -23,6 +23,8 @@ export type PersonalAdoptCardProps = {
   uri: string;
   title: string;
   intro?: string;
+  animalLabel: string;
+  animalVariant: ChipVariant;
   region: string;
   dateText: string;
   chips?: PersonalAdoptCardChip[];
@@ -37,6 +39,8 @@ export const PersonalAdoptCard = ({
   uri,
   title,
   intro,
+  animalLabel,
+  animalVariant,
   region,
   dateText,
   chips,
@@ -68,8 +72,18 @@ export const PersonalAdoptCard = ({
           )}
         </ImageContainer>
 
-        <Title>{title}</Title>
+        <AnimalLabel variant={animalVariant}>{animalLabel}</AnimalLabel>
+        <TitleRow>
+          <Title>{title}</Title>
+          {!!dateText && <DateText>{dateText}</DateText>}
+        </TitleRow>
         {!!intro && <IntroText>{intro}</IntroText>}
+        {!!region && (
+          <RegionWrap>
+            <Location width={14} height={14} color={black400.val} />
+            <RegionText>{region}</RegionText>
+          </RegionWrap>
+        )}
         {!!chips?.length && (
           <ChipRow>
             {chips.map(({ id, value, variant }) => (
@@ -79,15 +93,6 @@ export const PersonalAdoptCard = ({
             ))}
           </ChipRow>
         )}
-        <MetaRow>
-          {!!region && (
-            <RegionWrap>
-              <Location width={14} height={14} color={black400.val} />
-              <RegionText>{region}</RegionText>
-            </RegionWrap>
-          )}
-          <DateText>{dateText}</DateText>
-        </MetaRow>
       </Pressable>
 
       {onPressFavorite && (
@@ -152,14 +157,38 @@ const ProtectionText = styled(Text, {
   color: '$black800'
 });
 
+const AnimalLabel = styled(Text, {
+  fontWeight: 700,
+  fontSize: 12,
+  lineHeight: 15,
+  mb: 4,
+  variants: {
+    variant: {
+      dog: { color: '$dogMain' },
+      cat: { color: '$catMain' },
+      etc: { color: '$etcMain' },
+      default: { color: '$black600' },
+      error: { color: '$errorMain' },
+      success: { color: '$successMain' },
+      notice: { color: '$noticeMain' }
+    }
+  } as const
+});
+
+const TitleRow = styled(XStack, {
+  items: 'flex-start',
+  gap: 8,
+  mb: 6
+});
+
 const Title = styled(Text, {
+  flex: 1,
   fontWeight: 600,
   fontSize: 17,
   lineHeight: 22,
   color: '$black900',
   numberOfLines: 2,
-  ellipsizeMode: 'tail',
-  mb: 6
+  ellipsizeMode: 'tail'
 });
 
 const IntroText = styled(Text, {
@@ -169,13 +198,12 @@ const IntroText = styled(Text, {
   color: '$black600',
   numberOfLines: 1,
   ellipsizeMode: 'tail',
-  mb: 14
+  mb: 8
 });
 
 const ChipRow = styled(XStack, {
   flexWrap: 'wrap',
-  gap: 4,
-  mb: 12
+  gap: 4
 });
 
 const ChipItem = styled(View, {
@@ -213,16 +241,10 @@ const ChipText = styled(Text, {
   } as const
 });
 
-const MetaRow = styled(XStack, {
-  items: 'center',
-  justify: 'space-between',
-  gap: 8
-});
-
 const RegionWrap = styled(XStack, {
-  flex: 1,
   items: 'center',
-  gap: 3
+  gap: 3,
+  mb: 10
 });
 
 const RegionText = styled(Text, {
@@ -236,6 +258,7 @@ const RegionText = styled(Text, {
 });
 
 const DateText = styled(Text, {
+  mt: 2,
   fontWeight: 500,
   fontSize: 12,
   lineHeight: 16,

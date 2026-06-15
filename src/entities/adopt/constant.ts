@@ -65,6 +65,54 @@ export const SHELTER_FILTER_OPTIONS = {
 
 export type ShelterAgeBucket = (typeof SHELTER_FILTER_OPTIONS.AGE)[number]['id'];
 
+export const PERSONAL_FILTER_OPTIONS = {
+  GENDER: [
+    { id: '', label: '전체' },
+    { id: 'M', label: '남아' },
+    { id: 'F', label: '여아' },
+    { id: 'NONE', label: '모름' }
+  ] as const,
+  NEUTER: [
+    { id: '', label: '전체' },
+    { id: 'Y', label: '완료' },
+    { id: 'N', label: '미완료' }
+  ] as const,
+  VACCINATION: [
+    { id: '', label: '전체' },
+    { id: 'VACCINATED', label: '접종' },
+    { id: 'NOT', label: '미접종' }
+  ] as const,
+  HEALTH: [
+    { id: '', label: '전체' },
+    { id: 'Y', label: '완료' },
+    { id: 'N', label: '미완료' }
+  ] as const,
+  PROTECTION: [
+    { id: '', label: '전체' },
+    { id: 'ADOPTION', label: '입양 가능' },
+    { id: 'TEMPORARY', label: '임보 가능' }
+  ] as const,
+  STATUS: [
+    { id: 'IN_PROGRESS', label: '입양중' },
+    { id: 'COMPLETED', label: '완료' },
+    { id: '', label: '전체' }
+  ] as const
+} as const;
+
+export const PERSONAL_SORT_OPTIONS = [
+  { id: 'NEW', label: '최신순' },
+  { id: 'OLD', label: '오래된순' }
+] as const;
+
+export type PersonalSort = (typeof PERSONAL_SORT_OPTIONS)[number]['id'];
+
+export type PersonalGender = 'M' | 'F' | 'NONE';
+export type PersonalNeuter = 'Y' | 'N';
+export type PersonalVaccination = 'VACCINATED' | 'NOT';
+export type PersonalHealth = 'Y' | 'N';
+export type PersonalProtection = 'ADOPTION' | 'TEMPORARY';
+export type PersonalAdoptionStatus = 'IN_PROGRESS' | 'COMPLETED';
+
 type AdoptStatusInfo = {
   label: string;
   tone: 'positive' | 'neutral';
