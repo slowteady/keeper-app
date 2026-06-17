@@ -32,13 +32,16 @@ export const CommunityDetailHealthSection = ({
         <InfoRow label="중성화" value={ynText(neuterYn)} />
         <InfoRow label="예방접종" value={vaccineText(vaccinationCheck)} />
         <InfoRow label="건강검진" value={ynText(healthCheck)} />
+        {hasValue(health) && (
+          <>
+            <NoteDivider />
+            <YStack gap={6}>
+              <NoteLabel>아파요</NoteLabel>
+              <NoteText>{health}</NoteText>
+            </YStack>
+          </>
+        )}
       </Box>
-      {hasValue(health) && (
-        <YStack gap={8} mt={8}>
-          <Label>아파요</Label>
-          <Description>{health}</Description>
-        </YStack>
-      )}
     </YStack>
   );
 };
@@ -80,17 +83,21 @@ const RowValue = styled(Text, {
   color: '$black700'
 });
 
-const Label = styled(Text, {
-  fontSize: 18,
-  lineHeight: 24,
-  fontWeight: 700,
+const NoteDivider = styled(YStack, {
+  height: 1,
+  bg: '$white800'
+});
+
+const NoteLabel = styled(Text, {
+  fontSize: 15,
+  fontWeight: 600,
+  lineHeight: 22,
   color: '$black800'
 });
 
-const Description = styled(Text, {
-  fontSize: 16,
-  lineHeight: 25,
-  fontWeight: 400,
-  color: '$black650',
-  letterSpacing: -0.25
+const NoteText = styled(Text, {
+  fontSize: 15,
+  fontWeight: 500,
+  lineHeight: 22,
+  color: '$black700'
 });
