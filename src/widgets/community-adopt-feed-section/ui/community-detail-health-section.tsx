@@ -36,7 +36,7 @@ export const CommunityDetailHealthSection = ({
           <>
             <NoteDivider />
             <YStack gap={6}>
-              <NoteLabel>아파요</NoteLabel>
+              <NoteLabel>건강 특이사항</NoteLabel>
               <NoteText>{health}</NoteText>
             </YStack>
           </>

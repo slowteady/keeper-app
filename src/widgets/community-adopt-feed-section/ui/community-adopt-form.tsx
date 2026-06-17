@@ -170,12 +170,12 @@ export const CommunityAdoptForm = ({
             <Accordion.HeightAnimator animation="quick" exitStyle={{ opacity: 0, height: 0 }}>
               <YStack px={20} pb={24} gap={16}>
                 <OptionSelectField name="neuterYn" control={control} label="중성화" />
-                <OptionSelectField name="healthCheck" control={control} label="건강검진" />
                 <OptionSelectField name="vaccinationCheck" control={control} label="예방접종" />
+                <OptionSelectField name="healthCheck" control={control} label="건강검진" />
                 <LabelTextArea
                   name="health"
                   control={control}
-                  label="아파요"
+                  label="건강 특이사항"
                   rows={3}
                   minH={70}
                   maxLength={100}
