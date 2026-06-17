@@ -1,45 +1,60 @@
 import { useScrollToTop } from '@react-navigation/native';
 import { FlashList, FlashListRef } from '@shopify/flash-list';
 import { useQueryClient } from '@tanstack/react-query';
-import { useRouter } from 'expo-router';
-import { useCallback, useRef, useState } from 'react';
+import { RelativePathString, useRouter } from 'expo-router';
+import { useCallback, useRef } from 'react';
 import { RefreshControl } from 'react-native';
 import { styled, View } from 'tamagui';
 
 import { ADOPT_OPTIONS, adoptQueries } from '@/entities/adopt';
 import { shelterQueries } from '@/entities/shelter';
-import { useAdoptList } from '@/features/adopt';
+import { useAdoptList, usePersonalAdoptList } from '@/features/adopt';
 import { useHomeShelter } from '@/features/shelter';
 import { useListRefreshing } from '@/shared/model';
 import { RouteErrorBoundary } from '@/shared/ui';
-import { HomeAdoptSection, HomeBannerSection, HomeFooterSection, HomeShelterSection } from '@/widgets/home-section';
+import {
+  HomeAdoptSection,
+  HomeBannerSection,
+  HomeFooterSection,
+  HomePersonalSection,
+  HomeShelterSection
+} from '@/widgets/home-section';
 
 export const ErrorBoundary = RouteErrorBoundary;
 
 const IMAGES = [require('@/assets/images/banner1.png'), require('@/assets/images/banner2.png')];
 
-const SECTIONS = [{ id: 'banner' }, { id: 'adopt' }, { id: 'shelter' }] as const;
+const SECTIONS = [{ id: 'banner' }, { id: 'adopt' }, { id: 'personal' }, { id: 'shelter' }] as const;
+
+const HOME_LIST_SIZE = 10;
 
 const Page = () => {
   const router = useRouter();
   const scrollRef = useRef<FlashListRef<(typeof SECTIONS)[number]>>(null);
   useScrollToTop(scrollRef);
 
-  const [selectedType, setSelectedType] = useState<string>(ADOPT_OPTIONS.ANIMAL[0].id);
-
   const { convertedData, isLoading } = useAdoptList({
     filter: ADOPT_OPTIONS.FILTER[0].id,
-    animalType: selectedType
+    animalType: ADOPT_OPTIONS.ANIMAL[0].id,
+    size: HOME_LIST_SIZE
+  });
+
+  const { convertedData: personalData, isLoading: personalLoading } = usePersonalAdoptList({
+    animalType: ADOPT_OPTIONS.ANIMAL[0].id,
+    sort: 'NEW',
+    size: HOME_LIST_SIZE
   });
 
   const shelter = useHomeShelter();
   const queryClient = useQueryClient();
 
   const goDetail = useCallback((id: string) => router.push({ pathname: '/adopt/[id]', params: { id } }), [router]);
-  const goList = useCallback(
-    () => router.push({ pathname: '/adopt', params: { animalType: selectedType } }),
-    [router, selectedType]
+  const goList = useCallback(() => router.push('/adopt'), [router]);
+  const goPersonalDetail = useCallback(
+    (id: string) => router.push({ pathname: '/(untabs)/adopt-personal/[id]', params: { id } } as never),
+    [router]
   );
+  const goPersonalList = useCallback(() => router.push('/adopt?source=personal' as RelativePathString), [router]);
 
   const refreshCallback = useCallback(async () => {
     await Promise.all([
@@ -63,12 +78,21 @@ const Page = () => {
           return (
             <View pb={40}>
               <HomeAdoptSection
-                selectedType={selectedType}
                 convertedData={convertedData}
                 isLoading={isLoading}
                 onGoDetail={goDetail}
                 onGoList={goList}
-                onChangeType={setSelectedType}
+              />
+            </View>
+          );
+        case 'personal':
+          return (
+            <View pb={40}>
+              <HomePersonalSection
+                convertedData={personalData}
+                isLoading={personalLoading}
+                onGoDetail={goPersonalDetail}
+                onGoList={goPersonalList}
               />
             </View>
           );
@@ -84,7 +108,17 @@ const Page = () => {
           );
       }
     },
-    [selectedType, convertedData, isLoading, goDetail, goList, shelter]
+    [
+      convertedData,
+      isLoading,
+      personalData,
+      personalLoading,
+      goDetail,
+      goList,
+      goPersonalDetail,
+      goPersonalList,
+      shelter
+    ]
   );
 
   return (

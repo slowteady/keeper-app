@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import { useSharedValue } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -19,8 +19,9 @@ const ADOPT_SOURCE_ROUTES = [
 const Page = () => {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { source } = useLocalSearchParams<{ source?: string }>();
   const { requireLogin } = useLoginRequired();
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState(source === 'personal' ? 1 : 0);
   const scrollY = useSharedValue(0);
 
   const navigationState = useMemo(() => ({ index, routes: ADOPT_SOURCE_ROUTES }), [index]);
