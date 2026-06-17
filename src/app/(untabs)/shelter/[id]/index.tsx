@@ -1,7 +1,8 @@
 import { NaverMapViewRef } from '@mj-studio/react-native-naver-map';
 import { FlashListRef, ListRenderItemInfo } from '@shopify/flash-list';
-import { useLocalSearchParams } from 'expo-router';
+import { RelativePathString, router, useLocalSearchParams } from 'expo-router';
 import { Suspense, useCallback, useRef, useState } from 'react';
+import { showLocation } from 'react-native-map-link';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
 import { ADOPT_OPTIONS, AdoptCard, AdoptItem } from '@/entities/adopt';
@@ -9,7 +10,7 @@ import { useFavoriteAbandonment } from '@/features/favorite-abandonment';
 import { useFavoriteShelter } from '@/features/favorite-shelter';
 import { useShelter, useShelterAdoptList } from '@/features/shelter';
 import { useLocation, useShare } from '@/shared/model';
-import { Button, CallModal, DetailErrorBoundary, Dropdown, ShowMoreButton, SuspenseFallback } from '@/shared/ui';
+import { BottomButton, CallModal, DetailErrorBoundary, Dropdown, ShowMoreButton, SuspenseFallback } from '@/shared/ui';
 import { AdoptListSection } from '@/widgets/adopt-section';
 import { ShelterDetailDescriptionSection, ShelterDetailOverviewSection } from '@/widgets/shelter-section';
 
@@ -32,6 +33,7 @@ export default Page;
 
 const ShelterDetailContent = ({ id }: { id: string }) => {
   const [callModalOpen, setCallModalOpen] = useState(false);
+  const [buttonHeight, setButtonHeight] = useState(0);
   const { isGranted, permissionStatus } = useLocation();
   const mapRef = useRef<NaverMapViewRef>(null);
 
@@ -71,6 +73,23 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
     await Promise.all([refreshShelter(), refreshAdopts()]);
   }, [refreshShelter, refreshAdopts]);
 
+  const handleDirections = useCallback(() => {
+    if (!shelterData) return;
+    showLocation({
+      latitude: shelterData.latitude,
+      longitude: shelterData.longitude,
+      title: shelterData.name,
+      directionsMode: 'car',
+      dialogTitle: '길찾기',
+      dialogMessage: '길찾기에 사용할 지도 앱을 선택해주세요',
+      cancelText: '취소'
+    });
+  }, [shelterData]);
+
+  const handleOpenMap = useCallback(() => {
+    router.push(`/shelter/${id}/map` as RelativePathString);
+  }, [id]);
+
   const renderItem = useCallback(
     ({ item, index }: ListRenderItemInfo<AdoptItem>) => {
       const isLeft = index % 2 === 0;
@@ -104,10 +123,10 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
         onRefreshCallback={refreshFetch}
         renderItem={renderItem}
         emptyComponentVariant="list"
-        contentContainerStyle={{ paddingVertical: 48 }}
+        contentContainerStyle={{ paddingTop: 48, paddingBottom: buttonHeight + 40 }}
         header={
-          <YStack mb={24}>
-            <View mb={30} px={20}>
+          <YStack mb={24} gap={28}>
+            <View px={20}>
               <ShelterDetailOverviewSection
                 data={shelterData}
                 mapRef={mapRef}
@@ -116,30 +135,19 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
                 onMapInitialized={handleMapInitialized}
                 onPressFavorite={() => toggleFavoriteShelter(shelterData.id, shelterData.isFavorited ?? false)}
                 onPressShare={handlePressShare}
+                onPressDirections={handleDirections}
+                onPressMap={handleOpenMap}
               />
             </View>
-            <View mb={32} px={20}>
+            <View px={20}>
               <ShelterDetailDescriptionSection
                 time={shelterData.time}
-                address={shelterData.address}
                 person={shelterData.person}
-                tel={shelterData.tel ?? '연락처 정보가 없어요'}
+                tel={shelterData.tel ?? ''}
               />
             </View>
 
-            {hasCallNumber ? (
-              <View mb={40} px={20}>
-                <Button size="large" onPress={() => setCallModalOpen((prev) => !prev)}>
-                  <Text fontSize={15} fontWeight={600} lineHeight={18} color="$black900">
-                    보호소에 문의하기
-                  </Text>
-                </Button>
-              </View>
-            ) : (
-              <Divider mb={40} />
-            )}
-
-            <XStack items="flex-end" justify="space-between" px={20}>
+            <XStack items="center" justify="space-between" px={20}>
               <XStack gap={6} items="flex-end">
                 <Text fontSize={20} fontWeight="600" lineHeight={24} letterSpacing={-0.25} color="$black800">
                   보호중인 아이들
@@ -166,6 +174,26 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
         }
       />
 
+      <BottomButton
+        disabled={!hasCallNumber}
+        onPress={hasCallNumber ? () => setCallModalOpen((prev) => !prev) : undefined}
+        onLayout={(e) => {
+          const h = e.nativeEvent.layout.height;
+          setButtonHeight((prev) => (prev === h ? prev : h));
+        }}
+        topContent={
+          !hasCallNumber ? (
+            <Text mb={8} self="center" fontSize={13} lineHeight={18} fontWeight={500} color="$black500">
+              등록된 연락처가 없어요
+            </Text>
+          ) : undefined
+        }
+      >
+        <Text fontSize={15} fontWeight={600} lineHeight={18} color={hasCallNumber ? '$black900' : '$black500'}>
+          보호소에 문의하기
+        </Text>
+      </BottomButton>
+
       {hasCallNumber && (
         <CallModal
           open={callModalOpen}
@@ -182,9 +210,4 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
 const Container = styled(View, {
   bg: '$pageBackground',
   flex: 1
-});
-
-const Divider = styled(View, {
-  height: 8,
-  bg: '$white850'
 });

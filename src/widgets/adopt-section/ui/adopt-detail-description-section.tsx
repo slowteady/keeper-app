@@ -75,7 +75,7 @@ export const AdoptDetailDescriptionSection = ({ specialMark, shelter }: AdoptDet
 
 const SectionTitle = styled(Text, {
   fontSize: 18,
-  fontWeight: '600',
+  fontWeight: '700',
   lineHeight: 24,
   color: '$black800'
 });
@@ -98,7 +98,7 @@ const CardText = styled(Text, {
   fontSize: 16,
   fontWeight: '500',
   lineHeight: 24,
-  color: '$black650'
+  color: '$black700'
 });
 
 const CardDivider = styled(View, {
@@ -116,5 +116,5 @@ const RowText = styled(Text, {
   fontSize: 15,
   fontWeight: '500',
   lineHeight: 22,
-  color: '$black650'
+  color: '$black700'
 });
