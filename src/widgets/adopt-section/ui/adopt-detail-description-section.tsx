@@ -14,16 +14,11 @@ type Shelter = {
 export type AdoptDetailDescriptionSectionProps = {
   specialMark: string;
   shelter?: Shelter;
-  hasCallNumber?: boolean;
 };
 
 const hasValue = (value?: string) => !!value && value.trim().length > 0;
 
-export const AdoptDetailDescriptionSection = ({
-  specialMark,
-  shelter,
-  hasCallNumber
-}: AdoptDetailDescriptionSectionProps) => {
+export const AdoptDetailDescriptionSection = ({ specialMark, shelter }: AdoptDetailDescriptionSectionProps) => {
   const { black500 } = useTheme();
   const { id, time, person, address, name } = shelter || {};
   const hasShelter = !!name;
@@ -39,7 +34,7 @@ export const AdoptDetailDescriptionSection = ({
       </YStack>
 
       <YStack gap={12}>
-        <SectionTitle>보호소</SectionTitle>
+        <SectionTitle>담당 보호소</SectionTitle>
         <Card gap={hasShelter ? 14 : 0}>
           {hasShelter ? (
             <>
@@ -66,11 +61,6 @@ export const AdoptDetailDescriptionSection = ({
                 <IconRow>
                   <Stethoscope size={16} color={iconColor} />
                   <RowText>{person}</RowText>
-                </IconRow>
-              )}
-              {!hasCallNumber && (
-                <IconRow>
-                  <RowText>연락처 정보가 없어요</RowText>
                 </IconRow>
               )}
             </>

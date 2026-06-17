@@ -1,17 +1,21 @@
+import { MoreVertical, Siren } from '@tamagui/lucide-icons';
 import { useCallback, useState } from 'react';
-import { Alert, ScrollView } from 'react-native';
-import { styled, Text, View, YStack } from 'tamagui';
+import { Alert, Pressable, ScrollView } from 'react-native';
+import { styled, Text, useTheme, View, XStack } from 'tamagui';
 
+import { CommunityAdoptCardHeader, CommunityAdoptCardTitle } from '@/entities/community';
 import { useCurrentUser, useLoginRequired } from '@/features/auth';
 import { useLikePost } from '@/features/like-post';
+import { toggleHaptic } from '@/shared/lib';
 import { useLayout } from '@/shared/model';
-import { BottomButton, Skeleton, useBottomSheet } from '@/shared/ui';
-import { AdoptBasicInfoGrid } from '@/widgets/adopt-section';
+import { BottomButton, Carousel, Skeleton, useBottomSheet } from '@/shared/ui';
+import { AnimatedHeart } from '@/shared/ui/icons/animation';
+import { Share as ShareIcon } from '@/shared/ui/icons/outline';
+import { DetailSpecSection } from '@/widgets/adopt-section';
 import {
   CommunityDetailBehaviorSection,
   CommunityDetailDescriptionSection,
-  CommunityDetailHealthSection,
-  CommunityDetailOverviewSection
+  CommunityDetailHealthSection
 } from '@/widgets/community-adopt-feed-section';
 
 import { useAdoptionStatus } from '../model/use-adoption-status';
@@ -31,7 +35,19 @@ export const CommunityAdoptDetailContent = ({ id }: CommunityAdoptDetailContentP
 
   const { data } = useCommunityAdoptDetailFeed(id);
   const { toggleLikePost } = useLikePost();
+  const { black600 } = useTheme();
 
+  const overviews = data.overviews as {
+    image: string;
+    nickname: string;
+    displayTime: string;
+    title: string;
+    images: string[];
+    breed: string;
+    region: string;
+    protectionType: string | null;
+    content: string;
+  };
   const detailPost = data.detailPost;
   const infos = data.infos as {
     age: string;
@@ -53,10 +69,11 @@ export const CommunityAdoptDetailContent = ({ id }: CommunityAdoptDetailContentP
   const { user, isLoading: isUserLoading } = useCurrentUser();
   const isOwner = !!user && !!authorId && user.id === authorId;
   const isCompleted = detailPost?.adoptionStatus === 'COMPLETED';
+  const badgeLabel = overviews.protectionType ? PROTECTION_LABEL[overviews.protectionType] : undefined;
   const { setCompleted, setInProgress, isPending: isStatusPending } = useAdoptionStatus(id);
   const { requireLogin } = useLoginRequired();
 
-  const { openPostMenu, sharePost } = usePostMenu({ postId: id, authorId });
+  const { openPostMenu, sharePost, reportPost } = usePostMenu({ postId: id, authorId, hideBlock: true });
 
   const openContactSheet = useCallback(() => {
     requireLogin(() => {
@@ -75,6 +92,11 @@ export const CommunityAdoptDetailContent = ({ id }: CommunityAdoptDetailContentP
     );
   }, [isCompleted, setInProgress, setCompleted]);
 
+  const handlePressLike = useCallback(() => {
+    toggleHaptic(isLiked);
+    toggleLikePost(id, isLiked);
+  }, [toggleLikePost, id, isLiked]);
+
   const handleLayout = useCallback((h: number) => setButtonHeight((prev) => (prev === h ? prev : h)), []);
 
   // 하단 CTA: 소유자=입양완료 처리(토글) / 비소유자=문의하기(연락처 있고 입양중일 때). user 미확정 동안 스켈레톤.
@@ -86,7 +108,7 @@ export const CommunityAdoptDetailContent = ({ id }: CommunityAdoptDetailContentP
     <>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingTop: 32, paddingBottom: hasBottomCta ? buttonHeight + 40 : 48 }}
+        contentContainerStyle={{ paddingTop: 0, paddingBottom: hasBottomCta ? buttonHeight + 40 : 48 }}
       >
         {isCompleted && (
           <CompletedBanner>
@@ -96,23 +118,76 @@ export const CommunityAdoptDetailContent = ({ id }: CommunityAdoptDetailContentP
         )}
 
         {detailPost && (
-          <View px={20} mb={32}>
-            <CommunityDetailOverviewSection
-              {...(data.overviews as Parameters<typeof CommunityDetailOverviewSection>[0])}
-              onPressLike={() => toggleLikePost(id, isLiked)}
-              onPressShare={sharePost}
-              onPressMore={openPostMenu}
-            />
-          </View>
-        )}
-
-        <Divider mb={32} />
-
-        {detailPost && (
           <>
-            <YStack px={20} mb={32}>
-              <AdoptBasicInfoGrid age={infos.age} gender={infos.gender} weight={infos.weight} />
-            </YStack>
+            {overviews.images.length > 0 && (
+              <Hero mb={16}>
+                <Carousel data={overviews.images} showIndicator showImageViewer imageRadius={0} />
+              </Hero>
+            )}
+
+            <View px={20} mb={28}>
+              <AuthorRow mb={16}>
+                <CommunityAdoptCardHeader
+                  image={overviews.image}
+                  nickname={overviews.nickname}
+                  displayTime={overviews.displayTime}
+                />
+                <Actions>
+                  <Pressable onPress={handlePressLike} hitSlop={10} testID="community-detail-heart">
+                    <AnimatedHeart size={26} isLiked={isLiked} inactiveColor={black600.val} />
+                  </Pressable>
+                  <Pressable
+                    onPress={sharePost}
+                    hitSlop={10}
+                    accessibilityLabel="공유하기"
+                    testID="community-detail-share"
+                  >
+                    <ShareIcon width={24} height={24} color={black600.val} />
+                  </Pressable>
+                  {isOwner ? (
+                    <Pressable
+                      onPress={openPostMenu}
+                      hitSlop={10}
+                      accessibilityLabel="더보기"
+                      testID="community-detail-more"
+                    >
+                      <MoreVertical size={22} color="$black600" />
+                    </Pressable>
+                  ) : (
+                    <Pressable
+                      onPress={reportPost}
+                      hitSlop={10}
+                      accessibilityLabel="신고하기"
+                      testID="community-detail-report"
+                    >
+                      <Siren size={22} color="$black600" />
+                    </Pressable>
+                  )}
+                </Actions>
+              </AuthorRow>
+              {!isCompleted && badgeLabel && (
+                <ProtectionChip>
+                  <ProtectionChipText>{badgeLabel}</ProtectionChipText>
+                </ProtectionChip>
+              )}
+              <CommunityAdoptCardTitle title={overviews.title} numberOfLines={2} mb={overviews.content ? 12 : 0} />
+              {!!overviews.content && <IntroBody>{overviews.content}</IntroBody>}
+            </View>
+
+            <Divider mb={32} />
+
+            <View px={20} mb={32}>
+              <DetailSpecSection
+                title="기본정보"
+                rows={[
+                  { label: '품종', value: overviews.breed },
+                  ...(overviews.region ? [{ label: '지역', value: overviews.region }] : []),
+                  { label: '나이', value: infos.age },
+                  { label: '성별', value: infos.gender },
+                  { label: '크기·몸무게', value: infos.weight }
+                ].filter((r) => !!r.value)}
+              />
+            </View>
             {behaviors.length > 0 && (
               <View px={20} mb={32}>
                 <CommunityDetailBehaviorSection items={behaviors} />
@@ -160,6 +235,51 @@ export const CommunityAdoptDetailContent = ({ id }: CommunityAdoptDetailContentP
   );
 };
 
+const PROTECTION_LABEL: Record<string, string> = {
+  ADOPTION: '입양',
+  TEMPORARY: '임시보호',
+  BOTH: '입양·임보'
+};
+
+const ProtectionChip = styled(View, {
+  self: 'flex-start',
+  mb: 12,
+  px: 10,
+  py: 5,
+  rounded: 999,
+  bg: '$backgroundDefault'
+});
+
+const ProtectionChipText = styled(Text, {
+  fontWeight: 600,
+  fontSize: 13,
+  lineHeight: 15,
+  color: '$black700'
+});
+
+const IntroBody = styled(Text, {
+  fontSize: 15,
+  lineHeight: 24,
+  fontWeight: 400,
+  color: '$black800'
+});
+
+const Hero = styled(View, {
+  width: '100%',
+  aspectRatio: 4 / 3
+});
+
+const AuthorRow = styled(XStack, {
+  items: 'center',
+  justify: 'space-between',
+  gap: 12
+});
+
+const Actions = styled(XStack, {
+  items: 'center',
+  gap: 16
+});
+
 const Divider = styled(View, {
   height: 8,
   bg: '$white850'
@@ -167,7 +287,8 @@ const Divider = styled(View, {
 
 const CompletedBanner = styled(View, {
   mx: 20,
-  mb: 24,
+  mt: 16,
+  mb: 20,
   px: 16,
   py: 14,
   rounded: 10,

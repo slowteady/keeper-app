@@ -143,22 +143,31 @@ describe('CommunityAdoptFormSchema', () => {
     });
   });
 
-  describe('선택 string 필드 (BP: 필수 6개로 축소)', () => {
-    it.each(['specificType', 'age', 'weight', 'location', 'specialMark'] as const)(
-      '%s 가 빈 문자열이어도 통과',
-      (field) => {
-        const result = CommunityAdoptFormSchema.safeParse({ ...baseValid, [field]: '' });
-        expect(result.success).toBe(true);
-      }
-    );
+  describe('선택 string 필드', () => {
+    it.each(['specificType', 'age', 'weight', 'specialMark'] as const)('%s 가 빈 문자열이어도 통과', (field) => {
+      const result = CommunityAdoptFormSchema.safeParse({ ...baseValid, [field]: '' });
+      expect(result.success).toBe(true);
+    });
 
-    it.each(['specificType', 'age', 'weight', 'location', 'specialMark'] as const)(
-      '%s 가 undefined 여도 통과',
-      (field) => {
-        const result = CommunityAdoptFormSchema.safeParse({ ...baseValid, [field]: undefined });
-        expect(result.success).toBe(true);
+    it.each(['specificType', 'age', 'weight', 'specialMark'] as const)('%s 가 undefined 여도 통과', (field) => {
+      const result = CommunityAdoptFormSchema.safeParse({ ...baseValid, [field]: undefined });
+      expect(result.success).toBe(true);
+    });
+  });
+
+  describe('location (필수)', () => {
+    it('빈 문자열이면 "지역을 입력해주세요"', () => {
+      const result = CommunityAdoptFormSchema.safeParse({ ...baseValid, location: '' });
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.issues.find((i) => i.path[0] === 'location')?.message).toBe('지역을 입력해주세요');
       }
-    );
+    });
+
+    it('undefined 면 실패', () => {
+      const result = CommunityAdoptFormSchema.safeParse({ ...baseValid, location: undefined });
+      expect(result.success).toBe(false);
+    });
   });
 
   describe('images', () => {

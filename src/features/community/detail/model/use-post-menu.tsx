@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 
 import { communityApi, communityQueries } from '@/entities/community';
 import { useCurrentUser, useLoginRequired } from '@/features/auth';
@@ -24,9 +24,10 @@ type UsePostMenuParams = {
   postId: string;
   authorId: string | null | undefined;
   stayOnDelete?: boolean;
+  hideBlock?: boolean;
 };
 
-export const usePostMenu = ({ postId, authorId, stayOnDelete = false }: UsePostMenuParams) => {
+export const usePostMenu = ({ postId, authorId, stayOnDelete = false, hideBlock = false }: UsePostMenuParams) => {
   const { user } = useCurrentUser();
   const { requireLogin } = useLoginRequired();
   const { present, dismiss } = useBottomSheet();
@@ -65,46 +66,55 @@ export const usePostMenu = ({ postId, authorId, stayOnDelete = false }: UsePostM
     share({ type: 'community', id: postId });
   }, [share, postId]);
 
+  const reportPost = useCallback(() => {
+    requireLogin(() => router.push({ pathname: '/report', params: { type: 'POST', id: postId } }));
+  }, [requireLogin, postId]);
+
+  const pendingActionRef = useRef<(() => void) | undefined>(undefined);
+
   const handlePress = useCallback(
     (data: BottomSheetMenuData<PostMenuId>) => {
       switch (data.id) {
         case 'EDIT':
-          dismiss();
-          router.push(`/(untabs)/community/${postId}/edit`);
+          pendingActionRef.current = () => router.push(`/(untabs)/community/${postId}/edit`);
           break;
         case 'DELETE':
-          dismiss();
-          handleConfirmDelete();
+          pendingActionRef.current = () => handleConfirmDelete();
           break;
         case 'REPORT':
-          dismiss();
-          requireLogin(() => {
-            router.push({ pathname: '/report', params: { type: 'POST', id: postId } });
-          });
+          pendingActionRef.current = () =>
+            requireLogin(() => router.push({ pathname: '/report', params: { type: 'POST', id: postId } }));
           break;
         case 'BLOCK':
-          dismiss();
-          if (authorId)
-            requireLogin(async () => {
-              await block(authorId);
-              router.back();
-            });
+          pendingActionRef.current = authorId
+            ? () =>
+                requireLogin(async () => {
+                  await block(authorId);
+                  router.back();
+                })
+            : undefined;
           break;
       }
+      dismiss();
     },
     [dismiss, handleConfirmDelete, block, postId, authorId, requireLogin]
   );
 
   const menuItems = useMemo<readonly BottomSheetMenuData<PostMenuId>[]>(() => {
     if (isMine) return MINE_MENU;
-    return authorId ? [REPORT_ITEM, BLOCK_ITEM] : [REPORT_ITEM];
-  }, [isMine, authorId]);
+    return authorId && !hideBlock ? [REPORT_ITEM, BLOCK_ITEM] : [REPORT_ITEM];
+  }, [isMine, authorId, hideBlock]);
 
   const openPostMenu = useCallback(() => {
     present(<BottomSheetMenu data={menuItems} value={'' as PostMenuId} onPress={handlePress} mode="action" />, {
-      enableDynamicSizing: true
+      enableDynamicSizing: true,
+      onDismiss: () => {
+        const action = pendingActionRef.current;
+        pendingActionRef.current = undefined;
+        action?.();
+      }
     });
   }, [present, menuItems, handlePress]);
 
-  return { openPostMenu, sharePost: handleShare, isDeleting: deleteMutation.isPending };
+  return { openPostMenu, sharePost: handleShare, reportPost, isDeleting: deleteMutation.isPending };
 };

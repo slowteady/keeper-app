@@ -44,7 +44,7 @@ export const CommunityAdoptFormSchema = z.object({
     .string()
     .regex(/^(\d{1,3}(\.\d{1,2})?)?$/, '몸무게는 99.99kg 까지 숫자로 입력해주세요')
     .optional(),
-  location: z.string().optional(),
+  location: z.string().trim().min(1, '지역을 입력해주세요'),
   health: z.string().optional(),
   relatedLink: z.string().max(500).optional(),
   toiletTraining: z.enum(['COMPLETE', 'IN_PROGRESS', 'NEEDED']).optional(),

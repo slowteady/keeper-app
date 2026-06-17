@@ -1,10 +1,11 @@
+import { useRecyclingState } from '@shopify/flash-list';
+import { Images } from '@tamagui/lucide-icons';
 import { Image } from 'expo-image';
-import { useCallback, useState } from 'react';
+import { memo, useCallback } from 'react';
 import { Dimensions, Pressable, StyleSheet } from 'react-native';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
 import { toggleHaptic } from '@/shared/lib';
-import { Skeleton } from '@/shared/ui';
 import { NoImage } from '@/shared/ui/fallback/no-image';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
@@ -16,6 +17,7 @@ const STATUS_CHIP_IDS = ['NEAR_DEADLINE', 'NEW', 'DDAY'];
 
 export type AdoptCardProps = {
   uri: string;
+  imageCount?: number;
   title: string;
   description: AdoptCardDescriptionsProps['data'];
   chips?: AdoptCardChipsProps['data'];
@@ -34,8 +36,9 @@ export const ADOPT_CARD_IMAGE_SIZES = {
   medium: 220
 } as const;
 
-export const AdoptCard = ({
+const AdoptCardComponent = ({
   uri,
+  imageCount = 0,
   title,
   description,
   chips,
@@ -60,10 +63,17 @@ export const AdoptCard = ({
     <Container size={size}>
       <Pressable onPress={onPress} disabled={!onPress}>
         <ImageContainer size={size}>
-          <ImageWithSkeleton key={uri} uri={uri} />
+          <ImageWithSkeleton uri={uri} />
+          {status && isAdoptEnded(status) && <EndedDim />}
           {status && <StatusBadge status={status} />}
           {completed && <CompletedOverlay />}
           {statusChips.length > 0 && <StatusChipOverlay data={statusChips} />}
+          {imageCount > 1 && (
+            <ImageCountBadge>
+              <Images size={11} color="#fff" />
+              <ImageCountText>{imageCount}</ImageCountText>
+            </ImageCountBadge>
+          )}
         </ImageContainer>
 
         <Title size={size}>{title}</Title>
@@ -83,6 +93,9 @@ export const AdoptCard = ({
     </Container>
   );
 };
+
+export const AdoptCard = memo(AdoptCardComponent);
+AdoptCard.displayName = 'AdoptCard';
 
 const StatusBadge = ({ status }: { status: AdoptStatusDto }) => {
   if (!isAdoptEnded(status)) return null;
@@ -104,6 +117,17 @@ const StatusBadge = ({ status }: { status: AdoptStatusDto }) => {
   );
 };
 
+const EndedDim = styled(View, {
+  position: 'absolute',
+  t: 0,
+  l: 0,
+  r: 0,
+  b: 0,
+  rounded: 8,
+  bg: '$black900',
+  opacity: 0.45
+});
+
 const CompletedOverlay = () => {
   return (
     <>
@@ -119,25 +143,23 @@ const CompletedOverlay = () => {
   );
 };
 
-type ImageStatus = 'loading' | 'loaded' | 'error';
-
 const ImageWithSkeleton = ({ uri }: { uri: string }) => {
-  const [status, setStatus] = useState<ImageStatus>('loading');
+  const [errored, setErrored] = useRecyclingState(false, [uri]);
 
-  const handleLoad = useCallback(() => setStatus('loaded'), []);
-  const handleError = useCallback(() => setStatus('error'), []);
-
-  if (!uri || status === 'error') {
+  if (!uri || errored) {
     return <NoImage />;
   }
 
   return (
-    <>
-      {status === 'loading' && (
-        <Skeleton style={{ position: 'absolute', top: 0, width: '100%', height: '100%', borderRadius: 8 }} />
-      )}
-      <Image source={{ uri }} onLoad={handleLoad} onError={handleError} style={styles.image} />
-    </>
+    <Image
+      source={{ uri }}
+      recyclingKey={uri}
+      cachePolicy="memory-disk"
+      transition={0}
+      contentFit="cover"
+      onError={() => setErrored(true)}
+      style={styles.image}
+    />
   );
 };
 
@@ -371,11 +393,31 @@ const OverlayBadgeText = styled(Text, {
   color: '#fff'
 });
 
+const ImageCountBadge = styled(XStack, {
+  position: 'absolute',
+  b: 8,
+  r: 8,
+  items: 'center',
+  gap: 3,
+  px: 6,
+  py: 3,
+  rounded: 999,
+  bg: 'rgba(0,0,0,0.55)'
+});
+
+const ImageCountText = styled(Text, {
+  fontWeight: 600,
+  fontSize: 11,
+  lineHeight: 13,
+  color: '#fff'
+});
+
 const styles = StyleSheet.create({
   image: {
     width: '100%',
     borderRadius: 8,
-    aspectRatio: 5 / 4
+    aspectRatio: 5 / 4,
+    backgroundColor: '#F2F3F5'
   },
   favoriteButton: {
     position: 'absolute',

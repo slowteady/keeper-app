@@ -53,7 +53,7 @@ export const useAdoptList = (params: AdoptListParams) => {
   }, [fetchNextPageQuery, hasNextPage]);
 
   const moreButtonText = useMemo(() => {
-    const currentPage = (data?.page ?? 0) + 1;
+    const currentPage = data?.page ?? 1;
     const totalPage = Math.ceil((data?.total || 0) / size);
     return `더보기 ${currentPage}/${totalPage}`;
   }, [data?.page, data?.total, size]);

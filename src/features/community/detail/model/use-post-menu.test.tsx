@@ -64,6 +64,12 @@ const extractMenu = (call: unknown[]): MenuProps => {
   return node.props;
 };
 
+// 액션은 메뉴 dismiss 완료 후(onDismiss)에 실행됨 — 시트 닫힘을 시뮬레이트
+const fireDismiss = () => {
+  const opts = mockPresent.mock.calls[0][1] as { onDismiss?: () => void };
+  opts.onDismiss?.();
+};
+
 const setup = () => {
   const queryClient = new QueryClient({ defaultOptions: { mutations: { retry: false } } });
   const wrapper = ({ children }: { children: ReactNode }) => (
@@ -89,6 +95,19 @@ describe('usePostMenu', () => {
 
     const { data } = extractMenu(mockPresent.mock.calls[0]);
     expect(data.map((d) => d.id)).toEqual(['REPORT', 'BLOCK']);
+  });
+
+  it('hideBlock 이면 타인 글도 메뉴 = [신고] 만 (차단 제외)', () => {
+    mockUser = { id: '99' };
+    const { wrapper } = setup();
+    const { result } = renderHook(() => usePostMenu({ postId: '10', authorId: '1', hideBlock: true }), {
+      wrapper
+    });
+
+    act(() => result.current.openPostMenu());
+
+    const { data } = extractMenu(mockPresent.mock.calls[0]);
+    expect(data.map((d) => d.id)).toEqual(['REPORT']);
   });
 
   it('탈퇴한 사용자(authorId=null)의 글이면 메뉴 = [신고] 만', () => {
@@ -128,8 +147,9 @@ describe('usePostMenu', () => {
     const { onPress } = extractMenu(mockPresent.mock.calls[0]);
 
     act(() => onPress({ id: 'EDIT', label: '수정하기' }));
-
     expect(mockDismiss).toHaveBeenCalled();
+    act(() => fireDismiss());
+
     expect(router.push).toHaveBeenCalledWith('/(untabs)/community/42/edit');
   });
 
@@ -168,11 +188,12 @@ describe('usePostMenu', () => {
     act(() => result.current.openPostMenu());
     const { onPress } = extractMenu(mockPresent.mock.calls[0]);
 
+    act(() => onPress({ id: 'REPORT', label: '신고하기' }));
+    expect(mockDismiss).toHaveBeenCalled();
     await act(async () => {
-      await onPress({ id: 'REPORT', label: '신고하기' });
+      fireDismiss();
     });
 
-    expect(mockDismiss).toHaveBeenCalled();
     expect(router.push).toHaveBeenCalledWith({ pathname: '/report', params: { type: 'POST', id: '42' } });
   });
 
@@ -186,11 +207,12 @@ describe('usePostMenu', () => {
     act(() => result.current.openPostMenu());
     const { onPress } = extractMenu(mockPresent.mock.calls[0]);
 
+    act(() => onPress({ id: 'BLOCK', label: '차단하기' }));
+    expect(mockDismiss).toHaveBeenCalled();
     await act(async () => {
-      await onPress({ id: 'BLOCK', label: '차단하기' });
+      fireDismiss();
     });
 
-    expect(mockDismiss).toHaveBeenCalled();
     expect(mockBlock).toHaveBeenCalledWith('7');
   });
 
@@ -208,6 +230,7 @@ describe('usePostMenu', () => {
     const { onPress } = extractMenu(mockPresent.mock.calls[0]);
 
     act(() => onPress({ id: 'DELETE', label: '삭제하기' }));
+    act(() => fireDismiss());
 
     expect(mockOpenModal).toHaveBeenCalledTimes(1);
     const confirmNode = mockOpenModal.mock.calls[0][0] as ReactElement<{ onConfirm: () => void }>;
@@ -233,6 +256,7 @@ describe('usePostMenu', () => {
     act(() => result.current.openPostMenu());
     const { onPress } = extractMenu(mockPresent.mock.calls[0]);
     act(() => onPress({ id: 'DELETE', label: '삭제하기' }));
+    act(() => fireDismiss());
     const confirmNode = mockOpenModal.mock.calls[0][0] as ReactElement<{ onConfirm: () => void }>;
 
     await act(async () => {

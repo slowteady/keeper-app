@@ -62,10 +62,10 @@ export const AdoptPersonalScene = ({ scrollY }: { scrollY: SharedValue<number> }
       <View mb={32}>
         <PersonalAdoptCard
           uri={item.uri}
+          imageCount={item.imageCount}
           title={item.title}
           intro={item.intro}
-          animalLabel={item.animalLabel}
-          animalVariant={item.animalVariant}
+          breed={item.breed}
           region={item.region}
           dateText={item.dateText}
           chips={item.chips}

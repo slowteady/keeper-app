@@ -142,32 +142,31 @@ const personalAnimal = (animalType?: string | null) =>
   (animalType && PERSONAL_ANIMAL[animalType]) || { label: '기타', variant: 'etc' as ChipVariant };
 
 export const mapToPersonalAdoptList = (data: PersonalAdoptSource[]) => {
-  return data.map((item) => {
-    const animal = personalAnimal(item.animalType);
-    return {
-      id: item.id,
-      uri: item.images[0],
-      title: item.title,
-      intro: item.content?.trim() || '',
-      animalLabel: animal.label,
-      animalVariant: animal.variant,
-      protectionType: item.protectionType ?? null,
-      region: item.location?.trim() || '',
-      dateText: formatTimeAgo(item.displayTime),
-      chips: buildPersonalChips(item),
-      isLiked: item.isLiked,
-      completed: item.adoptionStatus === 'COMPLETED'
-    };
-  });
+  return data.map((item) => ({
+    id: item.id,
+    uri: item.images[0],
+    imageCount: item.images.length,
+    title: item.title,
+    intro: item.content?.trim() || '',
+    breed: item.specificType?.trim() || '',
+    protectionType: item.protectionType ?? null,
+    region: item.location?.trim() || '',
+    dateText: formatTimeAgo(item.displayTime),
+    chips: buildPersonalChips(item),
+    isLiked: item.isLiked,
+    completed: item.adoptionStatus === 'COMPLETED'
+  }));
 };
 
 const buildPersonalChips = (item: PersonalAdoptSource) => {
-  const chips: { id: string; value: string; variant: ChipVariant }[] = [];
-  if (item.specificType) chips.push({ id: 'KIND', value: item.specificType, variant: 'default' });
+  const animal = personalAnimal(item.animalType);
+  const chips: { id: string; value: string; variant: ChipVariant }[] = [
+    { id: 'ANIMAL', value: animal.label, variant: animal.variant }
+  ];
+  if (item.neuterYn === 'Y') chips.push({ id: 'NEUTER', value: '중성화', variant: 'notice' });
   const gender = convertGenderLabel(item.gender ?? undefined);
   if (gender !== '모름') chips.push({ id: 'GENDER', value: gender, variant: 'default' });
   if (item.age) chips.push({ id: 'AGE', value: item.age, variant: 'default' });
-  if (item.neuterYn === 'Y') chips.push({ id: 'NEUTER', value: '중성화', variant: 'notice' });
   if (item.weight) chips.push({ id: 'WEIGHT', value: item.weight, variant: 'default' });
   return chips;
 };

@@ -75,11 +75,11 @@ export const ShelterFilterBar = ({ filter, animalType, sortValue, onChangeSort }
         contentContainerStyle={{ gap: 6, alignItems: 'center', paddingRight: 12 }}
       >
         {activeCount > 0 && <ResetChip onPress={reset} />}
+        {breedEnabled && <FilterChip label={labels.breed ?? '품종'} active={!!applied.breed} onPress={openBreed} />}
         <FilterChip label={labels.region ?? '지역'} active={!!applied.region} onPress={openRegion} />
         <FilterChip label={labels.age ?? '연령'} active={!!applied.age} onPress={openAge} />
         <FilterChip label={labels.gender ?? '성별'} active={!!applied.gender} onPress={openGender} />
         <FilterChip label={labels.neuter ?? '중성화'} active={!!applied.neuter} onPress={openNeuter} />
-        {breedEnabled && <FilterChip label={labels.breed ?? '품종'} active={!!applied.breed} onPress={openBreed} />}
       </ScrollView>
 
       <Dropdown data={ADOPT_OPTIONS.FILTER} value={sortValue} onChange={(v) => onChangeSort(v.id as AdoptFilterDto)} />

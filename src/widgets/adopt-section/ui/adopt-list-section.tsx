@@ -1,11 +1,13 @@
 import { FlashList, FlashListProps, FlashListRef } from '@shopify/flash-list';
 import { ForwardedRef, forwardRef, ReactElement } from 'react';
 import { RefreshControl } from 'react-native';
-import { Text, View, XStack } from 'tamagui';
+import { Text, View, XStack, YStack } from 'tamagui';
 
-import { ADOPT_CARD_IMAGE_SIZES, AdoptCardSkeleton } from '@/entities/adopt';
+import { ADOPT_CARD_IMAGE_SIZES, AdoptCardSkeleton, PersonalAdoptCardSkeleton } from '@/entities/adopt';
 import { useListRefreshing } from '@/shared/model';
 import { FeedNodata } from '@/shared/ui';
+
+const SKELETON_ROWS = 3;
 
 export type AdoptListSectionProps<T> = {
   data: T[];
@@ -52,7 +54,9 @@ const AdoptListSectionInner = <T extends { id: string }>(
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
       ListHeaderComponent={header ?? null}
       ListFooterComponent={footer ?? null}
-      ListEmptyComponent={<EmptyComponent isLoading={isLoading} emptyComponentVariant={emptyComponentVariant} />}
+      ListEmptyComponent={
+        <EmptyComponent isLoading={isLoading} emptyComponentVariant={emptyComponentVariant} numColumns={numColumns} />
+      }
       contentContainerStyle={[{ flexGrow: 1 }, contentContainerStyle]}
       style={style}
     />
@@ -65,18 +69,32 @@ export const AdoptListSection = forwardRef(AdoptListSectionInner) as <T extends 
 
 const EmptyComponent = ({
   isLoading,
-  emptyComponentVariant
+  emptyComponentVariant,
+  numColumns
 }: {
   isLoading: boolean;
   emptyComponentVariant: 'feed' | 'list';
+  numColumns: number;
 }) => {
   if (isLoading) {
+    if (numColumns === 1) {
+      return (
+        <YStack gap={32}>
+          {Array.from({ length: SKELETON_ROWS }).map((_, idx) => (
+            <PersonalAdoptCardSkeleton key={`personal-skeleton-${idx}`} />
+          ))}
+        </YStack>
+      );
+    }
     return (
-      <XStack gap={8}>
-        {Array.from({ length: 2 }).map((_, idx) => (
-          <AdoptCardSkeleton key={`adopt-card-skeleton-${idx}`} width={ADOPT_CARD_IMAGE_SIZES.small} />
+      <YStack gap={32}>
+        {Array.from({ length: SKELETON_ROWS }).map((_, row) => (
+          <XStack key={`adopt-skeleton-row-${row}`} gap={8}>
+            <AdoptCardSkeleton width={ADOPT_CARD_IMAGE_SIZES.small} />
+            <AdoptCardSkeleton width={ADOPT_CARD_IMAGE_SIZES.small} />
+          </XStack>
         ))}
-      </XStack>
+      </YStack>
     );
   }
 

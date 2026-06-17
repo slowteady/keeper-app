@@ -14,10 +14,11 @@ export interface BasicCarouselProps extends PagerViewProps {
   data: string[];
   showIndicator?: boolean;
   showImageViewer?: boolean;
+  imageRadius?: number;
 }
 
 const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>(
-  ({ data, showIndicator = false, showImageViewer = false, ...props }, ref) => {
+  ({ data, showIndicator = false, showImageViewer = false, imageRadius = 10, ...props }, ref) => {
     const [openImgViewer, setOpenImgViewer] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
     // PagerView 가 native UIScrollView 라 RN root 의 pointerEvents 흡수를 우회 — onPress 자체에 직접 가드.
@@ -33,7 +34,7 @@ const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>(
     }, [isSharing]);
 
     const renderPage = (image: string) => (
-      <CarouselImage uri={image} onPress={showImageViewer ? handleOpenViewer : undefined} />
+      <CarouselImage uri={image} radius={imageRadius} onPress={showImageViewer ? handleOpenViewer : undefined} />
     );
 
     return (
@@ -43,7 +44,7 @@ const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>(
           ref={ref}
           onPageSelected={handlePageSelected}
           initialPage={0}
-          pageMargin={24}
+          pageMargin={8}
           {...props}
         >
           {data.map((image) => (
@@ -64,6 +65,7 @@ const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>(
 
 type CarouselImageProps = {
   uri: string;
+  radius: number;
   onPress?: () => void;
 };
 
@@ -75,7 +77,7 @@ const LOAD_TIMEOUT_MS = 5000;
 const failedUrls = new Set<string>();
 const loadedUrls = new Set<string>();
 
-const CarouselImage = ({ uri, onPress }: CarouselImageProps) => {
+const CarouselImage = ({ uri, radius, onPress }: CarouselImageProps) => {
   const [hasError, setHasError] = useState(() => failedUrls.has(uri));
   const [isLoaded, setIsLoaded] = useState(() => loadedUrls.has(uri));
   const canPress = !!onPress && !hasError;
@@ -105,11 +107,11 @@ const CarouselImage = ({ uri, onPress }: CarouselImageProps) => {
   const isLoading = !isLoaded && !hasError;
   const content = (
     <View style={styles.imageWrap}>
-      <View style={[styles.image, { opacity: isLoading ? 1 : 0 }]}>
-        <Skeleton style={styles.image} />
+      <View style={[styles.image, { borderRadius: radius, opacity: isLoading ? 1 : 0 }]}>
+        <Skeleton style={[styles.image, { borderRadius: radius }]} />
       </View>
-      <View style={[styles.image, styles.overlay, { opacity: hasError ? 1 : 0 }]}>
-        <NoImage style={styles.image} />
+      <View style={[styles.image, styles.overlay, { borderRadius: radius, opacity: hasError ? 1 : 0 }]}>
+        <NoImage style={{ ...styles.image, borderRadius: radius }} />
       </View>
       <Image
         source={uri}
@@ -118,7 +120,7 @@ const CarouselImage = ({ uri, onPress }: CarouselImageProps) => {
         contentFit="cover"
         onLoad={handleLoad}
         onError={handleError}
-        style={[styles.image, styles.overlay, { opacity: isLoaded ? 1 : 0 }]}
+        style={[styles.image, styles.overlay, { borderRadius: radius, opacity: isLoaded ? 1 : 0 }]}
       />
     </View>
   );

@@ -63,6 +63,7 @@ export const AdoptShelterScene = ({ scrollY }: { scrollY: SharedValue<number> })
         <View pl={isLeft ? 0 : 4} pr={isLeft ? 4 : 0} mb={32}>
           <AdoptCard
             uri={item.uri}
+            imageCount={item.images?.length}
             title={item.title}
             description={item.description}
             chips={item.chips}

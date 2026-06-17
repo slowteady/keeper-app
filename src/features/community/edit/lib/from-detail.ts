@@ -20,7 +20,7 @@ export const fromAdoptionPersonalDetail = (detail: CommunityAdoptDetailDto): Com
   vaccinationCheck: orUndefined(detail.vaccinationCheck),
   age: orUndefined(detail.age),
   weight: orUndefined(detail.weight),
-  location: orUndefined(detail.location),
+  location: detail.location?.trim() || '',
   health: orUndefined(detail.health),
   relatedLink: orUndefined(detail.relatedLink),
   toiletTraining: orUndefined(detail.toiletTraining),

@@ -1,15 +1,16 @@
+import { useRecyclingState } from '@shopify/flash-list';
+import { Images } from '@tamagui/lucide-icons';
 import { Image } from 'expo-image';
-import { useCallback, useState } from 'react';
+import { memo, useCallback } from 'react';
 import { Pressable, StyleSheet } from 'react-native';
-import { styled, Text, useTheme, View, XStack } from 'tamagui';
+import { styled, Text, View, XStack } from 'tamagui';
 
 import { toggleHaptic } from '@/shared/lib';
-import { Skeleton } from '@/shared/ui';
 import { NoImage } from '@/shared/ui/fallback/no-image';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
-import { Location } from '@/shared/ui/icons/outline';
 
 import type { ChipVariant } from '../mapper';
+import { AdoptChips } from './adopt-chips';
 
 const PROTECTION_LABEL: Record<string, string> = {
   ADOPTION: '입양',
@@ -21,10 +22,10 @@ export type PersonalAdoptCardChip = { id: string; value: string; variant: ChipVa
 
 export type PersonalAdoptCardProps = {
   uri: string;
+  imageCount?: number;
   title: string;
   intro?: string;
-  animalLabel: string;
-  animalVariant: ChipVariant;
+  breed?: string;
   region: string;
   dateText: string;
   chips?: PersonalAdoptCardChip[];
@@ -35,12 +36,12 @@ export type PersonalAdoptCardProps = {
   completed?: boolean;
 };
 
-export const PersonalAdoptCard = ({
+const PersonalAdoptCardComponent = ({
   uri,
+  imageCount = 0,
   title,
   intro,
-  animalLabel,
-  animalVariant,
+  breed,
   region,
   dateText,
   chips,
@@ -50,7 +51,6 @@ export const PersonalAdoptCard = ({
   onPressFavorite,
   completed = false
 }: PersonalAdoptCardProps) => {
-  const { black400 } = useTheme();
   const handlePressFavorite = useCallback(() => {
     if (!onPressFavorite) return;
     toggleHaptic(isLiked);
@@ -63,36 +63,43 @@ export const PersonalAdoptCard = ({
     <Container>
       <Pressable onPress={onPress} disabled={!onPress}>
         <ImageContainer>
-          <ImageWithSkeleton key={uri} uri={uri} />
+          <ImageWithSkeleton uri={uri} />
           {completed && <CompletedDim />}
           {badgeLabel && (
             <ProtectionBadge>
               <ProtectionText>{badgeLabel}</ProtectionText>
             </ProtectionBadge>
           )}
+          {imageCount > 1 && (
+            <ImageCountBadge>
+              <Images size={12} color="#fff" />
+              <ImageCountText>{imageCount}</ImageCountText>
+            </ImageCountBadge>
+          )}
         </ImageContainer>
 
-        <AnimalLabel variant={animalVariant}>{animalLabel}</AnimalLabel>
         <TitleRow>
           <Title>{title}</Title>
           {!!dateText && <DateText>{dateText}</DateText>}
         </TitleRow>
         {!!intro && <IntroText>{intro}</IntroText>}
-        {!!region && (
-          <RegionWrap>
-            <Location width={14} height={14} color={black400.val} />
-            <RegionText>{region}</RegionText>
-          </RegionWrap>
+        {(!!breed || !!region) && (
+          <MetaRows>
+            {!!breed && (
+              <MetaRow>
+                <MetaLabel>품종</MetaLabel>
+                <MetaValue>{breed}</MetaValue>
+              </MetaRow>
+            )}
+            {!!region && (
+              <MetaRow>
+                <MetaLabel>지역</MetaLabel>
+                <MetaValue>{region}</MetaValue>
+              </MetaRow>
+            )}
+          </MetaRows>
         )}
-        {!!chips?.length && (
-          <ChipRow>
-            {chips.map(({ id, value, variant }) => (
-              <ChipItem key={id} variant={variant}>
-                <ChipText variant={variant}>{value}</ChipText>
-              </ChipItem>
-            ))}
-          </ChipRow>
-        )}
+        {!!chips?.length && <AdoptChips chips={chips} />}
       </Pressable>
 
       {onPressFavorite && (
@@ -104,25 +111,26 @@ export const PersonalAdoptCard = ({
   );
 };
 
-type ImageStatus = 'loading' | 'loaded' | 'error';
+export const PersonalAdoptCard = memo(PersonalAdoptCardComponent);
+PersonalAdoptCard.displayName = 'PersonalAdoptCard';
 
 const ImageWithSkeleton = ({ uri }: { uri: string }) => {
-  const [status, setStatus] = useState<ImageStatus>('loading');
+  const [errored, setErrored] = useRecyclingState(false, [uri]);
 
-  const handleLoad = useCallback(() => setStatus('loaded'), []);
-  const handleError = useCallback(() => setStatus('error'), []);
-
-  if (!uri || status === 'error') {
+  if (!uri || errored) {
     return <NoImage />;
   }
 
   return (
-    <>
-      {status === 'loading' && (
-        <Skeleton style={{ position: 'absolute', top: 0, width: '100%', height: '100%', borderRadius: 12 }} />
-      )}
-      <Image source={{ uri }} onLoad={handleLoad} onError={handleError} style={styles.image} />
-    </>
+    <Image
+      source={{ uri }}
+      recyclingKey={uri}
+      cachePolicy="memory-disk"
+      transition={0}
+      contentFit="cover"
+      onError={() => setErrored(true)}
+      style={styles.image}
+    />
   );
 };
 
@@ -137,7 +145,7 @@ const Container = styled(View, {
 const ImageContainer = styled(View, {
   width: '100%',
   aspectRatio: 4 / 3,
-  mb: 14
+  mb: 18
 });
 
 const ProtectionBadge = styled(View, {
@@ -157,28 +165,30 @@ const ProtectionText = styled(Text, {
   color: '$black800'
 });
 
-const AnimalLabel = styled(Text, {
-  fontWeight: 700,
+const ImageCountBadge = styled(XStack, {
+  position: 'absolute',
+  b: 10,
+  r: 10,
+  items: 'center',
+  gap: 3,
+  px: 8,
+  py: 4,
+  rounded: 999,
+  bg: 'rgba(0,0,0,0.55)'
+});
+
+const ImageCountText = styled(Text, {
+  fontWeight: 600,
   fontSize: 12,
-  lineHeight: 15,
-  mb: 4,
-  variants: {
-    variant: {
-      dog: { color: '$dogMain' },
-      cat: { color: '$catMain' },
-      etc: { color: '$etcMain' },
-      default: { color: '$black600' },
-      error: { color: '$errorMain' },
-      success: { color: '$successMain' },
-      notice: { color: '$noticeMain' }
-    }
-  } as const
+  lineHeight: 14,
+  color: '#fff'
 });
 
 const TitleRow = styled(XStack, {
   items: 'flex-start',
-  gap: 8,
-  mb: 6
+  justify: 'space-between',
+  gap: 12,
+  mb: 14
 });
 
 const Title = styled(Text, {
@@ -196,69 +206,41 @@ const IntroText = styled(Text, {
   fontSize: 14,
   lineHeight: 19,
   color: '$black600',
-  numberOfLines: 1,
+  numberOfLines: 2,
   ellipsizeMode: 'tail',
-  mb: 8
+  mb: 14
 });
 
-const ChipRow = styled(XStack, {
-  flexWrap: 'wrap',
-  gap: 4
+const MetaRows = styled(View, {
+  gap: 10,
+  mb: 14
 });
 
-const ChipItem = styled(View, {
-  self: 'baseline',
-  rounded: 4,
-  px: 6,
-  py: 4,
-  variants: {
-    variant: {
-      error: { backgroundColor: '$errorLightest' },
-      success: { backgroundColor: '$successLightest' },
-      notice: { backgroundColor: '$noticeLightest' },
-      default: { backgroundColor: '$backgroundDefault' },
-      dog: { backgroundColor: '$dogLightest' },
-      cat: { backgroundColor: '$catLightest' },
-      etc: { backgroundColor: '$etcLightest' }
-    }
-  } as const
+const MetaRow = styled(XStack, {
+  items: 'center'
 });
 
-const ChipText = styled(Text, {
-  fontWeight: 400,
-  fontSize: 12,
-  lineHeight: 14,
-  variants: {
-    variant: {
-      error: { color: '$errorMain' },
-      success: { color: '$successMain' },
-      notice: { color: '$noticeMain' },
-      default: { color: '$black600' },
-      dog: { color: '$dogMain' },
-      cat: { color: '$catMain' },
-      etc: { color: '$etcMain' }
-    }
-  } as const
+const MetaLabel = styled(Text, {
+  minW: 57,
+  shrink: 0,
+  fontWeight: 500,
+  fontSize: 13,
+  lineHeight: 15,
+  color: '$black600'
 });
 
-const RegionWrap = styled(XStack, {
-  items: 'center',
-  gap: 3,
-  mb: 10
-});
-
-const RegionText = styled(Text, {
+const MetaValue = styled(Text, {
   flex: 1,
   fontWeight: 500,
   fontSize: 13,
-  lineHeight: 16,
-  color: '$black500',
+  lineHeight: 15,
+  color: '$black700',
   numberOfLines: 1,
   ellipsizeMode: 'tail'
 });
 
 const DateText = styled(Text, {
-  mt: 2,
+  mt: 3,
   fontWeight: 500,
   fontSize: 12,
   lineHeight: 16,
@@ -269,7 +251,8 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     borderRadius: 12,
-    aspectRatio: 4 / 3
+    aspectRatio: 4 / 3,
+    backgroundColor: '#F2F3F5'
   },
   favoriteButton: {
     position: 'absolute',

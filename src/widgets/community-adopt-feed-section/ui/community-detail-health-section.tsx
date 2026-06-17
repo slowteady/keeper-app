@@ -26,14 +26,15 @@ export const CommunityDetailHealthSection = ({
   health
 }: CommunityDetailHealthSectionProps) => {
   return (
-    <YStack gap={20}>
+    <YStack gap={12}>
+      <SectionLabel>건강정보</SectionLabel>
       <Box>
         <InfoRow label="중성화" value={ynText(neuterYn)} />
         <InfoRow label="예방접종" value={vaccineText(vaccinationCheck)} />
         <InfoRow label="건강검진" value={ynText(healthCheck)} />
       </Box>
       {hasValue(health) && (
-        <YStack gap={8}>
+        <YStack gap={8} mt={8}>
           <Label>아파요</Label>
           <Description>{health}</Description>
         </YStack>
@@ -43,11 +44,18 @@ export const CommunityDetailHealthSection = ({
 };
 
 const InfoRow = ({ label, value }: { label: string; value: string }) => (
-  <XStack justify="space-between" items="center">
+  <XStack items="flex-start" justify="space-between" gap={12}>
     <RowLabel>{label}</RowLabel>
-    <RowValue>{value}</RowValue>
+    <RowValue style={{ textAlign: 'right' }}>{value}</RowValue>
   </XStack>
 );
+
+const SectionLabel = styled(Text, {
+  fontSize: 18,
+  lineHeight: 24,
+  fontWeight: 700,
+  color: '$black800'
+});
 
 const Box = styled(YStack, {
   bg: '$backgroundDefault',
@@ -57,17 +65,19 @@ const Box = styled(YStack, {
 });
 
 const RowLabel = styled(Text, {
+  shrink: 0,
   fontSize: 15,
   fontWeight: 600,
-  lineHeight: 20,
+  lineHeight: 22,
   color: '$black800'
 });
 
 const RowValue = styled(Text, {
+  shrink: 1,
   fontSize: 15,
   fontWeight: 500,
-  lineHeight: 20,
-  color: '$black600'
+  lineHeight: 22,
+  color: '$black700'
 });
 
 const Label = styled(Text, {

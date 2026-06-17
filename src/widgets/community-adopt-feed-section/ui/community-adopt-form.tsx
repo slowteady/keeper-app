@@ -92,6 +92,7 @@ export const CommunityAdoptForm = ({
             control={control}
             label="지역"
             placeholder="지역을 선택해주세요"
+            required
             onPress={onPressLocation}
           />
           <LabelTextField name="relatedLink" control={control} label="관련 링크" placeholder="URL" maxLength={500} />
