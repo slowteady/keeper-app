@@ -6,7 +6,6 @@ import { globalToast } from '@/shared/lib';
 
 type AdoptionStatus = 'IN_PROGRESS' | 'COMPLETED';
 
-// 입양 상태 토글(소유자). 비낙관 — 확인 후 변경하고 성공 시 상세/목록/내 공고 캐시 무효화.
 export const useAdoptionStatus = (postId: string) => {
   const queryClient = useQueryClient();
 

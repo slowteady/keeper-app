@@ -3,6 +3,7 @@ import { useCallback, useState } from 'react';
 import { Alert, Pressable, ScrollView } from 'react-native';
 import { styled, Text, useTheme, View, XStack } from 'tamagui';
 
+import { PROTECTION_LABEL } from '@/entities/adopt';
 import { CommunityAdoptCardHeader, CommunityAdoptCardTitle } from '@/entities/community';
 import { useCurrentUser, useLoginRequired } from '@/features/auth';
 import { useLikePost } from '@/features/like-post';
@@ -27,7 +28,6 @@ export type CommunityAdoptDetailContentProps = {
   id: string;
 };
 
-// 개인 공고 상세 — 공고이므로 공개 댓글 없이 정보 + 하단 문의/입양완료 CTA (보호소 상세와 정합).
 export const CommunityAdoptDetailContent = ({ id }: CommunityAdoptDetailContentProps) => {
   const [buttonHeight, setButtonHeight] = useState(0);
   const { present, dismiss } = useBottomSheet();
@@ -99,7 +99,6 @@ export const CommunityAdoptDetailContent = ({ id }: CommunityAdoptDetailContentP
 
   const handleLayout = useCallback((h: number) => setButtonHeight((prev) => (prev === h ? prev : h)), []);
 
-  // 하단 CTA: 소유자=입양완료 처리(토글) / 비소유자=문의하기(연락처 있고 입양중일 때). user 미확정 동안 스켈레톤.
   const showOwnerCta = !isUserLoading && isOwner;
   const showContactCta = !isUserLoading && !isOwner && hasContact && !isCompleted;
   const hasBottomCta = isUserLoading || showOwnerCta || showContactCta;
@@ -233,12 +232,6 @@ export const CommunityAdoptDetailContent = ({ id }: CommunityAdoptDetailContentP
       ) : null}
     </>
   );
-};
-
-const PROTECTION_LABEL: Record<string, string> = {
-  ADOPTION: '입양',
-  TEMPORARY: '임시보호',
-  BOTH: '입양·임보'
 };
 
 const ProtectionChip = styled(View, {

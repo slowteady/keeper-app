@@ -3,10 +3,11 @@ import { LocateFixed } from '@tamagui/lucide-icons';
 import { useLocalSearchParams } from 'expo-router';
 import { Suspense, useCallback, useRef } from 'react';
 import { Pressable, StyleSheet } from 'react-native';
-import { styled, View } from 'tamagui';
+import { styled, useTheme, View } from 'tamagui';
 
 import { ShelterMap } from '@/entities/shelter';
 import { useShelter } from '@/features/shelter';
+import { useLocation } from '@/shared/model';
 import { DetailErrorBoundary, SuspenseFallback } from '@/shared/ui';
 
 export const ErrorBoundary = DetailErrorBoundary;
@@ -28,13 +29,15 @@ export default Page;
 
 const ShelterMapContent = ({ id }: { id: string }) => {
   const { shelterData } = useShelter({ id });
+  const { isGranted } = useLocation();
+  const { white900 } = useTheme();
   const mapRef = useRef<NaverMapViewRef>(null);
 
   const handleInitialized = useCallback(() => {
     if (!shelterData) return;
-    mapRef.current?.setLocationTrackingMode('NoFollow');
+    if (isGranted) mapRef.current?.setLocationTrackingMode('NoFollow');
     mapRef.current?.animateCameraTo({ latitude: shelterData.latitude, longitude: shelterData.longitude });
-  }, [shelterData]);
+  }, [shelterData, isGranted]);
 
   const handleRecenter = useCallback(() => {
     mapRef.current?.setLocationTrackingMode('Follow');
@@ -55,9 +58,15 @@ const ShelterMapContent = ({ id }: { id: string }) => {
         enableRefetch={false}
         fill
       />
-      <Pressable style={styles.locateButton} onPress={handleRecenter} accessibilityLabel="내 위치로">
-        <LocateFixed size={22} color="#3F403F" />
-      </Pressable>
+      {isGranted && (
+        <Pressable
+          style={[styles.locateButton, { backgroundColor: white900.val }]}
+          onPress={handleRecenter}
+          accessibilityLabel="내 위치로"
+        >
+          <LocateFixed size={22} color="$black700" />
+        </Pressable>
+      )}
     </View>
   );
 };
@@ -75,7 +84,6 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',

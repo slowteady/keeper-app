@@ -9,14 +9,9 @@ import { toggleHaptic } from '@/shared/lib';
 import { NoImage } from '@/shared/ui/fallback/no-image';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
+import { PROTECTION_LABEL } from '../constant';
 import type { ChipVariant } from '../mapper';
 import { AdoptChips } from './adopt-chips';
-
-const PROTECTION_LABEL: Record<string, string> = {
-  ADOPTION: '입양',
-  TEMPORARY: '임시보호',
-  BOTH: '입양·임보'
-};
 
 export type PersonalAdoptCardChip = { id: string; value: string; variant: ChipVariant };
 

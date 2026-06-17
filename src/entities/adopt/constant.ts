@@ -12,7 +12,6 @@ export const ADOPT_OPTIONS = {
     { id: 'NEAR_DEADLINE', label: '마감임박' },
     { id: 'NEW', label: '신규' }
   ] as const,
-  // 입양 탭 출처 세그먼트 — 보호소(공공)/개인 전환
   SOURCE: [
     { id: 'SHELTER', label: '보호소' },
     { id: 'PERSONAL', label: '개인' }
@@ -21,7 +20,12 @@ export const ADOPT_OPTIONS = {
 
 export type AdoptSourceDto = (typeof ADOPT_OPTIONS.SOURCE)[number]['id'];
 
-// 보호소 공고 필터 옵션 — 백엔드 abandonment 쿼리 enum과 정합.
+export const PROTECTION_LABEL: Record<string, string> = {
+  ADOPTION: '입양',
+  TEMPORARY: '임시보호',
+  BOTH: '입양·임보'
+};
+
 export const SHELTER_SIDO = [
   { id: 'SEOUL', label: '서울' },
   { id: 'BUSAN', label: '부산' },

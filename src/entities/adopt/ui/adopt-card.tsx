@@ -22,12 +22,10 @@ export type AdoptCardProps = {
   description: AdoptCardDescriptionsProps['data'];
   chips?: AdoptCardChipsProps['data'];
   horizontal?: boolean;
-  // 카드 전체 onPress — 부모 View onPress wrap 대신 카드가 직접 받아야 형제 하트 Pressable 과 hit 충돌이 안 난다.
   onPress?: () => void;
   isFavorited?: boolean;
   onPressFavorite?: () => void;
   status?: AdoptStatusDto;
-  // 개인 공고 전용 — 입양완료 시 이미지 딤 + 뱃지. 보호소 카드는 사용하지 않는다.
   completed?: boolean;
 };
 

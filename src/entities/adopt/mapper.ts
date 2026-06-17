@@ -110,8 +110,6 @@ const CHIP_TYPE_MAP: Record<AdoptChipTypeDto, { id: string; value: string; sort:
   NEW: { id: 'NEW', value: '신규', sort: 1, variant: 'success' }
 };
 
-// 개인 공고(community) → 입양 탭 개인 카드(PersonalAdoptCard) props 정규화.
-// 필수값(사진/제목/소개/입양·임보)은 고정, 선택값은 보호소처럼 칩으로 가변 노출.
 export type PersonalAdoptSource = {
   id: string;
   title: string;
