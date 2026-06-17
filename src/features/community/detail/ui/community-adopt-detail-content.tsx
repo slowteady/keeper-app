@@ -37,28 +37,7 @@ export const CommunityAdoptDetailContent = ({ id }: CommunityAdoptDetailContentP
   const { toggleLikePost } = useLikePost();
   const { black600 } = useTheme();
 
-  const overviews = data.overviews as {
-    image: string;
-    nickname: string;
-    displayTime: string;
-    title: string;
-    images: string[];
-    breed: string;
-    region: string;
-    protectionType: string | null;
-    content: string;
-  };
-  const detailPost = data.detailPost;
-  const infos = data.infos as {
-    age: string;
-    gender: string;
-    weight: string;
-    healthCheck?: string;
-    neuterYn?: string;
-    vaccinationCheck?: string;
-  };
-  const descriptions = data.descriptions as { health: string; relatedLink: string };
-  const behaviors = data.behaviors as { label: string; value: string }[];
+  const { detailPost, overviews, infos, descriptions, behaviors } = data;
   const healthText = descriptions?.health ?? '';
   const hasRelatedLink = !!descriptions?.relatedLink?.trim();
   const isLiked = detailPost?.isLiked ?? false;
@@ -69,7 +48,7 @@ export const CommunityAdoptDetailContent = ({ id }: CommunityAdoptDetailContentP
   const { user, isLoading: isUserLoading } = useCurrentUser();
   const isOwner = !!user && !!authorId && user.id === authorId;
   const isCompleted = detailPost?.adoptionStatus === 'COMPLETED';
-  const badgeLabel = overviews.protectionType ? PROTECTION_LABEL[overviews.protectionType] : undefined;
+  const badgeLabel = overviews?.protectionType ? PROTECTION_LABEL[overviews.protectionType] : undefined;
   const { setCompleted, setInProgress, isPending: isStatusPending } = useAdoptionStatus(id);
   const { requireLogin } = useLoginRequired();
 
@@ -116,7 +95,7 @@ export const CommunityAdoptDetailContent = ({ id }: CommunityAdoptDetailContentP
           </CompletedBanner>
         )}
 
-        {detailPost && (
+        {detailPost && overviews && infos && descriptions && (
           <>
             {overviews.images.length > 0 && (
               <Hero mb={16}>
