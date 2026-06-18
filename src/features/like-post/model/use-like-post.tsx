@@ -13,8 +13,10 @@ type LikeResponse = { count: number; isLiked: boolean };
 // 좋아요 mutation key — 카드별 isPending 격리는 variables 의 postId 로 predicate 매칭.
 export const LIKE_POST_MUTATION_KEY = ['like-post'] as const;
 
-// community 도메인 캐시 prefix — list/detail/(향후) my-likes 등 모두 매칭
+// community 도메인 캐시 prefix — list/detail 매칭
 const COMMUNITY_PREFIX = communityQueries.all();
+// 마이페이지 좋아요 목록은 별도 prefix (myLikedList queryKey)
+const ME_LIKED_PREFIX = ['me-liked-posts'] as const;
 
 export const useLikePost = () => {
   const queryClient = useQueryClient();
@@ -27,17 +29,24 @@ export const useLikePost = () => {
 
     onMutate: async ({ postId, currentlyLiked }) => {
       await queryClient.cancelQueries({ queryKey: COMMUNITY_PREFIX });
-      const backup = queryClient.getQueriesData({ queryKey: COMMUNITY_PREFIX });
+      await queryClient.cancelQueries({ queryKey: ME_LIKED_PREFIX });
+      const backup = [
+        ...queryClient.getQueriesData({ queryKey: COMMUNITY_PREFIX }),
+        ...queryClient.getQueriesData({ queryKey: ME_LIKED_PREFIX })
+      ];
 
       const nextIsLiked = !currentlyLiked;
-      queryClient.setQueriesData({ queryKey: COMMUNITY_PREFIX }, (old: unknown) => {
-        const current = readCurrentCount(old, postId);
-        if (current === undefined) return old;
-        return patchLikeCache(old, postId, {
-          isLiked: nextIsLiked,
-          count: nextIsLiked ? current + 1 : Math.max(0, current - 1)
+      const applyPatch = (queryKey: readonly unknown[]) =>
+        queryClient.setQueriesData({ queryKey }, (old: unknown) => {
+          const current = readCurrentCount(old, postId);
+          if (current === undefined) return old;
+          return patchLikeCache(old, postId, {
+            isLiked: nextIsLiked,
+            count: nextIsLiked ? current + 1 : Math.max(0, current - 1)
+          });
         });
-      });
+      applyPatch(COMMUNITY_PREFIX);
+      applyPatch(ME_LIKED_PREFIX);
 
       return { backup };
     },
@@ -52,15 +61,19 @@ export const useLikePost = () => {
     },
 
     onSuccess: (data, { postId }) => {
-      queryClient.setQueriesData({ queryKey: COMMUNITY_PREFIX }, (old: unknown) =>
-        patchLikeCache(old, postId, { isLiked: data.isLiked, count: data.count })
-      );
+      const applySuccess = (queryKey: readonly unknown[]) =>
+        queryClient.setQueriesData({ queryKey }, (old: unknown) =>
+          patchLikeCache(old, postId, { isLiked: data.isLiked, count: data.count })
+        );
+      applySuccess(COMMUNITY_PREFIX);
+      applySuccess(ME_LIKED_PREFIX);
     },
 
     // 연속 토글 race condition 방지 — 마지막 mutation 만 invalidate.
     onSettled: () => {
       if (queryClient.isMutating({ mutationKey: [...LIKE_POST_MUTATION_KEY] }) === 1) {
         queryClient.invalidateQueries({ queryKey: COMMUNITY_PREFIX });
+        queryClient.invalidateQueries({ queryKey: ME_LIKED_PREFIX });
       }
     }
   });
