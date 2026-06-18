@@ -27,6 +27,7 @@ const IMAGES = [require('@/assets/images/banner1.png'), require('@/assets/images
 const SECTIONS = [{ id: 'banner' }, { id: 'adopt' }, { id: 'personal' }, { id: 'shelter' }] as const;
 
 const HOME_LIST_SIZE = 10;
+const SECTION_GAP = 44;
 
 const Page = () => {
   const router = useRouter();
@@ -70,13 +71,13 @@ const Page = () => {
       switch (item.id) {
         case 'banner':
           return (
-            <View px={20} pt={24} pb={40}>
+            <View px={20} pt={24} pb={SECTION_GAP}>
               <HomeBannerSection images={IMAGES} />
             </View>
           );
         case 'adopt':
           return (
-            <View pb={0}>
+            <View pb={SECTION_GAP}>
               <HomeAdoptSection
                 convertedData={convertedData}
                 isLoading={isLoading}
@@ -87,7 +88,7 @@ const Page = () => {
           );
         case 'personal':
           return (
-            <View pb={45}>
+            <View pb={SECTION_GAP}>
               <HomePersonalSection
                 convertedData={personalData}
                 isLoading={personalLoading}
