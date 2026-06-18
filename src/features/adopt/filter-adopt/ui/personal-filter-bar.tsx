@@ -15,11 +15,10 @@ import {
   ShelterAgeBucket
 } from '@/entities/adopt';
 import { CAT_BREEDS, DOG_BREEDS } from '@/shared/model';
-import { Dropdown, useBottomSheet, useBottomSheetMenu } from '@/shared/ui';
+import { ChosungSelectSheet, Dropdown, useBottomSheet, useBottomSheetMenu } from '@/shared/ui';
 
 import { PersonalFilterController } from '../model/use-personal-filter';
 import { FilterChip, ResetChip } from './filter-chip';
-import { SearchableSelectSheet } from './searchable-select-sheet';
 
 export type PersonalFilterBarProps = {
   filter: PersonalFilterController;
@@ -29,7 +28,7 @@ export type PersonalFilterBarProps = {
 };
 
 export const PersonalFilterBar = ({ filter, animalType, sortValue, onChangeSort }: PersonalFilterBarProps) => {
-  const { present } = useBottomSheet();
+  const { present, dismiss } = useBottomSheet();
   const {
     applied,
     labels,
@@ -87,21 +86,29 @@ export const PersonalFilterBar = ({ filter, animalType, sortValue, onChangeSort 
 
   const openRegion = () =>
     present(
-      <SearchableSelectSheet
+      <ChosungSelectSheet
+        searchPlaceholder="지역 검색"
+        allLabel="전체"
         options={SHELTER_SIDO.map((s) => ({ id: s.id, label: s.label }))}
         value={applied.region}
-        onSelect={setRegion}
+        onSelect={(id) => {
+          setRegion(id);
+          dismiss();
+        }}
       />,
       { snapPoints: ['70%'], disableViewWrap: true }
     );
   const openBreed = () =>
     present(
-      <SearchableSelectSheet
-        showSearch
-        placeholder="품종 검색"
+      <ChosungSelectSheet
+        searchPlaceholder="품종 검색"
+        allLabel="전체"
         options={breeds.map((b) => ({ id: b.name, label: b.name }))}
         value={applied.breed}
-        onSelect={setBreed}
+        onSelect={(id) => {
+          setBreed(id);
+          dismiss();
+        }}
       />,
       { snapPoints: ['80%'], disableViewWrap: true }
     );

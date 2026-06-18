@@ -2,10 +2,9 @@ import { UseFormReturn, useWatch } from 'react-hook-form';
 
 import { CommunityAdoptFormDto } from '@/entities/community';
 import { AnimalTypeDto } from '@/shared/model';
-import { useBottomSheet, useBottomSheetMenu } from '@/shared/ui';
+import { ChosungSelectSheet, useBottomSheet, useBottomSheetMenu } from '@/shared/ui';
 
 import { makeFormOptions } from '../lib/make-form-options';
-import { CreatePostKindBottomSheet } from '../ui';
 
 export const useAdoptFormSelectors = (form: UseFormReturn<CommunityAdoptFormDto>, animalType: AnimalTypeDto) => {
   const age = useWatch({ control: form.control, name: 'age' });
@@ -22,16 +21,15 @@ export const useAdoptFormSelectors = (form: UseFormReturn<CommunityAdoptFormDto>
 
   const openKindSelector = () =>
     present(
-      <CreatePostKindBottomSheet
-        kindOption={kindOption}
-        kind={kind ?? ''}
+      <ChosungSelectSheet
+        options={kindOption}
+        value={kind ?? ''}
+        searchPlaceholder="예)골든 리트리버"
         onSelect={(id) => {
-          form.setValue('specificType', id, { shouldDirty: true });
+          if (id) form.setValue('specificType', id, { shouldDirty: true });
           dismiss();
         }}
       />,
-      // sheet 70% 고정 + disableViewWrap (SectionList 가 root scrollable, input/chip 은 ListHeaderComponent)
-      // 키보드 blur 시 복원은 CreatePostKindBottomSheet 안 Keyboard listener 가 snapToIndex(0) 호출
       { snapPoints: ['70%'], disableViewWrap: true }
     );
 
