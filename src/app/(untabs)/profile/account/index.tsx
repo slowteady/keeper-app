@@ -10,7 +10,7 @@ import { AccountHeader } from '@/widgets/profile';
 const Page = () => {
   const { user } = useCurrentUser();
   const { logout } = useLogout();
-  const { changeProfileImage } = useProfileImage();
+  const { changeProfileImage, isPending: isUpdatingImage } = useProfileImage();
   const { goSettingMenu } = usePermission();
 
   if (!user) return null;
@@ -19,7 +19,7 @@ const Page = () => {
     <Container>
       <ScrollView py={32}>
         <View px={20} mb={24}>
-          <AccountHeader user={user} onChangeProfileImage={changeProfileImage} />
+          <AccountHeader user={user} isUpdatingImage={isUpdatingImage} onChangeProfileImage={changeProfileImage} />
         </View>
 
         <Separator borderColor="$backgroundDefault" mb={24} />
