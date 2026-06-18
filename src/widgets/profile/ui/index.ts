@@ -3,7 +3,6 @@ export * from './inquiry-form-scene';
 export * from './inquiry-history-scene';
 export * from './profile-activity-scene';
 export * from './profile-comment-list-skeleton';
-export * from './profile-content-section';
 export * from './profile-empty-state';
 export * from './profile-header';
 export * from './profile-like-scene';

@@ -1,32 +1,55 @@
-import { Separator, View, YStack } from 'tamagui';
+import { styled, Text, View, YStack } from 'tamagui';
 
-import { MENU_ITEMS } from '@/features/profile';
+import { MENU_SECTIONS } from '@/features/profile';
 import { Menu } from '@/shared/ui';
 
+type MenuItem = (typeof MENU_SECTIONS)[number]['items'][number];
+
 type ProfileMenuListProps = {
-  items: typeof MENU_ITEMS;
+  sections: typeof MENU_SECTIONS;
   isLoggedIn: boolean;
-  onSelect: (path: string, requireAuth: boolean) => void;
+  onNavigate: (path: string, requireAuth: boolean) => void;
+  onReview: () => void;
+  onShare: () => void;
 };
 
-export const ProfileMenuList = ({ items, isLoggedIn, onSelect }: ProfileMenuListProps) => {
-  const visibleItems = items.filter((item) => isLoggedIn || !item.requireAuth);
+export const ProfileMenuList = ({ sections, isLoggedIn, onNavigate, onReview, onShare }: ProfileMenuListProps) => {
+  const handlePress = (item: MenuItem) => {
+    if ('action' in item) {
+      if (item.action === 'review') onReview();
+      else onShare();
+      return;
+    }
+    onNavigate(item.navigateTo, item.requireAuth);
+  };
 
   return (
     <YStack>
-      {visibleItems.map((item, idx) => {
-        const key = `${item.label}-${idx}`;
+      {sections.map((section) => {
+        const visibleItems = section.items.filter((item) => isLoggedIn || !('requireAuth' in item && item.requireAuth));
+        if (visibleItems.length === 0) return null;
 
         return (
-          <View key={key}>
-            <View px={20} py={16} onPress={() => onSelect(item.navigateTo, item.requireAuth)}>
-              <Menu icon={<item.icon size={20} />} label={item.label} />
-            </View>
-
-            {idx !== visibleItems.length - 1 && <Separator borderColor="$backgroundDefault" />}
-          </View>
+          <YStack key={section.label} mb={8}>
+            <SectionLabel>{section.label}</SectionLabel>
+            {visibleItems.map((item, idx) => (
+              <View key={`${item.label}-${idx}`} px={20} py={16} onPress={() => handlePress(item)}>
+                <Menu icon={<item.icon size={20} color="$black600" />} label={item.label} />
+              </View>
+            ))}
+          </YStack>
         );
       })}
     </YStack>
   );
 };
+
+const SectionLabel = styled(Text, {
+  px: 20,
+  pt: 20,
+  pb: 4,
+  fontSize: 13,
+  lineHeight: 16,
+  fontWeight: '600',
+  color: '$black500'
+});

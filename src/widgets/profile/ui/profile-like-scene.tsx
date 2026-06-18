@@ -1,52 +1,89 @@
 import { FlashList, ListRenderItemInfo } from '@shopify/flash-list';
 import { router } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
-import { styled, View, YStack } from 'tamagui';
+import { styled, View, XStack, YStack } from 'tamagui';
 
 import { ADOPT_CARD_IMAGE_SIZES, AdoptCard, AdoptCardSkeleton, mapToAdoptList } from '@/entities/adopt';
-import {
-  CommentListItem,
-  CommunityAdoptListDto,
-  CommunityPostListItem,
-  MyHelpfulCommentItemDto
-} from '@/entities/community';
-import { PROFILE_OPTIONS, ProfileLikeOption } from '@/entities/profile';
+import { CommentListItem, CommunityPostListItem, MyHelpfulCommentItemDto } from '@/entities/community';
 import { ShelterCard, ShelterCardSkeleton, ShelterDto } from '@/entities/shelter';
 import { useCommentHelpful } from '@/features/community';
 import { useFavoriteAbandonment, useMyFavoriteAbandonments } from '@/features/favorite-abandonment';
 import { useFavoriteShelter, useMyFavoriteShelters } from '@/features/favorite-shelter';
 import { useMyHelpfulComments } from '@/features/helpful-comment';
 import { useLikePost, useMyLikedPosts } from '@/features/like-post';
-import { ButtonGroup } from '@/shared/ui';
+import { ButtonGroup, Dropdown } from '@/shared/ui';
 
 import { ProfileCommentListSkeleton } from './profile-comment-list-skeleton';
 import { ProfileEmptyState } from './profile-empty-state';
 
+const TOP_TABS = [
+  { id: 'adopt', label: '공고' },
+  { id: 'shelter', label: '보호소' },
+  { id: 'community', label: '커뮤니티' }
+] as const;
+type TopTab = (typeof TOP_TABS)[number]['id'];
+
+const ADOPT_SUB = [
+  { id: 'abandonment', label: '보호소 공고' },
+  { id: 'personal', label: '개인 공고' }
+] as const;
+type AdoptSub = (typeof ADOPT_SUB)[number]['id'];
+
+const COMMUNITY_SUB = [
+  { id: 'post', label: '게시글' },
+  { id: 'comment', label: '댓글' }
+] as const;
+type CommunitySub = (typeof COMMUNITY_SUB)[number]['id'];
+
 export const ProfileLikeScene = () => {
-  const [selected, setSelected] = useState<ProfileLikeOption>('adopt');
+  const [tab, setTab] = useState<TopTab>('adopt');
 
   return (
     <Container>
       <ButtonGroupWrap>
-        <ButtonGroup id={selected} data={PROFILE_OPTIONS.LIKE} onChange={setSelected} />
+        <ButtonGroup id={tab} data={TOP_TABS} onChange={setTab} />
       </ButtonGroupWrap>
-      {selected === 'adopt' && <AdoptList />}
-      {selected === 'shelter' && <ShelterList />}
-      {selected === 'post' && <PostList />}
-      {selected === 'comment' && <CommentList />}
+      {tab === 'adopt' && <AdoptTab />}
+      {tab === 'shelter' && <ShelterList />}
+      {tab === 'community' && <CommunityTab />}
     </Container>
   );
 };
 
-const AdoptList = () => {
+const AdoptTab = () => {
+  const [sub, setSub] = useState<AdoptSub>('abandonment');
+
+  return (
+    <>
+      <FilterRow>
+        <Dropdown data={ADOPT_SUB} value={sub} onChange={(v) => setSub(v.id as AdoptSub)} />
+      </FilterRow>
+      {sub === 'abandonment' ? <AbandonmentList /> : <PersonalList />}
+    </>
+  );
+};
+
+const CommunityTab = () => {
+  const [sub, setSub] = useState<CommunitySub>('post');
+
+  return (
+    <>
+      <FilterRow>
+        <Dropdown data={COMMUNITY_SUB} value={sub} onChange={(v) => setSub(v.id as CommunitySub)} />
+      </FilterRow>
+      {sub === 'post' ? <CommunityPostLikeList /> : <CommentList />}
+    </>
+  );
+};
+
+const AbandonmentList = () => {
   const { items, isLoading, isFetchingNextPage, fetchNextPage, refetch } = useMyFavoriteAbandonments();
   const { toggleFavoriteAbandonment } = useFavoriteAbandonment();
-
   const converted = useMemo(() => mapToAdoptList(items), [items]);
 
   const renderItem = useCallback(
-    ({ item, index: itemIndex }: ListRenderItemInfo<(typeof converted)[number]>) => {
-      const isLeft = itemIndex % 2 === 0;
+    ({ item, index }: ListRenderItemInfo<(typeof converted)[number]>) => {
+      const isLeft = index % 2 === 0;
       return (
         <View pl={isLeft ? 0 : 4} pr={isLeft ? 4 : 0} mb={32}>
           <AdoptCard
@@ -68,9 +105,9 @@ const AdoptList = () => {
   if (!isLoading && converted.length === 0) {
     return (
       <ProfileEmptyState
-        text="관심 있는 공고가 없어요"
+        text="좋아요한 보호소 공고가 없어요"
         description="마음에 드는 친구를 저장해보세요"
-        cta={{ label: '입양 공고 둘러보기', onPress: () => router.replace('/(tabs)/adopt') }}
+        cta={{ label: '입양 공고 둘러보기', onPress: () => router.navigate('/(tabs)/adopt') }}
       />
     );
   }
@@ -85,9 +122,51 @@ const AdoptList = () => {
       onEndReachedThreshold={0.5}
       onRefresh={refetch}
       refreshing={false}
-      contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 40 }}
+      contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 8, paddingBottom: 40 }}
       ListEmptyComponent={isLoading ? <AdoptLoading /> : null}
       ListFooterComponent={isFetchingNextPage ? <AdoptLoading count={2} /> : null}
+    />
+  );
+};
+
+const PersonalList = () => {
+  const { items, isLoading, isFetchingNextPage, fetchNextPage, refetch } = useMyLikedPosts();
+  const { toggleLikePost } = useLikePost();
+
+  const renderItem = useCallback(
+    ({ item }: ListRenderItemInfo<(typeof items)[number]>) => (
+      <CommunityPostListItem
+        data={item}
+        categoryLabel="개인공고"
+        onPress={(id) => router.push(`/(untabs)/community/${id}`)}
+        onPressLike={(id, currentlyLiked) => toggleLikePost(id, currentlyLiked)}
+      />
+    ),
+    [toggleLikePost]
+  );
+
+  if (!isLoading && items.length === 0) {
+    return (
+      <ProfileEmptyState
+        text="좋아요한 개인 공고가 없어요"
+        description="마음에 드는 친구를 저장해보세요"
+        cta={{ label: '입양 공고 둘러보기', onPress: () => router.navigate('/(tabs)/adopt') }}
+      />
+    );
+  }
+
+  return (
+    <FlashList
+      data={items}
+      keyExtractor={(item) => String(item.id)}
+      renderItem={renderItem}
+      onEndReached={fetchNextPage}
+      onEndReachedThreshold={0.5}
+      onRefresh={refetch}
+      refreshing={false}
+      contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 8, paddingBottom: 40 }}
+      ListEmptyComponent={isLoading ? <ProfileCommentListSkeleton /> : null}
+      ListFooterComponent={isFetchingNextPage ? <ProfileCommentListSkeleton count={1} /> : null}
     />
   );
 };
@@ -110,9 +189,9 @@ const ShelterList = () => {
   if (!isLoading && items.length === 0) {
     return (
       <ProfileEmptyState
-        text="관심 보호소가 없어요"
+        text="좋아요한 보호소가 없어요"
         description="가까운 보호소를 저장해보세요"
-        cta={{ label: '보호소 둘러보기', onPress: () => router.replace('/(tabs)/shelter') }}
+        cta={{ label: '보호소 둘러보기', onPress: () => router.navigate('/(tabs)/shelter') }}
       />
     );
   }
@@ -128,21 +207,34 @@ const ShelterList = () => {
       refreshing={false}
       ItemSeparatorComponent={() => <View height={12} />}
       contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 40 }}
-      ListEmptyComponent={isLoading ? <ShelterLoading /> : null}
-      ListFooterComponent={isFetchingNextPage ? <ShelterLoading count={1} /> : null}
+      ListEmptyComponent={
+        isLoading ? (
+          <YStack gap={12}>
+            {Array.from({ length: 4 }).map((_, idx) => (
+              <ShelterCardSkeleton key={idx} />
+            ))}
+          </YStack>
+        ) : null
+      }
+      ListFooterComponent={isFetchingNextPage ? <ShelterCardSkeleton /> : null}
     />
   );
 };
 
-const PostList = () => {
-  const { items, isLoading, isFetchingNextPage, fetchNextPage, refetch } = useMyLikedPosts();
+const COMMUNITY_CATEGORY_LABEL: Record<'ADOPTION_LIFE' | 'QNA', string> = {
+  ADOPTION_LIFE: '입양생활',
+  QNA: '궁금해요'
+};
+
+const CommunityPostLikeList = () => {
+  const { items, isLoading, isFetchingNextPage, fetchNextPage, refetch } = useMyLikedPosts('community');
   const { toggleLikePost } = useLikePost();
 
   const renderItem = useCallback(
-    ({ item }: ListRenderItemInfo<CommunityAdoptListDto>) => (
+    ({ item }: ListRenderItemInfo<(typeof items)[number]>) => (
       <CommunityPostListItem
         data={item}
-        categoryLabel="개인입양"
+        categoryLabel={COMMUNITY_CATEGORY_LABEL[item.category === 'QNA' ? 'QNA' : 'ADOPTION_LIFE']}
         onPress={(id) => router.push(`/(untabs)/community/${id}`)}
         onPressLike={(id, currentlyLiked) => toggleLikePost(id, currentlyLiked)}
       />
@@ -153,9 +245,9 @@ const PostList = () => {
   if (!isLoading && items.length === 0) {
     return (
       <ProfileEmptyState
-        text="관심 게시글이 없어요"
-        description="마음에 든 게시글을 저장해보세요"
-        cta={{ label: '커뮤니티 둘러보기', onPress: () => router.replace('/(tabs)/community') }}
+        text="좋아요한 게시글이 없어요"
+        description="커뮤니티에서 마음에 든 글을 저장해보세요"
+        cta={{ label: '커뮤니티 둘러보기', onPress: () => router.navigate('/(tabs)/community') }}
       />
     );
   }
@@ -169,7 +261,7 @@ const PostList = () => {
       onEndReachedThreshold={0.5}
       onRefresh={refetch}
       refreshing={false}
-      contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 40 }}
+      contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 8, paddingBottom: 40 }}
       ListEmptyComponent={isLoading ? <ProfileCommentListSkeleton /> : null}
       ListFooterComponent={isFetchingNextPage ? <ProfileCommentListSkeleton count={1} /> : null}
     />
@@ -196,13 +288,7 @@ const CommentList = () => {
   );
 
   if (!isLoading && items.length === 0) {
-    return (
-      <ProfileEmptyState
-        text="관심 댓글이 없어요"
-        description="도움됐던 댓글을 저장해보세요"
-        cta={{ label: '커뮤니티 둘러보기', onPress: () => router.replace('/(tabs)/community') }}
-      />
-    );
+    return <ProfileEmptyState text="좋아요한 댓글이 없어요" description="도움이 된 댓글을 저장해보세요" />;
   }
 
   return (
@@ -214,7 +300,7 @@ const CommentList = () => {
       onEndReachedThreshold={0.5}
       onRefresh={refetch}
       refreshing={false}
-      contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 40 }}
+      contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 8, paddingBottom: 40 }}
       ListEmptyComponent={isLoading ? <ProfileCommentListSkeleton /> : null}
       ListFooterComponent={isFetchingNextPage ? <ProfileCommentListSkeleton count={1} /> : null}
     />
@@ -231,14 +317,6 @@ const AdoptLoading = ({ count = 4 }: { count?: number }) => (
   </AdoptSkeletonGrid>
 );
 
-const ShelterLoading = ({ count = 4 }: { count?: number }) => (
-  <YStack gap={12}>
-    {Array.from({ length: count }).map((_, index) => (
-      <ShelterCardSkeleton key={index} />
-    ))}
-  </YStack>
-);
-
 const Container = styled(YStack, {
   flex: 1
 });
@@ -246,7 +324,14 @@ const Container = styled(YStack, {
 const ButtonGroupWrap = styled(View, {
   px: 20,
   pt: 16,
-  pb: 12
+  pb: 8
+});
+
+const FilterRow = styled(XStack, {
+  px: 20,
+  pt: 4,
+  pb: 4,
+  justify: 'flex-end'
 });
 
 const AdoptSkeletonGrid = styled(View, {

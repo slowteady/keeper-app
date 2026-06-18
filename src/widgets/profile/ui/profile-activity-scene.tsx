@@ -3,7 +3,13 @@ import { router } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { styled, View, YStack } from 'tamagui';
 
-import { CommentListItem, CommunityPostListItem, MyCommentItemDto, MyPostItemDto } from '@/entities/community';
+import {
+  CommentListItem,
+  CommunityPostListItem,
+  CommunityPostListItemStatus,
+  MyCommentItemDto,
+  MyPostItemDto
+} from '@/entities/community';
 import { useCurrentUser } from '@/features/auth';
 import { useCommentMenu, usePostMenu } from '@/features/community';
 import { useMyComments, useMyPosts } from '@/features/profile';
@@ -23,6 +29,13 @@ const CATEGORY_LABEL: Record<MyPostItemDto['category'], string> = {
   ADOPTION_PERSONAL: '내 공고',
   ADOPTION_LIFE: '입양생활',
   QNA: '궁금해요'
+};
+
+const adoptionStatusChip = (item: MyPostItemDto): CommunityPostListItemStatus | undefined => {
+  if (item.category !== 'ADOPTION_PERSONAL' || !item.adoptionStatus) return undefined;
+  return item.adoptionStatus === 'COMPLETED'
+    ? { label: '입양완료', tone: 'success' }
+    : { label: '입양중', tone: 'notice' };
 };
 
 export const ProfileActivityScene = () => {
@@ -48,7 +61,7 @@ const MyPostList = () => {
       <ProfileEmptyState
         text="작성한 글이 없어요"
         description="커뮤니티에 첫 글을 남겨보세요"
-        cta={{ label: '커뮤니티 둘러보기', onPress: () => router.replace('/(tabs)/community') }}
+        cta={{ label: '커뮤니티 둘러보기', onPress: () => router.navigate('/(tabs)/community') }}
       />
     );
   }
@@ -77,6 +90,7 @@ const MyPostListItem = ({ item }: { item: MyPostItemDto }) => {
     <CommunityPostListItem
       data={item}
       categoryLabel={CATEGORY_LABEL[item.category]}
+      status={adoptionStatusChip(item)}
       onPress={(id) => router.push(`/(untabs)/community/${id}`)}
       onPressMore={openPostMenu}
     />
@@ -121,7 +135,7 @@ const MyCommentList = () => {
       <ProfileEmptyState
         text="작성한 댓글이 없어요"
         description="커뮤니티 이야기에 참여해보세요"
-        cta={{ label: '커뮤니티 둘러보기', onPress: () => router.replace('/(tabs)/community') }}
+        cta={{ label: '커뮤니티 둘러보기', onPress: () => router.navigate('/(tabs)/community') }}
       />
     );
   }

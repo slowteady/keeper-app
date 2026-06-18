@@ -90,7 +90,7 @@ export const ProfileHeader = ({
           <XStack gap={10}>
             <QuickAction onPress={user ? onLike : onLogin}>
               <Heart size={18} color="$black700" />
-              <QuickActionLabel>관심 목록</QuickActionLabel>
+              <QuickActionLabel>관심</QuickActionLabel>
             </QuickAction>
             <QuickAction onPress={user ? onActivity : onLogin}>
               <FileText size={18} color="$black700" />
