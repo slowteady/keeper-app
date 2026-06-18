@@ -63,7 +63,12 @@ const TextTabBar = <T extends Route>({
       {navigationState.routes.map((route, idx) => {
         const isActive = idx === activeIndex;
         return (
-          <TextTabItem key={`${route.key}-${idx}`} onPress={() => onIndexChange(idx)} hitSlop={12}>
+          <TextTabItem
+            key={`${route.key}-${idx}`}
+            onPress={() => onIndexChange(idx)}
+            hitSlop={12}
+            style={{ borderBottomColor: isActive ? activeColor : 'transparent' }}
+          >
             <TextTabLabel style={{ color: isActive ? activeColor : inactiveColor }}>{route.title}</TextTabLabel>
           </TextTabItem>
         );
@@ -166,14 +171,18 @@ const IndicatorContainer = styled(View, {
 
 const TextTabContainer = styled(XStack, {
   items: 'flex-end',
-  gap: 20,
+  gap: 24,
   px: 20,
-  pt: 8,
-  pb: 8
+  pt: 12,
+  mb: 12,
+  borderBottomWidth: 1,
+  borderColor: '$white600'
 });
 
 const TextTabItem = styled(View, {
-  py: 12
+  pb: 12,
+  mb: -1,
+  borderBottomWidth: 2.5
 });
 
 const TextTabLabel = styled(Text, {
