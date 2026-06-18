@@ -163,7 +163,7 @@ export const CommunityAdoptDetailContent = ({ id }: CommunityAdoptDetailContentP
                   { label: '나이', value: infos.age },
                   { label: '성별', value: infos.gender },
                   { label: '크기·몸무게', value: infos.weight }
-                ].filter((r) => !!r.value)}
+                ].filter((r) => !!r.value && r.value !== '모름' && r.value !== '미상')}
               />
             </View>
             {behaviors.length > 0 && (

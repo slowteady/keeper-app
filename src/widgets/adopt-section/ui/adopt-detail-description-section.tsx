@@ -29,7 +29,9 @@ export const AdoptDetailDescriptionSection = ({ specialMark, shelter }: AdoptDet
       <YStack gap={12}>
         <SectionTitle>특징</SectionTitle>
         <Card>
-          <CardText>{hasValue(specialMark) ? specialMark : '등록된 특이사항이 없어요'}</CardText>
+          <CardText color={hasValue(specialMark) ? '$black700' : '$black500'}>
+            {hasValue(specialMark) ? specialMark : '등록된 특이사항이 없어요'}
+          </CardText>
         </Card>
       </YStack>
 
@@ -65,7 +67,7 @@ export const AdoptDetailDescriptionSection = ({ specialMark, shelter }: AdoptDet
               )}
             </>
           ) : (
-            <CardText>보호소 정보가 없어요</CardText>
+            <CardText color="$black500">보호소 정보가 없어요</CardText>
           )}
         </Card>
       </YStack>

@@ -59,7 +59,7 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
     { label: '나이', value: adopt.age },
     { label: '성별', value: adopt.gender },
     { label: '크기·몸무게', value: adopt.weight }
-  ].filter((r) => !!r.value);
+  ].filter((r) => !!r.value && r.value !== '모름' && r.value !== '미상');
 
   const handlePressShare = () => {
     share({ type: 'adopt', id: adopt.id });

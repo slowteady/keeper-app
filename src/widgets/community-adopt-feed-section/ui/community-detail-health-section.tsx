@@ -9,7 +9,7 @@ export type CommunityDetailHealthSectionProps = {
 
 const hasValue = (value?: string) => !!value && value.trim().length > 0;
 
-const ynText = (v?: string) => (v === 'Y' ? '했어요' : v === 'N' ? '안 했어요' : '알 수 없어요');
+const ynText = (v?: string): string | null => (v === 'Y' ? '했어요' : v === 'N' ? '안 했어요' : null);
 
 const VACCINE_LABEL: Record<string, string> = {
   NOT: '안 했어요',
@@ -17,7 +17,7 @@ const VACCINE_LABEL: Record<string, string> = {
   SECOND: '2차',
   THIRD: '3차'
 };
-const vaccineText = (v?: string) => (v ? (VACCINE_LABEL[v] ?? '알 수 없어요') : '알 수 없어요');
+const vaccineText = (v?: string): string | null => (v ? (VACCINE_LABEL[v] ?? null) : null);
 
 export const CommunityDetailHealthSection = ({
   neuterYn,
@@ -25,13 +25,21 @@ export const CommunityDetailHealthSection = ({
   healthCheck,
   health
 }: CommunityDetailHealthSectionProps) => {
+  const rows = [
+    { label: '중성화', value: ynText(neuterYn) },
+    { label: '예방접종', value: vaccineText(vaccinationCheck) },
+    { label: '건강검진', value: ynText(healthCheck) }
+  ].filter((row): row is { label: string; value: string } => row.value !== null);
+
+  if (rows.length === 0 && !hasValue(health)) return null;
+
   return (
     <YStack gap={12}>
       <SectionLabel>건강정보</SectionLabel>
       <Box>
-        <InfoRow label="중성화" value={ynText(neuterYn)} />
-        <InfoRow label="예방접종" value={vaccineText(vaccinationCheck)} />
-        <InfoRow label="건강검진" value={ynText(healthCheck)} />
+        {rows.map((row) => (
+          <InfoRow key={row.label} label={row.label} value={row.value} />
+        ))}
         {hasValue(health) && (
           <>
             <NoteDivider />
