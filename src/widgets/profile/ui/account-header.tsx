@@ -6,6 +6,7 @@ import { UserAvatar } from '@/entities/profile';
 
 type AccountHeaderProps = {
   user: UserDto;
+  isUpdatingImage?: boolean;
   onChangeProfileImage: () => void;
 };
 
@@ -15,13 +16,18 @@ const SOCIAL_LABEL: Record<SocialLoginType, string> = {
   APPLE: '애플'
 };
 
-export const AccountHeader = ({ user, onChangeProfileImage }: AccountHeaderProps) => {
+export const AccountHeader = ({ user, isUpdatingImage, onChangeProfileImage }: AccountHeaderProps) => {
   const createdAt = user.createdAt ? dayjs(user.createdAt).format('YY.MM.DD') : null;
   const signupType = SOCIAL_LABEL[user.socialType];
 
   return (
     <XStack gap={20}>
-      <UserAvatar image={user.image} onPressEdit={onChangeProfileImage} onPressAdd={onChangeProfileImage} />
+      <UserAvatar
+        image={user.image}
+        loading={isUpdatingImage}
+        onPressEdit={onChangeProfileImage}
+        onPressAdd={onChangeProfileImage}
+      />
       <YStack>
         <Text fontSize={20} fontWeight="500" color="$black900" lineHeight={22} mb={12}>
           {user.nickname}님

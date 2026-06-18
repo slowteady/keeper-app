@@ -8,6 +8,7 @@ import { Skeleton } from '@/shared/ui';
 type ProfileHeaderProps = {
   user?: UserDto | null;
   isLoading: boolean;
+  isUpdatingImage?: boolean;
   onLogin: () => void;
   onAccount: () => void;
   onLike: () => void;
@@ -24,6 +25,7 @@ const SOCIAL_LABEL: Record<SocialLoginType, string> = {
 export const ProfileHeader = ({
   user,
   isLoading,
+  isUpdatingImage,
   onLogin,
   onAccount,
   onLike,
@@ -31,7 +33,7 @@ export const ProfileHeader = ({
   onChangeProfileImage
 }: ProfileHeaderProps) => {
   return (
-    <View px={20} mb={24} pt={40}>
+    <View px={20} mb={8} pt={40}>
       {isLoading ? (
         <YStack gap={20}>
           <XStack gap={16} items="center">
@@ -51,7 +53,12 @@ export const ProfileHeader = ({
           <XStack gap={16} items="center">
             {user ? (
               <>
-                <UserAvatar image={user.image} onPressAdd={onChangeProfileImage} onPressEdit={onChangeProfileImage} />
+                <UserAvatar
+                  image={user.image}
+                  loading={isUpdatingImage}
+                  onPressAdd={onChangeProfileImage}
+                  onPressEdit={onChangeProfileImage}
+                />
                 <YStack flex={1} gap={8}>
                   <Text numberOfLines={1} fontSize={20} lineHeight={20} fontWeight="500" color="$black900">
                     {user.nickname}님
