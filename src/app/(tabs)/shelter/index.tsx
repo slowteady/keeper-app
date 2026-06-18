@@ -49,7 +49,6 @@ const Page = () => {
     onTapMarker,
     onTapCluster,
     onDeselect,
-    selectShelter,
     moveToCurrentLocation
   } = useShelterViewport();
   const { toggleFavoriteShelter } = useFavoriteShelter();
@@ -81,13 +80,9 @@ const Page = () => {
     opacity: cardPresence.value * controlsFade.value
   }));
 
-  const handlePressCard = useCallback(
-    (id: string) => {
-      selectShelter(id);
-      router.push({ pathname: '/shelter/[id]', params: { id } });
-    },
-    [selectShelter]
-  );
+  const handlePressCard = useCallback((id: string) => {
+    router.push({ pathname: '/shelter/[id]', params: { id } });
+  }, []);
 
   if (permissionStatus === undefined || (isGranted && userLocation === undefined)) {
     return (
