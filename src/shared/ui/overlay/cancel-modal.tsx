@@ -9,6 +9,8 @@ export type CancelModalProps = {
   onConfirm: () => void;
   title?: string;
   description?: string;
+  confirmText?: string;
+  cancelText?: string;
 };
 
 export const CancelModal = ({
@@ -16,7 +18,9 @@ export const CancelModal = ({
   onClose,
   onConfirm,
   title = '정말 나가시겠어요?',
-  description
+  description,
+  confirmText = '나가기',
+  cancelText = '닫기'
 }: CancelModalProps) => {
   if (!open) return null;
 
@@ -36,7 +40,7 @@ export const CancelModal = ({
           <ModalButtons
             onPressSecondary={onClose}
             onPressPrimary={onConfirm}
-            text={{ primary: '나가기', secondary: '닫기' }}
+            text={{ primary: confirmText, secondary: cancelText }}
           />
         </Container>
       </View>

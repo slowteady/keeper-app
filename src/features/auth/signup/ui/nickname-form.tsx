@@ -11,6 +11,7 @@ export type NicknameFormProps = {
   isPending?: boolean;
   initialValue?: string;
   extraDisabled?: boolean;
+  locked?: boolean;
   children?: ReactNode;
 };
 
@@ -21,6 +22,7 @@ export const NicknameForm = ({
   isPending = false,
   initialValue = '',
   extraDisabled = false,
+  locked = false,
   children
 }: NicknameFormProps) => {
   const { nickname, nicknameStatus, isChecking, isComplete, changeNickname, clearNickname } =
@@ -53,8 +55,9 @@ export const NicknameForm = ({
         value={nickname}
         onChangeText={changeNickname}
         onPressReset={clearNickname}
+        editable={!locked}
         placeholder="닉네임"
-        helperText={helperText}
+        helperText={locked ? undefined : helperText}
         helperTextStatus={nicknameStatus.status}
         maxLength={10}
       />

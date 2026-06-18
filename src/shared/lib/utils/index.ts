@@ -8,5 +8,6 @@ export * from './handle-token';
 export * from './haptic';
 export * from './image';
 export * from './make-query';
+export * from './nickname-cooldown';
 export * from './scroll-to-view';
 export * from './validation';
