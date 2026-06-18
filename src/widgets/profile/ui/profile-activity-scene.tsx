@@ -60,7 +60,7 @@ const MyPostList = () => {
     return (
       <ProfileEmptyState
         text="작성한 글이 없어요"
-        description="커뮤니티에 첫 글을 남겨보세요"
+        description="커뮤니티에 글을 남기면 여기에 모여요"
         cta={{ label: '커뮤니티 둘러보기', onPress: () => router.navigate('/(tabs)/community') }}
       />
     );
@@ -134,7 +134,7 @@ const MyCommentList = () => {
     return (
       <ProfileEmptyState
         text="작성한 댓글이 없어요"
-        description="커뮤니티 이야기에 참여해보세요"
+        description="댓글을 남기면 여기에 모여요"
         cta={{ label: '커뮤니티 둘러보기', onPress: () => router.navigate('/(tabs)/community') }}
       />
     );
