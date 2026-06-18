@@ -64,10 +64,12 @@ jest.mock('@/shared/ui', () => ({
       ))}
     </MockView>
   ),
-  Dropdown: ({ data, value }: any) => {
-    const current = data.find((d: { id: string }) => d.id === value);
-    return <MockText>{current?.label}</MockText>;
-  },
+  FilterChip: ({ label, onPress }: any) => (
+    <MockPressable onPress={onPress}>
+      <MockText>{label}</MockText>
+    </MockPressable>
+  ),
+  useBottomSheetMenu: () => ({ open: jest.fn() }),
   FeedNodata: () => null
 }));
 

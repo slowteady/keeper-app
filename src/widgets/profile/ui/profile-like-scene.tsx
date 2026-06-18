@@ -11,7 +11,7 @@ import { useFavoriteAbandonment, useMyFavoriteAbandonments } from '@/features/fa
 import { useFavoriteShelter, useMyFavoriteShelters } from '@/features/favorite-shelter';
 import { useMyHelpfulComments } from '@/features/helpful-comment';
 import { useLikePost, useMyLikedPosts } from '@/features/like-post';
-import { ButtonGroup, Dropdown } from '@/shared/ui';
+import { ButtonGroup, FilterChip, useBottomSheetMenu } from '@/shared/ui';
 
 import { ProfileCommentListSkeleton } from './profile-comment-list-skeleton';
 import { ProfileEmptyState } from './profile-empty-state';
@@ -52,11 +52,13 @@ export const ProfileLikeScene = () => {
 
 const AdoptTab = () => {
   const [sub, setSub] = useState<AdoptSub>('abandonment');
+  const { open } = useBottomSheetMenu({ data: ADOPT_SUB, value: sub, onPress: (d) => setSub(d.id) });
+  const label = ADOPT_SUB.find((o) => o.id === sub)?.label ?? '';
 
   return (
     <>
       <FilterRow>
-        <Dropdown data={ADOPT_SUB} value={sub} onChange={(v) => setSub(v.id as AdoptSub)} />
+        <FilterChip label={label} active onPress={open} />
       </FilterRow>
       {sub === 'abandonment' ? <AbandonmentList /> : <PersonalList />}
     </>
@@ -65,11 +67,13 @@ const AdoptTab = () => {
 
 const CommunityTab = () => {
   const [sub, setSub] = useState<CommunitySub>('post');
+  const { open } = useBottomSheetMenu({ data: COMMUNITY_SUB, value: sub, onPress: (d) => setSub(d.id) });
+  const label = COMMUNITY_SUB.find((o) => o.id === sub)?.label ?? '';
 
   return (
     <>
       <FilterRow>
-        <Dropdown data={COMMUNITY_SUB} value={sub} onChange={(v) => setSub(v.id as CommunitySub)} />
+        <FilterChip label={label} active onPress={open} />
       </FilterRow>
       {sub === 'post' ? <CommunityPostLikeList /> : <CommentList />}
     </>
@@ -105,9 +109,9 @@ const AbandonmentList = () => {
   if (!isLoading && converted.length === 0) {
     return (
       <ProfileEmptyState
-        text="좋아요한 보호소 공고가 없어요"
-        description="마음에 드는 친구를 저장해보세요"
-        cta={{ label: '입양 공고 둘러보기', onPress: () => router.navigate('/(tabs)/adopt') }}
+        text="관심있는 보호소 공고가 없어요"
+        description="마음에 드는 보호소 공고에 하트를 누르면 여기에 모여요"
+        cta={{ label: '보호소 공고 보기', onPress: () => router.navigate('/(tabs)/adopt') }}
       />
     );
   }
@@ -148,9 +152,12 @@ const PersonalList = () => {
   if (!isLoading && items.length === 0) {
     return (
       <ProfileEmptyState
-        text="좋아요한 개인 공고가 없어요"
-        description="마음에 드는 친구를 저장해보세요"
-        cta={{ label: '입양 공고 둘러보기', onPress: () => router.navigate('/(tabs)/adopt') }}
+        text="관심있는 개인 공고가 없어요"
+        description="마음에 드는 개인 공고에 하트를 누르면 여기에 모여요"
+        cta={{
+          label: '개인 공고 보기',
+          onPress: () => router.navigate({ pathname: '/(tabs)/adopt', params: { source: 'personal' } })
+        }}
       />
     );
   }
@@ -189,8 +196,8 @@ const ShelterList = () => {
   if (!isLoading && items.length === 0) {
     return (
       <ProfileEmptyState
-        text="좋아요한 보호소가 없어요"
-        description="가까운 보호소를 저장해보세요"
+        text="관심있는 보호소가 없어요"
+        description="관심 가는 보호소에 하트를 누르면 여기에 모여요"
         cta={{ label: '보호소 둘러보기', onPress: () => router.navigate('/(tabs)/shelter') }}
       />
     );
@@ -245,8 +252,8 @@ const CommunityPostLikeList = () => {
   if (!isLoading && items.length === 0) {
     return (
       <ProfileEmptyState
-        text="좋아요한 게시글이 없어요"
-        description="커뮤니티에서 마음에 든 글을 저장해보세요"
+        text="관심있는 게시글이 없어요"
+        description="커뮤니티 글에 공감을 누르면 여기에 모여요"
         cta={{ label: '커뮤니티 둘러보기', onPress: () => router.navigate('/(tabs)/community') }}
       />
     );
@@ -288,7 +295,13 @@ const CommentList = () => {
   );
 
   if (!isLoading && items.length === 0) {
-    return <ProfileEmptyState text="좋아요한 댓글이 없어요" description="도움이 된 댓글을 저장해보세요" />;
+    return (
+      <ProfileEmptyState
+        text="관심있는 댓글이 없어요"
+        description="도움이 된 댓글에 공감을 누르면 여기에 모여요"
+        cta={{ label: '커뮤니티 둘러보기', onPress: () => router.navigate('/(tabs)/community') }}
+      />
+    );
   }
 
   return (
@@ -330,8 +343,8 @@ const ButtonGroupWrap = styled(View, {
 const FilterRow = styled(XStack, {
   px: 20,
   pt: 4,
-  pb: 4,
-  justify: 'flex-end'
+  pb: 8,
+  justify: 'flex-start'
 });
 
 const AdoptSkeletonGrid = styled(View, {

@@ -1,5 +1,6 @@
 export * from './checkbox';
 export * from './dropdown';
+export * from './filter-chip';
 export * from './image-selector';
 export * from './search-input';
 export * from './select-field';

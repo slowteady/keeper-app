@@ -9,10 +9,9 @@ import {
   ShelterAgeBucket
 } from '@/entities/adopt';
 import { CAT_BREEDS, DOG_BREEDS } from '@/shared/model';
-import { ChosungSelectSheet, Dropdown, useBottomSheet, useBottomSheetMenu } from '@/shared/ui';
+import { ChosungSelectSheet, Dropdown, FilterChip, ResetChip, useBottomSheet, useBottomSheetMenu } from '@/shared/ui';
 
 import { ShelterFilterController } from '../model/use-shelter-filter';
-import { FilterChip, ResetChip } from './filter-chip';
 
 export type ShelterFilterBarProps = {
   filter: ShelterFilterController;
