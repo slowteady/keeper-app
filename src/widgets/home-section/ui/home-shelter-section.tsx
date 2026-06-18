@@ -1,12 +1,11 @@
 import { FlashList, ListRenderItemInfo } from '@shopify/flash-list';
 import { router } from 'expo-router';
 import { useCallback } from 'react';
-import { styled, Text, useTheme, View, XStack } from 'tamagui';
+import { styled, Text, View, XStack } from 'tamagui';
 
 import { DistancePermissionPrompt, ShelterCard, ShelterDto } from '@/entities/shelter';
 import { useFavoriteShelter } from '@/features/favorite-shelter';
 import { Skeleton } from '@/shared/ui';
-import { DownArrow } from '@/shared/ui/icons/mini';
 
 const CARD_WIDTH = 270;
 const CARD_GAP = 12;
@@ -20,7 +19,6 @@ export type HomeShelterSectionProps = {
 };
 
 export const HomeShelterSection = ({ shelters, isGranted, isLoading }: HomeShelterSectionProps) => {
-  const { black500 } = useTheme();
   const { toggleFavoriteShelter } = useFavoriteShelter();
 
   const renderItem = useCallback(
@@ -41,11 +39,10 @@ export const HomeShelterSection = ({ shelters, isGranted, isLoading }: HomeShelt
         <Text fontSize={26} lineHeight={36} fontWeight="600" color="$black900">
           내 주변 보호소
         </Text>
-        <XStack items="center" gap={2} mt={12} onPress={() => router.push('/shelter')}>
+        <XStack items="center" mt={12} onPress={() => router.push('/shelter')}>
           <Text fontSize={15} lineHeight={21} fontWeight="500" color="$black500">
             전체보기
           </Text>
-          <DownArrow width={10} height={6} color={black500.val} transform={[{ rotate: '-90deg' }]} />
         </XStack>
       </HeaderContainer>
 

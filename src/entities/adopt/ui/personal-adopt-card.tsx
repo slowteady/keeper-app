@@ -1,5 +1,5 @@
 import { useRecyclingState } from '@shopify/flash-list';
-import { Images } from '@tamagui/lucide-icons';
+import { Images, MapPin } from '@tamagui/lucide-icons';
 import { Image } from 'expo-image';
 import { memo, useCallback } from 'react';
 import { Pressable, StyleSheet } from 'react-native';
@@ -22,13 +22,14 @@ export type PersonalAdoptCardProps = {
   intro?: string;
   breed?: string;
   region: string;
-  dateText: string;
+  dateText?: string;
   chips?: PersonalAdoptCardChip[];
   protectionType?: string | null;
   isLiked?: boolean;
   onPress?: () => void;
   onPressFavorite?: () => void;
   completed?: boolean;
+  compact?: boolean;
 };
 
 const PersonalAdoptCardComponent = ({
@@ -44,7 +45,8 @@ const PersonalAdoptCardComponent = ({
   isLiked = false,
   onPress,
   onPressFavorite,
-  completed = false
+  completed = false,
+  compact = false
 }: PersonalAdoptCardProps) => {
   const handlePressFavorite = useCallback(() => {
     if (!onPressFavorite) return;
@@ -54,11 +56,18 @@ const PersonalAdoptCardComponent = ({
 
   const badgeLabel = completed ? '입양완료' : protectionType ? PROTECTION_LABEL[protectionType] : undefined;
 
+  const displayChips = (() => {
+    if (!compact || !breed) return chips ?? [];
+    const base = chips ?? [];
+    const breedChip = { id: 'BREED', value: breed, variant: 'default' as ChipVariant };
+    return base.length > 0 ? [base[0], breedChip, ...base.slice(1)] : [breedChip];
+  })();
+
   return (
     <Container>
       <Pressable onPress={onPress} disabled={!onPress}>
-        <ImageContainer>
-          <ImageWithSkeleton uri={uri} />
+        <ImageContainer compact={compact}>
+          <ImageWithSkeleton uri={uri} compact={compact} />
           {completed && <CompletedDim />}
           {badgeLabel && (
             <ProtectionBadge>
@@ -73,33 +82,46 @@ const PersonalAdoptCardComponent = ({
           )}
         </ImageContainer>
 
-        <TitleRow>
-          <Title>{title}</Title>
-          {!!dateText && <DateText>{dateText}</DateText>}
+        <TitleRow compact={compact}>
+          <Title compact={compact} numberOfLines={compact ? 1 : 2}>
+            {title}
+          </Title>
+          {!compact && !!dateText && <DateText>{dateText}</DateText>}
         </TitleRow>
-        {!!intro && <IntroText>{intro}</IntroText>}
-        {(!!breed || !!region) && (
-          <MetaRows>
-            {!!breed && (
-              <MetaRow>
-                <MetaLabel>품종</MetaLabel>
-                <MetaValue>{breed}</MetaValue>
-              </MetaRow>
+        {!compact && !!intro && <IntroText>{intro}</IntroText>}
+        {compact
+          ? !!region && (
+              <RegionLine>
+                <MapPin size={13} color="$black500" />
+                <RegionText>{region}</RegionText>
+              </RegionLine>
+            )
+          : (!!breed || !!region) && (
+              <MetaRows compact={compact}>
+                {!!breed && (
+                  <MetaRow>
+                    <MetaLabel compact={compact}>품종</MetaLabel>
+                    <MetaValue compact={compact}>{breed}</MetaValue>
+                  </MetaRow>
+                )}
+                {!!region && (
+                  <MetaRow>
+                    <MetaLabel compact={compact}>지역</MetaLabel>
+                    <MetaValue compact={compact}>{region}</MetaValue>
+                  </MetaRow>
+                )}
+              </MetaRows>
             )}
-            {!!region && (
-              <MetaRow>
-                <MetaLabel>지역</MetaLabel>
-                <MetaValue>{region}</MetaValue>
-              </MetaRow>
-            )}
-          </MetaRows>
-        )}
-        {!!chips?.length && <AdoptChips chips={chips} />}
+        {displayChips.length > 0 && <AdoptChips chips={displayChips} />}
       </Pressable>
 
       {onPressFavorite && (
-        <Pressable style={styles.favoriteButton} hitSlop={10} onPress={handlePressFavorite}>
-          <AnimatedHeart isLiked={isLiked} size={20} strokeWidth={2} inactiveColor="#FFFFFF" />
+        <Pressable
+          style={compact ? styles.favoriteButtonCompact : styles.favoriteButton}
+          hitSlop={10}
+          onPress={handlePressFavorite}
+        >
+          <AnimatedHeart isLiked={isLiked} size={compact ? 18 : 20} strokeWidth={2} inactiveColor="#FFFFFF" />
         </Pressable>
       )}
     </Container>
@@ -109,7 +131,7 @@ const PersonalAdoptCardComponent = ({
 export const PersonalAdoptCard = memo(PersonalAdoptCardComponent);
 PersonalAdoptCard.displayName = 'PersonalAdoptCard';
 
-const ImageWithSkeleton = ({ uri }: { uri: string }) => {
+const ImageWithSkeleton = ({ uri, compact }: { uri: string; compact?: boolean }) => {
   const [errored, setErrored] = useRecyclingState(false, [uri]);
 
   if (!uri || errored) {
@@ -124,7 +146,7 @@ const ImageWithSkeleton = ({ uri }: { uri: string }) => {
       transition={0}
       contentFit="cover"
       onError={() => setErrored(true)}
-      style={styles.image}
+      style={[styles.image, compact && styles.imageCompact]}
     />
   );
 };
@@ -140,7 +162,12 @@ const Container = styled(View, {
 const ImageContainer = styled(View, {
   width: '100%',
   aspectRatio: 4 / 3,
-  mb: 18
+  mb: 18,
+  variants: {
+    compact: {
+      true: { aspectRatio: 5 / 4, mb: 18 }
+    }
+  } as const
 });
 
 const ProtectionBadge = styled(View, {
@@ -183,23 +210,46 @@ const TitleRow = styled(XStack, {
   items: 'flex-start',
   justify: 'space-between',
   gap: 12,
-  mb: 14
+  mb: 14,
+  variants: {
+    compact: {
+      true: { mb: 16 }
+    }
+  } as const
 });
 
 const Title = styled(Text, {
   flex: 1,
   fontWeight: 600,
   fontSize: 17,
-  lineHeight: 22,
+  lineHeight: 26,
   color: '$black900',
   numberOfLines: 2,
-  ellipsizeMode: 'tail'
+  ellipsizeMode: 'tail',
+  variants: {
+    compact: {
+      true: { fontSize: 18, lineHeight: 22 }
+    }
+  } as const
+});
+
+const RegionLine = styled(XStack, {
+  items: 'center',
+  gap: 4,
+  mb: 14
+});
+
+const RegionText = styled(Text, {
+  fontWeight: 500,
+  fontSize: 14,
+  lineHeight: 17,
+  color: '$black500'
 });
 
 const IntroText = styled(Text, {
   fontWeight: 400,
   fontSize: 14,
-  lineHeight: 19,
+  lineHeight: 22,
   color: '$black600',
   numberOfLines: 2,
   ellipsizeMode: 'tail',
@@ -208,7 +258,12 @@ const IntroText = styled(Text, {
 
 const MetaRows = styled(View, {
   gap: 10,
-  mb: 14
+  mb: 14,
+  variants: {
+    compact: {
+      true: { gap: 10, mb: 16 }
+    }
+  } as const
 });
 
 const MetaRow = styled(XStack, {
@@ -221,7 +276,12 @@ const MetaLabel = styled(Text, {
   fontWeight: 500,
   fontSize: 13,
   lineHeight: 15,
-  color: '$black600'
+  color: '$black600',
+  variants: {
+    compact: {
+      true: { fontSize: 15, lineHeight: 17 }
+    }
+  } as const
 });
 
 const MetaValue = styled(Text, {
@@ -231,7 +291,12 @@ const MetaValue = styled(Text, {
   lineHeight: 15,
   color: '$black700',
   numberOfLines: 1,
-  ellipsizeMode: 'tail'
+  ellipsizeMode: 'tail',
+  variants: {
+    compact: {
+      true: { fontSize: 15, lineHeight: 17 }
+    }
+  } as const
 });
 
 const DateText = styled(Text, {
@@ -249,6 +314,9 @@ const styles = StyleSheet.create({
     aspectRatio: 4 / 3,
     backgroundColor: '#F2F3F5'
   },
+  imageCompact: {
+    aspectRatio: 5 / 4
+  },
   favoriteButton: {
     position: 'absolute',
     top: 10,
@@ -256,6 +324,17 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
+    backgroundColor: 'rgba(0, 0, 0, 0.35)',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  favoriteButtonCompact: {
+    position: 'absolute',
+    top: 6,
+    right: 8,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
     backgroundColor: 'rgba(0, 0, 0, 0.35)',
     alignItems: 'center',
     justifyContent: 'center'

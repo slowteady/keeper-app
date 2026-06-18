@@ -76,7 +76,7 @@ const Page = () => {
           );
         case 'adopt':
           return (
-            <View pb={40}>
+            <View pb={0}>
               <HomeAdoptSection
                 convertedData={convertedData}
                 isLoading={isLoading}
@@ -87,7 +87,7 @@ const Page = () => {
           );
         case 'personal':
           return (
-            <View pb={40}>
+            <View pb={45}>
               <HomePersonalSection
                 convertedData={personalData}
                 isLoading={personalLoading}

@@ -27,7 +27,7 @@ const Box = styled(XStack, {
 const Notice = styled(Text, {
   flex: 1,
   fontSize: 13,
-  lineHeight: 20,
+  lineHeight: 22,
   color: '$black800',
   letterSpacing: -0.25
 });

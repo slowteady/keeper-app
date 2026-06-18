@@ -1,12 +1,11 @@
 import { FlashList, FlashListRef, ListRenderItemInfo } from '@shopify/flash-list';
 import { useCallback, useRef } from 'react';
 import { Dimensions } from 'react-native';
-import { styled, Text, useTheme, View, XStack } from 'tamagui';
+import { styled, Text, View, XStack } from 'tamagui';
 
 import { ADOPT_CARD_IMAGE_SIZES, AdoptCard, AdoptCardSkeleton, AdoptItem } from '@/entities/adopt';
 import { useFavoriteAbandonment } from '@/features/favorite-abandonment';
 import { FeedNodata } from '@/shared/ui';
-import { DownArrow } from '@/shared/ui/icons/mini';
 
 const CARD_GAP = 12;
 const CARD_SNAP_INTERVAL = ADOPT_CARD_IMAGE_SIZES.medium + CARD_GAP;
@@ -20,7 +19,6 @@ export type HomeAdoptSectionProps = {
 
 export const HomeAdoptSection = ({ convertedData, isLoading, onGoDetail, onGoList }: HomeAdoptSectionProps) => {
   const scrollRef = useRef<FlashListRef<AdoptItem>>(null);
-  const { black500 } = useTheme();
   const { toggleFavoriteAbandonment } = useFavoriteAbandonment();
 
   const renderItem = useCallback(
@@ -48,13 +46,12 @@ export const HomeAdoptSection = ({ convertedData, isLoading, onGoDetail, onGoLis
     <>
       <HeaderContainer px={20} mb={16}>
         <Text fontSize={26} lineHeight={36} fontWeight="600" color="$black900">
-          최근 보호소 공고
+          보호소 공고
         </Text>
-        <XStack items="center" gap={2} mt={12} onPress={onGoList}>
+        <XStack items="center" mt={12} onPress={onGoList}>
           <Text fontSize={15} lineHeight={21} fontWeight="500" color="$black500">
             전체보기
           </Text>
-          <DownArrow width={10} height={6} color={black500.val} transform={[{ rotate: '-90deg' }]} />
         </XStack>
       </HeaderContainer>
 

@@ -50,6 +50,7 @@ const AdoptListSectionInner = <T extends { id: string }>(
       scrollEventThrottle={16}
       numColumns={numColumns}
       keyExtractor={({ id }) => id}
+      maintainVisibleContentPosition={{ disabled: true }}
       showsVerticalScrollIndicator={false}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
       ListHeaderComponent={header ?? null}

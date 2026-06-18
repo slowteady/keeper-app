@@ -41,8 +41,8 @@ const ChipItem = styled(View, {
 
 const ChipText = styled(Text, {
   fontWeight: 400,
-  fontSize: 12,
-  lineHeight: 14,
+  fontSize: 11,
+  lineHeight: 13,
   variants: {
     variant: {
       error: { color: '$errorMain' },
