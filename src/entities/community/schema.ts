@@ -112,6 +112,7 @@ export type CommunityAdoptDetailDto = z.infer<typeof CommunityAdoptDetailSchema>
 
 export const CommunityAdoptListSchema = z.object({
   id: z.string(),
+  category: z.enum(['ADOPTION_PERSONAL', 'ADOPTION_LIFE', 'QNA']).nullish(),
   user: PostUserSummarySchema.nullable(),
   displayTime: z.string(),
   title: z.string(),

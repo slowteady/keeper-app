@@ -9,9 +9,15 @@ import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
 import { CommunityAdoptListDto } from '../schema';
 
+export type CommunityPostListItemStatus = {
+  label: string;
+  tone: 'notice' | 'success';
+};
+
 export type CommunityPostListItemProps = {
   data: CommunityAdoptListDto;
   categoryLabel: string;
+  status?: CommunityPostListItemStatus;
   onPress: (id: string) => void;
   onPressLike?: (id: string, currentlyLiked: boolean) => void;
   onPressMore?: () => void;
@@ -20,6 +26,7 @@ export type CommunityPostListItemProps = {
 export const CommunityPostListItem = ({
   data,
   categoryLabel,
+  status,
   onPress,
   onPressLike,
   onPressMore
@@ -38,6 +45,11 @@ export const CommunityPostListItem = ({
       <Pressable onPress={() => onPress(data.id)} style={{ flex: 1 }}>
         <YStack gap={8}>
           <XStack items="center" gap={8}>
+            {status && (
+              <StatusChip tone={status.tone}>
+                <StatusText tone={status.tone}>{status.label}</StatusText>
+              </StatusChip>
+            )}
             <CategoryChip>
               <CategoryText>{categoryLabel}</CategoryText>
             </CategoryChip>
@@ -52,7 +64,7 @@ export const CommunityPostListItem = ({
                 <AnimatedHeart isLiked={data.isLiked} size={18} inactiveColor={black500.val} />
               </Pressable>
             )}
-            <Meta>{data.counts.like}명이 공감했어요</Meta>
+            {data.counts.like > 0 && <Meta>{data.counts.like}명이 공감했어요</Meta>}
           </XStack>
         </YStack>
       </Pressable>
@@ -74,6 +86,30 @@ const Container = styled(XStack, {
   borderBottomWidth: 1,
   borderBottomColor: '$white850',
   items: 'center'
+});
+
+const StatusChip = styled(View, {
+  px: 6,
+  py: 5,
+  rounded: 4,
+  variants: {
+    tone: {
+      notice: { bg: '$noticeLightest' },
+      success: { bg: '$successLightest' }
+    }
+  } as const
+});
+
+const StatusText = styled(Text, {
+  fontSize: 12,
+  fontWeight: '600',
+  letterSpacing: -0.24,
+  variants: {
+    tone: {
+      notice: { color: '$noticeMain' },
+      success: { color: '$successMain' }
+    }
+  } as const
 });
 
 const CategoryChip = styled(View, {

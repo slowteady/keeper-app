@@ -106,7 +106,11 @@ const reportPost = async (id: string, body: { reason: string; reasonDetail?: str
   await authApi.post<AxiosResponse>(`${COMMUNITY_BASE}/${id}/report`, body);
 };
 
-const getMyLikedPosts = async (params: { page: number; size: number }): Promise<CommunityListResponseDto> => {
+const getMyLikedPosts = async (params: {
+  page: number;
+  size: number;
+  type?: 'personal' | 'community';
+}): Promise<CommunityListResponseDto> => {
   const res = await authApi.get<ApiResponse<CommunityListResponseDto>>(`${COMMUNITY_BASE}/my/liked-posts`, { params });
   return CommunityListResponseSchema.parse(res.data.data);
 };
@@ -230,10 +234,10 @@ export const communityQueries = {
       enabled: !!id
     }),
 
-  myLikedList: (size: number = 20) =>
+  myLikedList: (type: 'personal' | 'community' = 'personal', size: number = 20) =>
     infiniteQueryOptions({
-      queryKey: ['me-liked-posts', { size }] as const,
-      queryFn: ({ pageParam }) => getMyLikedPosts({ page: pageParam, size }),
+      queryKey: ['me-liked-posts', { type, size }] as const,
+      queryFn: ({ pageParam }) => getMyLikedPosts({ page: pageParam, size, type }),
       initialPageParam: 1,
       getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.page + 1 : undefined),
       select: (data) => ({
