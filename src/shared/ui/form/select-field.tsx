@@ -1,5 +1,7 @@
 import { Pressable } from 'react-native';
-import { styled, Text, XStack } from 'tamagui';
+import { styled, Text, useTheme, XStack } from 'tamagui';
+
+import { DownArrow } from '@/shared/ui/icons/mini';
 
 // TextField 와 동일한 외형, 동작은 onPress 트리거(BS 등) 전용.
 // 사용자가 직접 입력하지 않고 옵션 선택만 받는 필드용.
@@ -23,6 +25,7 @@ export const SelectField = ({
   left,
   right
 }: SelectFieldProps) => {
+  const { black500 } = useTheme();
   const hasValue = !!value;
 
   return (
@@ -30,7 +33,7 @@ export const SelectField = ({
       <Container variant={variant} status={status}>
         {left ? <SideWrapper>{left}</SideWrapper> : null}
         <ValueText hasValue={hasValue}>{hasValue ? value : placeholder}</ValueText>
-        {right ? <SideWrapper>{right}</SideWrapper> : null}
+        <SideWrapper>{right ?? <DownArrow width={10} height={6} color={black500.val} />}</SideWrapper>
       </Container>
     </Pressable>
   );

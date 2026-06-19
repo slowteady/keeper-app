@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Image, StyleSheet } from 'react-native';
 import { ScrollView, Spinner, styled, View, XStack, YStack } from 'tamagui';
 
-import { logger } from '@/shared/lib';
+import { globalToast, logger } from '@/shared/lib';
 
 import { Close } from '../icons/outline';
 import { ImageViewer } from '../overlay/image-viewer';
@@ -43,6 +43,7 @@ export const ImageSelector = ({ max = 10, size = 100, value = [], onChange, read
       onChange?.([...value, ...newImages].slice(0, max));
     } catch (err) {
       logger.error(err);
+      globalToast('이미지를 불러오지 못했어요', 'fail');
     }
   };
 

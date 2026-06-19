@@ -26,11 +26,14 @@ const processImage = async (uri: string): Promise<string> => {
 const uploadOne = async (uri: string, uploadUrl: string) => {
   const processed = await processImage(uri);
   const blob = await fetch(processed).then((r) => r.blob());
-  await fetch(uploadUrl, {
+  const res = await fetch(uploadUrl, {
     method: 'PUT',
     headers: { 'Content-Type': 'image/jpeg' },
     body: blob
   });
+  if (!res.ok) {
+    throw new Error(`image upload failed: ${res.status}`);
+  }
 };
 
 const uploadImages = async (uris: string[]) => {

@@ -1,4 +1,5 @@
 export * from './account-header';
+export * from './inquiry-detail-scene';
 export * from './inquiry-form-scene';
 export * from './inquiry-history-scene';
 export * from './profile-activity-scene';
