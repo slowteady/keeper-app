@@ -18,43 +18,13 @@ describe('shelterQueries.all', () => {
   });
 });
 
-describe('shelterQueries.list', () => {
-  it('/shelters 로 GET 요청하고 params를 전달한다', async () => {
-    const params = { latitude: 37, longitude: 127, distance: 5, userLatitude: 37, userLongitude: 127 };
-    const opts = shelterQueries.list(params);
-
-    await (opts.queryFn as never as () => Promise<unknown>)();
-
-    expect(mockedAuthGet).toHaveBeenCalledWith('/shelters', { params });
-  });
-
-  it('queryKey에 params가 포함된다', () => {
-    const params = { latitude: 37, longitude: 127, distance: 5, userLatitude: 37, userLongitude: 127 };
-
-    expect(shelterQueries.list(params).queryKey).toEqual(['shelters', 'list', params]);
-  });
-
-  it('queryFn 이 ApiResponse 의 data.data (ShelterDto[]) 를 직접 반환한다 — 낙관 업데이트 일관성', async () => {
-    const params = { latitude: 37, longitude: 127, distance: 5, userLatitude: 37, userLongitude: 127 };
-    const opts = shelterQueries.list(params);
-    const items = [{ id: 'S1' }, { id: 'S2' }];
-    mockedAuthGet.mockResolvedValueOnce({ data: { data: items } } as never);
-
-    const result = await (opts.queryFn as never as () => Promise<unknown>)();
-
-    expect(result).toEqual(items);
-  });
-});
-
 describe('shelterQueries.within', () => {
-  it('/shelters/within 로 GET 요청하고 bounds params를 전달한다', async () => {
+  it('/shelters/within 로 GET 요청하고 bounds params를 전달한다 (GPS 미전송)', async () => {
     const params = {
       minLatitude: 37,
       maxLatitude: 38,
       minLongitude: 126,
-      maxLongitude: 128,
-      userLatitude: 37.5,
-      userLongitude: 127
+      maxLongitude: 128
     };
     const opts = shelterQueries.within(params);
 

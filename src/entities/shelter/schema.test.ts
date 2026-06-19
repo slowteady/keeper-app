@@ -1,4 +1,4 @@
-import { ShelterAdoptsParamsSchema, ShelterSchema, SheltersParamsSchema, ShelterWithinParamsSchema } from './schema';
+import { ShelterAdoptsParamsSchema, ShelterSchema, ShelterWithinParamsSchema } from './schema';
 
 const VALID_SHELTER = {
   id: 's1',
@@ -35,23 +35,9 @@ describe('ShelterSchema', () => {
   it('optional 필드(division, distance) 미포함 통과', () => {
     expect(() => ShelterSchema.parse(VALID_SHELTER)).not.toThrow();
   });
-});
 
-describe('SheltersParamsSchema', () => {
-  it('5개 좌표/거리 모두 통과', () => {
-    expect(() =>
-      SheltersParamsSchema.parse({
-        latitude: 37.5,
-        longitude: 127.0,
-        distance: 5,
-        userLatitude: 37.5,
-        userLongitude: 127.0
-      })
-    ).not.toThrow();
-  });
-
-  it('필드 누락 시 실패', () => {
-    expect(() => SheltersParamsSchema.parse({ latitude: 37.5, longitude: 127.0 })).toThrow();
+  it('distance 가 null 이어도 통과 (서버는 거리 미계산 → null 반환)', () => {
+    expect(() => ShelterSchema.parse({ ...VALID_SHELTER, distance: null })).not.toThrow();
   });
 });
 
@@ -62,15 +48,13 @@ describe('ShelterAdoptsParamsSchema', () => {
 });
 
 describe('ShelterWithinParamsSchema', () => {
-  it('bounds 4좌표 + 선택 사용자 좌표 통과', () => {
+  it('bounds 4좌표 통과 (사용자 GPS 없음)', () => {
     expect(() =>
       ShelterWithinParamsSchema.parse({
         minLatitude: 37,
         maxLatitude: 38,
         minLongitude: 126,
-        maxLongitude: 128,
-        userLatitude: 37.5,
-        userLongitude: 127.0
+        maxLongitude: 128
       })
     ).not.toThrow();
   });

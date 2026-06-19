@@ -4,27 +4,28 @@ import { AdoptResponseDto } from '@/entities/adopt';
 import { authApi } from '@/shared/api';
 import { ApiResponse } from '@/shared/model';
 
+import { attachDistance, LatLng } from './lib';
 import {
   ShelterAdoptsParamsDto,
   ShelterDto,
   ShelterMyFavoriteListDto,
   ShelterMyFavoriteListSchema,
-  SheltersParamsDto,
   ShelterWithinParamsDto
 } from './schema';
 
 const BASE_URL = '/shelters';
 
-// --- Service Functions ---
-
-// 낙관 업데이트 일관성 — list/within/detail 은 cache 에 view 모델(ShelterDto[] / ShelterDto) 직접 저장.
-// authApi 사용 이유 — 백엔드가 @CurrentUser 를 optional 로 받아 토큰이 있으면 isFavorited 를 채워준다.
-// publicApi (토큰 미첨부) 로 호출하면 user=undefined 가 되어 isFavorited 가 항상 false 로 떨어진다.
-const getShelters = async (params: SheltersParamsDto): Promise<ShelterDto[]> => {
-  const res = await authApi.get<ApiResponse<ShelterDto[]>>(BASE_URL, { params });
-  return res.data.data;
+// 전국 bbox — 위치정보법: 사용자 GPS를 서버로 보내지 않기 위해 전체 보호소를 받아 거리는 클라에서 계산.
+export const SHELTER_NATION_BOUNDS: ShelterWithinParamsDto = {
+  minLatitude: 33,
+  maxLatitude: 38.7,
+  minLongitude: 124.5,
+  maxLongitude: 131.9
 };
 
+// --- Service Functions ---
+
+// authApi 사용 이유 — 백엔드가 @CurrentUser 를 optional 로 받아 토큰이 있으면 isFavorited 를 채워준다.
 const getSheltersWithin = async (params: ShelterWithinParamsDto): Promise<ShelterDto[]> => {
   const res = await authApi.get<ApiResponse<ShelterDto[]>>(`${BASE_URL}/within`, { params });
   return res.data.data;
@@ -40,12 +41,7 @@ const getShelterAdopts = async (id: string, params: ShelterAdoptsParamsDto): Pro
   return res.data.data;
 };
 
-const getMyFavoriteShelters = async (params: {
-  page: number;
-  size: number;
-  userLatitude?: number;
-  userLongitude?: number;
-}): Promise<ShelterMyFavoriteListDto> => {
+const getMyFavoriteShelters = async (params: { page: number; size: number }): Promise<ShelterMyFavoriteListDto> => {
   const res = await authApi.get<ApiResponse<ShelterMyFavoriteListDto>>(`${BASE_URL}/favorites`, { params });
   return ShelterMyFavoriteListSchema.parse(res.data.data);
 };
@@ -72,12 +68,6 @@ export const shelterApi = {
 export const shelterQueries = {
   all: () => ['shelters'] as const,
 
-  list: (params: SheltersParamsDto) =>
-    queryOptions({
-      queryKey: [...shelterQueries.all(), 'list', params] as const,
-      queryFn: () => getShelters(params)
-    }),
-
   within: (params: ShelterWithinParamsDto) =>
     queryOptions({
       queryKey: [...shelterQueries.all(), 'within', params] as const,
@@ -103,20 +93,17 @@ export const shelterQueries = {
       }
     }),
 
-  myFavoriteList: (userLocation?: { latitude: number; longitude: number }, size: number = 20) =>
+  myFavoriteList: (userLocation?: LatLng, size: number = 20) =>
     infiniteQueryOptions({
       queryKey: ['me-favorite-shelters', { size, userLocation }] as const,
-      queryFn: ({ pageParam }) =>
-        getMyFavoriteShelters({
-          page: pageParam,
-          size,
-          userLatitude: userLocation?.latitude,
-          userLongitude: userLocation?.longitude
-        }),
+      queryFn: ({ pageParam }) => getMyFavoriteShelters({ page: pageParam, size }),
       initialPageParam: 1,
       getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.page + 1 : undefined),
       select: (data) => ({
-        items: data.pages.flatMap((p) => p.items),
+        items: attachDistance(
+          data.pages.flatMap((p) => p.items),
+          userLocation
+        ),
         total: data.pages[data.pages.length - 1].total,
         page: data.pages[data.pages.length - 1].page,
         size: data.pages[data.pages.length - 1].size,

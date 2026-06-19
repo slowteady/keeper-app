@@ -1,6 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { shelterQueries } from '@/entities/shelter';
+import {
+  attachDistance,
+  filterWithinKm,
+  SHELTER_NATION_BOUNDS,
+  shelterQueries,
+  sortByDistance
+} from '@/entities/shelter';
 import { useLocation } from '@/shared/model';
 
 const DEFAULT_DISTANCE = 7;
@@ -9,14 +15,10 @@ export const useHomeShelter = () => {
   const { userLocation, isGranted } = useLocation();
 
   const { data: shelters, isLoading } = useQuery({
-    ...shelterQueries.list({
-      latitude: userLocation?.latitude ?? 0,
-      longitude: userLocation?.longitude ?? 0,
-      distance: DEFAULT_DISTANCE,
-      userLatitude: userLocation?.latitude,
-      userLongitude: userLocation?.longitude
-    }),
-    enabled: !!userLocation
+    ...shelterQueries.within(SHELTER_NATION_BOUNDS),
+    enabled: !!userLocation,
+    select: (data) =>
+      userLocation ? sortByDistance(filterWithinKm(attachDistance(data, userLocation), DEFAULT_DISTANCE)) : []
   });
 
   return { shelters, isGranted, isLoading };

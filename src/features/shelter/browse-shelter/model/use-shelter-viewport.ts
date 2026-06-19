@@ -4,11 +4,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Supercluster from 'supercluster';
 
 import {
+  attachDistance,
   ClusterPointFeature,
+  SHELTER_NATION_BOUNDS,
   ShelterDto,
   ShelterProps,
-  shelterQueries,
-  ShelterWithinParamsDto
+  shelterQueries
 } from '@/entities/shelter';
 import { useLocation } from '@/shared/model';
 
@@ -17,13 +18,6 @@ import { useSetShelterSearchCoord, useShelterSearchCoord } from './shelter-searc
 const DEFAULT_ZOOM = 12;
 const CLUSTER_MAX_ZOOM = 16;
 const CLUSTER_RADIUS = 60;
-
-const NATION_BOUNDS: Omit<ShelterWithinParamsDto, 'userLatitude' | 'userLongitude'> = {
-  minLatitude: 33,
-  maxLatitude: 38.7,
-  minLongitude: 124.5,
-  maxLongitude: 131.9
-};
 
 export const useShelterViewport = () => {
   const { userLocation, isGranted, permissionStatus } = useLocation();
@@ -38,12 +32,9 @@ export const useShelterViewport = () => {
   const regionRef = useRef<Region | undefined>(undefined);
 
   const { data: allShelters, isLoading } = useQuery({
-    ...shelterQueries.within({
-      ...NATION_BOUNDS,
-      userLatitude: userLocation?.latitude,
-      userLongitude: userLocation?.longitude
-    }),
-    enabled: isMapReady
+    ...shelterQueries.within(SHELTER_NATION_BOUNDS),
+    enabled: isMapReady,
+    select: (data) => attachDistance(data, userLocation)
   });
 
   const index = useMemo(() => {
