@@ -29,10 +29,12 @@ describe('login', () => {
 });
 
 describe('logout', () => {
-  it('authApi 로 POST /auth/logout', async () => {
-    await logout();
+  it('authApi 로 POST /auth/logout (refreshToken 동봉)', async () => {
+    await logout('r-token');
 
-    expect(mockedAuthPost).toHaveBeenCalledWith('/auth/logout');
+    expect(mockedAuthPost).toHaveBeenCalledWith('/auth/logout', {
+      refreshToken: 'r-token'
+    });
   });
 });
 

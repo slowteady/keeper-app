@@ -22,10 +22,10 @@ export const login = async (params: LoginParamsDto): Promise<AxiosResponse<ApiRe
   return await publicApi.post(endpoint, params);
 };
 
-export const logout = async (): Promise<AxiosResponse<ApiResponse<boolean>>> => {
+export const logout = async (refreshToken?: string): Promise<AxiosResponse<ApiResponse<boolean>>> => {
   const endpoint = `${BASE_URL}/logout`;
 
-  return await authApi.post(endpoint);
+  return await authApi.post(endpoint, refreshToken ? { refreshToken } : {});
 };
 
 export const getUser = async (): Promise<AxiosResponse<ApiResponse<UserDto>>> => {

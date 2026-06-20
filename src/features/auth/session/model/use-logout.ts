@@ -6,7 +6,7 @@ import { router } from 'expo-router';
 import { useCallback } from 'react';
 
 import { authQueries, logout, SocialLoginType, UserDto } from '@/entities/auth';
-import { globalToast, logger, removeToken } from '@/shared/lib';
+import { getRefreshToken, globalToast, logger, removeToken } from '@/shared/lib';
 
 import { useSetIsAuthenticated } from '../../lib/auth-state';
 
@@ -45,7 +45,8 @@ export const useLogout = () => {
     try {
       const cachedUser = qc.getQueryData<UserDto>(authQueries.me().queryKey);
 
-      await mutateAsync();
+      const refreshToken = await getRefreshToken();
+      await mutateAsync(refreshToken ?? undefined);
       if (cachedUser?.socialType) {
         await signOutSocialSession(cachedUser.socialType);
       }
