@@ -27,7 +27,7 @@ const IMAGES = [require('@/assets/images/banner1.png'), require('@/assets/images
 const SECTIONS = [{ id: 'banner' }, { id: 'adopt' }, { id: 'personal' }, { id: 'shelter' }] as const;
 
 const HOME_LIST_SIZE = 10;
-const SECTION_GAP = 44;
+const SECTION_GAP = 36;
 
 const Page = () => {
   const router = useRouter();
@@ -99,7 +99,7 @@ const Page = () => {
           );
         case 'shelter':
           return (
-            <View pb={80}>
+            <View pb={SECTION_GAP}>
               <HomeShelterSection
                 shelters={shelter.shelters}
                 isGranted={shelter.isGranted}

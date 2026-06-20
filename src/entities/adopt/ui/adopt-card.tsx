@@ -14,6 +14,7 @@ import type { ChipVariant } from '../mapper';
 import type { AdoptStatusDto } from '../schema';
 
 const STATUS_CHIP_IDS = ['NEAR_DEADLINE', 'NEW', 'DDAY'];
+const CORE_CHIP_IDS = ['ANIMAL', 'GENDER', 'AGE', 'WEIGHT'];
 
 export type AdoptCardProps = {
   uri: string;
@@ -22,6 +23,7 @@ export type AdoptCardProps = {
   description: AdoptCardDescriptionsProps['data'];
   chips?: AdoptCardChipsProps['data'];
   horizontal?: boolean;
+  coreChipsOnly?: boolean;
   onPress?: () => void;
   isFavorited?: boolean;
   onPressFavorite?: () => void;
@@ -41,6 +43,7 @@ const AdoptCardComponent = ({
   description,
   chips,
   horizontal = false,
+  coreChipsOnly = false,
   onPress,
   isFavorited = false,
   onPressFavorite,
@@ -49,7 +52,8 @@ const AdoptCardComponent = ({
 }: AdoptCardProps) => {
   const size = horizontal ? 'medium' : 'small';
   const statusChips = chips?.filter((c) => STATUS_CHIP_IDS.includes(c.id)) ?? [];
-  const attributeChips = chips?.filter((c) => !STATUS_CHIP_IDS.includes(c.id)) ?? [];
+  const attributeChips =
+    chips?.filter((c) => !STATUS_CHIP_IDS.includes(c.id) && (!coreChipsOnly || CORE_CHIP_IDS.includes(c.id))) ?? [];
 
   const handlePressFavorite = useCallback(() => {
     if (!onPressFavorite) return;

@@ -31,6 +31,7 @@ export const HomePersonalSection = ({ convertedData, isLoading, onGoDetail, onGo
       <View width={CARD_WIDTH}>
         <PersonalAdoptCard
           compact
+          coreChipsOnly
           uri={item.uri}
           imageCount={item.imageCount}
           title={item.title}
@@ -73,7 +74,7 @@ export const HomePersonalSection = ({ convertedData, isLoading, onGoDetail, onGo
         showsHorizontalScrollIndicator={false}
         ItemSeparatorComponent={() => <View width={CARD_GAP} />}
         contentContainerStyle={{ paddingRight: 20 }}
-        style={{ paddingLeft: 20 }}
+        style={{ paddingLeft: 20, height: 284 }}
         ListEmptyComponent={<EmptyComponent isLoading={isLoading} />}
       />
     </>

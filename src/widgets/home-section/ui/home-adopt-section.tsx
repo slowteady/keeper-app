@@ -28,6 +28,7 @@ export const HomeAdoptSection = ({ convertedData, isLoading, onGoDetail, onGoLis
       return (
         <AdoptCard
           horizontal
+          coreChipsOnly
           uri={uri}
           title={title}
           description={description}
@@ -66,8 +67,8 @@ export const HomeAdoptSection = ({ convertedData, isLoading, onGoDetail, onGoLis
         decelerationRate="fast"
         showsHorizontalScrollIndicator={false}
         ItemSeparatorComponent={() => <View width={CARD_GAP} />}
-        contentContainerStyle={{ minHeight: 350, paddingRight: 20 }}
-        style={{ paddingLeft: 20 }}
+        contentContainerStyle={{ paddingRight: 20 }}
+        style={{ paddingLeft: 20, height: 350 }}
         ListEmptyComponent={<EmptyComponent isLoading={isLoading} />}
       />
     </>

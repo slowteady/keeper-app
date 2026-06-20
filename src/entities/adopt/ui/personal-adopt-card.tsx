@@ -30,7 +30,10 @@ export type PersonalAdoptCardProps = {
   onPressFavorite?: () => void;
   completed?: boolean;
   compact?: boolean;
+  coreChipsOnly?: boolean;
 };
+
+const CORE_CHIP_IDS = ['ANIMAL', 'GENDER', 'AGE', 'WEIGHT'];
 
 const PersonalAdoptCardComponent = ({
   uri,
@@ -46,7 +49,8 @@ const PersonalAdoptCardComponent = ({
   onPress,
   onPressFavorite,
   completed = false,
-  compact = false
+  compact = false,
+  coreChipsOnly = false
 }: PersonalAdoptCardProps) => {
   const handlePressFavorite = useCallback(() => {
     if (!onPressFavorite) return;
@@ -57,8 +61,9 @@ const PersonalAdoptCardComponent = ({
   const badgeLabel = completed ? '입양완료' : protectionType ? PROTECTION_LABEL[protectionType] : undefined;
 
   const displayChips = (() => {
-    if (!compact || !breed) return chips ?? [];
     const base = chips ?? [];
+    if (coreChipsOnly) return base.filter((c) => CORE_CHIP_IDS.includes(c.id));
+    if (!compact || !breed) return base;
     const breedChip = { id: 'BREED', value: breed, variant: 'default' as ChipVariant };
     return base.length > 0 ? [base[0], breedChip, ...base.slice(1)] : [breedChip];
   })();
