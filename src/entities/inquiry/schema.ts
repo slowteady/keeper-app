@@ -71,5 +71,5 @@ export const INQUIRY_TYPE_LABEL: Record<InquiryTypeDto, string> = Object.fromEnt
 export const INQUIRY_STATUS_LABEL: Record<InquiryStatusDto, string> = {
   RECEIVED: '접수',
   IN_PROGRESS: '처리중',
-  DONE: '완료'
+  DONE: '답변완료'
 };

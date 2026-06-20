@@ -15,10 +15,10 @@ export const useCreateInquiry = () => {
       const images = data.images.length > 0 ? await imageUpload.mutateAsync(data.images) : [];
       return inquiryApi.createInquiry({ ...data, images });
     },
-    onSuccess: (created) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: inquiryQueries.all() });
       globalToast('문의를 접수했어요', 'success');
-      router.replace(`/(untabs)/profile/inquiry/${created.id}`);
+      router.back();
     },
     onError: (error) => {
       logger.error(error);

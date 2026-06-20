@@ -1,5 +1,5 @@
 import { ScrollView } from 'react-native';
-import { Spinner, styled, Text, View, XStack, YStack } from 'tamagui';
+import { Spinner, styled, Text, XStack, YStack } from 'tamagui';
 
 import { INQUIRY_TYPE_LABEL, InquiryReplyCard, InquiryStatusBadge } from '@/entities/inquiry';
 import { useInquiryDetail } from '@/features/inquiry';
@@ -33,10 +33,7 @@ export const InquiryDetailScene = ({ id }: { id: string }) => {
         <QuestionCard>
           <XStack items="center" gap={8}>
             <InquiryStatusBadge status={data.status} />
-            <TypeChip>
-              <TypeText>{INQUIRY_TYPE_LABEL[data.type]}</TypeText>
-            </TypeChip>
-            <DisplayTime>{formatTimeAgo(data.createdAt)}</DisplayTime>
+            <Meta>{`${INQUIRY_TYPE_LABEL[data.type]} · ${formatTimeAgo(data.createdAt)}`}</Meta>
           </XStack>
           <Content>{data.content}</Content>
           {data.images.length > 0 && <ImageSelector value={data.images} readOnly size={72} />}
@@ -69,24 +66,11 @@ const QuestionCard = styled(YStack, {
   borderBottomColor: '$white850'
 });
 
-const TypeChip = styled(View, {
-  px: 6,
-  py: 5,
-  rounded: 4,
-  bg: '$white850'
-});
-
-const TypeText = styled(Text, {
+const Meta = styled(Text, {
   fontSize: 12,
   fontWeight: '500',
-  color: '$black700',
+  color: '$black500',
   letterSpacing: -0.24
-});
-
-const DisplayTime = styled(Text, {
-  fontSize: 12,
-  fontWeight: '500',
-  color: '$black500'
 });
 
 const Content = styled(Text, {

@@ -57,6 +57,7 @@ export const InquiryHistoryScene = () => {
         renderItem={renderItem}
         onRefresh={refetch}
         refreshing={false}
+        maintainVisibleContentPosition={{ disabled: true }}
         contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 40 }}
       />
     </Container>

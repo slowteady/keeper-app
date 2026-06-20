@@ -5,10 +5,10 @@ export const SHARE_DESC = '유기동물들의 가족이 되어주세요';
 
 export const MENU_SECTIONS = [
   {
-    label: '이용 안내',
+    label: '지원',
     items: [
       { icon: Megaphone, label: '공지사항', navigateTo: 'notice', requireAuth: false },
-      { icon: CircleHelp, label: '문의하기', navigateTo: 'inquiry', requireAuth: true },
+      { icon: CircleHelp, label: '문의', navigateTo: 'inquiry', requireAuth: true },
       { icon: Info, label: '앱 정보', navigateTo: 'app-info', requireAuth: false }
     ]
   },

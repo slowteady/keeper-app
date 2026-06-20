@@ -1,64 +1,78 @@
+import { ChevronRight } from '@tamagui/lucide-icons';
 import { Pressable } from 'react-native';
-import { styled, Text, View, XStack, YStack } from 'tamagui';
+import { styled, Text, XStack, YStack } from 'tamagui';
 
 import { formatTimeAgo } from '@/shared/lib';
 
-import { INQUIRY_TYPE_LABEL, InquiryListItemDto } from '../schema';
-import { InquiryStatusBadge } from './inquiry-status-badge';
+import { INQUIRY_STATUS_LABEL, INQUIRY_TYPE_LABEL, InquiryListItemDto } from '../schema';
 
 export type InquiryListItemProps = {
   data: InquiryListItemDto;
   onPress: (id: string) => void;
 };
 
+const STATUS_TONE = {
+  RECEIVED: 'neutral',
+  IN_PROGRESS: 'notice',
+  DONE: 'success'
+} as const;
+
 export const InquiryListItem = ({ data, onPress }: InquiryListItemProps) => (
   <Pressable onPress={() => onPress(data.id)}>
     <Container>
-      <XStack items="center" gap={8}>
-        <InquiryStatusBadge status={data.status} />
-        <TypeChip>
-          <TypeText>{INQUIRY_TYPE_LABEL[data.type]}</TypeText>
-        </TypeChip>
-        <DisplayTime>{formatTimeAgo(data.createdAt)}</DisplayTime>
-      </XStack>
-      <Preview numberOfLines={2} ellipsizeMode="tail">
-        {data.contentPreview}
-      </Preview>
+      <YStack flex={1} gap={6}>
+        <Meta>{`${INQUIRY_TYPE_LABEL[data.type]} · ${formatTimeAgo(data.createdAt)}`}</Meta>
+        <Preview numberOfLines={2} ellipsizeMode="tail">
+          {data.contentPreview}
+        </Preview>
+      </YStack>
+      <StatusRow>
+        <StatusLabel tone={STATUS_TONE[data.status]}>{INQUIRY_STATUS_LABEL[data.status]}</StatusLabel>
+        <ChevronRight size={16} color="#ADB3AF" />
+      </StatusRow>
     </Container>
   </Pressable>
 );
 
-const Container = styled(YStack, {
+const Container = styled(XStack, {
   py: 16,
-  gap: 8,
+  gap: 12,
+  items: 'flex-start',
   borderBottomWidth: 1,
   borderBottomColor: '$white850'
 });
 
-const TypeChip = styled(View, {
-  px: 6,
-  py: 5,
-  rounded: 4,
-  bg: '$white850'
-});
-
-const TypeText = styled(Text, {
+const Meta = styled(Text, {
   fontSize: 12,
   fontWeight: '500',
-  color: '$black700',
+  color: '$black500',
   letterSpacing: -0.24
 });
 
-const DisplayTime = styled(Text, {
-  fontSize: 12,
+const Preview = styled(Text, {
+  fontSize: 16,
   fontWeight: '500',
-  color: '$black500'
+  lineHeight: 23,
+  color: '$black900',
+  letterSpacing: -0.4
 });
 
-const Preview = styled(Text, {
-  fontSize: 15,
-  fontWeight: '500',
-  lineHeight: 22,
-  color: '$black900',
-  letterSpacing: -0.45
+const StatusRow = styled(XStack, {
+  shrink: 0,
+  items: 'center',
+  gap: 2,
+  pt: 1
+});
+
+const StatusLabel = styled(Text, {
+  fontSize: 13,
+  fontWeight: '600',
+  letterSpacing: -0.26,
+  variants: {
+    tone: {
+      neutral: { color: '$black500' },
+      notice: { color: '$noticeMain' },
+      success: { color: '$successMain' }
+    }
+  } as const
 });
