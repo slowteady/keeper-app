@@ -1,7 +1,7 @@
 import { ChevronRight, Clock, Hash, MapPin } from '@tamagui/lucide-icons';
 import { RelativePathString, router, useLocalSearchParams } from 'expo-router';
 import { Suspense, useMemo, useState } from 'react';
-import { Pressable } from 'react-native';
+import { Pressable, RefreshControl } from 'react-native';
 import { ScrollView, styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
 
 import { ADOPT_STATUS_INFO, AdoptStatusDto, isAdoptEnded } from '@/entities/adopt';
@@ -37,7 +37,7 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
   const [buttonHeight, setButtonHeight] = useState(0);
   const { black600 } = useTheme();
 
-  const { adopt } = useAdopt({ id });
+  const { adopt, refetch, isRefetching } = useAdopt({ id });
   const { shelterData } = useShelter({ id: adopt.shelterId });
   const { toggleFavoriteAbandonment } = useFavoriteAbandonment();
   const { share } = useShare();
@@ -72,6 +72,7 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
         decelerationRate="fast"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingTop: 0, paddingBottom: buttonHeight + 40 } as never}
+        refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} />}
       >
         {ended && adopt.status && <AdoptEndedBanner status={adopt.status} />}
 

@@ -10,7 +10,11 @@ export type UseAdoptProps = {
 export const useAdopt = ({ id }: UseAdoptProps) => {
   const queryClient = useQueryClient();
 
-  const { data: adoptData } = useSuspenseQuery({
+  const {
+    data: adoptData,
+    refetch,
+    isRefetching
+  } = useSuspenseQuery({
     ...adoptQueries.detail(id),
     initialData: () => findInListCache(queryClient, id),
     initialDataUpdatedAt: 0
@@ -18,7 +22,7 @@ export const useAdopt = ({ id }: UseAdoptProps) => {
 
   const adopt = useMemo(() => adoptData && mapToAdopt(adoptData), [adoptData]);
 
-  return { adopt };
+  return { adopt, refetch, isRefetching };
 };
 
 const findInListCache = (queryClient: ReturnType<typeof useQueryClient>, id: string): AdoptDataDto | undefined => {
