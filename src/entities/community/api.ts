@@ -115,7 +115,13 @@ const getMyLikedPosts = async (params: {
   return CommunityListResponseSchema.parse(res.data.data);
 };
 
-const getMyPosts = async (params: { page: number; size: number }): Promise<MyPostListResponseDto> => {
+export type MyPostType = 'personal' | 'community';
+
+const getMyPosts = async (params: {
+  page: number;
+  size: number;
+  type?: MyPostType;
+}): Promise<MyPostListResponseDto> => {
   const res = await authApi.get<ApiResponse<MyPostListResponseDto>>(`${COMMUNITY_BASE}/my/posts`, { params });
   return MyPostListResponseSchema.parse(res.data.data);
 };
@@ -249,10 +255,10 @@ export const communityQueries = {
       })
     }),
 
-  myPostList: (size: number = 20) =>
+  myPostList: (type?: MyPostType, size: number = 20) =>
     infiniteQueryOptions({
-      queryKey: ['me-posts', { size }] as const,
-      queryFn: ({ pageParam }) => getMyPosts({ page: pageParam, size }),
+      queryKey: ['me-posts', { type, size }] as const,
+      queryFn: ({ pageParam }) => getMyPosts({ page: pageParam, size, type }),
       initialPageParam: 1,
       getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.page + 1 : undefined),
       select: (data) => ({

@@ -8,7 +8,8 @@ import {
   CommunityPostListItem,
   CommunityPostListItemStatus,
   MyCommentItemDto,
-  MyPostItemDto
+  MyPostItemDto,
+  MyPostType
 } from '@/entities/community';
 import { useCurrentUser } from '@/features/auth';
 import { useCommentMenu, usePostMenu } from '@/features/community';
@@ -19,14 +20,15 @@ import { ProfileCommentListSkeleton } from './profile-comment-list-skeleton';
 import { ProfileEmptyState } from './profile-empty-state';
 
 const ACTIVITY_OPTIONS = [
-  { id: 'post', label: '내 글' },
-  { id: 'comment', label: '내 댓글' }
+  { id: 'adopt', label: '공고' },
+  { id: 'post', label: '게시글' },
+  { id: 'comment', label: '댓글' }
 ] as const;
 
 type ActivityOption = (typeof ACTIVITY_OPTIONS)[number]['id'];
 
 const CATEGORY_LABEL: Record<MyPostItemDto['category'], string> = {
-  ADOPTION_PERSONAL: '내 공고',
+  ADOPTION_PERSONAL: '개인공고',
   ADOPTION_LIFE: '입양생활',
   QNA: '궁금해요'
 };
@@ -39,29 +41,45 @@ const adoptionStatusChip = (item: MyPostItemDto): CommunityPostListItemStatus | 
 };
 
 export const ProfileActivityScene = () => {
-  const [selected, setSelected] = useState<ActivityOption>('post');
+  const [selected, setSelected] = useState<ActivityOption>('adopt');
 
   return (
     <Container>
       <ButtonGroupWrap>
         <ButtonGroup id={selected} data={ACTIVITY_OPTIONS} onChange={setSelected} />
       </ButtonGroupWrap>
-      {selected === 'post' ? <MyPostList /> : <MyCommentList />}
+      {selected === 'adopt' && <MyPostList type="personal" />}
+      {selected === 'post' && <MyPostList type="community" />}
+      {selected === 'comment' && <MyCommentList />}
     </Container>
   );
 };
 
-const MyPostList = () => {
-  const { items, isLoading, isFetchingNextPage, fetchNextPage, refetch } = useMyPosts();
+const POST_EMPTY = {
+  personal: {
+    text: '올린 공고가 없어요',
+    description: '입양 보낼 아이의 공고를 올리면 여기에 모여요',
+    cta: { label: '공고 올리기', pathname: '/community-write' }
+  },
+  community: {
+    text: '작성한 글이 없어요',
+    description: '커뮤니티에 글을 남기면 여기에 모여요',
+    cta: { label: '커뮤니티 둘러보기', pathname: '/(tabs)/community' }
+  }
+} as const;
+
+const MyPostList = ({ type }: { type: MyPostType }) => {
+  const { items, isLoading, isFetchingNextPage, fetchNextPage, refetch } = useMyPosts(type);
+  const empty = POST_EMPTY[type];
 
   const renderItem = useCallback(({ item }: ListRenderItemInfo<MyPostItemDto>) => <MyPostListItem item={item} />, []);
 
   if (!isLoading && items.length === 0) {
     return (
       <ProfileEmptyState
-        text="작성한 글이 없어요"
-        description="커뮤니티에 글을 남기면 여기에 모여요"
-        cta={{ label: '커뮤니티 둘러보기', onPress: () => router.navigate('/(tabs)/community') }}
+        text={empty.text}
+        description={empty.description}
+        cta={{ label: empty.cta.label, onPress: () => router.navigate(empty.cta.pathname) }}
       />
     );
   }

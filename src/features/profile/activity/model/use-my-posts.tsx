@@ -2,11 +2,11 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
-import { communityQueries } from '@/entities/community';
+import { communityQueries, MyPostType } from '@/entities/community';
 
-export const useMyPosts = () => {
+export const useMyPosts = (type?: MyPostType) => {
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useInfiniteQuery(
-    communityQueries.myPostList()
+    communityQueries.myPostList(type)
   );
 
   useFocusEffect(
