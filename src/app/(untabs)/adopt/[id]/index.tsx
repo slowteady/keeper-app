@@ -1,4 +1,4 @@
-import { ChevronRight, Clock, MapPin } from '@tamagui/lucide-icons';
+import { ChevronRight, Clock, Hash, MapPin } from '@tamagui/lucide-icons';
 import { RelativePathString, router, useLocalSearchParams } from 'expo-router';
 import { Suspense, useMemo, useState } from 'react';
 import { Pressable } from 'react-native';
@@ -52,6 +52,7 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
   const region = descValue('지역');
   const noticePeriod = descValue('공고기간');
   const rescuePlace = descValue('구조장소');
+  const noticeNo = adopt.noticeNo;
 
   const basicRows = [
     { label: '품종', value: adopt.title },
@@ -104,10 +105,17 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
         </ActionRow>
 
         <YStack px={20} gap={32}>
-          {(!!noticePeriod || !!rescuePlace) && (
+          {(!!noticeNo || !!noticePeriod || !!rescuePlace) && (
             <YStack gap={12}>
               <NoticeTitle>공고정보</NoticeTitle>
               <YStack gap={10}>
+                {!!noticeNo && (
+                  <NoticeRow>
+                    <Hash size={16} color={black600.val as never} />
+                    <NoticeLabel>공고번호</NoticeLabel>
+                    <NoticeValue>{noticeNo}</NoticeValue>
+                  </NoticeRow>
+                )}
                 {!!noticePeriod && (
                   <NoticeRow>
                     <Clock size={16} color={black600.val as never} />
