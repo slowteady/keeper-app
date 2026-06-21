@@ -80,6 +80,7 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
       longitude: shelterData.longitude,
       title: shelterData.name,
       directionsMode: 'car',
+      naverCallerName: 'com.keeper.love',
       dialogTitle: '길찾기',
       dialogMessage: '길찾기에 사용할 지도 앱을 선택해주세요',
       cancelText: '취소'

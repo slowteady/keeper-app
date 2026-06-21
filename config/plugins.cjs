@@ -46,6 +46,7 @@ module.exports = [
   ],
   ['@react-native-google-signin/google-signin', { iosUrlScheme: process.env.EXPO_PUBLIC_GOOGLE_URL_IOS_SCHEME }],
   'react-native-map-link',
+  './config/with-korean-map-queries.cjs',
   [
     'expo-secure-store',
     {
