@@ -12,7 +12,7 @@ export type ScrollToTopButtonProps = {
 };
 
 const DEFAULT_THRESHOLD = 600;
-const SIZE = 44;
+const SIZE = 54;
 
 export const ScrollToTopButton = ({
   scrollY,

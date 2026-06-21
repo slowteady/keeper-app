@@ -8,12 +8,13 @@ import { ADOPT_STATUS_INFO, AdoptStatusDto, isAdoptEnded } from '@/entities/adop
 import { resolveAdoptShelter, useAdopt } from '@/features/adopt';
 import { useFavoriteAbandonment } from '@/features/favorite-abandonment';
 import { useShelter } from '@/features/shelter';
+import { SCREEN_GUTTER } from '@/shared/lib';
 import { useShare } from '@/shared/model';
 import { BottomButton, CallModal, Carousel, DetailErrorBoundary, SuspenseFallback } from '@/shared/ui';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 import { Share as ShareIcon } from '@/shared/ui/icons/outline';
 import { AdoptDetailDescriptionSection, DetailSpecSection } from '@/widgets/adopt-section';
-import { CommunityDetailHealthSection } from '@/widgets/community-adopt-feed-section';
+import { CommunityDetailHealthSection } from '@/widgets/community-post-section';
 
 export const ErrorBoundary = DetailErrorBoundary;
 
@@ -82,7 +83,7 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
           </Hero>
         )}
 
-        <ActionRow px={20} mb={24}>
+        <ActionRow px={SCREEN_GUTTER} mb={24}>
           {!!shelter.name && (
             <Pressable
               hitSlop={8}
@@ -105,7 +106,7 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
           </Actions>
         </ActionRow>
 
-        <YStack px={20} gap={32}>
+        <YStack px={SCREEN_GUTTER} gap={32}>
           {(!!noticeNo || !!noticePeriod || !!rescuePlace) && (
             <YStack gap={12}>
               <NoticeTitle>공고정보</NoticeTitle>

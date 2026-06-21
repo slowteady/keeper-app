@@ -10,7 +10,7 @@ import { LocationBottomSheet, useLocationBottomSheet } from '@/features/address'
 import { useCreatePost } from '@/features/community';
 import { getFormErrorMessage, globalToast, scrollToView } from '@/shared/lib';
 import { BottomButton, CancelModal, ModalPageHeader } from '@/shared/ui';
-import { CommunityAdoptForm } from '@/widgets/community-adopt-feed-section';
+import { CommunityAdoptForm } from '@/widgets/community-post-section';
 
 // 폼 시각적 순서에 맞춰 첫 에러 필드를 결정 (CommunityAdoptForm 렌더 순서)
 const FIELD_ORDER: (keyof CommunityAdoptFormDto)[] = [

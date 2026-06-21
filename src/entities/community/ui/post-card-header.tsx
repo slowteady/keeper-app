@@ -3,13 +3,13 @@ import { Text, XStack } from 'tamagui';
 import { ProfileAvatar } from '@/entities/profile';
 import { formatTimeAgo } from '@/shared/lib';
 
-export type CommunityAdoptCardHeaderProps = {
+export type PostCardHeaderProps = {
   image: string;
   nickname: string;
   displayTime: string;
 };
 
-export const CommunityAdoptCardHeader = ({ image, nickname, displayTime }: CommunityAdoptCardHeaderProps) => {
+export const PostCardHeader = ({ image, nickname, displayTime }: PostCardHeaderProps) => {
   return (
     <XStack items="center" flex={1} style={{ minWidth: 0 }}>
       <ProfileAvatar image={image} size={32} shape="rounded" />

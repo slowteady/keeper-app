@@ -6,7 +6,8 @@ export type ShelterDetailDescriptionSectionProps = {
   tel: string;
 };
 
-const orFallback = (value?: string) => (value && value.trim().length > 0 ? value : '등록되지 않았어요');
+const hasValue = (value?: string) => !!value && value.trim().length > 0;
+const orFallback = (value?: string) => (hasValue(value) ? (value as string) : '등록되지 않았어요');
 
 export const ShelterDetailDescriptionSection = ({ time, person, tel }: ShelterDetailDescriptionSectionProps) => {
   return (
@@ -15,7 +16,8 @@ export const ShelterDetailDescriptionSection = ({ time, person, tel }: ShelterDe
       rows={[
         { label: '운영시간', value: orFallback(time) },
         { label: '연락처', value: orFallback(tel) },
-        { label: '담당', value: orFallback(person) }
+        // 담당자(person)는 공공데이터상 없는 보호소가 많아 빈 경우 행 자체를 노출하지 않음
+        ...(hasValue(person) ? [{ label: '담당', value: person }] : [])
       ]}
     />
   );

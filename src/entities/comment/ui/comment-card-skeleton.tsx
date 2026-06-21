@@ -1,10 +1,11 @@
 import { View, XStack, YStack } from 'tamagui';
 
+import { SCREEN_GUTTER } from '@/shared/lib';
 import { Skeleton } from '@/shared/ui';
 
 export const CommentCardSkeleton = () => {
   return (
-    <YStack px={20} py={24}>
+    <YStack px={SCREEN_GUTTER} py={24}>
       <XStack mb={16} gap={8} items="center">
         <Skeleton style={{ width: 24, height: 24, borderRadius: 4 }} />
         <View height={14} width={80}>

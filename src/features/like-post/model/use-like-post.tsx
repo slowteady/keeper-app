@@ -70,10 +70,10 @@ export const useLikePost = () => {
     },
 
     // 연속 토글 race condition 방지 — 마지막 mutation 만 invalidate.
+    // 관심 목록(ME_LIKED)은 무효화 X — 카드 내 해제가 즉시 사라지지 않고 다음 focus refetch 까지 잔존 (29cm)
     onSettled: () => {
       if (queryClient.isMutating({ mutationKey: [...LIKE_POST_MUTATION_KEY] }) === 1) {
         queryClient.invalidateQueries({ queryKey: COMMUNITY_PREFIX });
-        queryClient.invalidateQueries({ queryKey: ME_LIKED_PREFIX });
       }
     }
   });

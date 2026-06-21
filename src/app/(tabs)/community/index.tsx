@@ -1,55 +1,35 @@
 import { useRouter } from 'expo-router';
-import { useCallback, useMemo, useState } from 'react';
-import { SceneRendererProps } from 'react-native-tab-view';
+import { useCallback } from 'react';
+import { NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
+import { useSharedValue } from 'react-native-reanimated';
 import { styled, View } from 'tamagui';
 
-import { COMMUNITY_TAB_ROUTES } from '@/entities/community';
 import { useLoginRequired } from '@/features/auth';
-import { globalToast } from '@/shared/lib';
-import { RouteErrorBoundary, Tab } from '@/shared/ui';
-import { CommunityAdoptFeed, CommunityWriteFab } from '@/widgets/community-adopt-feed-section';
-import { CommunityMissingFeed } from '@/widgets/community-missing-feed-section';
+import { RouteErrorBoundary, WriteFab } from '@/shared/ui';
 import { CommunityQnAFeed } from '@/widgets/community-qna-feed-section';
 
 export const ErrorBoundary = RouteErrorBoundary;
 
-const renderScene = ({ route }: SceneRendererProps & { route: { key: string } }) => {
-  switch (route.key) {
-    case 'adopt':
-      return <CommunityAdoptFeed />;
-    case 'missing':
-      return <CommunityMissingFeed />;
-    case 'qna':
-      return <CommunityQnAFeed />;
-    default:
-      return null;
-  }
-};
-
 const Page = () => {
-  const [index, setIndex] = useState(0);
   const router = useRouter();
   const { requireLogin } = useLoginRequired();
+  const scrollY = useSharedValue(0);
 
-  const navigationState = useMemo(() => ({ index, routes: COMMUNITY_TAB_ROUTES }), [index]);
+  const handleScroll = useCallback(
+    (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+      scrollY.value = e.nativeEvent.contentOffset.y;
+    },
+    [scrollY]
+  );
 
-  const handleIndexChange = useCallback((nextIndex: number) => {
-    setIndex(nextIndex);
-  }, []);
-
-  const handlePressWrite = useCallback(async () => {
-    await requireLogin(() => {
-      const currentKey = COMMUNITY_TAB_ROUTES[index]?.key;
-      if (currentKey === 'qna') router.push('/community-qna-write');
-      else if (currentKey === 'missing') globalToast('실종분실 글쓰기는 곧 열려요');
-      else router.push('/community-write');
-    });
-  }, [requireLogin, router, index]);
+  const handlePressWrite = useCallback(() => {
+    requireLogin(() => router.push('/community-qna-write'));
+  }, [requireLogin, router]);
 
   return (
     <Container>
-      <Tab onIndexChange={handleIndexChange} navigationState={navigationState} renderScene={renderScene} />
-      <CommunityWriteFab onPress={handlePressWrite} />
+      <CommunityQnAFeed onScroll={handleScroll} />
+      <WriteFab label="글 올리기" onPress={handlePressWrite} scrollY={scrollY} testID="community-write-fab" />
     </Container>
   );
 };

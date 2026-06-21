@@ -18,6 +18,7 @@ import { styled, View } from 'tamagui';
 import { DistancePermissionPrompt, ShelterCard, ShelterClusterMap, ShelterDto } from '@/entities/shelter';
 import { useFavoriteShelter } from '@/features/favorite-shelter';
 import { ShelterSearchBar, useShelterViewport } from '@/features/shelter';
+import { SCREEN_GUTTER } from '@/shared/lib';
 import { RouteErrorBoundary, Skeleton } from '@/shared/ui';
 import { ShelterBottomSheet } from '@/widgets/shelter-section';
 
@@ -94,7 +95,7 @@ const Page = () => {
 
   if (!isGranted) {
     return (
-      <Container items="center" justify="center" px={32}>
+      <Container items="center" justify="center" px={SCREEN_GUTTER}>
         <DistancePermissionPrompt variant="fullscreen" />
       </Container>
     );

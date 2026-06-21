@@ -6,8 +6,8 @@ import { SceneRendererProps } from 'react-native-tab-view';
 import { styled, View } from 'tamagui';
 
 import { useLoginRequired } from '@/features/auth';
-import { RouteErrorBoundary, Tab } from '@/shared/ui';
-import { AdoptPersonalScene, AdoptShelterScene, AdoptWriteFab } from '@/widgets/adopt-section';
+import { RouteErrorBoundary, Tab, WriteFab } from '@/shared/ui';
+import { AdoptPersonalScene, AdoptShelterScene } from '@/widgets/adopt-section';
 
 export const ErrorBoundary = RouteErrorBoundary;
 
@@ -59,7 +59,7 @@ const Page = () => {
         navigationState={navigationState}
         renderScene={renderScene}
       />
-      <AdoptWriteFab onPress={handlePressWrite} scrollY={scrollY} />
+      <WriteFab label="공고 올리기" onPress={handlePressWrite} scrollY={scrollY} testID="adopt-write-fab" />
     </Container>
   );
 };

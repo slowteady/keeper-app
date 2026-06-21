@@ -9,16 +9,16 @@ import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
 import { buildAdoptTags } from '../lib';
 import { CommunityAdoptListDto } from '../schema';
-import { CommunityAdoptCardHeader } from './community-adopt-card-header';
-import { CommunityAdoptCardStats } from './community-adopt-card-stats';
+import { PostCardHeader } from './post-card-header';
+import { PostStats } from './post-stats';
 
-export interface CommunityAdoptCardProps extends CommunityAdoptListDto {
+export interface PostCardProps extends CommunityAdoptListDto {
   onPressCard: (id: string) => void;
   onPressLike: (id: string, isLiked: boolean) => void;
   isLoading?: boolean;
 }
 
-const CommunityAdoptCardComponent = ({
+const PostCardComponent = ({
   id,
   user,
   onPressCard,
@@ -36,7 +36,7 @@ const CommunityAdoptCardComponent = ({
   protectionType,
   vaccinationCheck,
   keywords
-}: CommunityAdoptCardProps) => {
+}: PostCardProps) => {
   const { black500 } = useTheme();
   const handlePressCard = useCallback(() => onPressCard(id), [onPressCard, id]);
   const handlePressLike = useCallback(() => {
@@ -86,7 +86,7 @@ const CommunityAdoptCardComponent = ({
     <GestureDetector gesture={cardTap}>
       <View testID={`community-card-${id}`}>
         <XStack items="center" justify="space-between" mb={12}>
-          <CommunityAdoptCardHeader
+          <PostCardHeader
             image={user?.image ?? ''}
             nickname={user?.nickname ?? '탈퇴한 사용자'}
             displayTime={displayTime}
@@ -98,24 +98,24 @@ const CommunityAdoptCardComponent = ({
             </View>
           </GestureDetector>
         </XStack>
-        <CommunityAdoptCardTitle title={title} numberOfLines={1} mb={8} />
-        <CommunityAdoptCardContent content={content ?? ''} mb={20} />
-        {hasTags && <CommunityAdoptCardTags tags={tags} mb={20} />}
-        <CommunityAdoptCardCarousel images={images} mb={12} />
-        <CommunityAdoptCardStats comment={counts.comment} like={counts.like} view={counts.view} />
+        <PostCardTitle title={title} numberOfLines={1} mb={8} />
+        <PostCardContent content={content ?? ''} mb={20} />
+        {hasTags && <PostCardTags tags={tags} mb={20} />}
+        <PostCardCarousel images={images} mb={12} />
+        <PostStats comment={counts.comment} like={counts.like} view={counts.view} />
       </View>
     </GestureDetector>
   );
 };
 
-export const CommunityAdoptCard = memo(CommunityAdoptCardComponent);
-CommunityAdoptCard.displayName = 'CommunityAdoptCard';
+export const PostCard = memo(PostCardComponent);
+PostCard.displayName = 'PostCard';
 
-export const CommunityAdoptCardTitle = ({ title, ...props }: { title: string } & TextProps) => {
+export const PostCardTitle = ({ title, ...props }: { title: string } & TextProps) => {
   return <StyledTitle {...props}>{title}</StyledTitle>;
 };
 
-export const CommunityAdoptCardTags = ({ tags, ...props }: { tags: string[] } & XStackProps) => {
+export const PostCardTags = ({ tags, ...props }: { tags: string[] } & XStackProps) => {
   return (
     <XStack gap={6} flexWrap="wrap" {...props}>
       {tags.map((tag, idx) => (
@@ -125,17 +125,13 @@ export const CommunityAdoptCardTags = ({ tags, ...props }: { tags: string[] } & 
   );
 };
 
-export const CommunityAdoptCardContent = ({ content, ...props }: { content: string } & Omit<TextProps, 'content'>) => {
+export const PostCardContent = ({ content, ...props }: { content: string } & Omit<TextProps, 'content'>) => {
   return <StyledContent {...props}>{content}</StyledContent>;
 };
 
-type CommunityAdoptCardCarouselProps = { images: string[]; showImageViewer?: boolean } & ViewProps;
+type PostCardCarouselProps = { images: string[]; showImageViewer?: boolean } & ViewProps;
 
-export const CommunityAdoptCardCarousel = ({
-  images,
-  showImageViewer = false,
-  ...props
-}: CommunityAdoptCardCarouselProps) => {
+export const PostCardCarousel = ({ images, showImageViewer = false, ...props }: PostCardCarouselProps) => {
   const hasImages = images && images.length > 0;
   return (
     <CarouselWrap {...props}>

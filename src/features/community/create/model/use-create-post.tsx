@@ -76,7 +76,8 @@ export const useCreatePost = () => {
       return createAdoptionPersonal(body);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: communityQueries.all() });
+      // refetchType:'all' — 비활성(미마운트) 세그먼트 목록까지 즉시 refetch 해 복귀 시 새 공고 누락 방지
+      queryClient.invalidateQueries({ queryKey: communityQueries.all(), refetchType: 'all' });
       globalToast('공고를 등록했어요', 'success');
       router.back();
     },

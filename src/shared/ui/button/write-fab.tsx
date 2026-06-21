@@ -10,9 +10,12 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Text, useTheme } from 'tamagui';
 
-export type AdoptWriteFabProps = {
+export type WriteFabProps = {
+  label: string;
   onPress: () => void;
   scrollY: SharedValue<number>;
+  accessibilityLabel?: string;
+  testID?: string;
 };
 
 const COLLAPSE_THRESHOLD = 24;
@@ -25,7 +28,7 @@ const COLLAPSED_PAD = (COLLAPSED_SIZE - ICON_SIZE) / 2;
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-export const AdoptWriteFab = ({ onPress, scrollY }: AdoptWriteFabProps) => {
+export const WriteFab = ({ label, onPress, scrollY, accessibilityLabel, testID }: WriteFabProps) => {
   const { primaryMain } = useTheme();
   const [labelWidth, setLabelWidth] = useState<number | null>(null);
 
@@ -54,13 +57,13 @@ export const AdoptWriteFab = ({ onPress, scrollY }: AdoptWriteFabProps) => {
       hitSlop={6}
       style={[styles.button, { backgroundColor: primaryMain.val }, containerStyle]}
       accessibilityRole="button"
-      accessibilityLabel="개인 공고 올리기"
-      testID="adopt-write-fab"
+      accessibilityLabel={accessibilityLabel ?? label}
+      testID={testID}
     >
       <Plus size={ICON_SIZE} color="white" />
       <Animated.View style={[styles.label, labelStyle]} onLayout={labelWidth == null ? handleLabelLayout : undefined}>
         <Text fontSize={14} lineHeight={16} fontWeight={600} color="#fff" numberOfLines={1}>
-          공고 올리기
+          {label}
         </Text>
       </Animated.View>
     </AnimatedPressable>

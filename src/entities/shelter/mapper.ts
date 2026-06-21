@@ -50,5 +50,6 @@ const formatPerson = ({
   if (veterinarianCount > 0) return `수의사 ${veterinarianCount}명 외`;
   if (caretakerCount > 0) return `보조사 ${caretakerCount}명 외`;
 
-  return '담당자 정보가 없어요';
+  // 표시 fallback 을 데이터에 박지 않음 — 빈 값이면 상세 운영정보에서 담당 행 자체를 숨김 (QA #1)
+  return '';
 };

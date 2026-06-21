@@ -111,7 +111,7 @@ const CardDivider = styled(View, {
 const SpecRow = styled(XStack, {
   items: 'flex-start',
   justify: 'space-between',
-  gap: 12
+  gap: 32
 });
 
 const SpecLabel = styled(Text, {

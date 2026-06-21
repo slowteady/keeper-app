@@ -17,7 +17,6 @@ jest.mock('@/entities/adopt', () => ({
 }));
 
 jest.mock('@/entities/community', () => ({
-  CommentListItem: () => null,
   CommunityPostListItem: () => null
 }));
 
@@ -44,14 +43,6 @@ jest.mock('@/features/favorite-shelter', () => ({
 jest.mock('@/features/like-post', () => ({
   useLikePost: () => ({ toggleLikePost: jest.fn() }),
   useMyLikedPosts: () => ({ items: [], isLoading: false, fetchNextPage: jest.fn(), refetch: jest.fn() })
-}));
-
-jest.mock('@/features/helpful-comment', () => ({
-  useMyHelpfulComments: () => ({ items: [], isLoading: false, fetchNextPage: jest.fn(), refetch: jest.fn() })
-}));
-
-jest.mock('@/features/community', () => ({
-  useCommentHelpful: () => ({ toggleHelpful: jest.fn() })
 }));
 
 jest.mock('@/shared/ui', () => ({

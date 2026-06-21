@@ -2,12 +2,13 @@ import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { useCallback } from 'react';
 
-import { communityQueries, QnaListParams, QnaTypeDto } from '@/entities/community';
+import { communityQueries, QnaListParams, QnaSortDto, QnaTypeDto } from '@/entities/community';
 import { AnimalTypeDto } from '@/shared/model';
 
 type QnaFeedParams = {
   qnaType?: QnaTypeDto;
   animalType?: AnimalTypeDto;
+  sort?: QnaSortDto;
   size?: number;
 };
 
@@ -26,7 +27,8 @@ export const useCommunityQnaFeed = (params: QnaFeedParams = {}) => {
   const queryParams: Omit<QnaListParams, 'page'> = {
     size,
     ...(params.qnaType ? { qnaType: params.qnaType } : {}),
-    ...(params.animalType ? { animalType: params.animalType as 'DOG' | 'CAT' | 'OTHER' } : {})
+    ...(params.animalType ? { animalType: params.animalType as 'DOG' | 'CAT' | 'OTHER' } : {}),
+    ...(params.sort ? { sort: params.sort } : {})
   };
 
   const {

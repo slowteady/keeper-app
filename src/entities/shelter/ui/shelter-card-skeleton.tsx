@@ -1,10 +1,11 @@
 import { View, XStack, YStack } from 'tamagui';
 
+import { CARD_PADDING } from '@/shared/lib';
 import { Skeleton } from '@/shared/ui';
 
 export const ShelterCardSkeleton = () => {
   return (
-    <YStack px={16} py={18} gap={8} borderWidth={1} borderColor="$white800" rounded={12} bg="$white900">
+    <YStack px={CARD_PADDING} py={18} gap={8} borderWidth={1} borderColor="$white800" rounded={12} bg="$white900">
       <XStack justify="space-between" items="center">
         <View width="55%" height={18}>
           <Skeleton style={{ width: '100%', height: '100%', borderRadius: 4 }} />

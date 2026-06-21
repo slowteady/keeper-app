@@ -37,7 +37,7 @@ const Box = styled(YStack, {
 const Row = styled(XStack, {
   items: 'flex-start',
   justify: 'space-between',
-  gap: 12
+  gap: 32
 });
 
 const Label = styled(Text, {

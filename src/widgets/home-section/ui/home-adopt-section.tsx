@@ -5,6 +5,7 @@ import { styled, Text, View, XStack } from 'tamagui';
 
 import { ADOPT_CARD_IMAGE_SIZES, AdoptCard, AdoptCardSkeleton, AdoptItem } from '@/entities/adopt';
 import { useFavoriteAbandonment } from '@/features/favorite-abandonment';
+import { SCREEN_GUTTER } from '@/shared/lib';
 import { FeedNodata } from '@/shared/ui';
 
 const CARD_GAP = 12;
@@ -45,7 +46,7 @@ export const HomeAdoptSection = ({ convertedData, isLoading, onGoDetail, onGoLis
 
   return (
     <>
-      <HeaderContainer px={20} mb={16}>
+      <HeaderContainer px={SCREEN_GUTTER} mb={16}>
         <Text fontSize={26} lineHeight={36} fontWeight="600" color="$black900">
           보호소 공고
         </Text>

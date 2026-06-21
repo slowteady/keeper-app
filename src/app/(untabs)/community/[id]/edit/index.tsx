@@ -12,7 +12,7 @@ import { QnaEditContent, useEditPost } from '@/features/community';
 import { globalToast } from '@/shared/lib';
 import { useLayout } from '@/shared/model';
 import { Button, CancelModal, DetailErrorBoundary, ModalPageHeader } from '@/shared/ui';
-import { CommunityAdoptForm, PostDetailSkeleton } from '@/widgets/community-adopt-feed-section';
+import { CommunityAdoptForm, PostDetailSkeleton } from '@/widgets/community-post-section';
 
 export const ErrorBoundary = DetailErrorBoundary;
 

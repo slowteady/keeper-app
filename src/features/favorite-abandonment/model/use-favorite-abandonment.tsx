@@ -76,13 +76,13 @@ export const useFavoriteAbandonment = () => {
 
     // 연속 토글 race condition 방지 — 마지막 mutation 끝날 때만 invalidate.
     // 현재 settled 중인 자기 자신도 카운트되므로 === 1 비교.
+    // 관심 목록(ME_FAVORITE)은 무효화 X — 카드 내 해제가 즉시 사라지지 않고 다음 focus refetch 까지 잔존 (29cm)
     onSettled: () => {
       if (queryClient.isMutating({ mutationKey: [...FAVORITE_ABANDONMENT_MUTATION_KEY] }) === 1) {
         queryClient.invalidateQueries({ queryKey: ADOPT_PREFIX });
         queryClient.invalidateQueries({
           predicate: (query) => query.queryKey[0] === SHELTER_PREFIX[0] && query.queryKey[1] === 'adopts'
         });
-        queryClient.invalidateQueries({ queryKey: ME_FAVORITE_PREFIX });
       }
     }
   });

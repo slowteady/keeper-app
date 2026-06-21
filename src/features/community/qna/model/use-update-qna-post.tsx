@@ -29,7 +29,7 @@ export const useUpdateQnaPost = (id: string) => {
   useEffect(() => {
     if (detail) {
       form.reset({
-        type: detail.type,
+        type: detail.qnaType,
         animalType: detail.animalType,
         title: detail.title,
         content: detail.content,

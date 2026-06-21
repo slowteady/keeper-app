@@ -54,7 +54,7 @@ const Page = () => {
 
   return (
     <Container>
-      <ModalPageHeader title="궁금해요 작성하기" fullScreen onClose={handleClose} />
+      <ModalPageHeader title="글 작성하기" fullScreen onClose={handleClose} />
       <KeyboardAwareScrollView
         ref={scrollRef}
         contentContainerStyle={{ paddingTop: 40, paddingBottom: buttonHeight + 40 }}

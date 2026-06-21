@@ -107,18 +107,18 @@ describe('mapToShelter - person 변환 (formatPerson)', () => {
     expect(result.person).toBe('보조사 5명 외');
   });
 
-  it('둘 다 0 일 때 "정보 없음" 반환한다', () => {
+  it('둘 다 0 일 때 빈 문자열 반환한다 (담당 행 숨김용)', () => {
     const input: ShelterDto = { ...BASE_SHELTER, veterinarianCount: 0, caretakerCount: 0 };
 
     const result = mapToShelter(input);
 
-    expect(result.person).toBe('담당자 정보가 없어요');
+    expect(result.person).toBe('');
   });
 
-  it('veterinarianCount/caretakerCount 미제공 시 "정보 없음" 반환한다', () => {
+  it('veterinarianCount/caretakerCount 미제공 시 빈 문자열 반환한다', () => {
     const result = mapToShelter(BASE_SHELTER);
 
-    expect(result.person).toBe('담당자 정보가 없어요');
+    expect(result.person).toBe('');
   });
 
   it('veterinarianCount가 caretakerCount보다 우선한다', () => {

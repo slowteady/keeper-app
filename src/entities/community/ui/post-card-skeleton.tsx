@@ -1,10 +1,11 @@
 import { styled, View, XStack, YStack } from 'tamagui';
 
+import { SCREEN_GUTTER } from '@/shared/lib';
 import { Skeleton } from '@/shared/ui';
 
-export const CommunityAdoptCardSkeleton = () => {
+export const PostCardSkeleton = () => {
   return (
-    <YStack px={20} py={32}>
+    <YStack px={SCREEN_GUTTER} py={32}>
       <XStack mb={16} gap={8} items="center">
         <Skeleton style={{ width: 32, height: 32, borderRadius: 4 }} />
         <View flex={1}>

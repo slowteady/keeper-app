@@ -1,5 +1,4 @@
 export * from './use-adoption-status';
-export * from './use-comment-helpful';
 export * from './use-comment-menu';
 export * from './use-community-adopt-detail-feed';
 export * from './use-community-comment-list';

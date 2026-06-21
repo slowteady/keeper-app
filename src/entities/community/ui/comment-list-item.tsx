@@ -1,29 +1,25 @@
 import { MoreVertical } from '@tamagui/lucide-icons';
 import { Image } from 'expo-image';
 import { Pressable } from 'react-native';
-import { styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
+import { styled, Text, View, XStack, YStack } from 'tamagui';
 
 import { formatTimeAgo } from '@/shared/lib';
-import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
-import { MyHelpfulCommentItemDto } from '../schema';
+import { MyCommentItemDto } from '../schema';
 
-const CATEGORY_LABEL: Record<MyHelpfulCommentItemDto['postCategory'], string> = {
+const CATEGORY_LABEL: Record<MyCommentItemDto['postCategory'], string> = {
   ADOPTION_PERSONAL: '개인입양',
   ADOPTION_LIFE: '입양생활',
   QNA: '궁금해요'
 };
 
 export type CommentListItemProps = {
-  data: MyHelpfulCommentItemDto;
+  data: MyCommentItemDto;
   onPress: (postId: string, commentId: string) => void;
-  onPressHelpful?: (data: MyHelpfulCommentItemDto) => void;
-  onPressMore?: (data: MyHelpfulCommentItemDto) => void;
+  onPressMore?: (data: MyCommentItemDto) => void;
 };
 
-export const CommentListItem = ({ data, onPress, onPressHelpful, onPressMore }: CommentListItemProps) => {
-  const { black500 } = useTheme();
-
+export const CommentListItem = ({ data, onPress, onPressMore }: CommentListItemProps) => {
   return (
     <Container>
       <Pressable onPress={() => onPress(data.postId, data.id)} style={{ flex: 1 }}>
@@ -37,20 +33,6 @@ export const CommentListItem = ({ data, onPress, onPressHelpful, onPressMore }: 
           <Content numberOfLines={2} ellipsizeMode="tail">
             {data.content}
           </Content>
-          <XStack items="center" gap={10}>
-            {onPressHelpful && (
-              <Pressable
-                onPress={() => onPressHelpful(data)}
-                hitSlop={8}
-                testID={`me-helpful-comment-toggle-${data.id}`}
-              >
-                <AnimatedHeart isLiked={data.isHelpful} size={18} inactiveColor={black500.val} />
-              </Pressable>
-            )}
-            <Meta numberOfLines={1} ellipsizeMode="tail">
-              {data.helpfulCount}명이 공감했어요
-            </Meta>
-          </XStack>
         </YStack>
       </Pressable>
       <XStack items="center" gap={8}>
@@ -108,13 +90,6 @@ const Content = styled(Text, {
   fontWeight: '600',
   color: '$black900',
   letterSpacing: -0.45
-});
-
-const Meta = styled(Text, {
-  fontSize: 11,
-  fontWeight: '500',
-  color: '$black500',
-  letterSpacing: -0.22
 });
 
 const Thumbnail = styled(Image, {

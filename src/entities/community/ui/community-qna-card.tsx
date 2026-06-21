@@ -3,11 +3,12 @@ import { useCallback } from 'react';
 import { Pressable } from 'react-native';
 import { styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
 
-import { toggleHaptic } from '@/shared/lib';
+import { ProfileAvatar } from '@/entities/profile';
+import { formatTimeAgo, toggleHaptic } from '@/shared/lib';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
 import { CommunityQnaListItemDto } from '../schema';
-import { CommunityAdoptCardStats } from './community-adopt-card-stats';
+import { PostStats } from './post-stats';
 
 export type CommunityQnaCardProps = {
   data: CommunityQnaListItemDto;
@@ -31,20 +32,24 @@ export const CommunityQnaCard = ({ data, categoryLabel, onPress, onPressLike }: 
       <Pressable onPress={() => onPress(data.id)} style={{ flex: 1 }}>
         <Body>
           <XStack items="center" gap={6}>
-            <CategoryChip>
-              <CategoryText>{categoryLabel}</CategoryText>
-            </CategoryChip>
+            <ProfileAvatar image={data.user?.image ?? ''} size={20} shape="rounded" />
             <Writer numberOfLines={1} style={{ flexShrink: 1 }}>
               {data.user?.nickname ?? '탈퇴한 사용자'}
             </Writer>
+            <DisplayTime>· {formatTimeAgo(data.displayTime)}</DisplayTime>
           </XStack>
-          <Title numberOfLines={1} ellipsizeMode="tail">
-            {data.title}
-          </Title>
+          <XStack items="center" gap={6}>
+            <CategoryChip>
+              <CategoryText>{categoryLabel}</CategoryText>
+            </CategoryChip>
+            <Title flex={1} numberOfLines={1} ellipsizeMode="tail">
+              {data.title}
+            </Title>
+          </XStack>
           <Preview numberOfLines={2} ellipsizeMode="tail">
             {data.content ?? ''}
           </Preview>
-          <CommunityAdoptCardStats comment={data.counts.comment} like={data.counts.like} view={data.counts.view} />
+          <PostStats comment={data.counts.comment} like={data.counts.like} view={data.counts.view} />
         </Body>
       </Pressable>
 
@@ -89,6 +94,12 @@ const CategoryText = styled(Text, {
 });
 
 const Writer = styled(Text, {
+  fontSize: 13,
+  color: '$black700',
+  fontWeight: '500'
+});
+
+const DisplayTime = styled(Text, {
   fontSize: 12,
   color: '$black500'
 });

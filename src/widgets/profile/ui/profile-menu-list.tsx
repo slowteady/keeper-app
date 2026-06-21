@@ -1,6 +1,7 @@
 import { styled, Text, View, YStack } from 'tamagui';
 
 import { MENU_SECTIONS } from '@/features/profile';
+import { SCREEN_GUTTER } from '@/shared/lib';
 import { Menu } from '@/shared/ui';
 
 type MenuItem = (typeof MENU_SECTIONS)[number]['items'][number];
@@ -33,7 +34,7 @@ export const ProfileMenuList = ({ sections, isLoggedIn, onNavigate, onReview, on
           <YStack key={section.label} mb={8}>
             <SectionLabel>{section.label}</SectionLabel>
             {visibleItems.map((item, idx) => (
-              <View key={`${item.label}-${idx}`} px={20} py={16} onPress={() => handlePress(item)}>
+              <View key={`${item.label}-${idx}`} px={SCREEN_GUTTER} py={16} onPress={() => handlePress(item)}>
                 <Menu icon={<item.icon size={20} color="$black600" />} label={item.label} />
               </View>
             ))}

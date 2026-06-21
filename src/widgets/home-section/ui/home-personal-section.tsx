@@ -10,6 +10,7 @@ import {
   PersonalAdoptItem
 } from '@/entities/adopt';
 import { useLikePost } from '@/features/like-post';
+import { SCREEN_GUTTER } from '@/shared/lib';
 import { FeedNodata } from '@/shared/ui';
 
 const CARD_GAP = 12;
@@ -51,7 +52,7 @@ export const HomePersonalSection = ({ convertedData, isLoading, onGoDetail, onGo
 
   return (
     <>
-      <HeaderContainer px={20} mb={16}>
+      <HeaderContainer px={SCREEN_GUTTER} mb={16}>
         <Text fontSize={26} lineHeight={36} fontWeight="600" color="$black900">
           개인 공고
         </Text>

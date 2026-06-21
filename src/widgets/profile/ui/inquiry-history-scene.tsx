@@ -5,6 +5,7 @@ import { styled, YStack } from 'tamagui';
 
 import { InquiryListItem, InquiryListItemDto } from '@/entities/inquiry';
 import { useMyInquiries } from '@/features/inquiry';
+import { SCREEN_GUTTER } from '@/shared/lib';
 
 import { ProfileCommentListSkeleton } from './profile-comment-list-skeleton';
 import { ProfileEmptyState } from './profile-empty-state';
@@ -22,7 +23,7 @@ export const InquiryHistoryScene = () => {
   if (isLoading) {
     return (
       <Container>
-        <YStack px={20}>
+        <YStack px={SCREEN_GUTTER}>
           <ProfileCommentListSkeleton />
         </YStack>
       </Container>

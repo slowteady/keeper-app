@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
 
-import { toggleHaptic } from '@/shared/lib';
+import { CARD_PADDING, toggleHaptic } from '@/shared/lib';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
 import { formatShelterHours } from '../lib';
@@ -60,7 +60,7 @@ export const ShelterCard = ({
   return (
     <Container size={size} borderColor={isSelected ? '$primaryMain' : '$white800'}>
       <GestureDetector gesture={cardTap}>
-        <YStack px={16} py={18} gap={8}>
+        <YStack px={CARD_PADDING} py={18} gap={8}>
           <Text
             numberOfLines={1}
             ellipsizeMode="tail"

@@ -15,13 +15,12 @@ import {
   CommentListHeader,
   commentQueries
 } from '@/entities/comment';
-import { CommunityAdoptCardStats, communityQueries } from '@/entities/community';
+import { communityQueries, PostStats } from '@/entities/community';
 import { useLoginRequired } from '@/features/auth';
 import { useLikePost } from '@/features/like-post';
 import { useLayout, useListRefreshing } from '@/shared/model';
-import { CommunityDetailOverviewSection } from '@/widgets/community-adopt-feed-section/ui/community-detail-overview-section';
+import { PostDetailHeader } from '@/widgets/community-post-section';
 
-import { useCommentHelpful } from '../../detail/model/use-comment-helpful';
 import { useCommentMenu } from '../../detail/model/use-comment-menu';
 import { useCommunityCommentList } from '../../detail/model/use-community-comment-list';
 import { useCreateComment } from '../../detail/model/use-create-comment';
@@ -131,14 +130,6 @@ export const QnaDetailContent = ({ id, scrollToComments, commentId, editCommentI
   );
 
   const { openCommentMenu } = useCommentMenu({ onEdit: handleEnterEditMode });
-  const { toggleHelpful } = useCommentHelpful();
-
-  const handleToggleHelpful = useCallback(
-    (c: { id: string; isHelpful: boolean; helpfulCount: number }) => {
-      toggleHelpful({ commentId: c.id, currentlyHelpful: c.isHelpful, currentCount: c.helpfulCount });
-    },
-    [toggleHelpful]
-  );
 
   const submitComment = useCallback(
     (content: string) => {
@@ -191,19 +182,17 @@ export const QnaDetailContent = ({ id, scrollToComments, commentId, editCommentI
             onPressReply={() =>
               handleEnterReplyMode({ parentId: item.id, nickname: item.user?.nickname ?? '탈퇴한 사용자' })
             }
-            onPressHelpful={() => handleToggleHelpful(item)}
           />
           <RepliesSection
             parentComment={item}
             onPressReplyMore={(reply) =>
               openCommentMenu({ commentId: reply.id, authorId: reply.user?.id ?? null, content: reply.content })
             }
-            onPressReplyHelpful={(reply) => handleToggleHelpful(reply)}
           />
         </View>
       );
     },
-    [openCommentMenu, handleEnterReplyMode, handleToggleHelpful]
+    [openCommentMenu, handleEnterReplyMode]
   );
 
   return (
@@ -230,7 +219,7 @@ export const QnaDetailContent = ({ id, scrollToComments, commentId, editCommentI
             {overview && qna && (
               <>
                 <View px={20} mb={32}>
-                  <CommunityDetailOverviewSection
+                  <PostDetailHeader
                     {...overview}
                     onPressLike={() => toggleLikePost(id, isLiked)}
                     onPressShare={sharePost}
@@ -238,7 +227,7 @@ export const QnaDetailContent = ({ id, scrollToComments, commentId, editCommentI
                   />
                 </View>
                 <View px={20} mb={16}>
-                  <CommunityAdoptCardStats {...qna.counts} />
+                  <PostStats {...qna.counts} />
                 </View>
               </>
             )}
@@ -276,7 +265,7 @@ export const QnaDetailContent = ({ id, scrollToComments, commentId, editCommentI
             </YStack>
           ) : (
             <View items="center" justify="center" py={64}>
-              <EmptyText>{'아직 답변이 없어요\n여러분의 의견을 적어주세요:)'}</EmptyText>
+              <EmptyText>{'아직 댓글이 없어요\n가장 먼저 댓글을 남겨보세요'}</EmptyText>
             </View>
           )
         }

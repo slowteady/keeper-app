@@ -2,17 +2,12 @@ import { MoreVertical } from '@tamagui/lucide-icons';
 import { Pressable } from 'react-native';
 import { styled, Text, useTheme, XStack } from 'tamagui';
 
-import {
-  CommunityAdoptCardCarousel,
-  CommunityAdoptCardHeader,
-  CommunityAdoptCardTags,
-  CommunityAdoptCardTitle
-} from '@/entities/community';
+import { PostCardCarousel, PostCardHeader, PostCardTags, PostCardTitle } from '@/entities/community';
 import { toggleHaptic } from '@/shared/lib';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 import { Share as ShareIcon } from '@/shared/ui/icons/outline';
 
-export type CommunityDetailOverviewSectionProps = {
+export type PostDetailHeaderProps = {
   id: string;
   image: string;
   nickname: string;
@@ -27,7 +22,7 @@ export type CommunityDetailOverviewSectionProps = {
   onPressMore?: () => void;
 };
 
-export const CommunityDetailOverviewSection = ({
+export const PostDetailHeader = ({
   image,
   nickname,
   displayTime,
@@ -39,7 +34,7 @@ export const CommunityDetailOverviewSection = ({
   onPressLike,
   onPressShare,
   onPressMore
-}: CommunityDetailOverviewSectionProps) => {
+}: PostDetailHeaderProps) => {
   const { black600 } = useTheme();
   const handlePressLike = () => {
     toggleHaptic(isLiked);
@@ -49,7 +44,7 @@ export const CommunityDetailOverviewSection = ({
   return (
     <>
       <HeaderWrapper mb={20}>
-        <CommunityAdoptCardHeader image={image} nickname={nickname} displayTime={displayTime} />
+        <PostCardHeader image={image} nickname={nickname} displayTime={displayTime} />
         <XStack gap={16} items="center" style={{ flexShrink: 0 }}>
           <Pressable onPress={handlePressLike} hitSlop={10} testID="community-detail-heart">
             <AnimatedHeart size={26} isLiked={isLiked} inactiveColor={black600.val} />
@@ -72,9 +67,9 @@ export const CommunityDetailOverviewSection = ({
         </XStack>
       </HeaderWrapper>
 
-      <CommunityAdoptCardTitle title={title} mb={20} />
-      {images.length > 0 && <CommunityAdoptCardCarousel images={images} showImageViewer mb={16} />}
-      <CommunityAdoptCardTags tags={tags} mb={24} />
+      <PostCardTitle title={title} mb={20} />
+      {images.length > 0 && <PostCardCarousel images={images} showImageViewer mb={16} />}
+      <PostCardTags tags={tags} mb={24} />
       <Content>{content}</Content>
     </>
   );

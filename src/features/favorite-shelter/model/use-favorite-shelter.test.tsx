@@ -121,7 +121,7 @@ describe('useFavoriteShelter', () => {
     expect(cached?.pages[0].items[0].isFavorited).toBe(false);
   });
 
-  it('settled 시 me-favorite-shelters(관심 목록) 도 무효화 → 즉시 반영', async () => {
+  it('settled 시 me-favorite-shelters(관심 목록) 은 무효화하지 않음 — 29cm 잔존', async () => {
     const { queryClient, wrapper } = setup();
     mockedFavorite.mockResolvedValue({ isFavorited: true });
     const invalidateSpy = jest.spyOn(queryClient, 'invalidateQueries');
@@ -134,7 +134,7 @@ describe('useFavoriteShelter', () => {
       ([f]) =>
         JSON.stringify((f as { queryKey?: unknown } | undefined)?.queryKey) === JSON.stringify(['me-favorite-shelters'])
     );
-    expect(hit).toBe(true);
+    expect(hit).toBe(false);
   });
 
   it('detail 캐시도 함께 patch (prefix 매칭)', async () => {

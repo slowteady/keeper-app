@@ -1,12 +1,30 @@
 import * as ImagePicker from 'expo-image-picker';
 import { useState } from 'react';
 import { Image, StyleSheet } from 'react-native';
-import { ScrollView, Spinner, styled, View, XStack, YStack } from 'tamagui';
+import { ScrollView, styled, View, XStack, YStack } from 'tamagui';
 
 import { globalToast, logger } from '@/shared/lib';
 
+import { Skeleton } from '../fallback/skeleton';
 import { Close } from '../icons/outline';
 import { ImageViewer } from '../overlay/image-viewer';
+
+// 이미지별 로드 상태를 독립 관리 — 로드 전까지 Skeleton 노출 (네트워크 이미지 빈 화면 방지)
+const SelectorImage = ({ uri }: { uri: string }) => {
+  const [loaded, setLoaded] = useState(false);
+  return (
+    <>
+      <Image
+        source={{ uri }}
+        style={styles.image}
+        resizeMode="cover"
+        onLoad={() => setLoaded(true)}
+        onError={() => setLoaded(true)}
+      />
+      {!loaded && <Skeleton style={StyleSheet.absoluteFill} />}
+    </>
+  );
+};
 
 export type ImageSelectorProps = {
   max?: number;
@@ -22,7 +40,6 @@ export const canAddImage = ({ readOnly, count, max }: { readOnly: boolean; count
 export const canRemoveImage = ({ readOnly }: { readOnly: boolean }): boolean => !readOnly;
 
 export const ImageSelector = ({ max = 10, size = 100, value = [], onChange, readOnly = false }: ImageSelectorProps) => {
-  const [loadingIndex, setLoadingIndex] = useState<number | null>(null);
   const [viewerOpen, setViewerOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -67,19 +84,7 @@ export const ImageSelector = ({ max = 10, size = 100, value = [], onChange, read
           {value.map((uri, index) => (
             <ImageBox key={`${uri}-${index}`} width={size} height={size}>
               <View onPress={() => handleImagePress(index)} style={styles.imagePressable}>
-                {loadingIndex === index && (
-                  <LoadingOverlay>
-                    <Spinner size="small" color="$primaryMain" />
-                  </LoadingOverlay>
-                )}
-                <Image
-                  source={{ uri }}
-                  style={styles.image}
-                  resizeMode="cover"
-                  onLoadStart={() => setLoadingIndex(index)}
-                  onLoadEnd={() => setLoadingIndex(null)}
-                  onError={() => setLoadingIndex(null)}
-                />
+                <SelectorImage uri={uri} />
               </View>
 
               {showRemoveButton && (
@@ -118,15 +123,6 @@ const ImageBox = styled(YStack, {
   position: 'relative',
   rounded: '$4',
   overflow: 'hidden'
-});
-
-const LoadingOverlay = styled(YStack, {
-  position: 'absolute',
-  inset: 0,
-  items: 'center',
-  justify: 'center',
-  bg: 'rgba(0,0,0,0.1)',
-  z: 1
 });
 
 const RemoveButtonBackground = styled(YStack, {

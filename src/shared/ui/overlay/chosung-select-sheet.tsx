@@ -157,9 +157,9 @@ export const ChosungSelectSheet = ({
         style={styles.list}
         keyExtractor={(item: SelectOption, index: number) => `${item.id}-${index}`}
         stickySectionHeadersEnabled={false}
-        initialNumToRender={filteredOptions.length}
-        maxToRenderPerBatch={40}
-        windowSize={21}
+        initialNumToRender={20}
+        maxToRenderPerBatch={20}
+        windowSize={11}
         viewabilityConfig={viewabilityConfig}
         onViewableItemsChanged={onViewableItemsChanged}
         renderItem={({ item }: { item: SelectOption }) => {

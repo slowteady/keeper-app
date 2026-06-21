@@ -1,7 +1,7 @@
 import { CommunityQnaDetailDto, QNA_ANIMAL_TYPE_OPTIONS, QNA_CATEGORY_OPTIONS } from '@/entities/community';
 
 export const convertToQnaDetailOverviewData = (qna: CommunityQnaDetailDto) => {
-  const categoryLabel = QNA_CATEGORY_OPTIONS.find((o) => o.value === qna.type)?.label;
+  const categoryLabel = QNA_CATEGORY_OPTIONS.find((o) => o.value === qna.qnaType)?.label;
   const animalLabel = QNA_ANIMAL_TYPE_OPTIONS.find((o) => o.value === qna.animalType)?.label;
   const tags = [categoryLabel, animalLabel].filter((v) => !!v) as string[];
 

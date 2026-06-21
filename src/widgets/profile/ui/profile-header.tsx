@@ -3,6 +3,7 @@ import { styled, Text, View, XStack, YStack } from 'tamagui';
 
 import { SocialLoginType, UserDto } from '@/entities/auth';
 import { EmptyAvatar, UserAvatar } from '@/entities/profile';
+import { SCREEN_GUTTER } from '@/shared/lib';
 import { Skeleton } from '@/shared/ui';
 
 type ProfileHeaderProps = {
@@ -33,7 +34,7 @@ export const ProfileHeader = ({
   onChangeProfileImage
 }: ProfileHeaderProps) => {
   return (
-    <View px={20} mb={8} pt={40}>
+    <View px={SCREEN_GUTTER} mb={8} pt={40}>
       {isLoading ? (
         <YStack gap={20}>
           <XStack gap={16} items="center">

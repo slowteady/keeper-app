@@ -2,6 +2,7 @@ import { router } from 'expo-router';
 import { Linking } from 'react-native';
 import { styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
 
+import { SCREEN_GUTTER } from '@/shared/lib';
 import { Logo } from '@/shared/ui/icons/outline';
 
 export const HomeFooterSection = () => {
@@ -13,7 +14,7 @@ export const HomeFooterSection = () => {
   };
 
   return (
-    <Container px={20} py={40}>
+    <Container px={SCREEN_GUTTER} py={40}>
       <Logo width={96} height={30} color={black900.val} />
 
       <YStack mt={20} mb={32} gap={14}>

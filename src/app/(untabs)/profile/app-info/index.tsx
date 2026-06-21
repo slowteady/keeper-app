@@ -6,7 +6,7 @@ import { useCallback } from 'react';
 import { Pressable, StyleSheet } from 'react-native';
 import { ScrollView, Separator, styled, Text, View, XStack, YStack } from 'tamagui';
 
-import { globalToast } from '@/shared/lib';
+import { globalToast, SCREEN_GUTTER } from '@/shared/lib';
 import { formatBytes, useCacheSize } from '@/shared/model';
 import { ConfirmModal, Menu, useModal } from '@/shared/ui';
 
@@ -44,7 +44,7 @@ const Page = () => {
   return (
     <Container>
       <ScrollView py={32}>
-        <YStack px={20} mb={24}>
+        <YStack px={SCREEN_GUTTER} mb={24}>
           <NavText mb={6}>약관 및 정책</NavText>
           <Menu label="이용약관" style={{ paddingVertical: 14 }} onPress={() => router.push('/terms')} />
           <Menu label="개인정보처리방침" style={{ paddingVertical: 14 }} onPress={() => router.push('/privacy')} />
@@ -57,7 +57,7 @@ const Page = () => {
 
         <Separator borderColor="$backgroundDefault" mb={24} />
 
-        <YStack px={20} mb={24}>
+        <YStack px={SCREEN_GUTTER} mb={24}>
           <NavText mb={6}>저장공간</NavText>
           <Pressable style={styles.row} onPress={handlePressClear} hitSlop={12}>
             <Label>캐시 삭제</Label>
@@ -70,7 +70,7 @@ const Page = () => {
 
         <Separator borderColor="$backgroundDefault" mb={24} />
 
-        <YStack px={20} gap={6}>
+        <YStack px={SCREEN_GUTTER} gap={6}>
           <Label>버전 정보</Label>
           <Text fontSize={14} fontWeight="500" lineHeight={16} letterSpacing={-0.25} color="$white600">
             현재버전 {version}

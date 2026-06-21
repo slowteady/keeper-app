@@ -4,7 +4,7 @@ import { Pressable, RefreshControl, ScrollView } from 'react-native';
 import { styled, Text, useTheme, View, XStack } from 'tamagui';
 
 import { PROTECTION_LABEL } from '@/entities/adopt';
-import { CommunityAdoptCardHeader, CommunityAdoptCardTitle } from '@/entities/community';
+import { PostCardHeader, PostCardTitle } from '@/entities/community';
 import { useCurrentUser, useLoginRequired } from '@/features/auth';
 import { useLikePost } from '@/features/like-post';
 import { toggleHaptic } from '@/shared/lib';
@@ -17,7 +17,7 @@ import {
   CommunityDetailBehaviorSection,
   CommunityDetailDescriptionSection,
   CommunityDetailHealthSection
-} from '@/widgets/community-adopt-feed-section';
+} from '@/widgets/community-post-section';
 
 import { useAdoptionStatus } from '../model/use-adoption-status';
 import { useCommunityAdoptDetailFeed } from '../model/use-community-adopt-detail-feed';
@@ -117,7 +117,7 @@ export const CommunityAdoptDetailContent = ({ id }: CommunityAdoptDetailContentP
 
             <View px={20} mb={28}>
               <AuthorRow mb={16}>
-                <CommunityAdoptCardHeader
+                <PostCardHeader
                   image={overviews.image}
                   nickname={overviews.nickname}
                   displayTime={overviews.displayTime}
@@ -160,7 +160,7 @@ export const CommunityAdoptDetailContent = ({ id }: CommunityAdoptDetailContentP
                   <ProtectionChipText>{badgeLabel}</ProtectionChipText>
                 </ProtectionChip>
               )}
-              <CommunityAdoptCardTitle title={overviews.title} numberOfLines={2} mb={overviews.content ? 12 : 0} />
+              <PostCardTitle title={overviews.title} numberOfLines={2} mb={overviews.content ? 12 : 0} />
               {!!overviews.content && <IntroBody>{overviews.content}</IntroBody>}
             </View>
 

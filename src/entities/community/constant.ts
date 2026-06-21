@@ -1,11 +1,5 @@
 import { ChipOption } from '@/shared/ui';
 
-export const COMMUNITY_TAB_ROUTES = [
-  { key: 'adopt', title: '개인입양' },
-  { key: 'missing', title: '실종분실' },
-  { key: 'qna', title: '궁금해요' }
-];
-
 export const CREATE_POST_OPTIONS = {
   animalType: [
     { value: 'DOG', label: '강아지' },
@@ -69,13 +63,6 @@ export const CREATE_POST_OPTIONS = {
   ] as const satisfies ChipOption[]
 } as const;
 
-export const COMMUNITY_LIST_FILTER = [
-  { id: 'NEW', label: '최신순' },
-  { id: 'LIKE', label: '인기순' },
-  { id: 'COMMENT', label: '댓글순' },
-  { id: 'VIEW', label: '조회순' }
-] as const;
-
 // ─── QnA (궁금해요) chip ─────────────────────────────────────────────
 // 백엔드 QnaType 5종 (MISSING/DONATION 제거, TRAINING 신규) — 마이그레이션 027
 export const QNA_CATEGORY_OPTIONS = [
@@ -98,3 +85,11 @@ export const QNA_CATEGORY_FILTER_OPTIONS = [
   { value: 'ALL', label: '전체' },
   ...QNA_CATEGORY_OPTIONS
 ] as const satisfies ChipOption[];
+
+// QnA 정렬 — Dropdown data 용 {id,label}
+export const QNA_SORT_OPTIONS = [
+  { id: 'NEW', label: '최신순' },
+  { id: 'LIKE', label: '인기순' },
+  { id: 'COMMENT', label: '댓글순' },
+  { id: 'VIEW', label: '조회순' }
+] as const;

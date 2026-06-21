@@ -11,6 +11,7 @@ import { ADOPT_OPTIONS, AdoptCard, AdoptItem } from '@/entities/adopt';
 import { useFavoriteAbandonment } from '@/features/favorite-abandonment';
 import { useFavoriteShelter } from '@/features/favorite-shelter';
 import { useShelter, useShelterAdoptList } from '@/features/shelter';
+import { SCREEN_GUTTER } from '@/shared/lib';
 import { useLocation, useShare } from '@/shared/model';
 import {
   BottomButton,
@@ -150,7 +151,7 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
         contentContainerStyle={{ paddingTop: 48, paddingBottom: buttonHeight + 40 }}
         header={
           <YStack mb={24} gap={28}>
-            <View px={20}>
+            <View px={SCREEN_GUTTER}>
               <ShelterDetailOverviewSection
                 data={shelterData}
                 mapRef={mapRef}
@@ -163,7 +164,7 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
                 onPressMap={handleOpenMap}
               />
             </View>
-            <View px={20}>
+            <View px={SCREEN_GUTTER}>
               <ShelterDetailDescriptionSection
                 time={shelterData.time}
                 person={shelterData.person}
@@ -171,7 +172,7 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
               />
             </View>
 
-            <XStack items="center" justify="space-between" px={20}>
+            <XStack items="center" justify="space-between" px={SCREEN_GUTTER}>
               <XStack gap={6} items="flex-end">
                 <Text fontSize={20} fontWeight="600" lineHeight={24} letterSpacing={-0.25} color="$black800">
                   보호중인 아이들

@@ -75,19 +75,7 @@ const report = async (id: string, body: { reason: string; reasonDetail?: string 
   await authApi.post<AxiosResponse>(`${BASE}/comments/${id}/report`, body);
 };
 
-export type HelpfulToggleResponseDto = { count: number; isHelpful: boolean };
-
-const helpful = async (id: string): Promise<HelpfulToggleResponseDto> => {
-  const res = await authApi.post<ApiResponse<HelpfulToggleResponseDto>>(`${BASE}/comments/${id}/helpful`);
-  return res.data.data;
-};
-
-const unhelpful = async (id: string): Promise<HelpfulToggleResponseDto> => {
-  const res = await authApi.delete<ApiResponse<HelpfulToggleResponseDto>>(`${BASE}/comments/${id}/helpful`);
-  return res.data.data;
-};
-
-export const commentApi = { getList, getReplies, getContext, create, update, remove, report, helpful, unhelpful };
+export const commentApi = { getList, getReplies, getContext, create, update, remove, report };
 
 // queryKey 는 cursor 제외한 안정 키 (sort/size 만) — cursor 는 pageParam 으로 흘러감
 export type CommentListFilter = { sort: CommentSortOrderDto; size: number };

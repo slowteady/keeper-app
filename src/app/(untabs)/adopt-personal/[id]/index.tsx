@@ -6,7 +6,7 @@ import { styled, View } from 'tamagui';
 import { communityQueries } from '@/entities/community';
 import { CommunityAdoptDetailContent } from '@/features/community';
 import { DetailErrorBoundary } from '@/shared/ui';
-import { PostDetailSkeleton } from '@/widgets/community-adopt-feed-section';
+import { PostDetailSkeleton } from '@/widgets/community-post-section';
 
 export const ErrorBoundary = DetailErrorBoundary;
 

@@ -10,6 +10,7 @@ import { ADOPT_OPTIONS, adoptQueries } from '@/entities/adopt';
 import { shelterQueries } from '@/entities/shelter';
 import { useAdoptList, usePersonalAdoptList } from '@/features/adopt';
 import { useHomeShelter } from '@/features/shelter';
+import { SCREEN_GUTTER, SECTION_GAP } from '@/shared/lib';
 import { useListRefreshing } from '@/shared/model';
 import { RouteErrorBoundary } from '@/shared/ui';
 import {
@@ -27,7 +28,6 @@ const IMAGES = [require('@/assets/images/banner1.png'), require('@/assets/images
 const SECTIONS = [{ id: 'banner' }, { id: 'adopt' }, { id: 'personal' }, { id: 'shelter' }] as const;
 
 const HOME_LIST_SIZE = 10;
-const SECTION_GAP = 36;
 
 const Page = () => {
   const router = useRouter();
@@ -71,7 +71,7 @@ const Page = () => {
       switch (item.id) {
         case 'banner':
           return (
-            <View px={20} pt={24} pb={SECTION_GAP}>
+            <View px={SCREEN_GUTTER} pt={24} pb={SECTION_GAP}>
               <HomeBannerSection images={IMAGES} />
             </View>
           );

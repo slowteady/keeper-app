@@ -1,6 +1,7 @@
 import { MapPin } from '@tamagui/lucide-icons';
 import { styled, Text, View, YStack } from 'tamagui';
 
+import { CARD_PADDING } from '@/shared/lib';
 import { usePermission } from '@/shared/model';
 
 export type DistancePermissionPromptProps = {
@@ -32,7 +33,7 @@ export const DistancePermissionPrompt = ({ variant = 'inline' }: DistancePermiss
   }
 
   return (
-    <Container px={16} py={20}>
+    <Container px={CARD_PADDING} py={20}>
       <SmallIconCircle>
         <MapPin size={22} color="$black700" />
       </SmallIconCircle>

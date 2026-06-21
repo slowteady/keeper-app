@@ -213,3 +213,21 @@ describe('communityQueries.myPostListKey', () => {
     expect(communityQueries.myPostListKey()).toEqual(['me-posts']);
   });
 });
+
+describe('communityQueries.qnaList', () => {
+  it('category=QNA 강제 + sort·qnaType·animalType 파라미터를 전달한다', async () => {
+    const opts = communityQueries.qnaList({ sort: 'COMMENT', qnaType: 'HEALTH', animalType: 'DOG' });
+
+    await (opts.queryFn as never as (ctx: { pageParam: number }) => Promise<unknown>)({ pageParam: 1 });
+
+    expect(mockedAuthGet).toHaveBeenCalledWith('/community/posts', {
+      params: expect.objectContaining({
+        category: 'QNA',
+        sort: 'COMMENT',
+        qnaType: 'HEALTH',
+        animalType: 'DOG',
+        page: 1
+      })
+    });
+  });
+});

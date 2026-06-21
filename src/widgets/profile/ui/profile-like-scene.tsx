@@ -4,12 +4,10 @@ import { useCallback, useMemo, useState } from 'react';
 import { styled, View, XStack, YStack } from 'tamagui';
 
 import { ADOPT_CARD_IMAGE_SIZES, AdoptCard, AdoptCardSkeleton, mapToAdoptList } from '@/entities/adopt';
-import { CommentListItem, CommunityPostListItem, MyHelpfulCommentItemDto } from '@/entities/community';
+import { CommunityPostListItem } from '@/entities/community';
 import { ShelterCard, ShelterCardSkeleton, ShelterDto } from '@/entities/shelter';
-import { useCommentHelpful } from '@/features/community';
 import { useFavoriteAbandonment, useMyFavoriteAbandonments } from '@/features/favorite-abandonment';
 import { useFavoriteShelter, useMyFavoriteShelters } from '@/features/favorite-shelter';
-import { useMyHelpfulComments } from '@/features/helpful-comment';
 import { useLikePost, useMyLikedPosts } from '@/features/like-post';
 import { ButtonGroup, FilterChip, useBottomSheetMenu } from '@/shared/ui';
 
@@ -28,12 +26,6 @@ const ADOPT_SUB = [
   { id: 'personal', label: '개인 공고' }
 ] as const;
 type AdoptSub = (typeof ADOPT_SUB)[number]['id'];
-
-const COMMUNITY_SUB = [
-  { id: 'post', label: '게시글' },
-  { id: 'comment', label: '댓글' }
-] as const;
-type CommunitySub = (typeof COMMUNITY_SUB)[number]['id'];
 
 export const ProfileLikeScene = () => {
   const [tab, setTab] = useState<TopTab>('adopt');
@@ -65,20 +57,7 @@ const AdoptTab = () => {
   );
 };
 
-const CommunityTab = () => {
-  const [sub, setSub] = useState<CommunitySub>('post');
-  const { open } = useBottomSheetMenu({ data: COMMUNITY_SUB, value: sub, onPress: (d) => setSub(d.id) });
-  const label = COMMUNITY_SUB.find((o) => o.id === sub)?.label ?? '';
-
-  return (
-    <>
-      <FilterRow>
-        <FilterChip label={label} active onPress={open} />
-      </FilterRow>
-      {sub === 'post' ? <CommunityPostLikeList /> : <CommentList />}
-    </>
-  );
-};
+const CommunityTab = () => <CommunityPostLikeList />;
 
 const AbandonmentList = () => {
   const { items, isLoading, isFetchingNextPage, fetchNextPage, refetch } = useMyFavoriteAbandonments();
@@ -142,6 +121,7 @@ const PersonalList = () => {
       <CommunityPostListItem
         data={item}
         categoryLabel="개인공고"
+        hideLikeCount
         onPress={(id) => router.push(`/(untabs)/community/${id}`)}
         onPressLike={(id, currentlyLiked) => toggleLikePost(id, currentlyLiked)}
       />
@@ -254,51 +234,6 @@ const CommunityPostLikeList = () => {
       <ProfileEmptyState
         text="관심있는 게시글이 없어요"
         description="커뮤니티 글에 공감을 누르면 여기에 모여요"
-        cta={{ label: '커뮤니티 둘러보기', onPress: () => router.navigate('/(tabs)/community') }}
-      />
-    );
-  }
-
-  return (
-    <FlashList
-      data={items}
-      keyExtractor={(item) => String(item.id)}
-      renderItem={renderItem}
-      onEndReached={fetchNextPage}
-      onEndReachedThreshold={0.5}
-      onRefresh={refetch}
-      refreshing={false}
-      contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 8, paddingBottom: 40 }}
-      ListEmptyComponent={isLoading ? <ProfileCommentListSkeleton /> : null}
-      ListFooterComponent={isFetchingNextPage ? <ProfileCommentListSkeleton count={1} /> : null}
-    />
-  );
-};
-
-const CommentList = () => {
-  const { items, isLoading, isFetchingNextPage, fetchNextPage, refetch } = useMyHelpfulComments();
-  const { toggleHelpful } = useCommentHelpful();
-
-  const renderItem = useCallback(
-    ({ item }: ListRenderItemInfo<MyHelpfulCommentItemDto>) => (
-      <CommentListItem
-        data={item}
-        onPress={(postId) =>
-          router.push({ pathname: '/(untabs)/community/[id]', params: { id: postId, scrollToComments: '1' } })
-        }
-        onPressHelpful={(c) =>
-          toggleHelpful({ commentId: c.id, currentlyHelpful: c.isHelpful, currentCount: c.helpfulCount })
-        }
-      />
-    ),
-    [toggleHelpful]
-  );
-
-  if (!isLoading && items.length === 0) {
-    return (
-      <ProfileEmptyState
-        text="관심있는 댓글이 없어요"
-        description="도움이 된 댓글에 공감을 누르면 여기에 모여요"
         cta={{ label: '커뮤니티 둘러보기', onPress: () => router.navigate('/(tabs)/community') }}
       />
     );

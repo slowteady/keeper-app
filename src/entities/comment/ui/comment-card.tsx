@@ -1,4 +1,4 @@
-import { Heart, MoreVertical } from '@tamagui/lucide-icons';
+import { MoreVertical } from '@tamagui/lucide-icons';
 import { Pressable } from 'react-native';
 import { styled, Text, XStack } from 'tamagui';
 
@@ -12,11 +12,9 @@ export type CommentCardProps = {
   onPressMore?: () => void;
   // root 댓글에서만 노출 — reply 카드(parentId 존재)에는 안 보임 (1뎁스)
   onPressReply?: () => void;
-  // 도움돼요 토글 — root/reply 모두 노출
-  onPressHelpful?: () => void;
 };
 
-export const CommentCard = ({ comment, onPressMore, onPressReply, onPressHelpful }: CommentCardProps) => {
+export const CommentCard = ({ comment, onPressMore, onPressReply }: CommentCardProps) => {
   return (
     <>
       <XStack items="center" justify="space-between" mb={16}>
@@ -39,29 +37,13 @@ export const CommentCard = ({ comment, onPressMore, onPressReply, onPressHelpful
         {comment.content}
       </Text>
 
-      <XStack mt={16} items="center" gap={16}>
-        {onPressHelpful && (
-          <Pressable onPress={onPressHelpful} hitSlop={6} testID={`comment-helpful-${comment.id}`}>
-            <XStack items="center" gap={4}>
-              <Heart
-                size={14}
-                color={comment.isHelpful ? '$primaryMain' : '$black500'}
-                fill={comment.isHelpful ? '$primaryMain' : 'transparent'}
-              />
-              {comment.helpfulCount > 0 && (
-                <ActionButtonText color={comment.isHelpful ? '$primaryMain' : '$black500'}>
-                  {comment.helpfulCount}
-                </ActionButtonText>
-              )}
-            </XStack>
-          </Pressable>
-        )}
-        {onPressReply && (
+      {onPressReply && (
+        <XStack mt={16} items="center" gap={16}>
           <Pressable onPress={onPressReply} hitSlop={6} testID={`comment-reply-${comment.id}`}>
             <ActionButtonText>답글 달기</ActionButtonText>
           </Pressable>
-        )}
-      </XStack>
+        </XStack>
+      )}
     </>
   );
 };

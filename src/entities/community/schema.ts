@@ -183,8 +183,6 @@ export const CommunityQnaListItemSchema = z.object({
   qnaType: QnaTypeSchema,
   animalType: QnaAnimalTypeSchema,
   images: z.array(z.string()),
-  helpfulCount: z.number().default(0),
-  // 답변 수 = list 응답의 counts.comment 그대로 (parentId IS NULL 댓글 수는 백엔드 후속)
   counts: z.object({
     like: z.number(),
     view: z.number(),
@@ -209,10 +207,10 @@ export const CommunityQnaDetailSchema = z.object({
   displayTime: z.string(),
   title: z.string(),
   content: z.string(),
-  type: QnaTypeSchema,
+  // 백엔드 상세 응답은 list 와 동일하게 qnaType 으로 노출(PostListItem 기반). 과거 type 명칭과 불일치하던 것 정합
+  qnaType: QnaTypeSchema,
   animalType: QnaAnimalTypeSchema,
   images: z.array(z.string()),
-  helpfulCount: z.number().default(0),
   commentCount: z.number().default(0),
   counts: z.object({
     like: z.number(),
@@ -223,35 +221,24 @@ export const CommunityQnaDetailSchema = z.object({
 });
 export type CommunityQnaDetailDto = z.infer<typeof CommunityQnaDetailSchema>;
 
-export const MyHelpfulCommentItemSchema = z.object({
+export const MyCommentItemSchema = z.object({
   id: z.string(),
   content: z.string(),
   displayTime: z.string(),
-  helpfulCount: z.number(),
-  isHelpful: z.boolean(),
   postId: z.string(),
   postCategory: z.enum(['ADOPTION_PERSONAL', 'ADOPTION_LIFE', 'QNA']),
   postTitle: z.string(),
-  postThumbnail: z.string().nullable()
-});
-export type MyHelpfulCommentItemDto = z.infer<typeof MyHelpfulCommentItemSchema>;
-
-export const MyHelpfulCommentListResponseSchema = z.object({
-  items: z.array(MyHelpfulCommentItemSchema),
-  total: z.number(),
-  page: z.number(),
-  size: z.number(),
-  hasNext: z.boolean()
-});
-export type MyHelpfulCommentListResponseDto = z.infer<typeof MyHelpfulCommentListResponseSchema>;
-
-export const MyCommentItemSchema = MyHelpfulCommentItemSchema.extend({
+  postThumbnail: z.string().nullable(),
   parentId: z.string().nullable().default(null)
 });
 export type MyCommentItemDto = z.infer<typeof MyCommentItemSchema>;
 
-export const MyCommentListResponseSchema = MyHelpfulCommentListResponseSchema.extend({
-  items: z.array(MyCommentItemSchema)
+export const MyCommentListResponseSchema = z.object({
+  items: z.array(MyCommentItemSchema),
+  total: z.number(),
+  page: z.number(),
+  size: z.number(),
+  hasNext: z.boolean()
 });
 export type MyCommentListResponseDto = z.infer<typeof MyCommentListResponseSchema>;
 

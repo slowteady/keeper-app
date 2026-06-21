@@ -11,6 +11,7 @@ import { LabelSelectField } from '@/features/community/create/ui/field/label-sel
 import { LabelTextArea } from '@/features/community/create/ui/field/label-text-area';
 import { LabelTextField } from '@/features/community/create/ui/field/label-text-field';
 import { OptionSelectField } from '@/features/community/create/ui/field/option-select-field';
+import { SCREEN_GUTTER } from '@/shared/lib';
 import { DownArrow } from '@/shared/ui/icons/mini';
 
 export type CommunityAdoptFormProps = {
@@ -116,7 +117,7 @@ export const CommunityAdoptForm = ({
           </Accordion.Header>
           <Accordion.Content bg="transparent" p={0}>
             <Accordion.HeightAnimator animation="quick" exitStyle={{ opacity: 0, height: 0 }}>
-              <YStack px={20} pb={24} gap={16}>
+              <YStack px={SCREEN_GUTTER} pb={24} gap={16}>
                 <OptionSelectField name="gender" control={control} label="성별" />
                 <LabelSelectField
                   name="age"
@@ -166,7 +167,7 @@ export const CommunityAdoptForm = ({
           </Accordion.Header>
           <Accordion.Content bg="transparent" p={0}>
             <Accordion.HeightAnimator animation="quick" exitStyle={{ opacity: 0, height: 0 }}>
-              <YStack px={20} pb={24} gap={16}>
+              <YStack px={SCREEN_GUTTER} pb={24} gap={16}>
                 <OptionSelectField name="neuterYn" control={control} label="중성화" />
                 <OptionSelectField name="vaccinationCheck" control={control} label="예방접종" />
                 <OptionSelectField name="healthCheck" control={control} label="건강검진" />
@@ -203,7 +204,7 @@ export const CommunityAdoptForm = ({
           </Accordion.Header>
           <Accordion.Content bg="transparent" p={0}>
             <Accordion.HeightAnimator animation="quick" exitStyle={{ opacity: 0, height: 0 }}>
-              <YStack px={20} pb={24} gap={16}>
+              <YStack px={SCREEN_GUTTER} pb={24} gap={16}>
                 <LabelChipGroup
                   name="toiletTraining"
                   control={control}
@@ -287,7 +288,7 @@ export const CommunityAdoptForm = ({
           </Accordion.Header>
           <Accordion.Content bg="transparent" p={0}>
             <Accordion.HeightAnimator animation="quick" exitStyle={{ opacity: 0, height: 0 }}>
-              <YStack px={20} pb={24}>
+              <YStack px={SCREEN_GUTTER} pb={24}>
                 <ContactSelectField control={control} label="연락 정보" required inputRef={fieldRefs?.contactInput} />
               </YStack>
             </Accordion.HeightAnimator>

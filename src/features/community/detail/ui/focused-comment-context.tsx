@@ -5,7 +5,6 @@ import { styled, Text, View, YStack } from 'tamagui';
 
 import { CommentCard, commentQueries } from '@/entities/comment';
 
-import { useCommentHelpful } from '../model/use-comment-helpful';
 import { useCommentMenu } from '../model/use-comment-menu';
 
 type FocusedCommentContextProps = {
@@ -24,7 +23,6 @@ export const FocusedCommentContext = ({
   onShowAll
 }: FocusedCommentContextProps) => {
   const { data } = useQuery(commentQueries.context(postId, commentId));
-  const { toggleHelpful } = useCommentHelpful();
   const { openCommentMenu } = useCommentMenu({ onEdit, onDeleteSuccess: onShowAll });
   const autoEditTriggered = useRef(false);
 
@@ -42,30 +40,16 @@ export const FocusedCommentContext = ({
       authorId: comment.user?.id,
       content: comment.content
     });
-  const toggle = (comment: typeof data.targetComment) =>
-    toggleHelpful({
-      commentId: comment.id,
-      currentlyHelpful: comment.isHelpful,
-      currentCount: comment.helpfulCount
-    });
   const isReply = data.rootComment.id !== data.targetComment.id;
 
   return (
     <YStack px={20} py={24} gap={20}>
       <FocusedCard>
-        <CommentCard
-          comment={data.rootComment}
-          onPressMore={() => openMenu(data.rootComment)}
-          onPressHelpful={() => toggle(data.rootComment)}
-        />
+        <CommentCard comment={data.rootComment} onPressMore={() => openMenu(data.rootComment)} />
       </FocusedCard>
       {isReply ? (
         <ReplyCard>
-          <CommentCard
-            comment={data.targetComment}
-            onPressMore={() => openMenu(data.targetComment)}
-            onPressHelpful={() => toggle(data.targetComment)}
-          />
+          <CommentCard comment={data.targetComment} onPressMore={() => openMenu(data.targetComment)} />
         </ReplyCard>
       ) : null}
       <Pressable onPress={onShowAll}>

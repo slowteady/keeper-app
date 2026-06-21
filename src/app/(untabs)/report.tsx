@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { styled, Text, View, YStack } from 'tamagui';
 
 import { REPORT_REASONS, type ReportReason, useReport } from '@/features/community/safety';
+import { SCREEN_GUTTER } from '@/shared/lib';
 import { Menu, ModalPageHeader } from '@/shared/ui';
 
 const Page = () => {
@@ -28,7 +29,7 @@ const Page = () => {
   return (
     <Container edges={[]}>
       <ModalPageHeader title="신고하기" fullScreen />
-      <YStack flex={1} px={20}>
+      <YStack flex={1} px={SCREEN_GUTTER}>
         <Title>신고하는 이유를 선택해 주세요</Title>
         <InfoBox>
           <InfoText>접수된 신고는 운영자가 검토 후 처리합니다.</InfoText>

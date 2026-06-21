@@ -5,6 +5,7 @@ import { styled, Text, View, XStack } from 'tamagui';
 
 import { DistancePermissionPrompt, ShelterCard, ShelterDto } from '@/entities/shelter';
 import { useFavoriteShelter } from '@/features/favorite-shelter';
+import { SCREEN_GUTTER } from '@/shared/lib';
 import { Skeleton } from '@/shared/ui';
 
 const CARD_WIDTH = 270;
@@ -35,7 +36,7 @@ export const HomeShelterSection = ({ shelters, isGranted, isLoading }: HomeShelt
 
   return (
     <>
-      <HeaderContainer px={20} mb={16}>
+      <HeaderContainer px={SCREEN_GUTTER} mb={16}>
         <Text fontSize={26} lineHeight={36} fontWeight="600" color="$black900">
           내 주변 보호소
         </Text>
@@ -47,7 +48,7 @@ export const HomeShelterSection = ({ shelters, isGranted, isLoading }: HomeShelt
       </HeaderContainer>
 
       {!isGranted ? (
-        <View px={20}>
+        <View px={SCREEN_GUTTER}>
           <DistancePermissionPrompt />
         </View>
       ) : (

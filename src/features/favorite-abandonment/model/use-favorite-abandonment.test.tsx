@@ -139,7 +139,7 @@ describe('useFavoriteAbandonment', () => {
     expect(predicate({ queryKey: ['shelters', 'within', { x: 1 }] })).toBe(false);
   });
 
-  it('settled 시 me-favorite-abandonments(관심 목록) 도 무효화 → 즉시 반영', async () => {
+  it('settled 시 me-favorite-abandonments(관심 목록) 은 무효화하지 않음 — 29cm 잔존', async () => {
     const { queryClient, wrapper } = setup();
     mockedFavorite.mockResolvedValue({ isFavorited: true });
     const invalidateSpy = jest.spyOn(queryClient, 'invalidateQueries');
@@ -153,7 +153,7 @@ describe('useFavoriteAbandonment', () => {
         JSON.stringify((f as { queryKey?: unknown } | undefined)?.queryKey) ===
         JSON.stringify(['me-favorite-abandonments'])
     );
-    expect(hit).toBe(true);
+    expect(hit).toBe(false);
   });
 
   it('detail 캐시도 함께 patch (prefix 매칭)', async () => {

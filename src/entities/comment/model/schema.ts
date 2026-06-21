@@ -13,11 +13,7 @@ export const CommentSchema = z.object({
   // 대댓글 부모 댓글 id (root 면 null)
   parentId: z.string().nullable().default(null),
   // 대댓글 개수 (root 만 의미. reply 자신은 항상 0)
-  replyCount: z.coerce.number().default(0),
-  // 도움돼요 카운트 (root/reply 동일하게 적용)
-  helpfulCount: z.coerce.number().default(0),
-  // 비로그인 또는 미응답 시 false
-  isHelpful: z.boolean().default(false)
+  replyCount: z.coerce.number().default(0)
 });
 export type CommentDto = z.infer<typeof CommentSchema>;
 

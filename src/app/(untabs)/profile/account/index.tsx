@@ -3,6 +3,7 @@ import { ScrollView, Separator, styled, Text, View, XStack, YStack } from 'tamag
 
 import { useCurrentUser, useLogout } from '@/features/auth';
 import { useProfileImage } from '@/features/profile';
+import { SCREEN_GUTTER } from '@/shared/lib';
 import { usePermission } from '@/shared/model';
 import { Menu } from '@/shared/ui';
 import { AccountHeader } from '@/widgets/profile';
@@ -18,19 +19,19 @@ const Page = () => {
   return (
     <Container>
       <ScrollView py={32}>
-        <View px={20} mb={24}>
+        <View px={SCREEN_GUTTER} mb={24}>
           <AccountHeader user={user} isUpdatingImage={isUpdatingImage} onChangeProfileImage={changeProfileImage} />
         </View>
 
         <Separator borderColor="$backgroundDefault" mb={24} />
 
-        <YStack px={20} mb={24}>
+        <YStack px={SCREEN_GUTTER} mb={24}>
           <NavText mb={4}>계정설정</NavText>
           <Menu label="닉네임 설정" style={{ paddingVertical: 16 }} onPress={() => router.push('/nickname')} />
           <Menu label="차단 관리" style={{ paddingVertical: 16 }} onPress={() => router.push('/profile/blocks')} />
         </YStack>
 
-        <YStack px={20} mb={24}>
+        <YStack px={SCREEN_GUTTER} mb={24}>
           <NavText mb={4}>환경설정</NavText>
           <XStack items="center" justify="space-between" py={16}>
             <Label>위치 설정</Label>
@@ -44,7 +45,7 @@ const Page = () => {
 
         <Separator borderColor="$backgroundDefault" mb={24} />
 
-        <YStack px={20}>
+        <YStack px={SCREEN_GUTTER}>
           <Menu label="로그아웃" style={{ paddingVertical: 14 }} onPress={logout} testID="account-logout" />
           <Menu
             label="회원탈퇴"

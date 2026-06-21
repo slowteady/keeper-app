@@ -110,6 +110,7 @@ jest.mock('react-native-reanimated', () => ({
   default: { addWhitelistedNativeProps: jest.fn() },
   View: require('react-native').View,
   useSharedValue: jest.fn((init: any) => ({ value: init })),
+  useDerivedValue: jest.fn((fn: any) => ({ value: fn() })),
   useAnimatedStyle: jest.fn((fn: any) => fn()),
   useAnimatedProps: jest.fn((fn: any) => fn()),
   withTiming: jest.fn((val: any) => val),
