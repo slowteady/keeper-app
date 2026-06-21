@@ -108,11 +108,14 @@ jest.mock('react-native-safe-area-context', () => ({
 
 jest.mock('react-native-reanimated', () => ({
   default: { addWhitelistedNativeProps: jest.fn() },
+  View: require('react-native').View,
   useSharedValue: jest.fn((init: any) => ({ value: init })),
   useAnimatedStyle: jest.fn((fn: any) => fn()),
   useAnimatedProps: jest.fn((fn: any) => fn()),
   withTiming: jest.fn((val: any) => val),
   withSpring: jest.fn((val: any) => val),
+  withRepeat: jest.fn((val: any) => val),
+  interpolate: jest.fn((val: any, _input: any, output: any) => (Array.isArray(output) ? output[0] : val)),
   interpolateColor: jest.fn(() => 'transparent'),
   Easing: { out: jest.fn(() => jest.fn()), exp: jest.fn() },
   runOnJS: jest.fn((fn: any) => fn),
