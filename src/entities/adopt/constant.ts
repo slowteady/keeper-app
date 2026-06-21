@@ -98,8 +98,7 @@ export const PERSONAL_FILTER_OPTIONS = {
   ] as const,
   STATUS: [
     { id: 'IN_PROGRESS', label: '입양중' },
-    { id: 'COMPLETED', label: '완료' },
-    { id: '', label: '전체' }
+    { id: 'COMPLETED', label: '입양완료' }
   ] as const
 } as const;
 

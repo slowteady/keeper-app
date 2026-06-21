@@ -69,8 +69,8 @@ export const PersonalFilterBar = ({ filter, animalType, sortValue, onChangeSort 
   });
   const { open: openStatus } = useBottomSheetMenu({
     data: PERSONAL_FILTER_OPTIONS.STATUS,
-    value: applied.adoptionStatus ?? '',
-    onPress: (d) => setAdoptionStatus(d.id === '' ? undefined : (d.id as 'IN_PROGRESS' | 'COMPLETED'))
+    value: applied.adoptionStatus ?? 'IN_PROGRESS',
+    onPress: (d) => setAdoptionStatus(d.id as 'IN_PROGRESS' | 'COMPLETED')
   });
   const { open: openVaccination } = useBottomSheetMenu({
     data: PERSONAL_FILTER_OPTIONS.VACCINATION,
@@ -83,20 +83,11 @@ export const PersonalFilterBar = ({ filter, animalType, sortValue, onChangeSort 
     onPress: (d) => setHealthCheck(d.id === '' ? undefined : (d.id as PersonalHealth))
   });
 
-  const openRegion = () =>
-    present(
-      <ChosungSelectSheet
-        searchPlaceholder="지역 검색"
-        allLabel="전체"
-        options={SHELTER_SIDO.map((s) => ({ id: s.id, label: s.label }))}
-        value={applied.region}
-        onSelect={(id) => {
-          setRegion(id);
-          dismiss();
-        }}
-      />,
-      { snapPoints: ['70%'], disableViewWrap: true }
-    );
+  const { open: openRegion } = useBottomSheetMenu({
+    data: [{ id: '', label: '전체' }, ...SHELTER_SIDO.map((s) => ({ id: s.id, label: s.label }))],
+    value: applied.region ?? '',
+    onPress: (d) => setRegion(d.id === '' ? undefined : (d.id as string))
+  });
   const openBreed = () =>
     present(
       <ChosungSelectSheet
