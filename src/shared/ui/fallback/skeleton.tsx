@@ -11,9 +11,10 @@ import { useTheme } from 'tamagui';
 
 export type SkeletonProps = {
   style?: StyleProp<ViewStyle>;
+  testID?: string;
 };
 
-export const Skeleton = ({ style }: SkeletonProps) => {
+export const Skeleton = ({ style, testID }: SkeletonProps) => {
   const animatedValue = useSharedValue(0);
 
   const { white700 } = useTheme();
@@ -27,5 +28,10 @@ export const Skeleton = ({ style }: SkeletonProps) => {
     animatedValue.value = withRepeat(withTiming(1, { duration: 1500 }), -1, true);
   }, [animatedValue]);
 
-  return <Animated.View style={[{ overflow: 'hidden', backgroundColor: white700.val }, animatedStyle, style]} />;
+  return (
+    <Animated.View
+      testID={testID}
+      style={[{ overflow: 'hidden', backgroundColor: white700.val }, animatedStyle, style]}
+    />
+  );
 };

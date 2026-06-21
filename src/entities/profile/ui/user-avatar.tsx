@@ -1,5 +1,4 @@
 import { Image } from 'expo-image';
-import { useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { styled, View } from 'tamagui';
 
@@ -16,14 +15,8 @@ export type UserAvatarProps = {
 };
 
 export const UserAvatar = ({ image, loading, onPressAdd, onPressEdit }: UserAvatarProps) => {
-  const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    setLoaded(false);
-  }, [image]);
-
   if (loading) {
-    return <Skeleton style={{ width: 72, height: 72, borderRadius: 8 }} />;
+    return <Skeleton testID="user-avatar-skeleton" style={{ width: 72, height: 72, borderRadius: 8 }} />;
   }
 
   if (!image) {
@@ -34,14 +27,13 @@ export const UserAvatar = ({ image, loading, onPressAdd, onPressEdit }: UserAvat
     <Container>
       <ImageBox>
         <Image
+          testID="user-avatar-image"
           source={{ uri: image }}
           cachePolicy="memory-disk"
           transition={0}
           contentFit="cover"
           style={styles.image}
-          onLoad={() => setLoaded(true)}
         />
-        {!loaded && <Skeleton style={StyleSheet.absoluteFill} />}
       </ImageBox>
       {onPressEdit && (
         <EditButton onPress={onPressEdit} hitSlop={12}>
@@ -64,6 +56,7 @@ const ImageBox = styled(View, {
   rounded: 8,
   borderWidth: 1,
   borderColor: '$black500',
+  bg: '$white800',
   overflow: 'hidden'
 });
 
