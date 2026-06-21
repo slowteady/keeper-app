@@ -15,7 +15,7 @@ export const useAdoptionStatus = (postId: string) => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: [...communityQueries.all(), 'detail', postId] }),
         queryClient.invalidateQueries({ queryKey: communityQueries.all() }),
-        queryClient.invalidateQueries({ queryKey: communityQueries.myPostList().queryKey })
+        queryClient.invalidateQueries({ queryKey: communityQueries.myPostListKey() })
       ]);
     },
     onError: () => globalToast('입양 상태를 변경하지 못했어요', 'fail')

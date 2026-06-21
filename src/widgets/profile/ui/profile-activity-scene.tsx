@@ -12,7 +12,7 @@ import {
   MyPostType
 } from '@/entities/community';
 import { useCurrentUser } from '@/features/auth';
-import { useCommentMenu, usePostMenu } from '@/features/community';
+import { useAdoptionStatus, useCommentMenu, usePostMenu } from '@/features/community';
 import { useMyComments, useMyPosts } from '@/features/profile';
 import { ButtonGroup } from '@/shared/ui';
 
@@ -72,7 +72,10 @@ const MyPostList = ({ type }: { type: MyPostType }) => {
   const { items, isLoading, isFetchingNextPage, fetchNextPage, refetch } = useMyPosts(type);
   const empty = POST_EMPTY[type];
 
-  const renderItem = useCallback(({ item }: ListRenderItemInfo<MyPostItemDto>) => <MyPostListItem item={item} />, []);
+  const renderItem = useCallback(
+    ({ item }: ListRenderItemInfo<MyPostItemDto>) => <MyPostListItem item={item} type={type} />,
+    [type]
+  );
 
   if (!isLoading && items.length === 0) {
     return (
@@ -100,9 +103,21 @@ const MyPostList = ({ type }: { type: MyPostType }) => {
   );
 };
 
-const MyPostListItem = ({ item }: { item: MyPostItemDto }) => {
+const MyPostListItem = ({ item, type }: { item: MyPostItemDto; type: MyPostType }) => {
   const { user } = useCurrentUser();
-  const { openPostMenu } = usePostMenu({ postId: item.id, authorId: user?.id, stayOnDelete: true });
+  const { setCompleted, setInProgress } = useAdoptionStatus(item.id);
+  const isPersonal = type === 'personal' && !!item.adoptionStatus;
+  const { openPostMenu } = usePostMenu({
+    postId: item.id,
+    authorId: user?.id,
+    stayOnDelete: true,
+    adoption: isPersonal
+      ? {
+          status: item.adoptionStatus!,
+          onToggle: item.adoptionStatus === 'COMPLETED' ? setInProgress : setCompleted
+        }
+      : undefined
+  });
 
   return (
     <CommunityPostListItem
@@ -111,6 +126,8 @@ const MyPostListItem = ({ item }: { item: MyPostItemDto }) => {
       status={adoptionStatusChip(item)}
       onPress={(id) => router.push(`/(untabs)/community/${id}`)}
       onPressMore={openPostMenu}
+      hideCategory={type === 'personal'}
+      hideLikeCount
     />
   );
 };

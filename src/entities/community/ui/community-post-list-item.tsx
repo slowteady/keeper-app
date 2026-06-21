@@ -21,6 +21,8 @@ export type CommunityPostListItemProps = {
   onPress: (id: string) => void;
   onPressLike?: (id: string, currentlyLiked: boolean) => void;
   onPressMore?: () => void;
+  hideCategory?: boolean;
+  hideLikeCount?: boolean;
 };
 
 export const CommunityPostListItem = ({
@@ -29,7 +31,9 @@ export const CommunityPostListItem = ({
   status,
   onPress,
   onPressLike,
-  onPressMore
+  onPressMore,
+  hideCategory = false,
+  hideLikeCount = false
 }: CommunityPostListItemProps) => {
   const { black500 } = useTheme();
   const thumbnail = data.images?.[0];
@@ -50,42 +54,58 @@ export const CommunityPostListItem = ({
                 <StatusText tone={status.tone}>{status.label}</StatusText>
               </StatusChip>
             )}
-            <CategoryChip>
-              <CategoryText>{categoryLabel}</CategoryText>
-            </CategoryChip>
+            {!hideCategory && (
+              <CategoryChip>
+                <CategoryText>{categoryLabel}</CategoryText>
+              </CategoryChip>
+            )}
             <DisplayTime>{formatTimeAgo(data.displayTime)}</DisplayTime>
           </XStack>
           <Preview numberOfLines={2} ellipsizeMode="tail">
             {data.title}
           </Preview>
-          <XStack items="center" gap={10}>
-            {onPressLike && (
-              <Pressable onPress={handlePressLike} hitSlop={8} testID={`me-liked-post-toggle-${data.id}`}>
-                <AnimatedHeart isLiked={data.isLiked} size={18} inactiveColor={black500.val} />
-              </Pressable>
-            )}
-            {data.counts.like > 0 && <Meta>{data.counts.like}명이 공감했어요</Meta>}
-          </XStack>
+          {(onPressLike || (!hideLikeCount && data.counts.like > 0)) && (
+            <XStack items="center" gap={10}>
+              {onPressLike && (
+                <Pressable onPress={handlePressLike} hitSlop={8} testID={`me-liked-post-toggle-${data.id}`}>
+                  <AnimatedHeart isLiked={data.isLiked} size={18} inactiveColor={black500.val} />
+                </Pressable>
+              )}
+              {!hideLikeCount && data.counts.like > 0 && <Meta>{data.counts.like}명이 공감했어요</Meta>}
+            </XStack>
+          )}
         </YStack>
       </Pressable>
-      <XStack items="center" gap={8}>
-        {thumbnail ? <Thumbnail source={{ uri: thumbnail }} contentFit="cover" /> : <ThumbnailPlaceholder />}
-        {onPressMore ? (
-          <Pressable onPress={onPressMore} hitSlop={10} accessibilityLabel="더보기" testID={`my-post-more-${data.id}`}>
-            <MoreVertical size={18} color="$black700" />
-          </Pressable>
-        ) : null}
-      </XStack>
+      {(onPressMore || thumbnail) && (
+        <RightColumn>
+          {onPressMore ? (
+            <Pressable
+              onPress={onPressMore}
+              hitSlop={10}
+              accessibilityLabel="더보기"
+              testID={`my-post-more-${data.id}`}
+            >
+              <MoreVertical size={18} color="$black700" />
+            </Pressable>
+          ) : null}
+          {thumbnail && <Thumbnail source={{ uri: thumbnail }} contentFit="cover" />}
+        </RightColumn>
+      )}
     </Container>
   );
 };
+
+const RightColumn = styled(YStack, {
+  items: 'flex-end',
+  gap: 10
+});
 
 const Container = styled(XStack, {
   py: 16,
   gap: 16,
   borderBottomWidth: 1,
   borderBottomColor: '$white850',
-  items: 'center'
+  items: 'flex-start'
 });
 
 const StatusChip = styled(View, {
@@ -151,11 +171,4 @@ const Thumbnail = styled(Image, {
   width: 64,
   height: 64,
   rounded: 8
-});
-
-const ThumbnailPlaceholder = styled(View, {
-  width: 64,
-  height: 64,
-  rounded: 8,
-  bg: '$white850'
 });

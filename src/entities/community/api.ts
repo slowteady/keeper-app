@@ -255,6 +255,8 @@ export const communityQueries = {
       })
     }),
 
+  myPostListKey: () => ['me-posts'] as const,
+
   myPostList: (type?: MyPostType, size: number = 20) =>
     infiniteQueryOptions({
       queryKey: ['me-posts', { type, size }] as const,
