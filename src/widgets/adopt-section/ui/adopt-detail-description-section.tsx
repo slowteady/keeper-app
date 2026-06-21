@@ -1,4 +1,4 @@
-import { ChevronRight, Clock, MapPin, Stethoscope } from '@tamagui/lucide-icons';
+import { ChevronRight } from '@tamagui/lucide-icons';
 import { RelativePathString, router } from 'expo-router';
 import { Pressable } from 'react-native';
 import { styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
@@ -37,7 +37,7 @@ export const AdoptDetailDescriptionSection = ({ specialMark, shelter }: AdoptDet
 
       <YStack gap={12}>
         <SectionTitle>담당 보호소</SectionTitle>
-        <Card gap={hasShelter ? 14 : 0}>
+        <Card gap={hasShelter ? 16 : 0}>
           {hasShelter ? (
             <>
               <Pressable onPress={() => router.push(`/shelter/${id}` as RelativePathString)}>
@@ -48,22 +48,22 @@ export const AdoptDetailDescriptionSection = ({ specialMark, shelter }: AdoptDet
               </Pressable>
               <CardDivider />
               {hasValue(time) && (
-                <IconRow>
-                  <Clock size={16} color={iconColor} />
-                  <RowText>{time}</RowText>
-                </IconRow>
+                <SpecRow>
+                  <SpecLabel>운영시간</SpecLabel>
+                  <SpecValue>{time}</SpecValue>
+                </SpecRow>
               )}
               {hasValue(address) && (
-                <IconRow>
-                  <MapPin size={16} color={iconColor} />
-                  <RowText>{address}</RowText>
-                </IconRow>
+                <SpecRow>
+                  <SpecLabel>주소</SpecLabel>
+                  <SpecValue>{address}</SpecValue>
+                </SpecRow>
               )}
               {hasValue(person) && (
-                <IconRow>
-                  <Stethoscope size={16} color={iconColor} />
-                  <RowText>{person}</RowText>
-                </IconRow>
+                <SpecRow>
+                  <SpecLabel>담당</SpecLabel>
+                  <SpecValue>{person}</SpecValue>
+                </SpecRow>
               )}
             </>
           ) : (
@@ -108,15 +108,25 @@ const CardDivider = styled(View, {
   bg: '#EDEDED'
 });
 
-const IconRow = styled(XStack, {
-  items: 'center',
-  gap: 8
+const SpecRow = styled(XStack, {
+  items: 'flex-start',
+  justify: 'space-between',
+  gap: 12
 });
 
-const RowText = styled(Text, {
-  flex: 1,
+const SpecLabel = styled(Text, {
+  shrink: 0,
+  fontSize: 15,
+  fontWeight: '600',
+  lineHeight: 22,
+  color: '$black800'
+});
+
+const SpecValue = styled(Text, {
+  shrink: 1,
   fontSize: 15,
   fontWeight: '500',
   lineHeight: 22,
-  color: '$black700'
+  color: '$black700',
+  text: 'right'
 });
