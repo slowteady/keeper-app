@@ -16,7 +16,6 @@ const ADOPT_PREFIX = adoptQueries.all();
 // 보호소 상세 안 공고 목록 (shelterQueries.adopts) 도 sync — id matcher 가 desertionNo 만 패치하므로
 // 보호소 list/detail cache 는 무영향 (no-op).
 const SHELTER_PREFIX = shelterQueries.all();
-// 마이페이지 관심 list 는 도메인 prefix 와 별도 namespace — optimistic patch 만, invalidate 는 안 함 (29cm 잔존).
 const ME_FAVORITE_PREFIX = ['me-favorite-abandonments'] as const;
 
 export const useFavoriteAbandonment = () => {
@@ -80,7 +79,10 @@ export const useFavoriteAbandonment = () => {
     onSettled: () => {
       if (queryClient.isMutating({ mutationKey: [...FAVORITE_ABANDONMENT_MUTATION_KEY] }) === 1) {
         queryClient.invalidateQueries({ queryKey: ADOPT_PREFIX });
-        queryClient.invalidateQueries({ queryKey: SHELTER_PREFIX });
+        queryClient.invalidateQueries({
+          predicate: (query) => query.queryKey[0] === SHELTER_PREFIX[0] && query.queryKey[1] === 'adopts'
+        });
+        queryClient.invalidateQueries({ queryKey: ME_FAVORITE_PREFIX });
       }
     }
   });

@@ -121,6 +121,22 @@ describe('useFavoriteShelter', () => {
     expect(cached?.pages[0].items[0].isFavorited).toBe(false);
   });
 
+  it('settled 시 me-favorite-shelters(관심 목록) 도 무효화 → 즉시 반영', async () => {
+    const { queryClient, wrapper } = setup();
+    mockedFavorite.mockResolvedValue({ isFavorited: true });
+    const invalidateSpy = jest.spyOn(queryClient, 'invalidateQueries');
+
+    const { result } = renderHook(() => useFavoriteShelter(), { wrapper });
+    act(() => result.current.toggleFavoriteShelter('S1', false));
+
+    await waitFor(() => expect(invalidateSpy).toHaveBeenCalled());
+    const hit = invalidateSpy.mock.calls.some(
+      ([f]) =>
+        JSON.stringify((f as { queryKey?: unknown } | undefined)?.queryKey) === JSON.stringify(['me-favorite-shelters'])
+    );
+    expect(hit).toBe(true);
+  });
+
   it('detail 캐시도 함께 patch (prefix 매칭)', async () => {
     const { queryClient, wrapper } = setup();
     queryClient.setQueryData([...shelterQueries.all(), 'detail', 'S1'], {

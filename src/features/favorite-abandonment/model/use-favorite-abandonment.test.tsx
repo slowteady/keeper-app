@@ -119,6 +119,43 @@ describe('useFavoriteAbandonment', () => {
     expect(cached?.pages[0].value[0].isFavorited).toBe(false);
   });
 
+  it('settled 시 shelter adopts 서브리스트만 무효화하고 shelter 본체는 건드리지 않음', async () => {
+    const { queryClient, wrapper } = setup();
+    mockedFavorite.mockResolvedValue({ isFavorited: true });
+    const invalidateSpy = jest.spyOn(queryClient, 'invalidateQueries');
+
+    const { result } = renderHook(() => useFavoriteAbandonment(), { wrapper });
+    act(() => result.current.toggleFavoriteAbandonment('D1', false));
+
+    await waitFor(() => expect(invalidateSpy).toHaveBeenCalled());
+
+    const shelterCall = invalidateSpy.mock.calls.find(
+      ([filters]) => typeof (filters as { predicate?: unknown } | undefined)?.predicate === 'function'
+    );
+    expect(shelterCall).toBeDefined();
+    const predicate = (shelterCall![0] as { predicate: (q: { queryKey: readonly unknown[] }) => boolean }).predicate;
+    expect(predicate({ queryKey: ['shelters', 'adopts', 'S1', { page: 1 }] })).toBe(true);
+    expect(predicate({ queryKey: ['shelters', 'detail', 'S1'] })).toBe(false);
+    expect(predicate({ queryKey: ['shelters', 'within', { x: 1 }] })).toBe(false);
+  });
+
+  it('settled 시 me-favorite-abandonments(관심 목록) 도 무효화 → 즉시 반영', async () => {
+    const { queryClient, wrapper } = setup();
+    mockedFavorite.mockResolvedValue({ isFavorited: true });
+    const invalidateSpy = jest.spyOn(queryClient, 'invalidateQueries');
+
+    const { result } = renderHook(() => useFavoriteAbandonment(), { wrapper });
+    act(() => result.current.toggleFavoriteAbandonment('D1', false));
+
+    await waitFor(() => expect(invalidateSpy).toHaveBeenCalled());
+    const hit = invalidateSpy.mock.calls.some(
+      ([f]) =>
+        JSON.stringify((f as { queryKey?: unknown } | undefined)?.queryKey) ===
+        JSON.stringify(['me-favorite-abandonments'])
+    );
+    expect(hit).toBe(true);
+  });
+
   it('detail 캐시도 함께 patch (prefix 매칭)', async () => {
     const { queryClient, wrapper } = setup();
     queryClient.setQueryData([...adoptQueries.all(), 'detail', 'D1'], { id: 'D1', isFavorited: false });

@@ -68,6 +68,7 @@ export const useFavoriteShelter = () => {
     onSettled: () => {
       if (queryClient.isMutating({ mutationKey: [...FAVORITE_SHELTER_MUTATION_KEY] }) === 1) {
         queryClient.invalidateQueries({ queryKey: SHELTER_PREFIX });
+        queryClient.invalidateQueries({ queryKey: ME_FAVORITE_PREFIX });
       }
     }
   });
