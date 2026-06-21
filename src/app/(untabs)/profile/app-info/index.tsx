@@ -6,10 +6,9 @@ import { useCallback } from 'react';
 import { Pressable, StyleSheet } from 'react-native';
 import { ScrollView, Separator, styled, Text, View, XStack, YStack } from 'tamagui';
 
-import { ConfirmDeleteModal } from '@/features/community/detail/ui/confirm-delete-modal';
 import { globalToast } from '@/shared/lib';
 import { formatBytes, useCacheSize } from '@/shared/model';
-import { Menu, useModal } from '@/shared/ui';
+import { ConfirmModal, Menu, useModal } from '@/shared/ui';
 
 const Page = () => {
   const version = Application.nativeApplicationVersion;
@@ -30,9 +29,12 @@ const Page = () => {
   const handlePressClear = useCallback(() => {
     const sizeText = formatBytes(bytes);
     openModal(
-      <ConfirmDeleteModal
+      <ConfirmModal
         title="캐시를 삭제할까요?"
         description={`*저장된 이미지 ${sizeText} 가 비워집니다.`}
+        confirmText="삭제하기"
+        cancelText="닫기"
+        destructive
         onCancel={closeModal}
         onConfirm={handleConfirmClear}
       />

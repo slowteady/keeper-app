@@ -4,6 +4,7 @@ export * from './bottom-sheet-provider';
 export * from './call-modal';
 export * from './cancel-modal';
 export * from './chosung-select-sheet';
+export * from './confirm-modal';
 export * from './image-viewer';
 export * from './modal-buttons';
 export * from './modal-provider';

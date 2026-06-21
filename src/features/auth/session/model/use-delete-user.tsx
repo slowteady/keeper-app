@@ -6,10 +6,9 @@ import { useCallback } from 'react';
 
 import { authQueries, DeleteMeBodyDto, deleteUser, SocialLoginType, UserDto } from '@/entities/auth';
 import { globalToast, logger, removeToken } from '@/shared/lib';
-import { useModal } from '@/shared/ui';
+import { ConfirmModal, useModal } from '@/shared/ui';
 
 import { useSetIsAuthenticated } from '../../lib/auth-state';
-import { WithdrawModal } from '../ui/withdraw-modal';
 
 /**
  * 소셜 SDK 세션 종료 — 다음 로그인 시 "다른 계정으로 로그인" 시나리오 보장
@@ -66,12 +65,16 @@ export const useDeleteUser = () => {
   const openWithdrawModal = useCallback(
     (onWithdraw: () => void) => {
       open(
-        <WithdrawModal
-          onWithdraw={() => {
+        <ConfirmModal
+          title="정말 탈퇴하실건가요?"
+          description={`탈퇴 후 계정 복구는 불가하며,\n작성한 게시글은 '탈퇴한 회원'으로 표시됩니다`}
+          confirmText="탈퇴하기"
+          destructive
+          onConfirm={() => {
             onWithdraw();
             close();
           }}
-          onClose={close}
+          onCancel={close}
         />
       );
     },

@@ -11,7 +11,7 @@ import {
 } from './mapper';
 
 export const useCommunityAdoptDetailFeed = (id: string) => {
-  const { data, refetch } = useSuspenseQuery(communityQueries.detail(id));
+  const { data, refetch, isRefetching } = useSuspenseQuery(communityQueries.detail(id));
   const detailPost = data.kind === 'ADOPT' ? data.adopt : undefined;
 
   const overviews = useMemo(
@@ -29,6 +29,7 @@ export const useCommunityAdoptDetailFeed = (id: string) => {
     data: { detailPost, overviews, infos, descriptions, behaviors },
     isLoading: false,
     isError: false,
-    refetch
+    refetch,
+    isRefetching
   };
 };

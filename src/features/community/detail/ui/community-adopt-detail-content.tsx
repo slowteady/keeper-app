@@ -1,6 +1,6 @@
 import { MoreVertical, Siren } from '@tamagui/lucide-icons';
 import { useCallback, useState } from 'react';
-import { Alert, Pressable, ScrollView } from 'react-native';
+import { Pressable, RefreshControl, ScrollView } from 'react-native';
 import { styled, Text, useTheme, View, XStack } from 'tamagui';
 
 import { PROTECTION_LABEL } from '@/entities/adopt';
@@ -9,7 +9,7 @@ import { useCurrentUser, useLoginRequired } from '@/features/auth';
 import { useLikePost } from '@/features/like-post';
 import { toggleHaptic } from '@/shared/lib';
 import { useLayout } from '@/shared/model';
-import { BottomButton, Carousel, Skeleton, useBottomSheet } from '@/shared/ui';
+import { BottomButton, Carousel, ConfirmModal, Skeleton, useBottomSheet, useModal } from '@/shared/ui';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 import { Share as ShareIcon } from '@/shared/ui/icons/outline';
 import { DetailSpecSection } from '@/widgets/adopt-section';
@@ -31,9 +31,10 @@ export type CommunityAdoptDetailContentProps = {
 export const CommunityAdoptDetailContent = ({ id }: CommunityAdoptDetailContentProps) => {
   const [buttonHeight, setButtonHeight] = useState(0);
   const { present, dismiss } = useBottomSheet();
+  const { open: openModal, close: closeModal } = useModal();
   const { bottom } = useLayout();
 
-  const { data } = useCommunityAdoptDetailFeed(id);
+  const { data, refetch, isRefetching } = useCommunityAdoptDetailFeed(id);
   const { toggleLikePost } = useLikePost();
   const { black600 } = useTheme();
 
@@ -61,15 +62,25 @@ export const CommunityAdoptDetailContent = ({ id }: CommunityAdoptDetailContentP
   }, [requireLogin, present, dismiss, contacts]);
 
   const handleToggleStatus = useCallback(() => {
-    Alert.alert(
-      isCompleted ? '입양중으로 변경할까요?' : '입양완료로 변경할까요?',
-      isCompleted ? '다시 입양 공고로 노출돼요.' : '입양 목록에서 완료로 표시되고 하단으로 내려가요.',
-      [
-        { text: '취소', style: 'cancel' },
-        { text: '변경', onPress: () => (isCompleted ? setInProgress() : setCompleted()) }
-      ]
+    openModal(
+      <ConfirmModal
+        title={isCompleted ? '입양중으로 변경할까요?' : '입양완료로 변경할까요?'}
+        description={
+          isCompleted
+            ? '공고가 입양중으로 처리돼요. 다시 변경할 수 있어요'
+            : '공고가 입양완료로 처리돼요. 다시 변경할 수 있어요'
+        }
+        confirmText="변경"
+        cancelText="취소"
+        onCancel={closeModal}
+        onConfirm={() => {
+          closeModal();
+          if (isCompleted) setInProgress();
+          else setCompleted();
+        }}
+      />
     );
-  }, [isCompleted, setInProgress, setCompleted]);
+  }, [openModal, closeModal, isCompleted, setInProgress, setCompleted]);
 
   const handlePressLike = useCallback(() => {
     toggleHaptic(isLiked);
@@ -87,6 +98,7 @@ export const CommunityAdoptDetailContent = ({ id }: CommunityAdoptDetailContentP
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingTop: 0, paddingBottom: hasBottomCta ? buttonHeight + 40 : 48 }}
+        refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} />}
       >
         {isCompleted && (
           <CompletedBanner>

@@ -7,9 +7,7 @@ import { communityQueries, MyCommentItemDto } from '@/entities/community';
 import { useCurrentUser, useLoginRequired } from '@/features/auth';
 import { useBlock } from '@/features/community/safety';
 import { globalToast } from '@/shared/lib';
-import { BottomSheetMenu, type BottomSheetMenuData, useBottomSheet, useModal } from '@/shared/ui';
-
-import { ConfirmDeleteModal } from '../ui/confirm-delete-modal';
+import { BottomSheetMenu, type BottomSheetMenuData, ConfirmModal, useBottomSheet, useModal } from '@/shared/ui';
 
 export type CommentMenuId = 'EDIT' | 'DELETE' | 'REPORT' | 'BLOCK';
 
@@ -84,9 +82,12 @@ export const useCommentMenu = ({ onEdit, onDeleteSuccess }: UseCommentMenuParams
           case 'DELETE':
             dismiss();
             openModal(
-              <ConfirmDeleteModal
+              <ConfirmModal
                 title="정말 댓글을 삭제할까요?"
                 description="*내가 쓴 댓글이 완전히 삭제됩니다."
+                confirmText="삭제하기"
+                cancelText="닫기"
+                destructive
                 onCancel={closeModal}
                 onConfirm={() => {
                   closeModal();
