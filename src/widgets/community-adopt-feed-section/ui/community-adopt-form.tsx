@@ -1,5 +1,5 @@
 import { RefObject } from 'react';
-import { UseFormReturn, useWatch } from 'react-hook-form';
+import { UseFormReturn } from 'react-hook-form';
 import { LayoutChangeEvent, TextInput } from 'react-native';
 import { Accordion, Form, Square, styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
 
@@ -37,7 +37,6 @@ export const CommunityAdoptForm = ({
 }: CommunityAdoptFormProps) => {
   const { black500 } = useTheme();
   const { control } = form;
-  const weight = useWatch({ control, name: 'weight' });
 
   const renderArrow = (open: boolean) => (
     <Square animation="quick" rotate={open ? '180deg' : '0deg'}>
@@ -132,7 +131,6 @@ export const CommunityAdoptForm = ({
                   name="weight"
                   control={control}
                   placeholder="예) 3.5"
-                  value={weight ?? ''}
                   keyboardType="decimal-pad"
                   maxLength={5}
                   right={<Text color="$black500">kg</Text>}
