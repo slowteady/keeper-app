@@ -2,7 +2,9 @@ import { NaverMapViewRef } from '@mj-studio/react-native-naver-map';
 import { FlashListRef, ListRenderItemInfo } from '@shopify/flash-list';
 import { RelativePathString, router, useLocalSearchParams } from 'expo-router';
 import { Suspense, useCallback, useRef, useState } from 'react';
+import { NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
 import { showLocation } from 'react-native-map-link';
+import { useSharedValue } from 'react-native-reanimated';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
 import { ADOPT_OPTIONS, AdoptCard, AdoptItem } from '@/entities/adopt';
@@ -10,7 +12,15 @@ import { useFavoriteAbandonment } from '@/features/favorite-abandonment';
 import { useFavoriteShelter } from '@/features/favorite-shelter';
 import { useShelter, useShelterAdoptList } from '@/features/shelter';
 import { useLocation, useShare } from '@/shared/model';
-import { BottomButton, CallModal, DetailErrorBoundary, Dropdown, ShowMoreButton, SuspenseFallback } from '@/shared/ui';
+import {
+  BottomButton,
+  CallModal,
+  DetailErrorBoundary,
+  Dropdown,
+  ScrollToTopButton,
+  ShowMoreButton,
+  SuspenseFallback
+} from '@/shared/ui';
 import { AdoptListSection } from '@/widgets/adopt-section';
 import { ShelterDetailDescriptionSection, ShelterDetailOverviewSection } from '@/widgets/shelter-section';
 
@@ -59,6 +69,18 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
     goDetail
   } = useShelterAdoptList({ id });
   const scrollRef = useRef<FlashListRef<AdoptItem>>(null);
+  const scrollY = useSharedValue(0);
+
+  const handleScroll = useCallback(
+    (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+      scrollY.value = e.nativeEvent.contentOffset.y;
+    },
+    [scrollY]
+  );
+
+  const scrollToTop = useCallback(() => {
+    scrollRef.current?.scrollToOffset({ offset: 0, animated: true });
+  }, []);
 
   const handleMapInitialized = useCallback(() => {
     if (shelterData) {
@@ -122,6 +144,7 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
         data={convertedData ?? []}
         isLoading={adoptsLoading}
         onRefreshCallback={refreshFetch}
+        onScroll={handleScroll}
         renderItem={renderItem}
         emptyComponentVariant="list"
         contentContainerStyle={{ paddingTop: 48, paddingBottom: buttonHeight + 40 }}
@@ -174,6 +197,8 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
           ) : undefined
         }
       />
+
+      <ScrollToTopButton scrollY={scrollY} onPress={scrollToTop} bottom={buttonHeight + 16} />
 
       <BottomButton
         disabled={!hasCallNumber}
