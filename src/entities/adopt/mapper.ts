@@ -164,8 +164,10 @@ const buildPersonalChips = (item: PersonalAdoptSource) => {
   if (item.neuterYn === 'Y') chips.push({ id: 'NEUTER', value: '중성화', variant: 'notice' });
   const gender = convertGenderLabel(item.gender ?? undefined);
   if (gender !== '모름') chips.push({ id: 'GENDER', value: gender, variant: 'default' });
-  if (item.age) chips.push({ id: 'AGE', value: item.age, variant: 'default' });
-  if (item.weight) chips.push({ id: 'WEIGHT', value: item.weight, variant: 'default' });
+  const ageLabel = formatAge(item.age ?? undefined);
+  if (ageLabel) chips.push({ id: 'AGE', value: ageLabel, variant: 'default' });
+  const weightLabel = formatWeight(item.weight ?? undefined);
+  if (weightLabel) chips.push({ id: 'WEIGHT', value: weightLabel, variant: 'default' });
   return chips;
 };
 

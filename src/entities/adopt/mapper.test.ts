@@ -10,8 +10,8 @@ const personalSource = (over: Partial<PersonalAdoptSource> = {}): PersonalAdoptS
   specificType: '코숏',
   gender: 'F',
   neuterYn: 'N',
-  age: '1살',
-  weight: '3kg',
+  age: '2022',
+  weight: '3.5',
   location: '서울 마포구',
   displayTime: '2026-05-12T00:00:00.000Z',
   isLiked: false,
@@ -34,8 +34,8 @@ describe('mapToPersonalAdoptList', () => {
     expect(item.chips.find((c) => c.id === 'KIND')).toBeUndefined();
     expect(item.breed).toBe('코숏');
     expect(item.chips.find((c) => c.id === 'GENDER')?.value).toBe('여아');
-    expect(item.chips.find((c) => c.id === 'AGE')?.value).toBe('1살');
-    expect(item.chips.find((c) => c.id === 'WEIGHT')?.value).toBe('3kg');
+    expect(item.chips.find((c) => c.id === 'AGE')?.value).toBe('2022년생');
+    expect(item.chips.find((c) => c.id === 'WEIGHT')?.value).toBe('3.5kg');
     expect(item.chips.find((c) => c.id === 'NEUTER')).toBeUndefined();
     // 지역·날짜는 분리 (묶지 않음)
     expect(item.region).toBe('서울 마포구');
