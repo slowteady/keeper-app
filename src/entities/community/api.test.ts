@@ -184,3 +184,32 @@ describe('communityApi.getList', () => {
     await expect(communityApi.getList({ sort: 'NEW' })).rejects.toThrow();
   });
 });
+
+describe('communityQueries.myPostList', () => {
+  it('/community/posts/my/posts 로 GET 하고 page·size·type 파라미터를 전달한다', async () => {
+    const opts = communityQueries.myPostList('personal', 20);
+
+    await (opts.queryFn as never as (ctx: { pageParam: number }) => Promise<unknown>)({ pageParam: 1 });
+
+    expect(mockedAuthGet).toHaveBeenCalledWith('/community/posts/my/posts', {
+      params: { page: 1, size: 20, type: 'personal' }
+    });
+  });
+
+  it('queryKey가 ["me-posts", { type, size }]이다', () => {
+    expect(communityQueries.myPostList('community', 10).queryKey).toEqual([
+      'me-posts',
+      { type: 'community', size: 10 }
+    ]);
+  });
+
+  it('인자 없이 호출하면 type undefined·size 기본 20이다', () => {
+    expect(communityQueries.myPostList().queryKey).toEqual(['me-posts', { type: undefined, size: 20 }]);
+  });
+});
+
+describe('communityQueries.myPostListKey', () => {
+  it('무효화용 prefix queryKey가 ["me-posts"]이다', () => {
+    expect(communityQueries.myPostListKey()).toEqual(['me-posts']);
+  });
+});

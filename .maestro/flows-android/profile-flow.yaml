@@ -33,24 +33,27 @@ appId: com.keeper.love
     optional: true
 - waitForAnimationToEnd
 
-# 로그인 상태일 때 메뉴 확인 (optional)
-- tapOn:
-    text: '내 활동'
-    optional: true
-- waitForAnimationToEnd
-- tapOn:
-    text: '좋아요'
-    optional: true
-- waitForAnimationToEnd
-
-# 프로필 탭 재진입
-- tapOn: '프로필'
-- waitForAnimationToEnd
-
-# 바텀 탭 다른 곳 이동 후 복귀
+# 바텀 탭 다른 곳 이동 후 복귀 — 스크롤 초기화 (프로필 탭에서)
 - tapOn: 'Home'
 - extendedWaitUntil:
     visible: '입양공고'
     timeout: 5000
 - tapOn: '프로필'
+- waitForAnimationToEnd
+
+# 로그인 상태에서만 실행 — 내 활동 3탭(공고/게시글/댓글) 검수. pushed 화면이라 흐름 마지막에 배치
+- runFlow:
+    when:
+      visible: '내 활동'
+    commands:
+      - tapOn: '내 활동'
+      - waitForAnimationToEnd
+      - tapOn:
+          text: '게시글'
+          optional: true
+      - waitForAnimationToEnd
+      - tapOn:
+          text: '댓글'
+          optional: true
+      - waitForAnimationToEnd
 - waitForAnimationToEnd
