@@ -1,10 +1,11 @@
 import { Image } from 'expo-image';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { Pressable } from 'react-native';
 import { styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
 
 import { ProfileAvatar } from '@/entities/profile';
 import { formatTimeAgo, toggleHaptic } from '@/shared/lib';
+import { Skeleton } from '@/shared/ui';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
 import { CommunityQnaListItemDto } from '../schema';
@@ -59,7 +60,7 @@ export const CommunityQnaCard = ({ data, categoryLabel, onPress, onPressLike }: 
             <AnimatedHeart isLiked={data.isLiked} size={20} inactiveColor={black500.val} />
           </Pressable>
         )}
-        {thumbnail ? <Thumbnail source={{ uri: thumbnail }} contentFit="cover" /> : null}
+        {thumbnail ? <CardThumbnail uri={thumbnail} /> : null}
       </Right>
     </Container>
   );
@@ -72,7 +73,7 @@ const Container = styled(XStack, {
 
 const Body = styled(YStack, {
   flex: 1,
-  gap: 6
+  gap: 10
 });
 
 const Right = styled(YStack, {
@@ -113,8 +114,24 @@ const Title = styled(Text, {
 const Preview = styled(Text, {
   fontSize: 13,
   color: '$black500',
-  lineHeight: 18,
-  minH: 36
+  lineHeight: 18
+});
+
+const CardThumbnail = ({ uri }: { uri: string }) => {
+  const [loaded, setLoaded] = useState(false);
+  return (
+    <ThumbnailBox>
+      {!loaded && <Skeleton style={{ position: 'absolute', width: 72, height: 72, borderRadius: 8 }} />}
+      <Thumbnail source={{ uri }} contentFit="cover" onLoad={() => setLoaded(true)} />
+    </ThumbnailBox>
+  );
+};
+
+const ThumbnailBox = styled(View, {
+  width: 72,
+  height: 72,
+  rounded: 8,
+  overflow: 'hidden'
 });
 
 const Thumbnail = styled(Image, {
