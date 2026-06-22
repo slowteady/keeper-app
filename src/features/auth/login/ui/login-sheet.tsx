@@ -1,4 +1,4 @@
-import { Image } from 'expo-image';
+import LottieView from 'lottie-react-native';
 import { Pressable } from 'react-native';
 import { Text, YStack } from 'tamagui';
 
@@ -25,9 +25,10 @@ export const LoginSheetView = ({
 
   return (
     <YStack pt={8} pb={bottom + 12} gap={20}>
-      <Image
-        source={require('@/assets/images/dogs.png')}
-        contentFit="contain"
+      <LottieView
+        source={require('@/assets/animations/dogs-wag.json')}
+        autoPlay
+        loop
         style={{ width: 200, height: 108, alignSelf: 'center' }}
       />
 
