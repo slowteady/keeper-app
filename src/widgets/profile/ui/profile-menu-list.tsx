@@ -1,5 +1,6 @@
 import { styled, Text, View, YStack } from 'tamagui';
 
+import { useHasUnreadNotices } from '@/features/notice';
 import { MENU_SECTIONS } from '@/features/profile';
 import { SCREEN_GUTTER } from '@/shared/lib';
 import { Menu } from '@/shared/ui';
@@ -15,6 +16,8 @@ type ProfileMenuListProps = {
 };
 
 export const ProfileMenuList = ({ sections, isLoggedIn, onNavigate, onReview, onShare }: ProfileMenuListProps) => {
+  const { hasUnread } = useHasUnreadNotices();
+
   const handlePress = (item: MenuItem) => {
     if ('action' in item) {
       if (item.action === 'review') onReview();
@@ -35,7 +38,11 @@ export const ProfileMenuList = ({ sections, isLoggedIn, onNavigate, onReview, on
             <SectionLabel>{section.label}</SectionLabel>
             {visibleItems.map((item, idx) => (
               <View key={`${item.label}-${idx}`} px={SCREEN_GUTTER} py={16} onPress={() => handlePress(item)}>
-                <Menu icon={<item.icon size={20} color="$black600" />} label={item.label} />
+                <Menu
+                  icon={<item.icon size={20} color="$black600" />}
+                  label={item.label}
+                  showDot={'navigateTo' in item && item.navigateTo === 'notice' && hasUnread}
+                />
               </View>
             ))}
           </YStack>

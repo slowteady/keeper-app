@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { UrgentNoticeSchema } from '@/entities/notice';
 import { publicApi } from '@/shared/api/instance';
 
 export const bootstrapSchema = z.object({
@@ -7,7 +8,8 @@ export const bootstrapSchema = z.object({
   maintenanceMessage: z.string().nullable(),
   updateType: z.enum(['none', 'soft', 'hard']),
   latestVersion: z.string().nullable(),
-  storeUrl: z.string().nullable()
+  storeUrl: z.string().nullable(),
+  urgentNotice: UrgentNoticeSchema.nullish()
 });
 export type BootstrapDto = z.infer<typeof bootstrapSchema>;
 

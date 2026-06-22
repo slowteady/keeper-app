@@ -24,6 +24,7 @@ import { TamaguiProvider } from 'tamagui';
 
 import { getRefresh } from '@/entities/auth';
 import { AppGateScreen, useAppGate } from '@/features/app-gate';
+import { UrgentNoticeGate } from '@/features/notice';
 import { authApi, setupInterceptor } from '@/shared/api';
 import { globalToast, logger, setCurrentPathname, throwToErrorBoundary } from '@/shared/lib';
 import { BottomSheetProvider, ModalProvider, ShareGuard } from '@/shared/ui';
@@ -196,6 +197,7 @@ const RootLayout = () => {
                       <Stack.Screen name="community-qna-write" options={{ presentation: 'fullScreenModal' }} />
                     </Stack>
                     <ShareGuard />
+                    <UrgentNoticeGate notice={gate.urgentNotice} />
                     <Toaster
                       position="top-center"
                       duration={2000}

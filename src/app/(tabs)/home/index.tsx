@@ -7,8 +7,10 @@ import { RefreshControl } from 'react-native';
 import { styled, View } from 'tamagui';
 
 import { ADOPT_OPTIONS, adoptQueries } from '@/entities/adopt';
+import { noticeQueries } from '@/entities/notice';
 import { shelterQueries } from '@/entities/shelter';
 import { useAdoptList, usePersonalAdoptList } from '@/features/adopt';
+import { useNoticeList } from '@/features/notice';
 import { useHomeShelter } from '@/features/shelter';
 import { SCREEN_GUTTER, SECTION_GAP } from '@/shared/lib';
 import { useListRefreshing } from '@/shared/model';
@@ -17,6 +19,7 @@ import {
   HomeAdoptSection,
   HomeBannerSection,
   HomeFooterSection,
+  HomeNoticeSection,
   HomePersonalSection,
   HomeShelterSection
 } from '@/widgets/home-section';
@@ -25,7 +28,7 @@ export const ErrorBoundary = RouteErrorBoundary;
 
 const IMAGES = [require('@/assets/images/banner1.png'), require('@/assets/images/banner2.png')];
 
-const SECTIONS = [{ id: 'banner' }, { id: 'adopt' }, { id: 'personal' }, { id: 'shelter' }] as const;
+const SECTIONS = [{ id: 'notice' }, { id: 'banner' }, { id: 'adopt' }, { id: 'personal' }, { id: 'shelter' }] as const;
 
 const HOME_LIST_SIZE = 10;
 
@@ -47,6 +50,8 @@ const Page = () => {
   });
 
   const shelter = useHomeShelter();
+  const { items: noticeItems } = useNoticeList();
+  const hasNotice = noticeItems.length > 0;
   const queryClient = useQueryClient();
 
   const goDetail = useCallback((id: string) => router.push({ pathname: '/adopt/[id]', params: { id } }), [router]);
@@ -60,7 +65,8 @@ const Page = () => {
   const refreshCallback = useCallback(async () => {
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: adoptQueries.all() }),
-      queryClient.invalidateQueries({ queryKey: shelterQueries.all() })
+      queryClient.invalidateQueries({ queryKey: shelterQueries.all() }),
+      queryClient.invalidateQueries({ queryKey: noticeQueries.all() })
     ]);
   }, [queryClient]);
 
@@ -71,10 +77,12 @@ const Page = () => {
       switch (item.id) {
         case 'banner':
           return (
-            <View px={SCREEN_GUTTER} pt={24} pb={SECTION_GAP}>
+            <View px={SCREEN_GUTTER} pt={hasNotice ? 8 : 24} pb={SECTION_GAP}>
               <HomeBannerSection images={IMAGES} />
             </View>
           );
+        case 'notice':
+          return <HomeNoticeSection />;
         case 'adopt':
           return (
             <View pb={SECTION_GAP}>
@@ -118,7 +126,8 @@ const Page = () => {
       goList,
       goPersonalDetail,
       goPersonalList,
-      shelter
+      shelter,
+      hasNotice
     ]
   );
 
