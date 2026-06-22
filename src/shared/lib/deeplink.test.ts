@@ -1,4 +1,4 @@
-import { redirectSystemPath } from './+native-intent';
+import { redirectSystemPath } from './deeplink';
 
 describe('redirectSystemPath', () => {
   it.each([
