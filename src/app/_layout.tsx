@@ -23,10 +23,17 @@ import { Toaster } from 'sonner-native';
 import { TamaguiProvider } from 'tamagui';
 
 import { getRefresh } from '@/entities/auth';
-import { AppGateScreen, useAppGate } from '@/features/app-gate';
+import { AppGateScreen, SuspensionGateScreen, useAppGate } from '@/features/app-gate';
 import { UrgentNoticeGate } from '@/features/notice';
 import { authApi, setupInterceptor } from '@/shared/api';
-import { globalToast, logger, setCurrentPathname, throwToErrorBoundary } from '@/shared/lib';
+import {
+  clearSuspended,
+  globalToast,
+  logger,
+  setCurrentPathname,
+  throwToErrorBoundary,
+  useSuspension
+} from '@/shared/lib';
 import { BottomSheetProvider, ModalProvider, ShareGuard } from '@/shared/ui';
 
 import { config } from '../../tamagui.config';
@@ -107,6 +114,7 @@ const RootLayout = () => {
   const [isAppReady, setAppReady] = useState(false);
   const [isAnimationDone, setAnimationDone] = useState(false);
   const gate = useAppGate();
+  const suspension = useSuspension();
 
   useEffect(() => {
     const init = async () => {
@@ -177,6 +185,17 @@ const RootLayout = () => {
           storeUrl={gate.storeUrl}
           message={gate.maintenanceMessage}
           onDismiss={gate.dismissSoft}
+        />
+      </TamaguiProvider>
+    );
+  }
+  if (suspension) {
+    return (
+      <TamaguiProvider config={config}>
+        <SuspensionGateScreen
+          reason={suspension.reason}
+          suspendedUntil={suspension.suspendedUntil}
+          onConfirm={clearSuspended}
         />
       </TamaguiProvider>
     );

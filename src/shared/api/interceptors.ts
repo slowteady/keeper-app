@@ -1,5 +1,6 @@
 import { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
 
+import { getSuspensionDetail, isSuspendedError, setSuspended } from '../lib/suspension';
 import {
   getAccessToken,
   getRefreshToken,
@@ -45,6 +46,12 @@ export const setupInterceptor = (authApi: AxiosInstance, config: InterceptorConf
     async (error: AxiosError) => {
       const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
       const status = error.response?.status;
+
+      if (isSuspendedError(error)) {
+        setSuspended(getSuspensionDetail(error));
+        await removeToken();
+        return Promise.reject(error);
+      }
 
       if (status !== 401 || originalRequest._retry) {
         return Promise.reject(error);

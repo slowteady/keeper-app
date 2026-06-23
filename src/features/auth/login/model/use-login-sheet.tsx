@@ -7,7 +7,7 @@ import { Platform } from 'react-native';
 import { agree, AgreeBodyDto, login } from '@/entities/auth';
 import { SocialAuthResult } from '@/shared/api';
 import { publicApi } from '@/shared/api/instance';
-import { globalToast } from '@/shared/lib';
+import { getSuspensionDetail, globalToast, isSuspendedError, setSuspended } from '@/shared/lib';
 import { ApiResponse } from '@/shared/model';
 import { useBottomSheet } from '@/shared/ui';
 
@@ -62,11 +62,19 @@ export const useLoginSheet = () => {
             if (!accessToken || !refreshToken) return;
             await finish(accessToken, refreshToken);
           },
-          onError: () => globalToast('로그인하지 못했어요', 'fail')
+          onError: (error) => {
+            if (isSuspendedError(error)) {
+              dismiss();
+              setSheet(INITIAL_LOGIN_SHEET);
+              setSuspended(getSuspensionDetail(error));
+              return;
+            }
+            globalToast('로그인하지 못했어요', 'fail');
+          }
         }
       );
     },
-    [loginMutate, setSheet, finish]
+    [loginMutate, setSheet, finish, dismiss]
   );
 
   const devLogin = useCallback(
