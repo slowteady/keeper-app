@@ -1,5 +1,4 @@
 import { MoreVertical } from '@tamagui/lucide-icons';
-import { Image } from 'expo-image';
 import { useCallback } from 'react';
 import { Pressable } from 'react-native';
 import { styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
@@ -8,6 +7,7 @@ import { formatTimeAgo, toggleHaptic } from '@/shared/lib';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
 import { CommunityAdoptListDto } from '../schema';
+import { CategoryChip, CategoryText, DisplayTime, Thumbnail } from './post-list-styles';
 
 export type CommunityPostListItemStatus = {
   label: string;
@@ -132,26 +132,6 @@ const StatusText = styled(Text, {
   } as const
 });
 
-const CategoryChip = styled(View, {
-  px: 6,
-  py: 5,
-  rounded: 4,
-  bg: '$white850'
-});
-
-const CategoryText = styled(Text, {
-  fontSize: 12,
-  fontWeight: '500',
-  color: '$black700',
-  letterSpacing: -0.24
-});
-
-const DisplayTime = styled(Text, {
-  fontSize: 12,
-  fontWeight: '500',
-  color: '$black500'
-});
-
 const Preview = styled(Text, {
   fontSize: 15,
   fontWeight: '600',
@@ -165,10 +145,4 @@ const Meta = styled(Text, {
   fontWeight: '500',
   color: '$black500',
   letterSpacing: -0.22
-});
-
-const Thumbnail = styled(Image, {
-  width: 64,
-  height: 64,
-  rounded: 8
 });

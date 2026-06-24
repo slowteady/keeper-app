@@ -12,6 +12,7 @@ import { AnimatedHeart } from '@/shared/ui/icons/animation';
 import { ADOPT_STATUS_INFO, CORE_CHIP_IDS, isAdoptEnded } from '../constant';
 import type { ChipVariant } from '../mapper';
 import type { AdoptStatusDto } from '../schema';
+import { ChipItem, ChipText } from './chip';
 
 const STATUS_CHIP_IDS = ['NEAR_DEADLINE', 'NEW', 'DDAY'];
 
@@ -305,69 +306,6 @@ const DescriptionValue = styled(Text, {
 const ChipContainer = styled(XStack, {
   flexWrap: 'wrap',
   gap: 4
-});
-
-const ChipItem = styled(View, {
-  self: 'baseline',
-  rounded: 4,
-  px: 6,
-  py: 4,
-  variants: {
-    variant: {
-      error: {
-        backgroundColor: '$errorLightest'
-      },
-      success: {
-        backgroundColor: '$successLightest'
-      },
-      notice: {
-        backgroundColor: '$noticeLightest'
-      },
-      default: {
-        backgroundColor: '$backgroundDefault'
-      },
-      dog: {
-        backgroundColor: '$dogLightest'
-      },
-      cat: {
-        backgroundColor: '$catLightest'
-      },
-      etc: {
-        backgroundColor: '$etcLightest'
-      }
-    }
-  } as const
-});
-
-const ChipText = styled(Text, {
-  fontWeight: 400,
-  fontSize: 11,
-  lineHeight: 13,
-  variants: {
-    variant: {
-      error: {
-        color: '$errorMain'
-      },
-      success: {
-        color: '$successMain'
-      },
-      notice: {
-        color: '$noticeMain'
-      },
-      default: {
-        color: '$black600'
-      },
-      dog: {
-        color: '$dogMain'
-      },
-      cat: {
-        color: '$catMain'
-      },
-      etc: {
-        color: '$etcMain'
-      }
-    }
-  } as const
 });
 
 const OverlayBadge = styled(View, {

@@ -1,11 +1,11 @@
 import { MoreVertical } from '@tamagui/lucide-icons';
-import { Image } from 'expo-image';
 import { Pressable } from 'react-native';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
 import { formatTimeAgo } from '@/shared/lib';
 
 import { MyCommentItemDto } from '../schema';
+import { CategoryChip, CategoryText, DisplayTime, Thumbnail } from './post-list-styles';
 
 const CATEGORY_LABEL: Record<MyCommentItemDto['postCategory'], string> = {
   ADOPTION_PERSONAL: '개인입양',
@@ -64,38 +64,12 @@ const Container = styled(XStack, {
   items: 'center'
 });
 
-const CategoryChip = styled(View, {
-  py: 5,
-  px: 6,
-  rounded: 4,
-  bg: '$white850'
-});
-
-const CategoryText = styled(Text, {
-  fontSize: 12,
-  fontWeight: '500',
-  color: '$black700',
-  letterSpacing: -0.24
-});
-
-const DisplayTime = styled(Text, {
-  fontSize: 12,
-  fontWeight: '500',
-  color: '$black500'
-});
-
 const Content = styled(Text, {
   fontSize: 15,
   lineHeight: 22,
   fontWeight: '600',
   color: '$black900',
   letterSpacing: -0.45
-});
-
-const Thumbnail = styled(Image, {
-  width: 64,
-  height: 64,
-  rounded: 8
 });
 
 const ThumbnailPlaceholder = styled(View, {

@@ -1,6 +1,7 @@
-import { styled, Text, View, XStack } from 'tamagui';
+import { styled, XStack } from 'tamagui';
 
 import type { ChipVariant } from '../mapper';
+import { ChipItem, ChipText } from './chip';
 
 export type AdoptChip = { id: string; value: string; variant: ChipVariant };
 
@@ -19,39 +20,4 @@ export const AdoptChips = ({ chips }: { chips: AdoptChip[] }) => {
 const ChipRow = styled(XStack, {
   flexWrap: 'wrap',
   gap: 4
-});
-
-const ChipItem = styled(View, {
-  self: 'baseline',
-  rounded: 4,
-  px: 6,
-  py: 4,
-  variants: {
-    variant: {
-      error: { backgroundColor: '$errorLightest' },
-      success: { backgroundColor: '$successLightest' },
-      notice: { backgroundColor: '$noticeLightest' },
-      default: { backgroundColor: '$backgroundDefault' },
-      dog: { backgroundColor: '$dogLightest' },
-      cat: { backgroundColor: '$catLightest' },
-      etc: { backgroundColor: '$etcLightest' }
-    }
-  } as const
-});
-
-const ChipText = styled(Text, {
-  fontWeight: 400,
-  fontSize: 11,
-  lineHeight: 13,
-  variants: {
-    variant: {
-      error: { color: '$errorMain' },
-      success: { color: '$successMain' },
-      notice: { color: '$noticeMain' },
-      default: { color: '$black600' },
-      dog: { color: '$dogMain' },
-      cat: { color: '$catMain' },
-      etc: { color: '$etcMain' }
-    }
-  } as const
 });
