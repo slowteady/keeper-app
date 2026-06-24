@@ -11,7 +11,7 @@ import {
   QNA_CATEGORY_OPTIONS
 } from '@/entities/community';
 import { useImageUpload } from '@/features/upload';
-import { globalToast } from '@/shared/lib';
+import { getModerationMessage, globalToast } from '@/shared/lib';
 
 export const useCreateQnaPost = () => {
   const queryClient = useQueryClient();
@@ -39,8 +39,8 @@ export const useCreateQnaPost = () => {
       globalToast('글을 등록했어요', 'success');
       router.back();
     },
-    onError: () => {
-      globalToast('글을 등록하지 못했어요', 'fail');
+    onError: (error) => {
+      globalToast(getModerationMessage(error) ?? '글을 등록하지 못했어요', 'fail');
     }
   });
 

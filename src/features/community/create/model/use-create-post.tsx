@@ -11,7 +11,7 @@ import {
   CREATE_POST_OPTIONS
 } from '@/entities/community';
 import { useImageUpload } from '@/features/upload';
-import { globalToast } from '@/shared/lib';
+import { getModerationMessage, globalToast } from '@/shared/lib';
 
 import { createAdoptionPersonal, toCreateAdoptionPersonalBody } from './api';
 import { useAdoptFormSelectors } from './use-adopt-form-selectors';
@@ -81,8 +81,8 @@ export const useCreatePost = () => {
       globalToast('공고를 등록했어요', 'success');
       router.back();
     },
-    onError: () => {
-      globalToast('공고를 등록하지 못했어요', 'fail');
+    onError: (error) => {
+      globalToast(getModerationMessage(error) ?? '공고를 등록하지 못했어요', 'fail');
     }
   });
 

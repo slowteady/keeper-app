@@ -64,6 +64,7 @@ const detail: CommunityAdoptDetailDto = {
   health: null,
   relatedLink: null,
   rfid: null,
+  hasContact: true,
   contacts: [{ type: 'PHONE', value: '010-1111-2222' }],
   counts: { like: 0, view: 0, comment: 0 },
   isLiked: false

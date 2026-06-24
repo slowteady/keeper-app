@@ -1,6 +1,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
+import type { PostContactDto } from '@/entities/community';
 import { communityQueries } from '@/entities/community';
 
 import {
@@ -25,8 +26,21 @@ export const useCommunityAdoptDetailFeed = (id: string) => {
   );
   const behaviors = useMemo(() => (detailPost ? convertToAdoptDetailBehaviorData(detailPost) : []), [detailPost]);
 
+  const getContacts = useCallback(async () => {
+    const filterValid = (list: PostContactDto[]) => list.filter((c) => c.value && c.value.length > 0);
+
+    const current = filterValid(detailPost?.contacts ?? []);
+    if (current.length > 0) return current;
+
+    const { data: refetched } = await refetch();
+    const next = refetched && refetched.kind === 'ADOPT' ? refetched.adopt : undefined;
+    return filterValid(next?.contacts ?? []);
+  }, [detailPost, refetch]);
+
   return {
     data: { detailPost, overviews, infos, descriptions, behaviors },
+    hasContact: detailPost?.hasContact ?? false,
+    getContacts,
     isLoading: false,
     isError: false,
     refetch,

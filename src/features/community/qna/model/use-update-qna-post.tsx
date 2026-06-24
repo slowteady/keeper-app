@@ -12,7 +12,7 @@ import {
   type PostDetailUnion
 } from '@/entities/community';
 import { useImageUpload } from '@/features/upload';
-import { globalToast } from '@/shared/lib';
+import { getModerationMessage, globalToast } from '@/shared/lib';
 
 export const useUpdateQnaPost = (id: string) => {
   const queryClient = useQueryClient();
@@ -55,8 +55,8 @@ export const useUpdateQnaPost = (id: string) => {
       queryClient.invalidateQueries({ queryKey: communityQueries.all() });
       router.back();
     },
-    onError: () => {
-      globalToast('글을 수정하지 못했어요', 'fail');
+    onError: (error) => {
+      globalToast(getModerationMessage(error) ?? '글을 수정하지 못했어요', 'fail');
     }
   });
 

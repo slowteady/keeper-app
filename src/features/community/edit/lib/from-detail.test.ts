@@ -22,6 +22,7 @@ const base: CommunityAdoptDetailDto = {
   health: '없음',
   relatedLink: 'https://x',
   rfid: null,
+  hasContact: true,
   contacts: [{ type: 'PHONE', value: '010-1' }],
   counts: { like: 0, view: 0, comment: 0 },
   isLiked: false

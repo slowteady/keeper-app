@@ -1,7 +1,7 @@
 import { InfiniteData, useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { commentApi, CommentDto, commentQueries } from '@/entities/comment';
-import { globalToast } from '@/shared/lib';
+import { getModerationMessage, globalToast } from '@/shared/lib';
 
 export type CreateCommentVars = {
   content: string;
@@ -37,6 +37,6 @@ export const useCreateComment = ({ postId }: { postId: string }) => {
       // 백그라운드 정합 (정렬·페이지 합치기 등)
       queryClient.invalidateQueries({ queryKey: [...commentQueries.all(), 'list', postId] });
     },
-    onError: () => globalToast('댓글을 등록하지 못했어요', 'fail')
+    onError: (error) => globalToast(getModerationMessage(error) ?? '댓글을 등록하지 못했어요', 'fail')
   });
 };

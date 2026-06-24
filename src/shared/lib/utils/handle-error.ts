@@ -35,6 +35,15 @@ export const logger = {
   }
 };
 
+export const getModerationMessage = (error: unknown): string | null => {
+  if (!(error instanceof AxiosError)) return null;
+  const data = error.response?.data as { error?: string; message?: string } | undefined;
+  if (data?.error === 'CONTENT_MODERATION' && typeof data.message === 'string' && data.message.length > 0) {
+    return data.message;
+  }
+  return null;
+};
+
 export const throwToErrorBoundary = (error: unknown) => {
   if (error instanceof AxiosError) {
     const status = error.response?.status;

@@ -11,7 +11,7 @@ import {
 } from '@/entities/community';
 import { toCreateAdoptionPersonalBody, updateAdoptionPersonal } from '@/features/community/create/model/api';
 import { useAdoptFormSelectors } from '@/features/community/create/model/use-adopt-form-selectors';
-import { globalToast } from '@/shared/lib';
+import { getModerationMessage, globalToast } from '@/shared/lib';
 
 import { fromAdoptionPersonalDetail } from '../lib/from-detail';
 
@@ -44,8 +44,8 @@ export const useEditPost = (postId: string) => {
       queryClient.invalidateQueries({ queryKey: communityQueries.all() });
       router.back();
     },
-    onError: () => {
-      globalToast('공고를 수정하지 못했어요', 'fail');
+    onError: (error) => {
+      globalToast(getModerationMessage(error) ?? '공고를 수정하지 못했어요', 'fail');
     }
   });
 

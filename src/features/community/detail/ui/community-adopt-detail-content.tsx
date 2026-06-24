@@ -34,7 +34,7 @@ export const CommunityAdoptDetailContent = ({ id }: CommunityAdoptDetailContentP
   const { open: openModal, close: closeModal } = useModal();
   const { bottom } = useLayout();
 
-  const { data, refetch, isRefetching } = useCommunityAdoptDetailFeed(id);
+  const { data, hasContact, getContacts, refetch, isRefetching } = useCommunityAdoptDetailFeed(id);
   const { toggleLikePost } = useLikePost();
   const { black600 } = useTheme();
 
@@ -43,8 +43,6 @@ export const CommunityAdoptDetailContent = ({ id }: CommunityAdoptDetailContentP
   const hasRelatedLink = !!descriptions?.relatedLink?.trim();
   const isLiked = detailPost?.isLiked ?? false;
   const authorId = detailPost?.user?.id ?? null;
-  const contacts = (detailPost?.contacts ?? []).filter((c) => c.value && c.value.length > 0);
-  const hasContact = contacts.length > 0;
 
   const { user, isLoading: isUserLoading } = useCurrentUser();
   const isOwner = !!user && !!authorId && user.id === authorId;
@@ -56,10 +54,11 @@ export const CommunityAdoptDetailContent = ({ id }: CommunityAdoptDetailContentP
   const { openPostMenu, sharePost, reportPost } = usePostMenu({ postId: id, authorId, hideBlock: true });
 
   const openContactSheet = useCallback(() => {
-    requireLogin(() => {
+    requireLogin(async () => {
+      const contacts = await getContacts();
       present(<ContactSheet contacts={contacts} />, { enableDynamicSizing: true, onDismiss: dismiss });
     });
-  }, [requireLogin, present, dismiss, contacts]);
+  }, [requireLogin, present, dismiss, getContacts]);
 
   const handleToggleStatus = useCallback(() => {
     openModal(

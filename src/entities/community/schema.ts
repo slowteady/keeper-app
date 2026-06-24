@@ -100,6 +100,7 @@ export const CommunityAdoptDetailSchema = z.object({
   withDogs: z.enum(['GOOD', 'SHY', 'HARD']).nullish(),
   withCats: z.enum(['GOOD', 'SHY', 'HARD']).nullish(),
   adoptionStatus: z.enum(['IN_PROGRESS', 'COMPLETED']).nullish(),
+  hasContact: z.boolean(),
   contacts: z.array(PostContactSchema),
   counts: z.object({
     like: z.number(),

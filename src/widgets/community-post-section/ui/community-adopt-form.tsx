@@ -11,6 +11,7 @@ import { LabelSelectField } from '@/features/community/create/ui/field/label-sel
 import { LabelTextArea } from '@/features/community/create/ui/field/label-text-area';
 import { LabelTextField } from '@/features/community/create/ui/field/label-text-field';
 import { OptionSelectField } from '@/features/community/create/ui/field/option-select-field';
+import { FREE_ADOPTION_NOTICE, SafetyNotice } from '@/features/community/safety';
 import { SCREEN_GUTTER } from '@/shared/lib';
 import { DownArrow } from '@/shared/ui/icons/mini';
 
@@ -288,8 +289,9 @@ export const CommunityAdoptForm = ({
           </Accordion.Header>
           <Accordion.Content bg="transparent" p={0}>
             <Accordion.HeightAnimator animation="quick" exitStyle={{ opacity: 0, height: 0 }}>
-              <YStack px={SCREEN_GUTTER} pb={24}>
+              <YStack px={SCREEN_GUTTER} pb={24} gap={12}>
                 <ContactSelectField control={control} label="연락 정보" required inputRef={fieldRefs?.contactInput} />
+                <SafetyNotice message={FREE_ADOPTION_NOTICE} />
               </YStack>
             </Accordion.HeightAnimator>
           </Accordion.Content>

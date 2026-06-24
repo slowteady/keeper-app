@@ -2,7 +2,7 @@ import { InfiniteData, useMutation, useQueryClient } from '@tanstack/react-query
 
 import { commentApi, CommentDto, commentQueries } from '@/entities/comment';
 import { communityQueries, MyCommentItemDto } from '@/entities/community';
-import { globalToast } from '@/shared/lib';
+import { getModerationMessage, globalToast } from '@/shared/lib';
 
 type CommentPage = { items: CommentDto[] } & Record<string, unknown>;
 type MyCommentPage = { items: MyCommentItemDto[] } & Record<string, unknown>;
@@ -43,6 +43,6 @@ export const useUpdateComment = ({ postId }: { postId: string }) => {
           }
       );
     },
-    onError: () => globalToast('댓글을 수정하지 못했어요', 'fail')
+    onError: (error) => globalToast(getModerationMessage(error) ?? '댓글을 수정하지 못했어요', 'fail')
   });
 };

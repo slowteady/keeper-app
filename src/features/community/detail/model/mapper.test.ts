@@ -22,6 +22,7 @@ const baseDetail: CommunityAdoptDetailDto = {
   health: null,
   relatedLink: null,
   rfid: null,
+  hasContact: false,
   contacts: [],
   counts: { like: 0, view: 0, comment: 0 },
   isLiked: true
