@@ -1,19 +1,15 @@
-import { useFocusEffect } from '@react-navigation/native';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
 import { communityQueries } from '@/entities/community';
+import { useRefetchOnFocus } from '@/shared/model';
 
 export const useMyLikedPosts = (type: 'personal' | 'community' = 'personal') => {
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useInfiniteQuery(
     communityQueries.myLikedList(type)
   );
 
-  useFocusEffect(
-    useCallback(() => {
-      refetch();
-    }, [refetch])
-  );
+  useRefetchOnFocus(refetch);
 
   const handleFetchNextPage = useCallback(() => {
     if (hasNextPage && !isFetchingNextPage) fetchNextPage();

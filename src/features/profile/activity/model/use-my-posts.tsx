@@ -1,19 +1,15 @@
-import { useFocusEffect } from '@react-navigation/native';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
 import { communityQueries, MyPostType } from '@/entities/community';
+import { useRefetchOnFocus } from '@/shared/model';
 
 export const useMyPosts = (type?: MyPostType) => {
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useInfiniteQuery(
     communityQueries.myPostList(type)
   );
 
-  useFocusEffect(
-    useCallback(() => {
-      refetch();
-    }, [refetch])
-  );
+  useRefetchOnFocus(refetch);
 
   const handleFetchNextPage = useCallback(() => {
     if (hasNextPage && !isFetchingNextPage) fetchNextPage();

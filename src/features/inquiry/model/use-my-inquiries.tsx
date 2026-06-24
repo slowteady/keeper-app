@@ -1,17 +1,12 @@
-import { useFocusEffect } from '@react-navigation/native';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback } from 'react';
 
 import { inquiryQueries } from '@/entities/inquiry';
+import { useRefetchOnFocus } from '@/shared/model';
 
 export const useMyInquiries = () => {
   const { data, isLoading, isError, refetch } = useQuery(inquiryQueries.myList());
 
-  useFocusEffect(
-    useCallback(() => {
-      refetch();
-    }, [refetch])
-  );
+  useRefetchOnFocus(refetch);
 
   return {
     items: data?.items ?? [],

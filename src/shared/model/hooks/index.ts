@@ -7,5 +7,6 @@ export * from './use-layout';
 export * from './use-list-refreshing';
 export * from './use-location';
 export * from './use-permission';
+export * from './use-refetch-on-focus';
 export * from './use-review';
 export * from './use-share';

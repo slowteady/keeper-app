@@ -1,17 +1,12 @@
-import { useFocusEffect } from '@react-navigation/native';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback } from 'react';
 
 import { noticeQueries } from '@/entities/notice';
+import { useRefetchOnFocus } from '@/shared/model';
 
 export const useNoticeList = (size?: number) => {
   const { data, isLoading, isError, refetch } = useQuery(noticeQueries.list(size));
 
-  useFocusEffect(
-    useCallback(() => {
-      refetch();
-    }, [refetch])
-  );
+  useRefetchOnFocus(refetch);
 
   return {
     items: data?.items ?? [],

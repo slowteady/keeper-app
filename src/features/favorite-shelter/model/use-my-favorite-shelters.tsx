@@ -1,9 +1,8 @@
-import { useFocusEffect } from '@react-navigation/native';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
 import { shelterQueries } from '@/entities/shelter';
-import { useLocation } from '@/shared/model';
+import { useLocation, useRefetchOnFocus } from '@/shared/model';
 
 export const useMyFavoriteShelters = () => {
   const { userLocation, isGranted, permissionStatus } = useLocation();
@@ -18,11 +17,7 @@ export const useMyFavoriteShelters = () => {
     enabled: isLocationReady
   });
 
-  useFocusEffect(
-    useCallback(() => {
-      if (isLocationReady) refetch();
-    }, [refetch, isLocationReady])
-  );
+  useRefetchOnFocus(refetch, isLocationReady);
 
   const handleFetchNextPage = useCallback(() => {
     if (hasNextPage && !isFetchingNextPage) fetchNextPage();
