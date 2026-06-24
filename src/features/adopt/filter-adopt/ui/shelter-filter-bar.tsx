@@ -49,20 +49,11 @@ export const ShelterFilterBar = ({ filter, animalType, sortValue, onChangeSort }
     onPress: (d) => setAge(d.id === '' ? undefined : (d.id as ShelterAgeBucket))
   });
 
-  const openRegion = () =>
-    present(
-      <ChosungSelectSheet
-        searchPlaceholder="지역 검색"
-        allLabel="전체"
-        options={SHELTER_SIDO.map((s) => ({ id: s.id, label: s.label }))}
-        value={applied.region}
-        onSelect={(id) => {
-          setRegion(id);
-          dismiss();
-        }}
-      />,
-      { snapPoints: ['70%'], disableViewWrap: true }
-    );
+  const { open: openRegion } = useBottomSheetMenu({
+    data: [{ id: '', label: '전체' }, ...SHELTER_SIDO.map((s) => ({ id: s.id, label: s.label }))],
+    value: applied.region ?? '',
+    onPress: (d) => setRegion(d.id === '' ? undefined : (d.id as string))
+  });
   const openBreed = () =>
     present(
       <ChosungSelectSheet

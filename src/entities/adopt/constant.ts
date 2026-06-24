@@ -50,14 +50,12 @@ export const SHELTER_FILTER_OPTIONS = {
   GENDER: [
     { id: '', label: '전체' },
     { id: 'M', label: '남아' },
-    { id: 'F', label: '여아' },
-    { id: 'Q', label: '모름' }
+    { id: 'F', label: '여아' }
   ] as const,
   NEUTER: [
     { id: '', label: '전체' },
     { id: 'Y', label: '완료' },
-    { id: 'N', label: '미완료' },
-    { id: 'U', label: '미상' }
+    { id: 'N', label: '미완료' }
   ] as const,
   AGE: [
     { id: 'UNDER_1', label: '1살 미만' },

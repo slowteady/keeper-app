@@ -169,7 +169,7 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
           onClose={() => setCallModalOpen(false)}
           tel={shelter?.tel!}
           title={`${shelter?.name}에 문의하기`}
-          description="*원활한 소통을 위해 상담원이 상담, 휴대폰 번호, 주소 등을 수집할 수 있습니다"
+          description="*원활한 소통을 위해 성함, 휴대폰 번호, 주소 등을 수집할 수 있습니다"
         />
       )}
     </>
