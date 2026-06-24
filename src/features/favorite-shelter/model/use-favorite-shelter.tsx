@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 
 import { shelterApi, shelterQueries } from '@/entities/shelter';
 import { useLoginRequired } from '@/features/auth';
-import { globalToast } from '@/shared/lib';
+import { globalToast, toggleHaptic } from '@/shared/lib';
 
 import { patchFavoritedCache } from '../lib/patch-favorited-cache';
 
@@ -75,6 +75,7 @@ export const useFavoriteShelter = () => {
 
   const toggleFavoriteShelter = useCallback(
     (careRegNo: string, currentlyFavorited: boolean) => {
+      toggleHaptic(currentlyFavorited);
       requireLogin(() => mutation.mutate({ careRegNo, currentlyFavorited }));
     },
     [mutation, requireLogin]
