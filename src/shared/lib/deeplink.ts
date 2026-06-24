@@ -1,3 +1,5 @@
+import { logger } from './utils/handle-error';
+
 const SHARE_TYPES = ['adopt', 'shelter', 'community'] as const;
 type ShareType = (typeof SHARE_TYPES)[number];
 
@@ -9,13 +11,30 @@ const extractSegments = (path: string): string[] => {
     const url = new URL(path);
     pathname = url.protocol === 'keeper:' ? `${url.host}/${url.pathname}` : url.pathname;
   } catch {
-    // 상대 path — 그대로 사용
+    pathname = path;
   }
   return pathname
     .replace(/^\/?(share\/?)?/, '')
     .split('/')
     .filter(Boolean);
 };
+
+export function resolveNotificationPath(
+  refType: string | null | undefined,
+  refId: string | null | undefined
+): string | null {
+  if (!refType || !refId) return null;
+  switch (refType) {
+    case 'post':
+    case 'comment':
+      return `/(untabs)/community/${refId}`;
+    case 'inquiry':
+      return `/(untabs)/profile/inquiry/${refId}`;
+    default:
+      logger.error('[deeplink] unsupported refType', refType);
+      return null;
+  }
+}
 
 export function redirectSystemPath({ path }: { path: string; initial: boolean }) {
   try {

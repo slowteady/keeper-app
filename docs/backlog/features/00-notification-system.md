@@ -1,7 +1,7 @@
 # 백로그: 알림 시스템 (push 인프라 + 인앱 알림함)
 
 작성일: 2026-06-14
-상태: 아이디어 확정·스펙 상세화 대기 (이번 출시 P0 승격)
+상태: BP 딥리서치·핵심 결정 확정 (2026-06-23) → /prd·/spec 대기 (이번 출시 P0)
 관련: `release-plan.md` §1·§4 · 정보통신망법 §44조의2 · `admin-console.md` · [[project_notification_discarded]]
 
 ---
@@ -41,8 +41,10 @@
 | 소비자                     | 채널                 | 비고                                                      |
 | -------------------------- | -------------------- | --------------------------------------------------------- |
 | 사용자 통지(임시조치 결과) | 인앱 1차 (push 보조) | §44-2. 게시자=사유+이의 / 신고자=결과만(제재 상세 비공개) |
-| 운영자 알림(새 신고)       | push                 | 운영자도 앱 설치, admin 콘솔은 웹                         |
-| 마감/안락사 D-day          | push                 | 스케줄링(cron) 기반                                       |
+| 사용자 통지(계정 정지)     | 인앱 1차 (push 보조) | 정지 사유·기간(이미 USER_SUSPENDED 게이트 존재)           |
+| 문의 답변                  | 인앱 1차 (push 보조) | Inquiry 답변 인지 경로 신규(현재 없음)                    |
+| 운영자 알림(새 신고·문의)  | push                 | ADMIN role 유저 전원, 둘 다 즉시(A4). 운영자도 앱 설치    |
+| 마감/안락사 D-day          | push                 | 스케줄링(cron) 기반 — Phase 2                             |
 
 ## 로드맵 (Phase 단위)
 
@@ -61,24 +63,60 @@
 
 - 마감/안락사 **D-day** push (스케줄링). 이후 입양완료 등 추가 알림.
 
+## 확정 결정 (2026-06-23 — BP 딥리서치 + 사용자)
+
+### 아키텍처
+
+- **Expo Push Service** (expo-notifications + Expo Push API). FCM/APNs 직접 연동 X — 소규모 팀 BP, Expo가 FCM/APNs 추상화(자체 Firebase 콘솔 불필요), 배치 100건. keeper expo 스택·Firebase 미도입 방침과 정합.
+- 토큰 수명관리: 발급 시 `PushToken` 등록(유저↔다기기, timestamp), 월 1회 갱신, **`DeviceNotRegistered`는 발송 ticket이 아니라 영수증(getReceipts) 조회로 감지 → stale 토큰 삭제**. Android 토큰 270일 만료, iOS 무만료.
+
+### 권한 요청 / 미허용 처리 (사용자 확정 + 구현 BP)
+
+- **앱 첫 진입 시 최초 1회 요청** — `Notifications.requestPermissionsAsync({ ios: { allowAlert, allowBadge, allowSound } })`. (트레이드오프 인지: 첫 진입은 컨텍스트 요청보다 opt-in율↓·iOS 프롬프트 설치당 1회뿐. 단 keeper는 의무 통지가 알림함으로 도달 보장 → 거부 타격이 작아 단순함 채택. 주기적 재요청은 BP 기각이라 안 함.)
+- **거부 후 재요청 불가**(iOS 1회 / Android 영구거부) → 재프롬프트 X. **설정 인계가 표준 회복 경로**: 알림 기능 제공 지점(알림함 헤더 · 알림 설정 화면)에서 미허용이면 "알림 켜기" → `Linking.openSettings()`로 앱 알림설정 직착지.
+- **상태 판정** — `getPermissionsAsync()` → `granted` / `canAskAgain` / `ios.status`(PROVISIONAL 포함). `canAskAgain === false`면 프롬프트 대신 설정 인계 노출.
+- **포그라운드 복귀 재확인** — AppState `active` 시 권한 재조회 → 설정서 켜고 돌아오면 토큰 등록 + UI 갱신(BP: degraded 권한 상태 반영).
+- **토큰 등록** — 허용 시 `getExpoPushTokenAsync({ projectId })`(네트워크 실패 재시도) → 백엔드 `PushToken` 등록(userId↔토큰). 거부해도 **인앱 알림함은 동작**(graceful degradation), 의무 통지(정지·§44-2)는 권한 무관 적재 → 법규 도달 보장.
+
+### 알림 설정 (config)
+
+- 저장 = **서버**(다기기 일관). 단일 채널(push)이라 채널×카테고리 grid 아닌 **flat 리스트**.
+- 출시 = 가벼운 preference center: **의무 통지(토글 잠금, "법적 통지라 끌 수 없음" 표시) + 선택 알림 카테고리 소수 토글**(커뮤니티 답변·공고 소식 등), 각 토글 1줄 설명. 알림 타입 늘면 5~10개 카테고리로 확장.
+- 마케팅성 알림 도입 시 그때 opt-in 동의 + 야간(21–08시) 발송 제한 별도 적용(§50).
+
+### 운영자 알림 (A4)
+
+- 새 신고 + **새 문의 둘 다** → **ADMIN role 유저 전원** 즉시 push. `ReportHandledEmitter` stub 자리 + 문의 생성 listener에 연결. 1인 운영=관리자 본인 앱 수신.
+
+### 알림함 진입점 (A1)
+
+- **헤더 벨 아이콘** + 미읽음 뱃지.
+
+### 법규 (BP 검증 3-0)
+
+- 정지·신고처리·§44-2 통지 = **정보성/의무성** → 정보통신망법 §50 광고 규제(수신동의·야간제한) **대상 아님** → 동의 게이트 없이 발송 가능. 마케팅성만 규제 대상.
+- §44-2 — 임시조치 최대 30일 + 신청인·게시자 통지 + 게시판 조치사실 표시.
+
 ## 레퍼런스 BP
 
-- [Mozilla Content Moderation](https://www.mozilla.org/en-US/about/legal/content-moderation/) — 신고자에게 제재 상세 비공개(반복신고 악용 방지) → 신고자 통지는 "결과만".
-- [YouTube 위반 통지](https://support.google.com/youtube/answer/185111?hl=KO) — 인앱 지속 표시 + 이메일 병행 → keeper는 인앱 1차.
-- DSA 모더레이션 통지 — 게시자에게 사유 + 이의 경로 명시.
+- [Expo Push Notifications](https://docs.expo.dev/push-notifications/sending-notifications/) · [FCM token mgmt](https://firebase.google.com/docs/cloud-messaging/manage-tokens) — Expo Push Service + 토큰 수명(월갱신·270일·DeviceNotRegistered).
+- [Pushwoosh opt-in](https://www.pushwoosh.com/blog/increase-push-notifications-opt-in/) · [Appcues priming](https://www.appcues.com/blog/mobile-permission-priming) · [Android notification permission](https://developer.android.com/develop/ui/views/notifications/notification-permission) — 컨텍스트 트리거(벨 탭)·priming·재요청 스팸 금지.
+- [SuprSend preference center](https://www.suprsend.com/post/notification-preference-center) — 단일채널·소수타입=flat, 멀티채널=grid, 5~10 카테고리.
+- 정보통신망법 [§50](https://www.law.go.kr) · §44조의2 — 광고 vs 정보성 구분, 임시조치 통지.
+- [Mozilla Content Moderation](https://www.mozilla.org/en-US/about/legal/content-moderation/) · [YouTube 위반 통지](https://support.google.com/youtube/answer/185111?hl=KO) · DSA — 신고자=결과만·인앱 1차·게시자 사유+이의.
 
 ## 컷한 옵션 (사유 명시)
 
 - **이메일 통지 단독** — 소셜로그인(Apple 등) 이메일 미보장 → 도달 누락. 인앱 1차, 이메일은 후속 보강.
 - **신고자에게 상세 결과 통지** — 악용 우려(BP). "결과만"으로 축소.
 - **소비자별 개별 알림 구현** — 중복·파편화. 통합 시스템으로.
+- **FCM/APNs 직접 연동** — 소규모엔 과함. Expo Push Service로(필요 시 후속 전환).
+- **컨텍스트 트리거(벨 탭/행동 결부) 권한 요청** — opt-in율엔 유리하나, keeper는 알림함이 백업이라 거부 타격이 작고 단순함이 더 가치 → **첫 진입 1회 요청 채택**. 주기적 재요청은 BP 기각이라 안 함(설정 인계로 회복).
 
-## 오픈 이슈 / 결정 필요
+## 잔여 TBD (구현 단계)
 
-- TBD — admin 웹 콘솔 범위(`admin-console.md`와 경계): 출시 최소 신고 큐+임시조치만 vs 그 이상.
-- TBD — 인앱 알림함 진입점(프로필 메뉴 vs 헤더 벨 아이콘).
-- TBD — 이의(appeal) 경로: 출시 MVP "문의하기" 갈음 vs 재게시 청구 흐름(§44-2 청구권).
-- TBD — D-day 스케줄링 방식(서버 cron / 큐) — Phase 2.
+- 이의(appeal) 경로 — 출시 "문의하기"(Inquiry) 갈음, §44-2 재게시 청구권은 후속.
+- D-day 스케줄링 — Phase 2, `@nestjs/schedule`(이미 도입됨) cron.
 
 ## 참고
 

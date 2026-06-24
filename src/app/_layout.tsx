@@ -25,6 +25,7 @@ import { TamaguiProvider } from 'tamagui';
 import { getRefresh } from '@/entities/auth';
 import { AppGateScreen, SuspensionGateScreen, useAppGate } from '@/features/app-gate';
 import { UrgentNoticeGate } from '@/features/notice';
+import { NotificationGate } from '@/features/notification';
 import { authApi, setupInterceptor } from '@/shared/api';
 import {
   clearSuspended,
@@ -53,7 +54,10 @@ Sentry.init({
   sendDefaultPii: true,
   replaysSessionSampleRate: 0,
   replaysOnErrorSampleRate: 0.3,
-  integrations: [navigationIntegration, Sentry.mobileReplayIntegration()]
+  integrations: [
+    navigationIntegration,
+    Sentry.mobileReplayIntegration({ maskAllText: true, maskAllImages: true, maskAllVectors: true })
+  ]
 });
 
 const applyOtaUpdate = async () => {
@@ -216,6 +220,7 @@ const RootLayout = () => {
                       <Stack.Screen name="community-qna-write" options={{ presentation: 'fullScreenModal' }} />
                     </Stack>
                     <ShareGuard />
+                    <NotificationGate />
                     <UrgentNoticeGate notice={gate.urgentNotice} />
                     <Toaster
                       position="top-center"

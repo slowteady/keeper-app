@@ -1,4 +1,30 @@
-import { redirectSystemPath } from './deeplink';
+import { redirectSystemPath, resolveNotificationPath } from './deeplink';
+import { logger } from './utils/handle-error';
+
+jest.mock('./utils/handle-error', () => ({
+  logger: { error: jest.fn() }
+}));
+
+describe('resolveNotificationPath', () => {
+  it.each([
+    ['post', 'p1', '/(untabs)/community/p1'],
+    ['comment', 'p2', '/(untabs)/community/p2'],
+    ['inquiry', 'i1', '/(untabs)/profile/inquiry/i1']
+  ])('refType=%s refId=%s → %s', (refType, refId, expected) => {
+    expect(resolveNotificationPath(refType, refId)).toBe(expected);
+  });
+
+  it('refType/refId 가 없으면 null', () => {
+    expect(resolveNotificationPath(null, null)).toBeNull();
+    expect(resolveNotificationPath('post', null)).toBeNull();
+    expect(resolveNotificationPath(undefined, undefined)).toBeNull();
+  });
+
+  it('미지원 refType 은 null 이고 logger.error 로 기록한다', () => {
+    expect(resolveNotificationPath('unknown', 'x')).toBeNull();
+    expect(logger.error).toHaveBeenCalledWith('[deeplink] unsupported refType', 'unknown');
+  });
+});
 
 describe('redirectSystemPath', () => {
   it.each([

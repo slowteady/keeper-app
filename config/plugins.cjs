@@ -61,5 +61,11 @@ module.exports = [
       organization: process.env.SENTRY_ORG,
       project: process.env.SENTRY_PROJECT
     }
+  ],
+  [
+    'expo-notifications',
+    {
+      defaultChannel: 'default'
+    }
   ]
 ];
