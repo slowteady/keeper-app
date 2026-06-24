@@ -110,12 +110,11 @@ const CardDivider = styled(View, {
 
 const SpecRow = styled(XStack, {
   items: 'flex-start',
-  justify: 'space-between',
-  gap: 32
+  gap: 12
 });
 
 const SpecLabel = styled(Text, {
-  shrink: 0,
+  flex: 4,
   fontSize: 15,
   fontWeight: '600',
   lineHeight: 22,
@@ -123,7 +122,7 @@ const SpecLabel = styled(Text, {
 });
 
 const SpecValue = styled(Text, {
-  shrink: 1,
+  flex: 6,
   fontSize: 15,
   fontWeight: '500',
   lineHeight: 22,
