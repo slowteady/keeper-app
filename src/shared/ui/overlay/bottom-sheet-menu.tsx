@@ -41,7 +41,7 @@ export const BottomSheetMenu = <T,>({ data, value, onPress, mode = 'select' }: B
             accessibilityRole="button"
             testID={`menu-${String(item.id)}`}
           >
-            <StyledText style={[{ color }, mode === 'action' && { fontWeight: '600' }]}>{label}</StyledText>
+            <StyledText style={{ color }}>{label}</StyledText>
             {showCheck && <Check width={17} height={20} color={black800.val} />}
           </TouchableOpacity>
         );

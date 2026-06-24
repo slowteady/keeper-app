@@ -1,11 +1,11 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import { useSharedValue } from 'react-native-reanimated';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SceneRendererProps } from 'react-native-tab-view';
 import { styled, View } from 'tamagui';
 
 import { useLoginRequired } from '@/features/auth';
+import { useLayout } from '@/shared/model';
 import { RouteErrorBoundary, Tab, WriteFab } from '@/shared/ui';
 import { AdoptPersonalScene, AdoptShelterScene } from '@/widgets/adopt-section';
 
@@ -18,7 +18,7 @@ const ADOPT_SOURCE_ROUTES = [
 
 const Page = () => {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
+  const { top } = useLayout();
   const { source } = useLocalSearchParams<{ source?: string }>();
   const { requireLogin } = useLoginRequired();
   const [index, setIndex] = useState(source === 'personal' ? 1 : 0);
@@ -52,7 +52,7 @@ const Page = () => {
   }, [requireLogin, router]);
 
   return (
-    <Container style={{ paddingTop: insets.top }}>
+    <Container style={{ paddingTop: top }}>
       <Tab
         tabBarVariant="text"
         onIndexChange={handleIndexChange}

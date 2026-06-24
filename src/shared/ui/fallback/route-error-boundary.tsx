@@ -69,11 +69,29 @@ const ErrorFallbackUI = ({
 };
 
 export const RouteErrorBoundary = (props: RouteErrorBoundaryProps) => (
-  <ErrorFallbackUI {...props} secondaryAction={{ label: '홈으로', onPress: () => router.replace('/') }} />
+  <ErrorFallbackUI
+    {...props}
+    secondaryAction={{
+      label: '홈으로',
+      onPress: () => {
+        props.retry();
+        router.replace('/(tabs)/home');
+      }
+    }}
+  />
 );
 
 export const DetailErrorBoundary = (props: RouteErrorBoundaryProps) => (
-  <ErrorFallbackUI {...props} secondaryAction={{ label: '뒤로가기', onPress: () => router.back() }} />
+  <ErrorFallbackUI
+    {...props}
+    secondaryAction={{
+      label: '뒤로가기',
+      onPress: () => {
+        props.retry();
+        router.back();
+      }
+    }}
+  />
 );
 
 const Container = styled(YStack, {
