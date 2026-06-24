@@ -16,7 +16,6 @@ export const useCreateComment = ({ postId }: { postId: string }) => {
   return useMutation({
     mutationFn: ({ content, parentId }: CreateCommentVars) => commentApi.create(postId, content, parentId),
     onSuccess: (created, vars) => {
-      // 답글이면 replies 캐시에, 일반 댓글이면 list 캐시에 즉시 prepend (refetch 1초 지연 우회)
       const prepend = (old?: InfiniteData<CommentPage>) => {
         if (!old || old.pages.length === 0) return old;
         const [first, ...rest] = old.pages;
@@ -34,7 +33,6 @@ export const useCreateComment = ({ postId }: { postId: string }) => {
           prepend
         );
       }
-      // 백그라운드 정합 (정렬·페이지 합치기 등)
       queryClient.invalidateQueries({ queryKey: [...commentQueries.all(), 'list', postId] });
     },
     onError: (error) => globalToast(getModerationMessage(error) ?? '댓글을 등록하지 못했어요', 'fail')

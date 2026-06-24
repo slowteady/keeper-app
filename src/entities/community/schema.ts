@@ -10,7 +10,6 @@ import {
 
 import { CREATE_POST_OPTIONS } from './constant';
 
-// 보호 유형
 export const ProtectionTypeSchema = z.enum(['TEMPORARY', 'ADOPTION', 'BOTH']);
 export type ProtectionTypeDto = z.infer<typeof ProtectionTypeSchema>;
 
@@ -39,7 +38,6 @@ export const CommunityAdoptFormSchema = z.object({
   healthCheck: HealthCheckSchema.optional(),
   vaccinationCheck: VaccinationCheckSchema.optional(),
   age: z.string().optional(),
-  // 정수 1~3자리 + 선택적 소수 1~2자리 (빈 문자열 허용)
   weight: z
     .string()
     .regex(/^(\d{1,3}(\.\d{1,2})?)?$/, '몸무게는 99.99kg 까지 숫자로 입력해주세요')
@@ -65,7 +63,6 @@ export const PostUserSummarySchema = z.object({
 export type PostUserSummaryDto = z.infer<typeof PostUserSummarySchema>;
 
 export const PostContactSchema = z.object({
-  // 백엔드 PostContactType 과 정합 — PHONE/EMAIL/SNS
   type: z.enum(['PHONE', 'EMAIL', 'SNS']),
   value: z.string()
 });
@@ -77,7 +74,6 @@ export const CommunityAdoptDetailSchema = z.object({
   displayTime: z.string(),
   title: z.string(),
   images: z.array(z.string()),
-  // null + undefined 둘 다 허용 (nullish) — DB nullable 컬럼이 null 로 응답됨
   content: z.string().nullish(),
   age: z.string().nullish(),
   gender: z.string().nullish(),
@@ -119,20 +115,16 @@ export const CommunityAdoptListSchema = z.object({
   title: z.string(),
   images: z.array(z.string()),
   content: z.string().nullish(),
-  // 카테고리별 raw enum/원본 — 프론트 mapper 가 라벨로 변환
-  // 선택 입력 필드는 백엔드가 null 반환 가능 (nullish = null + undefined 모두 허용)
   animalType: AnimalTypeSchema.nullish(),
   gender: z.string().nullish(),
   neuterYn: NeuterYnSchema.nullish(),
   protectionType: ProtectionTypeSchema.nullish(),
   vaccinationCheck: VaccinationCheckSchema.nullish(),
-  // 개인 공고 카드용 (입양 탭 개인 세그먼트) — 백엔드 PostListItem 확장과 정합
   specificType: z.string().nullish(),
   age: z.string().nullish(),
   weight: z.string().nullish(),
   location: z.string().nullish(),
   adoptionStatus: z.enum(['IN_PROGRESS', 'COMPLETED']).nullish(),
-  // 입양생활 자유 입력 키워드
   keywords: z.array(z.string()).nullish(),
   counts: z.object({
     like: z.number(),
@@ -152,17 +144,11 @@ export const CommunityListResponseSchema = z.object({
 });
 export type CommunityListResponseDto = z.infer<typeof CommunityListResponseSchema>;
 
-// ─── QnA (궁금해요) ─────────────────────────────────────────────
-// 백엔드 QnaType enum 5종 — MISSING/DONATION 제거 + TRAINING 신규 (마이그레이션 027)
 export const QnaTypeSchema = z.enum(['ADOPTION', 'VOLUNTEER', 'TRAINING', 'HEALTH', 'ETC']);
 export type QnaTypeDto = z.infer<typeof QnaTypeSchema>;
 
-// QnA 동물 종류 — DB ENUM 3종. list 필터 전용 'ALL' 은 여기 포함되지 않음
 export const QnaAnimalTypeSchema = z.enum(['DOG', 'CAT', 'OTHER']);
 export type QnaAnimalTypeDto = z.infer<typeof QnaAnimalTypeSchema>;
-
-// QnA 의 동물 종류 — keeper 표준 AnimalTypeSchema 와 동일 (DOG/CAT/OTHER)
-// chip 미선택 = 백엔드 default 'OTHER'
 
 export const CommunityQnaFormSchema = z.object({
   title: z.string().min(2, '제목은 2자 이상이에요').max(50, '제목은 50자 이내로 입력해주세요'),
@@ -173,8 +159,6 @@ export const CommunityQnaFormSchema = z.object({
 });
 export type CommunityQnaFormDto = z.infer<typeof CommunityQnaFormSchema>;
 
-// 백엔드 PostListItemResponse 는 QnA 필드를 qnaType 으로 노출 (detail 의 PostQnaResponse.type 과 다름).
-// frontend list 카드에서는 qnaType 으로 받음.
 export const CommunityQnaListItemSchema = z.object({
   id: z.string(),
   user: PostUserSummarySchema.nullable(),
@@ -208,7 +192,6 @@ export const CommunityQnaDetailSchema = z.object({
   displayTime: z.string(),
   title: z.string(),
   content: z.string(),
-  // 백엔드 상세 응답은 list 와 동일하게 qnaType 으로 노출(PostListItem 기반). 과거 type 명칭과 불일치하던 것 정합
   qnaType: QnaTypeSchema,
   animalType: QnaAnimalTypeSchema,
   images: z.array(z.string()),

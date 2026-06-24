@@ -61,10 +61,8 @@ export const useBlock = () => {
   const block = async (userId: string) => {
     try {
       await blockMutation.mutateAsync(userId);
-      // 서버 응답 후 캐시 직접 수정 — refetch 1초 지연 우회 (BP for destructive action)
       removeBlockedFromCommunityList(queryClient, userId);
       removeBlockedFromCommentList(queryClient, userId);
-      // 백그라운드 정합
       queryClient.invalidateQueries({ queryKey: communityQueries.all() });
       queryClient.invalidateQueries({ queryKey: ['me-liked-posts'] });
       globalToast('차단했어요', 'success');

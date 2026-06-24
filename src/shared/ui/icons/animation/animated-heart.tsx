@@ -4,15 +4,10 @@ import type { SvgProps } from 'react-native-svg';
 import Svg, { Path } from 'react-native-svg';
 import { useTheme } from 'tamagui';
 
-// view-only 컴포넌트.
-// 인터랙션(탭/햅틱/콜백)은 호출자가 GestureDetector 또는 Pressable 로 감싸 책임진다.
-// 부모/자식 gesture 합성(requireExternalGestureToFail 등)을 호출처에서 자유롭게 구성 가능.
 export interface AnimatedHeartProps extends Omit<SvgProps, 'onPress'> {
   isLiked?: boolean;
   size?: number;
-  // 사진 위에 띄울 때 등 굵기 강조가 필요한 호출처에서 override.
   strokeWidth?: number;
-  // 헤더 액션 아이콘과 톤 맞출 때 등 호출처에서 override.
   inactiveColor?: string;
 }
 

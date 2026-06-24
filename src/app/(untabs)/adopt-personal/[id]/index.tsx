@@ -23,7 +23,6 @@ const Page = () => {
   );
 };
 
-// 개인 공고 전용 라우트 — QNA id 등 비-ADOPT 진입 시 빈 화면 대신 ErrorBoundary로 보낸다.
 const PersonalDetailGuard = ({ id }: { id: string }) => {
   const { data } = useSuspenseQuery(communityQueries.detail(id));
   if (data.kind !== 'ADOPT') {

@@ -42,7 +42,6 @@ export const AdoptDataSchema = z.object({
   rfid: z.string().nullable(),
   vaccinationCheck: z.string().nullable(),
   healthCheck: z.string().nullable(),
-  // 백엔드 isFavorited 응답 추가 (abandonment_favorite 마이그레이션 동기화)
   isFavorited: z.boolean().optional(),
   status: AdoptStatusSchema.optional(),
   chipType: AdoptChipTypeSchema.optional()
@@ -75,7 +74,6 @@ export const AdoptParamsSchema = z.object({
   animalType: z.string(),
   size: z.number(),
   page: z.number().optional(),
-  // 보호소 구조화 필터 (검색 인풋 대체)
   region: z.string().optional(),
   breed: z.string().optional(),
   gender: z.enum(['M', 'F', 'Q']).optional(),

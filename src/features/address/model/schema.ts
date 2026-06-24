@@ -1,8 +1,5 @@
 import { z } from 'zod';
 
-/**
- * 카카오 주소 문서
- */
 export const KakaoAddressDocumentSchema = z.object({
   address: z.object({
     address_name: z.string(),
@@ -41,9 +38,6 @@ export const KakaoAddressDocumentSchema = z.object({
 });
 export type KakaoAddressDocumentDto = z.infer<typeof KakaoAddressDocumentSchema>;
 
-/**
- * 카카오 지오코드 메타 정보
- */
 export const KakaoGeocodeMetaSchema = z.object({
   is_end: z.boolean(),
   pageable_count: z.number(),
@@ -51,18 +45,12 @@ export const KakaoGeocodeMetaSchema = z.object({
 });
 export type KakaoGeocodeMetaDto = z.infer<typeof KakaoGeocodeMetaSchema>;
 
-/**
- * Kakao Geocode API 응답
- */
 export const KakaoGeocodeResponseSchema = z.object({
   documents: z.array(KakaoAddressDocumentSchema),
   meta: KakaoGeocodeMetaSchema
 });
 export type KakaoGeocodeResponseDto = z.infer<typeof KakaoGeocodeResponseSchema>;
 
-/**
- * 카카오 키워드 장소 문서
- */
 export const KakaoKeywordDocumentSchema = z.object({
   id: z.string(),
   place_name: z.string(),
@@ -79,9 +67,6 @@ export const KakaoKeywordDocumentSchema = z.object({
 });
 export type KakaoKeywordDocumentDto = z.infer<typeof KakaoKeywordDocumentSchema>;
 
-/**
- * Kakao 키워드 장소 검색 응답
- */
 export const KakaoKeywordResponseSchema = z.object({
   documents: z.array(KakaoKeywordDocumentSchema),
   meta: KakaoGeocodeMetaSchema

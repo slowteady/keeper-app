@@ -63,8 +63,6 @@ export const CREATE_POST_OPTIONS = {
   ] as const satisfies ChipOption[]
 } as const;
 
-// ─── QnA (궁금해요) chip ─────────────────────────────────────────────
-// 백엔드 QnaType 5종 (MISSING/DONATION 제거, TRAINING 신규) — 마이그레이션 027
 export const QNA_CATEGORY_OPTIONS = [
   { value: 'ADOPTION', label: '입양' },
   { value: 'VOLUNTEER', label: '봉사' },
@@ -73,20 +71,17 @@ export const QNA_CATEGORY_OPTIONS = [
   { value: 'ETC', label: '기타' }
 ] as const satisfies ChipOption[];
 
-// 동물 종류 — chip 미선택 = 백엔드 default 'OTHER' (글쓰기 폼용)
 export const QNA_ANIMAL_TYPE_OPTIONS = [
   { value: 'DOG', label: '강아지' },
   { value: 'CAT', label: '고양이' },
   { value: 'OTHER', label: '기타' }
 ] as const satisfies ChipOption[];
 
-// list 필터용 카테고리 — '전체' 포함 (default 선택). 가로 스크롤 chip (BP)
 export const QNA_CATEGORY_FILTER_OPTIONS = [
   { value: 'ALL', label: '전체' },
   ...QNA_CATEGORY_OPTIONS
 ] as const satisfies ChipOption[];
 
-// QnA 정렬 — Dropdown data 용 {id,label}
 export const QNA_SORT_OPTIONS = [
   { id: 'NEW', label: '최신순' },
   { id: 'LIKE', label: '인기순' },

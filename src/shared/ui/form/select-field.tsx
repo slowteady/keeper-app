@@ -3,9 +3,6 @@ import { styled, Text, useTheme, XStack } from 'tamagui';
 
 import { DownArrow } from '@/shared/ui/icons/mini';
 
-// TextField 와 동일한 외형, 동작은 onPress 트리거(BS 등) 전용.
-// 사용자가 직접 입력하지 않고 옵션 선택만 받는 필드용.
-// disabled+onPress 트릭 대신 명시적인 select 컴포넌트로 의도 분리.
 export type SelectFieldProps = {
   value?: string;
   placeholder?: string;

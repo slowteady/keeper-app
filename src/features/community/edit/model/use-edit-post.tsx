@@ -17,9 +17,6 @@ import { fromAdoptionPersonalDetail } from '../lib/from-detail';
 
 export const useEditPost = (postId: string) => {
   const queryClient = useQueryClient();
-  // useSuspenseQuery — detail 도착이 hook 마운트 시점에 보장됨.
-  // defaultValues 에 동기 주입하므로 default → 실제값 따닥거림 제거.
-  // edit 라우트는 개인입양 전용 진입 → detail 은 항상 ADOPT.
   const { data } = useSuspenseQuery(communityQueries.detail(postId));
   const detail = data.kind === 'ADOPT' ? data.adopt : undefined;
 
@@ -37,10 +34,8 @@ export const useEditPost = (postId: string) => {
       return updateAdoptionPersonal(postId, body);
     },
     onSuccess: (updated) => {
-      // 서버 응답 후 detail 캐시 즉시 갱신 (refetch 1초 지연 우회)
       const next: PostDetailUnion = { kind: 'ADOPT', adopt: updated };
       queryClient.setQueryData(communityQueries.detail(postId).queryKey, next);
-      // 백그라운드 정합 (list 도 변경 반영)
       queryClient.invalidateQueries({ queryKey: communityQueries.all() });
       router.back();
     },

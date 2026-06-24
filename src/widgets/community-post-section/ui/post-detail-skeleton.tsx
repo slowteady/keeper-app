@@ -6,7 +6,6 @@ import { Skeleton } from '@/shared/ui';
 const SCREEN_WIDTH = Dimensions.get('screen').width;
 const IMAGE_SIZE = SCREEN_WIDTH - 40;
 
-// 커뮤니티 상세 진입 시 본문 자리 placeholder. 댓글창이 먼저 보이는 깜빡임 제거.
 export const PostDetailSkeleton = () => {
   return (
     <Container>

@@ -43,14 +43,12 @@ const COMMUNITY_BASE = '/community/posts';
 
 const getList = async (params: CommunityListParams): Promise<CommunityListResponseDto> => {
   const { ageBuckets, ...rest } = params;
-  // authApi 사용 — 토큰 첨부 시 server 가 isLiked 정확히 반환. publicApi 면 invalidate refetch 후 isLiked=false 로 cache 덮어쓰기 → 하트 리셋 버그.
   const res = await authApi.get<ApiResponse<CommunityListResponseDto>>(COMMUNITY_BASE, {
     params: { ...rest, ageBuckets: ageBuckets?.length ? ageBuckets.join(',') : undefined }
   });
   return CommunityListResponseSchema.parse(res.data.data);
 };
 
-// 응답 category 로 카테고리별 스키마 분기 (discriminated). 진입점/딥링크 무관 + query 1 회.
 export type PostDetailUnion =
   | { kind: 'QNA'; qna: CommunityQnaDetailDto }
   | { kind: 'ADOPT'; adopt: CommunityAdoptDetailDto };
@@ -124,7 +122,6 @@ const getMyPosts = async (params: {
   return MyPostListResponseSchema.parse(res.data.data);
 };
 
-// ─── QnA ───────────────────────────────────────────────
 export type QnaSortDto = 'NEW' | 'LIKE' | 'COMMENT' | 'VIEW';
 
 export type QnaListParams = {
@@ -136,7 +133,6 @@ export type QnaListParams = {
 };
 
 const getQnaList = async (params: QnaListParams): Promise<CommunityQnaListResponseDto> => {
-  // 백엔드 list endpoint 공유 — category=QNA 강제 + type/animalType 필터
   const res = await authApi.get<ApiResponse<CommunityQnaListResponseDto>>(COMMUNITY_BASE, {
     params: { ...params, category: 'QNA' }
   });
@@ -179,7 +175,6 @@ export const communityApi = {
   reportPost
 };
 
-// 페이지네이션 제외한 list 필터 (queryKey 안정성 + page 분리)
 type CommunityListFilter = Omit<CommunityListParams, 'page'>;
 
 export const communityQueries = {
@@ -191,7 +186,6 @@ export const communityQueries = {
       queryFn: ({ pageParam }) => getList({ ...params, page: pageParam, size: params.size ?? 20 }),
       initialPageParam: 1,
       getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.page + 1 : undefined),
-      // 페이지 합치고 메타(total/page/size/hasNext) 는 마지막 페이지 기준으로 노출
       select: (data) => ({
         items: data.pages.flatMap((p) => p.items),
         total: data.pages[data.pages.length - 1].total,
@@ -208,7 +202,6 @@ export const communityQueries = {
       enabled: !!id
     }),
 
-  // QnA list — type/animalType chip 필터 + infinite scroll
   qnaList: (params: Omit<QnaListParams, 'page'>) =>
     infiniteQueryOptions({
       queryKey: [...communityQueries.all(), 'qna', 'list', params] as const,

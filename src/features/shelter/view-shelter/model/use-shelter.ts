@@ -14,7 +14,6 @@ export const useShelter = ({ id }: UseShelterProps) => {
   const { data: shelterData, isLoading } = useQuery({
     ...shelterQueries.detail(id),
     select: mapToShelter,
-    // list cache 의 동일 careRegNo 항목을 initial 로 — 디테일 진입 즉시 낙관 update 된 isFavorited 노출.
     initialData: () => findInListCache(queryClient, id),
     initialDataUpdatedAt: 0,
     throwOnError: (error) => throwToErrorBoundary(error)
@@ -29,7 +28,6 @@ export const useShelter = ({ id }: UseShelterProps) => {
   return { shelterData, isLoading, hasCallNumber, refresh };
 };
 
-// shelter list(홈 반경) + within(보호소 탭 viewport) cache 들을 훑어 동일 id 찾기.
 const findInListCache = (queryClient: ReturnType<typeof useQueryClient>, id: string): ShelterDto | undefined => {
   const candidates: ShelterDto[][] = [];
 

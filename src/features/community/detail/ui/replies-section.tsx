@@ -11,13 +11,6 @@ export type RepliesSectionProps = {
   onPressReplyMore?: (reply: CommentDto) => void;
 };
 
-/**
- * 댓글(root) 카드 아래 노출되는 답글 영역
- *  - replyCount === 0 이면 렌더 안 함
- *  - "답글 N개 보기" 토글 — 펼치면 lazy fetch (useReplies)
- *  - reply 카드는 indent 32pt 로 시각 구분 (Facebook/Instagram 1뎁스 패턴)
- *  - 무한스크롤 BP — onEndReached 대신 명시 "답글 더 보기" 버튼 (수가 많을 때만 표시)
- */
 export const RepliesSection = ({ parentComment, onPressReplyMore }: RepliesSectionProps) => {
   const [expanded, setExpanded] = useState(false);
 

@@ -1,14 +1,3 @@
-// 좋아요 토글 시 React Query 캐시를 형태에 맞게 patch 하는 순수 함수.
-//
-// quasi-SSOT 전략:
-//   하나의 setQueriesData(prefix 매칭) 호출 안에서 모든 community 관련 캐시를
-//   이 함수가 받아 모양을 식별 후 알맞게 patch 한다.
-//
-// 지원 캐시 형태:
-//   1. InfiniteData<{ items: PostItem[] }>  — community list
-//   2. 단일 게시글(detail-like) 객체            — community detail
-//   3. 그 외/undefined                           — 그대로 반환 (no-op)
-
 export type PostLikeState = {
   isLiked: boolean;
   count: number;
@@ -36,7 +25,6 @@ const isPostLike = (data: unknown): data is WithLike =>
   'isLiked' in (data as Record<string, unknown>) &&
   'counts' in (data as Record<string, unknown>);
 
-// detail 캐시는 카테고리 분기 union — { kind: 'ADOPT', adopt } | { kind: 'QNA', qna }
 type DetailUnion = { kind: 'ADOPT'; adopt: WithLike } | { kind: 'QNA'; qna: WithLike };
 
 const isDetailUnion = (data: unknown): data is DetailUnion => {

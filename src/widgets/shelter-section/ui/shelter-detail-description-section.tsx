@@ -16,7 +16,6 @@ export const ShelterDetailDescriptionSection = ({ time, person, tel }: ShelterDe
       rows={[
         { label: '운영시간', value: orFallback(time) },
         { label: '연락처', value: orFallback(tel) },
-        // 담당자(person)는 공공데이터상 없는 보호소가 많아 빈 경우 행 자체를 노출하지 않음
         ...(hasValue(person) ? [{ label: '담당', value: person }] : [])
       ]}
     />

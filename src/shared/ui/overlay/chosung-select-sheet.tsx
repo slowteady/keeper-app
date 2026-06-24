@@ -73,9 +73,7 @@ export const ChosungSelectSheet = ({
           viewOffset: 0,
           animated: true
         });
-      } catch {
-        // onScrollToIndexFailed 에서 재시도
-      }
+      } catch {}
     });
   };
 
@@ -191,9 +189,7 @@ export const ChosungSelectSheet = ({
                 viewOffset: 0,
                 animated: false
               });
-            } catch {
-              // ignore
-            }
+            } catch {}
             if (attempt < 3) setTimeout(retry, 200);
           };
           setTimeout(retry, 200);

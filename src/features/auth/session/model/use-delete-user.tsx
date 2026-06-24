@@ -10,10 +10,6 @@ import { ConfirmModal, useModal } from '@/shared/ui';
 
 import { useSetIsAuthenticated } from '../../lib/auth-state';
 
-/**
- * 소셜 SDK 세션 종료 — 다음 로그인 시 "다른 계정으로 로그인" 시나리오 보장
- * Apple은 SDK 세션 종료 메서드 제공 안 함 (revoke만 가능, 별도 흐름)
- */
 const signOutSocialSession = async (socialType: SocialLoginType) => {
   try {
     switch (socialType) {
@@ -24,7 +20,6 @@ const signOutSocialSession = async (socialType: SocialLoginType) => {
         await GoogleSignin.signOut();
         break;
       case 'APPLE':
-        // SDK 세션 종료 미지원
         break;
     }
   } catch (e) {

@@ -43,7 +43,6 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
   const { toggleFavoriteAbandonment } = useFavoriteAbandonment();
   const { share } = useShare();
 
-  // 정책은 resolveAdoptShelter JSDoc 참조 (전화=공고 우선, 그 외=마스터 우선)
   const shelter = useMemo(() => resolveAdoptShelter(adopt, shelterData), [adopt, shelterData]);
   const ended = isAdoptEnded(adopt.status);
   const canCall = !!shelter.tel;

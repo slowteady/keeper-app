@@ -23,7 +23,6 @@ export const useCreatePost = () => {
     resolver: zodResolver(CommunityAdoptFormSchema),
     mode: 'onChange',
     defaultValues: {
-      // 필수
       animalType: CREATE_POST_OPTIONS.animalType[0].value,
       protectionType: CREATE_POST_OPTIONS.protectionType[0].value,
       title: '',
@@ -31,7 +30,6 @@ export const useCreatePost = () => {
       images: [],
       contact: [],
       location: '',
-      // 선택 — 미선택은 undefined
       gender: undefined,
       neuterYn: undefined,
       healthCheck: undefined,
@@ -53,8 +51,6 @@ export const useCreatePost = () => {
 
   const animalType = useWatch({ control: form.control, name: 'animalType' });
 
-  // animalType 변경 시 specificType reset — 강아지에서 고른 품종이 고양이로 바꿔도 남아있는 문제 방지
-  // 첫 마운트(default 값)에선 reset 하지 않도록 ref 로 변경 추적
   const prevAnimalTypeRef = useRef(animalType);
   useEffect(() => {
     if (prevAnimalTypeRef.current !== animalType) {
@@ -65,9 +61,6 @@ export const useCreatePost = () => {
 
   const { openAgeSelector, openKindSelector } = useAdoptFormSelectors(form, animalType);
 
-  // 게시글 등록 흐름: 이미지 presigned 업로드 → 백엔드 createPost → 상세로 이동
-  // 백엔드 presigned 엔드포인트(/uploads/presign) 미구현 시 이미지 업로드 단계에서 실패하므로,
-  // 그 책임은 백엔드 개발자가 담당. 프론트는 흐름 틀만 완성.
   const imageUpload = useImageUpload();
   const submitMutation = useMutation({
     mutationFn: async (data: CommunityAdoptFormDto) => {
@@ -76,7 +69,6 @@ export const useCreatePost = () => {
       return createAdoptionPersonal(body);
     },
     onSuccess: () => {
-      // refetchType:'all' — 비활성(미마운트) 세그먼트 목록까지 즉시 refetch 해 복귀 시 새 공고 누락 방지
       queryClient.invalidateQueries({ queryKey: communityQueries.all(), refetchType: 'all' });
       globalToast('공고를 등록했어요', 'success');
       router.back();

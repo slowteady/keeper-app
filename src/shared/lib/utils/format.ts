@@ -1,8 +1,5 @@
 import dayjs from 'dayjs';
 
-/**
- * - 보호소 운영시간으로 변환
- */
 export const formatTimeAMPM = (time: string | null | undefined) => {
   if (!time) return null;
 
@@ -12,9 +9,6 @@ export const formatTimeAMPM = (time: string | null | undefined) => {
   return formattedTime.replace('AM', '오전').replace('PM', '오후');
 };
 
-/**
- * - 시간 차이를 방금 막, 분 전, 시간 전, 일 전, 날짜로 변환
- */
 export const formatTimeAgo = (date: string | Date): string => {
   const now = dayjs();
   const target = dayjs(date);
@@ -36,6 +30,5 @@ export const formatTimeAgo = (date: string | Date): string => {
     return `${diffDays}일 전`;
   }
 
-  // 2일 이상이면 날짜로 출력
   return target.format('YYYY.MM.DD');
 };

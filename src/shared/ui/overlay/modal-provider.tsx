@@ -27,7 +27,6 @@ export const ModalProvider = ({ children }: { children: React.ReactNode }) => {
   const update = useCallback((node: React.ReactNode) => setContent(node), []);
   const close = useCallback(() => {
     setVisible(false);
-    // 모달이 닫힐 때 onDismiss 콜백 호출
     if (onDismissRef.current) {
       onDismissRef.current();
       onDismissRef.current = undefined;

@@ -14,7 +14,6 @@ export const useUpdateComment = ({ postId }: { postId: string }) => {
     mutationFn: ({ commentId, content }: { commentId: string; content: string }) =>
       commentApi.update(commentId, content),
     onSuccess: (updated) => {
-      // 서버 응답 후 list / replies 캐시의 해당 댓글 즉시 갱신 (refetch 1초 지연 우회)
       const replacer = (old?: InfiniteData<CommentPage>) =>
         old && {
           ...old,

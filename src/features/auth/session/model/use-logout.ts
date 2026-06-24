@@ -10,10 +10,6 @@ import { getRefreshToken, globalToast, logger, removeToken } from '@/shared/lib'
 
 import { useSetIsAuthenticated } from '../../lib/auth-state';
 
-/**
- * 소셜 SDK 세션 종료 — 다음 로그인 시 "다른 계정으로 로그인" 시나리오 보장
- * Apple은 SDK 세션 종료 메서드 제공 안 함 (revoke만 가능, 별도 흐름)
- */
 const signOutSocialSession = async (socialType: SocialLoginType) => {
   try {
     switch (socialType) {
@@ -24,11 +20,9 @@ const signOutSocialSession = async (socialType: SocialLoginType) => {
         await GoogleSignin.signOut();
         break;
       case 'APPLE':
-        // SDK 세션 종료 미지원
         break;
     }
   } catch (e) {
-    // 소셜 SDK 세션 종료 실패는 본인 로그아웃 흐름을 막지 않음
     logger.warn('소셜 SDK 세션 종료 실패', e);
   }
 };
@@ -52,7 +46,6 @@ export const useLogout = () => {
       }
       await removeToken();
       Sentry.setUser(null);
-      // 권한 의존 캐시(하트/찜/내 글 등) 가 stale 인 상태로 남으면 비로그인인데 ON 보이는 버그 발생 → 전체 제거.
       qc.removeQueries();
 
       setIsAuthenticated(false);

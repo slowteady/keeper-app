@@ -34,7 +34,6 @@ type CreateAdoptionPersonalBody = {
   withCats?: CommunityAdoptFormDto['withCats'];
 };
 
-// 빈 문자열 / 'NONE' / null / undefined 모두 백엔드 NULL 로 — chip 미선택 / 구버전 데이터 호환
 const orUndefined = <T>(value: T | undefined | null | '' | 'NONE'): T | undefined =>
   value === '' || value === 'NONE' || value === null || value === undefined ? undefined : (value as T);
 

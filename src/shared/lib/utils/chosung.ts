@@ -1,4 +1,3 @@
-// 한글 초성 19자 (쌍자음 포함) — Unicode 한글 음절(가–힣) 의 초성 인덱스 순서
 const CHOSUNG_ALL = [
   'ㄱ',
   'ㄲ',
@@ -21,7 +20,6 @@ const CHOSUNG_ALL = [
   'ㅎ'
 ] as const;
 
-// UI 표시용 14자 (쌍자음 그룹은 단자음에 병합)
 export const CHOSUNG_LABELS = [
   'ㄱ',
   'ㄴ',
@@ -44,7 +42,6 @@ const HANGUL_START = 0xac00;
 const HANGUL_END = 0xd7a3;
 const CHOSUNG_STRIDE = 588;
 
-// 쌍자음 → 단자음 매핑 (UI 14자 기준 grouping)
 const DOUBLE_TO_SINGLE: Record<string, ChosungLabel> = {
   ㄲ: 'ㄱ',
   ㄸ: 'ㄷ',
@@ -63,7 +60,6 @@ export const getChosung = (text: string): ChosungLabel => {
 
 export type ChosungSection<T> = { title: ChosungLabel; data: T[] };
 
-// 주어진 items 를 초성별 section 으로 묶음. 입력 순서 안에서 stable, 자모 순서는 CHOSUNG_LABELS 기준
 export const groupByChosung = <T>(items: readonly T[], pick: (item: T) => string): ChosungSection<T>[] => {
   const map = new Map<ChosungLabel, T[]>();
   for (const item of items) {

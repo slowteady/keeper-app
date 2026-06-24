@@ -15,7 +15,6 @@ import {
 
 const BASE_URL = '/shelters';
 
-// 전국 bbox — 위치정보법: 사용자 GPS를 서버로 보내지 않기 위해 전체 보호소를 받아 거리는 클라에서 계산.
 export const SHELTER_NATION_BOUNDS: ShelterWithinParamsDto = {
   minLatitude: 33,
   maxLatitude: 38.7,
@@ -23,9 +22,6 @@ export const SHELTER_NATION_BOUNDS: ShelterWithinParamsDto = {
   maxLongitude: 131.9
 };
 
-// --- Service Functions ---
-
-// authApi 사용 이유 — 백엔드가 @CurrentUser 를 optional 로 받아 토큰이 있으면 isFavorited 를 채워준다.
 const getSheltersWithin = async (params: ShelterWithinParamsDto): Promise<ShelterDto[]> => {
   const res = await authApi.get<ApiResponse<ShelterDto[]>>(`${BASE_URL}/within`, { params });
   return res.data.data;
@@ -46,8 +42,6 @@ const getMyFavoriteShelters = async (params: { page: number; size: number }): Pr
   return ShelterMyFavoriteListSchema.parse(res.data.data);
 };
 
-// --- Favorite (찜) ---
-
 const favoriteShelter = async (careRegNo: string): Promise<{ isFavorited: boolean }> => {
   const res = await authApi.post<ApiResponse<{ isFavorited: boolean }>>(`/shelters/${careRegNo}/favorite`);
   return res.data.data;
@@ -62,8 +56,6 @@ export const shelterApi = {
   favorite: favoriteShelter,
   unfavorite: unfavoriteShelter
 };
-
-// --- Query Options Factory ---
 
 export const shelterQueries = {
   all: () => ['shelters'] as const,

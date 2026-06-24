@@ -1,11 +1,8 @@
-// 공공데이터 동물보호관리시스템 kind_v2 API (https://apis.data.go.kr/1543061/abandonmentPublicService_v2/kind_v2)
-// 표준 코드 정합성을 위해 kindCd 보유 — 현재는 name 만 사용, 추후 검색/필터/통계에서 활용 가능
 export type Breed = {
   kindCd: string;
   name: string;
 };
 
-// 205종 — 공공데이터 동물보호관리시스템 kind_v2 API (up_kind_cd=417000), 기타 제외
 export const DOG_BREEDS: Breed[] = [
   { kindCd: '000245', name: '고든 세터' },
   { kindCd: '000054', name: '골든 리트리버' },
@@ -214,7 +211,6 @@ export const DOG_BREEDS: Breed[] = [
   { kindCd: '000111', name: '휘펫' }
 ] as const;
 
-// 37종 — 공공데이터 동물보호관리시스템 kind_v2 API (up_kind_cd=422400), 기타 제외
 export const CAT_BREEDS: Breed[] = [
   { kindCd: '000116', name: '고양이' },
   { kindCd: '000170', name: '노르웨이 숲' },
