@@ -2,6 +2,7 @@ import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
 import { AxiosResponse } from 'axios';
 
 import { authApi } from '@/shared/api/instance';
+import { selectInfinitePages } from '@/shared/lib';
 import { ApiResponse } from '@/shared/model';
 
 import {
@@ -186,13 +187,7 @@ export const communityQueries = {
       queryFn: ({ pageParam }) => getList({ ...params, page: pageParam, size: params.size ?? 20 }),
       initialPageParam: 1,
       getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.page + 1 : undefined),
-      select: (data) => ({
-        items: data.pages.flatMap((p) => p.items),
-        total: data.pages[data.pages.length - 1].total,
-        page: data.pages[data.pages.length - 1].page,
-        size: data.pages[data.pages.length - 1].size,
-        hasNext: data.pages[data.pages.length - 1].hasNext
-      })
+      select: selectInfinitePages
     }),
 
   detail: (id: string) =>
@@ -208,13 +203,7 @@ export const communityQueries = {
       queryFn: ({ pageParam }) => getQnaList({ ...params, page: pageParam, size: params.size ?? 20 }),
       initialPageParam: 1,
       getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.page + 1 : undefined),
-      select: (data) => ({
-        items: data.pages.flatMap((p) => p.items),
-        total: data.pages[data.pages.length - 1].total,
-        page: data.pages[data.pages.length - 1].page,
-        size: data.pages[data.pages.length - 1].size,
-        hasNext: data.pages[data.pages.length - 1].hasNext
-      })
+      select: selectInfinitePages
     }),
 
   qnaDetail: (id: string) =>
@@ -230,13 +219,7 @@ export const communityQueries = {
       queryFn: ({ pageParam }) => getMyLikedPosts({ page: pageParam, size, type }),
       initialPageParam: 1,
       getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.page + 1 : undefined),
-      select: (data) => ({
-        items: data.pages.flatMap((p) => p.items),
-        total: data.pages[data.pages.length - 1].total,
-        page: data.pages[data.pages.length - 1].page,
-        size: data.pages[data.pages.length - 1].size,
-        hasNext: data.pages[data.pages.length - 1].hasNext
-      })
+      select: selectInfinitePages
     }),
 
   myPostListKey: () => ['me-posts'] as const,
@@ -247,13 +230,7 @@ export const communityQueries = {
       queryFn: ({ pageParam }) => getMyPosts({ page: pageParam, size, type }),
       initialPageParam: 1,
       getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.page + 1 : undefined),
-      select: (data) => ({
-        items: data.pages.flatMap((p) => p.items),
-        total: data.pages[data.pages.length - 1].total,
-        page: data.pages[data.pages.length - 1].page,
-        size: data.pages[data.pages.length - 1].size,
-        hasNext: data.pages[data.pages.length - 1].hasNext
-      })
+      select: selectInfinitePages
     }),
 
   myCommentList: (size: number = 20) =>
@@ -262,12 +239,6 @@ export const communityQueries = {
       queryFn: ({ pageParam }) => getMyComments({ page: pageParam, size }),
       initialPageParam: 1,
       getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.page + 1 : undefined),
-      select: (data) => ({
-        items: data.pages.flatMap((p) => p.items),
-        total: data.pages[data.pages.length - 1].total,
-        page: data.pages[data.pages.length - 1].page,
-        size: data.pages[data.pages.length - 1].size,
-        hasNext: data.pages[data.pages.length - 1].hasNext
-      })
+      select: selectInfinitePages
     })
 };

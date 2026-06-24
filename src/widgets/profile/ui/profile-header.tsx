@@ -1,7 +1,7 @@
 import { ChevronRight, FileText, Heart } from '@tamagui/lucide-icons';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
-import { SocialLoginType, UserDto } from '@/entities/auth';
+import { SOCIAL_LABEL, UserDto } from '@/entities/auth';
 import { EmptyAvatar, UserAvatar } from '@/entities/profile';
 import { SCREEN_GUTTER } from '@/shared/lib';
 import { Skeleton } from '@/shared/ui';
@@ -15,12 +15,6 @@ type ProfileHeaderProps = {
   onLike: () => void;
   onActivity: () => void;
   onChangeProfileImage: () => void;
-};
-
-const SOCIAL_LABEL: Record<SocialLoginType, string> = {
-  KAKAO: '카카오',
-  GOOGLE: '구글',
-  APPLE: '애플'
 };
 
 export const ProfileHeader = ({

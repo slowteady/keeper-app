@@ -9,12 +9,11 @@ import { toggleHaptic } from '@/shared/lib';
 import { NoImage } from '@/shared/ui/fallback/no-image';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
-import { ADOPT_STATUS_INFO, isAdoptEnded } from '../constant';
+import { ADOPT_STATUS_INFO, CORE_CHIP_IDS, isAdoptEnded } from '../constant';
 import type { ChipVariant } from '../mapper';
 import type { AdoptStatusDto } from '../schema';
 
 const STATUS_CHIP_IDS = ['NEAR_DEADLINE', 'NEW', 'DDAY'];
-const CORE_CHIP_IDS = ['ANIMAL', 'GENDER', 'AGE', 'WEIGHT'];
 
 export type AdoptCardProps = {
   uri: string;

@@ -73,3 +73,9 @@ export const INQUIRY_STATUS_LABEL: Record<InquiryStatusDto, string> = {
   IN_PROGRESS: '처리중',
   DONE: '답변완료'
 };
+
+export const INQUIRY_STATUS_TONE = {
+  RECEIVED: 'neutral',
+  IN_PROGRESS: 'notice',
+  DONE: 'success'
+} as const;

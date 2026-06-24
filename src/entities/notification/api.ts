@@ -2,6 +2,7 @@ import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
 import { AxiosResponse } from 'axios';
 
 import { authApi } from '@/shared/api/instance';
+import { selectInfinitePages } from '@/shared/lib';
 import { ApiResponse } from '@/shared/model';
 
 import {
@@ -81,13 +82,7 @@ export const notificationQueries = {
       queryFn: ({ pageParam }) => getList({ page: pageParam, size }),
       initialPageParam: 1,
       getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.page + 1 : undefined),
-      select: (data) => ({
-        items: data.pages.flatMap((p) => p.items),
-        total: data.pages[data.pages.length - 1].total,
-        page: data.pages[data.pages.length - 1].page,
-        size: data.pages[data.pages.length - 1].size,
-        hasNext: data.pages[data.pages.length - 1].hasNext
-      })
+      select: selectInfinitePages
     }),
 
   unreadCount: () =>

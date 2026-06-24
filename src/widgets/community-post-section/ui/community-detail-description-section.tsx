@@ -2,11 +2,11 @@ import { ExternalLink, Link2 } from '@tamagui/lucide-icons';
 import { Linking, Pressable } from 'react-native';
 import { styled, Text, XStack, YStack } from 'tamagui';
 
+import { hasValue } from '@/shared/lib';
+
 export type CommunityDetailDescriptionSectionProps = {
   relatedLink: string;
 };
-
-const hasValue = (value?: string) => !!value && value.trim().length > 0;
 
 const getDomain = (url: string) => {
   const match = url.match(/^https?:\/\/([^/]+)/i);

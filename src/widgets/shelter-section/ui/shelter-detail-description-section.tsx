@@ -1,3 +1,4 @@
+import { hasValue } from '@/shared/lib';
 import { DetailSpecSection } from '@/widgets/adopt-section';
 
 export type ShelterDetailDescriptionSectionProps = {
@@ -6,7 +7,6 @@ export type ShelterDetailDescriptionSectionProps = {
   tel: string;
 };
 
-const hasValue = (value?: string) => !!value && value.trim().length > 0;
 const orFallback = (value?: string) => (hasValue(value) ? (value as string) : '등록되지 않았어요');
 
 export const ShelterDetailDescriptionSection = ({ time, person, tel }: ShelterDetailDescriptionSectionProps) => {

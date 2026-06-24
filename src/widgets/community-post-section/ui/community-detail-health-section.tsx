@@ -1,13 +1,13 @@
 import { styled, Text, XStack, YStack } from 'tamagui';
 
+import { hasValue } from '@/shared/lib';
+
 export type CommunityDetailHealthSectionProps = {
   neuterYn?: string;
   vaccinationCheck?: string;
   healthCheck?: string;
   health: string;
 };
-
-const hasValue = (value?: string) => !!value && value.trim().length > 0;
 
 const ynText = (v?: string): string | null => (v === 'Y' ? '했어요' : v === 'N' ? '안 했어요' : null);
 

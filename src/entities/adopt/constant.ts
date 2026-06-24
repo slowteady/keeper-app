@@ -159,3 +159,5 @@ export type EndedStatus = Exclude<AdoptStatusDto, 'PROTECTING'>;
 
 export const isAdoptEnded = (status?: AdoptStatusDto): status is EndedStatus =>
   status !== undefined && status !== 'PROTECTING';
+
+export const CORE_CHIP_IDS = ['ANIMAL', 'GENDER', 'AGE', 'WEIGHT'];

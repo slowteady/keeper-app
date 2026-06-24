@@ -1,31 +1,13 @@
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import { logout as kakaoLogout } from '@react-native-kakao/user';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { useCallback } from 'react';
 
-import { authQueries, DeleteMeBodyDto, deleteUser, SocialLoginType, UserDto } from '@/entities/auth';
-import { globalToast, logger, removeToken } from '@/shared/lib';
+import { authQueries, DeleteMeBodyDto, deleteUser, UserDto } from '@/entities/auth';
+import { globalToast, removeToken } from '@/shared/lib';
 import { ConfirmModal, useModal } from '@/shared/ui';
 
 import { useSetIsAuthenticated } from '../../lib/auth-state';
-
-const signOutSocialSession = async (socialType: SocialLoginType) => {
-  try {
-    switch (socialType) {
-      case 'KAKAO':
-        await kakaoLogout();
-        break;
-      case 'GOOGLE':
-        await GoogleSignin.signOut();
-        break;
-      case 'APPLE':
-        break;
-    }
-  } catch (e) {
-    logger.warn('소셜 SDK 세션 종료 실패', e);
-  }
-};
+import { signOutSocialSession } from '../../lib/sign-out-social-session';
 
 export const useDeleteUser = () => {
   const queryClient = useQueryClient();

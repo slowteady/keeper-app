@@ -9,7 +9,7 @@ import { toggleHaptic } from '@/shared/lib';
 import { NoImage } from '@/shared/ui/fallback/no-image';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
-import { PROTECTION_LABEL } from '../constant';
+import { CORE_CHIP_IDS, PROTECTION_LABEL } from '../constant';
 import type { ChipVariant } from '../mapper';
 import { AdoptChips } from './adopt-chips';
 
@@ -32,8 +32,6 @@ export type PersonalAdoptCardProps = {
   compact?: boolean;
   coreChipsOnly?: boolean;
 };
-
-const CORE_CHIP_IDS = ['ANIMAL', 'GENDER', 'AGE', 'WEIGHT'];
 
 const PersonalAdoptCardComponent = ({
   uri,

@@ -1,19 +1,13 @@
 import dayjs from 'dayjs';
 import { Text, XStack, YStack } from 'tamagui';
 
-import { SocialLoginType, UserDto } from '@/entities/auth';
+import { SOCIAL_LABEL, UserDto } from '@/entities/auth';
 import { UserAvatar } from '@/entities/profile';
 
 type AccountHeaderProps = {
   user: UserDto;
   isUpdatingImage?: boolean;
   onChangeProfileImage: () => void;
-};
-
-const SOCIAL_LABEL: Record<SocialLoginType, string> = {
-  KAKAO: '카카오',
-  GOOGLE: '구글',
-  APPLE: '애플'
 };
 
 export const AccountHeader = ({ user, isUpdatingImage, onChangeProfileImage }: AccountHeaderProps) => {

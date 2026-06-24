@@ -3,6 +3,8 @@ import { RelativePathString, router } from 'expo-router';
 import { Pressable } from 'react-native';
 import { styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
 
+import { hasValue } from '@/shared/lib';
+
 type Shelter = {
   id: string;
   time: string;
@@ -15,8 +17,6 @@ export type AdoptDetailDescriptionSectionProps = {
   specialMark: string;
   shelter?: Shelter;
 };
-
-const hasValue = (value?: string) => !!value && value.trim().length > 0;
 
 export const AdoptDetailDescriptionSection = ({ specialMark, shelter }: AdoptDetailDescriptionSectionProps) => {
   const { black500 } = useTheme();

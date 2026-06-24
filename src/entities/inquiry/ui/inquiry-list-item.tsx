@@ -4,18 +4,12 @@ import { styled, Text, XStack, YStack } from 'tamagui';
 
 import { formatTimeAgo } from '@/shared/lib';
 
-import { INQUIRY_STATUS_LABEL, INQUIRY_TYPE_LABEL, InquiryListItemDto } from '../schema';
+import { INQUIRY_STATUS_LABEL, INQUIRY_STATUS_TONE, INQUIRY_TYPE_LABEL, InquiryListItemDto } from '../schema';
 
 export type InquiryListItemProps = {
   data: InquiryListItemDto;
   onPress: (id: string) => void;
 };
-
-const STATUS_TONE = {
-  RECEIVED: 'neutral',
-  IN_PROGRESS: 'notice',
-  DONE: 'success'
-} as const;
 
 export const InquiryListItem = ({ data, onPress }: InquiryListItemProps) => (
   <Pressable onPress={() => onPress(data.id)}>
@@ -27,7 +21,7 @@ export const InquiryListItem = ({ data, onPress }: InquiryListItemProps) => (
         </Preview>
       </YStack>
       <StatusRow>
-        <StatusLabel tone={STATUS_TONE[data.status]}>{INQUIRY_STATUS_LABEL[data.status]}</StatusLabel>
+        <StatusLabel tone={INQUIRY_STATUS_TONE[data.status]}>{INQUIRY_STATUS_LABEL[data.status]}</StatusLabel>
         <ChevronRight size={16} color="#ADB3AF" />
       </StatusRow>
     </Container>

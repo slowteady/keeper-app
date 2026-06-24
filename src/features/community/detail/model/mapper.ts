@@ -3,7 +3,8 @@ import { CommunityAdoptDetailDto, CREATE_POST_OPTIONS } from '@/entities/communi
 
 export type BehaviorItem = { label: string; value: string };
 
-const ANIMAL_LABEL: Record<string, string> = { DOG: '강아지', CAT: '고양이', OTHER: '기타' };
+const animalTypeLabel = (value?: string | null) =>
+  CREATE_POST_OPTIONS.animalType.find((o) => o.value === value)?.label ?? '';
 
 export const convertToAdoptDetailOverviewData = (detailPost: CommunityAdoptDetailDto) => {
   const breed = detailPost.specificType?.trim();
@@ -14,7 +15,7 @@ export const convertToAdoptDetailOverviewData = (detailPost: CommunityAdoptDetai
     displayTime: detailPost.displayTime,
     title: detailPost.title,
     images: detailPost.images,
-    breed: breed || (detailPost.animalType ? (ANIMAL_LABEL[detailPost.animalType] ?? '') : ''),
+    breed: breed || animalTypeLabel(detailPost.animalType),
     region: detailPost.location?.trim() || '',
     protectionType: detailPost.protectionType ?? null,
     content: detailPost.content ?? '',
