@@ -8,7 +8,7 @@ import { ADOPT_STATUS_INFO, AdoptStatusDto, isAdoptEnded } from '@/entities/adop
 import { resolveAdoptShelter, useAdopt } from '@/features/adopt';
 import { useFavoriteAbandonment } from '@/features/favorite-abandonment';
 import { useShelter } from '@/features/shelter';
-import { SCREEN_GUTTER } from '@/shared/lib';
+import { pressHaptic, SCREEN_GUTTER } from '@/shared/lib';
 import { useShare } from '@/shared/model';
 import { BottomButton, CallModal, Carousel, DetailErrorBoundary, SuspenseFallback } from '@/shared/ui';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
@@ -63,6 +63,7 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
   ].filter((r) => !!r.value && r.value !== '모름' && r.value !== '미상');
 
   const handlePressShare = () => {
+    pressHaptic();
     share({ type: 'adopt', id: adopt.id });
   };
 

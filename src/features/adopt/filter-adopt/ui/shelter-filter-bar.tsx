@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { ScrollView } from 'react-native';
 import { XStack } from 'tamagui';
 
@@ -23,6 +24,11 @@ export type ShelterFilterBarProps = {
 export const ShelterFilterBar = ({ filter, animalType, sortValue, onChangeSort }: ShelterFilterBarProps) => {
   const { present, dismiss } = useBottomSheet();
   const { applied, labels, activeCount, setRegion, setBreed, setGender, setNeuter, setAge, reset } = filter;
+
+  const scrollRef = useRef<ScrollView>(null);
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ x: 0, animated: false });
+  }, [animalType]);
 
   const breeds = animalType === 'DOG' ? DOG_BREEDS : animalType === 'CAT' ? CAT_BREEDS : [];
   const breedEnabled = breeds.length > 0;
@@ -75,6 +81,7 @@ export const ShelterFilterBar = ({ filter, animalType, sortValue, onChangeSort }
   return (
     <XStack items="center" gap={14}>
       <ScrollView
+        ref={scrollRef}
         horizontal
         showsHorizontalScrollIndicator={false}
         style={{ flex: 1 }}

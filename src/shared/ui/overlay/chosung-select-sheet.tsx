@@ -58,11 +58,15 @@ export const ChosungSelectSheet = ({
   const availableChosungSet = useMemo(() => new Set(sections.map((s) => s.title)), [sections]);
 
   const chipJumpTargetRef = useRef<ChosungLabel | null>(null);
+  const jumpSectionIndexRef = useRef<number | null>(null);
+  const failRetryRef = useRef(0);
 
   const handleChipPress = (label: ChosungLabel) => {
     const idx = sections.findIndex((s) => s.title === label);
     if (idx < 0) return;
     chipJumpTargetRef.current = label;
+    jumpSectionIndexRef.current = idx;
+    failRetryRef.current = 0;
     setActiveChosung(label);
     requestAnimationFrame(() => {
       try {
@@ -177,22 +181,21 @@ export const ChosungSelectSheet = ({
         showsVerticalScrollIndicator
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="interactive"
-        onScrollToIndexFailed={({ index }: { index: number }) => {
-          let attempt = 0;
-          const retry = () => {
-            attempt += 1;
+        onScrollToIndexFailed={() => {
+          const sectionIndex = jumpSectionIndexRef.current;
+          if (sectionIndex == null || failRetryRef.current >= 6) return;
+          failRetryRef.current += 1;
+          setTimeout(() => {
             try {
               sectionListRef.current?.scrollToLocation?.({
-                sectionIndex: index,
+                sectionIndex,
                 itemIndex: 0,
                 viewPosition: 0,
                 viewOffset: 0,
                 animated: false
               });
             } catch {}
-            if (attempt < 3) setTimeout(retry, 200);
-          };
-          setTimeout(retry, 200);
+          }, 120);
         }}
       />
     </RNView>
