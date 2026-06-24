@@ -92,3 +92,16 @@ CLAUDE.md "쓸데없는 주석 금지" 위반(JSDoc·섹션 divider·워크어�
 - DOG_BREEDS 중복 name (공공데이터 미러, risk medium) — dedup 강행 X, 사실만 기록
 - address zod parse 여부 — 동작 변경(런타임 검증)이라 클린업 아님, 별건
 - comment/auth signup 슬라이스 대규모 재배치 — import 광범위, 우선순위 낮음
+- **HelperText 통합** — status variant은 같으나 size variant 상이($4+mt vs MEDIUM) → verbatim 병합 불가, 제외
+- **무한리스트 훅 useInfinitePage 추출** — 의도적 미적용. 3-A의 selectInfinitePages로 이미 핵심 중복(flatMap) 제거됨. 잔여는 훅당 ~8줄 단순 보일러플레이트인데, useInfiniteQuery(5 제네릭) 래핑이 `any` 없이 깔끔하게 안 나와 추상화가 가독성을 해침 = 추출비용 > 중복비용. (adopt-list/notification/favorite-shelters/inquiries는 가드·매핑·isLoading·쿼리종류가 발산해 애초에 동일군 아님.)
+- **캐시 패치 헬퍼**(댓글 prepend/replace·block remove) — 테스트 없음 + 캐시 키 의미 위험 + 절감 LOC 적음 → 가성비 미달, 제외
+
+## 실행 이력 (2026-06-24)
+
+- ✅ Phase 1 죽은 코드 / Phase 2 주석 117 / 3-A 순수 중복 / 3-B styled / 3-D 일관성 / 3-C(1) favorite 팩토리 / 3-C(2) refetch-on-focus — 전부 동작·렌더 불변 증명 + tsc/jest/eslint 통과 + 커밋(9건).
+- **Phase 3 종료**(안전·고가치 영역 완결). 위 "제외" 항목은 추상화 net-negative라 의도적 미적용.
+
+## Phase 4 — 보류 (MCP 실기 검증 필요, 추후)
+
+구조(마크업) 변경이라 정적 검증으로 렌더 회귀를 못 잡음 → Metro + 로컬 백엔드 띄워 MCP로 화면 검증해야 안전. 앱이 자연스럽게 떠 있는 타이밍(QA/개발)에 묶어 진행 권장.
+(대상: 위 "Phase 4 — 복잡도·구조" 목록 + 모달 ModalCard·SectionHeader·shelter no-location·field counter·검색 리스트·gate shell.)
