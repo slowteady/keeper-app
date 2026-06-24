@@ -4,7 +4,8 @@ import { type ReactNode } from 'react';
 
 import { NoticeListItemDto, noticeQueries } from '@/entities/notice';
 
-import { getLatestNotice, isNoticeFresh, useHasUnreadNotices } from './use-has-unread-notices';
+import { getLatestNotice, isNoticeFresh } from '../lib/notice-freshness';
+import { useHasUnreadNotices } from './use-has-unread-notices';
 import { NOTICE_READ_QUERY_KEY } from './use-read-notices';
 
 const daysAgo = (n: number) => new Date(Date.now() - n * 24 * 60 * 60 * 1000).toISOString();

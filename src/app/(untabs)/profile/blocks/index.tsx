@@ -4,7 +4,7 @@ import { ActivityIndicator } from 'react-native';
 import { styled, View, YStack } from 'tamagui';
 
 import type { BlockedUserDto } from '@/entities/community';
-import { BlockListRow, useBlockList } from '@/features/profile/blocks';
+import { BlockListRow, useBlockList } from '@/features/profile';
 import { RouteErrorBoundary } from '@/shared/ui';
 import { ProfileEmptyState } from '@/widgets/profile';
 

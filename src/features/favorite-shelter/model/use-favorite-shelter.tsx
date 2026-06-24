@@ -4,8 +4,7 @@ import { useCallback } from 'react';
 import { shelterApi, shelterQueries } from '@/entities/shelter';
 import { useLoginRequired } from '@/features/auth';
 import { globalToast, toggleHaptic } from '@/shared/lib';
-
-import { patchFavoritedCache } from '../lib/patch-favorited-cache';
+import { patchFavoritedCache } from '@/shared/lib/query/patch-favorited-cache';
 
 type ToggleVars = { careRegNo: string; currentlyFavorited: boolean };
 type FavoriteResponse = { isFavorited: boolean };

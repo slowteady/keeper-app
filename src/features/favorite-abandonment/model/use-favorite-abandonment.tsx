@@ -5,8 +5,7 @@ import { adoptApi, adoptQueries } from '@/entities/adopt';
 import { shelterQueries } from '@/entities/shelter';
 import { useLoginRequired } from '@/features/auth';
 import { globalToast, toggleHaptic } from '@/shared/lib';
-
-import { patchFavoritedCache } from '../lib/patch-favorited-cache';
+import { patchFavoritedCache } from '@/shared/lib/query/patch-favorited-cache';
 
 type ToggleVars = { desertionNo: string; currentlyFavorited: boolean };
 type FavoriteResponse = { isFavorited: boolean };

@@ -9,7 +9,7 @@ import {
   KakaoGeocodeResponseDto,
   KakaoKeywordParamsDto,
   KakaoKeywordResponseDto
-} from '../model';
+} from './schema';
 
 export const getKakaoGeocode = async ({
   query
