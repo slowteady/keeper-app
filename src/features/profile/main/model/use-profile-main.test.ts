@@ -13,7 +13,8 @@ jest.mock('@/features/auth', () => ({
 }));
 jest.mock('@/shared/model', () => ({
   useShare: jest.fn(),
-  useReview: jest.fn()
+  useReview: jest.fn(),
+  usePermission: () => ({ goSettingMenu: jest.fn() })
 }));
 
 const mockedUseCurrentUser = jest.mocked(useCurrentUser);

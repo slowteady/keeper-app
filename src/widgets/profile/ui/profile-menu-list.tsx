@@ -13,14 +13,23 @@ type ProfileMenuListProps = {
   onNavigate: (path: string, requireAuth: boolean) => void;
   onReview: () => void;
   onShare: () => void;
+  onLocationSettings: () => void;
 };
 
-export const ProfileMenuList = ({ sections, isLoggedIn, onNavigate, onReview, onShare }: ProfileMenuListProps) => {
+export const ProfileMenuList = ({
+  sections,
+  isLoggedIn,
+  onNavigate,
+  onReview,
+  onShare,
+  onLocationSettings
+}: ProfileMenuListProps) => {
   const { hasUnread } = useHasUnreadNotices();
 
   const handlePress = (item: MenuItem) => {
     if ('action' in item) {
       if (item.action === 'review') onReview();
+      else if (item.action === 'location') onLocationSettings();
       else onShare();
       return;
     }

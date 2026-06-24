@@ -1,12 +1,13 @@
 import { router } from 'expo-router';
 
 import { useCurrentUser, useOpenLoginSheet } from '@/features/auth';
-import { useReview, useShare } from '@/shared/model';
+import { usePermission, useReview, useShare } from '@/shared/model';
 
 export const useProfileMain = () => {
   const { user, isLoading } = useCurrentUser();
   const { share } = useShare();
   const { promptReview } = useReview();
+  const { goSettingMenu } = usePermission();
   const openLoginSheet = useOpenLoginSheet();
 
   const shareApp = () => share({ type: 'app' });
@@ -30,6 +31,7 @@ export const useProfileMain = () => {
     goAccount,
     goLike,
     goActivity,
-    goMenu
+    goMenu,
+    goSettingMenu
   };
 };

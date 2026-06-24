@@ -7,7 +7,8 @@ import { ProfileHeader, ProfileMenuList } from '@/widgets/profile';
 export const ErrorBoundary = RouteErrorBoundary;
 
 const Page = () => {
-  const { user, isLoading, promptReview, shareApp, goLogin, goAccount, goLike, goActivity, goMenu } = useProfileMain();
+  const { user, isLoading, promptReview, shareApp, goLogin, goAccount, goLike, goActivity, goMenu, goSettingMenu } =
+    useProfileMain();
   const { changeProfileImage, isPending: isUpdatingImage } = useProfileImage();
 
   return (
@@ -29,6 +30,7 @@ const Page = () => {
           onNavigate={goMenu}
           onReview={promptReview}
           onShare={shareApp}
+          onLocationSettings={goSettingMenu}
         />
       </ScrollView>
     </Container>

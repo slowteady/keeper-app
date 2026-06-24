@@ -1,9 +1,16 @@
-import { CircleHelp, Info, Megaphone, Share2, Star } from '@tamagui/lucide-icons';
+import { Bell, CircleHelp, Info, MapPin, Megaphone, Share2, Star } from '@tamagui/lucide-icons';
 
 export const SHARE_TITLE = 'Keeper';
 export const SHARE_DESC = '유기동물들의 가족이 되어주세요';
 
 export const MENU_SECTIONS = [
+  {
+    label: '설정',
+    items: [
+      { icon: Bell, label: '알림 설정', navigateTo: 'notification-settings', requireAuth: false },
+      { icon: MapPin, label: '위치 설정', action: 'location' }
+    ]
+  },
   {
     label: '지원',
     items: [
