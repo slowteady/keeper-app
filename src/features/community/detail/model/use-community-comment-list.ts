@@ -23,7 +23,6 @@ export const useCommunityCommentList = (postId: string) => {
   return {
     sortOrder,
     commentList,
-    hasNext: hasNextPage,
     isFetchingNextPage,
     isLoading,
     isError,

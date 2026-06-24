@@ -1,6 +1,5 @@
 import {
   NOTIFICATION_CATEGORIES,
-  NOTIFICATION_CHANNELS,
   NOTIFICATION_TYPE_LABEL,
   NOTIFICATION_TYPES,
   NotificationListResponseSchema,
@@ -34,10 +33,6 @@ describe('NOTIFICATION enum 가드 (백엔드 단일 출처 미러)', () => {
       'ADMIN_NEW_REPORT',
       'ADMIN_NEW_INQUIRY'
     ]);
-  });
-
-  it('NotificationChannel 값이 동일하다', () => {
-    expect(NOTIFICATION_CHANNELS).toEqual(['IN_APP', 'PUSH', 'BOTH']);
   });
 
   it('PushPlatform 값이 동일하다', () => {

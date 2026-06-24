@@ -158,7 +158,6 @@ export const useShelterViewport = () => {
     onTapMarker: handleTapMarker,
     onTapCluster: handleTapCluster,
     onDeselect: handleDeselect,
-    selectShelter: setSelectedShelterId,
     moveToCurrentLocation
   };
 };

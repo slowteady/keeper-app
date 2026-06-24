@@ -212,7 +212,6 @@ export const CommunityQnaDetailSchema = z.object({
   qnaType: QnaTypeSchema,
   animalType: QnaAnimalTypeSchema,
   images: z.array(z.string()),
-  commentCount: z.number().default(0),
   counts: z.object({
     like: z.number(),
     view: z.number(),

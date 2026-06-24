@@ -1,4 +1,3 @@
-import { router } from 'expo-router';
 import { styled, Text, XStack, YStack } from 'tamagui';
 
 import { Checkbox } from '@/shared/ui';
@@ -13,9 +12,9 @@ export type AgreementState = {
 type SignupAgreementProps = {
   value: AgreementState;
   onChange: (next: AgreementState) => void;
-  onViewTerms?: () => void;
-  onViewPrivacy?: () => void;
-  onViewCommunity?: () => void;
+  onViewTerms: () => void;
+  onViewPrivacy: () => void;
+  onViewCommunity: () => void;
   marginTop?: number;
 };
 
@@ -27,9 +26,6 @@ export const SignupAgreement = ({
   onViewCommunity,
   marginTop = 32
 }: SignupAgreementProps) => {
-  const handleViewTerms = onViewTerms ?? (() => router.push('/terms'));
-  const handleViewPrivacy = onViewPrivacy ?? (() => router.push('/privacy'));
-  const handleViewCommunity = onViewCommunity ?? (() => router.push('/community-guideline'));
   const { age14, terms, privacy, community } = value;
   const allChecked = age14 && terms && privacy && community;
 
@@ -62,7 +58,7 @@ export const SignupAgreement = ({
             <Checkbox variant="icon" size={24} checked={terms} onChange={setTerms} />
             <ItemLabel>(필수) 이용약관 동의</ItemLabel>
           </ItemLeft>
-          <ViewChip onPress={handleViewTerms}>
+          <ViewChip onPress={onViewTerms}>
             <ViewChipText>보기</ViewChipText>
           </ViewChip>
         </ItemRow>
@@ -72,7 +68,7 @@ export const SignupAgreement = ({
             <Checkbox variant="icon" size={24} checked={privacy} onChange={setPrivacy} />
             <ItemLabel>(필수) 개인정보 수집·이용 동의</ItemLabel>
           </ItemLeft>
-          <ViewChip onPress={handleViewPrivacy}>
+          <ViewChip onPress={onViewPrivacy}>
             <ViewChipText>보기</ViewChipText>
           </ViewChip>
         </ItemRow>
@@ -82,7 +78,7 @@ export const SignupAgreement = ({
             <Checkbox variant="icon" size={24} checked={community} onChange={setCommunity} />
             <ItemLabel>(필수) 커뮤니티 가이드라인 동의</ItemLabel>
           </ItemLeft>
-          <ViewChip onPress={handleViewCommunity}>
+          <ViewChip onPress={onViewCommunity}>
             <ViewChipText>보기</ViewChipText>
           </ViewChip>
         </ItemRow>

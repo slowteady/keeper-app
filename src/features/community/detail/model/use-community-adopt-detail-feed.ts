@@ -41,8 +41,6 @@ export const useCommunityAdoptDetailFeed = (id: string) => {
     data: { detailPost, overviews, infos, descriptions, behaviors },
     hasContact: detailPost?.hasContact ?? false,
     getContacts,
-    isLoading: false,
-    isError: false,
     refetch,
     isRefetching
   };

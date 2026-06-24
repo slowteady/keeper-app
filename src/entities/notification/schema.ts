@@ -10,17 +10,12 @@ export const NOTIFICATION_TYPES = [
   'ADMIN_NEW_INQUIRY'
 ] as const;
 
-export const NOTIFICATION_CHANNELS = ['IN_APP', 'PUSH', 'BOTH'] as const;
-
 export const PUSH_PLATFORMS = ['IOS', 'ANDROID'] as const;
 
 export const NOTIFICATION_CATEGORIES = ['COMMUNITY'] as const;
 
 export const NotificationTypeSchema = z.enum(NOTIFICATION_TYPES);
 export type NotificationTypeDto = z.infer<typeof NotificationTypeSchema>;
-
-export const NotificationChannelSchema = z.enum(NOTIFICATION_CHANNELS);
-export type NotificationChannelDto = z.infer<typeof NotificationChannelSchema>;
 
 export const PushPlatformSchema = z.enum(PUSH_PLATFORMS);
 export type PushPlatformDto = z.infer<typeof PushPlatformSchema>;

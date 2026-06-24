@@ -8,7 +8,7 @@ export type CommentListHeaderProps = {
   onChangeSortOrder: (order: CommentSortOrderDto) => void;
 };
 
-export const CommentListHeader = ({ commentCount = 0, sortOrder, onChangeSortOrder }: CommentListHeaderProps) => {
+export const CommentListHeader = ({ commentCount, sortOrder, onChangeSortOrder }: CommentListHeaderProps) => {
   const isLatest = sortOrder === 'LATEST';
   const isCreated = sortOrder === 'OLDEST';
 

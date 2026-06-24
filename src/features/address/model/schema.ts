@@ -95,20 +95,7 @@ export const KakaoKeywordParamsSchema = z.object({
 });
 export type KakaoKeywordParamsDto = z.infer<typeof KakaoKeywordParamsSchema>;
 
-export const KakaoGeocodeOptionalParamsSchema = z.object({
-  /** 페이지 번호 (1~45, 기본 1) */
-  page: z.number().optional(),
-  /** 페이지당 문서 수 (1~30, 기본 10) */
-  size: z.number().optional(),
-  /** 좌표 기준 검색(“x,y” 문자열) */
-  coordinate: z.string().optional(),
-  /** 정확도 옵션: ‘exact’ 또는 ‘similar’ (기본 ‘similar’) */
-  analyze_type: z.enum(['exact', 'similar']).optional()
-});
-export type KakaoGeocodeOptionalParamsDto = z.infer<typeof KakaoGeocodeOptionalParamsSchema>;
-
 export const KakaoGeocodeParamsSchema = z.object({
-  query: z.string(),
-  params: KakaoGeocodeOptionalParamsSchema.optional()
+  query: z.string()
 });
 export type KakaoGeocodeParamsDto = z.infer<typeof KakaoGeocodeParamsSchema>;
