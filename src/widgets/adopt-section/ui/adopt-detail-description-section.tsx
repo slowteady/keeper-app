@@ -50,19 +50,19 @@ export const AdoptDetailDescriptionSection = ({ specialMark, shelter }: AdoptDet
               {hasValue(time) && (
                 <SpecRow>
                   <SpecLabel>운영시간</SpecLabel>
-                  <SpecValue>{time}</SpecValue>
+                  <SpecValue lineBreakStrategyIOS="hangul-word">{time}</SpecValue>
                 </SpecRow>
               )}
               {hasValue(address) && (
                 <SpecRow>
                   <SpecLabel>주소</SpecLabel>
-                  <SpecValue>{address}</SpecValue>
+                  <SpecValue lineBreakStrategyIOS="hangul-word">{address}</SpecValue>
                 </SpecRow>
               )}
               {hasValue(person) && (
                 <SpecRow>
                   <SpecLabel>담당</SpecLabel>
-                  <SpecValue>{person}</SpecValue>
+                  <SpecValue lineBreakStrategyIOS="hangul-word">{person}</SpecValue>
                 </SpecRow>
               )}
             </>
@@ -114,7 +114,7 @@ const SpecRow = styled(XStack, {
 });
 
 const SpecLabel = styled(Text, {
-  flex: 4,
+  width: 72,
   fontSize: 15,
   fontWeight: '600',
   lineHeight: 22,
@@ -122,10 +122,9 @@ const SpecLabel = styled(Text, {
 });
 
 const SpecValue = styled(Text, {
-  flex: 6,
+  flex: 1,
   fontSize: 15,
   fontWeight: '500',
   lineHeight: 22,
-  color: '$black700',
-  text: 'right'
+  color: '$black700'
 });

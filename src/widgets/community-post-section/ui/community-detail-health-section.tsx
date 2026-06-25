@@ -57,7 +57,9 @@ export const CommunityDetailHealthSection = ({
 const InfoRow = ({ label, value }: { label: string; value: string }) => (
   <XStack items="flex-start" justify="space-between" gap={12}>
     <RowLabel>{label}</RowLabel>
-    <RowValue style={{ textAlign: 'right' }}>{value}</RowValue>
+    <RowValue lineBreakStrategyIOS="hangul-word" style={{ textAlign: 'right' }}>
+      {value}
+    </RowValue>
   </XStack>
 );
 

@@ -12,7 +12,9 @@ export const DetailSpecSection = ({ title, rows }: { title: string; rows: Detail
         {rows.map((row) => (
           <Row key={row.label}>
             <Label>{row.label}</Label>
-            <Value style={{ textAlign: 'right' }}>{row.value}</Value>
+            <Value lineBreakStrategyIOS="hangul-word" style={{ textAlign: 'right' }}>
+              {row.value}
+            </Value>
           </Row>
         ))}
       </Box>
