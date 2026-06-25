@@ -173,7 +173,6 @@ const TextTabContainer = styled(XStack, {
   items: 'flex-end',
   gap: 24,
   px: 20,
-  pt: 12,
   mb: 12,
   borderBottomWidth: 1,
   borderColor: '$white600'

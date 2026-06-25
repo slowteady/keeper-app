@@ -100,7 +100,15 @@ export const AdoptShelterScene = ({ scrollY }: { scrollY: SharedValue<number> })
       renderItem={renderItem}
       header={
         <YStack mb={16} gap={14}>
-          <ButtonGroup data={ADOPT_OPTIONS.ANIMAL} id={selectedType} onChange={(id) => setSelectedType(id)} />
+          <ButtonGroup
+            data={ADOPT_OPTIONS.ANIMAL}
+            id={selectedType}
+            onChange={(id) => {
+              if (id === selectedType) return;
+              setSelectedType(id);
+              shelterFilter.reset();
+            }}
+          />
           <ShelterFilterBar
             filter={shelterFilter}
             animalType={selectedType}
