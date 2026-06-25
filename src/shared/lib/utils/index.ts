@@ -1,5 +1,4 @@
 export * from './chosung';
-export * from './current-route';
 export * from './form-error';
 export * from './format';
 export * from './handle-error';

@@ -10,7 +10,7 @@ import { MutationCache, QueryClient, QueryClientProvider } from '@tanstack/react
 import { extend } from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useFonts } from 'expo-font';
-import { router, Stack, useNavigationContainerRef, usePathname } from 'expo-router';
+import { router, Stack, useNavigationContainerRef } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import * as Updates from 'expo-updates';
@@ -27,14 +27,7 @@ import { AppGateScreen, SuspensionGateScreen, useAppGate } from '@/features/app-
 import { UrgentNoticeGate } from '@/features/notice';
 import { NotificationGate } from '@/features/notification';
 import { authApi, setupInterceptor } from '@/shared/api';
-import {
-  clearSuspended,
-  globalToast,
-  logger,
-  setCurrentPathname,
-  throwToErrorBoundary,
-  useSuspension
-} from '@/shared/lib';
+import { clearSuspended, globalToast, logger, throwToErrorBoundary, useSuspension } from '@/shared/lib';
 import { BottomSheetProvider, ModalProvider, ShareGuard } from '@/shared/ui';
 
 import { config } from '../../tamagui.config';
@@ -172,11 +165,6 @@ const RootLayout = () => {
       navigationIntegration.registerNavigationContainer(navigationRef);
     }
   }, [navigationRef]);
-
-  const pathname = usePathname();
-  useEffect(() => {
-    setCurrentPathname(pathname);
-  }, [pathname]);
 
   if (!isAppReady) return null;
   if (!isAnimationDone) return <AnimatedSplash onFinish={() => setAnimationDone(true)} />;

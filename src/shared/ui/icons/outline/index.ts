@@ -17,7 +17,6 @@ export { default as Location } from './location';
 export { default as Logo } from './logo';
 export { default as Menu } from './menu';
 export { default as Message } from './message';
-export { default as MoreImage } from './more-image';
 export { default as Pencil } from './pencil';
 export { default as RightArrow } from './right-arrow';
 export { default as Share } from './share';
