@@ -1,8 +1,11 @@
+import { useQueryClient } from '@tanstack/react-query';
 import * as Notifications from 'expo-notifications';
-import { router } from 'expo-router';
-import { useEffect } from 'react';
+import { router, usePathname } from 'expo-router';
+import { useEffect, useRef } from 'react';
 
+import { notificationQueries } from '@/entities/notification';
 import { useCurrentUser } from '@/features/auth';
+import { globalToast } from '@/shared/lib';
 import { resolveNotificationPath } from '@/shared/lib/deeplink';
 
 import { useNotificationPermission } from '../model/use-notification-permission';
@@ -10,9 +13,9 @@ import { useRegisterPushToken } from '../model/use-register-push-token';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldShowBanner: true,
+    shouldShowBanner: false,
     shouldShowList: true,
-    shouldPlaySound: true,
+    shouldPlaySound: false,
     shouldSetBadge: false
   })
 });
@@ -28,6 +31,11 @@ const routeFromData = (data: Record<string, unknown> | undefined) => {
 export const NotificationGate = () => {
   const { isLoggedIn } = useCurrentUser();
   const { requestOnce } = useNotificationPermission();
+  const queryClient = useQueryClient();
+  const pathname = usePathname();
+  const pathnameRef = useRef(pathname);
+  pathnameRef.current = pathname;
+
   useRegisterPushToken(isLoggedIn);
 
   useEffect(() => {
@@ -45,6 +53,18 @@ export const NotificationGate = () => {
 
     return () => subscription.remove();
   }, []);
+
+  useEffect(() => {
+    const subscription = Notifications.addNotificationReceivedListener((notification) => {
+      queryClient.invalidateQueries({ queryKey: [...notificationQueries.all(), 'list'] });
+      queryClient.invalidateQueries({ queryKey: [...notificationQueries.all(), 'unread-count'] });
+
+      if (pathnameRef.current?.startsWith('/notifications')) return;
+      globalToast(notification.request.content.title ?? '새 알림이 도착했어요');
+    });
+
+    return () => subscription.remove();
+  }, [queryClient]);
 
   return null;
 };
