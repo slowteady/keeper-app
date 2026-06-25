@@ -1,6 +1,8 @@
 import { useCallback } from 'react';
 import { Alert, Platform, Share } from 'react-native';
 
+import { pressHaptic } from '@/shared/lib';
+
 import { useIsSharing, useSetIsSharing } from '../share/share-atom';
 
 // Native share sheet dismiss 직후 underlying view 로 touch 가 새는 race 보호. iOS UIActivityViewController dismiss 애니메이션이 ~400ms.
@@ -23,6 +25,7 @@ export const useShare = () => {
 
   const share = useCallback(
     async (params: ShareParams) => {
+      pressHaptic();
       setIsSharing(true);
       try {
         const shareUrl =

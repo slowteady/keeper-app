@@ -5,7 +5,7 @@ import { useCallback, useMemo, useRef } from 'react';
 import { communityApi, communityQueries } from '@/entities/community';
 import { useCurrentUser, useLoginRequired } from '@/features/auth';
 import { useBlock } from '@/features/community/safety';
-import { globalToast } from '@/shared/lib';
+import { globalToast, pressHaptic } from '@/shared/lib';
 import { useShare } from '@/shared/model';
 import { BottomSheetMenu, type BottomSheetMenuData, ConfirmModal, useBottomSheet, useModal } from '@/shared/ui';
 
@@ -132,6 +132,7 @@ export const usePostMenu = ({
   }, [isMine, authorId, hideBlock, adoption]);
 
   const openPostMenu = useCallback(() => {
+    pressHaptic();
     present(<BottomSheetMenu data={menuItems} value={'' as PostMenuId} onPress={handlePress} mode="action" />, {
       enableDynamicSizing: true,
       onDismiss: () => {

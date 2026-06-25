@@ -16,6 +16,8 @@ jest.mock('../share/share-atom', () => ({
   useSetIsSharing: () => mockSetIsSharing
 }));
 
+jest.mock('@/shared/lib', () => ({ pressHaptic: jest.fn() }));
+
 describe('useShare', () => {
   beforeEach(() => {
     mockShare.mockClear();

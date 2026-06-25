@@ -6,7 +6,7 @@ import { commentApi, commentQueries } from '@/entities/comment';
 import { communityQueries, MyCommentItemDto } from '@/entities/community';
 import { useCurrentUser, useLoginRequired } from '@/features/auth';
 import { useBlock } from '@/features/community/safety';
-import { globalToast } from '@/shared/lib';
+import { globalToast, pressHaptic } from '@/shared/lib';
 import { BottomSheetMenu, type BottomSheetMenuData, ConfirmModal, useBottomSheet, useModal } from '@/shared/ui';
 
 export type CommentMenuId = 'EDIT' | 'DELETE' | 'REPORT' | 'BLOCK';
@@ -66,6 +66,7 @@ export const useCommentMenu = ({ onEdit, onDeleteSuccess }: UseCommentMenuParams
 
   const openCommentMenu = useCallback(
     ({ commentId, authorId, content, postId }: CommentMenuTarget) => {
+      pressHaptic();
       const isMine = !!user && !!authorId && user.id === authorId;
       const menuItems: readonly BottomSheetMenuData<CommentMenuId>[] = isMine
         ? MINE_MENU

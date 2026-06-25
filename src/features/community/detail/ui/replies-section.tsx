@@ -3,6 +3,7 @@ import { ActivityIndicator, Pressable } from 'react-native';
 import { styled, Text, View } from 'tamagui';
 
 import { CommentCard, CommentDto } from '@/entities/comment';
+import { pressHaptic } from '@/shared/lib';
 
 import { useReplies } from '../model/use-replies';
 
@@ -46,7 +47,13 @@ export const RepliesSection = ({ parentComment, onPressReplyMore }: RepliesSecti
           )}
 
           {hasNextPage && (
-            <Pressable onPress={fetchNextPage} disabled={isFetchingNextPage}>
+            <Pressable
+              onPress={() => {
+                pressHaptic();
+                fetchNextPage();
+              }}
+              disabled={isFetchingNextPage}
+            >
               <View py={8}>
                 {isFetchingNextPage ? <ActivityIndicator size="small" /> : <ToggleText>답글 더 보기</ToggleText>}
               </View>
