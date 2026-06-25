@@ -1,4 +1,4 @@
-import { ShelterDto } from '../schema';
+import { hasShelterCoords, ShelterDto } from '../schema';
 
 export type LatLng = { latitude: number; longitude: number };
 
@@ -16,7 +16,9 @@ export const attachDistance = (shelters: ShelterDto[], origin?: LatLng): Shelter
   origin
     ? shelters.map((shelter) => ({
         ...shelter,
-        distance: haversineKm(origin.latitude, origin.longitude, shelter.latitude, shelter.longitude)
+        distance: hasShelterCoords(shelter)
+          ? haversineKm(origin.latitude, origin.longitude, shelter.latitude, shelter.longitude)
+          : shelter.distance
       }))
     : shelters;
 

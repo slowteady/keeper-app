@@ -67,7 +67,7 @@ export const ShelterDetailOverviewSection = ({
           hasLocation={isGranted}
           isLocationPending={isLocationPending}
           data={[data]}
-          camera={{ latitude, longitude, zoom: 15 }}
+          camera={{ latitude: latitude ?? 0, longitude: longitude ?? 0, zoom: 15 }}
           onRefetch={() => {}}
           onInitialized={onMapInitialized}
           selectedMarkerId={data.id}

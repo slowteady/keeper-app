@@ -6,6 +6,7 @@ import Supercluster from 'supercluster';
 import {
   attachDistance,
   ClusterPointFeature,
+  hasShelterCoords,
   SHELTER_NATION_BOUNDS,
   ShelterDto,
   ShelterProps,
@@ -41,7 +42,7 @@ export const useShelterViewport = () => {
     if (!allShelters) return null;
     const supercluster = new Supercluster<ShelterProps>({ radius: CLUSTER_RADIUS, maxZoom: CLUSTER_MAX_ZOOM });
     supercluster.load(
-      allShelters.map((shelter) => ({
+      allShelters.filter(hasShelterCoords).map((shelter) => ({
         type: 'Feature' as const,
         geometry: { type: 'Point' as const, coordinates: [shelter.longitude, shelter.latitude] },
         properties: { shelter }
@@ -98,7 +99,9 @@ export const useShelterViewport = () => {
       }
       setSelectedShelterId(id);
       const target = allShelters?.find((shelter) => shelter.id === id);
-      if (target) mapRef.current?.animateCameraTo({ latitude: target.latitude, longitude: target.longitude });
+      if (target && hasShelterCoords(target)) {
+        mapRef.current?.animateCameraTo({ latitude: target.latitude, longitude: target.longitude });
+      }
     },
     [selectedShelterId, allShelters]
   );

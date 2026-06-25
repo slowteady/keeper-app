@@ -13,6 +13,7 @@ export const useShelter = ({ id }: UseShelterProps) => {
 
   const { data: shelterData, isLoading } = useQuery({
     ...shelterQueries.detail(id),
+    enabled: !!id,
     select: mapToShelter,
     initialData: () => findInListCache(queryClient, id),
     initialDataUpdatedAt: 0,

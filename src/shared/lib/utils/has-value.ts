@@ -1,1 +1,1 @@
-export const hasValue = (value?: string) => !!value && value.trim().length > 0;
+export const hasValue = (value?: string | null) => !!value && value.trim().length > 0;

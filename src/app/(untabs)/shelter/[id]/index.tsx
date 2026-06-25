@@ -8,6 +8,7 @@ import { useSharedValue } from 'react-native-reanimated';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
 import { ADOPT_OPTIONS, AdoptCard, AdoptItem } from '@/entities/adopt';
+import { hasShelterCoords } from '@/entities/shelter';
 import { useFavoriteAbandonment } from '@/features/favorite-abandonment';
 import { useFavoriteShelter } from '@/features/favorite-shelter';
 import { useShelter, useShelterAdoptList } from '@/features/shelter';
@@ -84,7 +85,7 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
   }, []);
 
   const handleMapInitialized = useCallback(() => {
-    if (shelterData) {
+    if (shelterData && hasShelterCoords(shelterData)) {
       mapRef.current?.animateCameraTo({
         latitude: shelterData.latitude,
         longitude: shelterData.longitude
@@ -97,7 +98,7 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
   }, [refreshShelter, refreshAdopts]);
 
   const handleDirections = useCallback(() => {
-    if (!shelterData) return;
+    if (!shelterData || !hasShelterCoords(shelterData)) return;
     showLocation({
       latitude: shelterData.latitude,
       longitude: shelterData.longitude,

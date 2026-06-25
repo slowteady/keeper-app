@@ -5,7 +5,7 @@ import { Suspense, useCallback, useRef } from 'react';
 import { Pressable, StyleSheet } from 'react-native';
 import { styled, useTheme, View } from 'tamagui';
 
-import { ShelterMap } from '@/entities/shelter';
+import { hasShelterCoords, ShelterMap } from '@/entities/shelter';
 import { useShelter } from '@/features/shelter';
 import { useLocation } from '@/shared/model';
 import { DetailErrorBoundary, SuspenseFallback } from '@/shared/ui';
@@ -36,7 +36,9 @@ const ShelterMapContent = ({ id }: { id: string }) => {
   const handleInitialized = useCallback(() => {
     if (!shelterData) return;
     if (isGranted) mapRef.current?.setLocationTrackingMode('NoFollow');
-    mapRef.current?.animateCameraTo({ latitude: shelterData.latitude, longitude: shelterData.longitude });
+    if (hasShelterCoords(shelterData)) {
+      mapRef.current?.animateCameraTo({ latitude: shelterData.latitude, longitude: shelterData.longitude });
+    }
   }, [shelterData, isGranted]);
 
   const handleRecenter = useCallback(() => {
@@ -51,7 +53,7 @@ const ShelterMapContent = ({ id }: { id: string }) => {
         ref={mapRef}
         hasLocation
         data={[shelterData]}
-        camera={{ latitude: shelterData.latitude, longitude: shelterData.longitude, zoom: 16 }}
+        camera={{ latitude: shelterData.latitude ?? 0, longitude: shelterData.longitude ?? 0, zoom: 16 }}
         selectedMarkerId={shelterData.id}
         onRefetch={() => {}}
         onInitialized={handleInitialized}

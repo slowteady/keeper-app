@@ -5,8 +5,8 @@ export const ShelterSchema = z.object({
   name: z.string(),
   address: z.string(),
   tel: z.string().nullable(),
-  latitude: z.number(),
-  longitude: z.number(),
+  latitude: z.number().nullable(),
+  longitude: z.number().nullable(),
   division: z.string().optional(),
   veterinarianCount: z.number().optional(),
   caretakerCount: z.number().optional(),
@@ -24,6 +24,10 @@ export const ShelterSchema = z.object({
   isFavorited: z.boolean().optional()
 });
 export type ShelterDto = z.infer<typeof ShelterSchema>;
+
+export type ShelterWithCoords = ShelterDto & { latitude: number; longitude: number };
+export const hasShelterCoords = (shelter: ShelterDto): shelter is ShelterWithCoords =>
+  shelter.latitude != null && shelter.longitude != null;
 
 export const ShelterMyFavoriteListSchema = z.object({
   items: z.array(ShelterSchema),

@@ -34,6 +34,7 @@ const buildAdoptItem = (item: AdoptDataDto) => {
 
   return {
     ...item,
+    status: item.status ?? undefined,
     uri: images[0],
     title: name,
     chips,
@@ -58,6 +59,8 @@ export const mapToAdopt = (data: AdoptDataDto) => {
 
   return {
     ...data,
+    status: data.status ?? undefined,
+    shelterId: data.shelterId ?? '',
     title: convertFullName(fullName).name,
     age: formatAge(age) ?? '모름',
     gender: convertGenderLabel(gender),
@@ -71,7 +74,7 @@ type ChipLabelParams = {
   weight: AdoptDataDto['weight'];
   gender: AdoptDataDto['gender'];
   age: AdoptDataDto['age'];
-  chipType?: AdoptChipTypeDto;
+  chipType?: AdoptChipTypeDto | null;
   noticeEndDt?: AdoptDataDto['noticeEndDt'];
   animal?: string | null;
 };
@@ -225,7 +228,7 @@ const convertDescription = ({ noticeStartDt, noticeEndDt, orgName, happenPlace }
 
   return [
     { label: '공고기간', value: `${startDt}-${endDt}` },
-    { label: '지역', value: orgName },
+    { label: '지역', value: orgName ?? '' },
     { label: '구조장소', value: happenPlace }
   ];
 };

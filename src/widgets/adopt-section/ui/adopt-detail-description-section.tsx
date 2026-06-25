@@ -14,7 +14,7 @@ type Shelter = {
 };
 
 export type AdoptDetailDescriptionSectionProps = {
-  specialMark: string;
+  specialMark: string | null;
   shelter?: Shelter;
 };
 

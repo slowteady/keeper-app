@@ -13,7 +13,7 @@ import { styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
 import { CameraParams, useDebounceFunc, usePermission } from '@/shared/model';
 import { Button, Skeleton } from '@/shared/ui';
 
-import { ShelterDto } from '../schema';
+import { hasShelterCoords, ShelterDto, ShelterWithCoords } from '../schema';
 
 export type ShelterMapProps = {
   hasLocation: boolean;
@@ -82,7 +82,7 @@ const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
     }, [onInitializedProp]);
 
     const handleTapMarker = useCallback(
-      (data: ShelterDto) => {
+      (data: ShelterWithCoords) => {
         (ref as React.RefObject<NaverMapViewRef>)?.current?.animateCameraTo({
           latitude: data.latitude,
           longitude: data.longitude,
@@ -117,7 +117,7 @@ const Map = forwardRef<NaverMapViewRef, ShelterMapProps>(
               {...props}
               onInitialized={handleInitialized}
             >
-              {data?.map((item) => (
+              {data?.filter(hasShelterCoords).map((item) => (
                 <ShelterMarker
                   key={item.id}
                   data={item}
@@ -159,8 +159,8 @@ export { Map as ShelterMap };
 const MARKER_BASE_ZINDEX = 200000;
 
 type ShelterMarkerProps = {
-  data: ShelterDto;
-  onTap: (data: ShelterDto) => void;
+  data: ShelterWithCoords;
+  onTap: (data: ShelterWithCoords) => void;
   isSelected: boolean;
 };
 
