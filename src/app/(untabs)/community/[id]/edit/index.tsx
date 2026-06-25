@@ -6,34 +6,15 @@ import { Keyboard } from 'react-native';
 import { KeyboardAwareScrollView, KeyboardStickyView } from 'react-native-keyboard-controller';
 import { styled, View } from 'tamagui';
 
-import { CommunityAdoptFormDto, communityQueries } from '@/entities/community';
+import { ADOPT_FORM_FIELD_ORDER, CommunityAdoptFormDto, communityQueries } from '@/entities/community';
 import { LocationBottomSheet, useLocationBottomSheet } from '@/features/address';
 import { QnaEditContent, useEditPost } from '@/features/community';
-import { globalToast } from '@/shared/lib';
+import { findFirstFieldError, globalToast } from '@/shared/lib';
 import { useLayout } from '@/shared/model';
 import { Button, CancelModal, DetailErrorBoundary, ModalPageHeader } from '@/shared/ui';
 import { CommunityAdoptForm, PostDetailSkeleton } from '@/widgets/community-post-section';
 
 export const ErrorBoundary = DetailErrorBoundary;
-
-const FIELD_ORDER: (keyof CommunityAdoptFormDto)[] = [
-  'images',
-  'protectionType',
-  'title',
-  'content',
-  'animalType',
-  'contact'
-];
-
-const findFirstError = (
-  errors: FieldErrors<CommunityAdoptFormDto>
-): { name: keyof CommunityAdoptFormDto; message: string } | null => {
-  for (const name of FIELD_ORDER) {
-    const err = errors[name] as { message?: string } | undefined;
-    if (err?.message) return { name, message: err.message };
-  }
-  return null;
-};
 
 const Page = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -94,7 +75,7 @@ const EditContent = ({ postId }: { postId: string }) => {
   };
   const onInvalid = useCallback(
     (errors: FieldErrors<CommunityAdoptFormDto>) => {
-      const first = findFirstError(errors);
+      const first = findFirstFieldError(errors, ADOPT_FORM_FIELD_ORDER);
       globalToast(first?.message ?? '필수 항목을 입력해주세요', 'fail');
       if (!first) return;
       const trigger = selectTriggers[first.name];

@@ -5,24 +5,12 @@ import { Keyboard } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { styled, View } from 'tamagui';
 
-import { CommunityQnaFormDto } from '@/entities/community';
-import { globalToast } from '@/shared/lib';
+import { CommunityQnaFormDto, QNA_FORM_FIELD_ORDER } from '@/entities/community';
+import { findFirstFieldError, globalToast } from '@/shared/lib';
 import { BottomButton, CancelModal, ModalPageHeader } from '@/shared/ui';
 
 import { useUpdateQnaPost } from '../model/use-update-qna-post';
 import { CommunityQnaForm } from './community-qna-form';
-
-const FIELD_ORDER: (keyof CommunityQnaFormDto)[] = ['type', 'animalType', 'title', 'content', 'images'];
-
-const findFirstError = (
-  errors: FieldErrors<CommunityQnaFormDto>
-): { name: keyof CommunityQnaFormDto; message: string } | null => {
-  for (const name of FIELD_ORDER) {
-    const err = errors[name] as { message?: string } | undefined;
-    if (err?.message) return { name, message: err.message };
-  }
-  return null;
-};
 
 export const QnaEditContent = ({ postId }: { postId: string }) => {
   const [buttonHeight, setButtonHeight] = useState(0);
@@ -39,7 +27,7 @@ export const QnaEditContent = ({ postId }: { postId: string }) => {
 
   const onInvalid = useCallback(
     (errors: FieldErrors<CommunityQnaFormDto>) => {
-      const first = findFirstError(errors);
+      const first = findFirstFieldError(errors, QNA_FORM_FIELD_ORDER);
       globalToast(first?.message ?? '필수 항목을 입력해주세요', 'fail');
       if (first) form.setFocus(first.name);
     },

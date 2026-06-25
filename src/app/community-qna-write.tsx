@@ -5,22 +5,10 @@ import { Keyboard, View as NativeView } from 'react-native';
 import { KeyboardAwareScrollView, KeyboardAwareScrollViewRef } from 'react-native-keyboard-controller';
 import { styled, View } from 'tamagui';
 
-import { CommunityQnaFormDto } from '@/entities/community';
+import { CommunityQnaFormDto, QNA_FORM_FIELD_ORDER } from '@/entities/community';
 import { CommunityQnaForm, useCreateQnaPost } from '@/features/community';
-import { getFormErrorMessage, globalToast, scrollToView } from '@/shared/lib';
+import { findFirstFieldError, globalToast, scrollToView } from '@/shared/lib';
 import { BottomButton, CancelModal, ModalPageHeader } from '@/shared/ui';
-
-const FIELD_ORDER: (keyof CommunityQnaFormDto)[] = ['type', 'animalType', 'title', 'content', 'images'];
-
-const findFirstError = (
-  errors: FieldErrors<CommunityQnaFormDto>
-): { name: keyof CommunityQnaFormDto; message: string } | null => {
-  for (const name of FIELD_ORDER) {
-    const message = getFormErrorMessage(errors[name]);
-    if (message) return { name, message };
-  }
-  return null;
-};
 
 const Page = () => {
   const [buttonHeight, setButtonHeight] = useState(0);
@@ -39,7 +27,7 @@ const Page = () => {
 
   const onInvalid = useCallback(
     (errors: FieldErrors<CommunityQnaFormDto>) => {
-      const first = findFirstError(errors);
+      const first = findFirstFieldError(errors, QNA_FORM_FIELD_ORDER);
       globalToast(first?.message ?? '필수 항목을 입력해주세요', 'fail');
       if (!first) return;
       if (first.name === 'animalType') {

@@ -5,31 +5,12 @@ import { Keyboard, TextInput, View as NativeView } from 'react-native';
 import { KeyboardAwareScrollView, KeyboardAwareScrollViewRef } from 'react-native-keyboard-controller';
 import { styled, View } from 'tamagui';
 
-import { CommunityAdoptFormDto } from '@/entities/community';
+import { ADOPT_FORM_FIELD_ORDER, CommunityAdoptFormDto } from '@/entities/community';
 import { LocationBottomSheet, useLocationBottomSheet } from '@/features/address';
 import { useCreatePost } from '@/features/community';
-import { getFormErrorMessage, globalToast, scrollToView } from '@/shared/lib';
+import { findFirstFieldError, globalToast, scrollToView } from '@/shared/lib';
 import { BottomButton, CancelModal, ModalPageHeader } from '@/shared/ui';
 import { CommunityAdoptForm } from '@/widgets/community-post-section';
-
-const FIELD_ORDER: (keyof CommunityAdoptFormDto)[] = [
-  'images',
-  'protectionType',
-  'title',
-  'content',
-  'animalType',
-  'contact'
-];
-
-const findFirstError = (
-  errors: FieldErrors<CommunityAdoptFormDto>
-): { name: keyof CommunityAdoptFormDto; message: string } | null => {
-  for (const name of FIELD_ORDER) {
-    const message = getFormErrorMessage(errors[name]);
-    if (message) return { name, message };
-  }
-  return null;
-};
 
 const Page = () => {
   const [buttonHeight, setButtonHeight] = useState(0);
@@ -76,7 +57,7 @@ const Page = () => {
   };
   const onInvalid = useCallback(
     (errors: FieldErrors<CommunityAdoptFormDto>) => {
-      const first = findFirstError(errors);
+      const first = findFirstFieldError(errors, ADOPT_FORM_FIELD_ORDER);
       globalToast(first?.message ?? '필수 항목을 입력해주세요', 'fail');
       if (!first) return;
       if (first.name === 'contact') {

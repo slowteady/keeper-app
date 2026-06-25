@@ -159,6 +159,16 @@ export const CommunityQnaFormSchema = z.object({
 });
 export type CommunityQnaFormDto = z.infer<typeof CommunityQnaFormSchema>;
 
+export const ADOPT_FORM_FIELD_ORDER: (keyof CommunityAdoptFormDto)[] = [
+  'images',
+  'protectionType',
+  'title',
+  'content',
+  'animalType',
+  'contact'
+];
+export const QNA_FORM_FIELD_ORDER: (keyof CommunityQnaFormDto)[] = ['type', 'animalType', 'title', 'content', 'images'];
+
 export const CommunityQnaListItemSchema = z.object({
   id: z.string(),
   user: PostUserSummarySchema.nullable(),
