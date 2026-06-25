@@ -8,7 +8,7 @@ import { PostCardHeader, PostCardTitle } from '@/entities/community';
 import { useCurrentUser, useLoginRequired } from '@/features/auth';
 import { useLikePost } from '@/features/like-post';
 import { toggleHaptic } from '@/shared/lib';
-import { useLayout } from '@/shared/model';
+import { useLayout, useListRefreshing } from '@/shared/model';
 import { BottomButton, Carousel, ConfirmModal, Skeleton, useBottomSheet, useModal } from '@/shared/ui';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 import { Share as ShareIcon } from '@/shared/ui/icons/outline';
@@ -34,7 +34,10 @@ export const CommunityAdoptDetailContent = ({ id }: CommunityAdoptDetailContentP
   const { open: openModal, close: closeModal } = useModal();
   const { bottom } = useLayout();
 
-  const { data, hasContact, getContacts, refetch, isRefetching } = useCommunityAdoptDetailFeed(id);
+  const { data, hasContact, getContacts, refetch } = useCommunityAdoptDetailFeed(id);
+  const { refreshing, handleRefresh } = useListRefreshing(async () => {
+    await refetch();
+  });
   const { toggleLikePost } = useLikePost();
   const { black600 } = useTheme();
 
@@ -97,7 +100,7 @@ export const CommunityAdoptDetailContent = ({ id }: CommunityAdoptDetailContentP
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingTop: 0, paddingBottom: hasBottomCta ? buttonHeight + 40 : 48 }}
-        refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
       >
         {isCompleted && (
           <CompletedBanner>

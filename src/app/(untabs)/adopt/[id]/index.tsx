@@ -8,8 +8,8 @@ import { ADOPT_STATUS_INFO, AdoptStatusDto, isAdoptEnded } from '@/entities/adop
 import { resolveAdoptShelter, useAdopt } from '@/features/adopt';
 import { useFavoriteAbandonment } from '@/features/favorite-abandonment';
 import { useShelter } from '@/features/shelter';
-import { pressHaptic, SCREEN_GUTTER } from '@/shared/lib';
-import { useShare } from '@/shared/model';
+import { SCREEN_GUTTER } from '@/shared/lib';
+import { useListRefreshing, useShare } from '@/shared/model';
 import { BottomButton, CallModal, Carousel, DetailErrorBoundary, SuspenseFallback } from '@/shared/ui';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 import { Share as ShareIcon } from '@/shared/ui/icons/outline';
@@ -38,7 +38,10 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
   const [buttonHeight, setButtonHeight] = useState(0);
   const { black600 } = useTheme();
 
-  const { adopt, refetch, isRefetching } = useAdopt({ id });
+  const { adopt, refetch } = useAdopt({ id });
+  const { refreshing, handleRefresh } = useListRefreshing(async () => {
+    await refetch();
+  });
   const { shelterData } = useShelter({ id: adopt.shelterId });
   const { toggleFavoriteAbandonment } = useFavoriteAbandonment();
   const { share } = useShare();
@@ -63,7 +66,6 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
   ].filter((r) => !!r.value && r.value !== '모름' && r.value !== '미상');
 
   const handlePressShare = () => {
-    pressHaptic();
     share({ type: 'adopt', id: adopt.id });
   };
 
@@ -73,7 +75,7 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
         decelerationRate="fast"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingTop: 0, paddingBottom: buttonHeight + 40 } as never}
-        refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
       >
         {ended && adopt.status && <AdoptEndedBanner status={adopt.status} />}
 
@@ -129,7 +131,7 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
                   <NoticeRow>
                     <MapPin size={16} color={black600.val as never} />
                     <NoticeLabel>구조장소</NoticeLabel>
-                    <NoticeValue>{rescuePlace}</NoticeValue>
+                    <NoticeValue lineBreakStrategyIOS="hangul-word">{rescuePlace}</NoticeValue>
                   </NoticeRow>
                 )}
               </YStack>
