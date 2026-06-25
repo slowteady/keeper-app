@@ -61,7 +61,8 @@ jest.mock('@/shared/ui', () => ({
     </MockPressable>
   ),
   useBottomSheetMenu: () => ({ open: jest.fn() }),
-  FeedNodata: () => null
+  FeedNodata: () => null,
+  ScrollToTopButton: () => null
 }));
 
 describe('ProfileLikeScene', () => {

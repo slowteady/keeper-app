@@ -9,8 +9,8 @@ import { ShelterCard, ShelterCardSkeleton, ShelterDto } from '@/entities/shelter
 import { useFavoriteAbandonment, useMyFavoriteAbandonments } from '@/features/favorite-abandonment';
 import { useFavoriteShelter, useMyFavoriteShelters } from '@/features/favorite-shelter';
 import { useLikePost, useMyLikedPosts } from '@/features/like-post';
-import { useListRefreshing } from '@/shared/model';
-import { ButtonGroup, FilterChip, useBottomSheetMenu } from '@/shared/ui';
+import { useListRefreshing, useScrollToTop } from '@/shared/model';
+import { ButtonGroup, FilterChip, ScrollToTopButton, useBottomSheetMenu } from '@/shared/ui';
 
 import { ProfileCommentListSkeleton } from './profile-comment-list-skeleton';
 import { ProfileEmptyState } from './profile-empty-state';
@@ -67,6 +67,7 @@ const AbandonmentList = () => {
   });
   const { toggleFavoriteAbandonment } = useFavoriteAbandonment();
   const converted = useMemo(() => mapToAdoptList(items), [items]);
+  const { ref, scrollY, onScroll, scrollToTop } = useScrollToTop<(typeof converted)[number]>();
 
   const renderItem = useCallback(
     ({ item, index }: ListRenderItemInfo<(typeof converted)[number]>) => {
@@ -100,19 +101,25 @@ const AbandonmentList = () => {
   }
 
   return (
-    <FlashList
-      data={converted}
-      keyExtractor={(item) => item.id}
-      numColumns={2}
-      renderItem={renderItem}
-      onEndReached={fetchNextPage}
-      onEndReachedThreshold={0.5}
-      onRefresh={handleRefresh}
-      refreshing={refreshing}
-      contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 8, paddingBottom: 40 }}
-      ListEmptyComponent={isLoading ? <AdoptLoading /> : null}
-      ListFooterComponent={isFetchingNextPage ? <AdoptLoading count={2} /> : null}
-    />
+    <View flex={1}>
+      <FlashList
+        ref={ref}
+        data={converted}
+        keyExtractor={(item) => item.id}
+        numColumns={2}
+        renderItem={renderItem}
+        onEndReached={fetchNextPage}
+        onEndReachedThreshold={0.5}
+        onRefresh={handleRefresh}
+        refreshing={refreshing}
+        onScroll={onScroll}
+        scrollEventThrottle={16}
+        contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 8, paddingBottom: 40 }}
+        ListEmptyComponent={isLoading ? <AdoptLoading /> : null}
+        ListFooterComponent={isFetchingNextPage ? <AdoptLoading count={2} /> : null}
+      />
+      <ScrollToTopButton scrollY={scrollY} onPress={scrollToTop} threshold={400} />
+    </View>
   );
 };
 
@@ -121,6 +128,7 @@ const PersonalList = () => {
   const { refreshing, handleRefresh } = useListRefreshing(async () => {
     await refetch();
   });
+  const { ref, scrollY, onScroll, scrollToTop } = useScrollToTop<(typeof items)[number]>();
   const { toggleLikePost } = useLikePost();
 
   const renderItem = useCallback(
@@ -150,18 +158,24 @@ const PersonalList = () => {
   }
 
   return (
-    <FlashList
-      data={items}
-      keyExtractor={(item) => String(item.id)}
-      renderItem={renderItem}
-      onEndReached={fetchNextPage}
-      onEndReachedThreshold={0.5}
-      onRefresh={handleRefresh}
-      refreshing={refreshing}
-      contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 8, paddingBottom: 40 }}
-      ListEmptyComponent={isLoading ? <ProfileCommentListSkeleton /> : null}
-      ListFooterComponent={isFetchingNextPage ? <ProfileCommentListSkeleton count={1} /> : null}
-    />
+    <View flex={1}>
+      <FlashList
+        ref={ref}
+        data={items}
+        keyExtractor={(item) => String(item.id)}
+        renderItem={renderItem}
+        onEndReached={fetchNextPage}
+        onEndReachedThreshold={0.5}
+        onRefresh={handleRefresh}
+        refreshing={refreshing}
+        onScroll={onScroll}
+        scrollEventThrottle={16}
+        contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 8, paddingBottom: 40 }}
+        ListEmptyComponent={isLoading ? <ProfileCommentListSkeleton /> : null}
+        ListFooterComponent={isFetchingNextPage ? <ProfileCommentListSkeleton count={1} /> : null}
+      />
+      <ScrollToTopButton scrollY={scrollY} onPress={scrollToTop} threshold={400} />
+    </View>
   );
 };
 
@@ -170,6 +184,7 @@ const ShelterList = () => {
   const { refreshing, handleRefresh } = useListRefreshing(async () => {
     await refetch();
   });
+  const { ref, scrollY, onScroll, scrollToTop } = useScrollToTop<ShelterDto>();
   const { toggleFavoriteShelter } = useFavoriteShelter();
 
   const renderItem = useCallback(
@@ -194,27 +209,33 @@ const ShelterList = () => {
   }
 
   return (
-    <FlashList
-      data={items}
-      keyExtractor={(item) => item.id}
-      renderItem={renderItem}
-      onEndReached={fetchNextPage}
-      onEndReachedThreshold={0.5}
-      onRefresh={handleRefresh}
-      refreshing={refreshing}
-      ItemSeparatorComponent={() => <View height={12} />}
-      contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 40 }}
-      ListEmptyComponent={
-        isLoading ? (
-          <YStack gap={12}>
-            {Array.from({ length: 4 }).map((_, idx) => (
-              <ShelterCardSkeleton key={idx} />
-            ))}
-          </YStack>
-        ) : null
-      }
-      ListFooterComponent={isFetchingNextPage ? <ShelterCardSkeleton /> : null}
-    />
+    <View flex={1}>
+      <FlashList
+        ref={ref}
+        data={items}
+        keyExtractor={(item) => item.id}
+        renderItem={renderItem}
+        onEndReached={fetchNextPage}
+        onEndReachedThreshold={0.5}
+        onRefresh={handleRefresh}
+        refreshing={refreshing}
+        onScroll={onScroll}
+        scrollEventThrottle={16}
+        ItemSeparatorComponent={() => <View height={12} />}
+        contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 40 }}
+        ListEmptyComponent={
+          isLoading ? (
+            <YStack gap={12}>
+              {Array.from({ length: 4 }).map((_, idx) => (
+                <ShelterCardSkeleton key={idx} />
+              ))}
+            </YStack>
+          ) : null
+        }
+        ListFooterComponent={isFetchingNextPage ? <ShelterCardSkeleton /> : null}
+      />
+      <ScrollToTopButton scrollY={scrollY} onPress={scrollToTop} threshold={400} />
+    </View>
   );
 };
 
@@ -228,6 +249,7 @@ const CommunityPostLikeList = () => {
   const { refreshing, handleRefresh } = useListRefreshing(async () => {
     await refetch();
   });
+  const { ref, scrollY, onScroll, scrollToTop } = useScrollToTop<(typeof items)[number]>();
   const { toggleLikePost } = useLikePost();
 
   const renderItem = useCallback(
@@ -253,18 +275,24 @@ const CommunityPostLikeList = () => {
   }
 
   return (
-    <FlashList
-      data={items}
-      keyExtractor={(item) => String(item.id)}
-      renderItem={renderItem}
-      onEndReached={fetchNextPage}
-      onEndReachedThreshold={0.5}
-      onRefresh={handleRefresh}
-      refreshing={refreshing}
-      contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 8, paddingBottom: 40 }}
-      ListEmptyComponent={isLoading ? <ProfileCommentListSkeleton /> : null}
-      ListFooterComponent={isFetchingNextPage ? <ProfileCommentListSkeleton count={1} /> : null}
-    />
+    <View flex={1}>
+      <FlashList
+        ref={ref}
+        data={items}
+        keyExtractor={(item) => String(item.id)}
+        renderItem={renderItem}
+        onEndReached={fetchNextPage}
+        onEndReachedThreshold={0.5}
+        onRefresh={handleRefresh}
+        refreshing={refreshing}
+        onScroll={onScroll}
+        scrollEventThrottle={16}
+        contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 8, paddingBottom: 40 }}
+        ListEmptyComponent={isLoading ? <ProfileCommentListSkeleton /> : null}
+        ListFooterComponent={isFetchingNextPage ? <ProfileCommentListSkeleton count={1} /> : null}
+      />
+      <ScrollToTopButton scrollY={scrollY} onPress={scrollToTop} threshold={400} />
+    </View>
   );
 };
 

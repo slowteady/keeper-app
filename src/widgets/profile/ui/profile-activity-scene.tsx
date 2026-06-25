@@ -14,8 +14,8 @@ import {
 import { useCurrentUser } from '@/features/auth';
 import { useAdoptionStatus, useCommentMenu, usePostMenu } from '@/features/community';
 import { useMyComments, useMyPosts } from '@/features/profile';
-import { useListRefreshing } from '@/shared/model';
-import { ButtonGroup } from '@/shared/ui';
+import { useListRefreshing, useScrollToTop } from '@/shared/model';
+import { ButtonGroup, ScrollToTopButton } from '@/shared/ui';
 
 import { ProfileCommentListSkeleton } from './profile-comment-list-skeleton';
 import { ProfileEmptyState } from './profile-empty-state';
@@ -74,6 +74,7 @@ const MyPostList = ({ type }: { type: MyPostType }) => {
   const { refreshing, handleRefresh } = useListRefreshing(async () => {
     await refetch();
   });
+  const { ref, scrollY, onScroll, scrollToTop } = useScrollToTop<MyPostItemDto>();
   const empty = POST_EMPTY[type];
 
   const renderItem = useCallback(
@@ -92,18 +93,24 @@ const MyPostList = ({ type }: { type: MyPostType }) => {
   }
 
   return (
-    <FlashList
-      data={items}
-      keyExtractor={(item) => item.id}
-      renderItem={renderItem}
-      onEndReached={fetchNextPage}
-      onEndReachedThreshold={0.5}
-      onRefresh={handleRefresh}
-      refreshing={refreshing}
-      contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 40 }}
-      ListEmptyComponent={isLoading ? <ProfileCommentListSkeleton /> : null}
-      ListFooterComponent={isFetchingNextPage ? <ProfileCommentListSkeleton count={1} /> : null}
-    />
+    <View flex={1}>
+      <FlashList
+        ref={ref}
+        data={items}
+        keyExtractor={(item) => item.id}
+        renderItem={renderItem}
+        onEndReached={fetchNextPage}
+        onEndReachedThreshold={0.5}
+        onRefresh={handleRefresh}
+        refreshing={refreshing}
+        onScroll={onScroll}
+        scrollEventThrottle={16}
+        contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 40 }}
+        ListEmptyComponent={isLoading ? <ProfileCommentListSkeleton /> : null}
+        ListFooterComponent={isFetchingNextPage ? <ProfileCommentListSkeleton count={1} /> : null}
+      />
+      <ScrollToTopButton scrollY={scrollY} onPress={scrollToTop} threshold={400} />
+    </View>
   );
 };
 
@@ -141,6 +148,7 @@ const MyCommentList = () => {
   const { refreshing, handleRefresh } = useListRefreshing(async () => {
     await refetch();
   });
+  const { ref, scrollY, onScroll, scrollToTop } = useScrollToTop<MyCommentItemDto>();
   const { user } = useCurrentUser();
   const { openCommentMenu } = useCommentMenu({
     onEdit: ({ commentId, postId }) => {
@@ -183,18 +191,24 @@ const MyCommentList = () => {
   }
 
   return (
-    <FlashList
-      data={items}
-      keyExtractor={(item) => item.id}
-      renderItem={renderItem}
-      onEndReached={fetchNextPage}
-      onEndReachedThreshold={0.5}
-      onRefresh={handleRefresh}
-      refreshing={refreshing}
-      contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 40 }}
-      ListEmptyComponent={isLoading ? <ProfileCommentListSkeleton /> : null}
-      ListFooterComponent={isFetchingNextPage ? <ProfileCommentListSkeleton count={1} /> : null}
-    />
+    <View flex={1}>
+      <FlashList
+        ref={ref}
+        data={items}
+        keyExtractor={(item) => item.id}
+        renderItem={renderItem}
+        onEndReached={fetchNextPage}
+        onEndReachedThreshold={0.5}
+        onRefresh={handleRefresh}
+        refreshing={refreshing}
+        onScroll={onScroll}
+        scrollEventThrottle={16}
+        contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 40 }}
+        ListEmptyComponent={isLoading ? <ProfileCommentListSkeleton /> : null}
+        ListFooterComponent={isFetchingNextPage ? <ProfileCommentListSkeleton count={1} /> : null}
+      />
+      <ScrollToTopButton scrollY={scrollY} onPress={scrollToTop} threshold={400} />
+    </View>
   );
 };
 

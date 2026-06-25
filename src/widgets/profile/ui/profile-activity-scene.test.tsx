@@ -48,7 +48,8 @@ jest.mock('@/shared/ui', () => ({
       ))}
     </MockView>
   ),
-  FeedNodata: () => null
+  FeedNodata: () => null,
+  ScrollToTopButton: () => null
 }));
 
 const mockLoadingList = () => ({
