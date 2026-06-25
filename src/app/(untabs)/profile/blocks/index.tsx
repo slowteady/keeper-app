@@ -5,13 +5,18 @@ import { styled, View, YStack } from 'tamagui';
 
 import type { BlockedUserDto } from '@/entities/community';
 import { BlockListRow, useBlockList } from '@/features/profile';
+import { useListRefreshing } from '@/shared/model';
 import { RouteErrorBoundary } from '@/shared/ui';
 import { ProfileEmptyState } from '@/widgets/profile';
 
 export const ErrorBoundary = RouteErrorBoundary;
 
 const Page = () => {
-  const { items, isLoading, isFetchingNextPage, hasNext, fetchNextPage, unblock, isUnblockPending } = useBlockList();
+  const { items, isLoading, isFetchingNextPage, hasNext, fetchNextPage, refetch, unblock, isUnblockPending } =
+    useBlockList();
+  const { refreshing, handleRefresh } = useListRefreshing(async () => {
+    await refetch();
+  });
 
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<BlockedUserDto>) => (
@@ -26,6 +31,8 @@ const Page = () => {
         data={items}
         keyExtractor={(item) => String(item.id)}
         renderItem={renderItem}
+        onRefresh={handleRefresh}
+        refreshing={refreshing}
         onEndReached={hasNext ? fetchNextPage : undefined}
         onEndReachedThreshold={0.5}
         ListEmptyComponent={<EmptyComponent isLoading={isLoading} />}

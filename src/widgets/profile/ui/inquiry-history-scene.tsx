@@ -6,12 +6,16 @@ import { styled, YStack } from 'tamagui';
 import { InquiryListItem, InquiryListItemDto } from '@/entities/inquiry';
 import { useMyInquiries } from '@/features/inquiry';
 import { SCREEN_GUTTER } from '@/shared/lib';
+import { useListRefreshing } from '@/shared/model';
 
 import { ProfileCommentListSkeleton } from './profile-comment-list-skeleton';
 import { ProfileEmptyState } from './profile-empty-state';
 
 export const InquiryHistoryScene = () => {
   const { items, isLoading, isError, refetch } = useMyInquiries();
+  const { refreshing, handleRefresh } = useListRefreshing(async () => {
+    await refetch();
+  });
 
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<InquiryListItemDto>) => (
@@ -56,8 +60,8 @@ export const InquiryHistoryScene = () => {
         data={items}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
-        onRefresh={refetch}
-        refreshing={false}
+        onRefresh={handleRefresh}
+        refreshing={refreshing}
         maintainVisibleContentPosition={{ disabled: true }}
         contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 40 }}
       />

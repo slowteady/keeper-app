@@ -6,6 +6,7 @@ import { styled, YStack } from 'tamagui';
 import { NoticeListItem, NoticeListItemDto } from '@/entities/notice';
 import { isNoticeFresh, useNoticeList, useReadNotices } from '@/features/notice';
 import { SCREEN_GUTTER } from '@/shared/lib';
+import { useListRefreshing } from '@/shared/model';
 
 import { ProfileCommentListSkeleton } from './profile-comment-list-skeleton';
 import { ProfileEmptyState } from './profile-empty-state';
@@ -13,6 +14,9 @@ import { ProfileEmptyState } from './profile-empty-state';
 export const ProfileNoticeScene = () => {
   const { items, isLoading, isError, refetch } = useNoticeList();
   const { readIds } = useReadNotices();
+  const { refreshing, handleRefresh } = useListRefreshing(async () => {
+    await refetch();
+  });
 
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<NoticeListItemDto>) => (
@@ -62,8 +66,8 @@ export const ProfileNoticeScene = () => {
         data={items}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
-        onRefresh={refetch}
-        refreshing={false}
+        onRefresh={handleRefresh}
+        refreshing={refreshing}
         maintainVisibleContentPosition={{ disabled: true }}
         contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 40 }}
       />

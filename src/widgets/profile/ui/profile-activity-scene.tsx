@@ -14,6 +14,7 @@ import {
 import { useCurrentUser } from '@/features/auth';
 import { useAdoptionStatus, useCommentMenu, usePostMenu } from '@/features/community';
 import { useMyComments, useMyPosts } from '@/features/profile';
+import { useListRefreshing } from '@/shared/model';
 import { ButtonGroup } from '@/shared/ui';
 
 import { ProfileCommentListSkeleton } from './profile-comment-list-skeleton';
@@ -70,6 +71,9 @@ const POST_EMPTY = {
 
 const MyPostList = ({ type }: { type: MyPostType }) => {
   const { items, isLoading, isFetchingNextPage, fetchNextPage, refetch } = useMyPosts(type);
+  const { refreshing, handleRefresh } = useListRefreshing(async () => {
+    await refetch();
+  });
   const empty = POST_EMPTY[type];
 
   const renderItem = useCallback(
@@ -94,8 +98,8 @@ const MyPostList = ({ type }: { type: MyPostType }) => {
       renderItem={renderItem}
       onEndReached={fetchNextPage}
       onEndReachedThreshold={0.5}
-      onRefresh={refetch}
-      refreshing={false}
+      onRefresh={handleRefresh}
+      refreshing={refreshing}
       contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 40 }}
       ListEmptyComponent={isLoading ? <ProfileCommentListSkeleton /> : null}
       ListFooterComponent={isFetchingNextPage ? <ProfileCommentListSkeleton count={1} /> : null}
@@ -134,6 +138,9 @@ const MyPostListItem = ({ item, type }: { item: MyPostItemDto; type: MyPostType 
 
 const MyCommentList = () => {
   const { items, isLoading, isFetchingNextPage, fetchNextPage, refetch } = useMyComments();
+  const { refreshing, handleRefresh } = useListRefreshing(async () => {
+    await refetch();
+  });
   const { user } = useCurrentUser();
   const { openCommentMenu } = useCommentMenu({
     onEdit: ({ commentId, postId }) => {
@@ -182,8 +189,8 @@ const MyCommentList = () => {
       renderItem={renderItem}
       onEndReached={fetchNextPage}
       onEndReachedThreshold={0.5}
-      onRefresh={refetch}
-      refreshing={false}
+      onRefresh={handleRefresh}
+      refreshing={refreshing}
       contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 40 }}
       ListEmptyComponent={isLoading ? <ProfileCommentListSkeleton /> : null}
       ListFooterComponent={isFetchingNextPage ? <ProfileCommentListSkeleton count={1} /> : null}

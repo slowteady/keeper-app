@@ -5,6 +5,7 @@ import { styled, YStack } from 'tamagui';
 import { NotificationDto, NotificationItem } from '@/entities/notification';
 import { NotificationListBar, useNotificationFeed } from '@/features/notification';
 import { SCREEN_GUTTER } from '@/shared/lib';
+import { useListRefreshing } from '@/shared/model';
 import { ProfileCommentListSkeleton, ProfileEmptyState } from '@/widgets/profile';
 
 export type NotificationFeedProps = {
@@ -27,6 +28,9 @@ export const NotificationFeed = ({ feed }: NotificationFeedProps) => {
     toggleSelect,
     deleteSelected
   } = feed;
+  const { refreshing, handleRefresh } = useListRefreshing(async () => {
+    await refetch();
+  });
 
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<NotificationDto>) => (
@@ -85,8 +89,8 @@ export const NotificationFeed = ({ feed }: NotificationFeedProps) => {
         data={items}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
-        onRefresh={refetch}
-        refreshing={false}
+        onRefresh={handleRefresh}
+        refreshing={refreshing}
         onEndReached={fetchNextPage}
         onEndReachedThreshold={0.5}
         maintainVisibleContentPosition={{ disabled: true }}
