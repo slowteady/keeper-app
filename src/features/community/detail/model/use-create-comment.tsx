@@ -33,7 +33,7 @@ export const useCreateComment = ({ postId }: { postId: string }) => {
           prepend
         );
       }
-      queryClient.invalidateQueries({ queryKey: [...commentQueries.all(), 'list', postId] });
+      queryClient.invalidateQueries({ queryKey: [...commentQueries.all(), 'list', postId], refetchType: 'none' });
     },
     onError: (error) => globalToast(getModerationMessage(error) ?? '댓글을 등록하지 못했어요', 'fail')
   });

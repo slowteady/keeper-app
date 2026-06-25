@@ -17,7 +17,8 @@ export const useFavoriteShelter = () => {
     mutationFn: ({ id, currentlyFavorited }) =>
       currentlyFavorited ? shelterApi.unfavorite(id) : shelterApi.favorite(id),
     syncPrefixes: [SHELTER_PREFIX, ME_FAVORITE_PREFIX],
-    onSettledInvalidate: (queryClient) => queryClient.invalidateQueries({ queryKey: SHELTER_PREFIX })
+    onSettledInvalidate: (queryClient) =>
+      queryClient.invalidateQueries({ queryKey: SHELTER_PREFIX, refetchType: 'none' })
   });
 
   const toggleFavoriteShelter = useCallback(

@@ -70,12 +70,11 @@ beforeEach(() => {
 });
 
 describe('useLikePost', () => {
-  it('반환 객체 shape: toggleLikePost / toggleLikeComment / isPending', () => {
+  it('반환 객체 shape: toggleLikePost / isPending', () => {
     const { wrapper } = setup();
     const { result } = renderHook(() => useLikePost(), { wrapper });
 
     expect(typeof result.current.toggleLikePost).toBe('function');
-    expect(typeof result.current.toggleLikeComment).toBe('function');
     expect(result.current.isPending).toBe(false);
   });
 

@@ -9,39 +9,49 @@ import { AdoptChipTypeDto, AdoptDataDto } from './schema';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export type AdoptItem = ReturnType<typeof mapToAdoptList>[number];
+export type AdoptItem = ReturnType<typeof buildAdoptItem>;
 
 export type ChipVariant = 'error' | 'success' | 'notice' | 'default' | 'dog' | 'cat' | 'etc';
 
-export const mapToAdoptList = (data: AdoptDataDto[]) => {
-  return data.map((item) => {
-    const {
-      neuterYn,
-      age,
-      weight,
-      gender,
-      happenPlace,
-      images,
-      orgName,
-      noticeStartDt,
-      noticeEndDt,
-      fullName,
-      chipType
-    } = item;
+const buildAdoptItem = (item: AdoptDataDto) => {
+  const {
+    neuterYn,
+    age,
+    weight,
+    gender,
+    happenPlace,
+    images,
+    orgName,
+    noticeStartDt,
+    noticeEndDt,
+    fullName,
+    chipType
+  } = item;
 
-    const { animal, name } = convertFullName(fullName);
-    const chips = convertChipLabel({ neuterYn, weight, gender, age, chipType, noticeEndDt, animal });
-    const descriptions = convertDescription({ noticeStartDt, noticeEndDt, orgName, happenPlace });
+  const { animal, name } = convertFullName(fullName);
+  const chips = convertChipLabel({ neuterYn, weight, gender, age, chipType, noticeEndDt, animal });
+  const descriptions = convertDescription({ noticeStartDt, noticeEndDt, orgName, happenPlace });
 
-    return {
-      ...item,
-      uri: images[0],
-      title: name,
-      chips,
-      description: descriptions
-    };
-  });
+  return {
+    ...item,
+    uri: images[0],
+    title: name,
+    chips,
+    description: descriptions
+  };
 };
+
+const adoptItemCache = new WeakMap<AdoptDataDto, AdoptItem>();
+
+const mapAdoptItem = (item: AdoptDataDto): AdoptItem => {
+  const cached = adoptItemCache.get(item);
+  if (cached) return cached;
+  const mapped = buildAdoptItem(item);
+  adoptItemCache.set(item, mapped);
+  return mapped;
+};
+
+export const mapToAdoptList = (data: AdoptDataDto[]): AdoptItem[] => data.map(mapAdoptItem);
 
 export const mapToAdopt = (data: AdoptDataDto) => {
   const { age, weight, happenPlace, orgName, noticeStartDt, noticeEndDt, fullName, gender } = data;
@@ -128,7 +138,7 @@ export type PersonalAdoptSource = {
   adoptionStatus?: 'IN_PROGRESS' | 'COMPLETED' | null;
 };
 
-export type PersonalAdoptItem = ReturnType<typeof mapToPersonalAdoptList>[number];
+export type PersonalAdoptItem = ReturnType<typeof buildPersonalAdoptItem>;
 
 const PERSONAL_ANIMAL: Record<string, { label: string; variant: ChipVariant }> = {
   DOG: { label: '강아지', variant: 'dog' },
@@ -139,22 +149,33 @@ const PERSONAL_ANIMAL: Record<string, { label: string; variant: ChipVariant }> =
 const personalAnimal = (animalType?: string | null) =>
   (animalType && PERSONAL_ANIMAL[animalType]) || { label: '기타', variant: 'etc' as ChipVariant };
 
-export const mapToPersonalAdoptList = (data: PersonalAdoptSource[]) => {
-  return data.map((item) => ({
-    id: item.id,
-    uri: item.images[0],
-    imageCount: item.images.length,
-    title: item.title,
-    intro: item.content?.trim() || '',
-    breed: item.specificType?.trim() || '',
-    protectionType: item.protectionType ?? null,
-    region: item.location?.trim() || '',
-    dateText: formatTimeAgo(item.displayTime),
-    chips: buildPersonalChips(item),
-    isLiked: item.isLiked,
-    completed: item.adoptionStatus === 'COMPLETED'
-  }));
+const buildPersonalAdoptItem = (item: PersonalAdoptSource) => ({
+  id: item.id,
+  uri: item.images[0],
+  imageCount: item.images.length,
+  title: item.title,
+  intro: item.content?.trim() || '',
+  breed: item.specificType?.trim() || '',
+  protectionType: item.protectionType ?? null,
+  region: item.location?.trim() || '',
+  dateText: formatTimeAgo(item.displayTime),
+  chips: buildPersonalChips(item),
+  isLiked: item.isLiked,
+  completed: item.adoptionStatus === 'COMPLETED'
+});
+
+const personalItemCache = new WeakMap<PersonalAdoptSource, PersonalAdoptItem>();
+
+const mapPersonalAdoptItem = (item: PersonalAdoptSource): PersonalAdoptItem => {
+  const cached = personalItemCache.get(item);
+  if (cached) return cached;
+  const mapped = buildPersonalAdoptItem(item);
+  personalItemCache.set(item, mapped);
+  return mapped;
 };
+
+export const mapToPersonalAdoptList = (data: PersonalAdoptSource[]): PersonalAdoptItem[] =>
+  data.map(mapPersonalAdoptItem);
 
 const buildPersonalChips = (item: PersonalAdoptSource) => {
   const animal = personalAnimal(item.animalType);

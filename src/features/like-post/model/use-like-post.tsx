@@ -73,7 +73,7 @@ export const useLikePost = () => {
     // 관심 목록(ME_LIKED)은 무효화 X — 카드 내 해제가 즉시 사라지지 않고 다음 focus refetch 까지 잔존 (29cm)
     onSettled: () => {
       if (queryClient.isMutating({ mutationKey: [...LIKE_POST_MUTATION_KEY] }) === 1) {
-        queryClient.invalidateQueries({ queryKey: COMMUNITY_PREFIX });
+        queryClient.invalidateQueries({ queryKey: COMMUNITY_PREFIX, refetchType: 'none' });
       }
     }
   });
@@ -86,12 +86,7 @@ export const useLikePost = () => {
     [mutation, requireLogin]
   );
 
-  // 댓글 좋아요는 spec v2 보류
-  const toggleLikeComment = useCallback(async (_commentId: number) => {
-    // noop
-  }, []);
-
-  return { toggleLikePost, toggleLikeComment, isPending: mutation.isPending };
+  return { toggleLikePost, isPending: mutation.isPending };
 };
 
 // 특정 postId 의 좋아요 mutation 이 진행 중인지 — 카드별 isLoading 노출용.

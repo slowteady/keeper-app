@@ -19,9 +19,10 @@ export const useFavoriteAbandonment = () => {
     mutationFn: ({ id, currentlyFavorited }) => (currentlyFavorited ? adoptApi.unfavorite(id) : adoptApi.favorite(id)),
     syncPrefixes: [ADOPT_PREFIX, SHELTER_PREFIX, ME_FAVORITE_PREFIX],
     onSettledInvalidate: (queryClient) => {
-      queryClient.invalidateQueries({ queryKey: ADOPT_PREFIX });
+      queryClient.invalidateQueries({ queryKey: ADOPT_PREFIX, refetchType: 'none' });
       queryClient.invalidateQueries({
-        predicate: (query) => query.queryKey[0] === SHELTER_PREFIX[0] && query.queryKey[1] === 'adopts'
+        predicate: (query) => query.queryKey[0] === SHELTER_PREFIX[0] && query.queryKey[1] === 'adopts',
+        refetchType: 'none'
       });
     }
   });

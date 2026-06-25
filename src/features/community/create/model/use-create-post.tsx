@@ -69,7 +69,7 @@ export const useCreatePost = () => {
       return createAdoptionPersonal(body);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: communityQueries.all(), refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: communityQueries.all() });
       globalToast('공고를 등록했어요', 'success');
       router.back();
     },

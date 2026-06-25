@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
 
@@ -16,7 +16,7 @@ export type ShelterCardProps = {
   onPressFavorite?: (careRegNo: string, currentlyFavorited: boolean) => void;
 };
 
-export const ShelterCard = ({
+const ShelterCardComponent = ({
   data,
   size = 'full',
   isSelected = false,
@@ -111,6 +111,9 @@ export const ShelterCard = ({
     </Container>
   );
 };
+
+export const ShelterCard = memo(ShelterCardComponent);
+ShelterCard.displayName = 'ShelterCard';
 
 const Container = styled(View, {
   borderColor: '$white800',

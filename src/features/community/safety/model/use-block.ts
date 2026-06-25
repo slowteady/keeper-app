@@ -63,7 +63,7 @@ export const useBlock = () => {
       await blockMutation.mutateAsync(userId);
       removeBlockedFromCommunityList(queryClient, userId);
       removeBlockedFromCommentList(queryClient, userId);
-      queryClient.invalidateQueries({ queryKey: communityQueries.all() });
+      queryClient.invalidateQueries({ queryKey: communityQueries.all(), refetchType: 'none' });
       queryClient.invalidateQueries({ queryKey: ['me-liked-posts'] });
       globalToast('차단했어요', 'success');
     } catch {

@@ -13,7 +13,6 @@ export const useAdoptionStatus = (postId: string) => {
     mutationFn: (status: AdoptionStatus) => communityApi.updateAdoptionStatus(postId, status),
     onSuccess: async () => {
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: [...communityQueries.all(), 'detail', postId] }),
         queryClient.invalidateQueries({ queryKey: communityQueries.all() }),
         queryClient.invalidateQueries({ queryKey: communityQueries.myPostListKey() })
       ]);

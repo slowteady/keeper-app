@@ -60,7 +60,7 @@ describe('useCreateComment', () => {
     expect(mockedCreate).toHaveBeenCalledWith('10', '답글', '5');
   });
 
-  it('성공 시 해당 postId 댓글 리스트 invalidate (성공 토스트는 띄우지 않음 — Instagram BP)', async () => {
+  it('성공 시 해당 postId 댓글 리스트 invalidate(refetchType none — 낙관 prepend 유지) (성공 토스트는 띄우지 않음 — Instagram BP)', async () => {
     mockedCreate.mockResolvedValue({ id: 1 });
     const { queryClient, wrapper } = setup();
     const invalidateSpy = jest.spyOn(queryClient, 'invalidateQueries');
@@ -72,7 +72,10 @@ describe('useCreateComment', () => {
     });
 
     await waitFor(() => {
-      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: [...commentQueries.all(), 'list', '10'] });
+      expect(invalidateSpy).toHaveBeenCalledWith({
+        queryKey: [...commentQueries.all(), 'list', '10'],
+        refetchType: 'none'
+      });
     });
     expect(mockedToast).not.toHaveBeenCalled();
   });

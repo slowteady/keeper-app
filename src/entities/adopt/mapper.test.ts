@@ -224,6 +224,36 @@ describe('mapToAdoptList — edge cases', () => {
   });
 });
 
+describe('mapToAdoptList — 참조 안정성 (FlashList 재렌더 최적화)', () => {
+  it('동일 source 객체는 동일 매핑 결과 참조를 반환', () => {
+    const src = [mockAdoptData, { ...mockAdoptData, id: '2' }];
+    const first = mapToAdoptList(src);
+    const second = mapToAdoptList(src);
+    expect(second[0]).toBe(first[0]);
+    expect(second[1]).toBe(first[1]);
+  });
+
+  it('favorite 토글 시 바뀐 항목만 새 참조 (나머지는 참조 유지)', () => {
+    const a = mockAdoptData;
+    const b = { ...mockAdoptData, id: '2', isFavorited: false };
+    const first = mapToAdoptList([a, b]);
+    const second = mapToAdoptList([a, { ...b, isFavorited: true }]);
+    expect(second[0]).toBe(first[0]);
+    expect(second[1]).not.toBe(first[1]);
+    expect(second[1].isFavorited).toBe(true);
+  });
+});
+
+describe('mapToPersonalAdoptList — 참조 안정성', () => {
+  it('동일 source 객체는 동일 매핑 결과 참조를 반환', () => {
+    const src = [personalSource(), personalSource({ id: 'p2' })];
+    const first = mapToPersonalAdoptList(src);
+    const second = mapToPersonalAdoptList(src);
+    expect(second[0]).toBe(first[0]);
+    expect(second[1]).toBe(first[1]);
+  });
+});
+
 describe('mapToAdopt', () => {
   it('transforms single adopt data with formatted fields', () => {
     const result = mapToAdopt(mockAdoptData);
