@@ -52,7 +52,7 @@ const ErrorFallback = ({ error, resetError }: ErrorFallbackProps) => {
         <SecondaryButton
           onPress={() => {
             resetError();
-            router.dismissTo('/(tabs)/home');
+            router.replace('/(tabs)/home');
           }}
         >
           <Text fontSize={14} fontWeight="500" lineHeight={16} color="$black900">
