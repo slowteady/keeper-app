@@ -9,6 +9,7 @@ export * from './has-value';
 export * from './image';
 export * from './make-query';
 export * from './nickname-cooldown';
+export * from './normalize-url';
 export * from './scroll-to-view';
 export * from './select-infinite-pages';
 export * from './validation';
