@@ -11,6 +11,7 @@ import {
 } from '@/entities/community';
 import { toCreateAdoptionPersonalBody, updateAdoptionPersonal } from '@/features/community/create/model/api';
 import { useAdoptFormSelectors } from '@/features/community/create/model/use-adopt-form-selectors';
+import { useImageUpload } from '@/features/upload';
 import { getModerationMessage, globalToast } from '@/shared/lib';
 
 import { fromAdoptionPersonalDetail } from '../lib/from-detail';
@@ -28,9 +29,14 @@ export const useEditPost = (postId: string) => {
   const animalType = useWatch({ control: form.control, name: 'animalType' });
   const { openAgeSelector, openKindSelector } = useAdoptFormSelectors(form, animalType);
 
+  const imageUpload = useImageUpload();
   const submitMutation = useMutation({
-    mutationFn: (data: CommunityAdoptFormDto) => {
-      const body = toCreateAdoptionPersonalBody(data, data.images);
+    mutationFn: async (data: CommunityAdoptFormDto) => {
+      const localUris = data.images.filter((uri) => !uri.startsWith('http'));
+      const uploaded = localUris.length > 0 ? await imageUpload.mutateAsync(localUris) : [];
+      let next = 0;
+      const images = data.images.map((uri) => (uri.startsWith('http') ? uri : uploaded[next++]));
+      const body = toCreateAdoptionPersonalBody(data, images);
       return updateAdoptionPersonal(postId, body);
     },
     onSuccess: (updated) => {

@@ -95,7 +95,6 @@ const EditContent = ({ postId }: { postId: string }) => {
           onPressAge={actions.openAgeSelector}
           onPressKind={actions.openKindSelector}
           onPressLocation={openBottomSheet}
-          readOnlyImages
         />
       </KeyboardAwareScrollView>
 

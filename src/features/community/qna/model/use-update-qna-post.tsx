@@ -39,10 +39,12 @@ export const useUpdateQnaPost = (id: string) => {
   const imageUpload = useImageUpload();
   const submitMutation = useMutation({
     mutationFn: async (data: CommunityQnaFormDto) => {
-      const existing = (data.images ?? []).filter((u) => u.startsWith('https://'));
-      const localUris = (data.images ?? []).filter((u) => !u.startsWith('https://'));
+      const images = data.images ?? [];
+      const localUris = images.filter((u) => !u.startsWith('http'));
       const uploaded = localUris.length > 0 ? await imageUpload.mutateAsync(localUris) : [];
-      return communityApi.updateQnaPost(id, { ...data, images: [...existing, ...uploaded] });
+      let next = 0;
+      const merged = images.map((u) => (u.startsWith('http') ? u : uploaded[next++]));
+      return communityApi.updateQnaPost(id, { ...data, images: merged });
     },
     onSuccess: (updated) => {
       const next: PostDetailUnion = { kind: 'QNA', qna: updated };

@@ -12,6 +12,7 @@ const mockGetDetail = jest.fn();
 const mockUpdate = jest.fn();
 const mockPresent = jest.fn();
 const mockDismiss = jest.fn();
+const mockUpload = jest.fn();
 
 jest.mock('@/shared/ui', () => {
   const actual = jest.requireActual('@/shared/ui');
@@ -43,6 +44,10 @@ jest.mock('@/features/community/create/model/api', () => {
     updateAdoptionPersonal: (...args: unknown[]) => mockUpdate(...args)
   };
 });
+
+jest.mock('@/features/upload', () => ({
+  useImageUpload: () => ({ mutateAsync: (...args: unknown[]) => mockUpload(...args), isPending: false })
+}));
 
 const detail: CommunityAdoptDetailDto = {
   id: '42',
@@ -107,7 +112,7 @@ describe('useEditPost', () => {
     expect(result.current.form.getValues('images')).toEqual(['https://img/1.png']);
   });
 
-  it('handleSubmit 호출 시 updateAdoptionPersonal(postId, body) — 이미지는 폼 값 그대로 재전송', async () => {
+  it('handleSubmit 호출 시 updateAdoptionPersonal(postId, body) — 기존 http 이미지는 업로드 없이 그대로 재전송', async () => {
     mockUpdate.mockResolvedValue(detail);
     const { wrapper } = setup();
     const { result } = renderHook(() => useEditPost('42'), { wrapper });
@@ -121,6 +126,37 @@ describe('useEditPost', () => {
     expect(calledId).toBe('42');
     expect(body.images).toEqual(['https://img/1.png']);
     expect(body.contacts).toEqual([{ type: 'PHONE', value: '010-1111-2222' }]);
+    expect(mockUpload).not.toHaveBeenCalled();
+  });
+
+  it('신규 local 이미지만 업로드하고 기존 http URL은 유지하며 순서를 보존한다', async () => {
+    mockUpdate.mockResolvedValue(detail);
+    mockUpload.mockResolvedValue(['https://r2/new-a.jpg', 'https://r2/new-b.jpg']);
+    const { wrapper } = setup();
+    const { result } = renderHook(() => useEditPost('42'), { wrapper });
+
+    act(() => {
+      result.current.form.setValue('images', [
+        'https://img/1.png',
+        'file:///local/a.jpg',
+        'https://img/2.png',
+        'file:///local/b.jpg'
+      ]);
+    });
+
+    act(() => {
+      result.current.actions.handleSubmit(result.current.form.getValues());
+    });
+
+    await waitFor(() => expect(mockUpdate).toHaveBeenCalled());
+    expect(mockUpload).toHaveBeenCalledWith(['file:///local/a.jpg', 'file:///local/b.jpg']);
+    const [, body] = mockUpdate.mock.calls[0];
+    expect(body.images).toEqual([
+      'https://img/1.png',
+      'https://r2/new-a.jpg',
+      'https://img/2.png',
+      'https://r2/new-b.jpg'
+    ]);
   });
 
   it('actions.openAgeSelector / openKindSelector 도 함수로 노출되고 호출 시 present 호출', () => {
