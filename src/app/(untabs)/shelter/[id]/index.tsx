@@ -12,7 +12,7 @@ import { hasShelterCoords } from '@/entities/shelter';
 import { useFavoriteAbandonment } from '@/features/favorite-abandonment';
 import { useFavoriteShelter } from '@/features/favorite-shelter';
 import { useShelter, useShelterAdoptList } from '@/features/shelter';
-import { SCREEN_GUTTER } from '@/shared/lib';
+import { pressHaptic, SCREEN_GUTTER } from '@/shared/lib';
 import { useLocation, useShare } from '@/shared/model';
 import {
   BottomButton,
@@ -56,6 +56,7 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
 
   const handlePressShare = () => {
     if (!shelterData) return;
+    pressHaptic();
     share({ type: 'shelter', id: shelterData.id });
   };
   const {

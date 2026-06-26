@@ -88,7 +88,7 @@ const Page = () => {
       <ModalPageHeader title="개인입양 작성하기" fullScreen onClose={handleClose} />
       <KeyboardAwareScrollView
         ref={scrollRef}
-        contentContainerStyle={{ paddingTop: 40, paddingBottom: buttonHeight + 40 }}
+        contentContainerStyle={{ paddingTop: 16, paddingBottom: buttonHeight + 40 }}
         bottomOffset={buttonHeight}
       >
         <CommunityAdoptForm

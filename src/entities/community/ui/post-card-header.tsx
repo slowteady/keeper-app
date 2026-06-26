@@ -6,7 +6,7 @@ import { formatTimeAgo } from '@/shared/lib';
 export type PostCardHeaderProps = {
   image: string;
   nickname: string;
-  displayTime: string;
+  displayTime?: string;
 };
 
 export const PostCardHeader = ({ image, nickname, displayTime }: PostCardHeaderProps) => {
@@ -24,9 +24,11 @@ export const PostCardHeader = ({ image, nickname, displayTime }: PostCardHeaderP
       >
         {nickname}
       </Text>
-      <Text fontSize={14} fontWeight={500} ml={4} letterSpacing={-0.25} color="$black400" style={{ flexShrink: 0 }}>
-        {formatTimeAgo(displayTime)}
-      </Text>
+      {!!displayTime && (
+        <Text fontSize={14} fontWeight={500} ml={4} letterSpacing={-0.25} color="$black400" style={{ flexShrink: 0 }}>
+          {formatTimeAgo(displayTime)}
+        </Text>
+      )}
     </XStack>
   );
 };

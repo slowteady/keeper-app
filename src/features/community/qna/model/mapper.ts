@@ -3,7 +3,7 @@ import { CommunityQnaDetailDto, QNA_ANIMAL_TYPE_OPTIONS, QNA_CATEGORY_OPTIONS } 
 export const convertToQnaDetailOverviewData = (qna: CommunityQnaDetailDto) => {
   const categoryLabel = QNA_CATEGORY_OPTIONS.find((o) => o.value === qna.qnaType)?.label;
   const animalLabel = QNA_ANIMAL_TYPE_OPTIONS.find((o) => o.value === qna.animalType)?.label;
-  const tags = [categoryLabel, animalLabel].filter((v) => !!v) as string[];
+  const tags = [animalLabel].filter((v) => !!v) as string[];
 
   return {
     id: qna.id,
@@ -12,6 +12,7 @@ export const convertToQnaDetailOverviewData = (qna: CommunityQnaDetailDto) => {
     displayTime: qna.displayTime,
     title: qna.title,
     images: qna.images,
+    categoryTag: categoryLabel,
     tags,
     content: qna.content,
     isLiked: qna.isLiked

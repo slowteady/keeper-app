@@ -48,6 +48,9 @@ export const CommunityAdoptForm = ({
 
   return (
     <Form>
+      <View px={SCREEN_GUTTER} pb={16}>
+        <SafetyNotice message={FREE_ADOPTION_NOTICE} />
+      </View>
       <Caption>*은 필수 표기 정보입니다</Caption>
 
       <Section ref={fieldRefs?.images}>
@@ -291,7 +294,6 @@ export const CommunityAdoptForm = ({
             <Accordion.HeightAnimator animation="quick" exitStyle={{ opacity: 0, height: 0 }}>
               <YStack px={SCREEN_GUTTER} pb={24} gap={12}>
                 <ContactSelectField control={control} label="연락 정보" required inputRef={fieldRefs?.contactInput} />
-                <SafetyNotice message={FREE_ADOPTION_NOTICE} />
               </YStack>
             </Accordion.HeightAnimator>
           </Accordion.Content>

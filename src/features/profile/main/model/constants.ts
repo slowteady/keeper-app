@@ -4,8 +4,8 @@ export const MENU_SECTIONS = [
   {
     label: '설정',
     items: [
-      { icon: Bell, label: '알림 설정', navigateTo: 'notification-settings', requireAuth: false },
-      { icon: MapPin, label: '위치 설정', action: 'location' }
+      { icon: MapPin, label: '위치 설정', action: 'location' },
+      { icon: Bell, label: '알림 설정', navigateTo: 'notification-settings', requireAuth: false }
     ]
   },
   {

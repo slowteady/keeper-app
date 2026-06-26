@@ -2,7 +2,7 @@ import { ExternalLink, Link2 } from '@tamagui/lucide-icons';
 import { Linking, Pressable } from 'react-native';
 import { styled, Text, XStack, YStack } from 'tamagui';
 
-import { hasValue } from '@/shared/lib';
+import { hasValue, normalizeUrl } from '@/shared/lib';
 
 export type CommunityDetailDescriptionSectionProps = {
   relatedLink: string;
@@ -16,8 +16,10 @@ const getDomain = (url: string) => {
 export const CommunityDetailDescriptionSection = ({ relatedLink }: CommunityDetailDescriptionSectionProps) => {
   if (!hasValue(relatedLink)) return null;
 
+  const normalizedLink = normalizeUrl(relatedLink);
+
   const handlePress = () => {
-    Linking.openURL(relatedLink).catch(() => {});
+    Linking.openURL(normalizedLink).catch(() => {});
   };
 
   return (
@@ -28,7 +30,7 @@ export const CommunityDetailDescriptionSection = ({ relatedLink }: CommunityDeta
           <Link2 size={20} color="$black600" />
           <LinkBody>
             <LinkTitle numberOfLines={1}>원문 링크</LinkTitle>
-            <LinkUrl numberOfLines={1}>{getDomain(relatedLink)}</LinkUrl>
+            <LinkUrl numberOfLines={1}>{getDomain(normalizedLink)}</LinkUrl>
           </LinkBody>
           <ExternalLink size={16} color="$black500" />
         </LinkBox>

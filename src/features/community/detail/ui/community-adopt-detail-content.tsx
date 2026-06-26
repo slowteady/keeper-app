@@ -7,7 +7,7 @@ import { PROTECTION_LABEL } from '@/entities/adopt';
 import { PostCardHeader, PostCardTitle } from '@/entities/community';
 import { useCurrentUser, useLoginRequired } from '@/features/auth';
 import { useLikePost } from '@/features/like-post';
-import { toggleHaptic } from '@/shared/lib';
+import { formatTimeAgo, toggleHaptic } from '@/shared/lib';
 import { useLayout, useListRefreshing } from '@/shared/model';
 import { BottomButton, Carousel, ConfirmModal, Skeleton, useBottomSheet, useModal } from '@/shared/ui';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
@@ -92,7 +92,7 @@ export const CommunityAdoptDetailContent = ({ id }: CommunityAdoptDetailContentP
   const handleLayout = useCallback((h: number) => setButtonHeight((prev) => (prev === h ? prev : h)), []);
 
   const showOwnerCta = !isUserLoading && isOwner;
-  const showContactCta = !isUserLoading && !isOwner && hasContact && !isCompleted;
+  const showContactCta = !isUserLoading && !isOwner && !isCompleted;
   const hasBottomCta = isUserLoading || showOwnerCta || showContactCta;
 
   return (
@@ -119,11 +119,7 @@ export const CommunityAdoptDetailContent = ({ id }: CommunityAdoptDetailContentP
 
             <View px={20} mb={28}>
               <AuthorRow mb={16}>
-                <PostCardHeader
-                  image={overviews.image}
-                  nickname={overviews.nickname}
-                  displayTime={overviews.displayTime}
-                />
+                <PostCardHeader image={overviews.image} nickname={overviews.nickname} />
                 <Actions>
                   <Pressable onPress={handlePressLike} hitSlop={10} testID="community-detail-heart">
                     <AnimatedHeart size={26} isLiked={isLiked} inactiveColor={black600.val} />
@@ -143,7 +139,7 @@ export const CommunityAdoptDetailContent = ({ id }: CommunityAdoptDetailContentP
                       accessibilityLabel="더보기"
                       testID="community-detail-more"
                     >
-                      <MoreVertical size={22} color="$black600" />
+                      <MoreVertical size={22} color={black600.val as never} />
                     </Pressable>
                   ) : (
                     <Pressable
@@ -152,16 +148,21 @@ export const CommunityAdoptDetailContent = ({ id }: CommunityAdoptDetailContentP
                       accessibilityLabel="신고하기"
                       testID="community-detail-report"
                     >
-                      <Siren size={22} color="$black600" />
+                      <Siren size={22} color={black600.val as never} />
                     </Pressable>
                   )}
                 </Actions>
               </AuthorRow>
-              {!isCompleted && badgeLabel && (
-                <ProtectionChip>
-                  <ProtectionChipText>{badgeLabel}</ProtectionChipText>
-                </ProtectionChip>
-              )}
+              <ChipRow>
+                {!isCompleted && badgeLabel ? (
+                  <ProtectionChip>
+                    <ProtectionChipText>{badgeLabel}</ProtectionChipText>
+                  </ProtectionChip>
+                ) : (
+                  <View />
+                )}
+                <DateText>{formatTimeAgo(overviews.displayTime)}</DateText>
+              </ChipRow>
               <PostCardTitle title={overviews.title} numberOfLines={2} mb={overviews.content ? 12 : 0} />
               {!!overviews.content && <IntroBody>{overviews.content}</IntroBody>}
             </View>
@@ -217,8 +218,13 @@ export const CommunityAdoptDetailContent = ({ id }: CommunityAdoptDetailContentP
           </Text>
         </BottomButton>
       ) : showContactCta ? (
-        <BottomButton onPress={openContactSheet} onLayout={(e) => handleLayout(e.nativeEvent.layout.height)}>
-          <Text fontSize={15} fontWeight={600} lineHeight={18} color="$black900">
+        <BottomButton
+          disabled={!hasContact}
+          onPress={hasContact ? openContactSheet : undefined}
+          onLayout={(e) => handleLayout(e.nativeEvent.layout.height)}
+          topContent={!hasContact ? <NoContactText>탈퇴한 회원이라 문의를 받을 수 없어요</NoContactText> : undefined}
+        >
+          <Text fontSize={15} fontWeight={600} lineHeight={18} color={hasContact ? '$black900' : '$black500'}>
             문의하기
           </Text>
         </BottomButton>
@@ -227,13 +233,34 @@ export const CommunityAdoptDetailContent = ({ id }: CommunityAdoptDetailContentP
   );
 };
 
+const ChipRow = styled(XStack, {
+  items: 'center',
+  justify: 'space-between',
+  gap: 12,
+  mb: 12
+});
+
 const ProtectionChip = styled(View, {
-  self: 'flex-start',
-  mb: 12,
   px: 10,
   py: 5,
   rounded: 999,
   bg: '$backgroundDefault'
+});
+
+const DateText = styled(Text, {
+  fontWeight: 500,
+  fontSize: 13,
+  lineHeight: 16,
+  color: '$black400'
+});
+
+const NoContactText = styled(Text, {
+  mb: 8,
+  self: 'center',
+  fontSize: 13,
+  lineHeight: 18,
+  fontWeight: 500,
+  color: '$black500'
 });
 
 const ProtectionChipText = styled(Text, {

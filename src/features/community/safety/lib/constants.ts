@@ -11,7 +11,6 @@ export const REPORT_REASONS: readonly { id: ReportReason; label: string }[] = [
 ] as const;
 
 export const CONTACT_SAFETY_NOTICE =
-  'keeper는 입양에 관여하지 않으며, 책임은 게시자·입양자에게 있어요.\n책임비 등 금전을 요구받으면 신고해주세요.';
+  'keeper는 입양에 관여하지 않으며, 책임은 게시자·입양자에게 있어요\n책임비 등 금전을 요구받으면 신고해주세요';
 
-export const FREE_ADOPTION_NOTICE =
-  'keeper는 무상 입양만 지원해요.\n책임비·분양비 등 금전 요구는 금지되며, 위반 시 게시물이 제한될 수 있어요.';
+export const FREE_ADOPTION_NOTICE = '책임비 분양비 등 금전요구는 금지되며,\n위반 시 제재 대상이 될 수 있어요';
