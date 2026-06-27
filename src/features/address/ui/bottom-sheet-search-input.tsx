@@ -6,37 +6,30 @@ import { Cancel } from '@/shared/ui/icons/outline';
 import { Search } from '@/shared/ui/icons/solid';
 
 export type BottomSheetSearchInputProps = {
-  onSubmit: (text: string) => void;
+  onChangeText: (text: string) => void;
   placeholder?: string;
 };
 
-export const BottomSheetSearchInput = ({ onSubmit, placeholder }: BottomSheetSearchInputProps) => {
+export const BottomSheetSearchInput = ({ onChangeText, placeholder }: BottomSheetSearchInputProps) => {
   const [isFocus, setIsFocus] = useState(false);
   const [value, setValue] = useState('');
 
   const { black500, black900, white600 } = useTheme();
 
-  const handleFocus = () => {
-    setIsFocus(true);
-  };
+  const handleChangeText = useCallback(
+    (text: string) => {
+      setValue(text);
+      onChangeText(text);
+    },
+    [onChangeText]
+  );
 
-  const handleBlur = () => {
-    setIsFocus(false);
-  };
-
-  const handleSubmit = () => {
-    onSubmit(value);
-  };
-
-  const handlePressReset = () => {
+  const handleClear = useCallback(() => {
     setValue('');
-  };
+    onChangeText('');
+  }, [onChangeText]);
 
-  const handleChangeText = useCallback((text: string) => {
-    setValue(text);
-  }, []);
-
-  const hasValue = value && value.length > 0;
+  const hasValue = value.length > 0;
 
   return (
     <Container borderColor={isFocus ? '$black900' : '$white600'}>
@@ -47,21 +40,20 @@ export const BottomSheetSearchInput = ({ onSubmit, placeholder }: BottomSheetSea
         returnKeyType="search"
         value={value}
         onChangeText={handleChangeText}
-        onSubmitEditing={handleSubmit}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
+        onFocus={() => setIsFocus(true)}
+        onBlur={() => setIsFocus(false)}
       />
 
       <ButtonContainer r={0} gap={12} px={20}>
         <AnimatePresence>
           {hasValue && (
-            <ClearButton onPress={() => handlePressReset()}>
+            <ClearButton onPress={handleClear}>
               <Cancel />
             </ClearButton>
           )}
         </AnimatePresence>
 
-        <View width={24} height={24} onPress={() => onSubmit?.(value ?? '')} hitSlop={10}>
+        <View width={24} height={24} hitSlop={10}>
           <Search color={isFocus ? black900.val : white600.val} />
         </View>
       </ButtonContainer>

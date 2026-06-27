@@ -23,6 +23,7 @@ type CreateAdoptionPersonalBody = {
   healthCheck?: CommunityAdoptFormDto['healthCheck'];
   vaccinationCheck?: CommunityAdoptFormDto['vaccinationCheck'];
   location?: string;
+  regionCode?: string;
   health?: string;
   relatedLink?: string;
   toiletTraining?: CommunityAdoptFormDto['toiletTraining'];
@@ -57,6 +58,7 @@ export const toCreateAdoptionPersonalBody = (
   healthCheck: orUndefined(form.healthCheck),
   vaccinationCheck: orUndefined(form.vaccinationCheck),
   location: orUndefined(form.location),
+  regionCode: orUndefined(form.regionCode),
   health: orUndefined(form.health),
   relatedLink: orUndefined(form.relatedLink),
   toiletTraining: orUndefined(form.toiletTraining),

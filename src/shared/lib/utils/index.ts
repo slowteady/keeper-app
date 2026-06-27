@@ -7,6 +7,7 @@ export * from './handle-token';
 export * from './haptic';
 export * from './has-value';
 export * from './image';
+export * from './korean-profanity';
 export * from './make-query';
 export * from './nickname-cooldown';
 export * from './normalize-url';

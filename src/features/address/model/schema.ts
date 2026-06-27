@@ -1,55 +1,11 @@
 import { z } from 'zod';
 
-export const KakaoAddressDocumentSchema = z.object({
-  address: z.object({
-    address_name: z.string(),
-    b_code: z.string(),
-    h_code: z.string(),
-    main_address_no: z.string(),
-    mountain_yn: z.enum(['Y', 'N']),
-    region_1depth_name: z.string(),
-    region_2depth_name: z.string(),
-    region_3depth_h_name: z.string(),
-    region_3depth_name: z.string(),
-    sub_address_no: z.string(),
-    x: z.string(),
-    y: z.string()
-  }),
-  address_name: z.string(),
-  address_type: z.string(),
-  road_address: z
-    .object({
-      address_name: z.string(),
-      region_1depth_name: z.string(),
-      region_2depth_name: z.string(),
-      region_3depth_name: z.string(),
-      road_name: z.string(),
-      underground_yn: z.enum(['Y', 'N']),
-      main_building_no: z.string(),
-      sub_building_no: z.string(),
-      building_name: z.string(),
-      zone_no: z.string(),
-      x: z.string(),
-      y: z.string()
-    })
-    .nullable(),
-  x: z.string(),
-  y: z.string()
-});
-export type KakaoAddressDocumentDto = z.infer<typeof KakaoAddressDocumentSchema>;
-
 export const KakaoGeocodeMetaSchema = z.object({
   is_end: z.boolean(),
   pageable_count: z.number(),
   total_count: z.number()
 });
 export type KakaoGeocodeMetaDto = z.infer<typeof KakaoGeocodeMetaSchema>;
-
-export const KakaoGeocodeResponseSchema = z.object({
-  documents: z.array(KakaoAddressDocumentSchema),
-  meta: KakaoGeocodeMetaSchema
-});
-export type KakaoGeocodeResponseDto = z.infer<typeof KakaoGeocodeResponseSchema>;
 
 export const KakaoKeywordDocumentSchema = z.object({
   id: z.string(),
@@ -80,7 +36,18 @@ export const KakaoKeywordParamsSchema = z.object({
 });
 export type KakaoKeywordParamsDto = z.infer<typeof KakaoKeywordParamsSchema>;
 
-export const KakaoGeocodeParamsSchema = z.object({
-  query: z.string()
+export const KakaoRegionDocumentSchema = z.object({
+  region_type: z.enum(['H', 'B']),
+  code: z.string(),
+  region_1depth_name: z.string(),
+  region_2depth_name: z.string(),
+  region_3depth_name: z.string(),
+  region_4depth_name: z.string()
 });
-export type KakaoGeocodeParamsDto = z.infer<typeof KakaoGeocodeParamsSchema>;
+export type KakaoRegionDocumentDto = z.infer<typeof KakaoRegionDocumentSchema>;
+
+export const KakaoRegionResponseSchema = z.object({
+  meta: z.object({ total_count: z.number() }),
+  documents: z.array(KakaoRegionDocumentSchema)
+});
+export type KakaoRegionResponseDto = z.infer<typeof KakaoRegionResponseSchema>;

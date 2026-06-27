@@ -4,29 +4,27 @@ import { AxiosResponse } from 'axios';
 import { kakaoApi } from '@/shared/api';
 import { logger } from '@/shared/lib';
 
-import {
-  KakaoGeocodeParamsDto,
-  KakaoGeocodeResponseDto,
-  KakaoKeywordParamsDto,
-  KakaoKeywordResponseDto
-} from './schema';
+import { KakaoKeywordParamsDto, KakaoKeywordResponseDto, KakaoRegionResponseDto } from './schema';
 
-export const getKakaoGeocode = async ({
-  query
-}: KakaoGeocodeParamsDto): Promise<AxiosResponse<KakaoGeocodeResponseDto>> => {
-  try {
-    return await kakaoApi.get('address.json', { params: { query } });
-  } catch (err) {
-    logger.error(err);
-    throw err;
-  }
-};
+const KAKAO_REGION_URL = process.env.EXPO_PUBLIC_KAKAO_LOCAL_URL?.replace(
+  /search\/address\.json\/?$/,
+  'geo/coord2regioncode.json'
+);
 
 export const getKakaoKeyword = async (
   params: KakaoKeywordParamsDto
 ): Promise<AxiosResponse<KakaoKeywordResponseDto>> => {
   try {
     return await kakaoApi.get('keyword.json', { params });
+  } catch (err) {
+    logger.error(err);
+    throw err;
+  }
+};
+
+export const getKakaoRegionCode = async (x: string, y: string): Promise<AxiosResponse<KakaoRegionResponseDto>> => {
+  try {
+    return await kakaoApi.get(KAKAO_REGION_URL ?? '', { params: { x, y } });
   } catch (err) {
     logger.error(err);
     throw err;

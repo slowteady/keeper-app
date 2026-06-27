@@ -156,11 +156,11 @@ describe('CommunityAdoptFormSchema', () => {
   });
 
   describe('location (필수)', () => {
-    it('빈 문자열이면 "지역을 입력해주세요"', () => {
+    it('빈 문자열이면 "장소를 입력해주세요"', () => {
       const result = CommunityAdoptFormSchema.safeParse({ ...baseValid, location: '' });
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues.find((i) => i.path[0] === 'location')?.message).toBe('지역을 입력해주세요');
+        expect(result.error.issues.find((i) => i.path[0] === 'location')?.message).toBe('장소를 입력해주세요');
       }
     });
 

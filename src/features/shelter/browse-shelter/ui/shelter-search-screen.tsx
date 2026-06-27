@@ -17,7 +17,15 @@ export const ShelterSearchScreen = ({ onClose, onSelect }: ShelterSearchScreenPr
   const insets = useSafeAreaInsets();
   const { black900 } = useTheme();
   const [value, setValue] = useState('');
-  const { results, isPending, isFetchingNextPage, hasNextPage, fetchNextPage, submitSearch } = useKeywordSearch();
+  const { results, isPending, isFetchingNextPage, hasNextPage, fetchNextPage, setKeyword } = useKeywordSearch();
+
+  const handleChangeText = useCallback(
+    (text: string) => {
+      setValue(text);
+      setKeyword(text);
+    },
+    [setKeyword]
+  );
 
   const handleSelect = useCallback(
     (item: KakaoKeywordDocumentDto) => {
@@ -43,13 +51,7 @@ export const ShelterSearchScreen = ({ onClose, onSelect }: ShelterSearchScreenPr
           <LeftLineArrow width={24} height={30} color={black900.val} />
         </View>
         <View flex={1}>
-          <SearchInput
-            autoFocus
-            value={value}
-            placeholder="지역·주소·장소로 검색"
-            onTextChange={setValue}
-            onSubmit={submitSearch}
-          />
+          <SearchInput autoFocus value={value} placeholder="지역·주소·장소로 검색" onTextChange={handleChangeText} />
         </View>
       </HeaderRow>
 

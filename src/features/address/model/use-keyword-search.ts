@@ -1,10 +1,14 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useCallback, useState } from 'react';
 
+import { useDebounceValue } from '@/shared/model';
+
 import { kakaoKeywordQueries } from './api';
 
 export const useKeywordSearch = () => {
-  const [query, setQuery] = useState('');
+  const [keyword, setKeyword] = useState('');
+  const debouncedKeyword = useDebounceValue(keyword, 300);
+  const trimmed = debouncedKeyword.trim();
 
   const {
     data,
@@ -12,29 +16,24 @@ export const useKeywordSearch = () => {
     isFetchingNextPage,
     hasNextPage,
     fetchNextPage: fetchNextPageQuery
-  } = useInfiniteQuery(kakaoKeywordQueries.list(query));
-
-  const submitSearch = useCallback((value: string) => {
-    const trimmed = value.trim();
-    if (trimmed.length === 0) return;
-    setQuery(trimmed);
-  }, []);
-
-  const reset = useCallback(() => {
-    setQuery('');
-  }, []);
+  } = useInfiniteQuery(kakaoKeywordQueries.list(trimmed));
 
   const fetchNextPage = useCallback(async () => {
     if (hasNextPage && !isFetchingNextPage) await fetchNextPageQuery();
   }, [fetchNextPageQuery, hasNextPage, isFetchingNextPage]);
 
+  const reset = useCallback(() => {
+    setKeyword('');
+  }, []);
+
   return {
-    results: query ? data?.documents : undefined,
+    results: trimmed.length > 0 ? data?.documents : undefined,
+    keyword,
+    setKeyword,
     isPending: isLoading,
     isFetchingNextPage,
     hasNextPage: hasNextPage ?? false,
     fetchNextPage,
-    submitSearch,
     reset
   };
 };

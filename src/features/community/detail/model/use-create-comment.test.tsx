@@ -80,6 +80,99 @@ describe('useCreateComment', () => {
     expect(mockedToast).not.toHaveBeenCalled();
   });
 
+  it('답글 생성 시 부모 댓글 replyCount 를 optimistic +1', async () => {
+    let resolveCreate!: (value: unknown) => void;
+    mockedCreate.mockReturnValue(new Promise((res) => (resolveCreate = res)));
+    const { queryClient, wrapper } = setup();
+    const listKey = [...commentQueries.all(), 'list', '10'];
+    queryClient.setQueryData(listKey, {
+      pages: [{ items: [{ id: 'p1', replyCount: 0, content: '부모' }], nextCursor: null, hasNext: false }],
+      pageParams: [null]
+    });
+
+    const { result } = renderHook(() => useCreateComment({ postId: '10' }), { wrapper });
+
+    let pending!: Promise<unknown>;
+    act(() => {
+      pending = result.current.mutateAsync({ content: '답글', parentId: 'p1' }).catch(() => undefined);
+    });
+
+    await waitFor(() => {
+      const data = queryClient.getQueryData(listKey) as { pages: { items: { id: string; replyCount: number }[] }[] };
+      expect(data.pages[0].items[0].replyCount).toBe(1);
+    });
+
+    await act(async () => {
+      resolveCreate({ id: 'r1', content: '답글', parentId: 'p1' });
+      await pending;
+    });
+  });
+
+  it('답글 캐시가 없어도(미펼침) optimistic 답글이 시드된다', async () => {
+    let resolveCreate!: (value: unknown) => void;
+    mockedCreate.mockReturnValue(new Promise((res) => (resolveCreate = res)));
+    const { queryClient, wrapper } = setup();
+    const repliesKey = commentQueries.replies('p1').queryKey;
+
+    const { result } = renderHook(() => useCreateComment({ postId: '10' }), { wrapper });
+
+    let pending!: Promise<unknown>;
+    act(() => {
+      pending = result.current.mutateAsync({ content: '답글', parentId: 'p1' }).catch(() => undefined);
+    });
+
+    await waitFor(() => {
+      const data = queryClient.getQueryData(repliesKey) as { pages: { items: { content: string }[] }[] } | undefined;
+      expect(data?.pages[0].items[0].content).toBe('답글');
+    });
+
+    await act(async () => {
+      resolveCreate({ id: 'r1', content: '답글', parentId: 'p1' });
+      await pending;
+    });
+  });
+
+  it('답글 생성 후 부모 답글 쿼리를 invalidate (서버 정합 — 동시 답글 유실 방지)', async () => {
+    mockedCreate.mockResolvedValue({ id: 'r1', content: '답글', parentId: 'p1' });
+    const { queryClient, wrapper } = setup();
+    const invalidateSpy = jest.spyOn(queryClient, 'invalidateQueries');
+
+    const { result } = renderHook(() => useCreateComment({ postId: '10' }), { wrapper });
+
+    await act(async () => {
+      await result.current.mutateAsync({ content: '답글', parentId: 'p1' });
+    });
+
+    await waitFor(() => {
+      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: commentQueries.replies('p1').queryKey });
+    });
+  });
+
+  it('작성 시 게시글 comment 카운트를 optimistic +1 (detail union)', async () => {
+    let resolveCreate!: (value: unknown) => void;
+    mockedCreate.mockReturnValue(new Promise((res) => (resolveCreate = res)));
+    const { queryClient, wrapper } = setup();
+    const detailKey = ['community', 'detail', '10'];
+    queryClient.setQueryData(detailKey, { kind: 'QNA', qna: { id: '10', counts: { comment: 2 } } });
+
+    const { result } = renderHook(() => useCreateComment({ postId: '10' }), { wrapper });
+
+    let pending!: Promise<unknown>;
+    act(() => {
+      pending = result.current.mutateAsync({ content: '댓글' }).catch(() => undefined);
+    });
+
+    await waitFor(() => {
+      const d = queryClient.getQueryData(detailKey) as { qna: { counts: { comment: number } } };
+      expect(d.qna.counts.comment).toBe(3);
+    });
+
+    await act(async () => {
+      resolveCreate({ id: 'c1', content: '댓글', parentId: null });
+      await pending;
+    });
+  });
+
   it('실패 시 실패 토스트 노출', async () => {
     mockedCreate.mockRejectedValue(new Error('network'));
     const { wrapper } = setup();

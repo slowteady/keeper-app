@@ -1,6 +1,6 @@
 import { MoreVertical } from '@tamagui/lucide-icons';
 import { Pressable } from 'react-native';
-import { styled, Text, View, XStack, YStack } from 'tamagui';
+import { styled, Text, XStack, YStack } from 'tamagui';
 
 import { formatTimeAgo } from '@/shared/lib';
 
@@ -21,9 +21,9 @@ export type CommentListItemProps = {
 
 export const CommentListItem = ({ data, onPress, onPressMore }: CommentListItemProps) => {
   return (
-    <Container>
-      <Pressable onPress={() => onPress(data.postId, data.id)} style={{ flex: 1 }}>
-        <YStack gap={8}>
+    <Pressable onPress={() => onPress(data.postId, data.id)}>
+      <Container>
+        <YStack flex={1} gap={8}>
           <XStack items="center" gap={8}>
             <CategoryChip>
               <CategoryText>{CATEGORY_LABEL[data.postCategory]}</CategoryText>
@@ -34,25 +34,23 @@ export const CommentListItem = ({ data, onPress, onPressMore }: CommentListItemP
             {data.content}
           </Content>
         </YStack>
-      </Pressable>
-      <XStack items="center" gap={8}>
-        {data.postThumbnail ? (
-          <Thumbnail source={{ uri: data.postThumbnail }} contentFit="cover" />
-        ) : (
-          <ThumbnailPlaceholder />
+        {(onPressMore || data.postThumbnail) && (
+          <RightColumn>
+            {onPressMore ? (
+              <Pressable
+                onPress={() => onPressMore(data)}
+                hitSlop={10}
+                accessibilityLabel="더보기"
+                testID={`my-comment-more-${data.id}`}
+              >
+                <MoreVertical size={18} color="$black700" />
+              </Pressable>
+            ) : null}
+            {data.postThumbnail && <Thumbnail source={{ uri: data.postThumbnail }} contentFit="cover" />}
+          </RightColumn>
         )}
-        {onPressMore ? (
-          <Pressable
-            onPress={() => onPressMore(data)}
-            hitSlop={10}
-            accessibilityLabel="더보기"
-            testID={`my-comment-more-${data.id}`}
-          >
-            <MoreVertical size={18} color="$black700" />
-          </Pressable>
-        ) : null}
-      </XStack>
-    </Container>
+      </Container>
+    </Pressable>
   );
 };
 
@@ -61,7 +59,12 @@ const Container = styled(XStack, {
   gap: 16,
   borderBottomWidth: 1,
   borderBottomColor: '$white850',
-  items: 'center'
+  items: 'flex-start'
+});
+
+const RightColumn = styled(YStack, {
+  items: 'flex-end',
+  gap: 10
 });
 
 const Content = styled(Text, {
@@ -70,11 +73,4 @@ const Content = styled(Text, {
   fontWeight: '600',
   color: '$black900',
   letterSpacing: -0.45
-});
-
-const ThumbnailPlaceholder = styled(View, {
-  width: 64,
-  height: 64,
-  rounded: 8,
-  bg: '$white850'
 });

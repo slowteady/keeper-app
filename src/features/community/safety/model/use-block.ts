@@ -19,13 +19,18 @@ type CommunityPage = { items: WithUser[] } & Record<string, unknown>;
 type CommentPage = { items: WithUser[] } & Record<string, unknown>;
 
 const removeBlockedFromCommunityList = (queryClient: ReturnType<typeof useQueryClient>, blockedUserId: string) => {
+  const filterBlocked = (old?: InfiniteData<CommunityPage>) =>
+    old && {
+      ...old,
+      pages: old.pages.map((p) => ({ ...p, items: p.items.filter((it) => it.user?.id !== blockedUserId) }))
+    };
   queryClient.setQueriesData<InfiniteData<CommunityPage>>(
     { queryKey: [...communityQueries.all(), 'list'] },
-    (old) =>
-      old && {
-        ...old,
-        pages: old.pages.map((p) => ({ ...p, items: p.items.filter((it) => it.user?.id !== blockedUserId) }))
-      }
+    filterBlocked
+  );
+  queryClient.setQueriesData<InfiniteData<CommunityPage>>(
+    { queryKey: [...communityQueries.all(), 'qna', 'list'] },
+    filterBlocked
   );
 };
 
@@ -65,6 +70,7 @@ export const useBlock = () => {
       removeBlockedFromCommentList(queryClient, userId);
       queryClient.invalidateQueries({ queryKey: communityQueries.all(), refetchType: 'none' });
       queryClient.invalidateQueries({ queryKey: ['me-liked-posts'] });
+      queryClient.invalidateQueries({ queryKey: ['blocks'] });
       globalToast('차단했어요', 'success');
     } catch {
       globalToast('차단하지 못했어요', 'fail');

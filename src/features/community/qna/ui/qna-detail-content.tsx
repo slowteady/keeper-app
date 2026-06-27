@@ -2,9 +2,10 @@ import { useScrollToTop } from '@react-navigation/native';
 import { FlashList, FlashListRef, ListRenderItemInfo } from '@shopify/flash-list';
 import { useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, RefreshControl } from 'react-native';
-import { KeyboardStickyView } from 'react-native-keyboard-controller';
+import { ComponentRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ActivityIndicator, InteractionManager, Keyboard, RefreshControl } from 'react-native';
+import { KeyboardStickyView, useReanimatedKeyboardAnimation } from 'react-native-keyboard-controller';
+import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 import { styled, Text, View, YStack } from 'tamagui';
 
 import {
@@ -18,6 +19,7 @@ import {
 import { communityQueries, PostStats } from '@/entities/community';
 import { useLoginRequired } from '@/features/auth';
 import { useLikePost } from '@/features/like-post';
+import { containsProfanity, globalToast } from '@/shared/lib';
 import { useLayout, useListRefreshing } from '@/shared/model';
 import { PostDetailHeader } from '@/widgets/community-post-section';
 
@@ -41,6 +43,8 @@ export const QnaDetailContent = ({ id, scrollToComments, commentId, editCommentI
   const [inputHeight, setInputHeight] = useState(0);
 
   const { bottom } = useLayout();
+  const { height: keyboardHeight } = useReanimatedKeyboardAnimation();
+  const listBottomSpacerStyle = useAnimatedStyle(() => ({ height: Math.max(0, -keyboardHeight.value) }));
 
   const { qna, overview } = useCommunityQnaDetailFeed(id);
   const scrollRef = useRef<FlashListRef<CommentDto>>(null);
@@ -84,7 +88,13 @@ export const QnaDetailContent = ({ id, scrollToComments, commentId, editCommentI
   const [comment, setComment] = useState('');
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [replyTarget, setReplyTarget] = useState<{ parentId: string; nickname: string } | null>(null);
+  const [repliedParentId, setRepliedParentId] = useState<string | null>(null);
+  const commentInputRef = useRef<ComponentRef<typeof CommentFormInput>>(null);
   const { requireLogin, isLoggedIn } = useLoginRequired();
+
+  const focusCommentInput = useCallback(() => {
+    InteractionManager.runAfterInteractions(() => commentInputRef.current?.focus());
+  }, []);
 
   const handleTapWhenLoggedOut = useCallback(() => {
     requireLogin(() => {});
@@ -92,11 +102,15 @@ export const QnaDetailContent = ({ id, scrollToComments, commentId, editCommentI
   const createCommentMutation = useCreateComment({ postId: id });
   const updateCommentMutation = useUpdateComment({ postId: id });
 
-  const handleEnterEditMode = useCallback((target: { commentId: string; content: string }) => {
-    setReplyTarget(null);
-    setEditingCommentId(target.commentId);
-    setComment(target.content);
-  }, []);
+  const handleEnterEditMode = useCallback(
+    (target: { commentId: string; content: string }) => {
+      setReplyTarget(null);
+      setEditingCommentId(target.commentId);
+      setComment(target.content);
+      focusCommentInput();
+    },
+    [focusCommentInput]
+  );
 
   const handleCancelEdit = useCallback(() => {
     setEditingCommentId(null);
@@ -109,9 +123,10 @@ export const QnaDetailContent = ({ id, scrollToComments, commentId, editCommentI
         setEditingCommentId(null);
         setReplyTarget(target);
         setComment(`@${target.nickname} `);
+        focusCommentInput();
       });
     },
-    [requireLogin]
+    [requireLogin, focusCommentInput]
   );
 
   const handleCancelReply = useCallback(() => {
@@ -133,6 +148,10 @@ export const QnaDetailContent = ({ id, scrollToComments, commentId, editCommentI
 
   const submitComment = useCallback(
     (content: string) => {
+      if (containsProfanity(content)) {
+        globalToast('비속어 표현이 감지됐어요. 커뮤니티 가이드라인을 확인해주세요.', 'fail');
+        return;
+      }
       if (editingCommentId !== null) {
         const targetCommentId = editingCommentId;
         setComment('');
@@ -143,7 +162,9 @@ export const QnaDetailContent = ({ id, scrollToComments, commentId, editCommentI
         setComment('');
         setReplyTarget(null);
         createCommentMutation.mutate({ content, parentId });
+        if (parentId) setRepliedParentId(parentId);
       }
+      Keyboard.dismiss();
     },
     [editingCommentId, replyTarget, createCommentMutation, updateCommentMutation]
   );
@@ -177,7 +198,12 @@ export const QnaDetailContent = ({ id, scrollToComments, commentId, editCommentI
           <CommentCard
             comment={item}
             onPressMore={() =>
-              openCommentMenu({ commentId: item.id, authorId: item.user?.id ?? null, content: item.content })
+              openCommentMenu({
+                commentId: item.id,
+                authorId: item.user?.id ?? null,
+                content: item.content,
+                postId: id
+              })
             }
             onPressReply={() =>
               handleEnterReplyMode({ parentId: item.id, nickname: item.user?.nickname ?? '탈퇴한 사용자' })
@@ -185,14 +211,87 @@ export const QnaDetailContent = ({ id, scrollToComments, commentId, editCommentI
           />
           <RepliesSection
             parentComment={item}
+            autoExpand={repliedParentId === item.id}
             onPressReplyMore={(reply) =>
-              openCommentMenu({ commentId: reply.id, authorId: reply.user?.id ?? null, content: reply.content })
+              openCommentMenu({
+                commentId: reply.id,
+                authorId: reply.user?.id ?? null,
+                content: reply.content,
+                postId: id
+              })
             }
           />
         </View>
       );
     },
-    [openCommentMenu, handleEnterReplyMode]
+    [id, openCommentMenu, handleEnterReplyMode, repliedParentId]
+  );
+
+  const listHeader = useMemo(
+    () => (
+      <>
+        {overview && qna && (
+          <>
+            <View px={20} mb={32}>
+              <PostDetailHeader
+                {...overview}
+                onPressLike={() => toggleLikePost(id, isLiked)}
+                onPressShare={sharePost}
+                onPressMore={openPostMenu}
+              />
+            </View>
+            <View px={20} mb={16}>
+              <PostStats {...qna.counts} />
+            </View>
+          </>
+        )}
+
+        {commentId ? (
+          <FocusedCommentContext
+            postId={id}
+            commentId={commentId}
+            autoEdit={editCommentId === commentId}
+            onEdit={handleEnterEditMode}
+            onShowAll={showAllComments}
+          />
+        ) : (
+          <CommentListHeader
+            commentCount={qna?.counts?.comment ?? 0}
+            sortOrder={sortOrder}
+            onChangeSortOrder={changeSortOrder}
+          />
+        )}
+      </>
+    ),
+    [
+      overview,
+      qna,
+      id,
+      isLiked,
+      toggleLikePost,
+      sharePost,
+      openPostMenu,
+      commentId,
+      editCommentId,
+      handleEnterEditMode,
+      showAllComments,
+      sortOrder,
+      changeSortOrder
+    ]
+  );
+
+  const listFooter = useMemo(
+    () => (
+      <>
+        {isFetchingNextPage && (
+          <View py={20} items="center">
+            <ActivityIndicator />
+          </View>
+        )}
+        <Animated.View style={listBottomSpacerStyle} />
+      </>
+    ),
+    [isFetchingNextPage, listBottomSpacerStyle]
   );
 
   return (
@@ -206,49 +305,9 @@ export const QnaDetailContent = ({ id, scrollToComments, commentId, editCommentI
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
         onEndReached={commentId ? undefined : fetchNextPage}
         onEndReachedThreshold={0.5}
-        ListFooterComponent={
-          isFetchingNextPage ? (
-            <View py={20} items="center">
-              <ActivityIndicator />
-            </View>
-          ) : null
-        }
+        ListFooterComponent={listFooter}
         ItemSeparatorComponent={() => <View height={1} bg="$backgroundDefault" />}
-        ListHeaderComponent={() => (
-          <>
-            {overview && qna && (
-              <>
-                <View px={20} mb={32}>
-                  <PostDetailHeader
-                    {...overview}
-                    onPressLike={() => toggleLikePost(id, isLiked)}
-                    onPressShare={sharePost}
-                    onPressMore={openPostMenu}
-                  />
-                </View>
-                <View px={20} mb={16}>
-                  <PostStats {...qna.counts} />
-                </View>
-              </>
-            )}
-
-            {commentId ? (
-              <FocusedCommentContext
-                postId={id}
-                commentId={commentId}
-                autoEdit={editCommentId === commentId}
-                onEdit={handleEnterEditMode}
-                onShowAll={showAllComments}
-              />
-            ) : (
-              <CommentListHeader
-                commentCount={qna?.counts?.comment ?? 0}
-                sortOrder={sortOrder}
-                onChangeSortOrder={changeSortOrder}
-              />
-            )}
-          </>
-        )}
+        ListHeaderComponent={listHeader}
         contentContainerStyle={{
           paddingBottom: commentList.length > 0 ? inputHeight : 0,
           paddingTop: 32
@@ -274,6 +333,7 @@ export const QnaDetailContent = ({ id, scrollToComments, commentId, editCommentI
       <KeyboardStickyView offset={{ opened: bottom }}>
         <StickyInner onLayout={(event) => setInputHeight(event.nativeEvent.layout.height)} pb={bottom}>
           <CommentFormInput
+            ref={commentInputRef}
             flex={1}
             maxH={48}
             value={comment}

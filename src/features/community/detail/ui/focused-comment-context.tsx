@@ -38,7 +38,8 @@ export const FocusedCommentContext = ({
     openCommentMenu({
       commentId: comment.id,
       authorId: comment.user?.id,
-      content: comment.content
+      content: comment.content,
+      postId
     });
   const isReply = data.rootComment.id !== data.targetComment.id;
 

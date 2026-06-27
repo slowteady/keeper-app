@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable } from 'react-native';
 import { styled, Text, View } from 'tamagui';
 
@@ -10,17 +10,23 @@ import { useReplies } from '../model/use-replies';
 export type RepliesSectionProps = {
   parentComment: CommentDto;
   onPressReplyMore?: (reply: CommentDto) => void;
+  autoExpand?: boolean;
 };
 
-export const RepliesSection = ({ parentComment, onPressReplyMore }: RepliesSectionProps) => {
+export const RepliesSection = ({ parentComment, onPressReplyMore, autoExpand = false }: RepliesSectionProps) => {
   const [expanded, setExpanded] = useState(false);
+
+  useEffect(() => {
+    if (autoExpand) setExpanded(true);
+  }, [autoExpand]);
 
   const { replies, isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } = useReplies({
     parentId: parentComment.id,
     enabled: expanded
   });
 
-  if (parentComment.replyCount === 0 && !expanded) return null;
+  if (parentComment.replyCount === 0) return null;
+  if (expanded && !isLoading && replies.length === 0) return null;
 
   return (
     <View mt={12} ml={32}>

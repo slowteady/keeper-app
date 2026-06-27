@@ -1,12 +1,12 @@
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useRef } from 'react';
 
-import { KakaoAddressDocumentDto } from './schema';
-import { useAddressSearch } from './use-address-search';
+import { KakaoKeywordDocumentDto } from './schema';
+import { useKeywordSearch } from './use-keyword-search';
 
-export const useLocationBottomSheet = (onSelect: (item: KakaoAddressDocumentDto) => void) => {
-  const [address, setAddress] = useState<KakaoAddressDocumentDto>();
-  const { searchedAddresses, isPending, submitGeocode, reset } = useAddressSearch();
+export const useLocationBottomSheet = (onSelect: (item: KakaoKeywordDocumentDto) => void) => {
+  const { results, isPending, keyword, setKeyword, reset, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useKeywordSearch();
 
   const ref = useRef<BottomSheetModal>(null);
 
@@ -21,19 +21,21 @@ export const useLocationBottomSheet = (onSelect: (item: KakaoAddressDocumentDto)
     }
   }, [reset]);
 
-  const getAddress = (item: KakaoAddressDocumentDto) => {
-    setAddress(item);
+  const getAddress = (item: KakaoKeywordDocumentDto) => {
     onSelect?.(item);
     dismiss();
   };
 
   return {
-    address,
-    searchedAddresses,
+    results,
     ref,
     isPending,
+    keyword,
+    setKeyword,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
     openBottomSheet,
-    submitGeocode,
     getAddress,
     dismiss
   };

@@ -109,7 +109,7 @@ const PersonalAdoptCardComponent = ({
                 )}
                 {!!region && (
                   <MetaRow>
-                    <MetaLabel compact={compact}>지역</MetaLabel>
+                    <MetaLabel compact={compact}>장소</MetaLabel>
                     <MetaValue compact={compact}>{region}</MetaValue>
                   </MetaRow>
                 )}
@@ -243,10 +243,13 @@ const RegionLine = styled(XStack, {
 });
 
 const RegionText = styled(Text, {
+  shrink: 1,
   fontWeight: 500,
   fontSize: 14,
   lineHeight: 17,
-  color: '$black500'
+  color: '$black500',
+  numberOfLines: 1,
+  ellipsizeMode: 'tail'
 });
 
 const IntroText = styled(Text, {

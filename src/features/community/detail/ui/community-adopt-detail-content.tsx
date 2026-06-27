@@ -174,7 +174,7 @@ export const CommunityAdoptDetailContent = ({ id }: CommunityAdoptDetailContentP
                 title="기본정보"
                 rows={[
                   { label: '품종', value: overviews.breed },
-                  ...(overviews.region ? [{ label: '지역', value: overviews.region }] : []),
+                  ...(overviews.region ? [{ label: '장소', value: overviews.region }] : []),
                   { label: '나이', value: infos.age },
                   { label: '성별', value: infos.gender },
                   { label: '크기·몸무게', value: infos.weight }

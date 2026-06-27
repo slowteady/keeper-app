@@ -12,10 +12,11 @@ import { SHEET_BACKGROUND_STYLE, SheetContainer, sheetHandleIndicatorStyle } fro
 
 export interface BottomSheetLayoutProps extends Omit<BottomSheetModalProps, 'children'> {
   children?: React.ReactNode;
+  disableViewWrap?: boolean;
 }
 
 export const BottomSheet = forwardRef<BottomSheetModal, BottomSheetLayoutProps>((props, ref) => {
-  const { children, ...rest } = props;
+  const { children, disableViewWrap, ...rest } = props;
 
   const { white800 } = useTheme();
 
@@ -35,7 +36,11 @@ export const BottomSheet = forwardRef<BottomSheetModal, BottomSheetLayoutProps>(
       containerComponent={SheetContainer}
       {...rest}
     >
-      <BottomSheetView style={{ flexDirection: 'column', flex: 1, paddingTop: 12 }}>{children}</BottomSheetView>
+      {disableViewWrap ? (
+        children
+      ) : (
+        <BottomSheetView style={{ flexDirection: 'column', flex: 1, paddingTop: 12 }}>{children}</BottomSheetView>
+      )}
     </BottomSheetModal>
   );
 });

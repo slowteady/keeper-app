@@ -5,4 +5,5 @@ export * from './community-write-header';
 export * from './post-card';
 export * from './post-card-header';
 export * from './post-card-skeleton';
+export * from './post-list-item-skeleton';
 export * from './post-stats';

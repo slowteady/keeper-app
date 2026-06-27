@@ -7,7 +7,7 @@ import { KeyboardAwareScrollView, KeyboardStickyView } from 'react-native-keyboa
 import { styled, View } from 'tamagui';
 
 import { ADOPT_FORM_FIELD_ORDER, CommunityAdoptFormDto, communityQueries } from '@/entities/community';
-import { LocationBottomSheet, useLocationBottomSheet } from '@/features/address';
+import { LocationBottomSheet, resolveRegionFromPlace, useLocationBottomSheet } from '@/features/address';
 import { QnaEditContent, useEditPost } from '@/features/community';
 import { findFirstFieldError, globalToast } from '@/shared/lib';
 import { useLayout } from '@/shared/model';
@@ -58,14 +58,21 @@ const EditContent = ({ postId }: { postId: string }) => {
 
   const {
     ref: locationRef,
-    searchedAddresses,
+    results: locationResults,
     isPending: isLocationPending,
+    isFetchingNextPage: isLocationFetchingNextPage,
+    hasNextPage: locationHasNextPage,
+    fetchNextPage: fetchLocationNextPage,
     openBottomSheet,
-    submitGeocode,
+    keyword: locationKeyword,
+    setKeyword: setLocationKeyword,
     getAddress,
     dismiss: dismissLocation
-  } = useLocationBottomSheet((selectedAddress) => {
-    form.setValue('location', selectedAddress.address.address_name, { shouldDirty: true });
+  } = useLocationBottomSheet((selected) => {
+    void resolveRegionFromPlace(selected).then(({ location, regionCode }) => {
+      form.setValue('location', location, { shouldDirty: true });
+      if (regionCode) form.setValue('regionCode', regionCode, { shouldDirty: true });
+    });
   });
 
   const selectTriggers: Partial<Record<keyof CommunityAdoptFormDto, () => void>> = {
@@ -119,11 +126,15 @@ const EditContent = ({ postId }: { postId: string }) => {
 
       <LocationBottomSheet
         ref={locationRef}
-        addresses={searchedAddresses || []}
+        results={locationResults}
+        query={locationKeyword}
+        onChangeText={setLocationKeyword}
         onDismiss={dismissLocation}
-        onSearch={submitGeocode}
         onSelectAddress={getAddress}
         isPending={isLocationPending}
+        isFetchingNextPage={isLocationFetchingNextPage}
+        hasNextPage={locationHasNextPage}
+        fetchNextPage={fetchLocationNextPage}
       />
 
       <CancelModal

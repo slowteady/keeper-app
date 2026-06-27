@@ -94,8 +94,8 @@ export const CommunityAdoptForm = ({
           <LabelSelectField
             name="location"
             control={control}
-            label="지역"
-            placeholder="지역을 선택해주세요"
+            label="장소"
+            placeholder="장소를 검색해주세요"
             required
             onPress={onPressLocation}
           />

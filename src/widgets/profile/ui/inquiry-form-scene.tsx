@@ -32,7 +32,7 @@ export const InquiryFormScene = () => {
       containerProps={{ bg: '$pageBackground' }}
       contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 24 }}
       footer={
-        <BottomButton onPress={handleSubmit} disabled={!isValid || isPending}>
+        <BottomButton onPress={handleSubmit} disabled={!isValid || isPending} isLoading={isPending}>
           등록하기
         </BottomButton>
       }

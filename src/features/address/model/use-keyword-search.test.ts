@@ -38,16 +38,16 @@ beforeEach(() => {
 });
 
 describe('useKeywordSearch', () => {
-  it('검색 전에는 요청하지 않는다', () => {
+  it('검색어 입력 전에는 요청하지 않는다', () => {
     renderHook(() => useKeywordSearch(), { wrapper: createWrapper() });
 
     expect(mockedKakaoGet).not.toHaveBeenCalled();
   });
 
-  it('검색 후 다음 페이지를 이어 붙인다', async () => {
+  it('검색어 입력 후 디바운스 시간이 지나면 다음 페이지를 이어 붙인다', async () => {
     const { result } = renderHook(() => useKeywordSearch(), { wrapper: createWrapper() });
 
-    act(() => result.current.submitSearch(' 강남 '));
+    act(() => result.current.setKeyword(' 강남 '));
 
     await waitFor(() => expect(result.current.results).toHaveLength(1));
     expect(mockedKakaoGet).toHaveBeenLastCalledWith('keyword.json', {
@@ -61,5 +61,17 @@ describe('useKeywordSearch', () => {
       params: { query: '강남', page: 2, size: 15 }
     });
     expect(result.current.hasNextPage).toBe(false);
+  });
+
+  it('reset 하면 검색어와 결과가 비워진다', async () => {
+    const { result } = renderHook(() => useKeywordSearch(), { wrapper: createWrapper() });
+
+    act(() => result.current.setKeyword('강남'));
+    await waitFor(() => expect(result.current.results).toHaveLength(1));
+
+    act(() => result.current.reset());
+
+    await waitFor(() => expect(result.current.results).toBeUndefined());
+    expect(result.current.keyword).toBe('');
   });
 });

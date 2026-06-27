@@ -15,13 +15,13 @@ jest.mock('@shopify/flash-list', () => ({
 }));
 
 jest.mock('@/entities/comment', () => ({
-  CommentCardSkeleton: () => <MockView testID="activity-skeleton" />,
   commentQueries: { all: () => ['comment'] }
 }));
 
 jest.mock('@/entities/community', () => ({
   CommentListItem: () => null,
-  CommunityPostListItem: () => null
+  CommunityPostListItem: () => null,
+  PostListItemSkeleton: () => <MockView testID="activity-skeleton" />
 }));
 
 jest.mock('@/features/profile', () => ({

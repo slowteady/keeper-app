@@ -9,6 +9,8 @@ import { useBlock } from '@/features/community/safety';
 import { globalToast, pressHaptic } from '@/shared/lib';
 import { BottomSheetMenu, type BottomSheetMenuData, ConfirmModal, useBottomSheet, useModal } from '@/shared/ui';
 
+import { patchPostCommentCount } from '../lib/patch-comment-count';
+
 export type CommentMenuId = 'EDIT' | 'DELETE' | 'REPORT' | 'BLOCK';
 
 const MINE_MENU: readonly BottomSheetMenuData<CommentMenuId>[] = [
@@ -31,6 +33,7 @@ export type UseCommentMenuParams = {
 };
 
 type MyCommentPage = { items: MyCommentItemDto[]; total: number } & Record<string, unknown>;
+type CommentListPage = { items: { id: string }[] } & Record<string, unknown>;
 
 export const useCommentMenu = ({ onEdit, onDeleteSuccess }: UseCommentMenuParams) => {
   const { user } = useCurrentUser();
@@ -41,8 +44,9 @@ export const useCommentMenu = ({ onEdit, onDeleteSuccess }: UseCommentMenuParams
   const queryClient = useQueryClient();
 
   const deleteMutation = useMutation({
-    mutationFn: (commentId: string) => commentApi.remove(commentId),
-    onSuccess: async (_, commentId) => {
+    mutationFn: ({ commentId }: { commentId: string; postId?: string }) => commentApi.remove(commentId),
+    onSuccess: async (_, { commentId, postId }) => {
+      if (postId) patchPostCommentCount(queryClient, postId, -1);
       queryClient.setQueriesData<InfiniteData<MyCommentPage>>(
         { queryKey: communityQueries.myCommentList().queryKey },
         (old) =>
@@ -55,10 +59,27 @@ export const useCommentMenu = ({ onEdit, onDeleteSuccess }: UseCommentMenuParams
             }))
           }
       );
+      const removeFromList = (old?: InfiniteData<CommentListPage>) =>
+        old && {
+          ...old,
+          pages: old.pages.map((page) => ({
+            ...page,
+            items: page.items.filter((comment) => comment.id !== commentId)
+          }))
+        };
+      queryClient.setQueriesData<InfiniteData<CommentListPage>>(
+        { queryKey: [...commentQueries.all(), 'list'] },
+        removeFromList
+      );
+      queryClient.setQueriesData<InfiniteData<CommentListPage>>(
+        { queryKey: [...commentQueries.all(), 'replies'] },
+        removeFromList
+      );
       onDeleteSuccess?.();
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: commentQueries.all() }),
-        queryClient.invalidateQueries({ queryKey: communityQueries.myCommentList().queryKey })
+        queryClient.invalidateQueries({ queryKey: communityQueries.myCommentList().queryKey }),
+        queryClient.invalidateQueries({ queryKey: [...communityQueries.all(), 'detail'] })
       ]);
     },
     onError: () => globalToast('댓글을 삭제하지 못했어요', 'fail')
@@ -92,7 +113,7 @@ export const useCommentMenu = ({ onEdit, onDeleteSuccess }: UseCommentMenuParams
                 onCancel={closeModal}
                 onConfirm={() => {
                   closeModal();
-                  deleteMutation.mutate(commentId);
+                  deleteMutation.mutate({ commentId, postId });
                 }}
               />
             );

@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { forwardRef, ReactNode } from 'react';
 import { Pressable, StyleSheet } from 'react-native';
 import { styled, Text, TextAreaProps, View, XStack } from 'tamagui';
 
@@ -22,59 +22,67 @@ export type CommentFormInputProps = Omit<TextAreaProps, 'onSubmitEditing'> & {
 };
 
 // 게시글 좋아요는 헤더 하트만 — 입력창에 좋아요 둘 필요 X (Instagram/Threads/29cm 표준).
-export const CommentFormInput = ({
-  value,
-  onChangeText,
-  onSubmit,
-  isPending = false,
-  banner,
-  submitLabel = '등록',
-  disabled = false,
-  onTapWhenDisabled,
-  leading,
-  ...rest
-}: CommentFormInputProps) => {
-  const canSubmit = value.trim().length > 0 && !isPending && !disabled;
+export const CommentFormInput = forwardRef<React.ElementRef<typeof TextArea>, CommentFormInputProps>(
+  (
+    {
+      value,
+      onChangeText,
+      onSubmit,
+      isPending = false,
+      banner,
+      submitLabel = '등록',
+      disabled = false,
+      onTapWhenDisabled,
+      leading,
+      ...rest
+    },
+    ref
+  ) => {
+    const canSubmit = value.trim().length > 0 && !isPending && !disabled;
 
-  return (
-    <Container>
-      {banner && (
-        <BannerRow>
-          <BannerText>{banner.label}</BannerText>
-          <Pressable onPress={banner.onCancel} hitSlop={10}>
-            <CancelText>취소</CancelText>
-          </Pressable>
-        </BannerRow>
-      )}
-      <InputRow>
-        {leading && <View mr={8}>{leading}</View>}
-        <View flex={1} mr={6} position="relative">
-          <TextArea
-            placeholder="소중한 의견을 남겨주세요:)"
-            value={value}
-            onChangeText={onChangeText}
-            testID="comment-input"
-            {...rest}
-          />
-          {disabled && (
-            <Pressable style={StyleSheet.absoluteFill} onPress={onTapWhenDisabled} testID="comment-input-guard" />
-          )}
-        </View>
+    return (
+      <Container>
+        {banner && (
+          <BannerRow>
+            <BannerText>{banner.label}</BannerText>
+            <Pressable onPress={banner.onCancel} hitSlop={10}>
+              <CancelText>취소</CancelText>
+            </Pressable>
+          </BannerRow>
+        )}
+        <InputRow>
+          {leading && <View mr={8}>{leading}</View>}
+          <View flex={1} mr={6} position="relative">
+            <TextArea
+              ref={ref}
+              placeholder="소중한 의견을 남겨주세요:)"
+              value={value}
+              onChangeText={onChangeText}
+              testID="comment-input"
+              {...rest}
+            />
+            {disabled && (
+              <Pressable style={StyleSheet.absoluteFill} onPress={onTapWhenDisabled} testID="comment-input-guard" />
+            )}
+          </View>
 
-        <Button
-          color="secondary"
-          size="small"
-          style={{ minWidth: 72 }}
-          disabled={!canSubmit}
-          onPress={disabled ? onTapWhenDisabled : onSubmit}
-          testID="comment-submit"
-        >
-          {submitLabel}
-        </Button>
-      </InputRow>
-    </Container>
-  );
-};
+          <Button
+            color="secondary"
+            size="small"
+            style={{ minWidth: 72 }}
+            disabled={!canSubmit}
+            onPress={disabled ? onTapWhenDisabled : onSubmit}
+            testID="comment-submit"
+          >
+            {submitLabel}
+          </Button>
+        </InputRow>
+      </Container>
+    );
+  }
+);
+
+CommentFormInput.displayName = 'CommentFormInput';
 
 const Container = styled(View, {
   borderTopWidth: 1,

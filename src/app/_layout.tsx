@@ -187,7 +187,10 @@ const RootLayout = () => {
         <SuspensionGateScreen
           reason={suspension.reason}
           suspendedUntil={suspension.suspendedUntil}
-          onConfirm={clearSuspended}
+          onConfirm={() => {
+            clearSuspended();
+            router.replace('/(tabs)/home');
+          }}
         />
       </TamaguiProvider>
     );

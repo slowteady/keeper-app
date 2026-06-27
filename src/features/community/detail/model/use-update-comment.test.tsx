@@ -72,6 +72,67 @@ describe('useUpdateComment', () => {
     expect(mockedToast).not.toHaveBeenCalled();
   });
 
+  it('onMutate 시 서버 응답 전에 list 캐시 댓글 내용을 즉시 교체 (optimistic)', async () => {
+    let resolveUpdate!: (value: unknown) => void;
+    mockedUpdate.mockReturnValue(new Promise((res) => (resolveUpdate = res)));
+    const { queryClient, wrapper } = setup();
+    const listKey = [...commentQueries.all(), 'list', '10'];
+    queryClient.setQueryData(listKey, {
+      pages: [{ items: [{ id: '5', content: '원본', isEdited: false }] }],
+      pageParams: [undefined]
+    });
+
+    const { result } = renderHook(() => useUpdateComment({ postId: '10' }), { wrapper });
+
+    let pending!: Promise<unknown>;
+    act(() => {
+      pending = result.current.mutateAsync({ commentId: '5', content: '수정후' }).catch(() => undefined);
+    });
+
+    await waitFor(() => {
+      const data = queryClient.getQueryData(listKey) as { pages: { items: { content: string }[] }[] };
+      expect(data.pages[0].items[0].content).toBe('수정후');
+    });
+
+    await act(async () => {
+      resolveUpdate({ id: '5', content: '수정후', isEdited: true });
+      await pending;
+    });
+  });
+
+  it('실패 시 optimistic 변경을 원본으로 롤백', async () => {
+    let rejectUpdate!: (reason: unknown) => void;
+    mockedUpdate.mockReturnValue(new Promise((_, rej) => (rejectUpdate = rej)));
+    const { queryClient, wrapper } = setup();
+    const listKey = [...commentQueries.all(), 'list', '10'];
+    queryClient.setQueryData(listKey, {
+      pages: [{ items: [{ id: '5', content: '원본', isEdited: false }] }],
+      pageParams: [undefined]
+    });
+
+    const { result } = renderHook(() => useUpdateComment({ postId: '10' }), { wrapper });
+
+    let pending!: Promise<unknown>;
+    act(() => {
+      pending = result.current.mutateAsync({ commentId: '5', content: '수정후' }).catch(() => undefined);
+    });
+
+    await waitFor(() => {
+      const data = queryClient.getQueryData(listKey) as { pages: { items: { content: string }[] }[] };
+      expect(data.pages[0].items[0].content).toBe('수정후');
+    });
+
+    await act(async () => {
+      rejectUpdate(new Error('network'));
+      await pending;
+    });
+
+    await waitFor(() => {
+      const data = queryClient.getQueryData(listKey) as { pages: { items: { content: string }[] }[] };
+      expect(data.pages[0].items[0].content).toBe('원본');
+    });
+  });
+
   it('실패 시 실패 토스트', async () => {
     mockedUpdate.mockRejectedValue(new Error('network'));
     const { wrapper } = setup();
