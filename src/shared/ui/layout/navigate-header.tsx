@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { Text, useTheme, View } from 'tamagui';
 
 import { LeftLineArrow } from '@/shared/ui/icons/mini';
-import { Home } from '@/shared/ui/icons/outline';
+import { Home2 } from '@/shared/ui/icons/outline';
 
 import { HeaderLayout } from './header-layout';
 
@@ -46,7 +46,7 @@ export const NavigateHeader = ({ text, hideHome = false, showShadow = true }: Na
     <View width={28} height={28} />
   ) : (
     <View onPress={goHome} hitSlop={10}>
-      <Home width={28} height={28} color={black900.val} />
+      <Home2 width={28} height={28} color={black900.val} />
     </View>
   );
 
