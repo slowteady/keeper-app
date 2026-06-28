@@ -46,7 +46,7 @@ describe('AdoptDataSchema', () => {
   });
 
   it('id 누락 시 실패', () => {
-    const { id, ...rest } = VALID_ADOPT;
+    const { id: _id, ...rest } = VALID_ADOPT;
     expect(() => AdoptDataSchema.parse(rest)).toThrow();
   });
 });

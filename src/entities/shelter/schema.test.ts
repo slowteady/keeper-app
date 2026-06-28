@@ -28,7 +28,7 @@ describe('ShelterSchema', () => {
   });
 
   it('latitude 누락 시 실패', () => {
-    const { latitude, ...rest } = VALID_SHELTER;
+    const { latitude: _latitude, ...rest } = VALID_SHELTER;
     expect(() => ShelterSchema.parse(rest)).toThrow();
   });
 

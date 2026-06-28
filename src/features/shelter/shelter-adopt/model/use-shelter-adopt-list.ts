@@ -43,7 +43,7 @@ export const useShelterAdoptList = ({ id, adoptsParams }: UseShelterAdoptListPro
     return mapToAdoptList(data.items);
   }, [data]);
 
-  const changeFilter = useCallback((id: string) => router.setParams({ filter: id }), [router]);
+  const changeFilter = useCallback((id: string) => router.setParams({ filter: id }), []);
 
   const refresh = useCallback(async () => {
     await queryClient.invalidateQueries({ queryKey: shelterQueries.all() });
@@ -56,7 +56,7 @@ export const useShelterAdoptList = ({ id, adoptsParams }: UseShelterAdoptListPro
     }
   }, [fetchNextPageQuery, hasNextPage]);
 
-  const goDetail = useCallback((id: string) => router.push({ pathname: '/adopt/[id]', params: { id } }), [router]);
+  const goDetail = useCallback((id: string) => router.push({ pathname: '/adopt/[id]', params: { id } }), []);
 
   const moreButtonText = useMemo(() => {
     const currentPage = data?.page ?? 1;

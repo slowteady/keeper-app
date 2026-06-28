@@ -141,7 +141,7 @@ const RootLayout = () => {
     };
 
     init();
-  }, [fontLoaded]);
+  }, [fontLoaded, queryClient]);
 
   useEffect(() => {
     if (isAppReady) {

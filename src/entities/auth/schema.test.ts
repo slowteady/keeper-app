@@ -28,7 +28,7 @@ describe('UserSchema', () => {
   });
 
   it('image 가 누락되면 실패', () => {
-    const { image, ...rest } = VALID_USER;
+    const { image: _image, ...rest } = VALID_USER;
     expect(() => UserSchema.parse(rest)).toThrow();
   });
 });
