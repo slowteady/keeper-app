@@ -1,7 +1,7 @@
 import { RefObject } from 'react';
 import { Control, Controller, useFormState } from 'react-hook-form';
 import { KeyboardTypeOptions, TextInput } from 'react-native';
-import { YStack } from 'tamagui';
+import { Text, YStack } from 'tamagui';
 
 import { CommunityAdoptFormDto, CREATE_POST_OPTIONS } from '@/entities/community';
 import { ChipGroup, TextField } from '@/shared/ui';
@@ -11,6 +11,7 @@ import { FieldLabel } from './field-label';
 
 export type ContactSelectFieldProps = {
   label: string;
+  helper?: string;
   required?: boolean;
   control: Control<CommunityAdoptFormDto>;
   inputRef?: RefObject<TextInput | null>;
@@ -44,7 +45,7 @@ const getMaxLength = (type: string): number => (type === 'PHONE' ? 13 : 100);
 
 const formatValue = (type: string, value: string): string => (type === 'PHONE' ? formatPhone(value) : value);
 
-export const ContactSelectField = ({ control, label, required, inputRef }: ContactSelectFieldProps) => {
+export const ContactSelectField = ({ control, label, helper, required, inputRef }: ContactSelectFieldProps) => {
   const { errors, submitCount } = useFormState({ control, name: 'contact' });
   const showErrors = submitCount > 0;
   const contactError = errors.contact;
@@ -75,7 +76,12 @@ export const ContactSelectField = ({ control, label, required, inputRef }: Conta
 
         return (
           <YStack>
-            <FieldLabel title={label} required={required} />
+            <FieldLabel title={label} required={required} mb={helper ? 4 : 8} />
+            {helper && (
+              <Text fontSize={13} lineHeight={18} color="$black500" mb={12}>
+                {helper}
+              </Text>
+            )}
             <ChipGroup
               variant="secondary"
               multiple

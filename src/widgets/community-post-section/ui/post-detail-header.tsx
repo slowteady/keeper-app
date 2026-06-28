@@ -57,7 +57,7 @@ export const PostDetailHeader = ({
         <PostCardHeader image={image} nickname={nickname} />
         <XStack gap={16} items="center" style={{ flexShrink: 0 }}>
           <Pressable onPress={handlePressLike} hitSlop={10} testID="community-detail-heart">
-            <AnimatedHeart size={26} isLiked={isLiked} inactiveColor={black600.val} />
+            <AnimatedHeart size={24} isLiked={isLiked} inactiveColor={black600.val} />
           </Pressable>
           {onPressShare && (
             <Pressable
@@ -66,7 +66,7 @@ export const PostDetailHeader = ({
               accessibilityLabel="공유하기"
               testID="community-detail-share"
             >
-              <ShareIcon width={24} height={24} color={black600.val} />
+              <ShareIcon width={22} height={22} color={black600.val} />
             </Pressable>
           )}
           {onPressMore && (
@@ -76,7 +76,7 @@ export const PostDetailHeader = ({
               accessibilityLabel="더보기"
               testID="community-detail-more"
             >
-              <MoreVertical size={22} color={black600.val as never} />
+              <MoreVertical size={20} color={black600.val as never} />
             </Pressable>
           )}
         </XStack>

@@ -100,10 +100,10 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
           )}
           <Actions>
             <Pressable hitSlop={10} onPress={() => toggleFavoriteAbandonment(adopt.id, adopt.isFavorited ?? false)}>
-              <AnimatedHeart isLiked={adopt.isFavorited} size={26} inactiveColor={black600.val} />
+              <AnimatedHeart isLiked={adopt.isFavorited} size={24} inactiveColor={black600.val} />
             </Pressable>
             <Pressable hitSlop={10} onPress={handlePressShare} accessibilityLabel="공유">
-              <ShareIcon width={24} height={24} color={black600.val} />
+              <ShareIcon width={22} height={22} color={black600.val} />
             </Pressable>
           </Actions>
         </ActionRow>

@@ -50,12 +50,12 @@ export const ShelterDetailOverviewSection = ({
         <Actions>
           {onPressFavorite && (
             <Pressable hitSlop={10} onPress={handlePressFavorite}>
-              <AnimatedHeart isLiked={isFavorited} size={26} inactiveColor={black600.val} />
+              <AnimatedHeart isLiked={isFavorited} size={24} inactiveColor={black600.val} />
             </Pressable>
           )}
           {onPressShare && (
             <Pressable hitSlop={10} onPress={onPressShare} accessibilityLabel="공유">
-              <ShareIcon width={24} height={24} color={black600.val} />
+              <ShareIcon width={22} height={22} color={black600.val} />
             </Pressable>
           )}
         </Actions>
