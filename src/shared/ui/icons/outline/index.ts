@@ -1,4 +1,5 @@
 export { default as ActiveHeart } from './active-heart';
+export { default as ActiveHome } from './active-home';
 export { default as ActiveHome2 } from './active-home2';
 export { default as ActiveLocation } from './active-location';
 export { default as ActiveMessage } from './active-message';

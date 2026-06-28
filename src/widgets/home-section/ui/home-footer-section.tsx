@@ -1,5 +1,4 @@
 import { router } from 'expo-router';
-import { Linking } from 'react-native';
 import { styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
 
 import { SCREEN_GUTTER } from '@/shared/lib';
@@ -8,10 +7,6 @@ import { Logo } from '@/shared/ui/icons/outline';
 export const HomeFooterSection = () => {
   const { black900 } = useTheme();
   const year = new Date().getFullYear();
-
-  const handlePressContact = () => {
-    Linking.openURL(`mailto:${process.env.EXPO_PUBLIC_DEVELOPER_EMAIL}`);
-  };
 
   return (
     <Container px={SCREEN_GUTTER} py={40}>
@@ -32,7 +27,7 @@ export const HomeFooterSection = () => {
           </View>
         </XStack>
 
-        <View onPress={handlePressContact} hitSlop={12}>
+        <View onPress={() => router.push('/(untabs)/profile/inquiry/new')} hitSlop={12}>
           <LinkText>문의하기</LinkText>
         </View>
       </YStack>

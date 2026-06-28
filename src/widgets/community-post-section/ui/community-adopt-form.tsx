@@ -1,7 +1,7 @@
 import { RefObject } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { LayoutChangeEvent, TextInput } from 'react-native';
-import { Accordion, Form, Square, styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
+import { Accordion, Form, Square, styled, Text, useTheme, View, YStack } from 'tamagui';
 
 import { CommunityAdoptFormDto, CREATE_POST_OPTIONS } from '@/entities/community';
 import { ContactSelectField } from '@/features/community/create/ui/field/contact-select-field';
@@ -272,33 +272,15 @@ export const CommunityAdoptForm = ({
 
       <Divider />
 
-      <Accordion type="single" collapsible defaultValue="contact" onLayout={onContactLayout}>
-        <Accordion.Item value="contact">
-          <Accordion.Header unstyled>
-            <AccordionSectionTrigger unstyled>
-              {({ open }: { open: boolean }) => (
-                <>
-                  <TriggerTitleWrap>
-                    <XStack items="center" gap={4}>
-                      <SectionTitle mb={0}>연락처</SectionTitle>
-                      <RequiredMark>*</RequiredMark>
-                    </XStack>
-                    <TriggerSubtitle>여러 개 선택할 수 있어요</TriggerSubtitle>
-                  </TriggerTitleWrap>
-                  {renderArrow(open)}
-                </>
-              )}
-            </AccordionSectionTrigger>
-          </Accordion.Header>
-          <Accordion.Content bg="transparent" p={0}>
-            <Accordion.HeightAnimator animation="quick" exitStyle={{ opacity: 0, height: 0 }}>
-              <YStack px={SCREEN_GUTTER} pb={24} gap={12}>
-                <ContactSelectField control={control} label="연락 정보" required inputRef={fieldRefs?.contactInput} />
-              </YStack>
-            </Accordion.HeightAnimator>
-          </Accordion.Content>
-        </Accordion.Item>
-      </Accordion>
+      <Section onLayout={onContactLayout}>
+        <ContactSelectField
+          control={control}
+          label="연락 정보"
+          helper="여러 개 선택할 수 있어요"
+          required
+          inputRef={fieldRefs?.contactInput}
+        />
+      </Section>
     </Form>
   );
 };
@@ -315,27 +297,16 @@ const Divider = styled(View, {
 
 const SectionTitle = styled(Text, {
   fontSize: 18,
+  lineHeight: 26,
   fontWeight: '600',
   color: '$blackMain',
   letterSpacing: -0.25,
   mb: 16
 });
 
-const RequiredMark = styled(Text, {
-  fontSize: 18,
-  fontWeight: '600',
-  color: '$errorMain'
-});
-
 const TriggerTitleWrap = styled(YStack, {
   flex: 1,
   gap: 4
-});
-
-const TriggerSubtitle = styled(Text, {
-  fontSize: 13,
-  lineHeight: 18,
-  color: '$black500'
 });
 
 const Caption = styled(Text, {
