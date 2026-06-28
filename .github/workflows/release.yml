@@ -7,7 +7,7 @@ on:
         description: "릴리즈 버전 (X.X.X) ⚠️ 브랜치는 main 선택"
         required: true
         type: string
-        default: "1.3.17"
+        default: "2.0.0"
 
 jobs:
   release:
