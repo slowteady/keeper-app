@@ -38,7 +38,7 @@ export const useRegisterPushToken = (enabled: boolean) => {
       await notificationApi.registerPushToken({ token, platform });
       lastTokenRef.current = token;
     } catch (error) {
-      logger.error('[notification] push token register failed', error);
+      logger.log('[notification] push token register skipped', error);
     }
   }, [enabled, check]);
 

@@ -43,6 +43,10 @@ const remove = async (id: string): Promise<void> => {
   await authApi.delete<AxiosResponse>(`${NOTIFICATION_BASE}/${id}`);
 };
 
+const removeAll = async (): Promise<void> => {
+  await authApi.delete<AxiosResponse>(NOTIFICATION_BASE);
+};
+
 const registerPushToken = async (body: { token: string; platform: PushPlatformDto }): Promise<void> => {
   await authApi.post<AxiosResponse>(PUSH_TOKEN_BASE, body);
 };
@@ -67,6 +71,7 @@ export const notificationApi = {
   markRead,
   markAllRead,
   remove,
+  removeAll,
   registerPushToken,
   deletePushToken,
   getPreferences,

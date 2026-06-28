@@ -26,7 +26,8 @@ export const NotificationFeed = ({ feed }: NotificationFeedProps) => {
     selectedIds,
     exitSelectMode,
     toggleSelect,
-    deleteSelected
+    deleteSelected,
+    deleteAll
   } = feed;
   const { refreshing, handleRefresh } = useListRefreshing(async () => {
     await refetch();
@@ -83,6 +84,7 @@ export const NotificationFeed = ({ feed }: NotificationFeedProps) => {
         selectedCount={selectedIds.length}
         onMarkAllRead={markAllRead}
         onDeleteSelected={deleteSelected}
+        onDeleteAll={deleteAll}
         onCloseSelectMode={exitSelectMode}
       />
       <FlashList

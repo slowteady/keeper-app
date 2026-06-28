@@ -21,8 +21,10 @@ const extractSegments = (path: string): string[] => {
 
 export function resolveNotificationPath(
   refType: string | null | undefined,
-  refId: string | null | undefined
+  refId: string | null | undefined,
+  type?: string | null
 ): string | null {
+  if (type === 'CONTENT_BLINDED') return '/(untabs)/profile/inquiry/new';
   if (!refType || !refId) return null;
   switch (refType) {
     case 'post':

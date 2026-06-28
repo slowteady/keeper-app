@@ -1,24 +1,35 @@
 import { Bell } from '@tamagui/lucide-icons';
+import type { ReactNode } from 'react';
 import { Pressable } from 'react-native';
 import { styled, Text, XStack, YStack } from 'tamagui';
 
 export type PermissionBannerProps = {
   onPress: () => void;
+  icon?: ReactNode;
+  title?: string;
+  description?: string;
+  ctaLabel?: string;
 };
 
-export const PermissionBanner = ({ onPress }: PermissionBannerProps) => {
+export const PermissionBanner = ({
+  onPress,
+  icon = <Bell size={20} color="$black700" />,
+  title = '알림이 꺼져 있어요',
+  description = '중요한 소식을 받으려면 알림을 켜주세요',
+  ctaLabel = '알림 켜기'
+}: PermissionBannerProps) => {
   return (
     <Container>
       <XStack flex={1} gap={10} items="center" pr={12}>
-        <Bell size={20} color="$black700" />
+        {icon}
         <YStack flex={1} gap={2}>
-          <Title>알림이 꺼져 있어요</Title>
-          <Description>중요한 소식을 받으려면 알림을 켜주세요</Description>
+          <Title>{title}</Title>
+          <Description>{description}</Description>
         </YStack>
       </XStack>
       <Pressable onPress={onPress}>
         <CtaButton>
-          <CtaText>알림 켜기</CtaText>
+          <CtaText>{ctaLabel}</CtaText>
         </CtaButton>
       </Pressable>
     </Container>
@@ -27,7 +38,8 @@ export const PermissionBanner = ({ onPress }: PermissionBannerProps) => {
 
 const Container = styled(XStack, {
   mx: 20,
-  my: 12,
+  mt: 4,
+  mb: 12,
   px: 16,
   py: 14,
   rounded: 12,

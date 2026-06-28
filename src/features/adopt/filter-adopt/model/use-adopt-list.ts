@@ -21,6 +21,7 @@ export const useAdoptList = (params: AdoptListParams) => {
   const {
     data,
     isLoading,
+    isError,
     isFetchingNextPage,
     fetchNextPage: fetchNextPageQuery,
     hasNextPage
@@ -62,6 +63,7 @@ export const useAdoptList = (params: AdoptListParams) => {
     convertedData,
     moreButtonText,
     isLoading,
+    isError,
     isFetchingNextPage,
     hasNextPage,
     refresh,

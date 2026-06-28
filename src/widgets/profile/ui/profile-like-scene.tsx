@@ -124,7 +124,7 @@ const AbandonmentList = () => {
 };
 
 const PersonalList = () => {
-  const { items, isLoading, isFetchingNextPage, fetchNextPage, refetch } = useMyLikedPosts();
+  const { items, isLoading, isError, isFetchingNextPage, fetchNextPage, refetch } = useMyLikedPosts();
   const { refreshing, handleRefresh } = useListRefreshing(async () => {
     await refetch();
   });
@@ -137,12 +137,22 @@ const PersonalList = () => {
         data={item}
         categoryLabel="개인공고"
         hideLikeCount
-        onPress={(id) => router.push(`/(untabs)/community/${id}`)}
+        onPress={(id) => router.push(`/(untabs)/adopt-personal/${id}`)}
         onPressLike={(id, currentlyLiked) => toggleLikePost(id, currentlyLiked)}
       />
     ),
     [toggleLikePost]
   );
+
+  if (!isLoading && isError && items.length === 0) {
+    return (
+      <ProfileEmptyState
+        text="공고를 불러오지 못했어요"
+        description="잠시 후 다시 시도해 주세요"
+        cta={{ label: '다시 시도', onPress: () => refetch() }}
+      />
+    );
+  }
 
   if (!isLoading && items.length === 0) {
     return (
@@ -245,7 +255,7 @@ const COMMUNITY_CATEGORY_LABEL: Record<'ADOPTION_LIFE' | 'QNA', string> = {
 };
 
 const CommunityPostLikeList = () => {
-  const { items, isLoading, isFetchingNextPage, fetchNextPage, refetch } = useMyLikedPosts('community');
+  const { items, isLoading, isError, isFetchingNextPage, fetchNextPage, refetch } = useMyLikedPosts('community');
   const { refreshing, handleRefresh } = useListRefreshing(async () => {
     await refetch();
   });
@@ -263,6 +273,16 @@ const CommunityPostLikeList = () => {
     ),
     [toggleLikePost]
   );
+
+  if (!isLoading && isError && items.length === 0) {
+    return (
+      <ProfileEmptyState
+        text="게시글을 불러오지 못했어요"
+        description="잠시 후 다시 시도해 주세요"
+        cta={{ label: '다시 시도', onPress: () => refetch() }}
+      />
+    );
+  }
 
   if (!isLoading && items.length === 0) {
     return (

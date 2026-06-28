@@ -8,6 +8,13 @@ import { authApi } from '@/shared/api/instance';
 
 import { useNotificationFeed } from './use-notification-feed';
 
+const mockOpen = jest.fn();
+const mockClose = jest.fn();
+jest.mock('@/shared/ui', () => ({
+  useModal: () => ({ open: mockOpen, close: mockClose }),
+  ConfirmModal: (props: Record<string, unknown>) => props
+}));
+
 const mockedApi = authApi as jest.Mocked<typeof authApi>;
 const mockedPush = router.push as jest.Mock;
 
@@ -113,5 +120,28 @@ describe('useNotificationFeed', () => {
     act(() => result.current.enterSelectMode());
     act(() => result.current.deleteSelected());
     expect(mockedApi.delete).not.toHaveBeenCalled();
+  });
+
+  it('전체 삭제 → 확인 모달 열고 confirm 시 DELETE /notifications (선택 무관)', async () => {
+    const { result } = renderHook(() => useNotificationFeed(), { wrapper: wrapper() });
+    await waitFor(() => expect(result.current.items).toHaveLength(2));
+
+    act(() => result.current.deleteAll());
+    expect(mockOpen).toHaveBeenCalledTimes(1);
+
+    const modalProps = mockOpen.mock.calls[0][0].props as { onConfirm: () => void };
+    act(() => modalProps.onConfirm());
+    await waitFor(() => expect(mockedApi.delete).toHaveBeenCalledWith('/notifications'));
+  });
+
+  it('알림 0개면 전체 삭제 확인 모달 안 띄움', async () => {
+    mockedApi.get.mockResolvedValueOnce({
+      data: { code: 'OK', message: '', data: { items: [], total: 0, page: 1, size: 20, hasNext: false } }
+    } as never);
+    const { result } = renderHook(() => useNotificationFeed(), { wrapper: wrapper() });
+    await waitFor(() => expect(result.current.total).toBe(0));
+
+    act(() => result.current.deleteAll());
+    expect(mockOpen).not.toHaveBeenCalled();
   });
 });

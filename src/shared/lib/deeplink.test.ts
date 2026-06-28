@@ -20,6 +20,11 @@ describe('resolveNotificationPath', () => {
     expect(resolveNotificationPath(undefined, undefined)).toBeNull();
   });
 
+  it('CONTENT_BLINDED 통지는 이의제기(문의 작성)로 보낸다', () => {
+    expect(resolveNotificationPath('post', 'p1', 'CONTENT_BLINDED')).toBe('/(untabs)/profile/inquiry/new');
+    expect(resolveNotificationPath(null, null, 'CONTENT_BLINDED')).toBe('/(untabs)/profile/inquiry/new');
+  });
+
   it('미지원 refType 은 null 이고 logger.error 로 기록한다', () => {
     expect(resolveNotificationPath('unknown', 'x')).toBeNull();
     expect(logger.error).toHaveBeenCalledWith('[deeplink] unsupported refType', 'unknown');

@@ -16,7 +16,7 @@ export type ProtectionTypeDto = z.infer<typeof ProtectionTypeSchema>;
 export const CommunityAdoptFormSchema = z.object({
   animalType: AnimalTypeSchema,
   protectionType: ProtectionTypeSchema,
-  title: z.string().min(1, '제목을 입력해주세요').max(50, '제목은 50자 이내로 입력해주세요'),
+  title: z.string().min(2, '제목을 2자 이상 입력해주세요').max(50, '제목은 50자 이내로 입력해주세요'),
   content: z.string().min(1, '소개글을 입력해주세요'),
   images: z.array(z.string()).min(1, '최소 1장의 이미지를 업로드해주세요'),
   contact: z

@@ -3,12 +3,16 @@ import { z } from 'zod';
 export const SocialLoginTypeSchema = z.enum(['GOOGLE', 'APPLE', 'KAKAO']);
 export type SocialLoginType = z.infer<typeof SocialLoginTypeSchema>;
 
+export const UserRoleSchema = z.enum(['USER', 'ADMIN']);
+export type UserRole = z.infer<typeof UserRoleSchema>;
+
 export const UserSchema = z.object({
   id: z.string(),
   nickname: z.string(),
   email: z.string(),
   image: z.string(),
   socialType: SocialLoginTypeSchema,
+  role: UserRoleSchema.optional(),
   nicknameUpdatedAt: z.string().nullable().optional(),
   createdAt: z.string().optional()
 });

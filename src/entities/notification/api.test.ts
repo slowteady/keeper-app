@@ -64,6 +64,12 @@ describe('notificationApi', () => {
     expect(mocked.delete).toHaveBeenCalledWith('/notifications/n1');
   });
 
+  it('removeAll — DELETE /notifications', async () => {
+    mocked.delete.mockResolvedValueOnce({ data: {} });
+    await notificationApi.removeAll();
+    expect(mocked.delete).toHaveBeenCalledWith('/notifications');
+  });
+
   it('registerPushToken — POST /push-tokens with body', async () => {
     mocked.post.mockResolvedValueOnce({ data: {} });
     await notificationApi.registerPushToken({ token: 'ExponentPushToken[x]', platform: 'IOS' });

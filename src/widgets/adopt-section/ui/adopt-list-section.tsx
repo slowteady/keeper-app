@@ -16,6 +16,7 @@ export type AdoptListSectionProps<T> = {
   renderItem: FlashListProps<T>['renderItem'];
   onRefreshCallback: () => Promise<void>;
   isLoading?: boolean;
+  isError?: boolean;
   style?: FlashListProps<T>['style'];
   onScroll?: FlashListProps<T>['onScroll'];
   contentContainerStyle?: FlashListProps<T>['contentContainerStyle'];
@@ -31,6 +32,7 @@ const AdoptListSectionInner = <T extends { id: string }>(
     renderItem,
     onRefreshCallback,
     isLoading = false,
+    isError = false,
     style,
     onScroll,
     contentContainerStyle,
@@ -56,7 +58,13 @@ const AdoptListSectionInner = <T extends { id: string }>(
       ListHeaderComponent={header ?? null}
       ListFooterComponent={footer ?? null}
       ListEmptyComponent={
-        <EmptyComponent isLoading={isLoading} emptyComponentVariant={emptyComponentVariant} numColumns={numColumns} />
+        <EmptyComponent
+          isLoading={isLoading}
+          isError={isError}
+          onRetry={handleRefresh}
+          emptyComponentVariant={emptyComponentVariant}
+          numColumns={numColumns}
+        />
       }
       contentContainerStyle={[{ flexGrow: 1 }, contentContainerStyle]}
       style={style}
@@ -70,10 +78,14 @@ export const AdoptListSection = forwardRef(AdoptListSectionInner) as <T extends 
 
 const EmptyComponent = ({
   isLoading,
+  isError,
+  onRetry,
   emptyComponentVariant,
   numColumns
 }: {
   isLoading: boolean;
+  isError: boolean;
+  onRetry: () => void;
   emptyComponentVariant: 'feed' | 'list';
   numColumns: number;
 }) => {
@@ -96,6 +108,27 @@ const EmptyComponent = ({
           </XStack>
         ))}
       </YStack>
+    );
+  }
+
+  if (isError) {
+    if (emptyComponentVariant === 'feed') {
+      return (
+        <View flex={1} items="center" justify="center" mb={20}>
+          <FeedNodata
+            text="공고를 불러오지 못했어요"
+            description="잠시 후 다시 시도해 주세요"
+            cta={{ label: '다시 시도', onPress: onRetry }}
+          />
+        </View>
+      );
+    }
+    return (
+      <View flex={1} items="center" justify="center" minH={160}>
+        <Text fontSize={15} lineHeight={17} fontWeight="500" color="$black400">
+          공고를 불러오지 못했어요
+        </Text>
+      </View>
     );
   }
 

@@ -34,7 +34,7 @@ export const AdoptShelterScene = ({ scrollY }: { scrollY: SharedValue<number> })
     setBreed(undefined);
   }, [selectedType, setBreed]);
 
-  const { convertedData, moreButtonText, isLoading, isFetchingNextPage, hasNextPage, refresh, fetchNextPage } =
+  const { convertedData, moreButtonText, isLoading, isError, isFetchingNextPage, hasNextPage, refresh, fetchNextPage } =
     useAdoptList({
       filter: selectedFilter,
       animalType: selectedType,
@@ -95,6 +95,7 @@ export const AdoptShelterScene = ({ scrollY }: { scrollY: SharedValue<number> })
       ref={scrollRef}
       data={convertedData}
       isLoading={isLoading}
+      isError={isError}
       onRefreshCallback={refresh}
       onScroll={handleScroll}
       renderItem={renderItem}

@@ -31,7 +31,9 @@ describe('NOTIFICATION enum 가드 (백엔드 단일 출처 미러)', () => {
       'ACCOUNT_SUSPENDED',
       'INQUIRY_ANSWERED',
       'ADMIN_NEW_REPORT',
-      'ADMIN_NEW_INQUIRY'
+      'ADMIN_NEW_INQUIRY',
+      'POST_COMMENTED',
+      'COMMENT_REPLIED'
     ]);
   });
 
@@ -40,7 +42,7 @@ describe('NOTIFICATION enum 가드 (백엔드 단일 출처 미러)', () => {
   });
 
   it('NotificationCategory 값이 동일하다', () => {
-    expect(NOTIFICATION_CATEGORIES).toEqual(['COMMUNITY']);
+    expect(NOTIFICATION_CATEGORIES).toEqual(['COMMUNITY', 'REPORT', 'INQUIRY']);
   });
 
   it('모든 type에 라벨이 정의돼 있다', () => {

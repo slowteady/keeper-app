@@ -2,7 +2,7 @@ import { BrushCleaning } from '@tamagui/lucide-icons';
 import { router } from 'expo-router';
 import { styled, Text, useTheme, View } from 'tamagui';
 
-import { useNotificationFeed } from '@/features/notification';
+import { PermissionBanner, useNotificationFeed, useNotificationPermission } from '@/features/notification';
 import { HeaderLayout } from '@/shared/ui';
 import { LeftLineArrow } from '@/shared/ui/icons/mini';
 import { NotificationFeed } from '@/widgets/notification-feed-section';
@@ -10,6 +10,7 @@ import { NotificationFeed } from '@/widgets/notification-feed-section';
 const Page = () => {
   const { black900 } = useTheme();
   const feed = useNotificationFeed();
+  const { isGranted, openSettings } = useNotificationPermission();
 
   const goBack = () => {
     if (router.canGoBack()) router.back();
@@ -30,13 +31,18 @@ const Page = () => {
 
   const right = feed.items.length > 0 && (
     <View onPress={feed.selectMode ? feed.exitSelectMode : feed.enterSelectMode} hitSlop={10}>
-      <BrushCleaning size={24} color={feed.selectMode ? '$black900' : '$black400'} />
+      <BrushCleaning size={24} color={feed.selectMode ? '$black900' : '$black600'} />
     </View>
   );
 
   return (
     <Container>
       <HeaderLayout left={left} center={center} right={right || <View width={24} />} />
+      {!isGranted && (
+        <View pt={12}>
+          <PermissionBanner onPress={openSettings} />
+        </View>
+      )}
       <NotificationFeed feed={feed} />
     </Container>
   );

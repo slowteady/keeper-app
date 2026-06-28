@@ -9,6 +9,7 @@ export type NotificationListBarProps = {
   selectedCount: number;
   onMarkAllRead: () => void;
   onDeleteSelected: () => void;
+  onDeleteAll: () => void;
   onCloseSelectMode: () => void;
 };
 
@@ -18,6 +19,7 @@ export const NotificationListBar = ({
   selectedCount,
   onMarkAllRead,
   onDeleteSelected,
+  onDeleteAll,
   onCloseSelectMode
 }: NotificationListBarProps) => (
   <Container>
@@ -27,8 +29,11 @@ export const NotificationListBar = ({
         <XStack gap={16} items="center">
           <Pressable onPress={onDeleteSelected} disabled={selectedCount === 0}>
             <ActionText tone="danger" opacity={selectedCount === 0 ? 0.4 : 1}>
-              전체 삭제
+              삭제
             </ActionText>
+          </Pressable>
+          <Pressable onPress={onDeleteAll}>
+            <ActionText tone="danger">전체 삭제</ActionText>
           </Pressable>
           <Pressable onPress={onCloseSelectMode}>
             <ActionText>닫기</ActionText>

@@ -7,12 +7,14 @@ export const NOTIFICATION_TYPES = [
   'ACCOUNT_SUSPENDED',
   'INQUIRY_ANSWERED',
   'ADMIN_NEW_REPORT',
-  'ADMIN_NEW_INQUIRY'
+  'ADMIN_NEW_INQUIRY',
+  'POST_COMMENTED',
+  'COMMENT_REPLIED'
 ] as const;
 
 export const PUSH_PLATFORMS = ['IOS', 'ANDROID'] as const;
 
-export const NOTIFICATION_CATEGORIES = ['COMMUNITY'] as const;
+export const NOTIFICATION_CATEGORIES = ['COMMUNITY', 'REPORT', 'INQUIRY'] as const;
 
 export const NotificationTypeSchema = z.enum(NOTIFICATION_TYPES);
 export type NotificationTypeDto = z.infer<typeof NotificationTypeSchema>;
@@ -30,11 +32,32 @@ export const NOTIFICATION_TYPE_LABEL: Record<NotificationTypeDto, string> = {
   ACCOUNT_SUSPENDED: '계정 정지',
   INQUIRY_ANSWERED: '문의 답변',
   ADMIN_NEW_REPORT: '새 신고',
-  ADMIN_NEW_INQUIRY: '새 문의'
+  ADMIN_NEW_INQUIRY: '새 문의',
+  POST_COMMENTED: '댓글',
+  COMMENT_REPLIED: '답글'
 };
 
-export const NOTIFICATION_CATEGORY_META: Record<NotificationCategoryDto, { label: string; description: string }> = {
-  COMMUNITY: { label: '커뮤니티 알림', description: '문의 답변 등 커뮤니티 활동 소식을 받아요' }
+export type NotificationCategorySection = 'general' | 'admin';
+
+export const NOTIFICATION_CATEGORY_META: Record<
+  NotificationCategoryDto,
+  { label: string; description: string; section: NotificationCategorySection }
+> = {
+  COMMUNITY: {
+    label: '댓글·답글',
+    description: '내 글의 댓글, 내 댓글의 답글 알림을 받아요',
+    section: 'general'
+  },
+  REPORT: {
+    label: '새 신고',
+    description: '새 신고가 접수되면 알림을 받아요',
+    section: 'admin'
+  },
+  INQUIRY: {
+    label: '새 문의',
+    description: '새 문의가 접수되면 알림을 받아요',
+    section: 'admin'
+  }
 };
 
 export const NotificationSchema = z.object({

@@ -5,7 +5,7 @@ import { communityQueries } from '@/entities/community';
 import { useRefetchOnFocus } from '@/shared/model';
 
 export const useMyLikedPosts = (type: 'personal' | 'community' = 'personal') => {
-  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useInfiniteQuery(
+  const { data, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useInfiniteQuery(
     communityQueries.myLikedList(type)
   );
 
@@ -20,6 +20,7 @@ export const useMyLikedPosts = (type: 'personal' | 'community' = 'personal') => 
     total: data?.total ?? 0,
     hasNext: data?.hasNext ?? false,
     isLoading,
+    isError,
     isFetchingNextPage,
     fetchNextPage: handleFetchNextPage,
     refetch

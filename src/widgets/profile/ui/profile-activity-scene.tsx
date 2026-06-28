@@ -135,7 +135,9 @@ const MyPostListItem = ({ item, type }: { item: MyPostItemDto; type: MyPostType 
       data={item}
       categoryLabel={CATEGORY_LABEL[item.category]}
       status={adoptionStatusChip(item)}
-      onPress={(id) => router.push(`/(untabs)/community/${id}`)}
+      onPress={(id) =>
+        router.push(type === 'personal' ? `/(untabs)/adopt-personal/${id}` : `/(untabs)/community/${id}`)
+      }
       onPressMore={openPostMenu}
       hideCategory={type === 'personal'}
       hideLikeCount

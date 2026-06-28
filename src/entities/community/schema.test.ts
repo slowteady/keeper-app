@@ -141,6 +141,14 @@ describe('CommunityAdoptFormSchema', () => {
       const result = CommunityAdoptFormSchema.safeParse({ ...baseValid, [field]: value });
       expect(result.success).toBe(false);
     });
+
+    it('title 이 1자면 에러 (백엔드 min(2) 정합)', () => {
+      const result = CommunityAdoptFormSchema.safeParse({ ...baseValid, title: '제' });
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.issues.find((i) => i.path[0] === 'title')?.message).toBe('제목을 2자 이상 입력해주세요');
+      }
+    });
   });
 
   describe('선택 string 필드', () => {

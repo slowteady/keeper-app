@@ -4,9 +4,11 @@ import { useCallback, useState } from 'react';
 
 import { notificationApi, NotificationDto, notificationQueries } from '@/entities/notification';
 import { resolveNotificationPath } from '@/shared/lib/deeplink';
+import { ConfirmModal, useModal } from '@/shared/ui';
 
 export const useNotificationFeed = () => {
   const queryClient = useQueryClient();
+  const { open, close } = useModal();
 
   const [selectMode, setSelectMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -35,6 +37,7 @@ export const useNotificationFeed = () => {
     mutationFn: (ids: string[]) => Promise.all(ids.map((id) => notificationApi.remove(id))),
     onSuccess: invalidate
   });
+  const deleteAllMutation = useMutation({ mutationFn: notificationApi.removeAll, onSuccess: invalidate });
 
   const fetchNextPage = useCallback(async () => {
     if (hasNextPage && !isFetchingNextPage) await fetchNextPageQuery();
@@ -43,7 +46,7 @@ export const useNotificationFeed = () => {
   const openItem = useCallback(
     (item: NotificationDto) => {
       if (!item.readAt) markReadMutation.mutate(item.id);
-      const path = resolveNotificationPath(item.refType, item.refId);
+      const path = resolveNotificationPath(item.refType, item.refId, item.type);
       if (path) router.push(path as never);
     },
     [markReadMutation]
@@ -70,6 +73,23 @@ export const useNotificationFeed = () => {
     deleteMutation.mutate(selectedIds, { onSuccess: exitSelectMode });
   }, [selectedIds, deleteMutation, exitSelectMode]);
 
+  const deleteAll = useCallback(() => {
+    if (total === 0) return;
+    open(
+      <ConfirmModal
+        title="알림 전체 삭제"
+        description="모든 알림을 삭제할까요?"
+        confirmText="전체 삭제"
+        destructive
+        onConfirm={() => {
+          deleteAllMutation.mutate(undefined, { onSuccess: exitSelectMode });
+          close();
+        }}
+        onCancel={close}
+      />
+    );
+  }, [total, deleteAllMutation, exitSelectMode, open, close]);
+
   return {
     items,
     total,
@@ -86,6 +106,7 @@ export const useNotificationFeed = () => {
     enterSelectMode,
     exitSelectMode,
     toggleSelect,
-    deleteSelected
+    deleteSelected,
+    deleteAll
   };
 };

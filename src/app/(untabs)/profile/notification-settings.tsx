@@ -1,7 +1,8 @@
+import { LogIn } from '@tamagui/lucide-icons';
 import { Pressable } from 'react-native';
-import { ScrollView, Separator, styled, Text, View, YStack } from 'tamagui';
+import { ScrollView, styled, Text, View, XStack, YStack } from 'tamagui';
 
-import { NOTIFICATION_CATEGORY_META } from '@/entities/notification';
+import { NOTIFICATION_CATEGORY_META, NotificationCategoryDto } from '@/entities/notification';
 import { useCurrentUser, useOpenLoginSheet } from '@/features/auth';
 import {
   NotificationToggleRow,
@@ -15,46 +16,54 @@ import { NavigateHeader } from '@/shared/ui';
 const Page = () => {
   const { user } = useCurrentUser();
   const isLoggedIn = Boolean(user);
+  const isAdmin = user?.role === 'ADMIN';
   const openLoginSheet = useOpenLoginSheet();
   const { isGranted, openSettings } = useNotificationPermission();
   const { categories, isEnabled, toggle } = useNotificationPreferences(isLoggedIn);
 
+  const generalCategories = categories.filter((category) => NOTIFICATION_CATEGORY_META[category].section === 'general');
+  const adminCategories = categories.filter((category) => NOTIFICATION_CATEGORY_META[category].section === 'admin');
+
+  const renderToggle = (category: NotificationCategoryDto) => (
+    <NotificationToggleRow
+      key={category}
+      label={NOTIFICATION_CATEGORY_META[category].label}
+      description={NOTIFICATION_CATEGORY_META[category].description}
+      value={isEnabled(category)}
+      onChange={(next) => toggle(category, next)}
+    />
+  );
+
   return (
     <Container>
       <NavigateHeader text="알림 설정" />
-      <ScrollView py={24}>
+      <ScrollView pt={8} pb={24}>
         {!isGranted && <PermissionBanner onPress={openSettings} />}
 
-        <YStack px={SCREEN_GUTTER} mb={24}>
-          <NavText mb={4}>필수 통지</NavText>
-          <NotificationToggleRow
-            label="법적 통지"
-            description="신고 처리·계정 정지 등 법적 통지라 끌 수 없어요"
-            value
-            locked
-          />
-        </YStack>
+        <YStack px={SCREEN_GUTTER} position="relative" mt={16}>
+          <YStack opacity={isLoggedIn ? 1 : 0.35} pointerEvents={isLoggedIn ? undefined : 'none'}>
+            {generalCategories.map(renderToggle)}
+          </YStack>
 
-        <Separator borderColor="$backgroundDefault" mb={24} />
-
-        <YStack px={SCREEN_GUTTER}>
-          <NavText mb={4}>선택 알림</NavText>
-          {isLoggedIn ? (
-            categories.map((category) => (
-              <NotificationToggleRow
-                key={category}
-                label={NOTIFICATION_CATEGORY_META[category].label}
-                description={NOTIFICATION_CATEGORY_META[category].description}
-                value={isEnabled(category)}
-                onChange={(next) => toggle(category, next)}
-              />
-            ))
-          ) : (
-            <Pressable onPress={() => openLoginSheet()} accessibilityRole="button">
-              <LoginPrompt>로그인하면 알림 종류를 설정할 수 있어요</LoginPrompt>
-            </Pressable>
+          {!isLoggedIn && (
+            <Overlay>
+              <LogIn size={22} color="$black700" />
+              <OverlayText>로그인하면 알림을 설정할 수 있어요</OverlayText>
+              <Pressable onPress={() => openLoginSheet()} accessibilityRole="button">
+                <LoginButton>
+                  <LoginButtonText>로그인</LoginButtonText>
+                </LoginButton>
+              </Pressable>
+            </Overlay>
           )}
         </YStack>
+
+        {isAdmin && adminCategories.length > 0 && (
+          <YStack px={SCREEN_GUTTER} mt={32}>
+            <SectionTitle>운영자 알림</SectionTitle>
+            {adminCategories.map(renderToggle)}
+          </YStack>
+        )}
       </ScrollView>
     </Container>
   );
@@ -67,7 +76,8 @@ const Container = styled(View, {
   flex: 1
 });
 
-const NavText = styled(Text, {
+const SectionTitle = styled(Text, {
+  mb: 4,
   fontSize: 14,
   fontWeight: '500',
   lineHeight: 18,
@@ -75,11 +85,37 @@ const NavText = styled(Text, {
   color: '$black500'
 });
 
-const LoginPrompt = styled(Text, {
-  py: 16,
+const Overlay = styled(YStack, {
+  position: 'absolute',
+  t: 0,
+  l: 0,
+  r: 0,
+  b: 0,
+  pt: 16,
+  items: 'center',
+  justify: 'center',
+  gap: 10
+});
+
+const OverlayText = styled(Text, {
   fontSize: 14,
   fontWeight: '500',
   lineHeight: 18,
-  letterSpacing: -0.25,
-  color: '$black600'
+  letterSpacing: -0.28,
+  color: '$black700'
+});
+
+const LoginButton = styled(XStack, {
+  px: 18,
+  py: 9,
+  rounded: 8,
+  bg: '$black800',
+  items: 'center',
+  justify: 'center'
+});
+
+const LoginButtonText = styled(Text, {
+  fontSize: 13,
+  fontWeight: '600',
+  color: '$white900'
 });

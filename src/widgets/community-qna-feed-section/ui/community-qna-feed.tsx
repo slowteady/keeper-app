@@ -26,12 +26,21 @@ export type CommunityQnAFeedProps = {
 export const CommunityQnAFeed = ({ onScroll }: CommunityQnAFeedProps) => {
   const { qnaType, animalType, sort, changeQnaType, changeAnimalType, changeSort } = useCommunityQnaFilter();
   const { toggleLikePost } = useLikePost();
-  const { qnaList, isLoading, isFetchingNextPage, hasNextPage, refresh, fetchNextPage, goDetailPage, goCreatePage } =
-    useCommunityQnaFeed({
-      qnaType: qnaType === 'ALL' ? undefined : qnaType,
-      animalType: animalType === 'ALL' ? undefined : animalType,
-      sort
-    });
+  const {
+    qnaList,
+    isLoading,
+    isError,
+    isFetchingNextPage,
+    hasNextPage,
+    refresh,
+    fetchNextPage,
+    goDetailPage,
+    goCreatePage
+  } = useCommunityQnaFeed({
+    qnaType: qnaType === 'ALL' ? undefined : qnaType,
+    animalType: animalType === 'ALL' ? undefined : animalType,
+    sort
+  });
 
   const scrollRef = useRef<FlashListRef<CommunityQnaListItemDto>>(null);
   useScrollToTop(scrollRef);
@@ -65,7 +74,9 @@ export const CommunityQnAFeed = ({ onScroll }: CommunityQnAFeedProps) => {
         scrollEventThrottle={16}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
         ItemSeparatorComponent={() => <Divider />}
-        ListEmptyComponent={<EmptyState isLoading={isLoading} onPressCreate={goCreatePage} />}
+        ListEmptyComponent={
+          <EmptyState isLoading={isLoading} isError={isError} onRetry={refresh} onPressCreate={goCreatePage} />
+        }
         ListHeaderComponent={
           <YStack gap={12} pb={8}>
             <View px={SCREEN_GUTTER}>
@@ -109,11 +120,32 @@ export const CommunityQnAFeed = ({ onScroll }: CommunityQnAFeedProps) => {
   );
 };
 
-const EmptyState = ({ isLoading, onPressCreate }: { isLoading: boolean; onPressCreate: () => void }) => {
+const EmptyState = ({
+  isLoading,
+  isError,
+  onRetry,
+  onPressCreate
+}: {
+  isLoading: boolean;
+  isError: boolean;
+  onRetry: () => void;
+  onPressCreate: () => void;
+}) => {
   if (isLoading) {
     return (
       <View flex={1} items="center" justify="center" py={48}>
         <ActivityIndicator />
+      </View>
+    );
+  }
+  if (isError) {
+    return (
+      <View flex={1} items="center" justify="center" mb={20} minH={300}>
+        <FeedNodata
+          text="글을 불러오지 못했어요"
+          description="잠시 후 다시 시도해 주세요"
+          cta={{ label: '다시 시도', onPress: onRetry }}
+        />
       </View>
     );
   }

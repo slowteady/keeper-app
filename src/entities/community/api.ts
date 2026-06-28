@@ -8,7 +8,6 @@ import { ApiResponse } from '@/shared/model';
 import {
   CommunityAdoptDetailDto,
   CommunityAdoptDetailSchema,
-  CommunityAdoptFormDto,
   CommunityListResponseDto,
   CommunityListResponseSchema,
   CommunityQnaDetailDto,
@@ -60,19 +59,6 @@ const getPostDetail = async (id: string): Promise<PostDetailUnion> => {
   return raw.category === 'QNA'
     ? { kind: 'QNA', qna: CommunityQnaDetailSchema.parse(raw) }
     : { kind: 'ADOPT', adopt: CommunityAdoptDetailSchema.parse(raw) };
-};
-
-const createAdoptionPersonal = async (body: CommunityAdoptFormDto): Promise<{ id: string }> => {
-  const res = await authApi.post<ApiResponse<CommunityAdoptDetailDto>>(`${COMMUNITY_BASE}/adoption-personal`, body);
-  return { id: res.data.data.id };
-};
-
-const updateAdoptionPersonal = async (id: string, body: CommunityAdoptFormDto): Promise<CommunityAdoptDetailDto> => {
-  const res = await authApi.patch<ApiResponse<CommunityAdoptDetailDto>>(
-    `${COMMUNITY_BASE}/adoption-personal/${id}`,
-    body
-  );
-  return CommunityAdoptDetailSchema.parse(res.data.data);
 };
 
 const deletePost = async (id: string): Promise<void> => {
@@ -163,8 +149,6 @@ const getMyComments = async (params: { page: number; size: number }): Promise<My
 export const communityApi = {
   getList,
   getPostDetail,
-  createAdoptionPersonal,
-  updateAdoptionPersonal,
   getQnaList,
   getQnaDetail,
   createQnaPost,

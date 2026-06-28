@@ -39,6 +39,7 @@ app-example
 android/
 ios/
 service-account.json
+google-services.json
 .env.local
 
 # Claude Code
