@@ -1,0 +1,14 @@
+appId: com.keeper.love
+---
+# 프로필 진입 → 이미 로그인 상태면 로그아웃. 비로그인 상태면 skip.
+- tapOn: '프로필'
+- waitForAnimationToEnd
+- runFlow:
+    when:
+      visible: '테스터123님'
+    commands:
+      - tapOn:
+          id: 'account-logout'
+      - extendedWaitUntil:
+          visible: 'social login'
+          timeout: 10000

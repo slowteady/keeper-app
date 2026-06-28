@@ -1,0 +1,126 @@
+appId: com.keeper.love
+---
+# 홈 진입 + dev client 처리 (iOS)
+- launchApp
+- tapOn:
+    text: '앱을 사용하는 동안 허용'
+    optional: true
+- tapOn:
+    text: 'http://localhost:8081'
+    optional: true
+- waitForAnimationToEnd
+- tapOn:
+    text: 'Continue'
+    optional: true
+- extendedWaitUntil:
+    visible: '입양공고'
+    timeout: 30000
+
+# 홈 화면 섹션 확인
+- assertVisible: '입양공고'
+
+# 배너 캐러셀 스와이프
+- swipe:
+    start: '80%, 30%'
+    end: '20%, 30%'
+    duration: 300
+- swipe:
+    start: '20%, 30%'
+    end: '80%, 30%'
+    duration: 300
+
+# 입양공고 섹션 — 카테고리 변경
+- tapOn: '고양이'
+- tapOn: '강아지'
+- tapOn: '전체'
+
+# 입양공고 섹션 — 필터(드롭다운) 변경
+- tapOn: '마감임박공고'
+- waitForAnimationToEnd
+- tapOn:
+    point: '50%, 90%'
+- waitForAnimationToEnd
+
+# 입양공고 섹션 — 카드 탭 → 상세 이동
+- swipe:
+    start: '50%, 70%'
+    end: '50%, 50%'
+    duration: 300
+- tapOn:
+    point: '30%, 65%'
+- extendedWaitUntil:
+    visible: '공고기간'
+    timeout: 10000
+- assertVisible: '공고기간'
+- swipe:
+    start: '50%, 20%'
+    end: '50%, 80%'
+    duration: 300
+- swipe:
+    start: '50%, 20%'
+    end: '50%, 80%'
+    duration: 300
+- tapOn:
+    point: '12%, 8%'
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: 'Home'
+    timeout: 10000
+
+# 보호소 섹션까지 스와이프
+- swipe:
+    start: '50%, 80%'
+    end: '50%, 10%'
+    duration: 500
+- swipe:
+    start: '50%, 80%'
+    end: '50%, 10%'
+    duration: 500
+- swipe:
+    start: '50%, 80%'
+    end: '50%, 10%'
+    duration: 500
+- swipe:
+    start: '50%, 80%'
+    end: '50%, 10%'
+    duration: 500
+- extendedWaitUntil:
+    visible: '전체보기'
+    timeout: 10000
+- assertVisible: '전체보기'
+
+# 보호소 섹션 — 전체보기 탭 → 보호소 탭 이동
+- tapOn: '전체보기'
+- extendedWaitUntil:
+    visible: '보호소명 또는 주소를 검색해주세요.'
+    timeout: 10000
+- assertVisible: '위치설정'
+
+# 바텀 탭으로 홈 복귀
+- tapOn: 'Home'
+- extendedWaitUntil:
+    visible: '입양공고'
+    timeout: 10000
+
+# 풀 리프레시
+- swipe:
+    start: '50%, 30%'
+    end: '50%, 80%'
+    duration: 500
+- waitForAnimationToEnd
+- assertVisible: '입양공고'
+
+# 바텀 탭 재클릭 — 스크롤 초기화 확인
+- swipe:
+    start: '50%, 80%'
+    end: '50%, 20%'
+    duration: 500
+- swipe:
+    start: '50%, 80%'
+    end: '50%, 20%'
+    duration: 500
+- tapOn: 'Home'
+- extendedWaitUntil:
+    visible: '입양공고'
+    timeout: 5000
+- assertVisible: '입양공고'

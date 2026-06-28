@@ -1,0 +1,37 @@
+import { useEffect } from 'react';
+import { StyleProp, ViewStyle } from 'react-native';
+import Animated, {
+  interpolate,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withTiming
+} from 'react-native-reanimated';
+import { useTheme } from 'tamagui';
+
+export type SkeletonProps = {
+  style?: StyleProp<ViewStyle>;
+  testID?: string;
+};
+
+export const Skeleton = ({ style, testID }: SkeletonProps) => {
+  const animatedValue = useSharedValue(0);
+
+  const { white700 } = useTheme();
+
+  const animatedStyle = useAnimatedStyle(() => {
+    const opacity = interpolate(animatedValue.value, [0, 1], [0.2, 1]);
+    return { opacity };
+  });
+
+  useEffect(() => {
+    animatedValue.value = withRepeat(withTiming(1, { duration: 1500 }), -1, true);
+  }, [animatedValue]);
+
+  return (
+    <Animated.View
+      testID={testID}
+      style={[{ overflow: 'hidden', backgroundColor: white700.val }, animatedStyle, style]}
+    />
+  );
+};

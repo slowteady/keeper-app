@@ -1,0 +1,76 @@
+import { Pressable } from 'react-native';
+import { styled, Text, useTheme, XStack } from 'tamagui';
+
+import { DownArrow } from '@/shared/ui/icons/mini';
+
+export type SelectFieldProps = {
+  value?: string;
+  placeholder?: string;
+  onPress?: () => void;
+  status?: 'default' | 'error';
+  variant?: 'default' | 'fill';
+  left?: React.ReactNode;
+  right?: React.ReactNode;
+};
+
+export const SelectField = ({
+  value,
+  placeholder,
+  onPress,
+  status = 'default',
+  variant = 'fill',
+  left,
+  right
+}: SelectFieldProps) => {
+  const { black500 } = useTheme();
+  const hasValue = !!value;
+
+  return (
+    <Pressable onPress={onPress}>
+      <Container variant={variant} status={status}>
+        {left ? <SideWrapper>{left}</SideWrapper> : null}
+        <ValueText hasValue={hasValue}>{hasValue ? value : placeholder}</ValueText>
+        <SideWrapper>{right ?? <DownArrow width={10} height={6} color={black500.val} />}</SideWrapper>
+      </Container>
+    </Pressable>
+  );
+};
+
+const Container = styled(XStack, {
+  items: 'center',
+  justify: 'space-between',
+  rounded: '$3',
+  height: 48,
+  px: '$4',
+  variants: {
+    variant: {
+      default: { bg: '$white900' },
+      fill: { bg: '$white850' }
+    },
+    status: {
+      default: {},
+      error: {}
+    }
+  } as const,
+  defaultVariants: {
+    variant: 'fill',
+    status: 'default'
+  }
+});
+
+const ValueText = styled(Text, {
+  flex: 1,
+  fontSize: 15,
+  variants: {
+    hasValue: {
+      true: { color: '$black900', fontWeight: 500 },
+      false: { color: '$black500', fontWeight: 400 }
+    }
+  } as const
+});
+
+const SideWrapper = styled(XStack, {
+  items: 'center',
+  gap: '$2',
+  pl: '$2'
+});

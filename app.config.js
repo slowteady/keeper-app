@@ -1,4 +1,5 @@
 import 'dotenv/config';
+
 import { version as pkgVersion } from './package.json';
 
 const iosConfig = require('./config/ios.cjs');
@@ -13,8 +14,7 @@ export default () => ({
     orientation: 'portrait',
     scheme: 'keeper',
     userInterfaceStyle: 'automatic',
-    newArchEnabled: true,
-    ios: iosConfig,
+    ios: { ...iosConfig, bundleIdentifier: 'com.keeper.love' },
     android: androidConfig,
     plugins,
     experiments: { typedRoutes: true },

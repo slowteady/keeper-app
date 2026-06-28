@@ -1,0 +1,81 @@
+appId: com.keeper.love
+---
+# 로그인 + 정책 미동의 — 모든 정책 게이트 트리거가 시트 노출.
+# 사전: .maestro/scripts/setup-policy.sh not-agreed
+- runFlow:
+    file: ./_setup-launch.yaml
+- runFlow:
+    file: ./_setup-dev-login.yaml
+- tapOn: '커뮤니티'
+- extendedWaitUntil:
+    visible: '개인입양'
+    timeout: 10000
+
+# 1. 글쓰기 펜 → 정책 시트 → dismiss
+- tapOn:
+    id: 'community-write-button'
+- extendedWaitUntil:
+    visible:
+      id: 'community-policy-sheet'
+    timeout: 15000
+- swipe:
+    start: '50%,80%'
+    end: '50%,98%'
+    duration: 300
+- extendedWaitUntil:
+    notVisible:
+      id: 'community-policy-sheet'
+    timeout: 5000
+- assertVisible: '개인입양'
+
+# 2. 카드 본문 탭 → 디테일 진입
+- tapOn: '말티즈 뭉치 가족 찾아요'
+- extendedWaitUntil:
+    visible:
+      id: 'community-detail-heart'
+    timeout: 10000
+
+# 3. 댓글 영역 스크롤
+- swipe:
+    start: '50%,80%'
+    end: '50%,20%'
+    duration: 400
+- swipe:
+    start: '50%,80%'
+    end: '50%,20%'
+    duration: 400
+
+# 4. 답글 달기 탭 → 정책 시트 → dismiss
+- tapOn: '답글 달기'
+- extendedWaitUntil:
+    visible:
+      id: 'community-policy-sheet'
+    timeout: 15000
+- swipe:
+    start: '50%,80%'
+    end: '50%,98%'
+    duration: 300
+- extendedWaitUntil:
+    notVisible:
+      id: 'community-policy-sheet'
+    timeout: 5000
+
+# 5. 댓글 작성 → 등록 → 정책 시트 → dismiss
+- tapOn:
+    id: 'comment-input'
+- inputText: 'policy test'
+- hideKeyboard
+- tapOn:
+    id: 'comment-submit'
+- extendedWaitUntil:
+    visible:
+      id: 'community-policy-sheet'
+    timeout: 15000
+- swipe:
+    start: '50%,80%'
+    end: '50%,98%'
+    duration: 300
+- extendedWaitUntil:
+    notVisible:
+      id: 'community-policy-sheet'
+    timeout: 5000

@@ -1,0 +1,55 @@
+appId: com.keeper.love
+---
+# 앱 실행 + dev client 처리 (Android)
+- launchApp
+- tapOn:
+    text: 'While using the app'
+    optional: true
+- tapOn:
+    text: 'http://10.0.2.2:8081'
+    optional: true
+- waitForAnimationToEnd
+- tapOn:
+    text: 'No thanks'
+    optional: true
+- tapOn:
+    text: 'Continue'
+    optional: true
+- waitForAnimationToEnd
+- tapOn:
+    text: 'No thanks'
+    optional: true
+- extendedWaitUntil:
+    visible: '입양공고'
+    timeout: 30000
+
+# 프로필 탭 → 로그인 페이지 진입 (비로그인 가정)
+- tapOn: '프로필'
+- waitForAnimationToEnd
+
+- tapOn:
+    text: '로그인'
+    optional: true
+- waitForAnimationToEnd
+
+# 소셜 로그인 버튼 노출 확인 (외부 OAuth는 자동화 불가)
+- assertVisible:
+    text: '카카오'
+    optional: true
+- assertVisible:
+    text: 'Google'
+    optional: true
+
+# 뒤로가기 → 프로필 복귀
+- tapOn:
+    point: '12%, 8%'
+    optional: true
+- waitForAnimationToEnd
+
+# 바텀 탭 다른 곳 이동 후 다시 프로필 진입
+- tapOn: 'Home'
+- extendedWaitUntil:
+    visible: '입양공고'
+    timeout: 5000
+- tapOn: '프로필'
+- waitForAnimationToEnd
