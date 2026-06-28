@@ -54,6 +54,7 @@ export const useNotificationPermission = () => {
   }, [state.status]);
 
   useEffect(() => {
+    check();
     const subscription = AppState.addEventListener('change', (next) => {
       if (next === 'active') check();
     });

@@ -2,13 +2,25 @@ import { Bell } from '@tamagui/lucide-icons';
 import { router } from 'expo-router';
 import { styled, Text, View } from 'tamagui';
 
+import { useCurrentUser, useOpenLoginSheet } from '@/features/auth';
+
 import { useUnreadCount } from '../model/use-unread-count';
 
 export const NotificationBell = () => {
   const { badge } = useUnreadCount();
+  const { isLoggedIn } = useCurrentUser();
+  const openLoginSheet = useOpenLoginSheet();
+
+  const handlePress = () => {
+    if (!isLoggedIn) {
+      openLoginSheet();
+      return;
+    }
+    router.push('/(untabs)/notifications');
+  };
 
   return (
-    <View onPress={() => router.push('/(untabs)/notifications')} hitSlop={10}>
+    <View onPress={handlePress} hitSlop={10}>
       <Bell size={26} color="$black900" />
       {badge ? (
         <Badge>
