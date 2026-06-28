@@ -1,7 +1,9 @@
-import { Image } from 'expo-image';
-import { styled, Text, View, XStack, YStack } from 'tamagui';
+import { ChevronRight } from '@tamagui/lucide-icons';
+import { RelativePathString, router } from 'expo-router';
+import { Pressable } from 'react-native';
+import { styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
 
-import { Link } from '@/shared/ui';
+import { hasValue } from '@/shared/lib';
 
 type Shelter = {
   id: string;
@@ -12,120 +14,117 @@ type Shelter = {
 };
 
 export type AdoptDetailDescriptionSectionProps = {
-  specialMark: string;
+  specialMark: string | null;
   shelter?: Shelter;
-  hasCallNumber?: boolean;
 };
 
-export const AdoptDetailDescriptionSection = ({
-  specialMark,
-  shelter,
-  hasCallNumber
-}: AdoptDetailDescriptionSectionProps) => {
+export const AdoptDetailDescriptionSection = ({ specialMark, shelter }: AdoptDetailDescriptionSectionProps) => {
+  const { black500 } = useTheme();
   const { id, time, person, address, name } = shelter || {};
-
   const hasShelter = !!name;
+  const iconColor = black500.val as never;
 
   return (
-    <>
-      <XStack items="center" mb={20}>
-        <XStack gap={4} items="center" minW={90}>
-          <Text fontSize={18} fontWeight="600" lineHeight={24} color="$black800">
-            특징
-          </Text>
-          <Image
-            source={require('@/assets/images/message.png')}
-            contentFit="contain"
-            style={{ width: 20, height: 20 }}
-          />
-        </XStack>
-        <Text fontSize={16} fontWeight="500" lineHeight={22} color="$black650" flex={1}>
-          {specialMark}
-        </Text>
-      </XStack>
+    <YStack gap={28}>
+      <YStack gap={12}>
+        <SectionTitle>특징</SectionTitle>
+        <Card>
+          <CardText color={hasValue(specialMark) ? '$black700' : '$black500'}>
+            {hasValue(specialMark) ? specialMark : '등록된 특이사항이 없어요'}
+          </CardText>
+        </Card>
+      </YStack>
 
-      <Divider mb={20} />
-
-      <XStack items="flex-start" mb={20}>
-        <XStack gap={4} items="center" minW={90}>
-          <Text fontSize={18} fontWeight="600" lineHeight={24} color="$black800">
-            보호소
-          </Text>
-          <Image
-            source={require('@/assets/images/noticebar.png')}
-            contentFit="contain"
-            style={{ width: 20, height: 20 }}
-          />
-        </XStack>
-
-        {hasShelter ? (
-          <YStack gap={14} flex={1}>
-            {name && (
-              <DescriptionWrap>
-                <Bullet>·</Bullet>
-                <View flex={1} mb={4}>
-                  <Link url={`/shelter/${id}`} text={name} />
-                </View>
-              </DescriptionWrap>
-            )}
-            {time && (
-              <DescriptionWrap>
-                <Bullet>·</Bullet>
-                <Description flex={1}>{time}</Description>
-              </DescriptionWrap>
-            )}
-            {person && (
-              <DescriptionWrap>
-                <Bullet>·</Bullet>
-                <Description flex={1}>{person}</Description>
-              </DescriptionWrap>
-            )}
-            {address && (
-              <DescriptionWrap>
-                <Bullet>·</Bullet>
-                <Description flex={1} lineHeight={24}>
-                  {address}
-                </Description>
-              </DescriptionWrap>
-            )}
-            {!hasCallNumber && (
-              <DescriptionWrap>
-                <Bullet>·</Bullet>
-                <Description flex={1}>연락처 정보 없음</Description>
-              </DescriptionWrap>
-            )}
-          </YStack>
-        ) : (
-          <DescriptionWrap>
-            <Bullet>·</Bullet>
-            <Description flex={1}>정보 없음</Description>
-          </DescriptionWrap>
-        )}
-      </XStack>
-    </>
+      <YStack gap={12}>
+        <SectionTitle>담당 보호소</SectionTitle>
+        <Card gap={hasShelter ? 16 : 0}>
+          {hasShelter ? (
+            <>
+              <Pressable onPress={() => router.push(`/shelter/${id}` as RelativePathString)}>
+                <XStack justify="space-between" items="center">
+                  <ShelterName>{name}</ShelterName>
+                  <ChevronRight size={18} color={iconColor} />
+                </XStack>
+              </Pressable>
+              <CardDivider />
+              {hasValue(time) && (
+                <SpecRow>
+                  <SpecLabel>운영시간</SpecLabel>
+                  <SpecValue lineBreakStrategyIOS="hangul-word">{time}</SpecValue>
+                </SpecRow>
+              )}
+              {hasValue(address) && (
+                <SpecRow>
+                  <SpecLabel>주소</SpecLabel>
+                  <SpecValue lineBreakStrategyIOS="hangul-word">{address}</SpecValue>
+                </SpecRow>
+              )}
+              {hasValue(person) && (
+                <SpecRow>
+                  <SpecLabel>담당</SpecLabel>
+                  <SpecValue lineBreakStrategyIOS="hangul-word">{person}</SpecValue>
+                </SpecRow>
+              )}
+            </>
+          ) : (
+            <CardText color="$black500">보호소 정보가 없어요</CardText>
+          )}
+        </Card>
+      </YStack>
+    </YStack>
   );
 };
 
-const Divider = styled(View, {
+const SectionTitle = styled(Text, {
+  fontSize: 18,
+  fontWeight: '700',
+  lineHeight: 24,
+  color: '$black800'
+});
+
+const ShelterName = styled(Text, {
+  flex: 1,
+  fontSize: 16,
+  fontWeight: '700',
+  lineHeight: 22,
+  color: '$black800'
+});
+
+const Card = styled(YStack, {
+  bg: '$backgroundDefault',
+  rounded: 12,
+  p: 20
+});
+
+const CardText = styled(Text, {
+  fontSize: 16,
+  fontWeight: '500',
+  lineHeight: 24,
+  color: '$black700'
+});
+
+const CardDivider = styled(View, {
   height: 1,
   bg: '#EDEDED'
 });
 
-const Description = styled(Text, {
-  fontSize: 16,
-  fontWeight: '500',
-  lineHeight: 18,
-  color: '$black650'
-});
-
-const DescriptionWrap = styled(XStack, {
+const SpecRow = styled(XStack, {
   items: 'flex-start',
-  gap: 4
+  gap: 12
 });
 
-const Bullet = styled(Text, {
-  fontSize: 16,
+const SpecLabel = styled(Text, {
+  width: 72,
+  fontSize: 15,
+  fontWeight: '600',
+  lineHeight: 22,
+  color: '$black800'
+});
+
+const SpecValue = styled(Text, {
+  flex: 1,
+  fontSize: 15,
   fontWeight: '500',
-  lineHeight: 18,
-  color: '$black650'
+  lineHeight: 22,
+  color: '$black700'
 });

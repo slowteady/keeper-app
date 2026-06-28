@@ -1,11 +1,4 @@
-import {
-  ShelterAdoptsParamsSchema,
-  ShelterCountSchema,
-  ShelterCountsParamsSchema,
-  ShelterSchema,
-  ShelterSearchParamsSchema,
-  SheltersParamsSchema
-} from './schema';
+import { ShelterAdoptsParamsSchema, ShelterSchema, ShelterWithinParamsSchema } from './schema';
 
 const VALID_SHELTER = {
   id: 's1',
@@ -17,7 +10,8 @@ const VALID_SHELTER = {
   weekdayOpenTime: '09:00',
   weekdayCloseTime: '18:00',
   weekendOpenTime: null,
-  weekendCloseTime: null
+  weekendCloseTime: null,
+  closeDay: null
 };
 
 describe('ShelterSchema', () => {
@@ -29,6 +23,10 @@ describe('ShelterSchema', () => {
     expect(() => ShelterSchema.parse({ ...VALID_SHELTER, tel: null })).not.toThrow();
   });
 
+  it('closeDay 가 null 이어도 통과', () => {
+    expect(() => ShelterSchema.parse({ ...VALID_SHELTER, closeDay: null })).not.toThrow();
+  });
+
   it('latitude 누락 시 실패', () => {
     const { latitude, ...rest } = VALID_SHELTER;
     expect(() => ShelterSchema.parse(rest)).toThrow();
@@ -37,35 +35,9 @@ describe('ShelterSchema', () => {
   it('optional 필드(division, distance) 미포함 통과', () => {
     expect(() => ShelterSchema.parse(VALID_SHELTER)).not.toThrow();
   });
-});
 
-describe('ShelterCountSchema', () => {
-  it('distance/count 통과', () => {
-    expect(() => ShelterCountSchema.parse({ distance: 5, count: 3 })).not.toThrow();
-  });
-});
-
-describe('SheltersParamsSchema', () => {
-  it('5개 좌표/거리 모두 통과', () => {
-    expect(() =>
-      SheltersParamsSchema.parse({
-        latitude: 37.5,
-        longitude: 127.0,
-        distance: 5,
-        userLatitude: 37.5,
-        userLongitude: 127.0
-      })
-    ).not.toThrow();
-  });
-
-  it('필드 누락 시 실패', () => {
-    expect(() => SheltersParamsSchema.parse({ latitude: 37.5, longitude: 127.0 })).toThrow();
-  });
-});
-
-describe('ShelterCountsParamsSchema', () => {
-  it('latitude/longitude 통과', () => {
-    expect(() => ShelterCountsParamsSchema.parse({ latitude: 37.5, longitude: 127.0 })).not.toThrow();
+  it('distance 가 null 이어도 통과 (서버는 거리 미계산 → null 반환)', () => {
+    expect(() => ShelterSchema.parse({ ...VALID_SHELTER, distance: null })).not.toThrow();
   });
 });
 
@@ -75,10 +47,19 @@ describe('ShelterAdoptsParamsSchema', () => {
   });
 });
 
-describe('ShelterSearchParamsSchema', () => {
-  it('search + 사용자 좌표 통과', () => {
+describe('ShelterWithinParamsSchema', () => {
+  it('bounds 4좌표 통과 (사용자 GPS 없음)', () => {
     expect(() =>
-      ShelterSearchParamsSchema.parse({ search: '서울', userLatitude: 37.5, userLongitude: 127.0 })
+      ShelterWithinParamsSchema.parse({
+        minLatitude: 37,
+        maxLatitude: 38,
+        minLongitude: 126,
+        maxLongitude: 128
+      })
     ).not.toThrow();
+  });
+
+  it('bounds 좌표 누락 시 실패', () => {
+    expect(() => ShelterWithinParamsSchema.parse({ minLatitude: 37 })).toThrow();
   });
 });

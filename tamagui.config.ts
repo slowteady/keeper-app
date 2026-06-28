@@ -67,10 +67,17 @@ export const config = createTamagui({
       errorMain: '#FF4C47',
       errorLight: '#FFD7D6',
       errorLightest: '#FFD7D6',
+      destructive: '#FF3B30',
       successMain: '#0A7FFF',
       successLightest: '#CFE6FF',
       noticeMain: '#FFB800',
-      noticeLightest: '#FFF5DB'
+      noticeLightest: '#FFF5DB',
+      dogMain: '#F97316',
+      dogLightest: '#FFEDD5',
+      catMain: '#8B5CF6',
+      catLightest: '#EDE9FE',
+      etcMain: '#0891B2',
+      etcLightest: '#CFFAFE'
     },
     radius: {
       ...defaultConfig.tokens.radius,
@@ -134,12 +141,19 @@ export const config = createTamagui({
       errorMain: '#FF4C47',
       errorLight: '#FFD7D6',
       errorLightest: '#FFD7D6',
+      destructive: '#FF3B30',
 
       successMain: '#0A7FFF',
       successLightest: '#CFE6FF',
 
       noticeMain: '#FFB800',
-      noticeLightest: '#FFF5DB'
+      noticeLightest: '#FFF5DB',
+      dogMain: '#F97316',
+      dogLightest: '#FFEDD5',
+      catMain: '#8B5CF6',
+      catLightest: '#EDE9FE',
+      etcMain: '#0891B2',
+      etcLightest: '#CFFAFE'
     }
   }
 });

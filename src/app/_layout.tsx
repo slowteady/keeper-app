@@ -5,15 +5,15 @@ import 'react-native-reanimated';
 import { useReactQueryDevTools } from '@dev-plugins/react-query';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { initializeKakaoSDK } from '@react-native-kakao/core';
-import NaverLogin from '@react-native-seoul/naver-login';
 import * as Sentry from '@sentry/react-native';
 import { MutationCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { extend } from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useFonts } from 'expo-font';
-import { router, Stack, usePathname } from 'expo-router';
+import { router, Stack, useNavigationContainerRef } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
+import * as Updates from 'expo-updates';
 import { useEffect, useState } from 'react';
 import { Linking } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -23,32 +23,51 @@ import { Toaster } from 'sonner-native';
 import { TamaguiProvider } from 'tamagui';
 
 import { getRefresh } from '@/entities/auth';
+import { AppGateScreen, SuspensionGateScreen, useAppGate } from '@/features/app-gate';
+import { UrgentNoticeGate } from '@/features/notice';
+import { NotificationGate } from '@/features/notification';
 import { authApi, setupInterceptor } from '@/shared/api';
-import {
-  clearUserContext,
-  getCurrentPathname,
-  globalToast,
-  logger,
-  setCurrentPathname,
-  throwToErrorBoundary
-} from '@/shared/lib';
-import { BottomSheetProvider, ModalProvider } from '@/shared/ui';
+import { clearSuspended, globalToast, logger, throwToErrorBoundary, useSuspension } from '@/shared/lib';
+import { BottomSheetProvider, ModalProvider, ShareGuard } from '@/shared/ui';
 
 import { config } from '../../tamagui.config';
 import AnimatedSplash from './_animated-splash';
+import ErrorBoundary from './_error-boundary';
 import ErrorFallback from './_error-fallback';
 
 SplashScreen.preventAutoHideAsync();
 
+const navigationIntegration = Sentry.reactNavigationIntegration();
+
 Sentry.init({
   dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
-  debug: __DEV__,
+  enabled: !__DEV__ && !!process.env.EXPO_PUBLIC_SENTRY_DSN,
   environment: __DEV__ ? 'development' : 'production',
-  replaysSessionSampleRate: 0.1,
-  replaysOnErrorSampleRate: 1.0,
-  integrations: [Sentry.mobileReplayIntegration()],
-  enabled: !__DEV__
+  tracesSampleRate: 0.1,
+  sendDefaultPii: true,
+  replaysSessionSampleRate: 0,
+  replaysOnErrorSampleRate: 0.3,
+  integrations: [
+    navigationIntegration,
+    Sentry.mobileReplayIntegration({ maskAllText: true, maskAllImages: true, maskAllVectors: true })
+  ]
 });
+
+const applyOtaUpdate = async () => {
+  if (__DEV__ || !Updates.isEnabled) return;
+  try {
+    const result = await Promise.race([
+      Updates.checkForUpdateAsync(),
+      new Promise<never>((_, reject) => setTimeout(() => reject(new Error('ota-check-timeout')), 5000))
+    ]);
+    if (result.isAvailable) {
+      await Updates.fetchUpdateAsync();
+      await Updates.reloadAsync();
+    }
+  } catch (e) {
+    logger.warn('OTA 업데이트 확인 실패', e);
+  }
+};
 
 const RootLayout = () => {
   const [queryClient] = useState(
@@ -91,10 +110,14 @@ const RootLayout = () => {
 
   const [isAppReady, setAppReady] = useState(false);
   const [isAnimationDone, setAnimationDone] = useState(false);
+  const gate = useAppGate();
+  const suspension = useSuspension();
 
   useEffect(() => {
     const init = async () => {
       if (!fontLoaded) return;
+
+      await applyOtaUpdate();
 
       extend(customParseFormat);
       setupInterceptor(authApi, {
@@ -103,21 +126,12 @@ const RootLayout = () => {
           return data.data;
         },
         onRefreshFailed: () => {
-          clearUserContext();
-          queryClient.removeQueries({ queryKey: ['auth'] });
-          globalToast('세션이 만료되었어요 다시 로그인해주세요', 'fail');
-          router.replace({ pathname: '/login', params: { redirect: getCurrentPathname() } });
+          queryClient.removeQueries();
+          router.dismissTo('/(tabs)/profile');
         }
       });
 
       initializeKakaoSDK(process.env.EXPO_PUBLIC_KAKAO_NATIVE_KEY || '');
-      NaverLogin.initialize({
-        appName: process.env.EXPO_PUBLIC_NAVER_APP_NAME || '',
-        consumerKey: process.env.EXPO_PUBLIC_NAVER_CLIENT_ID || '',
-        consumerSecret: process.env.EXPO_PUBLIC_NAVER_CLIENT_SECRET || '',
-        serviceUrlSchemeIOS: process.env.EXPO_PUBLIC_NAVER_URL_SCHEME || '',
-        disableNaverAppAuthIOS: true
-      });
       GoogleSignin.configure({
         webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID || '',
         iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID || ''
@@ -145,19 +159,46 @@ const RootLayout = () => {
     return () => sub.remove();
   }, []);
 
-  const pathname = usePathname();
+  const navigationRef = useNavigationContainerRef();
   useEffect(() => {
-    setCurrentPathname(pathname);
-  }, [pathname]);
+    if (navigationRef?.current) {
+      navigationIntegration.registerNavigationContainer(navigationRef);
+    }
+  }, [navigationRef]);
 
   if (!isAppReady) return null;
   if (!isAnimationDone) return <AnimatedSplash onFinish={() => setAnimationDone(true)} />;
+  if (gate.status === 'loading') return null;
+  if (gate.status !== 'ok') {
+    return (
+      <TamaguiProvider config={config}>
+        <AppGateScreen
+          variant={gate.status}
+          storeUrl={gate.storeUrl}
+          message={gate.maintenanceMessage}
+          onDismiss={gate.dismissSoft}
+        />
+      </TamaguiProvider>
+    );
+  }
+  if (suspension) {
+    return (
+      <TamaguiProvider config={config}>
+        <SuspensionGateScreen
+          reason={suspension.reason}
+          suspendedUntil={suspension.suspendedUntil}
+          onConfirm={() => {
+            clearSuspended();
+            router.replace('/(tabs)/home');
+          }}
+        />
+      </TamaguiProvider>
+    );
+  }
 
   return (
     <TamaguiProvider config={config}>
-      <Sentry.ErrorBoundary
-        fallback={({ error, resetError }) => <ErrorFallback error={error} resetError={resetError} />}
-      >
+      <ErrorBoundary fallback={({ error, resetError }) => <ErrorFallback error={error} resetError={resetError} />}>
         <QueryClientProvider client={queryClient}>
           <GestureHandlerRootView style={{ flex: 1 }} collapsable={!__DEV__} collapsableChildren={!__DEV__}>
             <KeyboardProvider>
@@ -165,7 +206,13 @@ const RootLayout = () => {
                 <BottomSheetProvider>
                   <ModalProvider>
                     <StatusBar style="dark" />
-                    <Stack screenOptions={{ headerShown: false }} />
+                    <Stack screenOptions={{ headerShown: false }}>
+                      <Stack.Screen name="community-write" options={{ presentation: 'fullScreenModal' }} />
+                      <Stack.Screen name="community-qna-write" options={{ presentation: 'fullScreenModal' }} />
+                    </Stack>
+                    <ShareGuard />
+                    <NotificationGate />
+                    <UrgentNoticeGate notice={gate.urgentNotice} />
                     <Toaster
                       position="top-center"
                       duration={2000}
@@ -181,7 +228,7 @@ const RootLayout = () => {
             </KeyboardProvider>
           </GestureHandlerRootView>
         </QueryClientProvider>
-      </Sentry.ErrorBoundary>
+      </ErrorBoundary>
     </TamaguiProvider>
   );
 };

@@ -1,4 +1,3 @@
-import { router } from 'expo-router';
 import { styled, Text, XStack, YStack } from 'tamagui';
 
 import { Checkbox } from '@/shared/ui';
@@ -7,27 +6,40 @@ export type AgreementState = {
   age14: boolean;
   terms: boolean;
   privacy: boolean;
+  community: boolean;
 };
 
 type SignupAgreementProps = {
   value: AgreementState;
   onChange: (next: AgreementState) => void;
+  onViewTerms: () => void;
+  onViewPrivacy: () => void;
+  onViewCommunity: () => void;
+  marginTop?: number;
 };
 
-export const SignupAgreement = ({ value, onChange }: SignupAgreementProps) => {
-  const { age14, terms, privacy } = value;
-  const allChecked = age14 && terms && privacy;
+export const SignupAgreement = ({
+  value,
+  onChange,
+  onViewTerms,
+  onViewPrivacy,
+  onViewCommunity,
+  marginTop = 32
+}: SignupAgreementProps) => {
+  const { age14, terms, privacy, community } = value;
+  const allChecked = age14 && terms && privacy && community;
 
   const toggleAll = (next: boolean) => {
-    onChange({ age14: next, terms: next, privacy: next });
+    onChange({ age14: next, terms: next, privacy: next, community: next });
   };
 
   const setAge14 = (next: boolean) => onChange({ ...value, age14: next });
   const setTerms = (next: boolean) => onChange({ ...value, terms: next });
   const setPrivacy = (next: boolean) => onChange({ ...value, privacy: next });
+  const setCommunity = (next: boolean) => onChange({ ...value, community: next });
 
   return (
-    <YStack gap={16} mt={32}>
+    <YStack gap={16} mt={marginTop}>
       <SummaryBox onPress={() => toggleAll(!allChecked)}>
         <Checkbox variant="circle" size={24} checked={allChecked} onChange={toggleAll} />
         <SummaryLabel>약관에 모두 동의합니다</SummaryLabel>
@@ -46,7 +58,7 @@ export const SignupAgreement = ({ value, onChange }: SignupAgreementProps) => {
             <Checkbox variant="icon" size={24} checked={terms} onChange={setTerms} />
             <ItemLabel>(필수) 이용약관 동의</ItemLabel>
           </ItemLeft>
-          <ViewChip onPress={() => router.push('/terms')}>
+          <ViewChip onPress={onViewTerms}>
             <ViewChipText>보기</ViewChipText>
           </ViewChip>
         </ItemRow>
@@ -56,7 +68,17 @@ export const SignupAgreement = ({ value, onChange }: SignupAgreementProps) => {
             <Checkbox variant="icon" size={24} checked={privacy} onChange={setPrivacy} />
             <ItemLabel>(필수) 개인정보 수집·이용 동의</ItemLabel>
           </ItemLeft>
-          <ViewChip onPress={() => router.push('/privacy')}>
+          <ViewChip onPress={onViewPrivacy}>
+            <ViewChipText>보기</ViewChipText>
+          </ViewChip>
+        </ItemRow>
+
+        <ItemRow>
+          <ItemLeft onPress={() => setCommunity(!community)}>
+            <Checkbox variant="icon" size={24} checked={community} onChange={setCommunity} />
+            <ItemLabel>(필수) 커뮤니티 가이드라인 동의</ItemLabel>
+          </ItemLeft>
+          <ViewChip onPress={onViewCommunity}>
             <ViewChipText>보기</ViewChipText>
           </ViewChip>
         </ItemRow>
@@ -76,7 +98,7 @@ const SummaryBox = styled(XStack, {
 
 const SummaryLabel = styled(Text, {
   fontSize: 16,
-  lineHeight: 16,
+  lineHeight: 22,
   fontWeight: '600',
   color: '$black800',
   letterSpacing: -0.32
@@ -96,7 +118,7 @@ const ItemLeft = styled(XStack, {
 
 const ItemLabel = styled(Text, {
   fontSize: 15,
-  lineHeight: 15,
+  lineHeight: 20,
   fontWeight: '500',
   color: '$black500',
   letterSpacing: -0.15

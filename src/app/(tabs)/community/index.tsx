@@ -1,40 +1,35 @@
-import { useCallback, useMemo, useState } from 'react';
-import { SceneRendererProps } from 'react-native-tab-view';
+import { useRouter } from 'expo-router';
+import { useCallback } from 'react';
+import { NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
+import { useSharedValue } from 'react-native-reanimated';
 import { styled, View } from 'tamagui';
 
-import { COMMUNITY_TAB_ROUTES } from '@/entities/community';
-import { RouteErrorBoundary, Tab } from '@/shared/ui';
-import { CommunityAdoptFeed } from '@/widgets/community-adopt-feed-section';
-import { CommunityLifeFeed } from '@/widgets/community-life-feed-section';
+import { useLoginRequired } from '@/features/auth';
+import { RouteErrorBoundary, WriteFab } from '@/shared/ui';
 import { CommunityQnAFeed } from '@/widgets/community-qna-feed-section';
 
 export const ErrorBoundary = RouteErrorBoundary;
 
-const renderScene = ({ route }: SceneRendererProps & { route: { key: string } }) => {
-  switch (route.key) {
-    case 'adopt':
-      return <CommunityAdoptFeed />;
-    case 'life':
-      return <CommunityLifeFeed />;
-    case 'qna':
-      return <CommunityQnAFeed />;
-    default:
-      return null;
-  }
-};
-
 const Page = () => {
-  const [index, setIndex] = useState(0);
+  const router = useRouter();
+  const { requireLogin } = useLoginRequired();
+  const scrollY = useSharedValue(0);
 
-  const navigationState = useMemo(() => ({ index, routes: COMMUNITY_TAB_ROUTES }), [index]);
+  const handleScroll = useCallback(
+    (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+      scrollY.value = e.nativeEvent.contentOffset.y;
+    },
+    [scrollY]
+  );
 
-  const handleIndexChange = useCallback((nextIndex: number) => {
-    setIndex(nextIndex);
-  }, []);
+  const handlePressWrite = useCallback(() => {
+    requireLogin(() => router.push('/community-qna-write'));
+  }, [requireLogin, router]);
 
   return (
     <Container>
-      <Tab onIndexChange={handleIndexChange} navigationState={navigationState} renderScene={renderScene} />
+      <CommunityQnAFeed onScroll={handleScroll} />
+      <WriteFab label="글 올리기" onPress={handlePressWrite} scrollY={scrollY} testID="community-write-fab" />
     </Container>
   );
 };

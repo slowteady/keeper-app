@@ -1,0 +1,65 @@
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { router } from 'expo-router';
+import { useCallback } from 'react';
+
+import { communityQueries, QnaListParams, QnaSortDto, QnaTypeDto } from '@/entities/community';
+import { AnimalTypeDto } from '@/shared/model';
+
+type QnaFeedParams = {
+  qnaType?: QnaTypeDto;
+  animalType?: AnimalTypeDto;
+  sort?: QnaSortDto;
+  size?: number;
+};
+
+export const useCommunityQnaFeed = (params: QnaFeedParams = {}) => {
+  const queryClient = useQueryClient();
+  const size = params.size ?? 20;
+
+  const goDetailPage = useCallback((id: string) => {
+    router.push({ pathname: '/community/[id]', params: { id } });
+  }, []);
+
+  const goCreatePage = useCallback(() => {
+    router.push('/community-qna-write');
+  }, []);
+
+  const queryParams: Omit<QnaListParams, 'page'> = {
+    size,
+    ...(params.qnaType ? { qnaType: params.qnaType } : {}),
+    ...(params.animalType ? { animalType: params.animalType as 'DOG' | 'CAT' | 'OTHER' } : {}),
+    ...(params.sort ? { sort: params.sort } : {})
+  };
+
+  const {
+    data,
+    isLoading,
+    isError,
+    error,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage: fetchNextPageQuery
+  } = useInfiniteQuery(communityQueries.qnaList(queryParams));
+
+  const refresh = useCallback(async () => {
+    await queryClient.invalidateQueries({ queryKey: [...communityQueries.all(), 'qna', 'list'] });
+  }, [queryClient]);
+
+  const fetchNextPage = useCallback(async () => {
+    if (hasNextPage) await fetchNextPageQuery();
+  }, [fetchNextPageQuery, hasNextPage]);
+
+  return {
+    qnaList: data?.items ?? [],
+    total: data?.total ?? 0,
+    hasNextPage: hasNextPage ?? false,
+    isLoading,
+    isFetchingNextPage,
+    isError,
+    error,
+    refresh,
+    fetchNextPage,
+    goDetailPage,
+    goCreatePage
+  };
+};

@@ -1,26 +1,38 @@
-import { styled, View } from 'tamagui';
+import { ScrollView, styled, View } from 'tamagui';
 
-import { MENU_ITEMS, useProfileImage, useProfileMain } from '@/features/profile';
+import { MENU_SECTIONS, useProfileImage, useProfileMain } from '@/features/profile';
 import { RouteErrorBoundary } from '@/shared/ui';
-import { ProfileContentSection, ProfileHeader, ProfileMenuList } from '@/widgets/profile';
+import { ProfileHeader, ProfileMenuList } from '@/widgets/profile';
 
 export const ErrorBoundary = RouteErrorBoundary;
 
 const Page = () => {
-  const { user, isLoading, promptReview, shareApp, goLogin, goAccount, goMenu } = useProfileMain();
-  const { changeProfileImage } = useProfileImage();
+  const { user, isLoading, promptReview, shareApp, goLogin, goAccount, goLike, goActivity, goMenu, goSettingMenu } =
+    useProfileMain();
+  const { changeProfileImage, isPending: isUpdatingImage } = useProfileImage();
 
   return (
     <Container>
-      <ProfileHeader
-        user={user}
-        isLoading={isLoading}
-        onLogin={() => goLogin()}
-        onAccount={goAccount}
-        onChangeProfileImage={changeProfileImage}
-      />
-      <ProfileContentSection onReview={promptReview} onShare={shareApp} />
-      <ProfileMenuList items={MENU_ITEMS} onSelect={goMenu} />
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 } as never}>
+        <ProfileHeader
+          user={user}
+          isLoading={isLoading}
+          isUpdatingImage={isUpdatingImage}
+          onLogin={() => goLogin()}
+          onAccount={goAccount}
+          onLike={goLike}
+          onActivity={goActivity}
+          onChangeProfileImage={changeProfileImage}
+        />
+        <ProfileMenuList
+          sections={MENU_SECTIONS}
+          isLoggedIn={Boolean(user)}
+          onNavigate={goMenu}
+          onReview={promptReview}
+          onShare={shareApp}
+          onLocationSettings={goSettingMenu}
+        />
+      </ScrollView>
     </Container>
   );
 };

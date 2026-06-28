@@ -1,90 +1,105 @@
 import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
-import { AxiosResponse } from 'axios';
 
 import { AdoptResponseDto } from '@/entities/adopt';
-import { publicApi } from '@/shared/api';
+import { authApi } from '@/shared/api';
 import { ApiResponse } from '@/shared/model';
 
-import { SHELTER_DISTANCES } from './constant';
+import { attachDistance, LatLng } from './lib';
 import {
   ShelterAdoptsParamsDto,
-  ShelterCountDto,
-  ShelterCountsParamsDto,
   ShelterDto,
-  ShelterSearchParamsDto,
-  SheltersParamsDto
+  ShelterMyFavoriteListDto,
+  ShelterMyFavoriteListSchema,
+  ShelterWithinParamsDto
 } from './schema';
 
-const BASE_URL = '/v2/shelters';
+const BASE_URL = '/shelters';
 
-// --- Service Functions ---
-
-const getShelterCounts = async (
-  params: ShelterCountsParamsDto
-): Promise<AxiosResponse<ApiResponse<ShelterCountDto[]>>> => {
-  const distances = SHELTER_DISTANCES.join(',');
-  return await publicApi.get(`${BASE_URL}/nearby/count`, { params: { ...params, distances } });
+export const SHELTER_NATION_BOUNDS: ShelterWithinParamsDto = {
+  minLatitude: 33,
+  maxLatitude: 38.7,
+  minLongitude: 124.5,
+  maxLongitude: 131.9
 };
 
-const getShelters = async (params: SheltersParamsDto): Promise<AxiosResponse<ApiResponse<ShelterDto[]>>> => {
-  return await publicApi.get(BASE_URL, { params });
+const getSheltersWithin = async (params: ShelterWithinParamsDto): Promise<ShelterDto[]> => {
+  const res = await authApi.get<ApiResponse<ShelterDto[]>>(`${BASE_URL}/within`, { params });
+  return res.data.data;
 };
 
-const getShelter = async (id: string): Promise<AxiosResponse<ApiResponse<ShelterDto>>> => {
-  return await publicApi.get(`${BASE_URL}/${id}`);
+const getShelter = async (id: string): Promise<ShelterDto> => {
+  const res = await authApi.get<ApiResponse<ShelterDto>>(`${BASE_URL}/${id}`);
+  return res.data.data;
 };
 
-const getShelterAdopts = async (
-  id: string,
-  params: ShelterAdoptsParamsDto
-): Promise<AxiosResponse<ApiResponse<AdoptResponseDto>>> => {
-  return await publicApi.get(`${BASE_URL}/${id}/abandonments`, { params });
+const getShelterAdopts = async (id: string, params: ShelterAdoptsParamsDto): Promise<AdoptResponseDto> => {
+  const res = await authApi.get<ApiResponse<AdoptResponseDto>>(`${BASE_URL}/${id}/abandonments`, { params });
+  return res.data.data;
 };
 
-export const searchShelters = async (
-  params: ShelterSearchParamsDto
-): Promise<AxiosResponse<ApiResponse<ShelterDto[]>>> => {
-  return await publicApi.get(`${BASE_URL}/search`, { params });
+const getMyFavoriteShelters = async (params: { page: number; size: number }): Promise<ShelterMyFavoriteListDto> => {
+  const res = await authApi.get<ApiResponse<ShelterMyFavoriteListDto>>(`${BASE_URL}/favorites`, { params });
+  return ShelterMyFavoriteListSchema.parse(res.data.data);
 };
 
-// --- Query Options Factory ---
+const favoriteShelter = async (careRegNo: string): Promise<{ isFavorited: boolean }> => {
+  const res = await authApi.post<ApiResponse<{ isFavorited: boolean }>>(`/shelters/${careRegNo}/favorite`);
+  return res.data.data;
+};
+
+const unfavoriteShelter = async (careRegNo: string): Promise<{ isFavorited: boolean }> => {
+  const res = await authApi.delete<ApiResponse<{ isFavorited: boolean }>>(`/shelters/${careRegNo}/favorite`);
+  return res.data.data;
+};
+
+export const shelterApi = {
+  favorite: favoriteShelter,
+  unfavorite: unfavoriteShelter
+};
 
 export const shelterQueries = {
   all: () => ['shelters'] as const,
 
-  counts: (params: ShelterCountsParamsDto) =>
+  within: (params: ShelterWithinParamsDto) =>
     queryOptions({
-      queryKey: [...shelterQueries.all(), 'counts', params] as const,
-      queryFn: () => getShelterCounts(params),
-      select: (res) => res.data.data
-    }),
-
-  list: (params: SheltersParamsDto) =>
-    queryOptions({
-      queryKey: [...shelterQueries.all(), 'list', params] as const,
-      queryFn: () => getShelters(params),
-      select: (res) => res.data.data
+      queryKey: [...shelterQueries.all(), 'within', params] as const,
+      queryFn: () => getSheltersWithin(params)
     }),
 
   detail: (id: string) =>
     queryOptions({
       queryKey: [...shelterQueries.all(), 'detail', id] as const,
-      queryFn: () => getShelter(id),
-      select: (res) => res.data.data
+      queryFn: () => getShelter(id)
     }),
 
   adopts: (id: string, params: ShelterAdoptsParamsDto) =>
     infiniteQueryOptions({
       queryKey: [...shelterQueries.all(), 'adopts', id, params] as const,
-      queryFn: ({ pageParam = 0 }) => getShelterAdopts(id, { ...params, page: pageParam }),
-      initialPageParam: 0,
-      getNextPageParam: (lastPage) => {
-        return lastPage.data.data.has_next ? lastPage.data.data.page + 1 : undefined;
-      },
+      queryFn: ({ pageParam = 1 }) => getShelterAdopts(id, { ...params, page: pageParam }),
+      initialPageParam: 1,
+      getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.page + 1 : undefined),
       select: (data) => {
-        const lastPage = data.pages[data.pages.length - 1].data.data;
-        const allData = data.pages.flatMap((page) => page.data.data.value);
-        return { ...lastPage, value: allData };
+        const lastPage = data.pages[data.pages.length - 1];
+        const allData = data.pages.flatMap((page) => page.items);
+        return { ...lastPage, items: allData };
       }
+    }),
+
+  myFavoriteList: (userLocation?: LatLng, size: number = 20) =>
+    infiniteQueryOptions({
+      queryKey: ['me-favorite-shelters', { size, userLocation }] as const,
+      queryFn: ({ pageParam }) => getMyFavoriteShelters({ page: pageParam, size }),
+      initialPageParam: 1,
+      getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.page + 1 : undefined),
+      select: (data) => ({
+        items: attachDistance(
+          data.pages.flatMap((p) => p.items),
+          userLocation
+        ),
+        total: data.pages[data.pages.length - 1].total,
+        page: data.pages[data.pages.length - 1].page,
+        size: data.pages[data.pages.length - 1].size,
+        hasNext: data.pages[data.pages.length - 1].hasNext
+      })
     })
 };

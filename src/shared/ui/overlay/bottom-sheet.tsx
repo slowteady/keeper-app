@@ -8,12 +8,15 @@ import {
 import { forwardRef, useCallback } from 'react';
 import { useTheme } from 'tamagui';
 
+import { SHEET_BACKGROUND_STYLE, SheetContainer, sheetHandleIndicatorStyle } from './sheet-base';
+
 export interface BottomSheetLayoutProps extends Omit<BottomSheetModalProps, 'children'> {
   children?: React.ReactNode;
+  disableViewWrap?: boolean;
 }
 
 export const BottomSheet = forwardRef<BottomSheetModal, BottomSheetLayoutProps>((props, ref) => {
-  const { children, ...rest } = props;
+  const { children, disableViewWrap, ...rest } = props;
 
   const { white800 } = useTheme();
 
@@ -26,14 +29,18 @@ export const BottomSheet = forwardRef<BottomSheetModal, BottomSheetLayoutProps>(
       ref={ref}
       index={0}
       enableDynamicSizing={false}
-      animationConfigs={{ duration: 100 }}
-      handleIndicatorStyle={{ width: 48, borderRadius: 30, backgroundColor: white800.val }}
+      handleIndicatorStyle={sheetHandleIndicatorStyle(white800.val)}
       style={{ paddingHorizontal: 24 }}
-      backgroundStyle={{ borderTopLeftRadius: 20, borderTopRightRadius: 20 }}
+      backgroundStyle={SHEET_BACKGROUND_STYLE}
       backdropComponent={renderBackdrop}
+      containerComponent={SheetContainer}
       {...rest}
     >
-      <BottomSheetView style={{ flexDirection: 'column', flex: 1, paddingTop: 12 }}>{children}</BottomSheetView>
+      {disableViewWrap ? (
+        children
+      ) : (
+        <BottomSheetView style={{ flexDirection: 'column', flex: 1, paddingTop: 12 }}>{children}</BottomSheetView>
+      )}
     </BottomSheetModal>
   );
 });

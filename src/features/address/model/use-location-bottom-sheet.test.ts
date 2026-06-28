@@ -11,15 +11,17 @@ describe('useLocationBottomSheet', () => {
     const { result } = renderHook(() => useLocationBottomSheet(mockOnSelect), { wrapper: createWrapper() });
 
     // state
-    expect(result.current).toHaveProperty('address');
-    expect(result.current).toHaveProperty('searchedAddresses');
+    expect(result.current).toHaveProperty('results');
+    expect(result.current).toHaveProperty('keyword');
     // refs
     expect(result.current).toHaveProperty('ref');
     // flags
     expect(result.current).toHaveProperty('isPending');
+    expect(result.current).toHaveProperty('hasNextPage');
     // actions
     expect(typeof result.current.openBottomSheet).toBe('function');
-    expect(typeof result.current.submitGeocode).toBe('function');
+    expect(typeof result.current.setKeyword).toBe('function');
+    expect(typeof result.current.fetchNextPage).toBe('function');
     expect(typeof result.current.getAddress).toBe('function');
     expect(typeof result.current.dismiss).toBe('function');
   });

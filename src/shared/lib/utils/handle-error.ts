@@ -11,29 +11,15 @@ export const logger = {
   warn: (...args: unknown[]) => {
     if (__DEV__) {
       console.warn(...args);
-    } else {
-      Sentry.addBreadcrumb({
-        message: args.map(String).join(' '),
-        level: 'warning'
-      });
     }
   },
 
   error: (...args: unknown[]) => {
     if (__DEV__) {
       console.error(...args);
-    } else {
-      const error = args[0];
-      if (error instanceof Error) {
-        Sentry.captureException(error, {
-          extra: {
-            additionalData: args.slice(1)
-          }
-        });
-      } else {
-        Sentry.captureMessage(args.map(String).join(' '), 'error');
-      }
     }
+    const cause = args.find((arg) => arg instanceof Error);
+    Sentry.captureException(cause ?? new Error(args.map(String).join(' ')));
   },
 
   debug: (...args: unknown[]) => {
@@ -45,13 +31,17 @@ export const logger = {
   info: (...args: unknown[]) => {
     if (__DEV__) {
       console.info('[INFO]', ...args);
-    } else {
-      Sentry.addBreadcrumb({
-        message: args.map(String).join(' '),
-        level: 'info'
-      });
     }
   }
+};
+
+export const getModerationMessage = (error: unknown): string | null => {
+  if (!(error instanceof AxiosError)) return null;
+  const data = error.response?.data as { error?: string; message?: string } | undefined;
+  if (data?.error === 'CONTENT_MODERATION' && typeof data.message === 'string' && data.message.length > 0) {
+    return data.message;
+  }
+  return null;
 };
 
 export const throwToErrorBoundary = (error: unknown) => {

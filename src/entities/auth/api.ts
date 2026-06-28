@@ -6,10 +6,10 @@ import { ApiResponse } from '@/shared/model';
 
 import {
   CheckNicknameBodyDto,
+  DeleteMeBodyDto,
   LoginDataDto,
   LoginParamsDto,
   RefreshDataDto,
-  SignUpBodyDto,
   UpdateMeBodyDto,
   UserDto
 } from './schema';
@@ -22,14 +22,14 @@ export const login = async (params: LoginParamsDto): Promise<AxiosResponse<ApiRe
   return await publicApi.post(endpoint, params);
 };
 
-export const logout = async (): Promise<AxiosResponse<ApiResponse<boolean>>> => {
+export const logout = async (refreshToken?: string): Promise<AxiosResponse<ApiResponse<boolean>>> => {
   const endpoint = `${BASE_URL}/logout`;
 
-  return await authApi.post(endpoint);
+  return await authApi.post(endpoint, refreshToken ? { refreshToken } : {});
 };
 
 export const getUser = async (): Promise<AxiosResponse<ApiResponse<UserDto>>> => {
-  const endpoint = `${BASE_URL}/me`;
+  const endpoint = `/users/me`;
 
   return await authApi.get(endpoint);
 };
@@ -42,25 +42,31 @@ export const getRefresh = async (token: string): Promise<AxiosResponse<ApiRespon
 };
 
 export const checkNickname = async (body: CheckNicknameBodyDto): Promise<AxiosResponse<ApiResponse<boolean>>> => {
-  const endpoint = `${BASE_URL}/check-nickname`;
+  return await publicApi.get(`/users/check-nickname`, { params: { nickname: body.nickname } });
+};
+
+export type AgreeBodyDto = {
+  signupToken: string;
+  agreedTermsVersion: string;
+  agreedPrivacyVersion: string;
+  agreedCommunityPolicyVersion: string;
+  agreedAt: string;
+};
+
+export const agree = async (body: AgreeBodyDto): Promise<AxiosResponse<ApiResponse<LoginDataDto>>> => {
+  const endpoint = `${BASE_URL}/agree`;
 
   return await publicApi.post(endpoint, body);
 };
 
-export const signup = async (body: SignUpBodyDto): Promise<AxiosResponse<ApiResponse<LoginDataDto>>> => {
-  const endpoint = `${BASE_URL}/signup`;
+export const deleteUser = async (body: DeleteMeBodyDto): Promise<AxiosResponse<ApiResponse<boolean>>> => {
+  const endpoint = `/users/me`;
 
-  return await publicApi.post(endpoint, body);
-};
-
-export const deleteUser = async (): Promise<AxiosResponse<ApiResponse<boolean>>> => {
-  const endpoint = `${BASE_URL}/me`;
-
-  return await authApi.delete(endpoint);
+  return await authApi.delete(endpoint, { data: body });
 };
 
 export const updateMe = async (body: UpdateMeBodyDto): Promise<AxiosResponse<ApiResponse<UserDto>>> => {
-  const endpoint = `${BASE_URL}/me`;
+  const endpoint = `/users/me`;
 
   return await authApi.patch(endpoint, body);
 };

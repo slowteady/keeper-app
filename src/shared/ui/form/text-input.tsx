@@ -24,9 +24,11 @@ export const TextInput = ({
   helperText,
   helperTextStatus = 'default',
   onPressReset,
+  editable,
   ...props
 }: TextInputProps) => {
   const hasValue = value && value.length > 0;
+  const showClear = hasValue && editable !== false;
 
   return (
     <YStack gap={12}>
@@ -39,6 +41,7 @@ export const TextInput = ({
           returnKeyType="done"
           pr={30}
           unstyled
+          editable={editable}
           onChangeText={onTextChange}
           submitBehavior="newline"
           onSubmitEditing={(e) => onSubmit?.(e.nativeEvent.text)}
@@ -47,7 +50,7 @@ export const TextInput = ({
 
         <ButtonContainer r={0} gap={12} px={20}>
           <AnimatePresence>
-            {hasValue && (
+            {showClear && (
               <ClearButton onPress={onPressReset}>
                 <Cancel />
               </ClearButton>

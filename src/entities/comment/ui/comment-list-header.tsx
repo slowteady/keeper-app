@@ -8,9 +8,9 @@ export type CommentListHeaderProps = {
   onChangeSortOrder: (order: CommentSortOrderDto) => void;
 };
 
-export const CommentListHeader = ({ commentCount = 0, sortOrder, onChangeSortOrder }: CommentListHeaderProps) => {
+export const CommentListHeader = ({ commentCount, sortOrder, onChangeSortOrder }: CommentListHeaderProps) => {
   const isLatest = sortOrder === 'LATEST';
-  const isCreated = sortOrder === 'CREATED';
+  const isCreated = sortOrder === 'OLDEST';
 
   return (
     <Container>
@@ -28,8 +28,8 @@ export const CommentListHeader = ({ commentCount = 0, sortOrder, onChangeSortOrd
           <SortText active={isLatest} onPress={() => onChangeSortOrder('LATEST')} hitSlop={12}>
             최신순
           </SortText>
-          <SortText active={isCreated} onPress={() => onChangeSortOrder('CREATED')} hitSlop={12}>
-            등록순
+          <SortText active={isCreated} onPress={() => onChangeSortOrder('OLDEST')} hitSlop={12}>
+            오래된순
           </SortText>
         </XStack>
       </OverViewWrapper>

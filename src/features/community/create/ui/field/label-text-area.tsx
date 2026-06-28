@@ -1,24 +1,31 @@
-import { Control, Controller } from 'react-hook-form';
+import { Control, Controller, FieldPath, FieldValues } from 'react-hook-form';
+import { TextInput } from 'react-native';
 import { Text, TextAreaProps, XStack, YStack } from 'tamagui';
 
-import { CommunityAdoptFormDto } from '@/entities/community';
 import { TextArea } from '@/shared/ui';
 
+import { FieldError } from './field-error';
 import { FieldLabel } from './field-label';
 
-export interface LabelTextAreaProps extends TextAreaProps {
+export interface LabelTextAreaProps<T extends FieldValues> extends TextAreaProps {
   label: string;
   required?: boolean;
-  name: keyof CommunityAdoptFormDto;
-  control: Control<CommunityAdoptFormDto>;
+  name: FieldPath<T>;
+  control: Control<T>;
 }
 
-export const LabelTextArea = ({ label, required, name, control, ...props }: LabelTextAreaProps) => {
+export const LabelTextArea = <T extends FieldValues>({
+  label,
+  required,
+  name,
+  control,
+  ...props
+}: LabelTextAreaProps<T>) => {
   return (
     <Controller
       name={name}
       control={control}
-      render={({ field }) => {
+      render={({ field, fieldState }) => {
         const value = typeof field.value === 'string' ? field.value : '';
         const length = value.length;
 
@@ -39,7 +46,15 @@ export const LabelTextArea = ({ label, required, name, control, ...props }: Labe
               )}
             </XStack>
 
-            <TextArea variant="fill" value={value} onChangeText={field.onChange} onBlur={field.onBlur} {...props} />
+            <TextArea
+              variant="fill"
+              ref={field.ref as React.Ref<TextInput>}
+              value={value}
+              onChangeText={field.onChange}
+              onBlur={field.onBlur}
+              {...props}
+            />
+            <FieldError message={fieldState.error?.message} />
           </YStack>
         );
       }}

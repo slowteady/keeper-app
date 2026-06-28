@@ -1,30 +1,30 @@
 import { useState } from 'react';
 import { styled, Text, XStack, YStack } from 'tamagui';
 
-import { BottomButton, ButtonGroup, FormLayout, ImageSelector, TextArea } from '@/shared/ui';
-
-const INQUIRY_TYPES = [
-  { id: 'adoption', label: '입양' },
-  { id: 'missing', label: '실종|목격' },
-  { id: 'donation', label: '후원' },
-  { id: 'bug', label: '오류' },
-  { id: 'suggestion', label: '제안' },
-  { id: 'etc', label: '기타' }
-] as const;
-
-type InquiryType = (typeof INQUIRY_TYPES)[number]['id'];
+import { INQUIRY_TYPE_OPTIONS, InquiryTypeDto } from '@/entities/inquiry';
+import { useCreateInquiry } from '@/features/inquiry';
+import { BottomButton, FormLayout, ImageSelector, SelectField, TextArea, useBottomSheetMenu } from '@/shared/ui';
 
 const MAX_CONTENT = 500;
 
 export const InquiryFormScene = () => {
-  const [type, setType] = useState<InquiryType | null>(null);
+  const [type, setType] = useState<InquiryTypeDto | null>(null);
   const [content, setContent] = useState('');
   const [images, setImages] = useState<string[]>([]);
+  const { submit, isPending } = useCreateInquiry();
 
-  const isValid = type !== null && content.trim().length > 0;
+  const { open: openTypeSheet } = useBottomSheetMenu({
+    data: INQUIRY_TYPE_OPTIONS,
+    value: type,
+    onPress: (d) => setType(d.id)
+  });
+  const typeLabel = INQUIRY_TYPE_OPTIONS.find((o) => o.id === type)?.label;
+
+  const isValid = type !== null && content.trim().length >= 2;
 
   const handleSubmit = () => {
-    // TODO: POST /api/inquiries (백엔드 미구현)
+    if (!isValid || isPending) return;
+    submit({ type, content: content.trim(), images });
   };
 
   return (
@@ -32,16 +32,15 @@ export const InquiryFormScene = () => {
       containerProps={{ bg: '$pageBackground' }}
       contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 24 }}
       footer={
-        <BottomButton onPress={handleSubmit} disabled={!isValid}>
+        <BottomButton onPress={handleSubmit} disabled={!isValid || isPending} isLoading={isPending}>
           등록하기
         </BottomButton>
       }
     >
       <Title>어떤 유형의 문의인가요?</Title>
 
-      <YStack gap={6} mt={16}>
-        <ButtonGroup data={INQUIRY_TYPES.slice(0, 3)} id={type as InquiryType} onChange={setType} />
-        <ButtonGroup data={INQUIRY_TYPES.slice(3, 6)} id={type as InquiryType} onChange={setType} />
+      <YStack mt={16}>
+        <SelectField value={typeLabel} placeholder="유형을 선택해주세요" onPress={openTypeSheet} />
       </YStack>
 
       <YStack gap={12} mt={24}>

@@ -1,22 +1,45 @@
 import * as ImagePicker from 'expo-image-picker';
 import { useState } from 'react';
 import { Image, StyleSheet } from 'react-native';
-import { ScrollView, Spinner, styled, View, XStack, YStack } from 'tamagui';
+import { ScrollView, styled, View, XStack, YStack } from 'tamagui';
 
-import { logger } from '@/shared/lib';
+import { globalToast, logger } from '@/shared/lib';
 
+import { Skeleton } from '../fallback/skeleton';
 import { Close } from '../icons/outline';
 import { ImageViewer } from '../overlay/image-viewer';
+
+// 이미지별 로드 상태를 독립 관리 — 로드 전까지 Skeleton 노출 (네트워크 이미지 빈 화면 방지)
+const SelectorImage = ({ uri }: { uri: string }) => {
+  const [loaded, setLoaded] = useState(false);
+  return (
+    <>
+      <Image
+        source={{ uri }}
+        style={styles.image}
+        resizeMode="cover"
+        onLoad={() => setLoaded(true)}
+        onError={() => setLoaded(true)}
+      />
+      {!loaded && <Skeleton style={StyleSheet.absoluteFill} />}
+    </>
+  );
+};
 
 export type ImageSelectorProps = {
   max?: number;
   size?: number;
   value?: string[];
   onChange?: (images: string[]) => void;
+  readOnly?: boolean;
 };
 
-export const ImageSelector = ({ max = 10, size = 100, value = [], onChange }: ImageSelectorProps) => {
-  const [loadingIndex, setLoadingIndex] = useState<number | null>(null);
+export const canAddImage = ({ readOnly, count, max }: { readOnly: boolean; count: number; max: number }): boolean =>
+  !readOnly && count < max;
+
+export const canRemoveImage = ({ readOnly }: { readOnly: boolean }): boolean => !readOnly;
+
+export const ImageSelector = ({ max = 10, size = 100, value = [], onChange, readOnly = false }: ImageSelectorProps) => {
   const [viewerOpen, setViewerOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -37,6 +60,7 @@ export const ImageSelector = ({ max = 10, size = 100, value = [], onChange }: Im
       onChange?.([...value, ...newImages].slice(0, max));
     } catch (err) {
       logger.error(err);
+      globalToast('이미지를 불러오지 못했어요', 'fail');
     }
   };
 
@@ -50,7 +74,8 @@ export const ImageSelector = ({ max = 10, size = 100, value = [], onChange }: Im
     setViewerOpen(true);
   };
 
-  const canAddMore = value.length < max;
+  const showAddButton = canAddImage({ readOnly, count: value.length, max });
+  const showRemoveButton = canRemoveImage({ readOnly });
 
   return (
     <>
@@ -59,31 +84,25 @@ export const ImageSelector = ({ max = 10, size = 100, value = [], onChange }: Im
           {value.map((uri, index) => (
             <ImageBox key={`${uri}-${index}`} width={size} height={size}>
               <View onPress={() => handleImagePress(index)} style={styles.imagePressable}>
-                {loadingIndex === index && (
-                  <LoadingOverlay>
-                    <Spinner size="small" color="$primaryMain" />
-                  </LoadingOverlay>
-                )}
-                <Image
-                  source={{ uri }}
-                  style={styles.image}
-                  resizeMode="cover"
-                  onLoadStart={() => setLoadingIndex(index)}
-                  onLoadEnd={() => setLoadingIndex(null)}
-                  onError={() => setLoadingIndex(null)}
-                />
+                <SelectorImage uri={uri} />
               </View>
 
-              <View style={styles.removeButton} onPress={() => handleRemoveImage(index)}>
-                <RemoveButtonBackground>
-                  <Close width={12} height={12} color="white" />
-                </RemoveButtonBackground>
-              </View>
+              {showRemoveButton && (
+                <View style={styles.removeButton} onPress={() => handleRemoveImage(index)}>
+                  <RemoveButtonBackground>
+                    <Close width={12} height={12} color="white" />
+                  </RemoveButtonBackground>
+                </View>
+              )}
             </ImageBox>
           ))}
 
-          {canAddMore && (
-            <View style={[styles.addButton, { width: size, height: size }]} onPress={handlePickImage}>
+          {showAddButton && (
+            <View
+              testID="image-selector-add"
+              style={[styles.addButton, { width: size, height: size }]}
+              onPress={handlePickImage}
+            >
               <AddButton>
                 <PlusIcon>
                   <PlusVertical />
@@ -104,15 +123,6 @@ const ImageBox = styled(YStack, {
   position: 'relative',
   rounded: '$4',
   overflow: 'hidden'
-});
-
-const LoadingOverlay = styled(YStack, {
-  position: 'absolute',
-  inset: 0,
-  items: 'center',
-  justify: 'center',
-  bg: 'rgba(0,0,0,0.1)',
-  z: 1
 });
 
 const RemoveButtonBackground = styled(YStack, {

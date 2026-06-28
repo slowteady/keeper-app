@@ -1,0 +1,71 @@
+appId: com.keeper.love
+---
+# 로그인 + 정책 동의 — 모든 게이트 즉시 통과.
+# 사전: .maestro/scripts/setup-policy.sh agreed
+- runFlow:
+    file: ./_setup-launch.yaml
+- runFlow:
+    file: ./_setup-dev-login.yaml
+- tapOn: '커뮤니티'
+- extendedWaitUntil:
+    visible: '개인입양'
+    timeout: 10000
+
+# 1. 글쓰기 펜 → write 페이지 진입 (정책 시트 안 뜸)
+- tapOn:
+    id: 'community-write-button'
+- extendedWaitUntil:
+    visible: '개인입양 홍보'
+    timeout: 10000
+- back
+- extendedWaitUntil:
+    visible: '개인입양'
+    timeout: 5000
+
+# 2. 카드 본문 탭 → 디테일 진입
+- tapOn: '말티즈 뭉치 가족 찾아요'
+- extendedWaitUntil:
+    visible:
+      id: 'community-detail-heart'
+    timeout: 10000
+
+# 3. 디테일 헤더 하트 → 토글 (정책 시트 안 뜸, 모달 안 뜸)
+- tapOn:
+    id: 'community-detail-heart'
+- waitForAnimationToEnd
+- assertNotVisible:
+    id: 'community-policy-sheet'
+- assertNotVisible:
+    id: 'login-required-modal'
+
+# 4. 댓글 영역 스크롤
+- swipe:
+    start: '50%,80%'
+    end: '50%,20%'
+    duration: 400
+- swipe:
+    start: '50%,80%'
+    end: '50%,20%'
+    duration: 400
+
+# 5. 답글 달기 탭 → 즉시 reply mode (정책 시트 X)
+- tapOn: '답글 달기'
+- extendedWaitUntil:
+    visible: '답글 작성 중'
+    timeout: 5000
+
+# 6. prefix 삭제 → 일반 댓글 전환 (banner 사라짐)
+- tapOn:
+    id: 'comment-input'
+- eraseText: 30
+- waitForAnimationToEnd
+- assertNotVisible: '답글 작성 중'
+- hideKeyboard
+
+# 7. 정렬 변경 — placeholderData 로 깜빡임 없음
+- tapOn: '등록순'
+- waitForAnimationToEnd
+- assertVisible: '댓글 46개'
+- tapOn: '최신순'
+- waitForAnimationToEnd
+- assertVisible: '댓글 46개'

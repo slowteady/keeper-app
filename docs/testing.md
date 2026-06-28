@@ -31,7 +31,7 @@
 ## E2E 테스트
 
 - Maestro 사용 (YAML 기반)
-- 핵심 플로우만: 로그인, 입양공고 조회, 보호소 검색
+- 핵심 사용자 플로우 — `.maestro/flows-<platform>/` 참조
 - iOS/Android 동일 스크립트
 
 ## 파일 위치

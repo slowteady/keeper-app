@@ -1,6 +1,35 @@
 import { AxiosError, AxiosHeaders } from 'axios';
 
-import { throwToErrorBoundary } from './handle-error';
+import { getModerationMessage, throwToErrorBoundary } from './handle-error';
+
+const axiosErrorWith = (status: number, data: unknown) =>
+  new AxiosError('error', String(status), undefined, undefined, {
+    status,
+    data,
+    statusText: '',
+    headers: {},
+    config: { headers: new AxiosHeaders() }
+  });
+
+describe('getModerationMessage', () => {
+  it('CONTENT_MODERATION 에러면 서버 메시지를 반환한다', () => {
+    const error = axiosErrorWith(400, {
+      code: 'FAIL',
+      error: 'CONTENT_MODERATION',
+      message: '혐오·괴롭힘 표현이 감지됐어요. 커뮤니티 가이드라인을 확인해주세요.'
+    });
+    expect(getModerationMessage(error)).toBe('혐오·괴롭힘 표현이 감지됐어요. 커뮤니티 가이드라인을 확인해주세요.');
+  });
+
+  it('다른 에러 코드면 null', () => {
+    const error = axiosErrorWith(400, { code: 'FAIL', error: 'VALIDATION_FAILED', message: '검증 실패' });
+    expect(getModerationMessage(error)).toBeNull();
+  });
+
+  it('Axios 에러가 아니면 null', () => {
+    expect(getModerationMessage(new Error('boom'))).toBeNull();
+  });
+});
 
 describe('throwToErrorBoundary', () => {
   it('returns true for 500 error', () => {

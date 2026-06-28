@@ -1,48 +1,72 @@
 import { useScrollToTop } from '@react-navigation/native';
-import { FlashList } from '@shopify/flash-list';
+import { FlashList, FlashListRef } from '@shopify/flash-list';
 import { useQueryClient } from '@tanstack/react-query';
-import { useRouter } from 'expo-router';
-import { useCallback, useState } from 'react';
+import { RelativePathString, useRouter } from 'expo-router';
+import { useCallback, useRef } from 'react';
 import { RefreshControl } from 'react-native';
 import { styled, View } from 'tamagui';
 
-import { ADOPT_OPTIONS, AdoptFilterDto, adoptQueries } from '@/entities/adopt';
+import { ADOPT_OPTIONS, adoptQueries } from '@/entities/adopt';
+import { noticeQueries } from '@/entities/notice';
 import { shelterQueries } from '@/entities/shelter';
-import { useAdoptList } from '@/features/adopt';
+import { useAdoptList, usePersonalAdoptList } from '@/features/adopt';
+import { useNoticeList } from '@/features/notice';
 import { useHomeShelter } from '@/features/shelter';
-import { useListRefreshing, useScrollUpButton } from '@/shared/model';
-import { RouteErrorBoundary, ScrollUpButton } from '@/shared/ui';
-import { HomeAdoptSection, HomeBannerSection, HomeFooterSection, HomeShelterSection } from '@/widgets/home-section';
+import { SCREEN_GUTTER, SECTION_GAP } from '@/shared/lib';
+import { useListRefreshing } from '@/shared/model';
+import { RouteErrorBoundary } from '@/shared/ui';
+import {
+  HomeAdoptSection,
+  HomeBannerSection,
+  HomeFooterSection,
+  HomeNoticeSection,
+  HomePersonalSection,
+  HomeShelterSection
+} from '@/widgets/home-section';
 
 export const ErrorBoundary = RouteErrorBoundary;
 
 const IMAGES = [require('@/assets/images/banner1.png'), require('@/assets/images/banner2.png')];
 
-const SECTIONS = [{ id: 'banner' }, { id: 'adopt' }, { id: 'shelter' }] as const;
+const SECTIONS = [{ id: 'notice' }, { id: 'banner' }, { id: 'adopt' }, { id: 'personal' }, { id: 'shelter' }] as const;
+
+const HOME_LIST_SIZE = 10;
 
 const Page = () => {
   const router = useRouter();
-  const { isButtonVisible, handlePressButton, handleScroll, scrollRef } = useScrollUpButton();
+  const scrollRef = useRef<FlashListRef<(typeof SECTIONS)[number]>>(null);
   useScrollToTop(scrollRef);
 
-  const [selectedFilter, setSelectedFilter] = useState<AdoptFilterDto>(ADOPT_OPTIONS.FILTER[0].id);
-  const [selectedType, setSelectedType] = useState<string>(ADOPT_OPTIONS.ANIMAL[0].id);
-
   const { convertedData, isLoading } = useAdoptList({
-    filter: selectedFilter,
-    animalType: selectedType
+    filter: ADOPT_OPTIONS.FILTER[0].id,
+    animalType: ADOPT_OPTIONS.ANIMAL[0].id,
+    size: HOME_LIST_SIZE
+  });
+
+  const { convertedData: personalData, isLoading: personalLoading } = usePersonalAdoptList({
+    animalType: ADOPT_OPTIONS.ANIMAL[0].id,
+    sort: 'NEW',
+    size: HOME_LIST_SIZE
   });
 
   const shelter = useHomeShelter();
+  const { items: noticeItems } = useNoticeList();
+  const hasNotice = noticeItems.length > 0;
   const queryClient = useQueryClient();
 
   const goDetail = useCallback((id: string) => router.push({ pathname: '/adopt/[id]', params: { id } }), [router]);
   const goList = useCallback(() => router.push('/adopt'), [router]);
+  const goPersonalDetail = useCallback(
+    (id: string) => router.push({ pathname: '/(untabs)/adopt-personal/[id]', params: { id } } as never),
+    [router]
+  );
+  const goPersonalList = useCallback(() => router.push('/adopt?source=personal' as RelativePathString), [router]);
 
   const refreshCallback = useCallback(async () => {
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: adoptQueries.all() }),
-      queryClient.invalidateQueries({ queryKey: shelterQueries.all() })
+      queryClient.invalidateQueries({ queryKey: shelterQueries.all() }),
+      queryClient.invalidateQueries({ queryKey: noticeQueries.all() })
     ]);
   }, [queryClient]);
 
@@ -53,46 +77,58 @@ const Page = () => {
       switch (item.id) {
         case 'banner':
           return (
-            <View px={20} pt={24} pb={40}>
+            <View px={SCREEN_GUTTER} pt={hasNotice ? 8 : 24} pb={SECTION_GAP}>
               <HomeBannerSection images={IMAGES} />
             </View>
           );
+        case 'notice':
+          return <HomeNoticeSection />;
         case 'adopt':
           return (
-            <View pb={40}>
+            <View pb={SECTION_GAP}>
               <HomeAdoptSection
-                selectedFilter={selectedFilter}
-                selectedType={selectedType}
                 convertedData={convertedData}
                 isLoading={isLoading}
                 onGoDetail={goDetail}
                 onGoList={goList}
-                onChangeFilter={(id) => setSelectedFilter(id as AdoptFilterDto)}
-                onChangeType={setSelectedType}
+              />
+            </View>
+          );
+        case 'personal':
+          return (
+            <View pb={SECTION_GAP}>
+              <HomePersonalSection
+                convertedData={personalData}
+                isLoading={personalLoading}
+                onGoDetail={goPersonalDetail}
+                onGoList={goPersonalList}
               />
             </View>
           );
         case 'shelter':
           return (
-            <View pb={80}>
+            <View pb={SECTION_GAP}>
               <HomeShelterSection
                 shelters={shelter.shelters}
-                shelterCounts={shelter.shelterCounts}
-                mapRef={shelter.mapRef}
-                camera={shelter.camera}
-                selectedMarkerId={shelter.selectedMarkerId}
                 isGranted={shelter.isGranted}
                 isLoading={shelter.isLoading}
-                animatedListStyle={shelter.animatedListStyle}
-                onMapInitialized={shelter.onMapInitialized}
-                onRefetch={shelter.onRefetch}
-                onTapMarker={shelter.onTapMarker}
               />
             </View>
           );
       }
     },
-    [selectedFilter, selectedType, convertedData, isLoading, goDetail, goList, shelter]
+    [
+      convertedData,
+      isLoading,
+      personalData,
+      personalLoading,
+      goDetail,
+      goList,
+      goPersonalDetail,
+      goPersonalList,
+      shelter,
+      hasNotice
+    ]
   );
 
   return (
@@ -100,15 +136,12 @@ const Page = () => {
       <FlashList
         ref={scrollRef}
         data={SECTIONS}
-        onScroll={handleScroll}
         renderItem={renderItem}
         keyExtractor={({ id }) => id}
         getItemType={(item) => item.id}
         ListFooterComponent={<HomeFooterSection />}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
       />
-
-      <ScrollUpButton visible={isButtonVisible} onPress={handlePressButton} />
     </Container>
   );
 };

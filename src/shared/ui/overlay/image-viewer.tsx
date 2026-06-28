@@ -82,7 +82,8 @@ export const ImageViewer = ({ open, onClose, images, defaultIndex }: ImageViewer
   return (
     <Modal visible transparent animationType="fade" onRequestClose={onClose}>
       <GestureHandlerRootView style={styles.root}>
-        <YStack flex={1} bg="$black700" px={HORIZONTAL_PADDING} items="center" justify="center">
+        {/* 백드롭 tap 시 close — Gallery/Button/Indicator 자체는 자기 gesture 소비하므로 propagation 안 일어남 */}
+        <YStack flex={1} bg="$black700" px={HORIZONTAL_PADDING} items="center" justify="center" onPress={onClose}>
           <View flex={1} self="stretch" pt={insets.top + 10} pb={insets.bottom}>
             <IconButton self="flex-end" mb={8} onPress={onClose}>
               <Close width={18} height={18} color={white900.val} />

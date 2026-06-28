@@ -2,6 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
 
 import { checkNickname } from '@/entities/auth';
+import { containsProfanity } from '@/shared/lib';
 import { useDebounceValue } from '@/shared/model';
 
 export type NicknameStatus = {
@@ -49,6 +50,26 @@ export const useCheckNickname = (initialValue: string = '') => {
 
   useEffect(() => {
     if (debouncedNickname.length < 2 || debouncedNickname === initialValue) {
+      setIsChecking(false);
+      return;
+    }
+
+    if (/[ㄱ-ㅎㅏ-ㅣ]/.test(debouncedNickname)) {
+      setIsComplete(false);
+      setNicknameStatus({
+        status: 'error',
+        message: '*완성된 글자만 사용할 수 있어요'
+      });
+      setIsChecking(false);
+      return;
+    }
+
+    if (containsProfanity(debouncedNickname)) {
+      setIsComplete(false);
+      setNicknameStatus({
+        status: 'error',
+        message: '*사용할 수 없는 닉네임이에요'
+      });
       setIsChecking(false);
       return;
     }

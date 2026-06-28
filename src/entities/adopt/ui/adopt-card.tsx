@@ -1,17 +1,34 @@
+import { useRecyclingState } from '@shopify/flash-list';
+import { Images } from '@tamagui/lucide-icons';
 import { Image } from 'expo-image';
-import { useState } from 'react';
-import { Dimensions, StyleSheet } from 'react-native';
+import { memo, useCallback } from 'react';
+import { Dimensions, Pressable, StyleSheet } from 'react-native';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
-import { ChipVariant } from '@/entities/adopt';
-import { Skeleton } from '@/shared/ui';
+import { toggleHaptic } from '@/shared/lib';
+import { NoImage } from '@/shared/ui/fallback/no-image';
+import { AnimatedHeart } from '@/shared/ui/icons/animation';
+
+import { ADOPT_STATUS_INFO, CORE_CHIP_IDS, isAdoptEnded } from '../constant';
+import type { ChipVariant } from '../mapper';
+import type { AdoptStatusDto } from '../schema';
+import { ChipItem, ChipText } from './chip';
+
+const STATUS_CHIP_IDS = ['NEAR_DEADLINE', 'NEW', 'DDAY'];
 
 export type AdoptCardProps = {
   uri: string;
+  imageCount?: number;
   title: string;
   description: AdoptCardDescriptionsProps['data'];
   chips?: AdoptCardChipsProps['data'];
   horizontal?: boolean;
+  coreChipsOnly?: boolean;
+  onPress?: () => void;
+  isFavorited?: boolean;
+  onPressFavorite?: () => void;
+  status?: AdoptStatusDto;
+  completed?: boolean;
 };
 
 export const ADOPT_CARD_IMAGE_SIZES = {
@@ -19,37 +36,132 @@ export const ADOPT_CARD_IMAGE_SIZES = {
   medium: 220
 } as const;
 
-export const AdoptCard = ({ uri, title, description, chips, horizontal = false }: AdoptCardProps) => {
-  const [isLoaded, setIsLoaded] = useState(false);
-
+const AdoptCardComponent = ({
+  uri,
+  imageCount = 0,
+  title,
+  description,
+  chips,
+  horizontal = false,
+  coreChipsOnly = false,
+  onPress,
+  isFavorited = false,
+  onPressFavorite,
+  status,
+  completed = false
+}: AdoptCardProps) => {
   const size = horizontal ? 'medium' : 'small';
-  const hasChips = chips && chips.length > 0;
+  const statusChips = chips?.filter((c) => STATUS_CHIP_IDS.includes(c.id)) ?? [];
+  const attributeChips =
+    chips?.filter((c) => !STATUS_CHIP_IDS.includes(c.id) && (!coreChipsOnly || CORE_CHIP_IDS.includes(c.id))) ?? [];
+
+  const handlePressFavorite = useCallback(() => {
+    if (!onPressFavorite) return;
+    toggleHaptic(isFavorited);
+    onPressFavorite();
+  }, [isFavorited, onPressFavorite]);
 
   return (
     <Container size={size}>
-      <ImageContainer size={size}>
-        {!isLoaded && (
-          <Skeleton style={{ position: 'absolute', top: 0, width: '100%', height: '100%', borderRadius: 8 }} />
-        )}
-        {uri && (
-          <Image
-            key={uri}
-            source={{ uri }}
-            onLoad={() => setIsLoaded(true)}
-            onError={() => setIsLoaded(false)}
-            style={styles.image}
-          />
-        )}
-      </ImageContainer>
+      <Pressable onPress={onPress} disabled={!onPress}>
+        <ImageContainer size={size}>
+          <ImageWithSkeleton uri={uri} />
+          {status && isAdoptEnded(status) && <EndedDim />}
+          {status && <StatusBadge status={status} />}
+          {completed && <CompletedOverlay />}
+          {statusChips.length > 0 && <StatusChipOverlay data={statusChips} />}
+          {imageCount > 1 && (
+            <ImageCountBadge>
+              <Images size={11} color="#fff" />
+              <ImageCountText>{imageCount}</ImageCountText>
+            </ImageCountBadge>
+          )}
+        </ImageContainer>
 
-      <Title size={size}>{title}</Title>
+        <Title size={size}>{title}</Title>
 
-      <DescriptionContainer size={size} gap={10}>
-        <AdoptCardDescriptions data={description} size={size} />
-      </DescriptionContainer>
+        <DescriptionContainer size={size} gap={10}>
+          <AdoptCardDescriptions data={description} size={size} />
+        </DescriptionContainer>
 
-      {hasChips && <AdoptCardChips data={chips} />}
+        {attributeChips.length > 0 && <AdoptCardChips data={attributeChips} />}
+      </Pressable>
+
+      {onPressFavorite && (
+        <Pressable style={styles.favoriteButton} hitSlop={10} onPress={handlePressFavorite}>
+          <AnimatedHeart isLiked={isFavorited} size={18} strokeWidth={2} inactiveColor="#FFFFFF" />
+        </Pressable>
+      )}
     </Container>
+  );
+};
+
+export const AdoptCard = memo(AdoptCardComponent);
+AdoptCard.displayName = 'AdoptCard';
+
+const StatusBadge = ({ status }: { status: AdoptStatusDto }) => {
+  if (!isAdoptEnded(status)) return null;
+  const info = ADOPT_STATUS_INFO[status];
+  return (
+    <View
+      position="absolute"
+      t={8}
+      l={8}
+      px={8}
+      py={4}
+      rounded={999}
+      bg={info.tone === 'positive' ? '$successMain' : '$black700'}
+    >
+      <Text fontWeight={600} fontSize={11} lineHeight={13} color="#fff">
+        {info.label}
+      </Text>
+    </View>
+  );
+};
+
+const EndedDim = styled(View, {
+  position: 'absolute',
+  t: 0,
+  l: 0,
+  r: 0,
+  b: 0,
+  rounded: 8,
+  bg: '$black900',
+  opacity: 0.45
+});
+
+const CompletedOverlay = () => {
+  return (
+    <>
+      <View position="absolute" t={0} l={0} r={0} b={0} rounded={8} bg="$black900" opacity={0.45} />
+      <View position="absolute" t={0} l={0} r={0} b={0} justify="center" items="center">
+        <View px={10} py={5} rounded={999} bg="$black800">
+          <Text fontWeight={600} fontSize={12} lineHeight={14} color="#fff">
+            입양완료
+          </Text>
+        </View>
+      </View>
+    </>
+  );
+};
+
+const ImageWithSkeleton = ({ uri }: { uri: string }) => {
+  const [errored, setErrored] = useRecyclingState(false, [uri]);
+
+  if (!uri || errored) {
+    return <NoImage />;
+  }
+
+  return (
+    <Image
+      source={{ uri }}
+      recyclingKey={uri}
+      cachePolicy="memory-disk"
+      transition={0}
+      contentFit="cover"
+      onError={() => setErrored(true)}
+      style={styles.image}
+    />
   );
 };
 
@@ -72,13 +184,25 @@ type AdoptCardChipsProps = {
 };
 const AdoptCardChips = ({ data }: AdoptCardChipsProps) => {
   return (
-    <ChipContainer gap={4}>
+    <ChipContainer>
       {data.map(({ id, value, variant = 'default' }, idx) => (
         <ChipItem key={`${id}-${idx}`} variant={variant}>
           <ChipText variant={variant}>{value}</ChipText>
         </ChipItem>
       ))}
     </ChipContainer>
+  );
+};
+
+const StatusChipOverlay = ({ data }: AdoptCardChipsProps) => {
+  return (
+    <XStack position="absolute" t={8} l={8} gap={4}>
+      {data.map(({ id, value, variant = 'default' }, idx) => (
+        <OverlayBadge key={`${id}-${idx}`} variant={variant}>
+          <OverlayBadgeText>{value}</OverlayBadgeText>
+        </OverlayBadge>
+      ))}
+    </XStack>
   );
 };
 
@@ -96,6 +220,7 @@ const Container = styled(View, {
 });
 
 const ImageContainer = styled(View, {
+  aspectRatio: 5 / 4,
   variants: {
     size: {
       small: {
@@ -179,59 +304,69 @@ const DescriptionValue = styled(Text, {
 });
 
 const ChipContainer = styled(XStack, {
-  rowGap: 8,
-  flexWrap: 'wrap'
+  flexWrap: 'wrap',
+  gap: 4
 });
 
-const ChipItem = styled(View, {
-  self: 'baseline',
-  rounded: 4,
-  px: 6,
+const OverlayBadge = styled(View, {
+  px: 8,
   py: 4,
+  rounded: 999,
   variants: {
     variant: {
-      error: {
-        backgroundColor: '$errorLightest'
-      },
-      success: {
-        backgroundColor: '$successLightest'
-      },
-      notice: {
-        backgroundColor: '$noticeLightest'
-      },
-      default: {
-        backgroundColor: '$backgroundDefault'
-      }
+      error: { backgroundColor: '$errorMain' },
+      success: { backgroundColor: '$successMain' },
+      notice: { backgroundColor: '$noticeMain' },
+      default: { backgroundColor: '$black700' },
+      dog: { backgroundColor: '$dogMain' },
+      cat: { backgroundColor: '$catMain' },
+      etc: { backgroundColor: '$etcMain' }
     }
   } as const
 });
 
-const ChipText = styled(Text, {
-  fontWeight: 400,
+const OverlayBadgeText = styled(Text, {
+  fontWeight: 600,
   fontSize: 11,
   lineHeight: 13,
-  variants: {
-    variant: {
-      error: {
-        color: '$errorMain'
-      },
-      success: {
-        color: '$successMain'
-      },
-      notice: {
-        color: '$noticeMain'
-      },
-      default: {
-        color: '$black600'
-      }
-    }
-  } as const
+  color: '#fff'
+});
+
+const ImageCountBadge = styled(XStack, {
+  position: 'absolute',
+  b: 8,
+  r: 8,
+  items: 'center',
+  gap: 3,
+  px: 6,
+  py: 3,
+  rounded: 999,
+  bg: 'rgba(0,0,0,0.55)'
+});
+
+const ImageCountText = styled(Text, {
+  fontWeight: 600,
+  fontSize: 11,
+  lineHeight: 13,
+  color: '#fff'
 });
 
 const styles = StyleSheet.create({
   image: {
     width: '100%',
     borderRadius: 8,
-    aspectRatio: 5 / 4
+    aspectRatio: 5 / 4,
+    backgroundColor: '#F2F3F5'
+  },
+  favoriteButton: {
+    position: 'absolute',
+    top: 6,
+    right: 8,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: 'rgba(0, 0, 0, 0.35)',
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 });

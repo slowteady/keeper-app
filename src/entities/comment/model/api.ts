@@ -1,0 +1,110 @@
+import { infiniteQueryOptions, keepPreviousData, queryOptions } from '@tanstack/react-query';
+import { AxiosResponse } from 'axios';
+
+import { authApi } from '@/shared/api/instance';
+import { ApiResponse } from '@/shared/model';
+
+import {
+  CommentContextDto,
+  CommentContextSchema,
+  CommentDto,
+  CommentListResponseDto,
+  CommentListResponseSchema,
+  CommentSchema,
+  CommentSortOrderDto
+} from './schema';
+
+const BASE = '/community';
+
+export type CommentListParams = {
+  cursor?: string | null;
+  size?: number;
+  sort?: CommentSortOrderDto;
+};
+
+const getList = async (postId: string, params: CommentListParams): Promise<CommentListResponseDto> => {
+  // null cursor 는 axios 쿼리에 안 보냄 (백엔드는 미지정 = 첫 페이지)
+  const query: Record<string, string | number> = {};
+  if (params.cursor !== null && params.cursor !== undefined) query.cursor = params.cursor;
+  if (params.size !== undefined) query.size = params.size;
+  if (params.sort !== undefined) query.sort = params.sort;
+
+  const res = await authApi.get<ApiResponse<CommentListResponseDto>>(`${BASE}/posts/${postId}/comments`, {
+    params: query
+  });
+  return CommentListResponseSchema.parse(res.data.data);
+};
+
+const create = async (postId: string, content: string, parentId?: string | null): Promise<CommentDto> => {
+  const body: { content: string; parentId?: string } = { content };
+  if (parentId !== undefined && parentId !== null) body.parentId = parentId;
+  const res = await authApi.post<ApiResponse<CommentDto>>(`${BASE}/posts/${postId}/comments`, body);
+  return CommentSchema.parse(res.data.data);
+};
+
+export type ReplyListParams = {
+  cursor?: string | null;
+  size?: number;
+};
+
+const getReplies = async (parentId: string, params: ReplyListParams): Promise<CommentListResponseDto> => {
+  const query: Record<string, string | number> = {};
+  if (params.cursor !== null && params.cursor !== undefined) query.cursor = params.cursor;
+  if (params.size !== undefined) query.size = params.size;
+  const res = await authApi.get<ApiResponse<CommentListResponseDto>>(`${BASE}/comments/${parentId}/replies`, {
+    params: query
+  });
+  return CommentListResponseSchema.parse(res.data.data);
+};
+
+const getContext = async (postId: string, id: string): Promise<CommentContextDto> => {
+  const res = await authApi.get<ApiResponse<CommentContextDto>>(`${BASE}/posts/${postId}/comments/${id}/context`);
+  return CommentContextSchema.parse(res.data.data);
+};
+
+const update = async (id: string, content: string): Promise<CommentDto> => {
+  const res = await authApi.patch<ApiResponse<CommentDto>>(`${BASE}/comments/${id}`, { content });
+  return CommentSchema.parse(res.data.data);
+};
+
+const remove = async (id: string): Promise<void> => {
+  await authApi.delete<AxiosResponse>(`${BASE}/comments/${id}`);
+};
+
+const report = async (id: string, body: { reason: string; reasonDetail?: string }): Promise<void> => {
+  await authApi.post<AxiosResponse>(`${BASE}/comments/${id}/report`, body);
+};
+
+export const commentApi = { getList, getReplies, getContext, create, update, remove, report };
+
+// queryKey 는 cursor 제외한 안정 키 (sort/size 만) — cursor 는 pageParam 으로 흘러감
+export type CommentListFilter = { sort: CommentSortOrderDto; size: number };
+
+export const commentQueries = {
+  all: () => ['comment'] as const,
+  context: (postId: string, id: string) =>
+    queryOptions({
+      queryKey: [...commentQueries.all(), 'context', postId, id] as const,
+      queryFn: () => getContext(postId, id),
+      enabled: !!postId && !!id
+    }),
+  list: (postId: string, filter: CommentListFilter) =>
+    infiniteQueryOptions({
+      queryKey: [...commentQueries.all(), 'list', postId, filter] as const,
+      queryFn: ({ pageParam }) => getList(postId, { cursor: pageParam, sort: filter.sort, size: filter.size }),
+      initialPageParam: null as string | null,
+      getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.nextCursor : undefined),
+      // 정렬 변경 시 query key 바뀌면서 cache miss → 빈 화면 깜빡. 이전 결과 유지로 새 데이터 도착 시까지 표시.
+      placeholderData: keepPreviousData,
+      enabled: !!postId
+    }),
+  // 대댓글: lazy fetch — use-replies 의 enabled 토글로 제어
+  replies: (parentId: string, size = 20) =>
+    infiniteQueryOptions({
+      queryKey: [...commentQueries.all(), 'replies', parentId, { size }] as const,
+      queryFn: ({ pageParam }) => getReplies(parentId, { cursor: pageParam, size }),
+      initialPageParam: null as string | null,
+      getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.nextCursor : undefined),
+      enabled: !!parentId
+    })
+};

@@ -8,7 +8,7 @@ export const PROFILE_OPTIONS = {
     { id: 'adopt', label: '공고' },
     { id: 'shelter', label: '보호소' },
     { id: 'post', label: '게시글' },
-    { id: 'etc', label: '기타' }
+    { id: 'comment', label: '댓글' }
   ] as const
 };
 

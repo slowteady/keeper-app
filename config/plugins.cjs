@@ -44,8 +44,9 @@ module.exports = [
       ios: { handleKakaoOpenUrl: true }
     }
   ],
-  ['@react-native-seoul/naver-login', { urlScheme: process.env.EXPO_PUBLIC_NAVER_URL_SCHEME }],
   ['@react-native-google-signin/google-signin', { iosUrlScheme: process.env.EXPO_PUBLIC_GOOGLE_URL_IOS_SCHEME }],
+  'react-native-map-link',
+  './config/with-korean-map-queries.cjs',
   [
     'expo-secure-store',
     {
@@ -57,10 +58,14 @@ module.exports = [
   [
     '@sentry/react-native/expo',
     {
-      url: 'https://sentry.io/',
-      note: 'Use SENTRY_AUTH_TOKEN env to authenticate with Sentry.',
-      project: 'keeper',
-      organization: 'candykim'
+      organization: process.env.SENTRY_ORG,
+      project: process.env.SENTRY_PROJECT
+    }
+  ],
+  [
+    'expo-notifications',
+    {
+      defaultChannel: 'default'
     }
   ]
 ];

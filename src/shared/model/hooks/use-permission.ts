@@ -9,7 +9,7 @@ export const usePermission = () => {
   const goSettingMenu = useCallback(async () => {
     try {
       if (Platform.OS === 'ios') {
-        await Linking.openURL('app-settings:');
+        await Linking.openSettings();
       } else if (Platform.OS === 'android') {
         const data = `package:${applicationId}`;
         try {

@@ -4,7 +4,7 @@ import { Spinner, Text, useTheme } from 'tamagui';
 
 type Variant = 'default' | 'ghost';
 type Size = 'small' | 'medium' | 'large';
-type Color = 'primary' | 'secondary' | 'tertiary';
+type Color = 'primary' | 'secondary' | 'tertiary' | 'destructive';
 
 export const BUTTON_HEIGHT: Record<Size, number> = {
   small: 48,
@@ -73,7 +73,8 @@ const getBackgroundColor = (variant: Variant, color: Color, disabled: boolean, t
   const map = {
     primary: disabled ? theme.white800.val : theme.primaryMain.val,
     secondary: disabled ? theme.white800.val : theme.blackMain.val,
-    tertiary: disabled ? theme.backgroundDefault.val : theme.white800.val
+    tertiary: disabled ? theme.backgroundDefault.val : theme.white800.val,
+    destructive: disabled ? theme.white800.val : theme.errorMain.val
   };
 
   return map[color];
@@ -88,7 +89,8 @@ const getTextColor = (variant: Variant, color: Color, disabled: boolean, theme: 
   const map = {
     primary: disabled ? theme.black500.val : theme.black900.val,
     secondary: disabled ? theme.black500.val : theme.white900.val,
-    tertiary: disabled ? theme.white600.val : theme.black900.val
+    tertiary: disabled ? theme.white600.val : theme.black900.val,
+    destructive: disabled ? theme.black500.val : theme.white900.val
   };
 
   return map[color];

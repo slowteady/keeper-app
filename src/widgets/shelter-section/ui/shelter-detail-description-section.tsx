@@ -1,68 +1,23 @@
-import { Image } from 'expo-image';
-import { styled, Text, XStack, YStack } from 'tamagui';
+import { hasValue } from '@/shared/lib';
+import { DetailSpecSection } from '@/widgets/adopt-section';
 
 export type ShelterDetailDescriptionSectionProps = {
   time: string;
-  address: string;
   person: string;
   tel: string;
 };
 
-export const ShelterDetailDescriptionSection = ({
-  time,
-  address,
-  person,
-  tel
-}: ShelterDetailDescriptionSectionProps) => {
+const orFallback = (value?: string) => (hasValue(value) ? (value as string) : '등록되지 않았어요');
+
+export const ShelterDetailDescriptionSection = ({ time, person, tel }: ShelterDetailDescriptionSectionProps) => {
   return (
-    <YStack>
-      <Text fontSize={20} fontWeight="600" lineHeight={22} color="$black800" letterSpacing={-0.25} mb={20}>
-        보호소 운영정보
-      </Text>
-
-      <YStack gap={16}>
-        <DescriptionWrap>
-          <Image source={require('@/assets/images/clock.png')} contentFit="contain" style={{ width: 20, height: 20 }} />
-          <DescriptionText>{time}</DescriptionText>
-        </DescriptionWrap>
-
-        <DescriptionWrap>
-          <Image source={require('@/assets/images/phone.png')} contentFit="contain" style={{ width: 20, height: 20 }} />
-          <DescriptionText>{tel}</DescriptionText>
-        </DescriptionWrap>
-
-        <DescriptionWrap>
-          <Image
-            source={require('@/assets/images/stethoscope.png')}
-            contentFit="contain"
-            style={{ width: 20, height: 20 }}
-          />
-          <DescriptionText>{person}</DescriptionText>
-        </DescriptionWrap>
-
-        <DescriptionWrap>
-          <Image
-            source={require('@/assets/images/noticebar.png')}
-            contentFit="contain"
-            style={{ width: 20, height: 20 }}
-          />
-          <DescriptionText lineHeight={24}>{address}</DescriptionText>
-        </DescriptionWrap>
-      </YStack>
-    </YStack>
+    <DetailSpecSection
+      title="운영정보"
+      rows={[
+        { label: '운영시간', value: orFallback(time) },
+        { label: '연락처', value: orFallback(tel) },
+        ...(hasValue(person) ? [{ label: '담당', value: person }] : [])
+      ]}
+    />
   );
 };
-
-const DescriptionWrap = styled(XStack, {
-  items: 'flex-start'
-});
-
-const DescriptionText = styled(Text, {
-  fontSize: 16,
-  lineHeight: 22,
-  fontWeight: 500,
-  color: '#505050',
-  letterSpacing: -0.25,
-  ml: 20,
-  flex: 1
-});

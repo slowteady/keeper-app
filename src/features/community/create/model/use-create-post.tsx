@@ -1,95 +1,88 @@
-import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { router } from 'expo-router';
+import { useEffect, useRef } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 
-import { CommunityAdoptFormDto, CommunityAdoptFormSchema, CREATE_POST_OPTIONS } from '@/entities/community';
-import { BottomSheetMenu, useBottomSheet } from '@/shared/ui';
+import {
+  CommunityAdoptFormDto,
+  CommunityAdoptFormSchema,
+  communityQueries,
+  CREATE_POST_OPTIONS
+} from '@/entities/community';
+import { useImageUpload } from '@/features/upload';
+import { getModerationMessage, globalToast } from '@/shared/lib';
 
-import { makeFormOptions } from '../lib/make-form-options';
-import { CreatePostKindBottomSheet } from '../ui';
+import { createAdoptionPersonal, toCreateAdoptionPersonalBody } from './api';
+import { useAdoptFormSelectors } from './use-adopt-form-selectors';
 
 export const useCreatePost = () => {
+  const queryClient = useQueryClient();
+
   const form = useForm<CommunityAdoptFormDto>({
     resolver: zodResolver(CommunityAdoptFormSchema),
+    mode: 'onChange',
     defaultValues: {
-      title: '',
       animalType: CREATE_POST_OPTIONS.animalType[0].value,
-      gender: CREATE_POST_OPTIONS.gender[0].value,
-      neuterYn: CREATE_POST_OPTIONS.neuterYn[0].value,
-      healthCheck: CREATE_POST_OPTIONS.healthCheck[0].value,
       protectionType: CREATE_POST_OPTIONS.protectionType[0].value,
-      vaccinationCheck: CREATE_POST_OPTIONS.vaccinationCheck[0].value,
-      weight: '',
-      location: '',
-      age: '',
-      specificType: '',
-      specialMark: '',
+      title: '',
       content: '',
-      contact: [{ type: CREATE_POST_OPTIONS.contact[0].value, value: '' }],
       images: [],
-      // 선택 입력 필드
-      likes: '',
-      dislikes: '',
-      health: '',
-      relatedLink: ''
+      contact: [],
+      location: '',
+      gender: undefined,
+      neuterYn: undefined,
+      healthCheck: undefined,
+      vaccinationCheck: undefined,
+      weight: undefined,
+      age: undefined,
+      specificType: undefined,
+      health: undefined,
+      relatedLink: undefined,
+      toiletTraining: undefined,
+      separationAnxiety: undefined,
+      barking: undefined,
+      activityLevel: undefined,
+      withChildren: undefined,
+      withDogs: undefined,
+      withCats: undefined
     }
   });
 
-  const weight = useWatch({ control: form.control, name: 'weight' });
-  const age = useWatch({ control: form.control, name: 'age' });
-  const kind = useWatch({ control: form.control, name: 'specificType' });
+  const animalType = useWatch({ control: form.control, name: 'animalType' });
 
-  const { weightOption, ageOption, kindOption } = makeFormOptions();
-  const { present, dismiss } = useBottomSheet();
+  const prevAnimalTypeRef = useRef(animalType);
+  useEffect(() => {
+    if (prevAnimalTypeRef.current !== animalType) {
+      form.setValue('specificType', '', { shouldDirty: true });
+      prevAnimalTypeRef.current = animalType;
+    }
+  }, [animalType, form]);
 
-  const handleSubmit = (data: CommunityAdoptFormDto) => {};
+  const { openAgeSelector, openKindSelector } = useAdoptFormSelectors(form, animalType);
 
-  const openWeightSelector = () =>
-    present(
-      <BottomSheetScrollView>
-        <BottomSheetMenu
-          data={weightOption}
-          value={Number(weight)}
-          onPress={(data) => {
-            form.setValue('weight', data.id.toString());
-            dismiss();
-          }}
-        />
-      </BottomSheetScrollView>,
-      { snapPoints: ['50%'] }
-    );
+  const imageUpload = useImageUpload();
+  const submitMutation = useMutation({
+    mutationFn: async (data: CommunityAdoptFormDto) => {
+      const uploadedUrls = data.images.length > 0 ? await imageUpload.mutateAsync(data.images) : [];
+      const body = toCreateAdoptionPersonalBody(data, uploadedUrls);
+      return createAdoptionPersonal(body);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: communityQueries.all() });
+      globalToast('공고를 등록했어요', 'success');
+      router.back();
+    },
+    onError: (error) => {
+      globalToast(getModerationMessage(error) ?? '공고를 등록하지 못했어요', 'fail');
+    }
+  });
 
-  const openAgeSelector = () =>
-    present(
-      <BottomSheetScrollView>
-        <BottomSheetMenu
-          data={ageOption}
-          value={Number(age)}
-          onPress={(data) => {
-            form.setValue('age', data.id.toString());
-            dismiss();
-          }}
-        />
-      </BottomSheetScrollView>,
-      { snapPoints: ['50%'] }
-    );
-
-  const openKindSelector = () => {
-    present(
-      <CreatePostKindBottomSheet
-        kindOption={kindOption}
-        kind={kind}
-        onSelect={(id) => {
-          form.setValue('specificType', id);
-          dismiss();
-        }}
-      />,
-      { snapPoints: ['50%'] }
-    );
-  };
+  const handleSubmit = (data: CommunityAdoptFormDto) => submitMutation.mutate(data);
 
   return {
     form,
-    actions: { handleSubmit, openWeightSelector, openAgeSelector, openKindSelector }
+    isSubmitting: submitMutation.isPending,
+    actions: { handleSubmit, openAgeSelector, openKindSelector }
   };
 };

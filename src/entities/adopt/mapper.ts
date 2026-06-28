@@ -1,38 +1,71 @@
 import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
 
-import { AdoptDataDto, AdoptFilterDto } from './schema';
+import { formatTimeAgo } from '@/shared/lib';
 
-export type AdoptItem = ReturnType<typeof mapToAdoptList>[number];
+import { AdoptChipTypeDto, AdoptDataDto } from './schema';
 
-export type ChipVariant = 'error' | 'success' | 'notice' | 'default';
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
-export const mapToAdoptList = (data: AdoptDataDto[], filter?: AdoptFilterDto) => {
-  return data.map((item) => {
-    const { neuterYn, age, weight, gender, happenPlace, images, orgName, noticeStartDt, noticeEndDt, fullName } = item;
+export type AdoptItem = ReturnType<typeof buildAdoptItem>;
 
-    const chips = convertChipLabel({ neuterYn, weight, gender, age, filter, noticeEndDt });
-    const descriptions = convertDescription({ noticeStartDt, noticeEndDt, orgName, happenPlace });
+export type ChipVariant = 'error' | 'success' | 'notice' | 'default' | 'dog' | 'cat' | 'etc';
 
-    return {
-      ...item,
-      uri: images[0],
-      title: convertFullName(fullName),
-      chips,
-      description: descriptions
-    };
-  });
+const buildAdoptItem = (item: AdoptDataDto) => {
+  const {
+    neuterYn,
+    age,
+    weight,
+    gender,
+    happenPlace,
+    images,
+    orgName,
+    noticeStartDt,
+    noticeEndDt,
+    fullName,
+    chipType
+  } = item;
+
+  const { animal, name } = convertFullName(fullName);
+  const chips = convertChipLabel({ neuterYn, weight, gender, age, chipType, noticeEndDt, animal });
+  const descriptions = convertDescription({ noticeStartDt, noticeEndDt, orgName, happenPlace });
+
+  return {
+    ...item,
+    status: item.status ?? undefined,
+    uri: images[0],
+    title: name,
+    chips,
+    description: descriptions
+  };
 };
 
+const adoptItemCache = new WeakMap<AdoptDataDto, AdoptItem>();
+
+const mapAdoptItem = (item: AdoptDataDto): AdoptItem => {
+  const cached = adoptItemCache.get(item);
+  if (cached) return cached;
+  const mapped = buildAdoptItem(item);
+  adoptItemCache.set(item, mapped);
+  return mapped;
+};
+
+export const mapToAdoptList = (data: AdoptDataDto[]): AdoptItem[] => data.map(mapAdoptItem);
+
 export const mapToAdopt = (data: AdoptDataDto) => {
-  const { age, weight, happenPlace, orgName, noticeStartDt, noticeEndDt, fullName, gender, specificType } = data;
+  const { age, weight, happenPlace, orgName, noticeStartDt, noticeEndDt, fullName, gender } = data;
 
   return {
     ...data,
-    title: convertFullName(fullName),
-    age: formatAge(age) ?? '',
+    status: data.status ?? undefined,
+    shelterId: data.shelterId ?? '',
+    title: convertFullName(fullName).name,
+    age: formatAge(age) ?? '모름',
     gender: convertGenderLabel(gender),
-    weight: formatWeight(weight),
-    description: convertDescription({ noticeStartDt, noticeEndDt, orgName, happenPlace, specificType })
+    weight: formatWeight(weight) || '모름',
+    description: convertDescription({ noticeStartDt, noticeEndDt, orgName, happenPlace })
   };
 };
 
@@ -41,18 +74,25 @@ type ChipLabelParams = {
   weight: AdoptDataDto['weight'];
   gender: AdoptDataDto['gender'];
   age: AdoptDataDto['age'];
-  filter?: AdoptFilterDto;
+  chipType?: AdoptChipTypeDto | null;
   noticeEndDt?: AdoptDataDto['noticeEndDt'];
+  animal?: string | null;
 };
-const convertChipLabel = ({ neuterYn, weight, gender, age, filter, noticeEndDt }: ChipLabelParams) => {
+const convertChipLabel = ({ neuterYn, weight, gender, age, chipType, noticeEndDt, animal }: ChipLabelParams) => {
   const chips: { id: string; value: string; sort: number; variant?: ChipVariant }[] = [];
 
-  const filterChip = filter ? FILTER_CHIP_MAP[filter] : undefined;
-  if (filterChip) {
+  if (animal) {
+    const animalVariant: ChipVariant = animal === '강아지' ? 'dog' : animal === '고양이' ? 'cat' : 'etc';
+    const animalLabel = animalVariant === 'etc' ? '기타' : animal;
+    chips.push({ id: 'ANIMAL', value: animalLabel, sort: 0, variant: animalVariant });
+  }
+
+  const filterChip = chipType ? CHIP_TYPE_MAP[chipType] : undefined;
+  if (filterChip && chipType !== 'NEAR_DEADLINE') {
     chips.push(filterChip);
   }
 
-  if (filter === 'NEAR_DEADLINE' && noticeEndDt) {
+  if (chipType === 'NEAR_DEADLINE' && noticeEndDt) {
     const dday = calcDday(noticeEndDt);
     if (dday !== null) {
       chips.push({ id: 'DDAY', value: dday, sort: 1.5, variant: 'error' });
@@ -78,18 +118,90 @@ const convertChipLabel = ({ neuterYn, weight, gender, age, filter, noticeEndDt }
   return chips;
 };
 
-const FILTER_CHIP_MAP: Record<AdoptFilterDto, { id: string; value: string; sort: number; variant: ChipVariant }> = {
+const CHIP_TYPE_MAP: Record<AdoptChipTypeDto, { id: string; value: string; sort: number; variant: ChipVariant }> = {
   NEAR_DEADLINE: { id: 'NEAR_DEADLINE', value: '공고마감임박', sort: 1, variant: 'error' },
   NEW: { id: 'NEW', value: '신규', sort: 1, variant: 'success' }
 };
 
-const convertGenderLabel = (gender?: AdoptDataDto['gender']) => {
-  if (gender === 'F') return '여아';
-  if (gender === 'M') return '남아';
-  return '미상';
+export type PersonalAdoptSource = {
+  id: string;
+  title: string;
+  content?: string | null;
+  images: string[];
+  animalType?: string | null;
+  specificType?: string | null;
+  gender?: string | null;
+  neuterYn?: string | null;
+  age?: string | null;
+  weight?: string | null;
+  location?: string | null;
+  protectionType?: string | null;
+  displayTime: string;
+  isLiked: boolean;
+  adoptionStatus?: 'IN_PROGRESS' | 'COMPLETED' | null;
 };
 
-const formatAge = (age?: string): string | null => {
+export type PersonalAdoptItem = ReturnType<typeof buildPersonalAdoptItem>;
+
+const PERSONAL_ANIMAL: Record<string, { label: string; variant: ChipVariant }> = {
+  DOG: { label: '강아지', variant: 'dog' },
+  CAT: { label: '고양이', variant: 'cat' },
+  OTHER: { label: '기타', variant: 'etc' }
+};
+
+const personalAnimal = (animalType?: string | null) =>
+  (animalType && PERSONAL_ANIMAL[animalType]) || { label: '기타', variant: 'etc' as ChipVariant };
+
+const buildPersonalAdoptItem = (item: PersonalAdoptSource) => ({
+  id: item.id,
+  uri: item.images[0],
+  imageCount: item.images.length,
+  title: item.title,
+  intro: item.content?.trim() || '',
+  breed: item.specificType?.trim() || '',
+  protectionType: item.protectionType ?? null,
+  region: item.location?.trim() || '',
+  dateText: formatTimeAgo(item.displayTime),
+  chips: buildPersonalChips(item),
+  isLiked: item.isLiked,
+  completed: item.adoptionStatus === 'COMPLETED'
+});
+
+const personalItemCache = new WeakMap<PersonalAdoptSource, PersonalAdoptItem>();
+
+const mapPersonalAdoptItem = (item: PersonalAdoptSource): PersonalAdoptItem => {
+  const cached = personalItemCache.get(item);
+  if (cached) return cached;
+  const mapped = buildPersonalAdoptItem(item);
+  personalItemCache.set(item, mapped);
+  return mapped;
+};
+
+export const mapToPersonalAdoptList = (data: PersonalAdoptSource[]): PersonalAdoptItem[] =>
+  data.map(mapPersonalAdoptItem);
+
+const buildPersonalChips = (item: PersonalAdoptSource) => {
+  const animal = personalAnimal(item.animalType);
+  const chips: { id: string; value: string; variant: ChipVariant }[] = [
+    { id: 'ANIMAL', value: animal.label, variant: animal.variant }
+  ];
+  if (item.neuterYn === 'Y') chips.push({ id: 'NEUTER', value: '중성화', variant: 'notice' });
+  const gender = convertGenderLabel(item.gender ?? undefined);
+  if (gender !== '모름') chips.push({ id: 'GENDER', value: gender, variant: 'default' });
+  const ageLabel = formatAge(item.age ?? undefined);
+  if (ageLabel) chips.push({ id: 'AGE', value: ageLabel, variant: 'default' });
+  const weightLabel = formatWeight(item.weight ?? undefined);
+  if (weightLabel) chips.push({ id: 'WEIGHT', value: weightLabel, variant: 'default' });
+  return chips;
+};
+
+export const convertGenderLabel = (gender?: AdoptDataDto['gender']) => {
+  if (gender === 'F') return '여아';
+  if (gender === 'M') return '남아';
+  return '모름';
+};
+
+export const formatAge = (age?: string): string | null => {
   if (!age) return null;
   const year = age.substring(0, 4).replace(/[^0-9]/g, '');
   if (!year) return null;
@@ -109,28 +221,31 @@ type DescriptionParams = {
   noticeEndDt: AdoptDataDto['noticeEndDt'];
   orgName: AdoptDataDto['orgName'];
   happenPlace: AdoptDataDto['happenPlace'];
-  specificType?: AdoptDataDto['specificType'];
 };
-const convertDescription = ({ noticeStartDt, noticeEndDt, orgName, happenPlace, specificType }: DescriptionParams) => {
+const convertDescription = ({ noticeStartDt, noticeEndDt, orgName, happenPlace }: DescriptionParams) => {
   const startDt = dayjs(noticeStartDt).format('YY.MM.DD');
   const endDt = dayjs(noticeEndDt).format('YY.MM.DD');
 
   return [
     { label: '공고기간', value: `${startDt}-${endDt}` },
-    { label: '지역', value: orgName },
-    { label: '구조장소', value: happenPlace },
-    ...(specificType ? [{ label: '품종', value: specificType }] : [])
+    { label: '지역', value: orgName ?? '' },
+    { label: '구조장소', value: happenPlace }
   ];
 };
 
-const convertFullName = (fullName: AdoptDataDto['fullName']) => {
-  return fullName.replace('[개]', '[강아지]');
+const convertFullName = (fullName: AdoptDataDto['fullName']): { animal: string | null; name: string } => {
+  const replaced = fullName.replace('[개]', '[강아지]');
+  const match = replaced.match(/^\[(.+?)\]\s*(.*)$/);
+  if (match) {
+    return { animal: match[1], name: match[2].trim() || match[1] };
+  }
+  return { animal: null, name: replaced };
 };
 
 const calcDday = (noticeEndDt: string): string | null => {
-  const today = dayjs().startOf('day');
-  const endDate = dayjs(noticeEndDt).startOf('day');
-  const diff = endDate.diff(today, 'day');
+  const today = dayjs().tz('Asia/Seoul').format('YYYY-MM-DD');
+  const end = dayjs.utc(noticeEndDt).format('YYYY-MM-DD');
+  const diff = dayjs(end).diff(dayjs(today), 'day');
 
   if (diff < 0) return null;
   if (diff === 0) return 'D-Day';

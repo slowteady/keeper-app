@@ -1,21 +1,24 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import * as ImagePicker from 'expo-image-picker';
 import { useCallback } from 'react';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { compressImage } from '@/shared/lib';
-import { useBottomSheet } from '@/shared/ui';
-
-import { ProfileImageSheet } from '../ui/profile-image-sheet';
+import { authQueries, updateMe } from '@/entities/auth';
+import { useImageUpload } from '@/features/upload';
+import { compressImage, globalToast } from '@/shared/lib';
 
 const PROFILE_IMAGE_SIZE = 800;
 const PROFILE_IMAGE_QUALITY = 0.75;
 
 export const useProfileImage = () => {
-  const { bottom } = useSafeAreaInsets();
-  const { present, dismiss } = useBottomSheet();
+  const queryClient = useQueryClient();
+  const { mutateAsync: uploadImages, isPending: isUploading } = useImageUpload();
+  const { mutate: updateProfile, isPending: isUpdating } = useMutation({
+    mutationFn: updateMe,
+    onSuccess: (res) => queryClient.setQueryData(authQueries.me().queryKey, res),
+    onError: () => globalToast('프로필 사진을 변경하지 못했어요', 'fail')
+  });
 
-  const pickImage = useCallback(async () => {
-    dismiss();
+  const changeProfileImage = useCallback(async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
       allowsEditing: true,
@@ -35,13 +38,14 @@ export const useProfileImage = () => {
       quality: PROFILE_IMAGE_QUALITY
     });
 
-    // TODO: presign 발급 → S3 PUT(compressed.uri) → PATCH /auth/me
-    void compressed;
-  }, [dismiss]);
+    try {
+      const [publicUrl] = await uploadImages([compressed.uri]);
+      if (!publicUrl) throw new Error('no public url');
+      updateProfile({ image: publicUrl });
+    } catch {
+      globalToast('프로필 사진을 변경하지 못했어요', 'fail');
+    }
+  }, [uploadImages, updateProfile]);
 
-  const changeProfileImage = useCallback(() => {
-    present(<ProfileImageSheet onConfirm={pickImage} bottomInset={bottom} />, { snapPoints: [280] });
-  }, [bottom, pickImage, present]);
-
-  return { changeProfileImage };
+  return { changeProfileImage, isPending: isUploading || isUpdating };
 };

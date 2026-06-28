@@ -49,14 +49,19 @@ const ErrorFallback = ({ error, resetError }: ErrorFallbackProps) => {
       </Text>
 
       <XStack gap={12}>
-        <SecondaryButton onPress={() => router.dismissTo('/(tabs)/home')}>
+        <SecondaryButton
+          onPress={() => {
+            resetError();
+            router.replace('/(tabs)/home');
+          }}
+        >
           <Text fontSize={14} fontWeight="500" lineHeight={16} color="$black900">
             홈으로
           </Text>
         </SecondaryButton>
         <PrimaryButton onPress={resetError}>
           <Text fontSize={14} fontWeight="500" lineHeight={16} color="$white900">
-            다시시도
+            다시 시도
           </Text>
         </PrimaryButton>
       </XStack>

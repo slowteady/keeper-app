@@ -1,39 +1,23 @@
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import { logout as kakaoLogout } from '@react-native-kakao/user';
-import NaverLogin from '@react-native-seoul/naver-login';
+import * as Sentry from '@sentry/react-native';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import Constants from 'expo-constants';
+import * as Notifications from 'expo-notifications';
 import { router } from 'expo-router';
 import { useCallback } from 'react';
 
-import { authQueries, logout, SocialLoginType, UserDto } from '@/entities/auth';
-import { clearUserContext, globalToast, logger, removeToken } from '@/shared/lib';
+import { authQueries, logout, UserDto } from '@/entities/auth';
+import { notificationApi } from '@/entities/notification';
+import { getRefreshToken, globalToast, removeToken } from '@/shared/lib';
 
 import { useSetIsAuthenticated } from '../../lib/auth-state';
+import { signOutSocialSession } from '../../lib/sign-out-social-session';
 
-/**
- * 소셜 SDK 세션 종료 — 다음 로그인 시 "다른 계정으로 로그인" 시나리오 보장
- * Apple은 SDK 세션 종료 메서드 제공 안 함 (revoke만 가능, 별도 흐름)
- */
-const signOutSocialSession = async (socialType: SocialLoginType) => {
-  try {
-    switch (socialType) {
-      case 'KAKAO':
-        await kakaoLogout();
-        break;
-      case 'NAVER':
-        await NaverLogin.logout();
-        break;
-      case 'GOOGLE':
-        await GoogleSignin.signOut();
-        break;
-      case 'APPLE':
-        // SDK 세션 종료 미지원
-        break;
-    }
-  } catch (e) {
-    // 소셜 SDK 세션 종료 실패는 본인 로그아웃 흐름을 막지 않음
-    logger.warn('소셜 SDK 세션 종료 실패', e);
-  }
+const clearPushToken = async () => {
+  const projectId = Constants.expoConfig?.extra?.eas?.projectId ?? Constants.easConfig?.projectId;
+  if (!projectId) return;
+  await Notifications.getExpoPushTokenAsync({ projectId })
+    .then(({ data }) => (data ? notificationApi.deletePushToken(data) : undefined))
+    .catch(() => undefined);
 };
 
 export const useLogout = () => {
@@ -48,19 +32,20 @@ export const useLogout = () => {
     try {
       const cachedUser = qc.getQueryData<UserDto>(authQueries.me().queryKey);
 
-      await mutateAsync();
+      const refreshToken = await getRefreshToken();
+      await clearPushToken();
+      await mutateAsync(refreshToken ?? undefined);
       if (cachedUser?.socialType) {
         await signOutSocialSession(cachedUser.socialType);
       }
       await removeToken();
-      clearUserContext();
-      qc.removeQueries({ queryKey: authQueries.all() });
+      Sentry.setUser(null);
+      qc.removeQueries();
 
-      globalToast('로그아웃이 완료되었어요', 'success');
-      router.dismissTo('/(tabs)/home');
       setIsAuthenticated(false);
+      router.dismissTo('/(tabs)/profile');
     } catch {
-      globalToast('로그아웃에 실패했어요 다시 시도해주세요', 'fail');
+      globalToast('로그아웃하지 못했어요', 'fail');
     }
   }, [isPending, mutateAsync, qc, setIsAuthenticated]);
 

@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { StackProps, styled, XStack, YStack } from 'tamagui';
 
+import { SCREEN_GUTTER } from '@/shared/lib';
 import { useLayout } from '@/shared/model';
 
 export type HeaderLayoutProps = {
@@ -27,7 +28,7 @@ export const HeaderLayout = ({ showShadow = true, ContainerProps, left, center, 
 
 const HeaderContainer = styled(YStack, {
   bg: '$white900',
-  px: 20,
+  px: SCREEN_GUTTER,
   pb: 10,
   z: 1000,
 

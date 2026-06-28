@@ -1,4 +1,6 @@
 import { renderHook } from '@testing-library/react-native';
+import * as ImageManipulator from 'expo-image-manipulator';
+import { Image } from 'react-native';
 
 import { getPresignedUrls } from '@/entities/upload';
 import { createWrapper } from '@/test/create-wrapper';
@@ -9,7 +11,13 @@ jest.mock('@/entities/upload', () => ({
   getPresignedUrls: jest.fn()
 }));
 
+jest.mock('expo-image-manipulator', () => ({
+  manipulateAsync: jest.fn(),
+  SaveFormat: { JPEG: 'jpeg' }
+}));
+
 const mockedGetPresigned = jest.mocked(getPresignedUrls);
+const mockedManipulate = jest.mocked(ImageManipulator.manipulateAsync);
 
 const originalFetch = global.fetch;
 const mockedFetch = jest.fn();
@@ -22,8 +30,16 @@ afterAll(() => {
   global.fetch = originalFetch;
 });
 
+const setImageSize = (width: number, height: number) => {
+  jest
+    .spyOn(Image, 'getSize')
+    .mockImplementation((_uri, success) => (success as (w: number, h: number) => void)(width, height));
+};
+
 beforeEach(() => {
   jest.clearAllMocks();
+  setImageSize(100, 100);
+  mockedManipulate.mockResolvedValue({ uri: 'file:///processed.jpg', width: 100, height: 100 } as never);
 });
 
 const fakeBlob = new Blob(['fake'], { type: 'image/jpeg' });
@@ -87,7 +103,7 @@ describe('useImageUpload', () => {
     setupFetch();
     const { result } = renderHook(() => useImageUpload(), { wrapper: createWrapper() });
 
-    const urls = await result.current.mutateAsync(['file:///a', 'file:///b', 'file:///c']);
+    const urls = await result.current.mutateAsync(['file:///a.jpg', 'file:///b.jpg', 'file:///c.jpg']);
 
     expect(urls).toEqual(['https://s3/p1', 'https://s3/p2', 'https://s3/p3']);
   });
@@ -100,7 +116,7 @@ describe('useImageUpload', () => {
     });
     const { result } = renderHook(() => useImageUpload(), { wrapper: createWrapper() });
 
-    await expect(result.current.mutateAsync(['file:///a'])).rejects.toThrow('s3 down');
+    await expect(result.current.mutateAsync(['file:///a.jpg'])).rejects.toThrow('s3 down');
   });
 
   it('useMutation 인터페이스(mutateAsync, isPending)를 노출한다', () => {
@@ -108,5 +124,47 @@ describe('useImageUpload', () => {
 
     expect(typeof result.current.mutateAsync).toBe('function');
     expect(result.current.isPending).toBe(false);
+  });
+
+  it('이미지를 JPEG 로 가공(manipulate)한 결과 uri 를 업로드한다', async () => {
+    setPresignedItems([{ uploadUrl: 'https://s3/u1', publicUrl: 'https://s3/p1' }]);
+    setupFetch();
+    const { result } = renderHook(() => useImageUpload(), { wrapper: createWrapper() });
+
+    await result.current.mutateAsync(['file:///photo.heic']);
+
+    expect(mockedManipulate).toHaveBeenCalledWith(
+      'file:///photo.heic',
+      expect.any(Array),
+      expect.objectContaining({ format: 'jpeg' })
+    );
+    const blobCall = mockedFetch.mock.calls.find(([, init]) => !init || init.method !== 'PUT');
+    expect(blobCall?.[0]).toBe('file:///processed.jpg');
+  });
+
+  it('긴 변이 1920 초과면 리사이즈 action 을 포함해 가공한다', async () => {
+    setImageSize(4000, 3000);
+    setPresignedItems([{ uploadUrl: 'https://s3/u1', publicUrl: 'https://s3/p1' }]);
+    setupFetch();
+    const { result } = renderHook(() => useImageUpload(), { wrapper: createWrapper() });
+
+    await result.current.mutateAsync(['file:///big.jpg']);
+
+    expect(mockedManipulate).toHaveBeenCalledWith(
+      'file:///big.jpg',
+      [{ resize: { width: 1920 } }],
+      expect.objectContaining({ format: 'jpeg' })
+    );
+  });
+
+  it('긴 변이 1920 이하면 리사이즈 없이 압축만 한다', async () => {
+    setImageSize(800, 600);
+    setPresignedItems([{ uploadUrl: 'https://s3/u1', publicUrl: 'https://s3/p1' }]);
+    setupFetch();
+    const { result } = renderHook(() => useImageUpload(), { wrapper: createWrapper() });
+
+    await result.current.mutateAsync(['file:///small.jpg']);
+
+    expect(mockedManipulate).toHaveBeenCalledWith('file:///small.jpg', [], expect.objectContaining({ format: 'jpeg' }));
   });
 });

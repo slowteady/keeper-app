@@ -1,0 +1,18 @@
+appId: com.keeper.love
+---
+# 세션 만료(401) 시뮬레이션 — 인터셉터가 refresh fail 시 onRefreshFailed → 로그아웃 + /login push.
+# 사전: AsyncStorage 의 access/refresh token 을 모두 만료 처리. (외부 setup)
+- launchApp:
+    clearState: false
+- tapOn: '커뮤니티'
+- extendedWaitUntil:
+    visible: '개인입양'
+    timeout: 10000
+
+# 권한 의존 트리거 — 글쓰기 펜 → 인터셉터가 401 잡고 → 로그인 모달 또는 social login 화면
+- tapOn:
+    point: '92%,12%'
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: 'social login'
+    timeout: 10000

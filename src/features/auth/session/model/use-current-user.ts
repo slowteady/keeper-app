@@ -1,6 +1,7 @@
 import { useFocusEffect } from '@react-navigation/native';
+import * as Sentry from '@sentry/react-native';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { authQueries } from '@/entities/auth';
 import { getAccessToken } from '@/shared/lib';
@@ -21,7 +22,6 @@ export const useCurrentUser = () => {
   useFocusEffect(
     useCallback(() => {
       const checkToken = async () => {
-        setIsCheckingToken(true);
         const accessToken = await getAccessToken();
         setIsAuthenticated(!!accessToken);
         setIsCheckingToken(false);
@@ -33,6 +33,10 @@ export const useCurrentUser = () => {
 
   const user = isAuthenticated ? data : null;
   const isLoggedIn = !!user;
+
+  useEffect(() => {
+    if (user?.id) Sentry.setUser({ id: String(user.id) });
+  }, [user?.id]);
 
   const isLoadingState = isCheckingToken || (isAuthenticated && isLoading);
 

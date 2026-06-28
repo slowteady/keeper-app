@@ -1,16 +1,14 @@
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useRef } from 'react';
 
-import { useKakaoGeocodeMutation } from './mutation';
-import { KakaoAddressDocumentDto } from './schema';
+import { KakaoKeywordDocumentDto } from './schema';
+import { useKeywordSearch } from './use-keyword-search';
 
-export const useLocationBottomSheet = (onSelect: (item: KakaoAddressDocumentDto) => void) => {
-  const [address, setAddress] = useState<KakaoAddressDocumentDto>();
-  const [searchedAddresses, setSearchedAddresses] = useState<KakaoAddressDocumentDto[]>();
+export const useLocationBottomSheet = (onSelect: (item: KakaoKeywordDocumentDto) => void) => {
+  const { results, isPending, keyword, setKeyword, reset, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useKeywordSearch();
 
   const ref = useRef<BottomSheetModal>(null);
-
-  const { mutate, isPending } = useKakaoGeocodeMutation();
 
   const openBottomSheet = useCallback(() => {
     ref.current?.present();
@@ -19,43 +17,25 @@ export const useLocationBottomSheet = (onSelect: (item: KakaoAddressDocumentDto)
   const dismiss = useCallback(() => {
     if (ref.current) {
       ref.current.dismiss();
-      setSearchedAddresses(undefined);
+      reset();
     }
-  }, [ref]);
+  }, [reset]);
 
-  const submitGeocode = useCallback(
-    (value: string) => {
-      if (value.trim().length === 0) return;
-
-      mutate(
-        { query: value },
-        {
-          onSuccess: ({ data }) => {
-            const { documents } = data;
-            setSearchedAddresses(documents);
-          },
-          onError: () => {
-            setSearchedAddresses(undefined);
-          }
-        }
-      );
-    },
-    [mutate]
-  );
-
-  const getAddress = (item: KakaoAddressDocumentDto) => {
-    setAddress(item);
+  const getAddress = (item: KakaoKeywordDocumentDto) => {
     onSelect?.(item);
     dismiss();
   };
 
   return {
-    address,
-    searchedAddresses,
+    results,
     ref,
     isPending,
+    keyword,
+    setKeyword,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
     openBottomSheet,
-    submitGeocode,
     getAddress,
     dismiss
   };

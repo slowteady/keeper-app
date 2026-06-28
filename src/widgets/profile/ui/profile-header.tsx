@@ -1,79 +1,129 @@
+import { ChevronRight, FileText, Heart } from '@tamagui/lucide-icons';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
-import { UserDto } from '@/entities/auth';
+import { SOCIAL_LABEL, UserDto } from '@/entities/auth';
 import { EmptyAvatar, UserAvatar } from '@/entities/profile';
+import { SCREEN_GUTTER } from '@/shared/lib';
 import { Skeleton } from '@/shared/ui';
 
 type ProfileHeaderProps = {
   user?: UserDto | null;
   isLoading: boolean;
+  isUpdatingImage?: boolean;
   onLogin: () => void;
   onAccount: () => void;
+  onLike: () => void;
+  onActivity: () => void;
   onChangeProfileImage: () => void;
 };
 
-export const ProfileHeader = ({ user, isLoading, onLogin, onAccount, onChangeProfileImage }: ProfileHeaderProps) => {
+export const ProfileHeader = ({
+  user,
+  isLoading,
+  isUpdatingImage,
+  onLogin,
+  onAccount,
+  onLike,
+  onActivity,
+  onChangeProfileImage
+}: ProfileHeaderProps) => {
   return (
-    <View px={20} mb={24} pt={40}>
+    <View px={SCREEN_GUTTER} mb={8} pt={40}>
       {isLoading ? (
-        <XStack gap={16} items="flex-start">
-          <Skeleton style={{ width: 72, height: 72, borderRadius: 8 }} />
-          <YStack flex={1} gap={0} py={2}>
-            <XStack items="flex-start" justify="space-between" gap={12}>
+        <YStack gap={20}>
+          <XStack gap={16} items="center">
+            <Skeleton style={{ width: 72, height: 72, borderRadius: 8 }} />
+            <YStack flex={1} gap={10}>
               <Skeleton style={{ width: 120, height: 20, borderRadius: 4 }} />
-              <Skeleton style={{ width: 50, height: 13, borderRadius: 4 }} />
-            </XStack>
-            <Skeleton style={{ width: 180, height: 13, borderRadius: 4, marginTop: 12 }} />
-          </YStack>
-        </XStack>
-      ) : user ? (
-        <XStack gap={16} items="flex-start">
-          <UserAvatar image={user.image} onPressAdd={onChangeProfileImage} onPressEdit={onChangeProfileImage} />
-
-          <YStack flex={1} gap={0} py={2}>
-            <XStack items="flex-start" justify="space-between" gap={12}>
-              <Text fontSize={20} lineHeight={20} fontWeight="500" color="$black900">
-                {user.nickname}님
-              </Text>
-              <LoginButton onPress={onAccount}>
-                <Text fontSize={13} lineHeight={13} fontWeight="600" color="$black600">
-                  계정관리
-                </Text>
-              </LoginButton>
-            </XStack>
-            <Text fontSize={13} lineHeight={13} fontWeight="500" color="$black500">
-              {user.email}
-            </Text>
-          </YStack>
-        </XStack>
+              <Skeleton style={{ width: 100, height: 13, borderRadius: 4 }} />
+            </YStack>
+          </XStack>
+          <XStack gap={10}>
+            <Skeleton style={{ flex: 1, height: 54, borderRadius: 10 }} />
+            <Skeleton style={{ flex: 1, height: 54, borderRadius: 10 }} />
+          </XStack>
+        </YStack>
       ) : (
-        <XStack gap={16} items="flex-start">
-          <EmptyAvatar onPress={onLogin} />
-          <YStack flex={1} gap={0} py={2}>
-            <XStack items="flex-start" justify="space-between" gap={12}>
-              <Text fontSize={20} lineHeight={20} fontWeight="500" color="$black900">
-                반갑습니다:)
-              </Text>
-              <LoginButton onPress={onLogin}>
-                <Text fontSize={13} lineHeight={13} fontWeight="600" color="$black600">
-                  로그인
-                </Text>
-              </LoginButton>
-            </XStack>
-            <Text fontSize={13} lineHeight={13} fontWeight="500" color="$black500" letterSpacing={-0.39}>
-              로그인 후 이용 가능해요
-            </Text>
-          </YStack>
-        </XStack>
+        <YStack gap={20}>
+          <XStack gap={16} items="center">
+            {user ? (
+              <>
+                <UserAvatar
+                  image={user.image}
+                  loading={isUpdatingImage}
+                  onPressAdd={onChangeProfileImage}
+                  onPressEdit={onChangeProfileImage}
+                />
+                <YStack flex={1} gap={8}>
+                  <Text numberOfLines={1} fontSize={20} lineHeight={20} fontWeight="500" color="$black900">
+                    {user.nickname}님
+                  </Text>
+                  <Text numberOfLines={1} fontSize={13} lineHeight={16} fontWeight="500" color="$black500">
+                    {SOCIAL_LABEL[user.socialType]} 계정으로 로그인했어요
+                  </Text>
+                </YStack>
+                <AccountAction onPress={onAccount}>
+                  <Text fontSize={13} lineHeight={16} fontWeight="600" color="$black600">
+                    계정관리
+                  </Text>
+                  <ChevronRight size={14} color="$black500" />
+                </AccountAction>
+              </>
+            ) : (
+              <>
+                <EmptyAvatar onPress={onLogin} />
+                <LoginAction onPress={onLogin}>
+                  <Text fontSize={20} lineHeight={24} fontWeight="600" color="$black900">
+                    로그인하기
+                  </Text>
+                  <ChevronRight size={18} color="$black700" />
+                </LoginAction>
+              </>
+            )}
+          </XStack>
+
+          <XStack gap={10}>
+            <QuickAction onPress={user ? onLike : onLogin}>
+              <Heart size={18} color="$black700" />
+              <QuickActionLabel>관심</QuickActionLabel>
+            </QuickAction>
+            <QuickAction onPress={user ? onActivity : onLogin}>
+              <FileText size={18} color="$black700" />
+              <QuickActionLabel>내 활동</QuickActionLabel>
+            </QuickAction>
+          </XStack>
+        </YStack>
       )}
     </View>
   );
 };
 
-const LoginButton = styled(View, {
-  borderWidth: 1,
-  borderColor: '$white600',
-  rounded: 34,
-  px: 14,
-  py: 10
+const LoginAction = styled(XStack, {
+  flex: 1,
+  height: 44,
+  items: 'center',
+  gap: 4
+});
+
+const AccountAction = styled(XStack, {
+  height: 44,
+  items: 'center',
+  gap: 2
+});
+
+const QuickAction = styled(YStack, {
+  flex: 1,
+  height: 54,
+  items: 'center',
+  justify: 'center',
+  gap: 6,
+  bg: '$white850',
+  rounded: 10
+});
+
+const QuickActionLabel = styled(Text, {
+  fontSize: 12,
+  lineHeight: 14,
+  fontWeight: '600',
+  color: '$black700'
 });

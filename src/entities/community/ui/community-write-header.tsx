@@ -13,7 +13,7 @@ export const CommunityWriteHeader = ({ onPressWrite }: CommunityWriteHeaderProps
   const left = <Logo width={96} height={30} color={black900.val} />;
 
   const right = (
-    <View onPress={onPressWrite} hitSlop={10}>
+    <View onPress={onPressWrite} hitSlop={10} testID="community-write-button">
       <Pencil width={22} height={22} color={black800.val} />
     </View>
   );

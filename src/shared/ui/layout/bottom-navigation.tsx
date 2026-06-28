@@ -3,7 +3,7 @@ import { NavigationRoute, ParamListBase } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
 import { ComponentType, memo } from 'react';
 import { SvgProps } from 'react-native-svg';
-import { styled, Text, useTheme, XStack, YStack } from 'tamagui';
+import { styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
 
 import {
   ActiveHeart,
@@ -44,7 +44,9 @@ const TabIcon = ({ item, isActive }: { item: MenuItem; isActive: boolean }) => {
   );
 };
 
-export const BottomNavigation = memo(({ state, navigation, insets }: BottomTabBarProps) => {
+type BottomNavigationProps = BottomTabBarProps & { dotRoutes?: string[] };
+
+export const BottomNavigation = memo(({ state, navigation, insets, dotRoutes = [] }: BottomNavigationProps) => {
   const navigateToPage = (route: NavigationRoute<ParamListBase, string>, index: number) => {
     Haptics.selectionAsync();
 
@@ -74,7 +76,10 @@ export const BottomNavigation = memo(({ state, navigation, insets }: BottomTabBa
             return (
               <TabItemContainer key={route.key} onPress={() => navigateToPage(route, index)}>
                 <TabItemInner>
-                  <TabIcon item={item} isActive={isActive} />
+                  <IconWrap>
+                    <TabIcon item={item} isActive={isActive} />
+                    {dotRoutes.includes(item.name) && <Dot />}
+                  </IconWrap>
                   <TabLabel>{item.label}</TabLabel>
                 </TabItemInner>
               </TabItemContainer>
@@ -123,4 +128,20 @@ const TabLabel = styled(Text, {
   lineHeight: 13,
   fontWeight: '600',
   color: '$black900'
+});
+
+const IconWrap = styled(View, {
+  position: 'relative'
+});
+
+const Dot = styled(View, {
+  position: 'absolute',
+  t: -2,
+  r: -4,
+  width: 7,
+  height: 7,
+  rounded: 4,
+  bg: '$errorMain',
+  borderWidth: 1.5,
+  borderColor: '$white900'
 });

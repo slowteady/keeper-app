@@ -1,18 +1,25 @@
 import { NaverMapViewRef } from '@mj-studio/react-native-naver-map';
-import { ListRenderItemInfo } from '@shopify/flash-list';
-import { useLocalSearchParams } from 'expo-router';
+import { FlashListRef, ListRenderItemInfo } from '@shopify/flash-list';
+import { RelativePathString, router, useLocalSearchParams } from 'expo-router';
 import { Suspense, useCallback, useRef, useState } from 'react';
+import { NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
+import { showLocation } from 'react-native-map-link';
+import { useSharedValue } from 'react-native-reanimated';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
 import { ADOPT_OPTIONS, AdoptCard, AdoptItem } from '@/entities/adopt';
+import { hasShelterCoords } from '@/entities/shelter';
+import { useFavoriteAbandonment } from '@/features/favorite-abandonment';
+import { useFavoriteShelter } from '@/features/favorite-shelter';
 import { useShelter, useShelterAdoptList } from '@/features/shelter';
-import { useLocation, useScrollUpButton } from '@/shared/model';
+import { pressHaptic, SCREEN_GUTTER } from '@/shared/lib';
+import { useLocation, useShare } from '@/shared/model';
 import {
-  Button,
+  BottomButton,
   CallModal,
   DetailErrorBoundary,
   Dropdown,
-  ScrollUpButton,
+  ScrollToTopButton,
   ShowMoreButton,
   SuspenseFallback
 } from '@/shared/ui';
@@ -38,10 +45,20 @@ export default Page;
 
 const ShelterDetailContent = ({ id }: { id: string }) => {
   const [callModalOpen, setCallModalOpen] = useState(false);
-  const { isGranted } = useLocation();
+  const [buttonHeight, setButtonHeight] = useState(0);
+  const { isGranted, permissionStatus } = useLocation();
   const mapRef = useRef<NaverMapViewRef>(null);
 
   const { shelterData, refresh: refreshShelter, hasCallNumber } = useShelter({ id });
+  const { toggleFavoriteShelter } = useFavoriteShelter();
+  const { toggleFavoriteAbandonment } = useFavoriteAbandonment();
+  const { share } = useShare();
+
+  const handlePressShare = () => {
+    if (!shelterData) return;
+    pressHaptic();
+    share({ type: 'shelter', id: shelterData.id });
+  };
   const {
     selectedFilter,
     convertedData,
@@ -54,10 +71,22 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
     fetchNextPage,
     goDetail
   } = useShelterAdoptList({ id });
-  const { handleScroll, handlePressButton, isButtonVisible, scrollRef } = useScrollUpButton();
+  const scrollRef = useRef<FlashListRef<AdoptItem>>(null);
+  const scrollY = useSharedValue(0);
+
+  const handleScroll = useCallback(
+    (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+      scrollY.value = e.nativeEvent.contentOffset.y;
+    },
+    [scrollY]
+  );
+
+  const scrollToTop = useCallback(() => {
+    scrollRef.current?.scrollToOffset({ offset: 0, animated: true });
+  }, []);
 
   const handleMapInitialized = useCallback(() => {
-    if (shelterData) {
+    if (shelterData && hasShelterCoords(shelterData)) {
       mapRef.current?.animateCameraTo({
         latitude: shelterData.latitude,
         longitude: shelterData.longitude
@@ -69,17 +98,44 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
     await Promise.all([refreshShelter(), refreshAdopts()]);
   }, [refreshShelter, refreshAdopts]);
 
+  const handleDirections = useCallback(() => {
+    if (!shelterData || !hasShelterCoords(shelterData)) return;
+    showLocation({
+      latitude: shelterData.latitude,
+      longitude: shelterData.longitude,
+      title: shelterData.name,
+      directionsMode: 'car',
+      naverCallerName: 'com.keeper.love',
+      dialogTitle: '길찾기',
+      dialogMessage: '길찾기에 사용할 지도 앱을 선택해주세요',
+      cancelText: '취소'
+    });
+  }, [shelterData]);
+
+  const handleOpenMap = useCallback(() => {
+    router.push(`/shelter/${id}/map` as RelativePathString);
+  }, [id]);
+
   const renderItem = useCallback(
     ({ item, index }: ListRenderItemInfo<AdoptItem>) => {
       const isLeft = index % 2 === 0;
 
       return (
-        <View pl={isLeft ? 20 : 4} pr={isLeft ? 4 : 20} mb={32} onPress={() => goDetail(item.id)}>
-          <AdoptCard uri={item.uri} title={item.title} description={item.description} chips={item.chips} />
+        <View pl={isLeft ? 20 : 4} pr={isLeft ? 4 : 20} mb={32}>
+          <AdoptCard
+            uri={item.uri}
+            title={item.title}
+            description={item.description}
+            chips={item.chips}
+            isFavorited={item.isFavorited}
+            status={item.status}
+            onPress={() => goDetail(item.id)}
+            onPressFavorite={() => toggleFavoriteAbandonment(item.id, item.isFavorited ?? false)}
+          />
         </View>
       );
     },
-    [goDetail]
+    [goDetail, toggleFavoriteAbandonment]
   );
 
   if (!shelterData) return null;
@@ -90,43 +146,35 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
         ref={scrollRef}
         data={convertedData ?? []}
         isLoading={adoptsLoading}
-        onScroll={handleScroll}
         onRefreshCallback={refreshFetch}
+        onScroll={handleScroll}
         renderItem={renderItem}
         emptyComponentVariant="list"
-        contentContainerStyle={{ paddingVertical: 48 }}
+        contentContainerStyle={{ paddingTop: 48, paddingBottom: buttonHeight + 40 }}
         header={
-          <YStack mb={24}>
-            <View mb={30} px={20}>
+          <YStack mb={24} gap={28}>
+            <View px={SCREEN_GUTTER}>
               <ShelterDetailOverviewSection
                 data={shelterData}
                 mapRef={mapRef}
                 isGranted={isGranted}
+                isLocationPending={permissionStatus === undefined}
                 onMapInitialized={handleMapInitialized}
+                onPressFavorite={() => toggleFavoriteShelter(shelterData.id, shelterData.isFavorited ?? false)}
+                onPressShare={handlePressShare}
+                onPressDirections={handleDirections}
+                onPressMap={handleOpenMap}
               />
             </View>
-            <View mb={32} px={20}>
+            <View px={SCREEN_GUTTER}>
               <ShelterDetailDescriptionSection
                 time={shelterData.time}
-                address={shelterData.address}
                 person={shelterData.person}
-                tel={shelterData.tel ?? '정보 없음'}
+                tel={shelterData.tel ?? ''}
               />
             </View>
 
-            {hasCallNumber ? (
-              <View mb={40} px={20}>
-                <Button size="large" onPress={() => setCallModalOpen((prev) => !prev)}>
-                  <Text fontSize={15} fontWeight={600} lineHeight={18} color="$black900">
-                    보호소에 문의하기
-                  </Text>
-                </Button>
-              </View>
-            ) : (
-              <Divider mb={40} />
-            )}
-
-            <XStack items="flex-end" justify="space-between" px={20}>
+            <XStack items="center" justify="space-between" px={SCREEN_GUTTER}>
               <XStack gap={6} items="flex-end">
                 <Text fontSize={20} fontWeight="600" lineHeight={24} letterSpacing={-0.25} color="$black800">
                   보호중인 아이들
@@ -140,7 +188,6 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
                 data={ADOPT_OPTIONS.FILTER}
                 value={selectedFilter}
                 onChange={(value) => changeFilter(value.id)}
-                snapPoints={[200]}
               />
             </XStack>
           </YStack>
@@ -154,7 +201,27 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
         }
       />
 
-      <ScrollUpButton visible={isButtonVisible} onPress={handlePressButton} />
+      <ScrollToTopButton scrollY={scrollY} onPress={scrollToTop} bottom={buttonHeight + 16} />
+
+      <BottomButton
+        disabled={!hasCallNumber}
+        onPress={hasCallNumber ? () => setCallModalOpen((prev) => !prev) : undefined}
+        onLayout={(e) => {
+          const h = e.nativeEvent.layout.height;
+          setButtonHeight((prev) => (prev === h ? prev : h));
+        }}
+        topContent={
+          !hasCallNumber ? (
+            <Text mb={8} self="center" fontSize={13} lineHeight={18} fontWeight={500} color="$black500">
+              등록된 연락처가 없어요
+            </Text>
+          ) : undefined
+        }
+      >
+        <Text fontSize={15} fontWeight={600} lineHeight={18} color={hasCallNumber ? '$black900' : '$black500'}>
+          보호소에 문의하기
+        </Text>
+      </BottomButton>
 
       {hasCallNumber && (
         <CallModal
@@ -162,7 +229,7 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
           onClose={() => setCallModalOpen(false)}
           tel={shelterData.tel!}
           title={`${shelterData.name}에 문의하기`}
-          description="*원활한 소통을 위해 상담원이 상담, 휴대폰 번호, 주소 등을 수집할 수 있습니다"
+          description="*원활한 소통을 위해 성함, 휴대폰 번호, 주소 등을 수집할 수 있습니다"
         />
       )}
     </>
@@ -172,9 +239,4 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
 const Container = styled(View, {
   bg: '$pageBackground',
   flex: 1
-});
-
-const Divider = styled(View, {
-  height: 8,
-  bg: '$white850'
 });

@@ -4,15 +4,17 @@ import { router } from 'expo-router';
 import { useCurrentUser } from '@/features/auth';
 import { useReview, useShare } from '@/shared/model';
 
-import { SHARE_DESC, SHARE_TITLE } from './constants';
 import { useProfileMain } from './use-profile-main';
 
+const mockOpenLoginSheet = jest.fn();
 jest.mock('@/features/auth', () => ({
-  useCurrentUser: jest.fn()
+  useCurrentUser: jest.fn(),
+  useOpenLoginSheet: () => mockOpenLoginSheet
 }));
 jest.mock('@/shared/model', () => ({
   useShare: jest.fn(),
-  useReview: jest.fn()
+  useReview: jest.fn(),
+  usePermission: () => ({ goSettingMenu: jest.fn() })
 }));
 
 const mockedUseCurrentUser = jest.mocked(useCurrentUser);
@@ -36,7 +38,7 @@ const setupHook = (overrides: { user?: typeof FAKE_USER | null; isLoading?: bool
 
   const share = jest.fn();
   const promptReview = jest.fn();
-  mockedUseShare.mockReturnValue({ share } as ReturnType<typeof useShare>);
+  mockedUseShare.mockReturnValue({ share, isSharing: false } as ReturnType<typeof useShare>);
   mockedUseReview.mockReturnValue({ promptReview } as ReturnType<typeof useReview>);
 
   return { ...renderHook(() => useProfileMain()), share, promptReview };
@@ -54,28 +56,20 @@ describe('useProfileMain', () => {
     expect(result.current.isLoading).toBe(true);
   });
 
-  it('shareApp 호출 시 SHARE_TITLE/SHARE_DESC 로 share', () => {
+  it('shareApp 호출 시 앱 링크를 share', () => {
     const { result, share } = setupHook();
 
     result.current.shareApp();
 
-    expect(share).toHaveBeenCalledWith({ title: SHARE_TITLE, desc: SHARE_DESC });
+    expect(share).toHaveBeenCalledWith({ type: 'app' });
   });
 
-  it('goLogin() 기본 redirect 는 "/profile"', () => {
+  it('goLogin() → 로그인 시트 오픈', () => {
     const { result } = setupHook();
 
     result.current.goLogin();
 
-    expect(mockedPush).toHaveBeenCalledWith({ pathname: '/login', params: { redirect: '/profile' } });
-  });
-
-  it('goLogin(path) 로 redirect 지정 가능', () => {
-    const { result } = setupHook();
-
-    result.current.goLogin('/profile/like');
-
-    expect(mockedPush).toHaveBeenCalledWith({ pathname: '/login', params: { redirect: '/profile/like' } });
+    expect(mockOpenLoginSheet).toHaveBeenCalledWith();
   });
 
   it('goAccount 호출 시 /profile/account 로 push', () => {
@@ -86,15 +80,20 @@ describe('useProfileMain', () => {
     expect(mockedPush).toHaveBeenCalledWith({ pathname: '/profile/account' });
   });
 
-  it('goMenu(requireAuth=true) + 미로그인이면 login redirect 로 push', () => {
+  it('goActivity 호출 시 /profile/activity 로 push', () => {
+    const { result } = setupHook();
+
+    result.current.goActivity();
+
+    expect(mockedPush).toHaveBeenCalledWith({ pathname: '/profile/activity' });
+  });
+
+  it('goMenu(requireAuth=true) + 미로그인이면 로그인 시트 오픈', () => {
     const { result } = setupHook({ user: null });
 
     result.current.goMenu('like', true);
 
-    expect(mockedPush).toHaveBeenCalledWith({
-      pathname: '/login',
-      params: { redirect: '/profile/like' }
-    });
+    expect(mockOpenLoginSheet).toHaveBeenCalledWith();
   });
 
   it('goMenu(requireAuth=true) + 로그인 상태면 해당 path 로 push', () => {

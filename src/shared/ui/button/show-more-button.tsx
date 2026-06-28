@@ -1,6 +1,8 @@
 import { ActivityIndicator } from 'react-native';
 import { styled, Text, View } from 'tamagui';
 
+import { pressHaptic } from '@/shared/lib';
+
 export type ShowMoreButtonProps = {
   text: string;
   onPress: () => void;
@@ -8,8 +10,13 @@ export type ShowMoreButtonProps = {
 };
 
 export const ShowMoreButton = ({ text, onPress, isLoading = false }: ShowMoreButtonProps) => {
+  const handlePress = () => {
+    pressHaptic();
+    onPress();
+  };
+
   return (
-    <Button onPress={onPress} disabled={isLoading}>
+    <Button onPress={handlePress} disabled={isLoading}>
       {isLoading ? (
         <ActivityIndicator size={12} style={{ minWidth: 54 }} />
       ) : (

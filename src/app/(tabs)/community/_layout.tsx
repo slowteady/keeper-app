@@ -1,15 +1,9 @@
-import { Stack, useRouter } from 'expo-router';
+import { Stack } from 'expo-router';
 
-import { CommunityWriteHeader } from '@/entities/community';
+import { LogoHeader } from '@/shared/ui';
 
 const CommunityLayout = () => {
-  const router = useRouter();
-
-  return (
-    <Stack
-      screenOptions={{ header: () => <CommunityWriteHeader onPressWrite={() => router.push('/community/write')} /> }}
-    />
-  );
+  return <Stack screenOptions={{ header: () => <LogoHeader /> }} />;
 };
 
 export default CommunityLayout;

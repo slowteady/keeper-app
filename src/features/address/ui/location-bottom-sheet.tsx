@@ -1,37 +1,87 @@
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import { FlashList, ListRenderItemInfo } from '@shopify/flash-list';
+import { BottomSheetFlatList, BottomSheetModal } from '@gorhom/bottom-sheet';
 import { forwardRef, useCallback, useMemo } from 'react';
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator, Keyboard, ListRenderItemInfo } from 'react-native';
 import { styled, Text, View, XStack } from 'tamagui';
 
 import { BottomSheet } from '@/shared/ui';
 
-import { KakaoAddressDocumentDto } from '../model';
+import { KakaoKeywordDocumentDto } from '../model';
 import { BottomSheetSearchInput } from './bottom-sheet-search-input';
 
 export type LocationBottomSheetProps = {
-  addresses?: KakaoAddressDocumentDto[];
+  results?: KakaoKeywordDocumentDto[];
+  query: string;
+  onChangeText: (text: string) => void;
   onDismiss: () => void;
-  onSearch: (text: string) => void;
-  onSelectAddress: (address: KakaoAddressDocumentDto) => void;
+  onSelectAddress: (item: KakaoKeywordDocumentDto) => void;
   isPending: boolean;
+  isFetchingNextPage: boolean;
+  hasNextPage: boolean;
+  fetchNextPage: () => void;
+};
+
+const HighlightText = ({
+  text,
+  query,
+  color,
+  fontSize
+}: {
+  text: string;
+  query: string;
+  color: '$black800' | '$black500';
+  fontSize: number;
+}) => {
+  const keyword = query.trim();
+  if (keyword.length === 0 || !text.includes(keyword)) {
+    return (
+      <Text fontSize={fontSize} lineHeight={fontSize + 4} color={color}>
+        {text}
+      </Text>
+    );
+  }
+
+  const parts = text.split(keyword);
+
+  return (
+    <Text fontSize={fontSize} lineHeight={fontSize + 4} color={color}>
+      {parts.map((part, idx) => (
+        <Text key={idx} fontSize={fontSize} lineHeight={fontSize + 4} color={color}>
+          {part}
+          {idx < parts.length - 1 && (
+            <Text fontSize={fontSize} lineHeight={fontSize + 4} fontWeight="700" color="$primaryDark">
+              {keyword}
+            </Text>
+          )}
+        </Text>
+      ))}
+    </Text>
+  );
 };
 
 export const LocationBottomSheet = forwardRef<BottomSheetModal, LocationBottomSheetProps>((props, ref) => {
-  const { addresses, onDismiss, onSearch, onSelectAddress, isPending } = props;
-  const snapPoints = useMemo(() => ['50%'], []);
+  const {
+    results,
+    query,
+    onChangeText,
+    onDismiss,
+    onSelectAddress,
+    isPending,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage
+  } = props;
+  const snapPoints = useMemo(() => ['60%'], []);
 
   const renderItem = useCallback(
-    ({ item }: ListRenderItemInfo<KakaoAddressDocumentDto>) => {
-      const { address_name } = item;
-
-      return (
-        <ListButton onPress={() => onSelectAddress(item)}>
-          <ListText>{address_name}</ListText>
-        </ListButton>
-      );
-    },
-    [onSelectAddress]
+    ({ item }: ListRenderItemInfo<KakaoKeywordDocumentDto>) => (
+      <ListButton onPress={() => onSelectAddress(item)}>
+        <HighlightText text={item.place_name} query={query} color="$black800" fontSize={16} />
+        <Text fontSize={13} lineHeight={17} color="$black500">
+          {item.address_name || item.road_address_name}
+        </Text>
+      </ListButton>
+    ),
+    [onSelectAddress, query]
   );
 
   return (
@@ -42,42 +92,50 @@ export const LocationBottomSheet = forwardRef<BottomSheetModal, LocationBottomSh
       onDismiss={onDismiss}
       snapPoints={snapPoints}
       ref={ref}
+      disableViewWrap
     >
-      <View py={10}>
-        <HeaderText>주소검색</HeaderText>
-        <BottomSheetSearchInput onSubmit={onSearch} placeholder="예)강남구" />
-      </View>
+      <Header onPress={() => Keyboard.dismiss()}>
+        <HeaderText>장소검색</HeaderText>
+        <BottomSheetSearchInput onChangeText={onChangeText} placeholder="예)강남구, 건대입구역" />
+      </Header>
 
-      {isPending ? (
-        <IndicatorContainer>
-          <ActivityIndicator size="large" />
-        </IndicatorContainer>
-      ) : (
-        <FlashList
-          data={addresses || []}
-          keyExtractor={({ address_name }, idx) => `${address_name}-${idx}`}
-          renderItem={renderItem}
-          showsVerticalScrollIndicator
-          ListEmptyComponent={
-            <NodataContainer>
-              {addresses === undefined ? (
-                <NodataText>주소를 검색해주세요</NodataText>
+      <BottomSheetFlatList
+        data={results || []}
+        keyExtractor={(item: KakaoKeywordDocumentDto) => item.id}
+        renderItem={renderItem}
+        showsVerticalScrollIndicator
+        keyboardShouldPersistTaps="handled"
+        onEndReached={hasNextPage ? fetchNextPage : undefined}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={
+          isFetchingNextPage ? (
+            <View py={16} items="center">
+              <ActivityIndicator />
+            </View>
+          ) : null
+        }
+        ListEmptyComponent={
+          <NodataContainer>
+            {results === undefined ? (
+              isPending ? (
+                <ActivityIndicator size="large" />
               ) : (
-                <NodataText>검색 결과가 없습니다</NodataText>
-              )}
-            </NodataContainer>
-          }
-          style={{ marginBottom: 48 }}
-        />
-      )}
+                <NodataText>장소를 검색해주세요</NodataText>
+              )
+            ) : (
+              <NodataText>검색 결과가 없어요</NodataText>
+            )}
+          </NodataContainer>
+        }
+        contentContainerStyle={{ paddingBottom: 48 }}
+      />
     </BottomSheet>
   );
 });
 
-const IndicatorContainer = styled(XStack, {
-  flex: 1,
-  items: 'center',
-  justify: 'center'
+const Header = styled(View, {
+  pt: 12,
+  pb: 10
 });
 
 const NodataContainer = styled(XStack, {
@@ -95,15 +153,10 @@ const NodataText = styled(Text, {
 });
 
 const ListButton = styled(View, {
-  p: 16,
+  py: 16,
+  gap: 4,
   borderBottomWidth: 1,
   borderBottomColor: '$white800'
-});
-
-const ListText = styled(Text, {
-  fontSize: 16,
-  lineHeight: 18,
-  color: '$black800'
 });
 
 const HeaderText = styled(Text, {

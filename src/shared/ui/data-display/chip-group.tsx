@@ -19,8 +19,10 @@ export interface ChipGroupProps<T extends boolean = false> extends Omit<
   value?: ChipGroupValue<T>;
   onChange?: ChipGroupOnChange<T>;
   multiple?: T;
+  clearable?: boolean;
   direction?: 'horizontal' | 'vertical';
   gap?: number;
+  stretch?: boolean;
 }
 
 const DIRECTION_MAP = { horizontal: XStack, vertical: YStack } as const;
@@ -30,8 +32,11 @@ export const ChipGroup = <T extends boolean = false>({
   value,
   onChange,
   multiple = false as T,
+  clearable = false,
   direction = 'horizontal',
   gap = 4,
+  stretch = false,
+  style: chipStyle,
   ...chipProps
 }: ChipGroupProps<T>) => {
   const handleChipPress = useCallback(
@@ -43,13 +48,13 @@ export const ChipGroup = <T extends boolean = false>({
           : [...currentValues, optionValue];
 
         (onChange as ChipGroupOnChange<true>)?.(newValues);
+      } else if (value === optionValue) {
+        if (clearable) (onChange as ChipGroupOnChange<false>)?.('' as string);
       } else {
-        if (value !== optionValue) {
-          (onChange as ChipGroupOnChange<false>)?.(optionValue);
-        }
+        (onChange as ChipGroupOnChange<false>)?.(optionValue);
       }
     },
-    [value, onChange, multiple]
+    [value, onChange, multiple, clearable]
   );
 
   const isSelected = (optionValue: string) => {
@@ -62,13 +67,18 @@ export const ChipGroup = <T extends boolean = false>({
   const Container = DIRECTION_MAP[direction];
 
   return (
-    <Container flexWrap="wrap" gap={gap} items={direction === 'horizontal' ? 'center' : 'flex-start'}>
+    <Container
+      flexWrap={stretch ? 'nowrap' : 'wrap'}
+      gap={gap}
+      items={direction === 'horizontal' ? 'center' : 'flex-start'}
+    >
       {options.map((option) => (
         <ChipButton
           key={option.value}
+          {...chipProps}
           selected={isSelected(option.value)}
           onPress={() => handleChipPress(option.value)}
-          {...chipProps}
+          style={stretch ? { flex: 1 } : chipStyle}
         >
           {option.label}
         </ChipButton>

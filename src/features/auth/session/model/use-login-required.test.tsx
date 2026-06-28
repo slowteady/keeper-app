@@ -4,6 +4,8 @@ import { createWrapper } from '@/test/create-wrapper';
 
 import { useLoginRequired } from './use-login-required';
 
+jest.mock('../../login/model/use-open-login-sheet', () => ({ useOpenLoginSheet: () => jest.fn() }));
+
 describe('useLoginRequired', () => {
   it('returns flat object with correct properties', () => {
     const { result } = renderHook(() => useLoginRequired(), { wrapper: createWrapper() });

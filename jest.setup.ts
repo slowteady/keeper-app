@@ -1,3 +1,5 @@
+jest.mock('react-native-worklets', () => require('react-native-worklets/src/mock'));
+
 jest.mock('expo-router', () => ({
   useLocalSearchParams: jest.fn(() => ({})),
   useRouter: jest.fn(() => ({
@@ -19,7 +21,8 @@ jest.mock('expo-router', () => ({
 }));
 
 jest.mock('expo-haptics', () => ({
-  impactAsync: jest.fn(),
+  impactAsync: jest.fn(() => Promise.resolve()),
+  selectionAsync: jest.fn(() => Promise.resolve()),
   ImpactFeedbackStyle: { Light: 'Light', Medium: 'Medium', Heavy: 'Heavy' }
 }));
 
@@ -65,6 +68,18 @@ jest.mock('expo-image-manipulator', () => {
   };
 });
 
+jest.mock('expo-notifications', () => ({
+  getPermissionsAsync: jest.fn(() => Promise.resolve({ status: 'granted', canAskAgain: true, granted: true })),
+  requestPermissionsAsync: jest.fn(() => Promise.resolve({ status: 'granted', canAskAgain: true, granted: true })),
+  getExpoPushTokenAsync: jest.fn(() => Promise.resolve({ data: 'ExponentPushToken[mock]' })),
+  setNotificationHandler: jest.fn(),
+  addNotificationResponseReceivedListener: jest.fn(() => ({ remove: jest.fn() })),
+  getLastNotificationResponseAsync: jest.fn(() => Promise.resolve(null)),
+  setNotificationChannelAsync: jest.fn(() => Promise.resolve()),
+  AndroidImportance: { DEFAULT: 3, HIGH: 4, MAX: 5 },
+  PermissionStatus: { GRANTED: 'granted', DENIED: 'denied', UNDETERMINED: 'undetermined' }
+}));
+
 jest.mock('expo-store-review', () => ({
   requestReview: jest.fn(() => Promise.resolve()),
   isAvailableAsync: jest.fn(() => Promise.resolve(true))
@@ -105,11 +120,15 @@ jest.mock('react-native-safe-area-context', () => ({
 
 jest.mock('react-native-reanimated', () => ({
   default: { addWhitelistedNativeProps: jest.fn() },
+  View: require('react-native').View,
   useSharedValue: jest.fn((init: any) => ({ value: init })),
+  useDerivedValue: jest.fn((fn: any) => ({ value: fn() })),
   useAnimatedStyle: jest.fn((fn: any) => fn()),
   useAnimatedProps: jest.fn((fn: any) => fn()),
   withTiming: jest.fn((val: any) => val),
   withSpring: jest.fn((val: any) => val),
+  withRepeat: jest.fn((val: any) => val),
+  interpolate: jest.fn((val: any, _input: any, output: any) => (Array.isArray(output) ? output[0] : val)),
   interpolateColor: jest.fn(() => 'transparent'),
   Easing: { out: jest.fn(() => jest.fn()), exp: jest.fn() },
   runOnJS: jest.fn((fn: any) => fn),
@@ -122,10 +141,6 @@ jest.mock('@react-native-kakao/user', () => ({
 
 jest.mock('@react-native-kakao/core', () => ({
   initializeKakaoSDK: jest.fn()
-}));
-
-jest.mock('@react-native-seoul/naver-login', () => ({
-  default: { initialize: jest.fn(), login: jest.fn() }
 }));
 
 jest.mock('@mj-studio/react-native-naver-map', () => ({}));
@@ -196,5 +211,11 @@ jest.mock('@/shared/api/instance', () => ({
 jest.mock('@/shared/ui', () => ({
   ...jest.requireActual('@/shared/ui'),
   useBottomSheet: jest.fn(() => ({ present: jest.fn(), dismiss: jest.fn() })),
+  useBottomSheetMenu: jest.fn(() => ({ open: jest.fn() })),
   useModal: jest.fn(() => ({ open: jest.fn(), close: jest.fn() }))
 }));
+
+jest.mock('react-native-webview', () => {
+  const { View } = require('react-native');
+  return { WebView: View };
+});

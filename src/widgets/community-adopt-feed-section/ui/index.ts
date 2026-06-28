@@ -1,4 +1,0 @@
-export * from './community-adopt-feed';
-export * from './community-adopt-form';
-export * from './community-detail-description-section';
-export * from './community-detail-overview-section';

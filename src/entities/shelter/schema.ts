@@ -5,8 +5,8 @@ export const ShelterSchema = z.object({
   name: z.string(),
   address: z.string(),
   tel: z.string().nullable(),
-  latitude: z.number(),
-  longitude: z.number(),
+  latitude: z.number().nullable(),
+  longitude: z.number().nullable(),
   division: z.string().optional(),
   veterinarianCount: z.number().optional(),
   caretakerCount: z.number().optional(),
@@ -18,30 +18,25 @@ export const ShelterSchema = z.object({
   weekdayCellCloseTime: z.string().nullable().optional(),
   weekendCellOpenTime: z.string().nullable().optional(),
   weekendCellCloseTime: z.string().nullable().optional(),
-  distance: z.number().optional()
+  closeDay: z.string().nullable(),
+  distance: z.number().nullable().optional(),
+  // 백엔드 isFavorited 추가 (마이그레이션 014 + shelter v2 controller 변경 동기화)
+  isFavorited: z.boolean().optional()
 });
 export type ShelterDto = z.infer<typeof ShelterSchema>;
 
-export const ShelterCountSchema = z.object({
-  distance: z.number(),
-  count: z.number()
-});
-export type ShelterCountDto = z.infer<typeof ShelterCountSchema>;
+export type ShelterWithCoords = ShelterDto & { latitude: number; longitude: number };
+export const hasShelterCoords = (shelter: ShelterDto): shelter is ShelterWithCoords =>
+  shelter.latitude != null && shelter.longitude != null;
 
-export const SheltersParamsSchema = z.object({
-  latitude: z.number(),
-  longitude: z.number(),
-  distance: z.number(),
-  userLatitude: z.number(),
-  userLongitude: z.number()
+export const ShelterMyFavoriteListSchema = z.object({
+  items: z.array(ShelterSchema),
+  total: z.number(),
+  page: z.number(),
+  size: z.number(),
+  hasNext: z.boolean()
 });
-export type SheltersParamsDto = z.infer<typeof SheltersParamsSchema>;
-
-export const ShelterCountsParamsSchema = z.object({
-  latitude: z.number(),
-  longitude: z.number()
-});
-export type ShelterCountsParamsDto = z.infer<typeof ShelterCountsParamsSchema>;
+export type ShelterMyFavoriteListDto = z.infer<typeof ShelterMyFavoriteListSchema>;
 
 export const ShelterAdoptsParamsSchema = z.object({
   size: z.number(),
@@ -50,9 +45,10 @@ export const ShelterAdoptsParamsSchema = z.object({
 });
 export type ShelterAdoptsParamsDto = z.infer<typeof ShelterAdoptsParamsSchema>;
 
-export const ShelterSearchParamsSchema = z.object({
-  search: z.string(),
-  userLatitude: z.number(),
-  userLongitude: z.number()
+export const ShelterWithinParamsSchema = z.object({
+  minLatitude: z.number(),
+  maxLatitude: z.number(),
+  minLongitude: z.number(),
+  maxLongitude: z.number()
 });
-export type ShelterSearchParamsDto = z.infer<typeof ShelterSearchParamsSchema>;
+export type ShelterWithinParamsDto = z.infer<typeof ShelterWithinParamsSchema>;

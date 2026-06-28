@@ -1,5 +1,6 @@
 module.exports = {
   appleTeamId: process.env.EXPO_PUBLIC_APPLE_TEAM_ID,
+  associatedDomains: ['applinks:our-keeper.com'],
   icon: './src/assets/images/keeper-icon.png',
   usesAppleSignIn: true,
   supportsTablet: true,

@@ -1,12 +1,13 @@
-import * as Haptics from 'expo-haptics';
 import { useCallback, useState } from 'react';
+
+import { refreshHaptic } from '@/shared/lib';
 
 export const useListRefreshing = (onRefreshCallback: () => Promise<void>) => {
   const [refreshing, setRefreshing] = useState(false);
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
-    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    await refreshHaptic();
 
     const MIN_REFRESH_TIME = 1000;
     const startTime = Date.now();

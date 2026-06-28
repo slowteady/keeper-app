@@ -3,19 +3,19 @@ import {
   LoginDataSchema,
   LoginParamsSchema,
   RefreshDataSchema,
-  SignUpBodySchema,
   SocialLoginTypeSchema,
   UpdateMeBodySchema,
   UserSchema
 } from './schema';
 
 const VALID_USER = {
-  id: 1,
+  id: '1',
   name: 'Lee',
   nickname: 'keeper',
   email: 'a@b.com',
   image: 'https://x',
-  socialType: 'KAKAO' as const
+  socialType: 'KAKAO' as const,
+  createdAt: '2025-09-23T00:00:00.000Z'
 };
 
 describe('UserSchema', () => {
@@ -23,8 +23,8 @@ describe('UserSchema', () => {
     expect(() => UserSchema.parse(VALID_USER)).not.toThrow();
   });
 
-  it('id 가 number 가 아니면 실패', () => {
-    expect(() => UserSchema.parse({ ...VALID_USER, id: '1' })).toThrow();
+  it('id 가 string 이 아니면 실패', () => {
+    expect(() => UserSchema.parse({ ...VALID_USER, id: 1 })).toThrow();
   });
 
   it('image 가 누락되면 실패', () => {
@@ -34,8 +34,8 @@ describe('UserSchema', () => {
 });
 
 describe('SocialLoginTypeSchema', () => {
-  it('GOOGLE/APPLE/KAKAO/NAVER 만 통과', () => {
-    ['GOOGLE', 'APPLE', 'KAKAO', 'NAVER'].forEach((v) => {
+  it('GOOGLE/APPLE/KAKAO 만 통과', () => {
+    ['GOOGLE', 'APPLE', 'KAKAO'].forEach((v) => {
       expect(() => SocialLoginTypeSchema.parse(v)).not.toThrow();
     });
   });
@@ -89,33 +89,6 @@ describe('LoginParamsSchema', () => {
 describe('CheckNicknameBodySchema', () => {
   it('nickname 통과', () => {
     expect(() => CheckNicknameBodySchema.parse({ nickname: 'keeper' })).not.toThrow();
-  });
-});
-
-describe('SignUpBodySchema', () => {
-  it('약관 필드 포함 모든 필수 필드 통과', () => {
-    expect(() =>
-      SignUpBodySchema.parse({
-        socialType: 'KAKAO',
-        socialId: 's1',
-        nickname: 'keeper',
-        agreedTermsVersion: 'v1.0',
-        agreedPrivacyVersion: 'v1.0',
-        agreedAt: '2026-05-04T00:00:00Z'
-      })
-    ).not.toThrow();
-  });
-
-  it('agreedTermsVersion 누락 시 실패', () => {
-    expect(() =>
-      SignUpBodySchema.parse({
-        socialType: 'KAKAO',
-        socialId: 's1',
-        nickname: 'keeper',
-        agreedPrivacyVersion: 'v1.0',
-        agreedAt: '2026-05-04T00:00:00Z'
-      })
-    ).toThrow();
   });
 });
 

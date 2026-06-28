@@ -1,14 +1,16 @@
 import dayjs from 'dayjs';
 
-import { DOG_BREEDS } from '@/shared/model';
+import type { AnimalTypeDto } from '@/shared/model';
+import { CAT_BREEDS, DOG_BREEDS } from '@/shared/model';
 
-export const makeFormOptions = () => {
-  const makeWeightOption = () =>
-    Array.from({ length: 50 }, (_, index) => ({
-      id: index + 1,
-      label: `${index + 1}kg`
-    }));
+const KIND_BY_ANIMAL_TYPE = {
+  DOG: DOG_BREEDS,
+  CAT: CAT_BREEDS,
+  OTHER: [],
+  ALL: []
+} as const satisfies Record<AnimalTypeDto, readonly { name: string }[]>;
 
+export const makeFormOptions = (animalType: AnimalTypeDto = 'DOG') => {
   const makeAgeOption = () =>
     Array.from({ length: 25 }, (_, index) => {
       const year = dayjs().year() - index;
@@ -18,15 +20,13 @@ export const makeFormOptions = () => {
       };
     });
 
-  const makeKindOption = () => {
-    return DOG_BREEDS.map((breed) => ({
+  const makeKindOption = () =>
+    KIND_BY_ANIMAL_TYPE[animalType].map((breed) => ({
       id: breed.name,
       label: breed.name
     }));
-  };
 
   return {
-    weightOption: makeWeightOption(),
     ageOption: makeAgeOption(),
     kindOption: makeKindOption()
   };

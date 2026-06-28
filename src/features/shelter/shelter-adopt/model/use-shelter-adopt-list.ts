@@ -30,18 +30,18 @@ export const useShelterAdoptList = ({ id, adoptsParams }: UseShelterAdoptListPro
   } = useInfiniteQuery(
     shelterQueries.adopts(id, {
       size: 16,
-      page: 0,
+      page: 1,
       filter: selectedFilter,
       ...adoptsParams
     })
   );
 
   const convertedData = useMemo(() => {
-    const hasValue = data && data?.value && data?.value.length > 0;
+    const hasValue = data && data?.items && data?.items.length > 0;
     if (!hasValue) return [];
 
-    return mapToAdoptList(data.value, selectedFilter);
-  }, [data, selectedFilter]);
+    return mapToAdoptList(data.items);
+  }, [data]);
 
   const changeFilter = useCallback((id: string) => router.setParams({ filter: id }), [router]);
 
@@ -59,7 +59,7 @@ export const useShelterAdoptList = ({ id, adoptsParams }: UseShelterAdoptListPro
   const goDetail = useCallback((id: string) => router.push({ pathname: '/adopt/[id]', params: { id } }), [router]);
 
   const moreButtonText = useMemo(() => {
-    const currentPage = (data?.page ?? 0) + 1;
+    const currentPage = data?.page ?? 1;
     const totalPage = Math.ceil((data?.total || 0) / 16);
     return `더보기 ${currentPage}/${totalPage}`;
   }, [data?.page, data?.total]);

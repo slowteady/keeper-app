@@ -1,26 +1,33 @@
-import { Control, Controller } from 'react-hook-form';
+import { Control, Controller, FieldPath, FieldValues } from 'react-hook-form';
 import { Text, XStack, YStack } from 'tamagui';
 
-import { CommunityAdoptFormDto } from '@/entities/community';
 import { ImageSelector, ImageSelectorProps } from '@/shared/ui';
 
+import { FieldError } from './field-error';
 import { FieldLabel } from './field-label';
 
-export interface LabelImageSelectorProps extends Omit<ImageSelectorProps, 'value' | 'onChange'> {
+export interface LabelImageSelectorProps<T extends FieldValues> extends Omit<ImageSelectorProps, 'value' | 'onChange'> {
   label: string;
   required?: boolean;
-  name: keyof CommunityAdoptFormDto;
-  control: Control<CommunityAdoptFormDto>;
+  name: FieldPath<T>;
+  control: Control<T>;
 }
 
 const IMAGE_BOX_SIZE = 72;
 
-export const LabelImageSelector = ({ label, required, name, control, max = 10, ...props }: LabelImageSelectorProps) => {
+export const LabelImageSelector = <T extends FieldValues>({
+  label,
+  required,
+  name,
+  control,
+  max = 10,
+  ...props
+}: LabelImageSelectorProps<T>) => {
   return (
     <Controller
       name={name}
       control={control}
-      render={({ field }) => {
+      render={({ field, fieldState }) => {
         const images: string[] = Array.isArray(field.value) ? (field.value as string[]) : [];
         const count = images.length;
 
@@ -46,6 +53,7 @@ export const LabelImageSelector = ({ label, required, name, control, max = 10, .
               onChange={(images: string[]) => field.onChange(images)}
               {...props}
             />
+            <FieldError message={fieldState.error?.message} />
           </YStack>
         );
       }}

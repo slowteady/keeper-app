@@ -7,17 +7,27 @@ export type ModalButtonsProps = {
     primary: string;
     secondary: string;
   };
+  destructive?: boolean;
+  testIDSecondary?: string;
+  testIDPrimary?: string;
 };
 
-export const ModalButtons = ({ onPressSecondary, onPressPrimary, text }: ModalButtonsProps) => {
+export const ModalButtons = ({
+  onPressSecondary,
+  onPressPrimary,
+  text,
+  destructive = false,
+  testIDSecondary,
+  testIDPrimary
+}: ModalButtonsProps) => {
   return (
     <XStack gap={6}>
-      <Button onPress={onPressSecondary} bg="$white800">
+      <Button onPress={onPressSecondary} bg="$white800" testID={testIDSecondary}>
         <ButtonText>{text.secondary}</ButtonText>
       </Button>
 
-      <Button onPress={onPressPrimary} bg="$primaryMain">
-        <ButtonText>{text.primary}</ButtonText>
+      <Button onPress={onPressPrimary} bg={destructive ? '$errorMain' : '$primaryMain'} testID={testIDPrimary}>
+        <ButtonText color={destructive ? '$white900' : '$black800'}>{text.primary}</ButtonText>
       </Button>
     </XStack>
   );

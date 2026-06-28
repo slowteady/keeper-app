@@ -1,26 +1,14 @@
-import { useState } from 'react';
-import { SceneMap } from 'react-native-tab-view';
+import { router } from 'expo-router';
 import { styled, View } from 'tamagui';
 
-import { Tab } from '@/shared/ui';
-import { InquiryFormScene, InquiryHistoryScene } from '@/widgets/profile';
-
-const ROUTES = [
-  { key: 'form', title: '문의하기' },
-  { key: 'history', title: '문의내역' }
-] as const;
-
-const renderScene = SceneMap({
-  form: InquiryFormScene,
-  history: InquiryHistoryScene
-});
+import { BottomButton } from '@/shared/ui';
+import { InquiryHistoryScene } from '@/widgets/profile';
 
 const Page = () => {
-  const [index, setIndex] = useState(0);
-
   return (
     <Container>
-      <Tab navigationState={{ index, routes: [...ROUTES] }} renderScene={renderScene} onIndexChange={setIndex} />
+      <InquiryHistoryScene />
+      <BottomButton onPress={() => router.push('/(untabs)/profile/inquiry/new')}>문의하기</BottomButton>
     </Container>
   );
 };

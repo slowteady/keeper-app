@@ -1,6 +1,6 @@
 import { toast as sonnerToast } from 'sonner-native';
 
-import { ToastContent } from '@/shared/ui';
+import { ToastContent } from '@/shared/ui/overlay/toast-content';
 
 type ToastStatus = 'success' | 'fail';
 
