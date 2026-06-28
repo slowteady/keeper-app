@@ -21,7 +21,7 @@ describe('CommentSchema', () => {
   });
 
   it('content 누락 시 실패', () => {
-    const { content, ...rest } = VALID_COMMENT;
+    const { content: _content, ...rest } = VALID_COMMENT;
     expect(() => CommentSchema.parse(rest)).toThrow();
   });
 });
