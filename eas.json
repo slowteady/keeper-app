@@ -28,12 +28,20 @@
       "ios": {
         "appleId": "ymlee.dev@gmail.com",
         "ascAppId": "6739178024"
+      },
+      "android": {
+        "serviceAccountKeyPath": "./service-account.json",
+        "track": "internal"
       }
     },
     "production": {
       "ios": {
         "appleId": "ymlee.dev@gmail.com",
         "ascAppId": "6739178024"
+      },
+      "android": {
+        "serviceAccountKeyPath": "./service-account.json",
+        "track": "production"
       }
     }
   }
