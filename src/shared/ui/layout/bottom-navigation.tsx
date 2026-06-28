@@ -7,12 +7,12 @@ import { styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
 
 import {
   ActiveHeart,
-  ActiveHome,
+  ActiveHome2,
   ActiveLocation,
   ActiveMessage,
   ActiveUser,
   Heart,
-  Home,
+  Home2,
   Location,
   Message,
   User
@@ -27,7 +27,7 @@ type MenuItem = {
 };
 
 const MENU_ITEMS: MenuItem[] = [
-  { name: 'home', label: 'Home', Icon: Home, ActiveIcon: ActiveHome, size: 24 },
+  { name: 'home', label: 'Home', Icon: Home2, ActiveIcon: ActiveHome2, size: 24 },
   { name: 'adopt', label: '입양공고', Icon: Heart, ActiveIcon: ActiveHeart, size: 26 },
   { name: 'shelter', label: '보호소', Icon: Location, ActiveIcon: ActiveLocation, size: 28 },
   { name: 'community', label: '커뮤니티', Icon: Message, ActiveIcon: ActiveMessage, size: 24 },
