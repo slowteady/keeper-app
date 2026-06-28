@@ -1,3 +1,12 @@
+const kakaoNativeKey = process.env.EXPO_PUBLIC_KAKAO_NATIVE_KEY;
+const googleIosUrlScheme = process.env.EXPO_PUBLIC_GOOGLE_URL_IOS_SCHEME;
+
+if (process.env.EAS_BUILD && (!kakaoNativeKey || !googleIosUrlScheme)) {
+  throw new Error(
+    '[plugins] EAS 빌더 환경변수 누락: EXPO_PUBLIC_KAKAO_NATIVE_KEY / EXPO_PUBLIC_GOOGLE_URL_IOS_SCHEME (production environment 확인)'
+  );
+}
+
 module.exports = [
   'expo-font',
   'expo-web-browser',
@@ -39,12 +48,15 @@ module.exports = [
   [
     '@react-native-kakao/core',
     {
-      nativeAppKey: process.env.EXPO_PUBLIC_KAKAO_NATIVE_KEY,
+      nativeAppKey: kakaoNativeKey ?? 'PLACEHOLDER_KAKAO_NATIVE_KEY',
       android: { authCodeHandlerActivity: true },
       ios: { handleKakaoOpenUrl: true }
     }
   ],
-  ['@react-native-google-signin/google-signin', { iosUrlScheme: process.env.EXPO_PUBLIC_GOOGLE_URL_IOS_SCHEME }],
+  [
+    '@react-native-google-signin/google-signin',
+    { iosUrlScheme: googleIosUrlScheme ?? 'com.googleusercontent.apps.placeholder' }
+  ],
   'react-native-map-link',
   './config/with-korean-map-queries.cjs',
   './config/with-modular-headers.cjs',
