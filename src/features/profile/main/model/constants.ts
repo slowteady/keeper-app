@@ -1,12 +1,9 @@
-import { Bell, CircleHelp, Info, MapPin, Megaphone, Share2, Star } from '@tamagui/lucide-icons';
+import { Bell, CircleHelp, Info, Megaphone, Share2, Star } from '@tamagui/lucide-icons';
 
 export const MENU_SECTIONS = [
   {
     label: '설정',
-    items: [
-      { icon: MapPin, label: '위치 설정', action: 'location' },
-      { icon: Bell, label: '알림 설정', navigateTo: 'notification-settings', requireAuth: false }
-    ]
+    items: [{ icon: Bell, label: '알림 설정', navigateTo: 'notification-settings', requireAuth: false }]
   },
   {
     label: '지원',

@@ -67,4 +67,4 @@ jobs:
           token: ${{ secrets.EXPO_TOKEN }}
 
       - name: EAS Build (${{ inputs.profile }})
-        run: eas build --platform ${{ inputs.platform }} --profile ${{ inputs.profile }} --non-interactive --no-wait
+        run: eas build --platform ${{ inputs.platform }} --profile ${{ inputs.profile }} --non-interactive --no-wait --auto-submit
