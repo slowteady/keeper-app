@@ -3,7 +3,7 @@
   "main": "expo-router/entry",
   "private": true,
   "type": "module",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "scripts": {
     "postinstall": "pnpm run prebuild",
     "dev": "expo start --dev-client",
