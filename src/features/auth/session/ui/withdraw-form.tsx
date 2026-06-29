@@ -18,7 +18,7 @@ export const WithdrawForm = () => {
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={styles.content}
       >
-        <Title>{'Keeper를 탈퇴하는\n이유를 알려주세요'}</Title>
+        <Title>{'keeper를 탈퇴하는\n이유를 알려주세요'}</Title>
         <Description>더 나은 서비스를 위해 노력할게요</Description>
 
         <YStack gap={12}>
