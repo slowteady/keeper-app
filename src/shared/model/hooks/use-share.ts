@@ -36,13 +36,12 @@ export const useShare = () => {
         if (Platform.OS === 'ios') {
           await Share.share({
             url: shareUrl,
-            message: 'Keeper에서 확인해보세요',
-            title: 'Keeper'
+            title: 'keeper'
           });
         } else {
           await Share.share({
-            message: `Keeper에서 확인해보세요\n${shareUrl}`,
-            title: 'Keeper'
+            message: shareUrl,
+            title: 'keeper'
           });
         }
       } catch {

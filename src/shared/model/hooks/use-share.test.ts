@@ -45,9 +45,8 @@ describe('useShare', () => {
     });
 
     expect(mockShare).toHaveBeenCalledWith({
-      message: 'Keeper에서 확인해보세요',
       url: 'https://our-keeper.com/share/community/post%201',
-      title: 'Keeper'
+      title: 'keeper'
     });
   });
 });
