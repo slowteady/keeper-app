@@ -1,5 +1,5 @@
 import { ChevronRight } from '@tamagui/lucide-icons';
-import { ColorTokens, styled, Text, View, XStack, XStackProps } from 'tamagui';
+import { ColorTokens, Spinner, styled, Text, View, XStack, XStackProps } from 'tamagui';
 
 export type MenuProps = {
   icon?: React.ReactNode;
@@ -7,19 +7,39 @@ export type MenuProps = {
   labelColor?: ColorTokens;
   showDot?: boolean;
   onPress?: () => void;
+  isLoading?: boolean;
+  disabled?: boolean;
   style?: XStackProps['style'];
   testID?: string;
 };
 
-export const Menu = ({ icon, label, labelColor, showDot = false, onPress, style, testID }: MenuProps) => {
+export const Menu = ({
+  icon,
+  label,
+  labelColor,
+  showDot = false,
+  onPress,
+  isLoading = false,
+  disabled = false,
+  style,
+  testID
+}: MenuProps) => {
+  const isBlocked = disabled || isLoading;
+
   return (
-    <Container onPress={onPress} hitSlop={12} style={style} testID={testID}>
+    <Container
+      onPress={isBlocked ? undefined : onPress}
+      hitSlop={12}
+      opacity={disabled && !isLoading ? 0.4 : 1}
+      style={style}
+      testID={testID}
+    >
       <XStack gap={8} items="center">
         {icon}
         <Label color={labelColor}>{label}</Label>
         {showDot && <Dot />}
       </XStack>
-      <ChevronRight size={21} color="#ADB3AF" />
+      {isLoading ? <Spinner size="small" color="#ADB3AF" /> : <ChevronRight size={21} color="#ADB3AF" />}
     </Container>
   );
 };

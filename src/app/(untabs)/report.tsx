@@ -1,5 +1,5 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { styled, Text, View, YStack } from 'tamagui';
 
@@ -13,6 +13,7 @@ const Page = () => {
   const targetId = params.id;
 
   const { report, isPending } = useReport();
+  const [pendingReason, setPendingReason] = useState<ReportReason | null>(null);
 
   useEffect(() => {
     if (!targetId) router.back();
@@ -22,6 +23,7 @@ const Page = () => {
 
   const handleSelect = async (reason: ReportReason) => {
     if (isPending) return;
+    setPendingReason(reason);
     await report({ type: targetType, id: targetId }, reason);
     router.back();
   };
@@ -37,7 +39,13 @@ const Page = () => {
         <YStack>
           {REPORT_REASONS.map((reason, idx) => (
             <ReasonWrap key={reason.id} isFirst={idx === 0}>
-              <Menu label={reason.label} onPress={() => handleSelect(reason.id)} style={{ paddingVertical: 18 }} />
+              <Menu
+                label={reason.label}
+                onPress={() => handleSelect(reason.id)}
+                isLoading={pendingReason === reason.id}
+                disabled={isPending && pendingReason !== reason.id}
+                style={{ paddingVertical: 18 }}
+              />
             </ReasonWrap>
           ))}
         </YStack>

@@ -8,6 +8,7 @@ import { useCallback } from 'react';
 import { authQueries, logout, UserDto } from '@/entities/auth';
 import { notificationApi } from '@/entities/notification';
 import { getRefreshToken, globalToast, removeToken } from '@/shared/lib';
+import { useLoadingOverlay } from '@/shared/ui';
 
 import { useSetIsAuthenticated } from '../../lib/auth-state';
 import { signOutSocialSession } from '../../lib/sign-out-social-session';
@@ -23,12 +24,14 @@ const clearPushToken = async () => {
 export const useLogout = () => {
   const qc = useQueryClient();
   const setIsAuthenticated = useSetIsAuthenticated();
+  const overlay = useLoadingOverlay();
 
   const { mutateAsync, isPending } = useMutation({ mutationFn: logout });
 
   const handleLogout = useCallback(async () => {
     if (isPending) return;
 
+    overlay.show('로그아웃 중...');
     try {
       const cachedUser = qc.getQueryData<UserDto>(authQueries.me().queryKey);
 
@@ -46,8 +49,10 @@ export const useLogout = () => {
       router.dismissTo('/(tabs)/profile');
     } catch {
       globalToast('로그아웃하지 못했어요', 'fail');
+    } finally {
+      overlay.hide();
     }
-  }, [isPending, mutateAsync, qc, setIsAuthenticated]);
+  }, [isPending, mutateAsync, qc, setIsAuthenticated, overlay]);
 
   return { logout: handleLogout, isPending };
 };

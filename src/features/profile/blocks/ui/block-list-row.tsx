@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { Pressable } from 'react-native';
-import { styled, Text, XStack, YStack } from 'tamagui';
+import { Spinner, styled, Text, XStack, YStack } from 'tamagui';
 
 import type { BlockedUserDto } from '@/entities/community';
 import { ProfileAvatar } from '@/entities/profile';
@@ -22,7 +22,7 @@ export const BlockListRow = ({ user, onUnblock, isPending }: BlockListRowProps) 
         </YStack>
       </XStack>
       <Pressable onPress={onUnblock} disabled={isPending} hitSlop={8} style={styles.button}>
-        <UnblockText>차단 해제</UnblockText>
+        {isPending ? <Spinner size="small" color="$black700" /> : <UnblockText>차단 해제</UnblockText>}
       </Pressable>
     </Row>
   );

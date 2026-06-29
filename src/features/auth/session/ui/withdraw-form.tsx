@@ -8,7 +8,7 @@ import { Button, StickyFooter } from '@/shared/ui';
 import { useWithdrawForm } from '../model/use-withdraw-form';
 
 export const WithdrawForm = () => {
-  const { reasons, selectedIndex, selectReason, detail, setDetail, isOther, submit } = useWithdrawForm();
+  const { reasons, selectedIndex, selectReason, detail, setDetail, isOther, submit, isPending } = useWithdrawForm();
   const [footerHeight, setFooterHeight] = useState(0);
 
   return (
@@ -50,7 +50,7 @@ export const WithdrawForm = () => {
       </KeyboardAwareScrollView>
 
       <StickyFooter onLayout={(e) => setFooterHeight(e.nativeEvent.layout.height)}>
-        <Button color="destructive" onPress={submit}>
+        <Button color="destructive" onPress={submit} isLoading={isPending} disabled={isPending}>
           탈퇴하기
         </Button>
       </StickyFooter>
