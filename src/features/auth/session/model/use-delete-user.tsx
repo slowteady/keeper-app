@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 
 import { authQueries, DeleteMeBodyDto, deleteUser, UserDto } from '@/entities/auth';
 import { globalToast, removeToken } from '@/shared/lib';
-import { ConfirmModal, useModal } from '@/shared/ui';
+import { ConfirmModal, useLoadingOverlay, useModal } from '@/shared/ui';
 
 import { useSetIsAuthenticated } from '../../lib/auth-state';
 import { signOutSocialSession } from '../../lib/sign-out-social-session';
@@ -13,6 +13,7 @@ export const useDeleteUser = () => {
   const queryClient = useQueryClient();
   const { open, close } = useModal();
   const setIsAuthenticated = useSetIsAuthenticated();
+  const overlay = useLoadingOverlay();
 
   const { mutateAsync, isPending } = useMutation({ mutationFn: deleteUser });
 
@@ -20,6 +21,7 @@ export const useDeleteUser = () => {
     async (body: DeleteMeBodyDto) => {
       if (isPending) return;
 
+      overlay.show('탈퇴 처리 중...');
       try {
         const cachedUser = queryClient.getQueryData<UserDto>(authQueries.me().queryKey);
 
@@ -34,9 +36,11 @@ export const useDeleteUser = () => {
         router.dismissTo('/(tabs)/profile');
       } catch {
         globalToast('회원탈퇴하지 못했어요', 'fail');
+      } finally {
+        overlay.hide();
       }
     },
-    [isPending, mutateAsync, queryClient, setIsAuthenticated]
+    [isPending, mutateAsync, queryClient, setIsAuthenticated, overlay]
   );
 
   const openWithdrawModal = useCallback(

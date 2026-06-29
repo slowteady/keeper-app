@@ -28,7 +28,7 @@ import { UrgentNoticeGate } from '@/features/notice';
 import { NotificationGate } from '@/features/notification';
 import { authApi, setupInterceptor } from '@/shared/api';
 import { clearSuspended, globalToast, logger, throwToErrorBoundary, useSuspension } from '@/shared/lib';
-import { BottomSheetProvider, ModalProvider, ShareGuard } from '@/shared/ui';
+import { BottomSheetProvider, LoadingOverlayProvider, ModalProvider, ShareGuard } from '@/shared/ui';
 
 import { config } from '../../tamagui.config';
 import AnimatedSplash from './_animated-splash';
@@ -92,8 +92,7 @@ const RootLayout = () => {
             throwOnError: throwToErrorBoundary
           },
           mutations: {
-            retry: false,
-            throwOnError: throwToErrorBoundary
+            retry: false
           }
         }
       })
@@ -205,23 +204,25 @@ const RootLayout = () => {
               <SafeAreaProvider>
                 <BottomSheetProvider>
                   <ModalProvider>
-                    <StatusBar style="dark" />
-                    <Stack screenOptions={{ headerShown: false }}>
-                      <Stack.Screen name="community-write" options={{ presentation: 'fullScreenModal' }} />
-                      <Stack.Screen name="community-qna-write" options={{ presentation: 'fullScreenModal' }} />
-                    </Stack>
-                    <ShareGuard />
-                    <NotificationGate />
-                    <UrgentNoticeGate notice={gate.urgentNotice} />
-                    <Toaster
-                      position="top-center"
-                      duration={2000}
-                      swipeToDismissDirection="up"
-                      toastOptions={{
-                        toastContainerStyle: { paddingHorizontal: 20, width: '100%' },
-                        toastContentStyle: { width: '100%', padding: 0, backgroundColor: 'transparent' }
-                      }}
-                    />
+                    <LoadingOverlayProvider>
+                      <StatusBar style="dark" />
+                      <Stack screenOptions={{ headerShown: false }}>
+                        <Stack.Screen name="community-write" options={{ presentation: 'fullScreenModal' }} />
+                        <Stack.Screen name="community-qna-write" options={{ presentation: 'fullScreenModal' }} />
+                      </Stack>
+                      <ShareGuard />
+                      <NotificationGate />
+                      <UrgentNoticeGate notice={gate.urgentNotice} />
+                      <Toaster
+                        position="top-center"
+                        duration={2000}
+                        swipeToDismissDirection="up"
+                        toastOptions={{
+                          toastContainerStyle: { paddingHorizontal: 20, width: '100%' },
+                          toastContentStyle: { width: '100%', padding: 0, backgroundColor: 'transparent' }
+                        }}
+                      />
+                    </LoadingOverlayProvider>
                   </ModalProvider>
                 </BottomSheetProvider>
               </SafeAreaProvider>

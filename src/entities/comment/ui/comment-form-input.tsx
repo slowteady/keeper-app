@@ -71,6 +71,7 @@ export const CommentFormInput = forwardRef<React.ElementRef<typeof TextArea>, Co
             size="small"
             style={{ minWidth: 72 }}
             disabled={!canSubmit}
+            isLoading={isPending}
             onPress={disabled ? onTapWhenDisabled : onSubmit}
             testID="comment-submit"
           >

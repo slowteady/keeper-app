@@ -6,6 +6,7 @@ export * from './cancel-modal';
 export * from './chosung-select-sheet';
 export * from './confirm-modal';
 export * from './image-viewer';
+export * from './loading-overlay-provider';
 export * from './modal-buttons';
 export * from './modal-provider';
 export * from './share-guard';

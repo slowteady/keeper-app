@@ -1,5 +1,5 @@
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 
 import { blockQueries } from '@/entities/community';
 import { useBlock } from '@/features/community/safety';
@@ -9,7 +9,8 @@ export const useBlockList = () => {
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useInfiniteQuery(
     blockQueries.list()
   );
-  const { unblock, isPending: isUnblockPending } = useBlock();
+  const { unblock } = useBlock();
+  const [pendingUnblockId, setPendingUnblockId] = useState<string | null>(null);
 
   const handleFetchNextPage = useCallback(() => {
     if (hasNextPage && !isFetchingNextPage) fetchNextPage();
@@ -17,10 +18,16 @@ export const useBlockList = () => {
 
   const handleUnblock = useCallback(
     async (userId: string) => {
-      await unblock(userId);
-      await queryClient.invalidateQueries({ queryKey: blockQueries.all() });
+      if (pendingUnblockId) return;
+      setPendingUnblockId(userId);
+      try {
+        await unblock(userId);
+        await queryClient.invalidateQueries({ queryKey: blockQueries.all() });
+      } finally {
+        setPendingUnblockId(null);
+      }
     },
-    [unblock, queryClient]
+    [pendingUnblockId, unblock, queryClient]
   );
 
   return {
@@ -32,6 +39,6 @@ export const useBlockList = () => {
     fetchNextPage: handleFetchNextPage,
     refetch,
     unblock: handleUnblock,
-    isUnblockPending
+    pendingUnblockId
   };
 };

@@ -9,7 +9,7 @@ import { AccountHeader } from '@/widgets/profile';
 
 const Page = () => {
   const { user } = useCurrentUser();
-  const { logout } = useLogout();
+  const { logout, isPending: isLoggingOut } = useLogout();
   const { changeProfileImage, isPending: isUpdatingImage } = useProfileImage();
 
   if (!user) return null;
@@ -32,7 +32,13 @@ const Page = () => {
         <Separator borderColor="$backgroundDefault" mb={24} />
 
         <YStack px={SCREEN_GUTTER}>
-          <Menu label="로그아웃" style={{ paddingVertical: 14 }} onPress={logout} testID="account-logout" />
+          <Menu
+            label="로그아웃"
+            style={{ paddingVertical: 14 }}
+            onPress={logout}
+            isLoading={isLoggingOut}
+            testID="account-logout"
+          />
           <Menu
             label="회원탈퇴"
             labelColor="$errorMain"

@@ -15,7 +15,7 @@ export const WITHDRAW_REASONS: { code: WithdrawReason; label: string }[] = [
 ];
 
 export const useWithdrawForm = () => {
-  const { deleteUser, openWithdrawModal } = useDeleteUser();
+  const { deleteUser, openWithdrawModal, isPending } = useDeleteUser();
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [detail, setDetail] = useState('');
 
@@ -40,8 +40,9 @@ export const useWithdrawForm = () => {
       detail,
       setDetail,
       isOther,
-      submit
+      submit,
+      isPending
     }),
-    [selectedIndex, detail, isOther, submit]
+    [selectedIndex, detail, isOther, submit, isPending]
   );
 };

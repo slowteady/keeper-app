@@ -12,7 +12,7 @@ import { ProfileEmptyState } from '@/widgets/profile';
 export const ErrorBoundary = RouteErrorBoundary;
 
 const Page = () => {
-  const { items, isLoading, isFetchingNextPage, hasNext, fetchNextPage, refetch, unblock, isUnblockPending } =
+  const { items, isLoading, isFetchingNextPage, hasNext, fetchNextPage, refetch, unblock, pendingUnblockId } =
     useBlockList();
   const { refreshing, handleRefresh } = useListRefreshing(async () => {
     await refetch();
@@ -20,9 +20,9 @@ const Page = () => {
 
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<BlockedUserDto>) => (
-      <BlockListRow user={item} onUnblock={() => unblock(item.id)} isPending={isUnblockPending} />
+      <BlockListRow user={item} onUnblock={() => unblock(item.id)} isPending={pendingUnblockId === item.id} />
     ),
-    [unblock, isUnblockPending]
+    [unblock, pendingUnblockId]
   );
 
   return (
