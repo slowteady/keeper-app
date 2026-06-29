@@ -68,7 +68,8 @@ export const useBlock = () => {
       await blockMutation.mutateAsync(userId);
       removeBlockedFromCommunityList(queryClient, userId);
       removeBlockedFromCommentList(queryClient, userId);
-      queryClient.invalidateQueries({ queryKey: communityQueries.all(), refetchType: 'none' });
+      queryClient.invalidateQueries({ queryKey: communityQueries.all(), refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: commentQueries.all(), refetchType: 'all' });
       queryClient.invalidateQueries({ queryKey: ['me-liked-posts'] });
       queryClient.invalidateQueries({ queryKey: ['blocks'] });
       globalToast('차단했어요', 'success');
@@ -80,9 +81,9 @@ export const useBlock = () => {
   const unblock = async (userId: string) => {
     try {
       await unblockMutation.mutateAsync(userId);
-      await queryClient.invalidateQueries({ queryKey: communityQueries.all() });
-      await queryClient.invalidateQueries({ queryKey: commentQueries.all() });
-      await queryClient.invalidateQueries({ queryKey: ['blocks'] });
+      queryClient.invalidateQueries({ queryKey: communityQueries.all(), refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: commentQueries.all(), refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: ['blocks'] });
       globalToast('차단 해제했어요', 'success');
     } catch {
       globalToast('차단 해제하지 못했어요', 'fail');

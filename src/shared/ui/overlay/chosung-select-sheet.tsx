@@ -105,8 +105,8 @@ export const ChosungSelectSheet = ({
     setActiveChosung(title);
   }).current;
 
-  return (
-    <RNView style={styles.container}>
+  const listHeader = (
+    <RNView>
       <RNView style={styles.headerWrap}>
         <View style={styles.searchWrap}>
           <BottomSheetTextInput
@@ -152,7 +152,12 @@ export const ChosungSelectSheet = ({
           <RowText style={{ color: value ? black500.val : black900.val }}>{allLabel}</RowText>
         </TouchableOpacity>
       )}
+    </RNView>
+  );
 
+  return (
+    <>
+      {listHeader}
       <BottomSheetFlatList
         ref={listRef as never}
         data={rows}
@@ -182,12 +187,11 @@ export const ChosungSelectSheet = ({
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="interactive"
       />
-    </RNView>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
   headerWrap: { backgroundColor: '#fff' },
   searchWrap: {
     position: 'relative',

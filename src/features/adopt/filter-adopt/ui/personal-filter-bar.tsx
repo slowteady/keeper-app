@@ -16,7 +16,15 @@ import {
   ShelterAgeBucket
 } from '@/entities/adopt';
 import { CAT_BREEDS, DOG_BREEDS } from '@/shared/model';
-import { ChosungSelectSheet, Dropdown, FilterChip, ResetChip, useBottomSheet, useBottomSheetMenu } from '@/shared/ui';
+import {
+  ChosungSelectSheet,
+  Dropdown,
+  FadeEdgesScrollView,
+  FilterChip,
+  ResetChip,
+  useBottomSheet,
+  useBottomSheetMenu
+} from '@/shared/ui';
 
 import { PersonalFilterController } from '../model/use-personal-filter';
 
@@ -111,13 +119,7 @@ export const PersonalFilterBar = ({ filter, animalType, sortValue, onChangeSort 
 
   return (
     <XStack items="center" gap={14}>
-      <ScrollView
-        ref={scrollRef}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={{ flex: 1 }}
-        contentContainerStyle={{ gap: 6, alignItems: 'center', paddingRight: 12 }}
-      >
+      <FadeEdgesScrollView ref={scrollRef} contentContainerStyle={{ gap: 6, alignItems: 'center', paddingRight: 12 }}>
         {activeCount > 0 && <ResetChip onPress={reset} />}
         {breedEnabled && <FilterChip label={labels.breed ?? '품종'} active={!!applied.breed} onPress={openBreed} />}
         <FilterChip label={labels.region ?? '지역'} active={!!applied.region} onPress={openRegion} />
@@ -136,7 +138,7 @@ export const PersonalFilterBar = ({ filter, animalType, sortValue, onChangeSort 
         />
         <FilterChip label={labels.vaccination ?? '예방접종'} active={!!applied.vaccination} onPress={openVaccination} />
         <FilterChip label={labels.healthCheck ?? '건강검진'} active={!!applied.healthCheck} onPress={openHealth} />
-      </ScrollView>
+      </FadeEdgesScrollView>
 
       <Dropdown data={PERSONAL_SORT_OPTIONS} value={sortValue} onChange={(v) => onChangeSort(v.id as PersonalSort)} />
     </XStack>

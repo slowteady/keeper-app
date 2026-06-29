@@ -1,7 +1,7 @@
 import { useScrollToTop } from '@react-navigation/native';
 import { FlashList, FlashListRef, ListRenderItem } from '@shopify/flash-list';
 import { useCallback, useRef } from 'react';
-import { ActivityIndicator, NativeScrollEvent, NativeSyntheticEvent, RefreshControl, ScrollView } from 'react-native';
+import { ActivityIndicator, NativeScrollEvent, NativeSyntheticEvent, RefreshControl } from 'react-native';
 import { styled, View, XStack, YStack } from 'tamagui';
 
 import { ADOPT_OPTIONS } from '@/entities/adopt';
@@ -17,7 +17,7 @@ import { QnaCategoryFilter, useCommunityQnaFeed, useCommunityQnaFilter } from '@
 import { useLikePost } from '@/features/like-post';
 import { SCREEN_GUTTER } from '@/shared/lib';
 import { AnimalTypeDto, useListRefreshing } from '@/shared/model';
-import { ButtonGroup, ChipGroup, Dropdown, FeedNodata } from '@/shared/ui';
+import { ButtonGroup, ChipGroup, Dropdown, FadeEdgesScrollView, FeedNodata } from '@/shared/ui';
 
 export type CommunityQnAFeedProps = {
   onScroll?: (e: NativeSyntheticEvent<NativeScrollEvent>) => void;
@@ -87,19 +87,14 @@ export const CommunityQnAFeed = ({ onScroll }: CommunityQnAFeedProps) => {
               />
             </View>
             <XStack items="center" gap={8} pr={20}>
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                style={{ flex: 1 }}
-                contentContainerStyle={{ paddingLeft: 20 }}
-              >
+              <FadeEdgesScrollView contentContainerStyle={{ paddingLeft: 20 }}>
                 <ChipGroup
                   variant="secondary"
                   options={QNA_CATEGORY_FILTER_OPTIONS}
                   value={qnaType}
                   onChange={(v) => changeQnaType(v as QnaCategoryFilter)}
                 />
-              </ScrollView>
+              </FadeEdgesScrollView>
               <Dropdown data={QNA_SORT_OPTIONS} value={sort} onChange={(v) => changeSort(v.id as QnaSortDto)} />
             </XStack>
           </YStack>

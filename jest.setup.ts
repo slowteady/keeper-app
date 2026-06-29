@@ -80,6 +80,17 @@ jest.mock('expo-notifications', () => ({
   PermissionStatus: { GRANTED: 'granted', DENIED: 'denied', UNDETERMINED: 'undetermined' }
 }));
 
+jest.mock('expo-linear-gradient', () => ({
+  LinearGradient: ({ children }: any) => children
+}));
+
+jest.mock(
+  '@react-native-masked-view/masked-view',
+  () =>
+    ({ children }: any) =>
+      children
+);
+
 jest.mock('expo-store-review', () => ({
   requestReview: jest.fn(() => Promise.resolve()),
   isAvailableAsync: jest.fn(() => Promise.resolve(true))
