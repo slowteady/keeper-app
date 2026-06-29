@@ -10,7 +10,15 @@ import {
   ShelterAgeBucket
 } from '@/entities/adopt';
 import { CAT_BREEDS, DOG_BREEDS } from '@/shared/model';
-import { ChosungSelectSheet, Dropdown, FilterChip, ResetChip, useBottomSheet, useBottomSheetMenu } from '@/shared/ui';
+import {
+  ChosungSelectSheet,
+  Dropdown,
+  FadeEdgesScrollView,
+  FilterChip,
+  ResetChip,
+  useBottomSheet,
+  useBottomSheetMenu
+} from '@/shared/ui';
 
 import { ShelterFilterController } from '../model/use-shelter-filter';
 
@@ -71,20 +79,14 @@ export const ShelterFilterBar = ({ filter, animalType, sortValue, onChangeSort }
 
   return (
     <XStack items="center" gap={14}>
-      <ScrollView
-        ref={scrollRef}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={{ flex: 1 }}
-        contentContainerStyle={{ gap: 6, alignItems: 'center', paddingRight: 12 }}
-      >
+      <FadeEdgesScrollView ref={scrollRef} contentContainerStyle={{ gap: 6, alignItems: 'center', paddingRight: 12 }}>
         {activeCount > 0 && <ResetChip onPress={reset} />}
         {breedEnabled && <FilterChip label={labels.breed ?? '품종'} active={!!applied.breed} onPress={openBreed} />}
         <FilterChip label={labels.region ?? '지역'} active={!!applied.region} onPress={openRegion} />
         <FilterChip label={labels.age ?? '연령'} active={!!applied.age} onPress={openAge} />
         <FilterChip label={labels.gender ?? '성별'} active={!!applied.gender} onPress={openGender} />
         <FilterChip label={labels.neuter ?? '중성화'} active={!!applied.neuter} onPress={openNeuter} />
-      </ScrollView>
+      </FadeEdgesScrollView>
 
       <Dropdown data={ADOPT_OPTIONS.FILTER} value={sortValue} onChange={(v) => onChangeSort(v.id as AdoptFilterDto)} />
     </XStack>

@@ -3,7 +3,7 @@ import { FlashList, FlashListRef, ListRenderItemInfo } from '@shopify/flash-list
 import { useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { ComponentRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, InteractionManager, Keyboard, RefreshControl } from 'react-native';
+import { ActivityIndicator, Keyboard, RefreshControl } from 'react-native';
 import { KeyboardStickyView, useReanimatedKeyboardAnimation } from 'react-native-keyboard-controller';
 import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 import { styled, Text, View, YStack } from 'tamagui';
@@ -93,7 +93,7 @@ export const QnaDetailContent = ({ id, scrollToComments, commentId, editCommentI
   const { requireLogin, isLoggedIn } = useLoginRequired();
 
   const focusCommentInput = useCallback(() => {
-    InteractionManager.runAfterInteractions(() => commentInputRef.current?.focus());
+    requestAnimationFrame(() => commentInputRef.current?.focus());
   }, []);
 
   const handleTapWhenLoggedOut = useCallback(() => {
