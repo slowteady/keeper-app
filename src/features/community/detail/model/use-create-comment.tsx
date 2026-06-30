@@ -26,14 +26,17 @@ export const useCreateComment = ({ postId }: { postId: string }) => {
     return { ...old, pages: [{ ...first, items: [item, ...first.items] }, ...rest] };
   };
 
-  const seedOrPrependReply =
+  const seedOrAppendReply =
     (item: CommentDto) =>
     (old?: InfiniteData<CommentPage>): InfiniteData<CommentPage> => {
       if (!old || old.pages.length === 0) {
         return { pages: [{ items: [item], nextCursor: null, hasNext: false }], pageParams: [null] };
       }
-      const [first, ...rest] = old.pages;
-      return { ...old, pages: [{ ...first, items: [item, ...first.items] }, ...rest] };
+      const lastIndex = old.pages.length - 1;
+      return {
+        ...old,
+        pages: old.pages.map((page, i) => (i === lastIndex ? { ...page, items: [...page.items, item] } : page))
+      };
     };
 
   const bumpReplyCount = (parentId: string, delta: number) => (old?: InfiniteData<CommentPage>) =>
@@ -60,7 +63,7 @@ export const useCreateComment = ({ postId }: { postId: string }) => {
       const tempId = `temp-${Date.now()}`;
       const optimistic: CommentDto = {
         id: tempId,
-        user: user ? { id: user.id, image: user.image, nickname: user.nickname } : null,
+        user: user ? { id: user.id, image: user.image, nickname: user.nickname, isAdmin: false } : null,
         content,
         displayTime: new Date().toISOString(),
         isEdited: false,
@@ -80,7 +83,7 @@ export const useCreateComment = ({ postId }: { postId: string }) => {
           [repliesKey, queryClient.getQueryData(repliesKey)],
           ...queryClient.getQueriesData({ queryKey: listKey })
         ];
-        queryClient.setQueryData<InfiniteData<CommentPage>>(repliesKey, seedOrPrependReply(optimistic));
+        queryClient.setQueryData<InfiniteData<CommentPage>>(repliesKey, seedOrAppendReply(optimistic));
         queryClient.setQueriesData<InfiniteData<CommentPage>>({ queryKey: listKey }, bumpReplyCount(parentId, 1));
         return { backup, tempId };
       }

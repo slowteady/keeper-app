@@ -4,7 +4,7 @@ import { fromAdoptionPersonalDetail } from './from-detail';
 
 const base: CommunityAdoptDetailDto = {
   id: '1',
-  user: { id: '1', image: '', nickname: 't' },
+  user: { id: '1', image: '', nickname: 't', isAdmin: false },
   displayTime: '',
   title: '제목',
   images: ['https://img/a.png'],
