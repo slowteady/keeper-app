@@ -51,7 +51,7 @@ jest.mock('@/features/upload', () => ({
 
 const detail: CommunityAdoptDetailDto = {
   id: '42',
-  user: { id: '1', image: '', nickname: 't' },
+  user: { id: '1', image: '', nickname: 't', isAdmin: false },
   displayTime: '방금 전',
   title: '귀여운 강아지 입양',
   images: ['https://img/1.png'],
