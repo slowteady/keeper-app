@@ -4,7 +4,7 @@ import { convertToAdoptDetailBehaviorData, convertToAdoptDetailOverviewData } fr
 
 const baseDetail: CommunityAdoptDetailDto = {
   id: '1',
-  user: { id: '10', nickname: '닉네임', image: '' },
+  user: { id: '10', nickname: '닉네임', image: '', isAdmin: false },
   displayTime: '방금',
   title: '말티즈 뭉치 가족 찾아요',
   images: ['https://example.com/a.jpg'],

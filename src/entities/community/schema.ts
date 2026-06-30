@@ -59,7 +59,8 @@ export type CommunityAdoptFormDto = z.infer<typeof CommunityAdoptFormSchema>;
 export const PostUserSummarySchema = z.object({
   id: z.string(),
   image: z.string(),
-  nickname: z.string().nullable()
+  nickname: z.string().nullable(),
+  isAdmin: z.boolean().default(false)
 });
 export type PostUserSummaryDto = z.infer<typeof PostUserSummarySchema>;
 

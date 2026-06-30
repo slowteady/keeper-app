@@ -1,4 +1,4 @@
-import { MoreVertical } from '@tamagui/lucide-icons';
+import { BadgeCheck, MoreVertical } from '@tamagui/lucide-icons';
 import { Pressable } from 'react-native';
 import { styled, Text, XStack } from 'tamagui';
 
@@ -22,6 +22,7 @@ export const CommentCard = ({ comment, onPressMore, onPressReply }: CommentCardP
           <CommentCardHeader
             image={comment.user?.image ?? ''}
             nickname={comment.user?.nickname ?? '탈퇴한 사용자'}
+            isAdmin={comment.user?.isAdmin ?? false}
             displayTime={comment.displayTime}
             isEdited={comment.isEdited}
           />
@@ -51,16 +52,18 @@ export const CommentCard = ({ comment, onPressMore, onPressReply }: CommentCardP
 type CommentCardHeaderProps = {
   image: string;
   nickname: string;
+  isAdmin?: boolean;
   displayTime: string;
   isEdited?: boolean;
 };
-const CommentCardHeader = ({ image, nickname, displayTime, isEdited }: CommentCardHeaderProps) => {
+const CommentCardHeader = ({ image, nickname, isAdmin, displayTime, isEdited }: CommentCardHeaderProps) => {
   return (
     <XStack items="center">
       <ProfileAvatar image={image} size={24} shape="rounded" />
       <Text fontSize={14} lineHeight={16} fontWeight={600} ml={8} color="$black700">
         {nickname}
       </Text>
+      {isAdmin && <BadgeCheck size={16} color="#1FE678" ml={4} />}
       <Text fontSize={12} lineHeight={14} fontWeight={500} ml={4} color="$black500">
         {formatTimeAgo(displayTime)}
         {isEdited ? ' · 수정됨' : ''}
