@@ -21,7 +21,7 @@
 | 품종       | `specificType`     | 축종별 DOG/CAT 표준 품종명      | 단일 | 검색 리스트 시트(축종 종속, OTHER 시 **숨김**) |
 | 성별       | `gender`           | 전체/남아(M)/여아(F)/모름(NONE) | 단일 | `useBottomSheetMenu`                           |
 | 중성화     | `neuterYn`         | 전체/완료(Y)/미완료(N)          | 단일 | `useBottomSheetMenu`                           |
-| 연령       | `birthYear`(신설)  | 전체/1살미만/1~3살/3~7살/7살↑   | 단일 | `useBottomSheetMenu`                           |
+| 연령       | `birthYear`(신설)  | 전체/1살미만/1~~3살/3~~7살/7살↑ | 단일 | `useBottomSheetMenu`                           |
 | 입양 유형  | `protectionType`   | 전체/입양 가능/임보 가능        | 단일 | `useBottomSheetMenu`                           |
 | 입양 상태  | `adoptionStatus`   | 입양중/완료/전체 (기본 입양중)  | 단일 | `useBottomSheetMenu`                           |
 | 예방접종   | `vaccinationCheck` | 전체/접종/미접종                | 단일 | `useBottomSheetMenu`                           |

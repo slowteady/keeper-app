@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
 import * as WebBrowser from 'expo-web-browser';
 import { useAtom } from 'jotai';
 import { useCallback } from 'react';
@@ -30,7 +31,25 @@ export const useLoginSheet = () => {
   const setIsAuthenticated = useSetIsAuthenticated();
   const { dismiss, ref } = useBottomSheet();
 
-  const { mutate: loginMutate, isPending: isLoginPending } = useMutation({ mutationFn: login });
+  const { mutate: loginMutate, isPending: isLoginPending } = useMutation({
+    mutationFn: login,
+    onError: (error) => {
+      if (isSuspendedError(error)) {
+        dismiss();
+        setSheet(INITIAL_LOGIN_SHEET);
+        setSuspended(getSuspensionDetail(error));
+        return;
+      }
+      if (axios.isAxiosError(error) && error.response?.status === 409) {
+        const data = error.response.data as { error?: string; message?: string };
+        if (data?.error === 'ALREADY_REGISTERED' && data.message) {
+          globalToast(data.message, 'fail');
+          return;
+        }
+      }
+      globalToast('로그인하지 못했어요', 'fail');
+    }
+  });
   const { mutateAsync: agreeAsync, isPending: isAgreePending } = useMutation({ mutationFn: agree });
 
   const finish = useCallback(
@@ -61,20 +80,11 @@ export const useLoginSheet = () => {
 
             if (!accessToken || !refreshToken) return;
             await finish(accessToken, refreshToken);
-          },
-          onError: (error) => {
-            if (isSuspendedError(error)) {
-              dismiss();
-              setSheet(INITIAL_LOGIN_SHEET);
-              setSuspended(getSuspensionDetail(error));
-              return;
-            }
-            globalToast('로그인하지 못했어요', 'fail');
           }
         }
       );
     },
-    [loginMutate, setSheet, finish, dismiss]
+    [loginMutate, setSheet, finish]
   );
 
   const devLogin = useCallback(

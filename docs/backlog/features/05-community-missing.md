@@ -1,6 +1,6 @@
 # 커뮤니티 "실종분실" 탭 — 실종신고 공고 게시판
 
-> 상태: 발산 완료. 다음 단계 /prd. (인프라 이동과 병행)
+> 상태: 발산 완료(2026-06-30 외부 데이터·연계 갱신). 다음 단계 /spec.
 
 ## 배경
 
@@ -15,11 +15,15 @@
 - **[Q4 확정] 실종 일시 = 날짜 + 시간** — datetime 입력. 날짜 필수 + 시간 선택(보호자가 시각 모를 수 있음). 미래 날짜 차단. (spec: date/time picker 컴포넌트 유무 확인)
 - **[Q5 확정] 정렬·필터 = 최신순 + (동물 종류 + 미해결)** — 정렬 최신순 단일. 필터는 동물 종류 ButtonGroup(QnA 패턴 재활용) + "찾는 중만" 토글. 지역 필터는 좌표만 저장해두고 글 쌓인 뒤(YAGNI).
 - **[Q6 확정] 알림 = MVP 제외** — 반경 푸시는 초기 사용자 적어 가치 낮음 + 푸시 인프라 부담. **알림은 별도 기능으로 후속 독립 구현** 예정 (실종 전용 아님).
+- **[Q7 확정] 외부 공공 데이터 = data.go.kr 분실동물 API(lossInfo, 15141910) 컷** (2026-06-30 조사). 사유: 자체 UGC 게시판과 데이터 성격 동일(둘 다 소유자 관점 유실동물)이라 **중복**(IA 단일 귀결 위배) + **사진 없음**(RFID 등록·공식신고자만이라 모수 협소) + 신고자 연락처 처리 불확실 + 또 하나의 정부 API 유지보수(서비스키·코드 동기화) 부담. → 실종/분실은 **자체 게시판**으로.
+  - **발견 매칭이 필요하면** lossInfo가 아니라 keeper가 **이미 배치 동기화 중인 유기동물 공고**(`abandonment` 테이블, `abandonment-sync.service.ts`)와 교차. "당신이 등록한 실종견과 비슷한 동물이 ○○보호소에 보호 중" — 품종(kindCd)·지역(happenPlace 시군구)·발견일(happenDt ≥ 분실일)·색상/특이사항 기반 후보 추천. **신규 외부 의존성 0**, 사진(popfile)·보호소 정보 풍부. 이게 비영리·1인 운영에 가장 맞는 고가치 연계. (단 MVP 포함 vs 후속은 spec에서 결정)
 
-## 후속 / 별도 트랙
+## 후속 / 별도 트랙 (연계)
 
-- **AI 포스터 폼채움** — `ai-poster-prefill.md` 참조. 실종 폼 확정 직후 Phase 1.5 후보.
-- **알림(푸시)** — 실종 한정 아닌 앱 전반 알림 기능으로 별도 구현 예정.
+- **포스터 자동생성 + 인스타 확산** — [[05-poster-template-share]]. 실종의 **광역 확산 메커니즘** = 디지털화의 본질 가치. 가장 가치 큰 연계.
+- **AI 포스터 폼채움** — [[05-ai-poster-prefill]]. 실종 등록 마찰 감소. 실종 폼 확정 직후 Phase 1.5 후보.
+- **발견 매칭** — Q7 참조. 기존 `abandonment` 데이터 교차(외부 의존성 0).
+- **알림(푸시)** — 앱 전반 알림 시스템은 이미 출시 구축됨([[project_notification_system]]). 실종 반경 푸시는 글 쌓인 뒤 별도.
 - **지역/반경 필터** — 좌표 저장은 MVP, 필터·반경은 글 쌓인 뒤.
 
 ## 레퍼런스 BP 딥다이브 (해외 6개 서비스)
@@ -43,7 +47,7 @@ Petco Love Lost, PawBoost, PetFBI, Lost My Doggie, Nextdoor 조사. keeper 적�
 
 - PostType enum 에 `MISSING` 추가
 - 신규 entity (post_missing): 개인입양 컬럼 재활용(animalType/specificType/age/weight/gender/images/특징) + 신규(실종 일시, 좌표 lat/lng, 해결 상태)
-- 마이그레이션 다음 번호: 028 (keeper-api 측 재확인)
+- 마이그레이션: keeper-backend Prisma(timestamp 1건). 구 keeper-api(MySQL 028) 표기는 폐기 — v2는 NestJS+Prisma. 영상 첨부는 [[04-video-upload]], 포스터 필드 충족 여부는 [[05-poster-template-share]] 와 연계.
 
 ## 출처
 

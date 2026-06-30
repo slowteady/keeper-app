@@ -1,6 +1,8 @@
 import { BottomSheetFlatList, BottomSheetTextInput, TouchableOpacity } from '@gorhom/bottom-sheet';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Keyboard, Platform, ScrollView, StyleSheet, View as RNView, type ViewToken } from 'react-native';
+import { Keyboard, Platform, StyleSheet, View as RNView, type ViewToken } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { styled, Text, useTheme, View } from 'tamagui';
 
 import { CHOSUNG_LABELS, ChosungLabel, groupByChosung } from '@/shared/lib';
@@ -33,6 +35,7 @@ export const ChosungSelectSheet = ({
   allLabel
 }: ChosungSelectSheetProps) => {
   const { white900, black900, black500, black700 } = useTheme();
+  const { bottom } = useSafeAreaInsets();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeChosung, setActiveChosung] = useState<ChosungLabel | null>(null);
   const listRef = useRef<{ scrollToIndex: (p: { index: number; viewPosition?: number; animated?: boolean }) => void }>(
@@ -182,7 +185,7 @@ export const ChosungSelectSheet = ({
             </TouchableOpacity>
           )
         }
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={{ paddingBottom: 24 + bottom }}
         showsVerticalScrollIndicator
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="interactive"
@@ -215,8 +218,7 @@ const styles = StyleSheet.create({
   allRow: { height: ROW_HEIGHT, justifyContent: 'center', paddingHorizontal: 4 },
   row: { height: ROW_HEIGHT, justifyContent: 'center', paddingHorizontal: 4 },
   sectionHeader: { height: HEADER_HEIGHT, justifyContent: 'center', paddingHorizontal: 4 },
-  list: { flex: 1 },
-  listContent: { paddingBottom: 24 }
+  list: { flex: 1 }
 });
 
 const ChipText = styled(Text, { fontSize: 13, fontWeight: '600', lineHeight: 17 });
