@@ -107,18 +107,16 @@ export const CommunityAdoptForm = ({
 
       <Accordion type="single" collapsible>
         <Accordion.Item value="appearance">
-          <Accordion.Header unstyled>
-            <AccordionSectionTrigger unstyled>
-              {({ open }: { open: boolean }) => (
-                <>
-                  <TriggerTitleWrap>
-                    <SectionTitle mb={0}>외형 (선택)</SectionTitle>
-                  </TriggerTitleWrap>
-                  {renderArrow(open)}
-                </>
-              )}
-            </AccordionSectionTrigger>
-          </Accordion.Header>
+          <AccordionSectionTrigger unstyled>
+            {({ open }: { open: boolean }) => (
+              <>
+                <TriggerTitleWrap>
+                  <SectionTitle mb={0}>외형 (선택)</SectionTitle>
+                </TriggerTitleWrap>
+                {renderArrow(open)}
+              </>
+            )}
+          </AccordionSectionTrigger>
           <Accordion.Content bg="transparent" p={0}>
             <Accordion.HeightAnimator animation="quick" exitStyle={{ opacity: 0, height: 0 }}>
               <YStack px={SCREEN_GUTTER} pb={24} gap={16}>
@@ -157,18 +155,16 @@ export const CommunityAdoptForm = ({
 
       <Accordion type="single" collapsible>
         <Accordion.Item value="health">
-          <Accordion.Header unstyled>
-            <AccordionSectionTrigger unstyled>
-              {({ open }: { open: boolean }) => (
-                <>
-                  <TriggerTitleWrap>
-                    <SectionTitle mb={0}>건강 (선택)</SectionTitle>
-                  </TriggerTitleWrap>
-                  {renderArrow(open)}
-                </>
-              )}
-            </AccordionSectionTrigger>
-          </Accordion.Header>
+          <AccordionSectionTrigger unstyled>
+            {({ open }: { open: boolean }) => (
+              <>
+                <TriggerTitleWrap>
+                  <SectionTitle mb={0}>건강 (선택)</SectionTitle>
+                </TriggerTitleWrap>
+                {renderArrow(open)}
+              </>
+            )}
+          </AccordionSectionTrigger>
           <Accordion.Content bg="transparent" p={0}>
             <Accordion.HeightAnimator animation="quick" exitStyle={{ opacity: 0, height: 0 }}>
               <YStack px={SCREEN_GUTTER} pb={24} gap={16}>
@@ -194,18 +190,16 @@ export const CommunityAdoptForm = ({
 
       <Accordion type="single" collapsible>
         <Accordion.Item value="behavior">
-          <Accordion.Header unstyled>
-            <AccordionSectionTrigger unstyled>
-              {({ open }: { open: boolean }) => (
-                <>
-                  <TriggerTitleWrap>
-                    <SectionTitle mb={0}>성격·생활 습관 (선택)</SectionTitle>
-                  </TriggerTitleWrap>
-                  {renderArrow(open)}
-                </>
-              )}
-            </AccordionSectionTrigger>
-          </Accordion.Header>
+          <AccordionSectionTrigger unstyled>
+            {({ open }: { open: boolean }) => (
+              <>
+                <TriggerTitleWrap>
+                  <SectionTitle mb={0}>성격·생활 습관 (선택)</SectionTitle>
+                </TriggerTitleWrap>
+                {renderArrow(open)}
+              </>
+            )}
+          </AccordionSectionTrigger>
           <Accordion.Content bg="transparent" p={0}>
             <Accordion.HeightAnimator animation="quick" exitStyle={{ opacity: 0, height: 0 }}>
               <YStack px={SCREEN_GUTTER} pb={24} gap={16}>
