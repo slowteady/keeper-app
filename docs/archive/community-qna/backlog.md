@@ -57,7 +57,7 @@ post_qna (existing)
   - `email` 필드 제거
   - `animalType: 'DOG'|'CAT'|'OTHER'` 추가 (optional, 서버에서 default `OTHER` 처리)
   - `type` (카테고리) 필수 유지
-  - `title` (2~50자) / `content` (2~1000자) base 에서 상속
+  - `title` (2~~50자) / `content` (2~~1000자) base 에서 상속
 
 ### 답변
 
