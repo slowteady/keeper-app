@@ -76,6 +76,18 @@ const Page = () => {
             현재버전 {version}
           </Text>
         </YStack>
+
+        <Text
+          mt={28}
+          px={SCREEN_GUTTER}
+          fontSize={13}
+          fontWeight="500"
+          lineHeight={18}
+          letterSpacing={-0.25}
+          color="$white600"
+        >
+          keeper는 수익을 목적으로 운영되지 않습니다.
+        </Text>
       </ScrollView>
     </Container>
   );
