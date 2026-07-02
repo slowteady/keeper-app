@@ -1,4 +1,4 @@
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import { useSharedValue } from 'react-native-reanimated';
 import { SceneRendererProps } from 'react-native-tab-view';
@@ -23,6 +23,14 @@ const Page = () => {
   const { requireLogin } = useLoginRequired();
   const [index, setIndex] = useState(source === 'personal' ? 1 : 0);
   const scrollY = useSharedValue(0);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (!source) return;
+      setIndex(source === 'personal' ? 1 : 0);
+      router.setParams({ source: undefined });
+    }, [source, router])
+  );
 
   const navigationState = useMemo(() => ({ index, routes: ADOPT_SOURCE_ROUTES }), [index]);
   const handleIndexChange = useCallback(

@@ -55,7 +55,7 @@ const Page = () => {
   const queryClient = useQueryClient();
 
   const goDetail = useCallback((id: string) => router.push({ pathname: '/adopt/[id]', params: { id } }), [router]);
-  const goList = useCallback(() => router.push('/adopt'), [router]);
+  const goList = useCallback(() => router.push('/adopt?source=shelter' as RelativePathString), [router]);
   const goPersonalDetail = useCallback(
     (id: string) => router.push({ pathname: '/(untabs)/adopt-personal/[id]', params: { id } } as never),
     [router]

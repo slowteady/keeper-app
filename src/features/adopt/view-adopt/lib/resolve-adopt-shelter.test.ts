@@ -67,7 +67,8 @@ describe('resolveAdoptShelter', () => {
       address: '서울 강남',
       tel: '010-5488-5003',
       time: '운영시간 정보 없음',
-      person: '담당자 정보 없음'
+      person: '담당자 정보 없음',
+      navigable: false
     });
   });
 
@@ -93,5 +94,17 @@ describe('resolveAdoptShelter', () => {
 
     expect(result.name).toBe('창녕 유기동물보호소');
     expect(result.address).toBe('경상남도 창녕군 정규화 주소');
+  });
+
+  it('shelter 마스터 매칭 성공 → navigable=true (상세 이동 가능)', () => {
+    const result = resolveAdoptShelter(makeAdopt(), makeShelter());
+
+    expect(result.navigable).toBe(true);
+  });
+
+  it('shelter 마스터 매칭 실패(공공데이터 gap) → navigable=false (상세 이동 차단, 정보만 표시)', () => {
+    const result = resolveAdoptShelter(makeAdopt(), undefined);
+
+    expect(result.navigable).toBe(false);
   });
 });
