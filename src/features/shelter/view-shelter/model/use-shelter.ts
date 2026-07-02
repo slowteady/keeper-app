@@ -11,7 +11,12 @@ export type UseShelterProps = {
 export const useShelter = ({ id }: UseShelterProps) => {
   const queryClient = useQueryClient();
 
-  const { data: shelterData, isLoading } = useQuery({
+  const {
+    data: shelterData,
+    isLoading,
+    isError,
+    error
+  } = useQuery({
     ...shelterQueries.detail(id),
     enabled: !!id,
     select: mapToShelter,
@@ -26,7 +31,7 @@ export const useShelter = ({ id }: UseShelterProps) => {
 
   const hasCallNumber = !!shelterData?.tel;
 
-  return { shelterData, isLoading, hasCallNumber, refresh };
+  return { shelterData, isLoading, isError, error, hasCallNumber, refresh };
 };
 
 const findInListCache = (queryClient: ReturnType<typeof useQueryClient>, id: string): ShelterDto | undefined => {

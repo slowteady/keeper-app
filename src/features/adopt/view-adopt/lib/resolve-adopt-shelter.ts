@@ -12,6 +12,7 @@ export type AdoptShelterInfo = {
   tel: string | null;
   time: string;
   person: string;
+  navigable: boolean;
 };
 
 export const resolveAdoptShelter = (adopt: Adopt, shelterData: Shelter | undefined): AdoptShelterInfo => {
@@ -24,7 +25,8 @@ export const resolveAdoptShelter = (adopt: Adopt, shelterData: Shelter | undefin
       address: shelterData.address,
       tel: fallbackTel || shelterData.tel,
       time: shelterData.time,
-      person: shelterData.person
+      person: shelterData.person,
+      navigable: true
     };
   }
 
@@ -34,6 +36,7 @@ export const resolveAdoptShelter = (adopt: Adopt, shelterData: Shelter | undefin
     address: adopt.careAddr ?? '',
     tel: fallbackTel,
     time: '운영시간 정보 없음',
-    person: '담당자 정보 없음'
+    person: '담당자 정보 없음',
+    navigable: false
   };
 };

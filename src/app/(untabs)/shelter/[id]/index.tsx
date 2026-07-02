@@ -49,7 +49,14 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
   const { isGranted, permissionStatus } = useLocation();
   const mapRef = useRef<NaverMapViewRef>(null);
 
-  const { shelterData, refresh: refreshShelter, hasCallNumber } = useShelter({ id });
+  const {
+    shelterData,
+    isLoading: shelterLoading,
+    isError,
+    error,
+    refresh: refreshShelter,
+    hasCallNumber
+  } = useShelter({ id });
   const { toggleFavoriteShelter } = useFavoriteShelter();
   const { toggleFavoriteAbandonment } = useFavoriteAbandonment();
   const { share } = useShare();
@@ -138,6 +145,8 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
     [goDetail, toggleFavoriteAbandonment]
   );
 
+  if (isError && error) throw error;
+  if (shelterLoading) return <SuspenseFallback />;
   if (!shelterData) return null;
 
   return (

@@ -11,6 +11,7 @@ type Shelter = {
   person: string;
   address: string;
   name: string;
+  navigable: boolean;
 };
 
 export type AdoptDetailDescriptionSectionProps = {
@@ -20,7 +21,7 @@ export type AdoptDetailDescriptionSectionProps = {
 
 export const AdoptDetailDescriptionSection = ({ specialMark, shelter }: AdoptDetailDescriptionSectionProps) => {
   const { black500 } = useTheme();
-  const { id, time, person, address, name } = shelter || {};
+  const { id, time, person, address, name, navigable } = shelter || {};
   const hasShelter = !!name;
   const iconColor = black500.val as never;
 
@@ -40,12 +41,16 @@ export const AdoptDetailDescriptionSection = ({ specialMark, shelter }: AdoptDet
         <Card gap={hasShelter ? 16 : 0}>
           {hasShelter ? (
             <>
-              <Pressable onPress={() => router.push(`/shelter/${id}` as RelativePathString)}>
-                <XStack justify="space-between" items="center">
-                  <ShelterName>{name}</ShelterName>
-                  <ChevronRight size={18} color={iconColor} />
-                </XStack>
-              </Pressable>
+              {navigable ? (
+                <Pressable onPress={() => router.push(`/shelter/${id}` as RelativePathString)}>
+                  <XStack justify="space-between" items="center">
+                    <ShelterName>{name}</ShelterName>
+                    <ChevronRight size={18} color={iconColor} />
+                  </XStack>
+                </Pressable>
+              ) : (
+                <ShelterName>{name}</ShelterName>
+              )}
               <CardDivider />
               {hasValue(time) && (
                 <SpecRow>
