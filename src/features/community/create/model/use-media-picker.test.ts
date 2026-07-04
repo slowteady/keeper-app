@@ -25,16 +25,13 @@ jest.mock('react-native-video-trim', () => {
       onError: make('error')
     },
     showEditor: jest.fn(),
-    isValidFile: jest.fn(() => Promise.resolve({ isValid: true })),
+    isValidFile: jest.fn(() => Promise.resolve({ isValid: true, duration: 30266 })),
     __emit: (name: string, payload?: unknown) => handlers[name]?.(payload)
   };
 });
 
-jest.mock('expo-video', () => ({
-  createVideoPlayer: jest.fn(() => ({
-    generateThumbnailsAsync: jest.fn(() => Promise.resolve([{ width: 100, height: 100 }])),
-    release: jest.fn()
-  }))
+jest.mock('expo-video-thumbnails', () => ({
+  getThumbnailAsync: jest.fn(() => Promise.resolve({ uri: 'file:///mock/thumbnail.jpg', width: 100, height: 100 }))
 }));
 
 const mockedPicker = jest.mocked(ImagePicker.launchImageLibraryAsync);
@@ -47,7 +44,7 @@ const setPicked = (assets: { uri: string; type?: string }[]) => {
 
 beforeEach(() => {
   jest.clearAllMocks();
-  (isValidFile as jest.Mock).mockResolvedValue({ isValid: true });
+  (isValidFile as jest.Mock).mockResolvedValue({ isValid: true, duration: 30266 });
 });
 
 describe('useMediaPicker', () => {
@@ -80,7 +77,11 @@ describe('useMediaPicker', () => {
 
     expect(mockedShowEditor).toHaveBeenCalledWith('file:///v.mov', expect.objectContaining({ maxDuration: 30000 }));
     expect(picked.images).toEqual(['file:///a.jpg']);
-    expect(picked.video).toEqual({ uri: 'file:///trimmed.mp4', thumbnailUri: 'file:///mock/manipulated.jpg' });
+    expect(picked.video).toEqual({
+      uri: 'file:///trimmed.mp4',
+      thumbnailUri: 'file:///mock/thumbnail.jpg',
+      duration: 30
+    });
   });
 
   it('영상 여러 개면 첫 1개만 트리밍하고 안내한다', async () => {

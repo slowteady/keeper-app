@@ -13,21 +13,25 @@ describe('resolveVideoUpload', () => {
       videoUrl: 'https://r2/v.mp4',
       videoThumbnailUrl: 'https://r2/t.jpg'
     });
-    const video = { uri: 'file:///v.mov', thumbnailUri: 'file:///t.jpg' };
+    const video = { uri: 'file:///v.mov', thumbnailUri: 'file:///t.jpg', duration: 27 };
 
     const result = await resolveVideoUpload(video, upload);
 
     expect(upload).toHaveBeenCalledWith(video);
-    expect(result).toEqual({ videoUrl: 'https://r2/v.mp4', videoThumbnailUrl: 'https://r2/t.jpg' });
+    expect(result).toEqual({ videoUrl: 'https://r2/v.mp4', videoThumbnailUrl: 'https://r2/t.jpg', videoDuration: 27 });
   });
 
   it('기존 원격 영상(http)이면 재업로드 없이 그대로 재사용 (수정 시 미변경)', async () => {
     const upload = jest.fn();
-    const video = { uri: 'https://r2/old.mp4', thumbnailUri: 'https://r2/old.jpg' };
+    const video = { uri: 'https://r2/old.mp4', thumbnailUri: 'https://r2/old.jpg', duration: 12 };
 
     const result = await resolveVideoUpload(video, upload);
 
     expect(upload).not.toHaveBeenCalled();
-    expect(result).toEqual({ videoUrl: 'https://r2/old.mp4', videoThumbnailUrl: 'https://r2/old.jpg' });
+    expect(result).toEqual({
+      videoUrl: 'https://r2/old.mp4',
+      videoThumbnailUrl: 'https://r2/old.jpg',
+      videoDuration: 12
+    });
   });
 });

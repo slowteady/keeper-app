@@ -32,6 +32,13 @@ export type PersonalAdoptCardProps = {
   compact?: boolean;
   coreChipsOnly?: boolean;
   hasVideo?: boolean;
+  videoDuration?: number | null;
+};
+
+const formatDuration = (seconds: number) => {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${m}:${s.toString().padStart(2, '0')}`;
 };
 
 const PersonalAdoptCardComponent = ({
@@ -50,7 +57,8 @@ const PersonalAdoptCardComponent = ({
   completed = false,
   compact = false,
   coreChipsOnly = false,
-  hasVideo = false
+  hasVideo = false,
+  videoDuration
 }: PersonalAdoptCardProps) => {
   const handlePressFavorite = useCallback(() => {
     if (!onPressFavorite) return;
@@ -79,16 +87,18 @@ const PersonalAdoptCardComponent = ({
               <ProtectionText>{badgeLabel}</ProtectionText>
             </ProtectionBadge>
           )}
-          {imageCount > 1 && (
-            <ImageCountBadge>
-              <Images size={12} color="#fff" />
-              <ImageCountText>{imageCount}</ImageCountText>
-            </ImageCountBadge>
-          )}
-          {hasVideo && !completed && (
-            <VideoPlayOverlay>
-              <Play size={22} color="#fff" />
-            </VideoPlayOverlay>
+          {hasVideo ? (
+            <MediaBadge>
+              <Play size={11} color="#fff" fill="#fff" />
+              {!!videoDuration && <MediaBadgeText>{formatDuration(videoDuration)}</MediaBadgeText>}
+            </MediaBadge>
+          ) : (
+            imageCount > 1 && (
+              <MediaBadge>
+                <Images size={12} color="#fff" />
+                <MediaBadgeText>{imageCount}</MediaBadgeText>
+              </MediaBadge>
+            )
           )}
         </ImageContainer>
 
@@ -197,21 +207,7 @@ const ProtectionText = styled(Text, {
   color: '$black800'
 });
 
-const VideoPlayOverlay = styled(View, {
-  position: 'absolute',
-  t: '50%',
-  l: '50%',
-  width: 44,
-  height: 44,
-  mt: -22,
-  ml: -22,
-  rounded: 999,
-  items: 'center',
-  justify: 'center',
-  bg: 'rgba(0,0,0,0.45)'
-});
-
-const ImageCountBadge = styled(XStack, {
+const MediaBadge = styled(XStack, {
   position: 'absolute',
   b: 10,
   r: 10,
@@ -223,7 +219,7 @@ const ImageCountBadge = styled(XStack, {
   bg: 'rgba(0,0,0,0.55)'
 });
 
-const ImageCountText = styled(Text, {
+const MediaBadgeText = styled(Text, {
   fontWeight: 600,
   fontSize: 12,
   lineHeight: 14,

@@ -1,6 +1,5 @@
-import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
 import * as ImagePicker from 'expo-image-picker';
-import { createVideoPlayer } from 'expo-video';
+import * as VideoThumbnails from 'expo-video-thumbnails';
 import { useCallback } from 'react';
 import VideoTrim, { isValidFile, showEditor } from 'react-native-video-trim';
 
@@ -8,7 +7,7 @@ import { globalToast, logger } from '@/shared/lib';
 
 const TRIM_MAX_MS = 30000;
 
-export type PickedVideo = { uri: string; thumbnailUri: string };
+export type PickedVideo = { uri: string; thumbnailUri: string; duration: number };
 export type PickedMedia = { images: string[]; video: PickedVideo | null };
 
 const trimVideo = (uri: string): Promise<string | null> =>
@@ -29,19 +28,12 @@ const trimVideo = (uri: string): Promise<string | null> =>
         resolve(null);
       })
     );
-    showEditor(uri, { maxDuration: TRIM_MAX_MS });
+    showEditor(uri, { maxDuration: TRIM_MAX_MS, enableSaveDialog: false });
   });
 
 const generateThumbnail = async (uri: string): Promise<string> => {
-  const player = createVideoPlayer(uri);
-  try {
-    const [thumbnail] = await player.generateThumbnailsAsync(0);
-    const rendered = await ImageManipulator.manipulate(thumbnail).renderAsync();
-    const result = await rendered.saveAsync({ format: SaveFormat.JPEG });
-    return result.uri;
-  } finally {
-    player.release();
-  }
+  const { uri: thumbnailUri } = await VideoThumbnails.getThumbnailAsync(uri, { time: 0, quality: 0.8 });
+  return thumbnailUri;
 };
 
 export const useMediaPicker = () => {
@@ -70,8 +62,10 @@ export const useMediaPicker = () => {
       const trimmedUri = await trimVideo(source.uri);
       if (!trimmedUri) return { images, video: null };
 
+      const trimmedInfo = await isValidFile(trimmedUri);
+      const duration = Math.round((trimmedInfo?.duration ?? 0) / 1000);
       const thumbnailUri = await generateThumbnail(trimmedUri);
-      return { images, video: { uri: trimmedUri, thumbnailUri } };
+      return { images, video: { uri: trimmedUri, thumbnailUri, duration } };
     } catch (error) {
       logger.error(error);
       globalToast('미디어를 불러오지 못했어요', 'fail');

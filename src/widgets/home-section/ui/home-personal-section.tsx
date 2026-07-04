@@ -43,6 +43,7 @@ export const HomePersonalSection = ({ convertedData, isLoading, onGoDetail, onGo
           isLiked={item.isLiked}
           completed={item.completed}
           hasVideo={item.hasVideo}
+          videoDuration={item.videoDuration}
           onPress={() => onGoDetail(item.id)}
           onPressFavorite={() => toggleLikePost(item.id, item.isLiked)}
         />

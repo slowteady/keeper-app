@@ -12,6 +12,7 @@ export const convertToQnaDetailOverviewData = (qna: CommunityQnaDetailDto) => {
     displayTime: qna.displayTime,
     title: qna.title,
     images: qna.images,
+    videoItem: qna.videoUrl ? { videoUrl: qna.videoUrl, thumbnailUrl: qna.videoThumbnailUrl ?? undefined } : null,
     categoryTag: categoryLabel,
     tags,
     content: qna.content,

@@ -183,6 +183,10 @@ jest.mock('expo-video', () => {
   };
 });
 
+jest.mock('expo-video-thumbnails', () => ({
+  getThumbnailAsync: jest.fn(() => Promise.resolve({ uri: 'file:///mock/thumbnail.jpg', width: 100, height: 100 }))
+}));
+
 jest.mock('react-native-gesture-handler', () => ({
   GestureHandlerRootView: ({ children }: any) => children,
   GestureDetector: ({ children }: any) => children,

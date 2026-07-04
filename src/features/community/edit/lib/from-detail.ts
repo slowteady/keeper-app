@@ -11,7 +11,7 @@ export const fromAdoptionPersonalDetail = (detail: CommunityAdoptDetailDto): Com
   images: detail.images,
   video:
     detail.videoUrl && detail.videoThumbnailUrl
-      ? { uri: detail.videoUrl, thumbnailUri: detail.videoThumbnailUrl }
+      ? { uri: detail.videoUrl, thumbnailUri: detail.videoThumbnailUrl, duration: detail.videoDuration ?? 0 }
       : null,
   contact: detail.contacts.map((c) => ({ type: c.type, value: c.value })),
   specificType: orUndefined(detail.specificType),

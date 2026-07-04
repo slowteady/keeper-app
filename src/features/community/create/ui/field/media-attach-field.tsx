@@ -1,10 +1,11 @@
 import { Plus } from '@tamagui/lucide-icons';
-import { type Control, useController } from 'react-hook-form';
+import { useState } from 'react';
+import { type Control, type FieldPath, type FieldValues, useController } from 'react-hook-form';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
-import { CommunityAdoptFormDto } from '@/entities/community';
+import { MediaVideoDto } from '@/entities/community';
 import { useMediaPicker } from '@/features/community/create/model/use-media-picker';
-import { ImageSelector } from '@/shared/ui';
+import { ImageSelector, VideoViewer } from '@/shared/ui';
 
 import { FieldError } from './field-error';
 import { FieldLabel } from './field-label';
@@ -12,41 +13,55 @@ import { VideoAttachment } from './video-attachment';
 
 const MEDIA_BOX_SIZE = 72;
 
-export type MediaAttachFieldProps = {
-  control: Control<CommunityAdoptFormDto>;
+export type MediaAttachFieldProps<T extends FieldValues> = {
+  control: Control<T>;
   label: string;
   required?: boolean;
   max?: number;
   readOnly?: boolean;
+  imagesName?: FieldPath<T>;
+  videoName?: FieldPath<T>;
 };
 
-export const MediaAttachField = ({ control, label, required, max = 10, readOnly = false }: MediaAttachFieldProps) => {
-  const { field: imagesField, fieldState } = useController({ control, name: 'images' });
-  const { field: videoField } = useController({ control, name: 'video' });
+export const MediaAttachField = <T extends FieldValues>({
+  control,
+  label,
+  required,
+  max = 10,
+  readOnly = false,
+  imagesName = 'images' as FieldPath<T>,
+  videoName = 'video' as FieldPath<T>
+}: MediaAttachFieldProps<T>) => {
+  const { field: imagesField, fieldState } = useController({ control, name: imagesName });
+  const { field: videoField } = useController({ control, name: videoName });
   const { pickMedia } = useMediaPicker();
+  const [viewerOpen, setViewerOpen] = useState(false);
 
   const images: string[] = Array.isArray(imagesField.value) ? imagesField.value : [];
-  const video = videoField.value ?? null;
+  const video = (videoField.value ?? null) as MediaVideoDto | null;
+  const mediaCount = images.length + (video ? 1 : 0);
 
   const handleAdd = async () => {
     const picked = await pickMedia();
+    const nextVideo = picked.video ?? video;
     if (picked.images.length > 0) {
-      imagesField.onChange([...images, ...picked.images].slice(0, max));
+      const imageSlots = max - (nextVideo ? 1 : 0);
+      imagesField.onChange([...images, ...picked.images].slice(0, imageSlots));
     }
     if (picked.video) {
       videoField.onChange(picked.video);
     }
   };
 
-  const canAdd = !readOnly && (images.length < max || !video);
+  const canAdd = !readOnly && mediaCount < max;
 
   return (
     <YStack>
       <XStack items="center" justify="space-between">
         <FieldLabel title={label} required={required} mb={10} />
         <XStack>
-          <Text fontSize={12} fontWeight="$4" color={images.length > 0 ? '#707070' : '#BEBEBE'}>
-            {images.length}
+          <Text fontSize={12} fontWeight="$4" color={mediaCount > 0 ? '#707070' : '#BEBEBE'}>
+            {mediaCount}
           </Text>
           <Text fontSize={12} fontWeight="$4" color="#BEBEBE">
             /{max}
@@ -61,25 +76,29 @@ export const MediaAttachField = ({ control, label, required, max = 10, readOnly 
         onChange={(next) => imagesField.onChange(next)}
         readOnly={readOnly}
         hideAddButton
+        trailing={
+          <>
+            {video && (
+              <VideoAttachment
+                thumbnailUri={video.thumbnailUri}
+                size={MEDIA_BOX_SIZE}
+                readOnly={readOnly}
+                onPress={() => setViewerOpen(true)}
+                onRemove={() => videoField.onChange(null)}
+              />
+            )}
+            {canAdd && (
+              <AddButton testID="media-attach-add" width={MEDIA_BOX_SIZE} height={MEDIA_BOX_SIZE} onPress={handleAdd}>
+                <Plus size={24} color="#BEBEBE" />
+              </AddButton>
+            )}
+          </>
+        }
       />
 
-      <XStack gap={8} mt={8} items="center">
-        {video && (
-          <VideoAttachment
-            thumbnailUri={video.thumbnailUri}
-            size={MEDIA_BOX_SIZE}
-            readOnly={readOnly}
-            onRemove={() => videoField.onChange(null)}
-          />
-        )}
-        {canAdd && (
-          <AddButton testID="media-attach-add" width={MEDIA_BOX_SIZE} height={MEDIA_BOX_SIZE} onPress={handleAdd}>
-            <Plus size={24} color="#BEBEBE" />
-          </AddButton>
-        )}
-      </XStack>
-
       <FieldError message={fieldState.error?.message} />
+
+      {viewerOpen && video && <VideoViewer uri={video.uri} onClose={() => setViewerOpen(false)} />}
     </YStack>
   );
 };

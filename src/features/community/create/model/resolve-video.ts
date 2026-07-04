@@ -1,14 +1,15 @@
 import { VideoUploadResult } from '@/features/upload';
 
-type LocalVideo = { uri: string; thumbnailUri: string };
+type LocalVideo = { uri: string; thumbnailUri: string; duration: number };
+export type ResolvedVideo = VideoUploadResult & { videoDuration: number };
 
 export const resolveVideoUpload = async (
   video: LocalVideo | null | undefined,
   upload: (video: LocalVideo) => Promise<VideoUploadResult>
-): Promise<VideoUploadResult | null> => {
+): Promise<ResolvedVideo | null> => {
   if (!video) return null;
   if (video.uri.startsWith('http')) {
-    return { videoUrl: video.uri, videoThumbnailUrl: video.thumbnailUri };
+    return { videoUrl: video.uri, videoThumbnailUrl: video.thumbnailUri, videoDuration: video.duration };
   }
-  return upload(video);
+  return { ...(await upload(video)), videoDuration: video.duration };
 };

@@ -1,5 +1,5 @@
 import * as ImagePicker from 'expo-image-picker';
-import { useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import { Image, StyleSheet } from 'react-native';
 import { ScrollView, styled, View, XStack, YStack } from 'tamagui';
 
@@ -33,6 +33,7 @@ export type ImageSelectorProps = {
   onChange?: (images: string[]) => void;
   readOnly?: boolean;
   hideAddButton?: boolean;
+  trailing?: ReactNode;
 };
 
 export const canAddImage = ({ readOnly, count, max }: { readOnly: boolean; count: number; max: number }): boolean =>
@@ -46,7 +47,8 @@ export const ImageSelector = ({
   value = [],
   onChange,
   readOnly = false,
-  hideAddButton = false
+  hideAddButton = false,
+  trailing
 }: ImageSelectorProps) => {
   const [viewerOpen, setViewerOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -119,6 +121,8 @@ export const ImageSelector = ({
               </AddButton>
             </View>
           )}
+
+          {trailing}
         </XStack>
       </ScrollView>
 

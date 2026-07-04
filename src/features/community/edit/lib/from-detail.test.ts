@@ -88,10 +88,29 @@ describe('fromAdoptionPersonalDetail', () => {
     const form = fromAdoptionPersonalDetail({
       ...base,
       videoUrl: 'https://r2/videos/v.mp4',
+      videoThumbnailUrl: 'https://r2/videos/v.jpg',
+      videoDuration: 27
+    });
+
+    expect(form.video).toEqual({
+      uri: 'https://r2/videos/v.mp4',
+      thumbnailUri: 'https://r2/videos/v.jpg',
+      duration: 27
+    });
+  });
+
+  it('videoDuration 없는 레거시 영상은 duration 0 으로 매핑', () => {
+    const form = fromAdoptionPersonalDetail({
+      ...base,
+      videoUrl: 'https://r2/videos/v.mp4',
       videoThumbnailUrl: 'https://r2/videos/v.jpg'
     });
 
-    expect(form.video).toEqual({ uri: 'https://r2/videos/v.mp4', thumbnailUri: 'https://r2/videos/v.jpg' });
+    expect(form.video).toEqual({
+      uri: 'https://r2/videos/v.mp4',
+      thumbnailUri: 'https://r2/videos/v.jpg',
+      duration: 0
+    });
   });
 
   it('영상 없으면 form.video 는 null (하위호환)', () => {

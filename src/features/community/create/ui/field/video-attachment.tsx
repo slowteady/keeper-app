@@ -1,6 +1,6 @@
 import { Play } from '@tamagui/lucide-icons';
 import { Image } from 'expo-image';
-import { StyleSheet } from 'react-native';
+import { Pressable, StyleSheet } from 'react-native';
 import { styled, Text, View, YStack } from 'tamagui';
 
 import { Close } from '@/shared/ui/icons/outline';
@@ -10,6 +10,7 @@ export type VideoAttachmentProps = {
   size?: number;
   progress?: number | null;
   readOnly?: boolean;
+  onPress?: () => void;
   onRemove?: () => void;
 };
 
@@ -18,17 +19,19 @@ export const VideoAttachment = ({
   size = 72,
   progress,
   readOnly = false,
+  onPress,
   onRemove
 }: VideoAttachmentProps) => {
   const uploading = progress != null && progress < 1;
 
   return (
     <Box width={size} height={size}>
-      <Image source={thumbnailUri} style={styles.thumbnail} contentFit="cover" />
-
-      <View style={styles.playBadge}>
-        <Play size={14} color="white" />
-      </View>
+      <Pressable style={styles.thumbnailPress} onPress={onPress} disabled={!onPress}>
+        <Image source={thumbnailUri} style={styles.thumbnail} contentFit="cover" />
+        <View style={styles.playBadge}>
+          <Play size={14} color="white" />
+        </View>
+      </Pressable>
 
       {uploading && (
         <View style={styles.progressOverlay}>
@@ -66,6 +69,7 @@ const RemoveBackground = styled(YStack, {
 });
 
 const styles = StyleSheet.create({
+  thumbnailPress: { width: '100%', height: '100%' },
   thumbnail: { width: '100%', height: '100%' },
   playBadge: {
     position: 'absolute',

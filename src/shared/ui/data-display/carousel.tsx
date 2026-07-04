@@ -48,6 +48,17 @@ const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>(
     const totalPages = data.length + (hasVideo ? 1 : 0);
     const viewerIndex = hasVideo ? Math.max(0, currentIndex - 1) : currentIndex;
 
+    const pages = [
+      ...(videoItem
+        ? [
+            <View key="carousel-video">
+              <VideoPlayer uri={videoItem.videoUrl} thumbnailUrl={videoItem.thumbnailUrl} radius={imageRadius} />
+            </View>
+          ]
+        : []),
+      ...data.map((image) => <View key={image}>{renderPage(image)}</View>)
+    ];
+
     return (
       <>
         <PagerView
@@ -58,14 +69,7 @@ const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>(
           pageMargin={8}
           {...props}
         >
-          {hasVideo && (
-            <View key="carousel-video">
-              <VideoPlayer uri={videoItem.videoUrl} radius={imageRadius} />
-            </View>
-          )}
-          {data.map((image) => (
-            <View key={image}>{renderPage(image)}</View>
-          ))}
+          {pages}
         </PagerView>
         {showIndicator && totalPages > 1 && <Indicator currentIndex={currentIndex} maxIndex={totalPages} />}
         <ImageViewer

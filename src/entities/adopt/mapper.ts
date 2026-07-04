@@ -129,6 +129,7 @@ export type PersonalAdoptSource = {
   content?: string | null;
   images: string[];
   videoThumbnailUrl?: string | null;
+  videoDuration?: number | null;
   animalType?: string | null;
   specificType?: string | null;
   gender?: string | null;
@@ -158,6 +159,7 @@ const buildPersonalAdoptItem = (item: PersonalAdoptSource) => ({
   uri: item.images[0],
   imageCount: item.images.length,
   hasVideo: !!item.videoThumbnailUrl,
+  videoDuration: item.videoDuration ?? null,
   title: item.title,
   intro: item.content?.trim() || '',
   breed: item.specificType?.trim() || '',

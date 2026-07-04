@@ -58,10 +58,12 @@ describe('toCreateAdoptionPersonalBody', () => {
     it('video 전달 시 videoUrl/videoThumbnailUrl 매핑', () => {
       const body = toCreateAdoptionPersonalBody(fullForm, ['https://s3/1.jpg'], {
         videoUrl: 'https://r2/videos/v.mp4',
-        videoThumbnailUrl: 'https://r2/videos/v.jpg'
+        videoThumbnailUrl: 'https://r2/videos/v.jpg',
+        videoDuration: 27
       });
       expect(body.videoUrl).toBe('https://r2/videos/v.mp4');
       expect(body.videoThumbnailUrl).toBe('https://r2/videos/v.jpg');
+      expect(body.videoDuration).toBe(27);
     });
 
     it('video null 전달 시 undefined (영상 삭제)', () => {

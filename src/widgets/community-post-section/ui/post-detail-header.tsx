@@ -4,6 +4,7 @@ import { styled, Text, useTheme, View, XStack } from 'tamagui';
 
 import { PostCardCarousel, PostCardHeader, PostCardTags, PostCardTitle } from '@/entities/community';
 import { formatTimeAgo, pressHaptic, toggleHaptic } from '@/shared/lib';
+import { CarouselVideoItem } from '@/shared/ui';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 import { Share as ShareIcon } from '@/shared/ui/icons/outline';
 
@@ -14,6 +15,7 @@ export type PostDetailHeaderProps = {
   displayTime: string;
   title: string;
   images: string[];
+  videoItem?: CarouselVideoItem | null;
   categoryTag?: string;
   tags: string[];
   content: string;
@@ -29,6 +31,7 @@ export const PostDetailHeader = ({
   displayTime,
   title,
   images,
+  videoItem,
   categoryTag,
   tags,
   content,
@@ -94,7 +97,9 @@ export const PostDetailHeader = ({
       </ChipRow>
 
       <PostCardTitle title={title} mb={20} />
-      {images.length > 0 && <PostCardCarousel images={images} showImageViewer mb={16} />}
+      {(images.length > 0 || videoItem) && (
+        <PostCardCarousel images={images} videoItem={videoItem} showImageViewer mb={16} />
+      )}
       {tags.length > 0 && <PostCardTags tags={tags} mb={20} />}
       <Content>{content}</Content>
     </>

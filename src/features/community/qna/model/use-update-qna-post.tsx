@@ -11,8 +11,10 @@ import {
   communityQueries,
   type PostDetailUnion
 } from '@/entities/community';
-import { useImageUpload } from '@/features/upload';
+import { useImageUpload, useVideoUpload } from '@/features/upload';
 import { getModerationMessage, globalToast } from '@/shared/lib';
+
+import { resolveVideoUpload } from '../../create/model/resolve-video';
 
 export const useUpdateQnaPost = (id: string) => {
   const queryClient = useQueryClient();
@@ -21,7 +23,7 @@ export const useUpdateQnaPost = (id: string) => {
 
   const form = useForm<CommunityQnaFormDto>({
     resolver: zodResolver(CommunityQnaFormSchema),
-    defaultValues: { type: 'ETC', animalType: undefined, title: '', content: '', images: [] }
+    defaultValues: { type: 'ETC', animalType: undefined, title: '', content: '', images: [], video: null }
   });
 
   useEffect(() => {
@@ -31,12 +33,17 @@ export const useUpdateQnaPost = (id: string) => {
         animalType: detail.animalType,
         title: detail.title,
         content: detail.content,
-        images: detail.images
+        images: detail.images,
+        video:
+          detail.videoUrl && detail.videoThumbnailUrl
+            ? { uri: detail.videoUrl, thumbnailUri: detail.videoThumbnailUrl, duration: detail.videoDuration ?? 0 }
+            : null
       });
     }
   }, [detail, form]);
 
   const imageUpload = useImageUpload();
+  const videoUpload = useVideoUpload();
   const submitMutation = useMutation({
     mutationFn: async (data: CommunityQnaFormDto) => {
       const images = data.images ?? [];
@@ -44,7 +51,17 @@ export const useUpdateQnaPost = (id: string) => {
       const uploaded = localUris.length > 0 ? await imageUpload.mutateAsync(localUris) : [];
       let next = 0;
       const merged = images.map((u) => (u.startsWith('http') ? u : uploaded[next++]));
-      return communityApi.updateQnaPost(id, { ...data, images: merged });
+      const videoResult = await resolveVideoUpload(data.video, (video) => videoUpload.mutateAsync({ video }));
+      return communityApi.updateQnaPost(id, {
+        type: data.type,
+        animalType: data.animalType,
+        title: data.title,
+        content: data.content,
+        images: merged,
+        videoUrl: videoResult?.videoUrl,
+        videoThumbnailUrl: videoResult?.videoThumbnailUrl,
+        videoDuration: videoResult?.videoDuration || undefined
+      });
     },
     onSuccess: (updated) => {
       const next: PostDetailUnion = { kind: 'QNA', qna: updated };
@@ -62,6 +79,6 @@ export const useUpdateQnaPost = (id: string) => {
   return {
     form,
     onSubmit: form.handleSubmit(handleSubmit),
-    isPending: submitMutation.isPending || imageUpload.isPending
+    isPending: submitMutation.isPending || imageUpload.isPending || videoUpload.isPending
   };
 };
