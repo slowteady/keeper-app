@@ -249,6 +249,34 @@ describe('CommunityAdoptFormSchema', () => {
     });
   });
 
+  describe('video (선택)', () => {
+    it('video 미지정이어도 통과', () => {
+      const result = CommunityAdoptFormSchema.safeParse(baseValid);
+      expect(result.success).toBe(true);
+    });
+
+    it('video null 통과 (첨부 없음)', () => {
+      const result = CommunityAdoptFormSchema.safeParse({ ...baseValid, video: null });
+      expect(result.success).toBe(true);
+    });
+
+    it('video {uri, thumbnailUri} 통과', () => {
+      const result = CommunityAdoptFormSchema.safeParse({
+        ...baseValid,
+        video: { uri: 'file://v.mp4', thumbnailUri: 'file://v.jpg' }
+      });
+      expect(result.success).toBe(true);
+    });
+
+    it('video 에 thumbnailUri 누락이면 거부', () => {
+      const result = CommunityAdoptFormSchema.safeParse({
+        ...baseValid,
+        video: { uri: 'file://v.mp4' }
+      });
+      expect(result.success).toBe(false);
+    });
+  });
+
   describe('relatedLink 검증', () => {
     it('유효한 URL 은 통과', () => {
       const result = CommunityAdoptFormSchema.safeParse({

@@ -15,6 +15,8 @@ export const convertToAdoptDetailOverviewData = (detailPost: CommunityAdoptDetai
     displayTime: detailPost.displayTime,
     title: detailPost.title,
     images: detailPost.images,
+    videoUrl: detailPost.videoUrl ?? null,
+    videoThumbnailUrl: detailPost.videoThumbnailUrl ?? null,
     breed: breed || animalTypeLabel(detailPost.animalType),
     region: detailPost.location?.trim() || '',
     protectionType: detailPost.protectionType ?? null,

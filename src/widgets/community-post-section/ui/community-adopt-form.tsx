@@ -6,10 +6,10 @@ import { Accordion, Form, Square, styled, Text, useTheme, View, YStack } from 't
 import { CommunityAdoptFormDto, CREATE_POST_OPTIONS } from '@/entities/community';
 import { ContactSelectField } from '@/features/community/create/ui/field/contact-select-field';
 import { LabelChipGroup } from '@/features/community/create/ui/field/label-chip-group';
-import { LabelImageSelector } from '@/features/community/create/ui/field/label-image-selector';
 import { LabelSelectField } from '@/features/community/create/ui/field/label-select-field';
 import { LabelTextArea } from '@/features/community/create/ui/field/label-text-area';
 import { LabelTextField } from '@/features/community/create/ui/field/label-text-field';
+import { MediaAttachField } from '@/features/community/create/ui/field/media-attach-field';
 import { OptionSelectField } from '@/features/community/create/ui/field/option-select-field';
 import { FREE_ADOPTION_NOTICE, SafetyNotice } from '@/features/community/safety';
 import { SCREEN_GUTTER } from '@/shared/lib';
@@ -54,10 +54,9 @@ export const CommunityAdoptForm = ({
       <Caption>*은 필수 표기 정보입니다</Caption>
 
       <Section ref={fieldRefs?.images}>
-        <LabelImageSelector
-          name="images"
+        <MediaAttachField
           control={control}
-          label="이미지 첨부(최대 10장)"
+          label="사진·동영상 첨부(최대 10장)"
           required
           max={10}
           readOnly={readOnlyImages}

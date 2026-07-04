@@ -8,17 +8,24 @@ import { useIsSharing } from '@/shared/model';
 
 import { NoImage, Skeleton } from '../fallback';
 import { LeftLineArrow, RightLineArrow } from '../icons/mini';
+import { VideoPlayer } from '../media/video-player';
 import { ImageViewer } from '../overlay/image-viewer';
+
+export type CarouselVideoItem = {
+  videoUrl: string;
+  thumbnailUrl?: string;
+};
 
 export interface BasicCarouselProps extends PagerViewProps {
   data: string[];
+  videoItem?: CarouselVideoItem | null;
   showIndicator?: boolean;
   showImageViewer?: boolean;
   imageRadius?: number;
 }
 
 const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>(
-  ({ data, showIndicator = false, showImageViewer = false, imageRadius = 10, ...props }, ref) => {
+  ({ data, videoItem, showIndicator = false, showImageViewer = false, imageRadius = 10, ...props }, ref) => {
     const [openImgViewer, setOpenImgViewer] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
     // PagerView 가 native UIScrollView 라 RN root 의 pointerEvents 흡수를 우회 — onPress 자체에 직접 가드.
@@ -37,6 +44,10 @@ const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>(
       <CarouselImage uri={image} radius={imageRadius} onPress={showImageViewer ? handleOpenViewer : undefined} />
     );
 
+    const hasVideo = !!videoItem;
+    const totalPages = data.length + (hasVideo ? 1 : 0);
+    const viewerIndex = hasVideo ? Math.max(0, currentIndex - 1) : currentIndex;
+
     return (
       <>
         <PagerView
@@ -47,16 +58,21 @@ const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>(
           pageMargin={8}
           {...props}
         >
+          {hasVideo && (
+            <View key="carousel-video">
+              <VideoPlayer uri={videoItem.videoUrl} radius={imageRadius} />
+            </View>
+          )}
           {data.map((image) => (
             <View key={image}>{renderPage(image)}</View>
           ))}
         </PagerView>
-        {showIndicator && data.length > 1 && <Indicator currentIndex={currentIndex} maxIndex={data.length} />}
+        {showIndicator && totalPages > 1 && <Indicator currentIndex={currentIndex} maxIndex={totalPages} />}
         <ImageViewer
           open={openImgViewer}
           onClose={() => setOpenImgViewer(false)}
           images={data}
-          defaultIndex={currentIndex}
+          defaultIndex={viewerIndex}
         />
       </>
     );

@@ -88,14 +88,17 @@
 
 ## 이미지 / 미디어
 
-| 라이브러리                  | 핵심 export               | 용도                                                  |
-| --------------------------- | ------------------------- | ----------------------------------------------------- |
-| `expo-image`                | `Image`, `ImageSource`    | 캐시 / blurhash / contentFit 지원. RN Image 보다 우선 |
-| `expo-image-picker`         | `launchImageLibraryAsync` | 갤러리                                                |
-| `expo-image-manipulator`    | `manipulateAsync`         | 리사이즈 / 압축                                       |
-| `react-native-zoom-toolkit` | zoom view                 | 이미지 zoom                                           |
-| `react-native-svg`          | `Svg`, `Path`, ...        | SVG (keeper 아이콘)                                   |
-| `lottie-react-native`       | `LottieView`              | 로티                                                  |
+| 라이브러리                  | 핵심 export                                                                                    | 용도                                                                |
+| --------------------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `expo-image`                | `Image`, `ImageSource`                                                                         | 캐시 / blurhash / contentFit 지원. RN Image 보다 우선               |
+| `expo-image-picker`         | `launchImageLibraryAsync`                                                                      | 갤러리                                                              |
+| `expo-image-manipulator`    | `manipulateAsync`                                                                              | 리사이즈 / 압축                                                     |
+| `react-native-zoom-toolkit` | zoom view                                                                                      | 이미지 zoom                                                         |
+| `react-native-svg`          | `Svg`, `Path`, ...                                                                             | SVG (keeper 아이콘)                                                 |
+| `lottie-react-native`       | `LottieView`                                                                                   | 로티                                                                |
+| `expo-video`                | `useVideoPlayer`, `VideoView`, `createVideoPlayer`, `player.generateThumbnailsAsync`           | 인라인 영상 재생·썸네일 추출 (keeper `shared/ui/media/VideoPlayer`) |
+| `react-native-compressor`   | `Video.compress(uri, {compressionMethod:'manual', maxSize, bitrate}, onProgress)`              | 영상 720p/H.264 압축 (개인공고 업로드)                              |
+| `react-native-video-trim`   | `showEditor(uri, {maxDuration})`, `VideoTrim.onFinishTrimming/onCancel/onError`, `isValidFile` | 영상 트리밍 에디터 (통합 피커 후 30초 컷)                           |
 
 ---
 

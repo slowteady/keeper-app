@@ -33,6 +33,18 @@ describe('PresignedUrlsBodySchema', () => {
   it('count 가 정수가 아니면 거부', () => {
     expect(() => PresignedUrlsBodySchema.parse({ count: 1.5 })).toThrow();
   });
+
+  it('mediaType 미지정 시 image 로 기본', () => {
+    expect(PresignedUrlsBodySchema.parse({ count: 1 }).mediaType).toBe('image');
+  });
+
+  it('mediaType video 통과', () => {
+    expect(PresignedUrlsBodySchema.parse({ count: 1, mediaType: 'video' }).mediaType).toBe('video');
+  });
+
+  it('mediaType 이 image/video 외이면 거부', () => {
+    expect(() => PresignedUrlsBodySchema.parse({ count: 1, mediaType: 'audio' })).toThrow();
+  });
 });
 
 describe('PresignedUrlsDataSchema', () => {

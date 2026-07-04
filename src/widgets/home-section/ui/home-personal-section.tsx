@@ -42,6 +42,7 @@ export const HomePersonalSection = ({ convertedData, isLoading, onGoDetail, onGo
           protectionType={item.protectionType}
           isLiked={item.isLiked}
           completed={item.completed}
+          hasVideo={item.hasVideo}
           onPress={() => onGoDetail(item.id)}
           onPressFavorite={() => toggleLikePost(item.id, item.isLiked)}
         />

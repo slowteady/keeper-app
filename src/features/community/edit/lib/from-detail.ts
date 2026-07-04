@@ -9,6 +9,10 @@ export const fromAdoptionPersonalDetail = (detail: CommunityAdoptDetailDto): Com
   title: detail.title,
   content: detail.content ?? '',
   images: detail.images,
+  video:
+    detail.videoUrl && detail.videoThumbnailUrl
+      ? { uri: detail.videoUrl, thumbnailUri: detail.videoThumbnailUrl }
+      : null,
   contact: detail.contacts.map((c) => ({ type: c.type, value: c.value })),
   specificType: orUndefined(detail.specificType),
   gender: detail.gender === 'M' || detail.gender === 'F' ? detail.gender : undefined,

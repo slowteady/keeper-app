@@ -1,5 +1,5 @@
 import { useRecyclingState } from '@shopify/flash-list';
-import { Images, MapPin } from '@tamagui/lucide-icons';
+import { Images, MapPin, Play } from '@tamagui/lucide-icons';
 import { Image } from 'expo-image';
 import { memo, useCallback } from 'react';
 import { Pressable, StyleSheet } from 'react-native';
@@ -31,6 +31,7 @@ export type PersonalAdoptCardProps = {
   completed?: boolean;
   compact?: boolean;
   coreChipsOnly?: boolean;
+  hasVideo?: boolean;
 };
 
 const PersonalAdoptCardComponent = ({
@@ -48,7 +49,8 @@ const PersonalAdoptCardComponent = ({
   onPressFavorite,
   completed = false,
   compact = false,
-  coreChipsOnly = false
+  coreChipsOnly = false,
+  hasVideo = false
 }: PersonalAdoptCardProps) => {
   const handlePressFavorite = useCallback(() => {
     if (!onPressFavorite) return;
@@ -82,6 +84,11 @@ const PersonalAdoptCardComponent = ({
               <Images size={12} color="#fff" />
               <ImageCountText>{imageCount}</ImageCountText>
             </ImageCountBadge>
+          )}
+          {hasVideo && !completed && (
+            <VideoPlayOverlay>
+              <Play size={22} color="#fff" />
+            </VideoPlayOverlay>
           )}
         </ImageContainer>
 
@@ -188,6 +195,20 @@ const ProtectionText = styled(Text, {
   fontSize: 12,
   lineHeight: 14,
   color: '$black800'
+});
+
+const VideoPlayOverlay = styled(View, {
+  position: 'absolute',
+  t: '50%',
+  l: '50%',
+  width: 44,
+  height: 44,
+  mt: -22,
+  ml: -22,
+  rounded: 999,
+  items: 'center',
+  justify: 'center',
+  bg: 'rgba(0,0,0,0.45)'
 });
 
 const ImageCountBadge = styled(XStack, {

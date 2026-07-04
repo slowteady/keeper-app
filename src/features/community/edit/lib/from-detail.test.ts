@@ -84,6 +84,26 @@ describe('fromAdoptionPersonalDetail', () => {
     expect(form.vaccinationCheck).toBeUndefined();
   });
 
+  it('videoUrl+videoThumbnailUrl 있으면 form.video 로 매핑', () => {
+    const form = fromAdoptionPersonalDetail({
+      ...base,
+      videoUrl: 'https://r2/videos/v.mp4',
+      videoThumbnailUrl: 'https://r2/videos/v.jpg'
+    });
+
+    expect(form.video).toEqual({ uri: 'https://r2/videos/v.mp4', thumbnailUri: 'https://r2/videos/v.jpg' });
+  });
+
+  it('영상 없으면 form.video 는 null (하위호환)', () => {
+    const form = fromAdoptionPersonalDetail(base);
+    expect(form.video).toBeNull();
+  });
+
+  it('videoUrl 만 있고 썸네일 없으면 null (불완전 데이터 방어)', () => {
+    const form = fromAdoptionPersonalDetail({ ...base, videoUrl: 'https://r2/videos/v.mp4' });
+    expect(form.video).toBeNull();
+  });
+
   it('images URL 배열을 그대로 보존한다 (수정 시 read-only — 재전송 용도)', () => {
     const form = fromAdoptionPersonalDetail({
       ...base,

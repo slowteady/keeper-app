@@ -19,6 +19,7 @@ export const CommunityAdoptFormSchema = z.object({
   title: z.string().min(2, '제목을 2자 이상 입력해주세요').max(50, '제목은 50자 이내로 입력해주세요'),
   content: z.string().min(1, '소개글을 입력해주세요'),
   images: z.array(z.string()).min(1, '최소 1장의 이미지를 업로드해주세요'),
+  video: z.object({ uri: z.string(), thumbnailUri: z.string() }).nullable().optional(),
   contact: z
     .array(
       z
@@ -76,6 +77,8 @@ export const CommunityAdoptDetailSchema = z.object({
   displayTime: z.string(),
   title: z.string(),
   images: z.array(z.string()),
+  videoUrl: z.string().nullish(),
+  videoThumbnailUrl: z.string().nullish(),
   content: z.string().nullish(),
   age: z.string().nullish(),
   gender: z.string().nullish(),
@@ -116,6 +119,7 @@ export const CommunityAdoptListSchema = z.object({
   displayTime: z.string(),
   title: z.string(),
   images: z.array(z.string()),
+  videoThumbnailUrl: z.string().nullish(),
   content: z.string().nullish(),
   animalType: AnimalTypeSchema.nullish(),
   gender: z.string().nullish(),

@@ -32,6 +32,7 @@ export type ImageSelectorProps = {
   value?: string[];
   onChange?: (images: string[]) => void;
   readOnly?: boolean;
+  hideAddButton?: boolean;
 };
 
 export const canAddImage = ({ readOnly, count, max }: { readOnly: boolean; count: number; max: number }): boolean =>
@@ -39,7 +40,14 @@ export const canAddImage = ({ readOnly, count, max }: { readOnly: boolean; count
 
 export const canRemoveImage = ({ readOnly }: { readOnly: boolean }): boolean => !readOnly;
 
-export const ImageSelector = ({ max = 10, size = 100, value = [], onChange, readOnly = false }: ImageSelectorProps) => {
+export const ImageSelector = ({
+  max = 10,
+  size = 100,
+  value = [],
+  onChange,
+  readOnly = false,
+  hideAddButton = false
+}: ImageSelectorProps) => {
   const [viewerOpen, setViewerOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -74,7 +82,7 @@ export const ImageSelector = ({ max = 10, size = 100, value = [], onChange, read
     setViewerOpen(true);
   };
 
-  const showAddButton = canAddImage({ readOnly, count: value.length, max });
+  const showAddButton = !hideAddButton && canAddImage({ readOnly, count: value.length, max });
   const showRemoveButton = canRemoveImage({ readOnly });
 
   return (
