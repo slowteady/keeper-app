@@ -228,7 +228,6 @@ const styles = StyleSheet.create({
   container: { position: 'relative', width: '100%', height: '100%' },
   imageWrap: { width: '100%', height: '100%' },
   image: { borderRadius: 10, width: '100%', height: '100%' },
-  skeleton: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, borderRadius: 10 },
   overlay: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 },
   imageButton: { width: '100%', height: '100%' }
 });

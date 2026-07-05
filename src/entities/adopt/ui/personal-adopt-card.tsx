@@ -5,7 +5,7 @@ import { memo, useCallback } from 'react';
 import { Pressable, StyleSheet } from 'react-native';
 import { styled, Text, View, XStack } from 'tamagui';
 
-import { toggleHaptic } from '@/shared/lib';
+import { formatDuration, toggleHaptic } from '@/shared/lib';
 import { NoImage } from '@/shared/ui/fallback/no-image';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
@@ -33,12 +33,6 @@ export type PersonalAdoptCardProps = {
   coreChipsOnly?: boolean;
   hasVideo?: boolean;
   videoDuration?: number | null;
-};
-
-const formatDuration = (seconds: number) => {
-  const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
-  return `${m}:${s.toString().padStart(2, '0')}`;
 };
 
 const PersonalAdoptCardComponent = ({

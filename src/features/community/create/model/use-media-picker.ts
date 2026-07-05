@@ -3,12 +3,12 @@ import * as VideoThumbnails from 'expo-video-thumbnails';
 import { useCallback } from 'react';
 import VideoTrim, { isValidFile, showEditor } from 'react-native-video-trim';
 
+import { MediaVideoDto } from '@/entities/community';
 import { globalToast, logger } from '@/shared/lib';
 
 const TRIM_MAX_MS = 30000;
 
-export type PickedVideo = { uri: string; thumbnailUri: string; duration: number };
-export type PickedMedia = { images: string[]; video: PickedVideo | null };
+export type PickedMedia = { images: string[]; video: MediaVideoDto | null };
 
 const trimVideo = (uri: string): Promise<string | null> =>
   new Promise((resolve) => {

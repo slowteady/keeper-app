@@ -5,18 +5,12 @@ import { Pressable } from 'react-native';
 import { styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
 
 import { ProfileAvatar } from '@/entities/profile';
-import { formatTimeAgo, toggleHaptic } from '@/shared/lib';
+import { formatDuration, formatTimeAgo, toggleHaptic } from '@/shared/lib';
 import { Skeleton } from '@/shared/ui';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
 import { CommunityQnaListItemDto } from '../schema';
 import { PostStats } from './post-stats';
-
-const formatDuration = (seconds: number) => {
-  const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
-  return `${m}:${s.toString().padStart(2, '0')}`;
-};
 
 export type CommunityQnaCardProps = {
   data: CommunityQnaListItemDto;
