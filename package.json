@@ -7,6 +7,7 @@
   "scripts": {
     "postinstall": "pnpm run prebuild",
     "dev": "expo start --dev-client",
+    "dev:tailscale": "REACT_NATIVE_PACKAGER_HOSTNAME=100.67.109.67 expo start --dev-client",
     "android": "SENTRY_DISABLE_AUTO_UPLOAD=true expo run:android",
     "ios": "SENTRY_DISABLE_AUTO_UPLOAD=true expo run:ios",
     "android:device": "SENTRY_DISABLE_AUTO_UPLOAD=true expo run:android --device",
