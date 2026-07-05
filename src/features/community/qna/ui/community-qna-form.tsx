@@ -5,9 +5,9 @@ import { Form, styled, Text, View, YStack } from 'tamagui';
 import { CommunityQnaFormDto, QNA_ANIMAL_TYPE_OPTIONS, QNA_CATEGORY_OPTIONS } from '@/entities/community';
 
 import { LabelChipGroup } from '../../create/ui/field/label-chip-group';
-import { LabelImageSelector } from '../../create/ui/field/label-image-selector';
 import { LabelTextArea } from '../../create/ui/field/label-text-area';
 import { LabelTextField } from '../../create/ui/field/label-text-field';
+import { MediaAttachField } from '../../create/ui/field/media-attach-field';
 
 export type CommunityQnaFormProps = {
   form: UseFormReturn<CommunityQnaFormDto>;
@@ -24,10 +24,9 @@ export const CommunityQnaForm = ({ form, readOnlyImages = false, animalTypeRef }
 
       <Section>
         <YStack gap={16}>
-          <LabelImageSelector
-            name="images"
+          <MediaAttachField
             control={control}
-            label="이미지 첨부(선택, 최대 10장)"
+            label="사진·영상 첨부(선택, 최대 10개)"
             max={10}
             readOnly={readOnlyImages}
           />

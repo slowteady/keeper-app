@@ -10,8 +10,10 @@ import {
   communityQueries,
   QNA_CATEGORY_OPTIONS
 } from '@/entities/community';
-import { useImageUpload } from '@/features/upload';
+import { useImageUpload, useVideoUpload } from '@/features/upload';
 import { getModerationMessage, globalToast } from '@/shared/lib';
+
+import { resolveVideoUpload } from '../../create/model/resolve-video';
 
 export const useCreateQnaPost = () => {
   const queryClient = useQueryClient();
@@ -24,15 +26,27 @@ export const useCreateQnaPost = () => {
       animalType: undefined,
       title: '',
       content: '',
-      images: []
+      images: [],
+      video: null
     }
   });
 
   const imageUpload = useImageUpload();
+  const videoUpload = useVideoUpload();
   const submitMutation = useMutation({
     mutationFn: async (data: CommunityQnaFormDto) => {
       const uploadedUrls = data.images && data.images.length > 0 ? await imageUpload.mutateAsync(data.images) : [];
-      return communityApi.createQnaPost({ ...data, images: uploadedUrls });
+      const videoResult = await resolveVideoUpload(data.video, (video) => videoUpload.mutateAsync({ video }));
+      return communityApi.createQnaPost({
+        type: data.type,
+        animalType: data.animalType,
+        title: data.title,
+        content: data.content,
+        images: uploadedUrls,
+        videoUrl: videoResult?.videoUrl,
+        videoThumbnailUrl: videoResult?.videoThumbnailUrl,
+        videoDuration: videoResult?.videoDuration || undefined
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: communityQueries.all() });
@@ -49,6 +63,6 @@ export const useCreateQnaPost = () => {
   return {
     form,
     onSubmit: form.handleSubmit(handleSubmit),
-    isPending: submitMutation.isPending || imageUpload.isPending
+    isPending: submitMutation.isPending || imageUpload.isPending || videoUpload.isPending
   };
 };

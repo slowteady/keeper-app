@@ -1,11 +1,11 @@
 import { useRecyclingState } from '@shopify/flash-list';
-import { Images, MapPin } from '@tamagui/lucide-icons';
+import { Images, MapPin, Play } from '@tamagui/lucide-icons';
 import { Image } from 'expo-image';
 import { memo, useCallback } from 'react';
 import { Pressable, StyleSheet } from 'react-native';
 import { styled, Text, View, XStack } from 'tamagui';
 
-import { toggleHaptic } from '@/shared/lib';
+import { formatDuration, toggleHaptic } from '@/shared/lib';
 import { NoImage } from '@/shared/ui/fallback/no-image';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
@@ -31,6 +31,8 @@ export type PersonalAdoptCardProps = {
   completed?: boolean;
   compact?: boolean;
   coreChipsOnly?: boolean;
+  hasVideo?: boolean;
+  videoDuration?: number | null;
 };
 
 const PersonalAdoptCardComponent = ({
@@ -48,7 +50,9 @@ const PersonalAdoptCardComponent = ({
   onPressFavorite,
   completed = false,
   compact = false,
-  coreChipsOnly = false
+  coreChipsOnly = false,
+  hasVideo = false,
+  videoDuration
 }: PersonalAdoptCardProps) => {
   const handlePressFavorite = useCallback(() => {
     if (!onPressFavorite) return;
@@ -77,11 +81,18 @@ const PersonalAdoptCardComponent = ({
               <ProtectionText>{badgeLabel}</ProtectionText>
             </ProtectionBadge>
           )}
-          {imageCount > 1 && (
-            <ImageCountBadge>
-              <Images size={12} color="#fff" />
-              <ImageCountText>{imageCount}</ImageCountText>
-            </ImageCountBadge>
+          {hasVideo ? (
+            <MediaBadge>
+              <Play size={11} color="#fff" fill="#fff" />
+              {!!videoDuration && <MediaBadgeText>{formatDuration(videoDuration)}</MediaBadgeText>}
+            </MediaBadge>
+          ) : (
+            imageCount > 1 && (
+              <MediaBadge>
+                <Images size={12} color="#fff" />
+                <MediaBadgeText>{imageCount}</MediaBadgeText>
+              </MediaBadge>
+            )
           )}
         </ImageContainer>
 
@@ -190,7 +201,7 @@ const ProtectionText = styled(Text, {
   color: '$black800'
 });
 
-const ImageCountBadge = styled(XStack, {
+const MediaBadge = styled(XStack, {
   position: 'absolute',
   b: 10,
   r: 10,
@@ -202,7 +213,7 @@ const ImageCountBadge = styled(XStack, {
   bg: 'rgba(0,0,0,0.55)'
 });
 
-const ImageCountText = styled(Text, {
+const MediaBadgeText = styled(Text, {
   fontWeight: 600,
   fontSize: 12,
   lineHeight: 14,

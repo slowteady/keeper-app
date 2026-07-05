@@ -156,6 +156,43 @@ jest.mock('@react-native-kakao/core', () => ({
 
 jest.mock('@mj-studio/react-native-naver-map', () => ({}));
 
+jest.mock('react-native-compressor', () => ({
+  Video: { compress: jest.fn(() => Promise.resolve('file:///compressed.mp4')) }
+}));
+
+jest.mock('react-native-video-trim', () => ({
+  __esModule: true,
+  default: {
+    onFinishTrimming: jest.fn(() => ({ remove: jest.fn() })),
+    onCancel: jest.fn(() => ({ remove: jest.fn() })),
+    onError: jest.fn(() => ({ remove: jest.fn() }))
+  },
+  showEditor: jest.fn(),
+  isValidFile: jest.fn(() => Promise.resolve({ isValid: true, fileType: 'video', duration: 1000 }))
+}));
+
+jest.mock('expo-video', () => {
+  const React = require('react');
+  return {
+    VideoView: (props: any) => React.createElement('VideoView', props, props.children),
+    useVideoPlayer: jest.fn(() => ({
+      muted: true,
+      loop: false,
+      play: jest.fn(),
+      pause: jest.fn(),
+      addListener: jest.fn(() => ({ remove: jest.fn() }))
+    })),
+    createVideoPlayer: jest.fn(() => ({
+      generateThumbnailsAsync: jest.fn(() => Promise.resolve([{ width: 100, height: 100 }])),
+      release: jest.fn()
+    }))
+  };
+});
+
+jest.mock('expo-video-thumbnails', () => ({
+  getThumbnailAsync: jest.fn(() => Promise.resolve({ uri: 'file:///mock/thumbnail.jpg', width: 100, height: 100 }))
+}));
+
 jest.mock('react-native-gesture-handler', () => ({
   GestureHandlerRootView: ({ children }: any) => children,
   GestureDetector: ({ children }: any) => children,

@@ -113,7 +113,17 @@ export const CommunityAdoptDetailContent = ({ id }: CommunityAdoptDetailContentP
           <>
             {overviews.images.length > 0 && (
               <Hero mb={16}>
-                <Carousel data={overviews.images} showIndicator showImageViewer imageRadius={0} />
+                <Carousel
+                  data={overviews.images}
+                  videoItem={
+                    overviews.videoUrl
+                      ? { videoUrl: overviews.videoUrl, thumbnailUrl: overviews.videoThumbnailUrl ?? undefined }
+                      : null
+                  }
+                  showIndicator
+                  showImageViewer
+                  imageRadius={0}
+                />
               </Hero>
             )}
 

@@ -29,10 +29,12 @@ module.exports = [
   [
     'expo-image-picker',
     {
-      photosPermission: '게시글 및 프로필 사진 업로드를 위해 사진 라이브러리 접근 권한이 필요합니다.',
+      photosPermission: '게시글 및 프로필 사진·동영상 업로드를 위해 사진 라이브러리 접근 권한이 필요합니다.',
       cameraPermission: '프로필 사진 촬영을 위해 카메라 접근 권한이 필요합니다.'
     }
   ],
+  'expo-video',
+  'react-native-compressor',
   [
     'expo-build-properties',
     {

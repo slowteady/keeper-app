@@ -7,9 +7,10 @@ export const PresignedItemSchema = z.object({
 export type PresignedItemDto = z.infer<typeof PresignedItemSchema>;
 
 export const PresignedUrlsBodySchema = z.object({
-  count: z.number().int().min(1).max(10)
+  count: z.number().int().min(1).max(10),
+  mediaType: z.enum(['image', 'video']).default('image')
 });
-export type PresignedUrlsBodyDto = z.infer<typeof PresignedUrlsBodySchema>;
+export type PresignedUrlsBodyDto = z.input<typeof PresignedUrlsBodySchema>;
 
 export const PresignedUrlsDataSchema = z.object({
   items: z.array(PresignedItemSchema)

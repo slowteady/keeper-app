@@ -72,6 +72,8 @@ export const AdoptPersonalScene = ({ scrollY }: { scrollY: SharedValue<number> }
           protectionType={item.protectionType}
           isLiked={item.isLiked}
           completed={item.completed}
+          hasVideo={item.hasVideo}
+          videoDuration={item.videoDuration}
           onPress={() => goDetail(item.id)}
           onPressFavorite={() => toggleLikePost(item.id, item.isLiked)}
         />

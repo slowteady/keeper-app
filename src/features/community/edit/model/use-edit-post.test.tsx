@@ -46,7 +46,8 @@ jest.mock('@/features/community/create/model/api', () => {
 });
 
 jest.mock('@/features/upload', () => ({
-  useImageUpload: () => ({ mutateAsync: (...args: unknown[]) => mockUpload(...args), isPending: false })
+  useImageUpload: () => ({ mutateAsync: (...args: unknown[]) => mockUpload(...args), isPending: false }),
+  useVideoUpload: () => ({ mutateAsync: jest.fn(), isPending: false })
 }));
 
 const detail: CommunityAdoptDetailDto = {

@@ -1,4 +1,4 @@
-import { CommunityAdoptFormSchema } from './schema';
+import { CommunityAdoptFormSchema, CommunityQnaFormSchema } from './schema';
 
 // 폼 작성 schema 검증 — 특히 contact 배열의 chip + value 정합성 (옵션 A: 선택한 chip 의 value 모두 필수)
 // 게시글 작성 흐름의 핵심 validation 이므로 엣지 케이스를 명시적으로 고정한다.
@@ -249,6 +249,42 @@ describe('CommunityAdoptFormSchema', () => {
     });
   });
 
+  describe('video (선택)', () => {
+    it('video 미지정이어도 통과', () => {
+      const result = CommunityAdoptFormSchema.safeParse(baseValid);
+      expect(result.success).toBe(true);
+    });
+
+    it('video null 통과 (첨부 없음)', () => {
+      const result = CommunityAdoptFormSchema.safeParse({ ...baseValid, video: null });
+      expect(result.success).toBe(true);
+    });
+
+    it('video {uri, thumbnailUri, duration} 통과', () => {
+      const result = CommunityAdoptFormSchema.safeParse({
+        ...baseValid,
+        video: { uri: 'file://v.mp4', thumbnailUri: 'file://v.jpg', duration: 27 }
+      });
+      expect(result.success).toBe(true);
+    });
+
+    it('video 에 thumbnailUri 누락이면 거부', () => {
+      const result = CommunityAdoptFormSchema.safeParse({
+        ...baseValid,
+        video: { uri: 'file://v.mp4', duration: 27 }
+      });
+      expect(result.success).toBe(false);
+    });
+
+    it('video 에 duration 누락이면 거부', () => {
+      const result = CommunityAdoptFormSchema.safeParse({
+        ...baseValid,
+        video: { uri: 'file://v.mp4', thumbnailUri: 'file://v.jpg' }
+      });
+      expect(result.success).toBe(false);
+    });
+  });
+
   describe('relatedLink 검증', () => {
     it('유효한 URL 은 통과', () => {
       const result = CommunityAdoptFormSchema.safeParse({
@@ -273,5 +309,36 @@ describe('CommunityAdoptFormSchema', () => {
       const result = CommunityAdoptFormSchema.safeParse({ ...baseValid, relatedLink: longLink });
       expect(result.success).toBe(false);
     });
+  });
+});
+
+describe('CommunityQnaFormSchema video (선택)', () => {
+  const qnaBase = {
+    title: '입양 절차가 궁금해요',
+    content: '처음이라 무엇부터 준비할지 모르겠어요',
+    type: 'ADOPTION' as const,
+    animalType: 'DOG' as const,
+    images: []
+  };
+
+  it('video 없이도 통과', () => {
+    const result = CommunityQnaFormSchema.safeParse(qnaBase);
+    expect(result.success).toBe(true);
+  });
+
+  it('video {uri, thumbnailUri, duration} 통과', () => {
+    const result = CommunityQnaFormSchema.safeParse({
+      ...qnaBase,
+      video: { uri: 'file://v.mp4', thumbnailUri: 'file://v.jpg', duration: 18 }
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('video 에 duration 누락이면 거부', () => {
+    const result = CommunityQnaFormSchema.safeParse({
+      ...qnaBase,
+      video: { uri: 'file://v.mp4', thumbnailUri: 'file://v.jpg' }
+    });
+    expect(result.success).toBe(false);
   });
 });

@@ -79,6 +79,16 @@ describe('mapToPersonalAdoptList', () => {
     expect(item.region).toBe('');
     expect(item.dateText.length).toBeGreaterThan(0);
   });
+
+  it('videoThumbnailUrl 있으면 hasVideo=true', () => {
+    const [item] = mapToPersonalAdoptList([personalSource({ videoThumbnailUrl: 'https://r2/v.jpg' })]);
+    expect(item.hasVideo).toBe(true);
+  });
+
+  it('videoThumbnailUrl 없거나 null 이면 hasVideo=false (하위호환)', () => {
+    expect(mapToPersonalAdoptList([personalSource()])[0].hasVideo).toBe(false);
+    expect(mapToPersonalAdoptList([personalSource({ videoThumbnailUrl: null })])[0].hasVideo).toBe(false);
+  });
 });
 
 const mockAdoptData: AdoptDataDto = {

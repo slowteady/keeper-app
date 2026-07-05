@@ -10,10 +10,11 @@ import {
   communityQueries,
   CREATE_POST_OPTIONS
 } from '@/entities/community';
-import { useImageUpload } from '@/features/upload';
+import { useImageUpload, useVideoUpload } from '@/features/upload';
 import { getModerationMessage, globalToast } from '@/shared/lib';
 
 import { createAdoptionPersonal, toCreateAdoptionPersonalBody } from './api';
+import { resolveVideoUpload } from './resolve-video';
 import { useAdoptFormSelectors } from './use-adopt-form-selectors';
 
 export const useCreatePost = () => {
@@ -28,6 +29,7 @@ export const useCreatePost = () => {
       title: '',
       content: '',
       images: [],
+      video: null,
       contact: [],
       location: '',
       gender: undefined,
@@ -62,10 +64,12 @@ export const useCreatePost = () => {
   const { openAgeSelector, openKindSelector } = useAdoptFormSelectors(form, animalType);
 
   const imageUpload = useImageUpload();
+  const videoUpload = useVideoUpload();
   const submitMutation = useMutation({
     mutationFn: async (data: CommunityAdoptFormDto) => {
       const uploadedUrls = data.images.length > 0 ? await imageUpload.mutateAsync(data.images) : [];
-      const body = toCreateAdoptionPersonalBody(data, uploadedUrls);
+      const videoResult = await resolveVideoUpload(data.video, (video) => videoUpload.mutateAsync({ video }));
+      const body = toCreateAdoptionPersonalBody(data, uploadedUrls, videoResult);
       return createAdoptionPersonal(body);
     },
     onSuccess: () => {
