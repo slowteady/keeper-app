@@ -19,7 +19,7 @@
 | Carousel `data:string[]` 불변 + `videoItem?` 추가 (회귀 0)                | carousel.tsx:19-25, 실사용 6곳               | ✅ 미전달 호출부 정상                                                                            |
 | MediaAttachField generic 하위호환                                         | media-attach-field.tsx:16-34                 | ✅ adopt·qna 공유, tsc 통과                                                                      |
 | PostDetailHeader/PostCardCarousel videoItem? optional                     | post-detail-header.tsx:16, post-card.tsx:134 | ✅ ADOPTION_LIFE 회귀 없음(nullish)                                                              |
-| **Option B(길이배지/개수배지), QnA 영상, videoDuration**                  | 구현됨                                       | ❌ prd/design/spec 문서에 미반영 (P1)                                                            |
+| **Option B(길이배지/개수배지), QnA 영상, videoDuration**                  | 구현됨                                       | ✅ prd/design/spec 04-video-upload.md "구현 반영(2026-07-04)" 델타 섹션에 반영                   |
 | design ADR "영상 풀스크린 제외(인라인만)"                                 | video-player.tsx / video-viewer.tsx          | ⚠️ 이번 세션 사용자 승인으로 상세·작성폼 탭→풀스크린 재생 채택 (ADR 문구가 stale, 동작은 의도됨) |
 | spec §4 썸네일 "최종본(compress 후) 기준"                                 | use-media-picker.ts                          | ⚠️ trim 직후·compress 이전 생성 (첫 프레임 동일, 실사용 영향 낮음)                               |
 | spec §4 `expo-video generateThumbnailsAsync`                              | use-media-picker.ts (expo-video-thumbnails)  | ⚠️ SDK54 SharedRef 비호환으로 expo-video-thumbnails로 대체 (동작 정상)                           |
@@ -47,7 +47,7 @@
 - **jest** (keeper-app): 655/655 PASS
 - **eslint** (keeper-app): PASS (기존 dayjs `import/no-named-as-default-member` 경고만, 이번 변경 무관)
 - **tsc** (keeper-backend): PASS
-- **jest** (keeper-backend/community): 118/118 PASS
+- **jest** (keeper-backend/community): 122/122 PASS (update orphan 롤백 4건 신규 포함)
 
 ## 5. MCP 시뮬 검수 (iOS)
 
@@ -62,6 +62,11 @@
 - **혼합(영상+이미지) 상세 캐러셀 스와이프**: 영상→이미지 `1/2`→`2/2`, 되돌리기 `2/1` 양방향 정상 ✅ (P1-3 fix 후)
 - **영상 탭 → 풀스크린 재생 유지**: 스와이프 복원 후에도 탭→VideoViewer 정상 ✅
 - **영상 로딩 스켈레톤/썸네일 포스터**: onFirstFrameRender 전까지 Skeleton+썸네일 노출 (P1-4 fix) ✅
+- **수정(edit) — 혼합글 폼 프리필**: 이미지+영상 썸네일(▶) 둘 다 pre-fill, 제목/본문 유지 ✅
+- **수정 — 영상 삭제 후 저장**: 상세 이미지 단독 노출(영상·인디케이터 제거), DB video_url/thumb/duration 전부 NULL + images 유지 (docker psql 실측) + 구 R2 영상 정리 ✅
+- **수정 — 롤백 유닛**: moderation/DB 실패 시 신규 media만 정리, 기존 유지 media 보존, DB 미변경 ✅
+- **영상 로드 실패 fallback**: 깨진 video_url 주입(docker) → 상세 캐러셀이 `No Image` fallback 표시(무한 스켈레톤/크래시 없음), mute·탭 핸들러 숨김, 깨진 영상 슬라이드에서도 이미지 페이지 스와이프 정상 ✅
+- **수정 — 개인공고(updateAdoptionPersonal) 영상 삭제**: 수정 폼 영상 프리필(▶) → 삭제 → 저장 → DB video 3컬럼 NULL + 이미지 유지 + 연락처 $transaction 재생성 (docker psql 실측) ✅
 
 ## 6. 발견 사항
 
@@ -71,15 +76,15 @@
 - **영상 duration 배지 오류**: `onFinishTrimming.duration`이 트림본(30s)이 아닌 원본(40s) 반환 → 배지 `▶ 0:40` 오표시. **fix**: `isValidFile(trimmedUri).duration`로 실측. use-media-picker.ts:64-67. ✅ MCP+ffprobe 재검증(0:30)
 - **use-media-picker.test.ts 실패**: duration 로직 변경에 따른 mock 갱신. ✅ 해결(5/5)
 
-### P1 (fix 완료 — 사용자 리포트)
+### P1 (fix 완료 — 사용자 리포트 + QA 후속)
 
 - **혼합 미디어 상세에서 영상만 노출(이미지 스와이프 차단)**: 인라인 영상의 `Pressable absoluteFill`(탭→풀스크린)이 PagerView 가로 pan 을 흡수 → 이미지 페이지로 스와이프 불가. **fix**: react-native-gesture-handler `Gesture.Tap()` + `GestureDetector` 로 교체 — 탭은 인식, 가로 드래그는 pager 로 양보. video-player.tsx:39-41,63-65. ✅ MCP 재검증(1/2↔2/2 양방향 + 탭 풀스크린 유지)
-- **영상 로딩 스켈레톤 부재**: 이미지는 3중 Skeleton 이나 영상은 로딩 placeholder 없음. **fix**: VideoPlayer 에 `thumbnailUrl` 포스터 + Skeleton 을 `onFirstFrameRender` 전까지 노출. carousel 에서 `videoItem.thumbnailUrl` 전달. video-player.tsx:47-60, carousel.tsx:55. ✅
+- **영상 로딩 스켈레톤 부재**: 이미지는 3중 Skeleton 이나 영상은 로딩 placeholder 없음. **fix**: VideoPlayer 에 `thumbnailUrl` 포스터 + Skeleton 을 `onFirstFrameRender` 전까지 노출. carousel 에서 `videoItem.thumbnailUrl` 전달. ✅
+- **영상 로드 실패 시 무한 스켈레톤(엣지)**: 이미지는 `NoImage` fallback 이나 영상은 로드 실패 시 `onFirstFrameRender` 미도래로 스켈레톤이 영구 잔존. **fix**: `player.addListener('statusChange')` 로 `error` 상태 감지 → `NoImage` fallback 표시(mute·탭 핸들러 숨김). jest.setup useVideoPlayer 모킹에 addListener 추가. ✅ MCP(깨진 URL) 재검증
 
-### P1 (다음 사이클)
+- **update 경로 orphan 롤백 부재 → fix 완료**: create는 try/catch로 롤백하나 update는 없어 moderate/HeadObject/DB 실패 시 신규 업로드 media가 R2 orphan. **fix**: `collectAddedMedia(input, before)` 로 "새로 추가된 media"만 산출 → updateQna·updateAdoptionPersonal 을 try/catch 로 감싸 실패 시 `deleteByUrls(added)`. **유지한 기존 media 는 kept 집합으로 제외**해 오삭제 방지. post.service.ts collectAddedMedia + update 2곳. 유닛 4건 신규(모더레이션 실패·DB 실패 롤백, 기존 media 보존 검증). ✅
 
-- **update 경로 orphan 롤백 부재**: create는 try/catch로 롤백하나 update는 없음. moderate 실패 시 신규 업로드 media가 orphan. 발생확률 낮음(모더레이션 차단 필요). update 롤백은 kept vs new 구분이 필요해 create보다 복잡 → 별도 처리 권장.
-- **문서 stale**: prd/design/spec/04-video-upload.md가 Option B(길이배지)·QnA 영상·videoDuration·풀스크린 재생 결정을 미반영. 후속 문서 갱신 필요.
+- **문서 stale → 갱신 완료**: prd/design/spec/04-video-upload.md 각각에 "구현 반영(2026-07-04)" 델타 섹션 추가 — Option B·QnA 영상·videoDuration·풀스크린·스켈레톤·스와이프·update 롤백 반영. 원본 기록은 보존.
 
 ### P2 (관찰)
 
@@ -89,9 +94,8 @@
 
 ## 7. 권장 조치
 
-- **즉시** — P0 2건 fix + 재검증 완료. 병합 가능 상태.
-- **다음 사이클** — P1 update orphan 롤백(비용/확률 낮음, 별도 이슈), 04-video-upload 문서 3종 갱신.
-- **관찰** — P2 formatDuration 공용 유틸 추출은 여유 시.
+- **즉시** — P0 2건 + P1 4건(스와이프·스켈레톤·update 롤백·문서) 모두 fix + 재검증 완료. 병합 가능 상태.
+- **관찰** — P2 formatDuration 공용 유틸 추출, 썸네일 생성 시점은 여유 시.
 
 ## 참고
 

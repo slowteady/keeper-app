@@ -212,6 +212,24 @@ PostAdoptionPersonal (기존 모델에 컬럼 2개 추가)
 - **[재검수] 썸네일 생성 시점** — 최종(trim·compress 후) 영상 기준 `generateThumbnailsAsync`(VideoPlayer 인스턴스 + ImageManipulator jpg 변환). 첨부 파이프라인 단계 확정 → `/spec`.
 - **[재검수] HEVC 코덱 정규화** — iOS picker `Passthrough` 원본 HEVC → compressor H.264 정규화 보장(Android 재생 호환) → `/spec` + Phase 0 실측.
 
+## 11. 구현 반영 (2026-07-04, 구현 중 확정 — 원 PRD 대비 델타)
+
+| 항목          | 원 PRD                 | 구현 확정                                                                                                                        |
+| ------------- | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| 적용 범위     | 개인공고만             | **개인공고 + 커뮤니티 QnA**(PostQna에 동일 video 3컬럼). 작성 폼은 `MediaAttachField` generic 공유                               |
+| 목록 배지     | 미정의                 | **Option B**: 영상=길이 `▶ m:ss`(videoDuration), 사진 다수=개수 `🖼 N`                                                            |
+| videoDuration | 없음                   | 배지용 `Int?` 컬럼 추가(개인공고·QnA). 트림 **결과물** duration 실측(`isValidFile(trimmed)` — onFinishTrimming은 원본 반환 버그) |
+| 풀스크린 재생 | 인라인만(결정 번복 전) | **인라인 + 탭 풀스크린(VideoViewer)**. 상세 캐러셀·작성 폼 썸네일 탭 모두                                                        |
+| 로딩 표시     | 미정의                 | 인라인 영상 **스켈레톤 + 썸네일 포스터**(onFirstFrameRender 전까지)                                                              |
+| 혼합 캐러셀   | 미정의                 | 영상+이미지 혼합 시 스와이프 이동 — 영상 탭 핸들러를 `gesture-handler Tap`으로 교체(Pressable이 pan 흡수 회귀 해소)              |
+| update orphan | MVP 감수               | **update 롤백 구현**: `collectAddedMedia`로 신규 media만, 기존 유지 media 보존                                                   |
+
+### Open Issues 해소
+
+- `videoUrl` 저장 형태 → **공개 URL 전체**(images 패턴 일관).
+- `expo-video-thumbnails` → SDK54 SharedRef 비호환으로 `generateThumbnailsAsync` 전환 불가, `getThumbnailAsync` 유지(동작 정상).
+- Carousel 8곳 회귀 → `videoItem?` prop 추가(data `string[]` 불변)로 회귀 0.
+
 ## 참고
 
 - 백로그 원본: `docs/backlog/features/04-video-upload.md`

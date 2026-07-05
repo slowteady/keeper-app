@@ -153,6 +153,14 @@ ALTER TABLE "post_adoption_personal"
 - `useVideoUpload` 진행률과 `useImageUpload` 병렬 시 통합 진행률 표기 → 구현 디테일.
 - `extractPostSummary`(알림 썸네일)에 video 썸네일 폴백 반영 여부 → 알림 기능과 교차, 후속.
 
+## 8. 구현 반영 (2026-07-04, 원 Spec 대비 델타)
+
+- **적용 범위**: 개인공고 외 **PostQna** 에도 `videoUrl`·`videoThumbnailUrl`·`videoDuration` 3컬럼 추가(마이그레이션 `add_post_qna_video`).
+- **videoDuration**: 배지용 `Int?` 컬럼(개인공고 `add_post_adoption_personal_video_duration`·QnA). 앱은 `isValidFile(trimmedUri).duration` 로 **트림 결과물** 길이 실측(`onFinishTrimming.duration` 은 원본 반환 버그).
+- **3중 검증 확장**: `videoDuration` 을 zod(`MediaVideoSchema.duration`) ↔ DTO(`z.number().int().positive().optional()`) ↔ prisma(`Int?`) 정합.
+- **update orphan 롤백**: 원 결정 "MVP 감수(도달 후 실패만 서버 롤백)" → **update 도 롤백 구현**. `collectAddedMedia(input, before)` 로 "기존 유지 media 제외한 신규 media"만 산출 → `updateQna`·`updateAdoptionPersonal` try/catch 실패 시 `deleteByUrls(added)`. 유지 media 오삭제 방지.
+- **video 삭제 시 컬럼 null**: update `data` 에 `input.videoUrl ?? null`(Prisma `undefined`=no-change 회피) — 삭제 시 R2 정리와 DB 컬럼 정합.
+
 ## 참고
 
 - PRD: `docs/prd/04-video-upload.md` · Design: `docs/design/04-video-upload.md` · 백로그: `docs/backlog/features/04-video-upload.md`

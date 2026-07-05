@@ -157,6 +157,16 @@ PersonalAdoptCard (hasVideo prop 추가)
 - **[재검수] 미디어 파이프라인 순서** — 선택 → trim(30s) → compress(720p) → 썸네일(최종본 기준) → 업로드. trim·compress **이중 인코딩** 최소화 + HEVC→H.264 정규화 + 썸네일 생성 시점 → `/spec` + Phase 0 실측.
 - **[재검수] 업로드 원자성** — 영상·썸네일·글 저장 중 실패 시 orphan 정리(`deleteByUrls` 롤백) 흐름 → `/spec`.
 
+## 7. 구현 반영 (2026-07-04, 원 Design 대비 델타)
+
+- **풀스크린 영상**: "인라인만" → **인라인 + 탭 풀스크린(`VideoViewer`)** 로 번복. 상세 캐러셀·작성 폼 썸네일 탭 모두 풀스크린 재생.
+- **혼합 캐러셀 스와이프**: 영상 슬라이드의 full-cover `Pressable`(탭→풀스크린)이 PagerView 가로 pan 을 흡수 → `gesture-handler Gesture.Tap()` + `GestureDetector` 로 교체(탭 인식, 드래그는 pager 양보).
+- **인라인 로딩**: `VideoPlayer` 에 `thumbnailUrl` 포스터 + `Skeleton` 을 `onFirstFrameRender` 전까지 노출(이미지 3중 레이어와 동일 결).
+- **첨부 필드 공유**: `MediaAttachField` 를 `<T extends FieldValues>` generic 화 → 개인공고·QnA 폼(`community-qna-form`)이 동일 필드 공유(`image-selector` 확장 + 오케스트레이션).
+- **목록 배지**: 카드에 영상=길이 배지(`▶ m:ss`)·사진=개수 배지(`🖼 N`) — Option B.
+- **S5 수정(edit)**: 원격 영상은 `{uri: videoUrl(http), thumbnailUri, duration}` 로 프리필 → `resolveVideoUpload` 가 `http` prefix면 재업로드 없이 pass-through, 삭제 시 `video=null`.
+- Open Issue 해소 — 업로드 원자성: create·**update 양쪽** `deleteByUrls` 롤백 구현(update는 신규 media만).
+
 ## 참고
 
 - PRD: `docs/prd/04-video-upload.md`
