@@ -4,7 +4,7 @@ import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { styled, Text, TextProps, useTheme, View, ViewProps, XStack, XStackProps } from 'tamagui';
 
 import { toggleHaptic } from '@/shared/lib';
-import { Carousel, Chip, NoImage } from '@/shared/ui';
+import { Carousel, CarouselVideoItem, Chip, NoImage } from '@/shared/ui';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
 import { buildAdoptTags } from '../lib';
@@ -129,13 +129,21 @@ export const PostCardContent = ({ content, ...props }: { content: string } & Omi
   return <StyledContent {...props}>{content}</StyledContent>;
 };
 
-type PostCardCarouselProps = { images: string[]; showImageViewer?: boolean } & ViewProps;
+type PostCardCarouselProps = {
+  images: string[];
+  videoItem?: CarouselVideoItem | null;
+  showImageViewer?: boolean;
+} & ViewProps;
 
-export const PostCardCarousel = ({ images, showImageViewer = false, ...props }: PostCardCarouselProps) => {
-  const hasImages = images && images.length > 0;
+export const PostCardCarousel = ({ images, videoItem, showImageViewer = false, ...props }: PostCardCarouselProps) => {
+  const hasMedia = (images && images.length > 0) || !!videoItem;
   return (
     <CarouselWrap {...props}>
-      {hasImages ? <Carousel data={images} showIndicator showImageViewer={showImageViewer} /> : <NoImage />}
+      {hasMedia ? (
+        <Carousel data={images ?? []} videoItem={videoItem} showIndicator showImageViewer={showImageViewer} />
+      ) : (
+        <NoImage />
+      )}
     </CarouselWrap>
   );
 };

@@ -15,6 +15,9 @@ type CreateAdoptionPersonalBody = {
   contacts: { type: string; value: string }[];
   tags: string[];
   images?: string[];
+  videoUrl?: string;
+  videoThumbnailUrl?: string;
+  videoDuration?: number;
   specificType?: string;
   age?: string;
   weight?: string;
@@ -40,7 +43,8 @@ const orUndefined = <T>(value: T | undefined | null | '' | 'NONE'): T | undefine
 
 export const toCreateAdoptionPersonalBody = (
   form: CommunityAdoptFormDto,
-  uploadedImageUrls: string[]
+  uploadedImageUrls: string[],
+  video?: { videoUrl: string; videoThumbnailUrl: string; videoDuration: number } | null
 ): CreateAdoptionPersonalBody => ({
   category: 'ADOPTION_PERSONAL',
   title: form.title,
@@ -50,6 +54,9 @@ export const toCreateAdoptionPersonalBody = (
   contacts: form.contact.map((c) => ({ type: c.type, value: c.value })),
   tags: [],
   images: uploadedImageUrls,
+  videoUrl: video?.videoUrl,
+  videoThumbnailUrl: video?.videoThumbnailUrl,
+  videoDuration: video?.videoDuration || undefined,
   specificType: orUndefined(form.specificType),
   age: orUndefined(form.age),
   weight: orUndefined(form.weight),

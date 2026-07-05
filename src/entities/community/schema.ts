@@ -13,12 +13,16 @@ import { CREATE_POST_OPTIONS } from './constant';
 export const ProtectionTypeSchema = z.enum(['TEMPORARY', 'ADOPTION', 'BOTH']);
 export type ProtectionTypeDto = z.infer<typeof ProtectionTypeSchema>;
 
+export const MediaVideoSchema = z.object({ uri: z.string(), thumbnailUri: z.string(), duration: z.number() });
+export type MediaVideoDto = z.infer<typeof MediaVideoSchema>;
+
 export const CommunityAdoptFormSchema = z.object({
   animalType: AnimalTypeSchema,
   protectionType: ProtectionTypeSchema,
   title: z.string().min(2, '제목을 2자 이상 입력해주세요').max(50, '제목은 50자 이내로 입력해주세요'),
   content: z.string().min(1, '소개글을 입력해주세요'),
   images: z.array(z.string()).min(1, '최소 1장의 이미지를 업로드해주세요'),
+  video: MediaVideoSchema.nullable().optional(),
   contact: z
     .array(
       z
@@ -76,6 +80,9 @@ export const CommunityAdoptDetailSchema = z.object({
   displayTime: z.string(),
   title: z.string(),
   images: z.array(z.string()),
+  videoUrl: z.string().nullish(),
+  videoThumbnailUrl: z.string().nullish(),
+  videoDuration: z.number().nullish(),
   content: z.string().nullish(),
   age: z.string().nullish(),
   gender: z.string().nullish(),
@@ -116,6 +123,8 @@ export const CommunityAdoptListSchema = z.object({
   displayTime: z.string(),
   title: z.string(),
   images: z.array(z.string()),
+  videoThumbnailUrl: z.string().nullish(),
+  videoDuration: z.number().nullish(),
   content: z.string().nullish(),
   animalType: AnimalTypeSchema.nullish(),
   gender: z.string().nullish(),
@@ -157,7 +166,8 @@ export const CommunityQnaFormSchema = z.object({
   content: z.string().min(2, '본문은 2자 이상이에요').max(1000, '본문은 1000자 이내로 입력해주세요'),
   type: QnaTypeSchema,
   animalType: z.enum(['DOG', 'CAT', 'OTHER'], { error: '동물 종류를 선택해주세요' }),
-  images: z.array(z.string()).max(10, '이미지는 최대 10장까지 첨부할 수 있어요').optional()
+  images: z.array(z.string()).max(10, '이미지는 최대 10장까지 첨부할 수 있어요').optional(),
+  video: MediaVideoSchema.nullable().optional()
 });
 export type CommunityQnaFormDto = z.infer<typeof CommunityQnaFormSchema>;
 
@@ -180,6 +190,8 @@ export const CommunityQnaListItemSchema = z.object({
   qnaType: QnaTypeSchema,
   animalType: QnaAnimalTypeSchema,
   images: z.array(z.string()),
+  videoThumbnailUrl: z.string().nullish(),
+  videoDuration: z.number().nullish(),
   counts: z.object({
     like: z.number(),
     view: z.number(),
@@ -207,6 +219,9 @@ export const CommunityQnaDetailSchema = z.object({
   qnaType: QnaTypeSchema,
   animalType: QnaAnimalTypeSchema,
   images: z.array(z.string()),
+  videoUrl: z.string().nullish(),
+  videoThumbnailUrl: z.string().nullish(),
+  videoDuration: z.number().nullish(),
   counts: z.object({
     like: z.number(),
     view: z.number(),

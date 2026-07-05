@@ -1,10 +1,11 @@
+import { Play } from '@tamagui/lucide-icons';
 import { Image } from 'expo-image';
 import { useCallback, useState } from 'react';
 import { Pressable } from 'react-native';
 import { styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
 
 import { ProfileAvatar } from '@/entities/profile';
-import { formatTimeAgo, toggleHaptic } from '@/shared/lib';
+import { formatDuration, formatTimeAgo, toggleHaptic } from '@/shared/lib';
 import { Skeleton } from '@/shared/ui';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
@@ -20,7 +21,8 @@ export type CommunityQnaCardProps = {
 
 export const CommunityQnaCard = ({ data, categoryLabel, onPress, onPressLike }: CommunityQnaCardProps) => {
   const { black500 } = useTheme();
-  const thumbnail = data.images?.[0];
+  const hasVideo = !!data.videoThumbnailUrl;
+  const thumbnail = hasVideo ? data.videoThumbnailUrl : data.images?.[0];
 
   const handlePressLike = useCallback(() => {
     if (!onPressLike) return;
@@ -60,7 +62,7 @@ export const CommunityQnaCard = ({ data, categoryLabel, onPress, onPressLike }: 
             <AnimatedHeart isLiked={data.isLiked} size={20} inactiveColor={black500.val} />
           </Pressable>
         )}
-        {thumbnail ? <CardThumbnail uri={thumbnail} /> : null}
+        {thumbnail ? <CardThumbnail uri={thumbnail} hasVideo={hasVideo} videoDuration={data.videoDuration} /> : null}
       </Right>
     </Container>
   );
@@ -117,12 +119,26 @@ const Preview = styled(Text, {
   lineHeight: 18
 });
 
-const CardThumbnail = ({ uri }: { uri: string }) => {
+const CardThumbnail = ({
+  uri,
+  hasVideo = false,
+  videoDuration
+}: {
+  uri: string;
+  hasVideo?: boolean;
+  videoDuration?: number | null;
+}) => {
   const [loaded, setLoaded] = useState(false);
   return (
     <ThumbnailBox>
       {!loaded && <Skeleton style={{ position: 'absolute', width: 72, height: 72, borderRadius: 8 }} />}
       <Thumbnail source={{ uri }} contentFit="cover" onLoad={() => setLoaded(true)} />
+      {hasVideo && (
+        <VideoBadge>
+          <Play size={9} color="#fff" fill="#fff" />
+          {!!videoDuration && <VideoBadgeText>{formatDuration(videoDuration)}</VideoBadgeText>}
+        </VideoBadge>
+      )}
     </ThumbnailBox>
   );
 };
@@ -132,6 +148,25 @@ const ThumbnailBox = styled(View, {
   height: 72,
   rounded: 8,
   overflow: 'hidden'
+});
+
+const VideoBadge = styled(XStack, {
+  position: 'absolute',
+  b: 4,
+  r: 4,
+  items: 'center',
+  gap: 2,
+  px: 5,
+  py: 2,
+  rounded: 999,
+  bg: 'rgba(0,0,0,0.55)'
+});
+
+const VideoBadgeText = styled(Text, {
+  fontWeight: 600,
+  fontSize: 10,
+  lineHeight: 12,
+  color: '#fff'
 });
 
 const Thumbnail = styled(Image, {

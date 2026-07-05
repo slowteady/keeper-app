@@ -48,6 +48,31 @@ describe('toCreateAdoptionPersonalBody', () => {
     expect(body.images).toEqual([]);
   });
 
+  describe('video 매핑', () => {
+    it('video 미전달 시 videoUrl/videoThumbnailUrl undefined', () => {
+      const body = toCreateAdoptionPersonalBody(fullForm, ['https://s3/1.jpg']);
+      expect(body.videoUrl).toBeUndefined();
+      expect(body.videoThumbnailUrl).toBeUndefined();
+    });
+
+    it('video 전달 시 videoUrl/videoThumbnailUrl 매핑', () => {
+      const body = toCreateAdoptionPersonalBody(fullForm, ['https://s3/1.jpg'], {
+        videoUrl: 'https://r2/videos/v.mp4',
+        videoThumbnailUrl: 'https://r2/videos/v.jpg',
+        videoDuration: 27
+      });
+      expect(body.videoUrl).toBe('https://r2/videos/v.mp4');
+      expect(body.videoThumbnailUrl).toBe('https://r2/videos/v.jpg');
+      expect(body.videoDuration).toBe(27);
+    });
+
+    it('video null 전달 시 undefined (영상 삭제)', () => {
+      const body = toCreateAdoptionPersonalBody(fullForm, [], null);
+      expect(body.videoUrl).toBeUndefined();
+      expect(body.videoThumbnailUrl).toBeUndefined();
+    });
+  });
+
   describe('선택 enum 처리 (BP: chip 미선택 = undefined)', () => {
     it('healthCheck undefined → undefined', () => {
       const body = toCreateAdoptionPersonalBody({ ...fullForm, healthCheck: undefined }, []);

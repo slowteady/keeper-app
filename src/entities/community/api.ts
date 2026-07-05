@@ -50,8 +50,7 @@ const getList = async (params: CommunityListParams): Promise<CommunityListRespon
 };
 
 export type PostDetailUnion =
-  | { kind: 'QNA'; qna: CommunityQnaDetailDto }
-  | { kind: 'ADOPT'; adopt: CommunityAdoptDetailDto };
+  { kind: 'QNA'; qna: CommunityQnaDetailDto } | { kind: 'ADOPT'; adopt: CommunityAdoptDetailDto };
 
 const getPostDetail = async (id: string): Promise<PostDetailUnion> => {
   const res = await authApi.get<ApiResponse<{ category: string }>>(`${COMMUNITY_BASE}/${id}`);
@@ -131,12 +130,23 @@ const getQnaDetail = async (id: string): Promise<CommunityQnaDetailDto> => {
   return CommunityQnaDetailSchema.parse(res.data.data);
 };
 
-const createQnaPost = async (body: CommunityQnaFormDto): Promise<{ id: string }> => {
+export type QnaPostBody = {
+  type: QnaTypeDto;
+  animalType: CommunityQnaFormDto['animalType'];
+  title: string;
+  content: string;
+  images: string[];
+  videoUrl?: string;
+  videoThumbnailUrl?: string;
+  videoDuration?: number;
+};
+
+const createQnaPost = async (body: QnaPostBody): Promise<{ id: string }> => {
   const res = await authApi.post<ApiResponse<{ id: string }>>(`${COMMUNITY_BASE}/qna`, body);
   return { id: res.data.data.id };
 };
 
-const updateQnaPost = async (id: string, body: CommunityQnaFormDto): Promise<CommunityQnaDetailDto> => {
+const updateQnaPost = async (id: string, body: QnaPostBody): Promise<CommunityQnaDetailDto> => {
   const res = await authApi.patch<ApiResponse<CommunityQnaDetailDto>>(`${COMMUNITY_BASE}/qna/${id}`, body);
   return CommunityQnaDetailSchema.parse(res.data.data);
 };
