@@ -6,7 +6,7 @@ import { Pressable, StyleSheet } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { View } from 'tamagui';
 
-import { Skeleton } from '../fallback';
+import { NoImage, Skeleton } from '../fallback';
 import { VideoViewer } from './video-viewer';
 
 export type VideoPlayerProps = {
@@ -19,6 +19,7 @@ export const VideoPlayer = ({ uri, thumbnailUrl, radius = 10 }: VideoPlayerProps
   const [muted, setMuted] = useState(true);
   const [viewerOpen, setViewerOpen] = useState(false);
   const [ready, setReady] = useState(false);
+  const [hasError, setHasError] = useState(false);
 
   const player = useVideoPlayer(uri, (instance) => {
     instance.loop = true;
@@ -35,6 +36,14 @@ export const VideoPlayer = ({ uri, thumbnailUrl, radius = 10 }: VideoPlayerProps
     else player.play();
   }, [viewerOpen, player]);
 
+  useEffect(() => {
+    const subscription = player.addListener('statusChange', ({ status }) => {
+      if (status === 'error') setHasError(true);
+      else if (status === 'readyToPlay') setReady(true);
+    });
+    return () => subscription.remove();
+  }, [player]);
+
   const openViewer = Gesture.Tap()
     .onEnd(() => setViewerOpen(true))
     .runOnJS(true);
@@ -48,26 +57,37 @@ export const VideoPlayer = ({ uri, thumbnailUrl, radius = 10 }: VideoPlayerProps
         contentFit="cover"
         onFirstFrameRender={() => setReady(true)}
       />
-      <View style={[StyleSheet.absoluteFill, { borderRadius: radius, opacity: ready ? 0 : 1 }]} pointerEvents="none">
-        <Skeleton style={[styles.video, { borderRadius: radius }]} />
-        {thumbnailUrl && (
-          <Image
-            source={thumbnailUrl}
-            cachePolicy="memory-disk"
-            contentFit="cover"
-            style={[StyleSheet.absoluteFill, { borderRadius: radius }]}
-          />
-        )}
-      </View>
-      <GestureDetector gesture={openViewer}>
-        <View style={StyleSheet.absoluteFill} />
-      </GestureDetector>
-      <Pressable style={styles.muteButton} hitSlop={8} onPress={() => setMuted((prev) => !prev)}>
-        <View style={styles.muteBackground}>
-          {muted ? <VolumeX size={16} color="white" /> : <Volume2 size={16} color="white" />}
+      {hasError ? (
+        <View style={[StyleSheet.absoluteFill, { borderRadius: radius }]} pointerEvents="none">
+          <NoImage style={{ ...styles.video, borderRadius: radius }} />
         </View>
-      </Pressable>
-      {viewerOpen && <VideoViewer uri={uri} onClose={() => setViewerOpen(false)} />}
+      ) : (
+        <>
+          <View
+            style={[StyleSheet.absoluteFill, { borderRadius: radius, opacity: ready ? 0 : 1 }]}
+            pointerEvents="none"
+          >
+            <Skeleton style={[styles.video, { borderRadius: radius }]} />
+            {thumbnailUrl && (
+              <Image
+                source={thumbnailUrl}
+                cachePolicy="memory-disk"
+                contentFit="cover"
+                style={[StyleSheet.absoluteFill, { borderRadius: radius }]}
+              />
+            )}
+          </View>
+          <GestureDetector gesture={openViewer}>
+            <View style={StyleSheet.absoluteFill} />
+          </GestureDetector>
+          <Pressable style={styles.muteButton} hitSlop={8} onPress={() => setMuted((prev) => !prev)}>
+            <View style={styles.muteBackground}>
+              {muted ? <VolumeX size={16} color="white" /> : <Volume2 size={16} color="white" />}
+            </View>
+          </Pressable>
+          {viewerOpen && <VideoViewer uri={uri} onClose={() => setViewerOpen(false)} />}
+        </>
+      )}
     </View>
   );
 };

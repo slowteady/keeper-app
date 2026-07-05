@@ -175,7 +175,13 @@ jest.mock('expo-video', () => {
   const React = require('react');
   return {
     VideoView: (props: any) => React.createElement('VideoView', props, props.children),
-    useVideoPlayer: jest.fn(() => ({ muted: true, loop: false, play: jest.fn(), pause: jest.fn() })),
+    useVideoPlayer: jest.fn(() => ({
+      muted: true,
+      loop: false,
+      play: jest.fn(),
+      pause: jest.fn(),
+      addListener: jest.fn(() => ({ remove: jest.fn() }))
+    })),
     createVideoPlayer: jest.fn(() => ({
       generateThumbnailsAsync: jest.fn(() => Promise.resolve([{ width: 100, height: 100 }])),
       release: jest.fn()
