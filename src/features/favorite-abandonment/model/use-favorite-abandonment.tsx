@@ -4,6 +4,7 @@ import { adoptApi, adoptQueries } from '@/entities/adopt';
 import { shelterQueries } from '@/entities/shelter';
 import { useLoginRequired } from '@/features/auth';
 import { toggleHaptic } from '@/shared/lib';
+import { ANALYTICS_EVENT, useAnalytics } from '@/shared/lib/analytics';
 import { useFavoriteToggle, useIsFavoritePending } from '@/shared/model';
 
 export const FAVORITE_ABANDONMENT_MUTATION_KEY = ['favorite-abandonment'] as const;
@@ -13,6 +14,7 @@ const ME_FAVORITE_PREFIX = ['me-favorite-abandonments'] as const;
 
 export const useFavoriteAbandonment = () => {
   const { requireLogin } = useLoginRequired();
+  const { track } = useAnalytics();
 
   const mutation = useFavoriteToggle({
     mutationKey: FAVORITE_ABANDONMENT_MUTATION_KEY,
@@ -30,9 +32,12 @@ export const useFavoriteAbandonment = () => {
   const toggleFavoriteAbandonment = useCallback(
     (desertionNo: string, currentlyFavorited: boolean) => {
       toggleHaptic(currentlyFavorited);
-      requireLogin(() => mutation.mutate({ id: desertionNo, currentlyFavorited }));
+      requireLogin(() => {
+        if (!currentlyFavorited) track(ANALYTICS_EVENT.adoptFavorited, { adopt_id: desertionNo });
+        mutation.mutate({ id: desertionNo, currentlyFavorited });
+      });
     },
-    [mutation, requireLogin]
+    [mutation, requireLogin, track]
   );
 
   return { toggleFavoriteAbandonment, isPending: mutation.isPending };

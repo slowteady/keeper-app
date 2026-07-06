@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { Alert, Platform, Share } from 'react-native';
 
 import { pressHaptic } from '@/shared/lib';
+import { ANALYTICS_EVENT, useAnalytics } from '@/shared/lib/analytics';
 
 import { useIsSharing, useSetIsSharing } from '../share/share-atom';
 
@@ -22,6 +23,7 @@ type ShareParams =
 export const useShare = () => {
   const isSharing = useIsSharing();
   const setIsSharing = useSetIsSharing();
+  const { track } = useAnalytics();
 
   const share = useCallback(
     async (params: ShareParams) => {
@@ -33,16 +35,16 @@ export const useShare = () => {
             ? WEB_BASE_URL
             : `${WEB_BASE_URL}/share/${params.type}/${encodeURIComponent(params.id.toString())}`;
 
-        if (Platform.OS === 'ios') {
-          await Share.share({
-            url: shareUrl,
-            title: 'keeper'
-          });
-        } else {
-          await Share.share({
-            message: shareUrl,
-            title: 'keeper'
-          });
+        const result =
+          Platform.OS === 'ios'
+            ? await Share.share({ url: shareUrl, title: 'keeper' })
+            : await Share.share({ message: shareUrl, title: 'keeper' });
+
+        if (result.action === Share.sharedAction) {
+          track(
+            ANALYTICS_EVENT.contentShared,
+            params.type === 'app' ? { type: 'app' } : { type: params.type, id: String(params.id) }
+          );
         }
       } catch {
         Alert.alert('공유하지 못했어요', '공유 중 오류가 생겼어요');
@@ -50,7 +52,7 @@ export const useShare = () => {
         setTimeout(() => setIsSharing(false), POST_SHARE_GUARD_MS);
       }
     },
-    [setIsSharing]
+    [setIsSharing, track]
   );
 
   return { share, isSharing };

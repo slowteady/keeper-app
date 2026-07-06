@@ -1,11 +1,14 @@
 import { useCallback } from 'react';
 
+import { ANALYTICS_EVENT, useAnalytics } from '@/shared/lib/analytics';
+
 import { useOpenLoginSheet } from '../../login/model/use-open-login-sheet';
 import { useCurrentUser } from './use-current-user';
 
 export const useLoginRequired = () => {
   const { user } = useCurrentUser();
   const openLoginSheet = useOpenLoginSheet();
+  const { track } = useAnalytics();
   const isLoggedIn = !!user;
 
   const requireLogin = useCallback(
@@ -15,10 +18,11 @@ export const useLoginRequired = () => {
         return true;
       }
 
+      track(ANALYTICS_EVENT.loginPromptShown);
       openLoginSheet();
       return false;
     },
-    [isLoggedIn, openLoginSheet]
+    [isLoggedIn, openLoginSheet, track]
   );
 
   return { requireLogin, isLoggedIn };
