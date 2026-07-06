@@ -8,6 +8,7 @@ import { useCallback } from 'react';
 import { authQueries, logout, UserDto } from '@/entities/auth';
 import { notificationApi } from '@/entities/notification';
 import { getRefreshToken, globalToast, removeToken } from '@/shared/lib';
+import { useAnalytics } from '@/shared/lib/analytics';
 import { useLoadingOverlay } from '@/shared/ui';
 
 import { useSetIsAuthenticated } from '../../lib/auth-state';
@@ -25,6 +26,7 @@ export const useLogout = () => {
   const qc = useQueryClient();
   const setIsAuthenticated = useSetIsAuthenticated();
   const overlay = useLoadingOverlay();
+  const { reset } = useAnalytics();
 
   const { mutateAsync, isPending } = useMutation({ mutationFn: logout });
 
@@ -43,6 +45,7 @@ export const useLogout = () => {
       }
       await removeToken();
       Sentry.setUser(null);
+      reset();
       qc.removeQueries();
 
       setIsAuthenticated(false);
@@ -52,7 +55,7 @@ export const useLogout = () => {
     } finally {
       overlay.hide();
     }
-  }, [isPending, mutateAsync, qc, setIsAuthenticated, overlay]);
+  }, [isPending, mutateAsync, qc, setIsAuthenticated, overlay, reset]);
 
   return { logout: handleLogout, isPending };
 };

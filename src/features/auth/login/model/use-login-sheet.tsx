@@ -9,6 +9,7 @@ import { agree, AgreeBodyDto, login } from '@/entities/auth';
 import { SocialAuthResult } from '@/shared/api';
 import { publicApi } from '@/shared/api/instance';
 import { getSuspensionDetail, globalToast, isSuspendedError, setSuspended } from '@/shared/lib';
+import { ANALYTICS_EVENT, useAnalytics } from '@/shared/lib/analytics';
 import { ApiResponse } from '@/shared/model';
 import { useBottomSheet } from '@/shared/ui';
 
@@ -30,6 +31,7 @@ export const useLoginSheet = () => {
   const queryClient = useQueryClient();
   const setIsAuthenticated = useSetIsAuthenticated();
   const { dismiss, ref } = useBottomSheet();
+  const { track } = useAnalytics();
 
   const { mutate: loginMutate, isPending: isLoginPending } = useMutation({
     mutationFn: login,
@@ -79,12 +81,13 @@ export const useLoginSheet = () => {
             }
 
             if (!accessToken || !refreshToken) return;
+            track(ANALYTICS_EVENT.login, { social_type: socialType });
             await finish(accessToken, refreshToken);
           }
         }
       );
     },
-    [loginMutate, setSheet, finish]
+    [loginMutate, setSheet, finish, track]
   );
 
   const devLogin = useCallback(
@@ -125,7 +128,8 @@ export const useLoginSheet = () => {
     const { accessToken, refreshToken } = res.data.data;
     if (!accessToken || !refreshToken) return;
     await finish(accessToken, refreshToken);
-  }, [allRequiredAgreed, sheet.signupToken, agreeAsync, finish]);
+    track(ANALYTICS_EVENT.signupCompleted);
+  }, [allRequiredAgreed, sheet.signupToken, agreeAsync, finish, track]);
 
   const viewPolicy = useCallback(
     async (type: PolicyType) => {

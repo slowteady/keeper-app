@@ -1,11 +1,12 @@
 import { useQueryClient } from '@tanstack/react-query';
 import * as Notifications from 'expo-notifications';
 import { router, usePathname } from 'expo-router';
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 import { notificationQueries } from '@/entities/notification';
 import { useCurrentUser } from '@/features/auth';
 import { globalToast } from '@/shared/lib';
+import { ANALYTICS_EVENT, useAnalytics } from '@/shared/lib/analytics';
 import { resolveNotificationPath } from '@/shared/lib/deeplink';
 
 import { useNotificationPermission } from '../model/use-notification-permission';
@@ -38,6 +39,13 @@ export const NotificationGate = () => {
   const pathname = usePathname();
   const pathnameRef = useRef(pathname);
   pathnameRef.current = pathname;
+  const { track } = useAnalytics();
+
+  const trackPush = useCallback(
+    (event: typeof ANALYTICS_EVENT.pushOpened | typeof ANALYTICS_EVENT.pushReceived, data?: Record<string, unknown>) =>
+      track(event, { ref_type: String(data?.refType ?? ''), ref_id: String(data?.refId ?? '') }),
+    [track]
+  );
 
   useRegisterPushToken(isLoggedIn);
 
@@ -51,18 +59,23 @@ export const NotificationGate = () => {
 
   useEffect(() => {
     Notifications.getLastNotificationResponseAsync().then((response) => {
-      routeFromData(response?.notification.request.content.data as Record<string, unknown> | undefined);
+      const data = response?.notification.request.content.data as Record<string, unknown> | undefined;
+      if (data) trackPush(ANALYTICS_EVENT.pushOpened, data);
+      routeFromData(data);
     });
 
     const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
-      routeFromData(response.notification.request.content.data as Record<string, unknown> | undefined);
+      const data = response.notification.request.content.data as Record<string, unknown> | undefined;
+      trackPush(ANALYTICS_EVENT.pushOpened, data);
+      routeFromData(data);
     });
 
     return () => subscription.remove();
-  }, []);
+  }, [trackPush]);
 
   useEffect(() => {
     const subscription = Notifications.addNotificationReceivedListener((notification) => {
+      trackPush(ANALYTICS_EVENT.pushReceived, notification.request.content.data as Record<string, unknown> | undefined);
       queryClient.invalidateQueries({ queryKey: [...notificationQueries.all(), 'list'] });
       queryClient.invalidateQueries({ queryKey: [...notificationQueries.all(), 'unread-count'] });
 
@@ -71,7 +84,7 @@ export const NotificationGate = () => {
     });
 
     return () => subscription.remove();
-  }, [queryClient]);
+  }, [queryClient, trackPush]);
 
   return null;
 };

@@ -12,6 +12,7 @@ import {
 } from '@/entities/community';
 import { useImageUpload, useVideoUpload } from '@/features/upload';
 import { getModerationMessage, globalToast } from '@/shared/lib';
+import { ANALYTICS_EVENT, useAnalytics } from '@/shared/lib/analytics';
 
 import { createAdoptionPersonal, toCreateAdoptionPersonalBody } from './api';
 import { resolveVideoUpload } from './resolve-video';
@@ -19,6 +20,7 @@ import { useAdoptFormSelectors } from './use-adopt-form-selectors';
 
 export const useCreatePost = () => {
   const queryClient = useQueryClient();
+  const { track } = useAnalytics();
 
   const form = useForm<CommunityAdoptFormDto>({
     resolver: zodResolver(CommunityAdoptFormSchema),
@@ -72,7 +74,11 @@ export const useCreatePost = () => {
       const body = toCreateAdoptionPersonalBody(data, uploadedUrls, videoResult);
       return createAdoptionPersonal(body);
     },
-    onSuccess: () => {
+    onSuccess: (_res, variables) => {
+      track(ANALYTICS_EVENT.postCreated, {
+        type: variables.animalType,
+        has_media: variables.images.length > 0 || !!variables.video
+      });
       queryClient.invalidateQueries({ queryKey: communityQueries.all() });
       globalToast('공고를 등록했어요', 'success');
       router.back();

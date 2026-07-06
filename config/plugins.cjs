@@ -9,6 +9,7 @@ if (process.env.EAS_BUILD && (!kakaoNativeKey || !googleIosUrlScheme)) {
 
 module.exports = [
   'expo-font',
+  'expo-localization',
   'expo-web-browser',
   'expo-router',
   'expo-apple-authentication',
