@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { useCallback } from 'react';
+import { InteractionManager } from 'react-native';
 
 import { authQueries, DeleteMeBodyDto, deleteUser, UserDto } from '@/entities/auth';
 import { globalToast, removeToken } from '@/shared/lib';
@@ -33,12 +34,16 @@ export const useDeleteUser = () => {
         queryClient.removeQueries({ queryKey: authQueries.all() });
 
         setIsAuthenticated(false);
-        router.dismissTo('/(tabs)/profile');
       } catch {
         globalToast('회원탈퇴하지 못했어요', 'fail');
-      } finally {
         overlay.hide();
+        return;
       }
+
+      overlay.hide();
+      InteractionManager.runAfterInteractions(() => {
+        router.dismissTo('/(tabs)/profile');
+      });
     },
     [isPending, mutateAsync, queryClient, setIsAuthenticated, overlay]
   );
@@ -52,8 +57,10 @@ export const useDeleteUser = () => {
           confirmText="탈퇴하기"
           destructive
           onConfirm={() => {
-            onWithdraw();
             close();
+            InteractionManager.runAfterInteractions(() => {
+              onWithdraw();
+            });
           }}
           onCancel={close}
         />

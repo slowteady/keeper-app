@@ -16,6 +16,7 @@ jest.mock('expo-router', () => ({
     setParams: jest.fn(),
     dismiss: jest.fn(),
     dismissAll: jest.fn(),
+    dismissTo: jest.fn(),
     navigate: jest.fn()
   }
 }));
