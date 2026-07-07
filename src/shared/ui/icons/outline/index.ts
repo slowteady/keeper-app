@@ -19,6 +19,7 @@ export { default as Logo } from './logo';
 export { default as Menu } from './menu';
 export { default as Message } from './message';
 export { default as Pencil } from './pencil';
+export { default as Poster } from './poster';
 export { default as RightArrow } from './right-arrow';
 export { default as Share } from './share';
 export { default as User } from './user';

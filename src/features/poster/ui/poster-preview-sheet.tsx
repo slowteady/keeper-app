@@ -1,10 +1,9 @@
 import { Image } from 'expo-image';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Text, useTheme, XStack, YStack } from 'tamagui';
+import { Text, useTheme, YStack } from 'tamagui';
 
 import { Button, NoImage, Skeleton } from '@/shared/ui';
-import { Download } from '@/shared/ui/icons/outline';
 
 import { usePoster } from '../model/use-poster';
 import { usePosterSave } from '../model/use-poster-save';
@@ -14,7 +13,7 @@ type PosterPreviewSheetProps = {
 };
 
 export const PosterPreviewSheet = ({ desertionNo }: PosterPreviewSheetProps) => {
-  const { black900, white850 } = useTheme();
+  const { white850 } = useTheme();
   const { url, isLoading, isError, isEnded, refetch } = usePoster(desertionNo);
   const { save, isSaving } = usePosterSave();
   const [isImageLoaded, setIsImageLoaded] = useState(false);
@@ -56,12 +55,9 @@ export const PosterPreviewSheet = ({ desertionNo }: PosterPreviewSheetProps) => 
         </Button>
       ) : (
         <Button disabled={!url} isLoading={isSaving} onPress={() => (url ? save(url, desertionNo) : undefined)}>
-          <XStack gap="$2" items="center">
-            <Download width={20} height={20} color={black900.val} />
-            <Text color="$black900" fontWeight="600">
-              저장
-            </Text>
-          </XStack>
+          <Text color="$black900" fontWeight="600">
+            저장하기
+          </Text>
         </Button>
       )}
     </YStack>
