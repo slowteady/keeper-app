@@ -23,17 +23,13 @@ const ScreenTracker = () => {
   return null;
 };
 
-export const AnalyticsProvider = ({ children }: PropsWithChildren) => {
-  if (!ENABLED) return <>{children}</>;
-
-  return (
-    <PostHogProvider
-      apiKey={POSTHOG_KEY as string}
-      options={{ host: POSTHOG_HOST }}
-      autocapture={{ captureTouches: false, captureScreens: false }}
-    >
-      <ScreenTracker />
-      {children}
-    </PostHogProvider>
-  );
-};
+export const AnalyticsProvider = ({ children }: PropsWithChildren) => (
+  <PostHogProvider
+    apiKey={POSTHOG_KEY ?? 'phc_disabled'}
+    options={{ host: POSTHOG_HOST, disabled: !ENABLED }}
+    autocapture={{ captureTouches: false, captureScreens: false }}
+  >
+    <ScreenTracker />
+    {children}
+  </PostHogProvider>
+);
