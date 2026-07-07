@@ -7,6 +7,7 @@ export { default as Cancel } from './cancel';
 export { default as CircleX } from './circle-x';
 export { default as Close } from './close';
 export { default as Comment } from './comment';
+export { default as Download } from './download';
 export { default as Eye } from './eye';
 export { default as Heart } from './heart';
 export { default as Home } from './home';

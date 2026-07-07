@@ -7,6 +7,7 @@ import { ScrollView, styled, Text, useTheme, View, XStack, YStack } from 'tamagu
 import { ADOPT_STATUS_INFO, AdoptStatusDto, isAdoptEnded } from '@/entities/adopt';
 import { resolveAdoptShelter, useAdopt } from '@/features/adopt';
 import { useFavoriteAbandonment } from '@/features/favorite-abandonment';
+import { PosterSaveButton } from '@/features/poster';
 import { useShelter } from '@/features/shelter';
 import { SCREEN_GUTTER } from '@/shared/lib';
 import { ANALYTICS_EVENT, useAnalytics } from '@/shared/lib/analytics';
@@ -118,6 +119,7 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
             <Pressable hitSlop={10} onPress={handlePressShare} accessibilityLabel="공유">
               <ShareIcon width={22} height={22} color={black600.val} />
             </Pressable>
+            {!ended && <PosterSaveButton desertionNo={adopt.id} color={black600.val} />}
           </Actions>
         </ActionRow>
 
