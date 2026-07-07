@@ -1,4 +1,3 @@
-import { router } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
 import { FieldErrors } from 'react-hook-form';
 import { Keyboard, TextInput, View as NativeView } from 'react-native';
@@ -8,7 +7,7 @@ import { styled, View } from 'tamagui';
 import { ADOPT_FORM_FIELD_ORDER, CommunityAdoptFormDto } from '@/entities/community';
 import { LocationBottomSheet, resolveRegionFromPlace, useLocationBottomSheet } from '@/features/address';
 import { useCreatePost } from '@/features/community';
-import { findFirstFieldError, globalToast, scrollToView } from '@/shared/lib';
+import { findFirstFieldError, globalToast, safeBack, scrollToView } from '@/shared/lib';
 import { BottomButton, CancelModal, ModalPageHeader } from '@/shared/ui';
 import { CommunityAdoptForm } from '@/widgets/community-post-section';
 
@@ -29,13 +28,13 @@ const Page = () => {
     if (isDirty && !isSubmitting) {
       setShowCancelModal(true);
     } else {
-      router.back();
+      safeBack('/(tabs)/adopt');
     }
   }, [isDirty, isSubmitting]);
 
   const handleConfirmExit = useCallback(() => {
     setShowCancelModal(false);
-    router.back();
+    safeBack('/(tabs)/adopt');
   }, []);
 
   const {
