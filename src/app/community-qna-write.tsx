@@ -1,4 +1,3 @@
-import { router } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
 import { FieldErrors } from 'react-hook-form';
 import { Keyboard, View as NativeView } from 'react-native';
@@ -7,7 +6,7 @@ import { styled, View } from 'tamagui';
 
 import { CommunityQnaFormDto, QNA_FORM_FIELD_ORDER } from '@/entities/community';
 import { CommunityQnaForm, useCreateQnaPost } from '@/features/community';
-import { findFirstFieldError, globalToast, scrollToView } from '@/shared/lib';
+import { findFirstFieldError, globalToast, safeBack, scrollToView } from '@/shared/lib';
 import { BottomButton, CancelModal, ModalPageHeader } from '@/shared/ui';
 
 const Page = () => {
@@ -22,7 +21,7 @@ const Page = () => {
   const handleClose = useCallback(() => {
     Keyboard.dismiss();
     if (isDirty && !isPending) setShowCancelModal(true);
-    else router.back();
+    else safeBack('/(tabs)/community');
   }, [isDirty, isPending]);
 
   const onInvalid = useCallback(
@@ -68,7 +67,7 @@ const Page = () => {
         onClose={() => setShowCancelModal(false)}
         onConfirm={() => {
           setShowCancelModal(false);
-          router.back();
+          safeBack('/(tabs)/community');
         }}
         title="작성을 그만두시겠어요?"
         description="작성 중인 내용은 저장되지 않아요"

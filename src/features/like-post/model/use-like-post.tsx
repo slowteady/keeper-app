@@ -4,6 +4,7 @@ import { useCallback } from 'react';
 import { communityApi, communityQueries } from '@/entities/community';
 import { useLoginRequired } from '@/features/auth';
 import { globalToast, toggleHaptic } from '@/shared/lib';
+import { ANALYTICS_EVENT, useAnalytics } from '@/shared/lib/analytics';
 
 import { patchLikeCache } from '../lib/patch-like-cache';
 
@@ -21,6 +22,7 @@ const ME_LIKED_PREFIX = ['me-liked-posts'] as const;
 export const useLikePost = () => {
   const queryClient = useQueryClient();
   const { requireLogin } = useLoginRequired();
+  const { track } = useAnalytics();
 
   const mutation = useMutation<LikeResponse, unknown, ToggleVars, { backup: [readonly unknown[], unknown][] }>({
     mutationKey: [...LIKE_POST_MUTATION_KEY],
@@ -81,9 +83,12 @@ export const useLikePost = () => {
   const toggleLikePost = useCallback(
     (postId: string, currentlyLiked: boolean) => {
       toggleHaptic(currentlyLiked);
-      requireLogin(() => mutation.mutate({ postId, currentlyLiked }));
+      requireLogin(() => {
+        if (!currentlyLiked) track(ANALYTICS_EVENT.postLiked, { post_id: postId });
+        mutation.mutate({ postId, currentlyLiked });
+      });
     },
-    [mutation, requireLogin]
+    [mutation, requireLogin, track]
   );
 
   return { toggleLikePost, isPending: mutation.isPending };

@@ -3,6 +3,7 @@ import { InfiniteData, useMutation, useQueryClient } from '@tanstack/react-query
 import { commentApi, CommentDto, commentQueries } from '@/entities/comment';
 import { useCurrentUser } from '@/features/auth';
 import { getModerationMessage, globalToast } from '@/shared/lib';
+import { ANALYTICS_EVENT, useAnalytics } from '@/shared/lib/analytics';
 
 import { patchPostCommentCount } from '../lib/patch-comment-count';
 
@@ -17,6 +18,7 @@ type MutationContext = { backup: [readonly unknown[], unknown][]; tempId: string
 export const useCreateComment = ({ postId }: { postId: string }) => {
   const queryClient = useQueryClient();
   const { user } = useCurrentUser();
+  const { track } = useAnalytics();
 
   const listKey = [...commentQueries.all(), 'list', postId];
 
@@ -101,6 +103,7 @@ export const useCreateComment = ({ postId }: { postId: string }) => {
       globalToast(getModerationMessage(error) ?? '댓글을 등록하지 못했어요', 'fail');
     },
     onSuccess: (created, vars, context) => {
+      track(ANALYTICS_EVENT.commentCreated, { post_id: postId, is_reply: !!vars.parentId });
       if (!context) return;
       if (vars.parentId) {
         queryClient.setQueryData<InfiniteData<CommentPage>>(

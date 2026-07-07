@@ -10,29 +10,32 @@ const TRIM_MAX_MS = 30000;
 
 export type PickedMedia = { images: string[]; video: MediaVideoDto | null };
 
-const trimVideo = (uri: string): Promise<string | null> =>
+type TrimResult = { status: 'done'; uri: string } | { status: 'canceled' } | { status: 'error' };
+
+const trimVideo = (uri: string): Promise<TrimResult> =>
   new Promise((resolve) => {
     const subs: { remove: () => void }[] = [];
     const cleanup = () => subs.forEach((sub) => sub.remove());
     subs.push(
       VideoTrim.onFinishTrimming(({ outputPath }: { outputPath: string }) => {
         cleanup();
-        resolve(outputPath);
+        resolve({ status: 'done', uri: outputPath });
       }),
       VideoTrim.onCancel(() => {
         cleanup();
-        resolve(null);
+        resolve({ status: 'canceled' });
       }),
       VideoTrim.onError(() => {
         cleanup();
-        resolve(null);
+        resolve({ status: 'error' });
       })
     );
     showEditor(uri, { maxDuration: TRIM_MAX_MS, enableSaveDialog: false });
   });
 
-const generateThumbnail = async (uri: string): Promise<string> => {
-  const { uri: thumbnailUri } = await VideoThumbnails.getThumbnailAsync(uri, { time: 0, quality: 0.8 });
+const generateThumbnail = async (uri: string, durationMs: number): Promise<string> => {
+  const time = durationMs > 0 ? Math.min(1000, Math.floor(durationMs / 2)) : 1000;
+  const { uri: thumbnailUri } = await VideoThumbnails.getThumbnailAsync(uri, { time, quality: 0.8 });
   return thumbnailUri;
 };
 
@@ -59,12 +62,26 @@ export const useMediaPicker = () => {
         return { images, video: null };
       }
 
-      const trimmedUri = await trimVideo(source.uri);
-      if (!trimmedUri) return { images, video: null };
+      const trim = await trimVideo(source.uri);
+      if (trim.status === 'canceled') return { images, video: null };
+      if (trim.status === 'error') {
+        globalToast('영상을 편집하지 못했어요. 다시 시도해 주세요', 'fail');
+        return { images, video: null };
+      }
 
+      const trimmedUri = trim.uri;
       const trimmedInfo = await isValidFile(trimmedUri);
       const duration = Math.round((trimmedInfo?.duration ?? 0) / 1000);
-      const thumbnailUri = await generateThumbnail(trimmedUri);
+
+      let thumbnailUri: string;
+      try {
+        thumbnailUri = await generateThumbnail(trimmedUri, trimmedInfo?.duration ?? 0);
+      } catch (error) {
+        logger.error(error);
+        globalToast('영상 미리보기를 만들지 못했어요. 영상 앞부분을 살짝 잘라내고 다시 시도해 주세요', 'fail');
+        return { images, video: null };
+      }
+
       return { images, video: { uri: trimmedUri, thumbnailUri, duration } };
     } catch (error) {
       logger.error(error);

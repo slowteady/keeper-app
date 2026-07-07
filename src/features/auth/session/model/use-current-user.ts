@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { authQueries } from '@/entities/auth';
 import { getAccessToken } from '@/shared/lib';
+import { useAnalytics } from '@/shared/lib/analytics';
 
 import { useIsAuthenticated } from '../../lib/auth-state';
 
@@ -34,9 +35,13 @@ export const useCurrentUser = () => {
   const user = isAuthenticated ? data : null;
   const isLoggedIn = !!user;
 
+  const { identify } = useAnalytics();
   useEffect(() => {
-    if (user?.id) Sentry.setUser({ id: String(user.id) });
-  }, [user?.id]);
+    if (user?.id) {
+      Sentry.setUser({ id: String(user.id) });
+      identify(String(user.id), { nickname: user.nickname });
+    }
+  }, [user?.id, user?.nickname, identify]);
 
   const isLoadingState = isCheckingToken || (isAuthenticated && isLoading);
 

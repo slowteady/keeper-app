@@ -1,14 +1,16 @@
 import { ChevronRight, Clock, Hash, MapPin } from '@tamagui/lucide-icons';
 import { RelativePathString, router, useLocalSearchParams } from 'expo-router';
-import { Suspense, useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 import { Pressable, RefreshControl } from 'react-native';
 import { ScrollView, styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
 
 import { ADOPT_STATUS_INFO, AdoptStatusDto, isAdoptEnded } from '@/entities/adopt';
 import { resolveAdoptShelter, useAdopt } from '@/features/adopt';
 import { useFavoriteAbandonment } from '@/features/favorite-abandonment';
+import { PosterSaveButton } from '@/features/poster';
 import { useShelter } from '@/features/shelter';
 import { SCREEN_GUTTER } from '@/shared/lib';
+import { ANALYTICS_EVENT, useAnalytics } from '@/shared/lib/analytics';
 import { useListRefreshing, useShare } from '@/shared/model';
 import { BottomButton, CallModal, Carousel, DetailErrorBoundary, SuspenseFallback } from '@/shared/ui';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
@@ -51,9 +53,21 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
   const canCall = !!shelter.tel;
   const ctaDisabled = ended || !canCall;
 
+  const { track } = useAnalytics();
+
   const descValue = (label: string) => adopt.description.find((d) => d.label === label)?.value ?? '';
   const region = descValue('지역');
   const noticePeriod = descValue('공고기간');
+
+  useEffect(() => {
+    track(ANALYTICS_EVENT.adoptDetailViewed, {
+      adopt_id: adopt.id,
+      status: String(adopt.status ?? ''),
+      shelter_id: String(adopt.shelterId ?? ''),
+      animal_type: adopt.animalType,
+      region
+    });
+  }, [adopt.id, adopt.status, adopt.shelterId, adopt.animalType, region, track]);
   const rescuePlace = descValue('구조장소');
   const noticeNo = adopt.noticeNo;
 
@@ -105,6 +119,7 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
             <Pressable hitSlop={10} onPress={handlePressShare} accessibilityLabel="공유">
               <ShareIcon width={22} height={22} color={black600.val} />
             </Pressable>
+            {!ended && <PosterSaveButton desertionNo={adopt.id} color={black600.val} />}
           </Actions>
         </ActionRow>
 
@@ -153,7 +168,19 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
 
       <BottomButton
         disabled={ctaDisabled}
-        onPress={ctaDisabled ? undefined : () => setCallModalOpen((prev) => !prev)}
+        onPress={
+          ctaDisabled
+            ? undefined
+            : () => {
+                track(ANALYTICS_EVENT.shelterContactClicked, {
+                  shelter_id: String(shelter.id),
+                  adopt_id: adopt.id,
+                  animal_type: adopt.animalType,
+                  region
+                });
+                setCallModalOpen((prev) => !prev);
+              }
+        }
         onLayout={(e) => {
           const h = e.nativeEvent.layout.height;
           setButtonHeight((prev) => (prev === h ? prev : h));

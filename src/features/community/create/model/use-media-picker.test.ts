@@ -1,5 +1,6 @@
 import { renderHook } from '@testing-library/react-native';
 import * as ImagePicker from 'expo-image-picker';
+import * as VideoThumbnails from 'expo-video-thumbnails';
 import { isValidFile, showEditor } from 'react-native-video-trim';
 
 import { globalToast } from '@/shared/lib';
@@ -127,5 +128,56 @@ describe('useMediaPicker', () => {
 
     expect(picked.images).toEqual([]);
     expect(picked.video).toBeNull();
+  });
+
+  it('트리밍 에러 시 명확한 토스트 + video null', async () => {
+    setPicked([{ uri: 'file:///v.mov', type: 'video' }]);
+    const { result } = renderHook(() => useMediaPicker());
+
+    const promise = result.current.pickMedia();
+    await Promise.resolve();
+    await Promise.resolve();
+    emit('error');
+    const picked = await promise;
+
+    expect(picked.video).toBeNull();
+    expect(globalToast).toHaveBeenCalledWith('영상을 편집하지 못했어요. 다시 시도해 주세요', 'fail');
+  });
+
+  it('썸네일 생성 실패 시 안내 토스트 + 사진은 유지', async () => {
+    (VideoThumbnails.getThumbnailAsync as jest.Mock).mockRejectedValueOnce(new Error('열 수 없음'));
+    setPicked([
+      { uri: 'file:///a.jpg', type: 'image' },
+      { uri: 'file:///v.mov', type: 'video' }
+    ]);
+    const { result } = renderHook(() => useMediaPicker());
+
+    const promise = result.current.pickMedia();
+    await Promise.resolve();
+    await Promise.resolve();
+    emit('finish', { outputPath: 'file:///trimmed.mp4' });
+    const picked = await promise;
+
+    expect(picked.images).toEqual(['file:///a.jpg']);
+    expect(picked.video).toBeNull();
+    expect(globalToast).toHaveBeenCalledWith(
+      '영상 미리보기를 만들지 못했어요. 영상 앞부분을 살짝 잘라내고 다시 시도해 주세요',
+      'fail'
+    );
+  });
+
+  it('썸네일을 0초가 아닌 지점에서 생성한다 (time:0 회귀 방지)', async () => {
+    setPicked([{ uri: 'file:///v.mov', type: 'video' }]);
+    const { result } = renderHook(() => useMediaPicker());
+
+    const promise = result.current.pickMedia();
+    await Promise.resolve();
+    await Promise.resolve();
+    emit('finish', { outputPath: 'file:///trimmed.mp4' });
+    await promise;
+
+    const call = (VideoThumbnails.getThumbnailAsync as jest.Mock).mock.calls[0];
+    expect(call[0]).toBe('file:///trimmed.mp4');
+    expect(call[1].time).toBeGreaterThan(0);
   });
 });

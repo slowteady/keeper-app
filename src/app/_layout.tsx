@@ -28,6 +28,7 @@ import { UrgentNoticeGate } from '@/features/notice';
 import { NotificationGate } from '@/features/notification';
 import { authApi, setupInterceptor } from '@/shared/api';
 import { clearSuspended, globalToast, logger, throwToErrorBoundary, useSuspension } from '@/shared/lib';
+import { AnalyticsProvider } from '@/shared/lib/analytics';
 import { BottomSheetProvider, LoadingOverlayProvider, ModalProvider, ShareGuard } from '@/shared/ui';
 
 import { config } from '../../tamagui.config';
@@ -199,35 +200,37 @@ const RootLayout = () => {
     <TamaguiProvider config={config}>
       <ErrorBoundary fallback={({ error, resetError }) => <ErrorFallback error={error} resetError={resetError} />}>
         <QueryClientProvider client={queryClient}>
-          <GestureHandlerRootView style={{ flex: 1 }} collapsable={!__DEV__} collapsableChildren={!__DEV__}>
-            <KeyboardProvider>
-              <SafeAreaProvider>
-                <BottomSheetProvider>
-                  <ModalProvider>
-                    <LoadingOverlayProvider>
-                      <StatusBar style="dark" />
-                      <Stack screenOptions={{ headerShown: false }}>
-                        <Stack.Screen name="community-write" options={{ presentation: 'fullScreenModal' }} />
-                        <Stack.Screen name="community-qna-write" options={{ presentation: 'fullScreenModal' }} />
-                      </Stack>
-                      <ShareGuard />
-                      <NotificationGate />
-                      <UrgentNoticeGate notice={gate.urgentNotice} />
-                      <Toaster
-                        position="top-center"
-                        duration={2000}
-                        swipeToDismissDirection="up"
-                        toastOptions={{
-                          toastContainerStyle: { paddingHorizontal: 20, width: '100%' },
-                          toastContentStyle: { width: '100%', padding: 0, backgroundColor: 'transparent' }
-                        }}
-                      />
-                    </LoadingOverlayProvider>
-                  </ModalProvider>
-                </BottomSheetProvider>
-              </SafeAreaProvider>
-            </KeyboardProvider>
-          </GestureHandlerRootView>
+          <AnalyticsProvider>
+            <GestureHandlerRootView style={{ flex: 1 }} collapsable={!__DEV__} collapsableChildren={!__DEV__}>
+              <KeyboardProvider>
+                <SafeAreaProvider>
+                  <BottomSheetProvider>
+                    <ModalProvider>
+                      <LoadingOverlayProvider>
+                        <StatusBar style="dark" />
+                        <Stack screenOptions={{ headerShown: false }}>
+                          <Stack.Screen name="community-write" options={{ presentation: 'fullScreenModal' }} />
+                          <Stack.Screen name="community-qna-write" options={{ presentation: 'fullScreenModal' }} />
+                        </Stack>
+                        <ShareGuard />
+                        <NotificationGate />
+                        <UrgentNoticeGate notice={gate.urgentNotice} />
+                        <Toaster
+                          position="top-center"
+                          duration={2000}
+                          swipeToDismissDirection="up"
+                          toastOptions={{
+                            toastContainerStyle: { paddingHorizontal: 20, width: '100%' },
+                            toastContentStyle: { width: '100%', padding: 0, backgroundColor: 'transparent' }
+                          }}
+                        />
+                      </LoadingOverlayProvider>
+                    </ModalProvider>
+                  </BottomSheetProvider>
+                </SafeAreaProvider>
+              </KeyboardProvider>
+            </GestureHandlerRootView>
+          </AnalyticsProvider>
         </QueryClientProvider>
       </ErrorBoundary>
     </TamaguiProvider>
