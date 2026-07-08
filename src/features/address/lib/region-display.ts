@@ -26,6 +26,8 @@ type RegionParts = {
   region_3depth_name: string;
 };
 
+export const shortenSido = (sido: string): string => SIDO_SHORT[sido] ?? sido;
+
 export const formatRegionDisplay = (parts: RegionParts): string => {
   const sido = SIDO_SHORT[parts.region_1depth_name] ?? parts.region_1depth_name;
   return [sido, parts.region_2depth_name, parts.region_3depth_name]
