@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Text, useTheme, YStack } from 'tamagui';
 
-import { Button, NoImage, Skeleton } from '@/shared/ui';
+import { Button, NoImage, Skeleton, useBottomSheet } from '@/shared/ui';
 
 import { usePoster } from '../model/use-poster';
 import { usePosterSave } from '../model/use-poster-save';
@@ -14,6 +14,7 @@ type PosterPreviewSheetProps = {
 
 export const PosterPreviewSheet = ({ desertionNo }: PosterPreviewSheetProps) => {
   const { white850 } = useTheme();
+  const { dismiss } = useBottomSheet();
   const { url, isLoading, isError, isEnded, refetch } = usePoster(desertionNo);
   const { save, isSaving } = usePosterSave();
   const [isImageLoaded, setIsImageLoaded] = useState(false);
@@ -26,6 +27,15 @@ export const PosterPreviewSheet = ({ desertionNo }: PosterPreviewSheetProps) => 
     setIsImageError(false);
     setIsImageLoaded(false);
     refetch();
+  };
+
+  const handleSave = async () => {
+    if (!url) {
+      return;
+    }
+    if (await save(url, desertionNo)) {
+      dismiss();
+    }
   };
 
   return (
@@ -54,7 +64,7 @@ export const PosterPreviewSheet = ({ desertionNo }: PosterPreviewSheetProps) => 
           <Text>다시 시도</Text>
         </Button>
       ) : (
-        <Button disabled={!url} isLoading={isSaving} onPress={() => (url ? save(url, desertionNo) : undefined)}>
+        <Button disabled={!url} isLoading={isSaving} onPress={handleSave}>
           <Text color="$black900" fontWeight="600">
             저장하기
           </Text>
