@@ -1,6 +1,6 @@
 import { logger } from './utils/handle-error';
 
-const SHARE_TYPES = ['adopt', 'shelter', 'community'] as const;
+const SHARE_TYPES = ['adopt', 'shelter', 'community', 'missing'] as const;
 type ShareType = (typeof SHARE_TYPES)[number];
 
 const isShareType = (value: string): value is ShareType => SHARE_TYPES.includes(value as ShareType);

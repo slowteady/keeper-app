@@ -13,7 +13,7 @@ const WEB_BASE_URL = process.env.EXPO_PUBLIC_SHARE_URL ?? 'https://our-keeper.co
 
 type ShareParams =
   | {
-      type: 'adopt' | 'shelter' | 'community';
+      type: 'adopt' | 'shelter' | 'community' | 'missing';
       id: number | string;
     }
   | {

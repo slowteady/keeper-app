@@ -2,13 +2,15 @@ import { Clock, Landmark, MapPin } from '@tamagui/lucide-icons';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
 import { Suspense, useMemo, useState } from 'react';
-import { RefreshControl } from 'react-native';
+import { Pressable, RefreshControl } from 'react-native';
 import { ScrollView, styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
 
 import { mapToMissingDetail, missingQueries } from '@/entities/missing';
+import { useLoginRequired } from '@/features/auth';
 import { SCREEN_GUTTER } from '@/shared/lib';
-import { useListRefreshing } from '@/shared/model';
+import { useListRefreshing, useShare } from '@/shared/model';
 import { BottomButton, CallModal, Carousel, DetailErrorBoundary, SuspenseFallback } from '@/shared/ui';
+import { Share as ShareIcon } from '@/shared/ui/icons/outline';
 import { DetailSpecSection } from '@/widgets/adopt-section';
 
 export const ErrorBoundary = DetailErrorBoundary;
@@ -33,6 +35,9 @@ const MissingDetailContent = ({ id }: { id: string }) => {
   const [callModalOpen, setCallModalOpen] = useState(false);
   const [buttonHeight, setButtonHeight] = useState(0);
 
+  const { share } = useShare();
+  const { requireLogin } = useLoginRequired();
+
   const { data, refetch } = useSuspenseQuery(missingQueries.detail(id));
   const { refreshing, handleRefresh } = useListRefreshing(async () => {
     await refetch();
@@ -40,6 +45,10 @@ const MissingDetailContent = ({ id }: { id: string }) => {
   const missing = useMemo(() => mapToMissingDetail(data), [data]);
 
   const canCall = !!missing.callTel;
+
+  const handlePressShare = () => {
+    share({ type: 'missing', id });
+  };
 
   return (
     <>
@@ -54,6 +63,12 @@ const MissingDetailContent = ({ id }: { id: string }) => {
             <Carousel data={missing.photos} showIndicator showImageViewer imageRadius={0} />
           </Hero>
         )}
+
+        <ActionRow px={SCREEN_GUTTER} mb={24}>
+          <Pressable hitSlop={10} onPress={handlePressShare} accessibilityLabel="공유">
+            <ShareIcon width={22} height={22} color={black600.val} />
+          </Pressable>
+        </ActionRow>
 
         <YStack px={SCREEN_GUTTER} gap={32}>
           <YStack gap={12}>
@@ -87,7 +102,7 @@ const MissingDetailContent = ({ id }: { id: string }) => {
 
       <BottomButton
         disabled={!canCall}
-        onPress={canCall ? () => setCallModalOpen(true) : undefined}
+        onPress={canCall ? () => requireLogin(() => setCallModalOpen(true)) : undefined}
         onLayout={(e) => {
           const h = e.nativeEvent.layout.height;
           setButtonHeight((prev) => (prev === h ? prev : h));
@@ -119,6 +134,11 @@ const Container = styled(View, {
 const Hero = styled(View, {
   width: '100%',
   aspectRatio: 4 / 3
+});
+
+const ActionRow = styled(XStack, {
+  items: 'center',
+  justify: 'flex-end'
 });
 
 const InfoTitle = styled(Text, {
