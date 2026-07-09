@@ -7,6 +7,7 @@ import { RefreshControl } from 'react-native';
 import { styled, View } from 'tamagui';
 
 import { ADOPT_OPTIONS, adoptQueries } from '@/entities/adopt';
+import { missingQueries } from '@/entities/missing';
 import { noticeQueries } from '@/entities/notice';
 import { shelterQueries } from '@/entities/shelter';
 import { useAdoptList, usePersonalAdoptList } from '@/features/adopt';
@@ -66,7 +67,8 @@ const Page = () => {
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: adoptQueries.all() }),
       queryClient.invalidateQueries({ queryKey: shelterQueries.all() }),
-      queryClient.invalidateQueries({ queryKey: noticeQueries.all() })
+      queryClient.invalidateQueries({ queryKey: noticeQueries.all() }),
+      queryClient.invalidateQueries({ queryKey: missingQueries.all() })
     ]);
   }, [queryClient]);
 
