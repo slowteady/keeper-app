@@ -36,9 +36,11 @@ describe('redirectSystemPath', () => {
     ['https://our-keeper.com/share/adopt/123', '/(untabs)/adopt/123'],
     ['https://our-keeper.com/share/shelter/abc', '/(untabs)/shelter/abc'],
     ['https://our-keeper.com/share/community/45', '/(untabs)/community/45'],
+    ['https://our-keeper.com/share/missing/77', '/(untabs)/missing/77'],
     ['keeper://adopt/123', '/(untabs)/adopt/123'],
     ['keeper://shelter/abc', '/(untabs)/shelter/abc'],
-    ['keeper://community/45', '/(untabs)/community/45']
+    ['keeper://community/45', '/(untabs)/community/45'],
+    ['keeper://missing/77', '/(untabs)/missing/77']
   ])('%s → %s', (input, expected) => {
     expect(redirectSystemPath({ path: input, initial: true })).toBe(expected);
   });
