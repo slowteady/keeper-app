@@ -17,8 +17,8 @@ import { useListRefreshing } from '@/shared/model';
 import { RouteErrorBoundary } from '@/shared/ui';
 import {
   HomeAdoptSection,
-  HomeBannerSection,
   HomeFooterSection,
+  HomeMissingHero,
   HomeNoticeSection,
   HomePersonalSection,
   HomeShelterSection
@@ -78,7 +78,7 @@ const Page = () => {
         case 'banner':
           return (
             <View px={SCREEN_GUTTER} pt={hasNotice ? 8 : 24} pb={SECTION_GAP}>
-              <HomeBannerSection images={IMAGES} />
+              <HomeMissingHero fallbackImages={IMAGES} />
             </View>
           );
         case 'notice':

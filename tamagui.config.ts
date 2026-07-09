@@ -63,7 +63,7 @@ export const config = createTamagui({
       black900: '#161717',
       primaryMain: '#1FE678',
       primaryDark: '#15BC60',
-      primaryLightest: '#30e582',
+      primaryLightest: '#DDFBEB',
       errorMain: '#FF4C47',
       errorLight: '#FFD7D6',
       errorLightest: '#FFD7D6',
@@ -136,7 +136,7 @@ export const config = createTamagui({
 
       primaryMain: '#1FE678',
       primaryDark: '#15BC60',
-      primaryLightest: '#30e582',
+      primaryLightest: '#DDFBEB',
 
       errorMain: '#FF4C47',
       errorLight: '#FFD7D6',

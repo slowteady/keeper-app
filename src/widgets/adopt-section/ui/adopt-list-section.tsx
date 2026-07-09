@@ -21,6 +21,7 @@ export type AdoptListSectionProps<T> = {
   onScroll?: FlashListProps<T>['onScroll'];
   contentContainerStyle?: FlashListProps<T>['contentContainerStyle'];
   emptyComponentVariant?: 'feed' | 'list';
+  emptyComponent?: ReactElement;
   numColumns?: number;
 };
 
@@ -37,6 +38,7 @@ const AdoptListSectionInner = <T extends { id: string }>(
     onScroll,
     contentContainerStyle,
     emptyComponentVariant = 'feed',
+    emptyComponent,
     numColumns = 2
   }: AdoptListSectionProps<T>,
   ref: ForwardedRef<FlashListRef<T>>
@@ -58,13 +60,15 @@ const AdoptListSectionInner = <T extends { id: string }>(
       ListHeaderComponent={header ?? null}
       ListFooterComponent={footer ?? null}
       ListEmptyComponent={
-        <EmptyComponent
-          isLoading={isLoading}
-          isError={isError}
-          onRetry={handleRefresh}
-          emptyComponentVariant={emptyComponentVariant}
-          numColumns={numColumns}
-        />
+        emptyComponent ?? (
+          <EmptyComponent
+            isLoading={isLoading}
+            isError={isError}
+            onRetry={handleRefresh}
+            emptyComponentVariant={emptyComponentVariant}
+            numColumns={numColumns}
+          />
+        )
       }
       contentContainerStyle={[{ flexGrow: 1 }, contentContainerStyle]}
       style={style}
