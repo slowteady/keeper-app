@@ -44,7 +44,7 @@ PostHog 웹 SDK가 `utm_*`과 `document.referrer`를 자동으로 person propert
 
 ### keeper-app
 
-- EAS production에 `EXPO_PUBLIC_POSTHOG_KEY`, `EXPO_PUBLIC_POSTHOG_HOST` 등록. preview는 미등록 → 계측 off(내부 테스트 이벤트가 프로덕션 데이터를 오염시키지 않게). 나중에 preview 계측이 필요하면 PostHog Environments로 분리한다.
+- EAS production에 `EXPO_PUBLIC_POSTHOG_KEY`, `EXPO_PUBLIC_POSTHOG_HOST` 등록. **계측은 프로덕션에서만 한다** — 알고 싶은 것이 실사용자의 행동이므로 preview·dev 데이터는 필요 없다. preview는 키 미등록으로 자연히 off 되고, PostHog 환경도 프로젝트 하나만 쓴다.
 - `deeplink.ts`: `redirectSystemPath`는 expo-router가 React 트리 밖 모듈 스코프에서 호출하므로 훅을 못 쓴다. pub-sub(`subscribeDeeplink`)으로 이벤트를 방출하고, 구독자가 없으면(콜드 스타트) 보관했다가 구독 시점에 한 번만 전달한다.
 - `analytics-provider.tsx`: `DeeplinkTracker`가 구독해 `deeplink_opened`를 발사한다(`type`, `id`, `utm_source`, `utm_medium`, `utm_content`, `initial`).
 - `use-share.ts`: 공유 URL에 `?utm_source=app&utm_medium=share`. `content_shared`에 `platform` 추가.
