@@ -72,6 +72,8 @@ export function resolveNotificationPath(
   type?: string | null
 ): string | null {
   if (type === 'CONTENT_BLINDED') return '/(untabs)/profile/inquiry/new';
+  if (refType === 'favorite') return '/(untabs)/profile/like';
+  if (refType === 'shelter-favorite') return '/(untabs)/profile/like?tab=shelter';
   if (!refType || !refId) return null;
   switch (refType) {
     case 'post':
@@ -79,11 +81,26 @@ export function resolveNotificationPath(
       return `/(untabs)/community/${refId}`;
     case 'inquiry':
       return `/(untabs)/profile/inquiry/${refId}`;
+    case 'adopt':
+      return `/(untabs)/adopt/${refId}`;
+    case 'shelter':
+      return `/(untabs)/shelter/${refId}`;
     default:
       logger.error('[deeplink] unsupported refType', refType);
       return null;
   }
 }
+
+const toRouterPath = (path: string): string => {
+  try {
+    const url = new URL(path);
+    const host = url.protocol === 'keeper:' ? url.host : '';
+    const pathname = `${host ? `/${host}` : ''}${url.pathname}`;
+    return `${pathname || '/'}${url.search}`;
+  } catch {
+    return path;
+  }
+};
 
 export function redirectSystemPath({ path, initial }: { path: string; initial: boolean }) {
   try {
@@ -92,7 +109,7 @@ export function redirectSystemPath({ path, initial }: { path: string; initial: b
       emitDeeplink({ type, id, ...extractUtm(path), initial });
       return `/(untabs)/${type}/${id}`;
     }
-    return path;
+    return toRouterPath(path);
   } catch {
     return '/';
   }

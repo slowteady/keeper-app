@@ -29,6 +29,22 @@ describe('resolveNotificationPath', () => {
     expect(resolveNotificationPath('unknown', 'x')).toBeNull();
     expect(logger.error).toHaveBeenCalledWith('[deeplink] unsupported refType', 'unknown');
   });
+
+  it('adopt refType 은 공고 상세로 보낸다', () => {
+    expect(resolveNotificationPath('adopt', '448575202500001')).toBe('/(untabs)/adopt/448575202500001');
+  });
+
+  it('favorite refType 은 refId 없이 관심 목록으로 보낸다', () => {
+    expect(resolveNotificationPath('favorite', null)).toBe('/(untabs)/profile/like');
+  });
+
+  it('shelter refType 은 보호소 상세로 보낸다', () => {
+    expect(resolveNotificationPath('shelter', '331314202600001')).toBe('/(untabs)/shelter/331314202600001');
+  });
+
+  it('shelter-favorite refType 은 관심 목록의 보호소 탭으로 보낸다', () => {
+    expect(resolveNotificationPath('shelter-favorite', null)).toBe('/(untabs)/profile/like?tab=shelter');
+  });
 });
 
 describe('redirectSystemPath', () => {
@@ -45,18 +61,28 @@ describe('redirectSystemPath', () => {
     expect(redirectSystemPath({ path: input, initial: true })).toBe(expected);
   });
 
-  it('미지원 type 은 원본 path 를 반환한다', () => {
-    const path = 'https://our-keeper.com/share/foo/1';
-    expect(redirectSystemPath({ path, initial: true })).toBe(path);
+  it('미지원 type 은 경로만 남겨 반환한다', () => {
+    expect(redirectSystemPath({ path: 'https://our-keeper.com/share/foo/1', initial: true })).toBe('/share/foo/1');
   });
 
-  it('id 가 없으면 원본 path 를 반환한다', () => {
-    const path = 'https://our-keeper.com/share/adopt';
-    expect(redirectSystemPath({ path, initial: true })).toBe(path);
+  it('id 가 없으면 경로만 남겨 반환한다', () => {
+    expect(redirectSystemPath({ path: 'https://our-keeper.com/share/adopt', initial: true })).toBe('/share/adopt');
   });
 
   it('share prefix 없는 keeper 스킴도 변환한다', () => {
     expect(redirectSystemPath({ path: 'keeper://adopt/999', initial: false })).toBe('/(untabs)/adopt/999');
+  });
+
+  it.each([
+    ['keeper:///(untabs)/profile/like?tab=shelter', '/(untabs)/profile/like?tab=shelter'],
+    ['exp+keeper:///(untabs)/profile/like?tab=shelter', '/(untabs)/profile/like?tab=shelter'],
+    ['keeper:///(untabs)/profile/like', '/(untabs)/profile/like']
+  ])('공유 대상이 아닌 스킴 URL 은 라우터 경로로 정규화한다: %s → %s', (input, expected) => {
+    expect(redirectSystemPath({ path: input, initial: true })).toBe(expected);
+  });
+
+  it('이미 라우터 경로면 그대로 반환한다', () => {
+    expect(redirectSystemPath({ path: '/(untabs)/profile/like', initial: true })).toBe('/(untabs)/profile/like');
   });
 
   it('깨진 입력에도 throw 하지 않는다', () => {
