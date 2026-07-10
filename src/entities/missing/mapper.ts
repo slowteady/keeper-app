@@ -52,6 +52,6 @@ export const mapToMissingDetail = (data: MissingDataDto) => {
     orgNm: data.orgNm,
     happenPlace: data.happenPlace,
     happenDt: dayjs(data.happenDt).format('YYYY.MM.DD'),
-    callTel: data.callTel
+    hasCallTel: data.hasCallTel
   };
 };

@@ -16,9 +16,14 @@ export const MissingResponseSchema = z.object({
 export type MissingResponseDto = z.infer<typeof MissingResponseSchema>;
 
 export const MissingDataSchema = MissingResponseSchema.extend({
-  callTel: z.string().nullable()
+  hasCallTel: z.boolean()
 });
 export type MissingDataDto = z.infer<typeof MissingDataSchema>;
+
+export const MissingContactSchema = z.object({
+  callTel: z.string()
+});
+export type MissingContactDto = z.infer<typeof MissingContactSchema>;
 
 export const MissingListSchema = z.object({
   items: z.array(MissingResponseSchema),

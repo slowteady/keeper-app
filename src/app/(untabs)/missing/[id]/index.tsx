@@ -1,13 +1,13 @@
 import { Clock, Landmark, MapPin } from '@tamagui/lucide-icons';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
 import { Suspense, useMemo, useState } from 'react';
 import { Pressable, RefreshControl } from 'react-native';
 import { ScrollView, styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
 
-import { mapToMissingDetail, missingQueries } from '@/entities/missing';
+import { getMissingContact, mapToMissingDetail, missingQueries } from '@/entities/missing';
 import { useLoginRequired } from '@/features/auth';
-import { SCREEN_GUTTER } from '@/shared/lib';
+import { globalToast, SCREEN_GUTTER } from '@/shared/lib';
 import { useListRefreshing, useShare } from '@/shared/model';
 import { BottomButton, CallModal, Carousel, DetailErrorBoundary, SuspenseFallback } from '@/shared/ui';
 import { Share as ShareIcon } from '@/shared/ui/icons/outline';
@@ -33,6 +33,7 @@ export default Page;
 const MissingDetailContent = ({ id }: { id: string }) => {
   const { black600 } = useTheme();
   const [callModalOpen, setCallModalOpen] = useState(false);
+  const [callTel, setCallTel] = useState<string | null>(null);
   const [buttonHeight, setButtonHeight] = useState(0);
 
   const { share } = useShare();
@@ -44,7 +45,16 @@ const MissingDetailContent = ({ id }: { id: string }) => {
   });
   const missing = useMemo(() => mapToMissingDetail(data), [data]);
 
-  const canCall = !!missing.callTel;
+  const { mutate: loadContact, isPending } = useMutation({
+    mutationFn: () => getMissingContact(id),
+    onSuccess: (contact) => {
+      setCallTel(contact.callTel);
+      setCallModalOpen(true);
+    },
+    onError: () => globalToast('연락처를 불러오지 못했어요', 'fail')
+  });
+
+  const canCall = missing.hasCallTel;
 
   const handlePressShare = () => {
     share({ type: 'missing', id });
@@ -101,8 +111,8 @@ const MissingDetailContent = ({ id }: { id: string }) => {
       </ScrollView>
 
       <BottomButton
-        disabled={!canCall}
-        onPress={canCall ? () => requireLogin(() => setCallModalOpen(true)) : undefined}
+        disabled={!canCall || isPending}
+        onPress={canCall ? () => requireLogin(() => loadContact()) : undefined}
         onLayout={(e) => {
           const h = e.nativeEvent.layout.height;
           setButtonHeight((prev) => (prev === h ? prev : h));
@@ -113,11 +123,11 @@ const MissingDetailContent = ({ id }: { id: string }) => {
         </Text>
       </BottomButton>
 
-      {missing.callTel && (
+      {callTel && (
         <CallModal
           open={callModalOpen}
           onClose={() => setCallModalOpen(false)}
-          tel={missing.callTel}
+          tel={callTel}
           title="보호자에게 전화하기"
           description="*실종 반려동물을 발견하셨다면 보호자에게 연락해 주세요"
         />

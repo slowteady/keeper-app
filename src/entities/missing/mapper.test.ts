@@ -50,11 +50,11 @@ describe('mapToMissingList', () => {
 });
 
 describe('mapToMissingDetail', () => {
-  const detail: MissingDataDto = { ...mockItem, callTel: '010-1234-5678' };
+  const detail: MissingDataDto = { ...mockItem, hasCallTel: true };
 
-  it('callTel·사진·관할기관·실종장소·실종일(포맷) 전달', () => {
+  it('hasCallTel·사진·관할기관·실종장소·실종일(포맷) 전달', () => {
     const result = mapToMissingDetail(detail);
-    expect(result.callTel).toBe('010-1234-5678');
+    expect(result.hasCallTel).toBe(true);
     expect(result.photos).toEqual(mockItem.photos);
     expect(result.orgNm).toBe('강남구청');
     expect(result.happenPlace).toBe('역삼역 3번 출구');
