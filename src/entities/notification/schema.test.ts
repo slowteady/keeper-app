@@ -1,3 +1,5 @@
+import { logger } from '@/shared/lib/utils/handle-error';
+
 import {
   NOTIFICATION_CATEGORIES,
   NOTIFICATION_TYPE_LABEL,
@@ -8,6 +10,14 @@ import {
   PUSH_PLATFORMS,
   UnreadCountSchema
 } from './schema';
+
+jest.mock('@/shared/lib/utils/handle-error', () => ({
+  logger: { error: jest.fn() }
+}));
+
+beforeEach(() => {
+  (logger.error as jest.Mock).mockClear();
+});
 
 const baseNotification = {
   id: 'n1',
@@ -33,7 +43,9 @@ describe('NOTIFICATION enum 가드 (백엔드 단일 출처 미러)', () => {
       'ADMIN_NEW_REPORT',
       'ADMIN_NEW_INQUIRY',
       'POST_COMMENTED',
-      'COMMENT_REPLIED'
+      'COMMENT_REPLIED',
+      'ADOPT_DEADLINE_NEAR',
+      'SHELTER_NEW_ADOPT'
     ]);
   });
 
@@ -42,7 +54,7 @@ describe('NOTIFICATION enum 가드 (백엔드 단일 출처 미러)', () => {
   });
 
   it('NotificationCategory 값이 동일하다', () => {
-    expect(NOTIFICATION_CATEGORIES).toEqual(['COMMUNITY', 'REPORT', 'INQUIRY']);
+    expect(NOTIFICATION_CATEGORIES).toEqual(['COMMUNITY', 'REPORT', 'INQUIRY', 'FAVORITE']);
   });
 
   it('모든 type에 라벨이 정의돼 있다', () => {
@@ -91,6 +103,55 @@ describe('NotificationListResponseSchema', () => {
     });
     expect(parsed.items).toHaveLength(1);
     expect(parsed.hasNext).toBe(false);
+  });
+
+  it('서버가 앱보다 먼저 배포돼 모르는 type이 섞여도 나머지를 살린다', () => {
+    const parsed = NotificationListResponseSchema.parse({
+      items: [baseNotification, { ...baseNotification, id: 'n2', type: 'FUTURE_TYPE' }],
+      total: 2,
+      page: 1,
+      size: 20,
+      hasNext: false
+    });
+
+    expect(parsed.items).toHaveLength(1);
+    expect(parsed.items[0].id).toBe('n1');
+  });
+
+  it('드롭이 발생하면 몇 건인지 기록한다', () => {
+    NotificationListResponseSchema.parse({
+      items: [baseNotification, { ...baseNotification, id: 'n2', type: 'FUTURE_TYPE' }],
+      total: 2,
+      page: 1,
+      size: 20,
+      hasNext: false
+    });
+
+    expect(logger.error).toHaveBeenCalledWith('[notification] 해석할 수 없는 알림을 건너뜁니다', 1);
+  });
+
+  it('드롭이 없으면 아무것도 기록하지 않는다', () => {
+    NotificationListResponseSchema.parse({
+      items: [baseNotification],
+      total: 1,
+      page: 1,
+      size: 20,
+      hasNext: false
+    });
+
+    expect(logger.error).not.toHaveBeenCalled();
+  });
+
+  it('알 수 없는 type만 있으면 빈 목록이 된다', () => {
+    const parsed = NotificationListResponseSchema.parse({
+      items: [{ ...baseNotification, type: 'FUTURE_TYPE' }],
+      total: 1,
+      page: 1,
+      size: 20,
+      hasNext: false
+    });
+
+    expect(parsed.items).toEqual([]);
   });
 });
 

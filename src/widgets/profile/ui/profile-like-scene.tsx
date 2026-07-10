@@ -1,5 +1,5 @@
 import { FlashList, ListRenderItemInfo } from '@shopify/flash-list';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import { styled, View, XStack, YStack } from 'tamagui';
 
@@ -22,6 +22,8 @@ const TOP_TABS = [
 ] as const;
 type TopTab = (typeof TOP_TABS)[number]['id'];
 
+const isTopTab = (value?: string): value is TopTab => TOP_TABS.some((item) => item.id === value);
+
 const ADOPT_SUB = [
   { id: 'abandonment', label: '보호소 공고' },
   { id: 'personal', label: '개인 공고' }
@@ -29,7 +31,8 @@ const ADOPT_SUB = [
 type AdoptSub = (typeof ADOPT_SUB)[number]['id'];
 
 export const ProfileLikeScene = () => {
-  const [tab, setTab] = useState<TopTab>('adopt');
+  const { tab: initialTab } = useLocalSearchParams<{ tab?: string }>();
+  const [tab, setTab] = useState<TopTab>(isTopTab(initialTab) ? initialTab : 'adopt');
 
   return (
     <Container>
