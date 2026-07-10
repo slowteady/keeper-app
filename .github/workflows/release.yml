@@ -4,10 +4,10 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "릴리즈 버전 (X.X.X) ⚠️ 브랜치는 main 선택"
+        description: '릴리즈 버전 (X.X.X) ⚠️ 브랜치는 main 선택'
         required: true
         type: string
-        default: "2.0.7"
+        default: '2.0.7'
 
 jobs:
   release:
@@ -25,6 +25,22 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: 이미 릴리즈된 버전인지 확인
+        run: |
+          VERSION=v${{ github.event.inputs.version }}
+          if git ls-remote --tags origin | grep -q "refs/tags/${VERSION}$"; then
+            echo "::error::태그 ${VERSION} 이 이미 존재합니다. 이미 릴리즈된 버전은 다시 만들 수 없습니다."
+            exit 1
+          fi
+
+      - name: 기존 release 브랜치 정리
+        run: |
+          BRANCH=release/v${{ github.event.inputs.version }}
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; then
+            echo "미머지 상태인 ${BRANCH} 를 삭제하고 최신 develop 기준으로 다시 만듭니다."
+            git push origin --delete "$BRANCH"
+          fi
 
       - name: release 브랜치 생성
         run: git checkout -b release/v${{ github.event.inputs.version }}
