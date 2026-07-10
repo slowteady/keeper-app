@@ -1,5 +1,6 @@
 import { renderHook } from '@testing-library/react-native';
-import { Video } from 'react-native-compressor';
+import { ImageManipulator } from 'expo-image-manipulator';
+import { compress } from 'react-native-video-trim';
 
 import { getPresignedUrls } from '@/entities/upload';
 import { createWrapper } from '@/test/create-wrapper';
@@ -10,12 +11,12 @@ jest.mock('@/entities/upload', () => ({
   getPresignedUrls: jest.fn()
 }));
 
-jest.mock('react-native-compressor', () => ({
-  Video: { compress: jest.fn() }
+jest.mock('react-native-video-trim', () => ({
+  compress: jest.fn()
 }));
 
 const mockedGetPresigned = jest.mocked(getPresignedUrls);
-const mockedCompress = jest.mocked(Video.compress);
+const mockedCompress = jest.mocked(compress);
 
 const originalFetch = global.fetch;
 const mockedFetch = jest.fn();
@@ -53,11 +54,24 @@ const setPresign = (video: string, thumb: string) => {
   );
 };
 
+const setThumbnailSize = (width: number, height: number) => {
+  (ImageManipulator.manipulate as jest.Mock).mockReturnValue({
+    renderAsync: jest.fn(() =>
+      Promise.resolve({
+        width,
+        height,
+        saveAsync: jest.fn(() => Promise.resolve({ uri: 'file:///mock/manipulated.jpg' }))
+      })
+    )
+  });
+};
+
 const localVideo = { uri: 'file:///v.mov', thumbnailUri: 'file:///t.jpg' };
 
 beforeEach(() => {
   jest.clearAllMocks();
-  mockedCompress.mockResolvedValue('file:///compressed.mp4');
+  mockedCompress.mockResolvedValue({ outputPath: 'file:///compressed.mp4' });
+  setThumbnailSize(800, 800);
   setupFetch();
 });
 
@@ -74,7 +88,8 @@ describe('useVideoUpload', () => {
     });
   });
 
-  it('영상은 720p/H.264 manual 압축한다', async () => {
+  it('가로 영상은 너비를 720 으로 맞춘다', async () => {
+    setThumbnailSize(1920, 1080);
     setPresign('https://r2/v.mp4', 'https://r2/t.jpg');
     const { result } = renderHook(() => useVideoUpload(), { wrapper: createWrapper() });
 
@@ -82,9 +97,31 @@ describe('useVideoUpload', () => {
 
     expect(mockedCompress).toHaveBeenCalledWith(
       'file:///v.mov',
-      expect.objectContaining({ compressionMethod: 'manual', maxSize: 720, bitrate: 2000000 }),
-      expect.any(Function)
+      expect.objectContaining({ bitrate: 2000000, width: 720, height: -1 })
     );
+  });
+
+  it('세로 영상은 높이를 720 으로 맞춘다', async () => {
+    setThumbnailSize(1080, 1920);
+    setPresign('https://r2/v.mp4', 'https://r2/t.jpg');
+    const { result } = renderHook(() => useVideoUpload(), { wrapper: createWrapper() });
+
+    await result.current.mutateAsync({ video: localVideo });
+
+    expect(mockedCompress).toHaveBeenCalledWith(
+      'file:///v.mov',
+      expect.objectContaining({ bitrate: 2000000, width: -1, height: 720 })
+    );
+  });
+
+  it('안드로이드 outputPath(스킴 없는 절대경로)를 file:// 로 정규화해 업로드한다', async () => {
+    mockedCompress.mockResolvedValue({ outputPath: '/data/user/0/com.keeper.love/cache/compressed.mp4' });
+    setPresign('https://r2/v.mp4', 'https://r2/t.jpg');
+    const { result } = renderHook(() => useVideoUpload(), { wrapper: createWrapper() });
+
+    await result.current.mutateAsync({ video: localVideo });
+
+    expect(mockedFetch).toHaveBeenCalledWith('file:///data/user/0/com.keeper.love/cache/compressed.mp4');
   });
 
   it('presign 은 video/image 각각 mediaType 으로 호출한다', async () => {
@@ -117,20 +154,6 @@ describe('useVideoUpload', () => {
     expect(res.videoUrl).toBe('https://r2/v.mp4');
     const put = mockedFetch.mock.calls.find(([url, init]) => init?.method === 'PUT' && url === 'https://r2/v.mp4/put');
     expect(put?.[1]?.body).toBe(fakeBlob);
-  });
-
-  it('onProgress 를 compress 진행률로 전달한다', async () => {
-    mockedCompress.mockImplementation(async (_uri, _opts, onProgress) => {
-      (onProgress as (p: number) => void)?.(0.5);
-      return 'file:///compressed.mp4';
-    });
-    setPresign('https://r2/v.mp4', 'https://r2/t.jpg');
-    const onProgress = jest.fn();
-    const { result } = renderHook(() => useVideoUpload(), { wrapper: createWrapper() });
-
-    await result.current.mutateAsync({ video: localVideo, onProgress });
-
-    expect(onProgress).toHaveBeenCalledWith(0.5);
   });
 
   it('PUT 실패 시 reject', async () => {

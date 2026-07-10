@@ -8,6 +8,7 @@ import { globalToast } from '@/shared/lib';
 import { useMediaPicker } from './use-media-picker';
 
 jest.mock('@/shared/lib', () => ({
+  ...jest.requireActual('@/shared/lib/utils/file-uri'),
   globalToast: jest.fn(),
   logger: { error: jest.fn() }
 }));
@@ -160,10 +161,36 @@ describe('useMediaPicker', () => {
 
     expect(picked.images).toEqual(['file:///a.jpg']);
     expect(picked.video).toBeNull();
-    expect(globalToast).toHaveBeenCalledWith(
-      '영상 미리보기를 만들지 못했어요. 영상 앞부분을 살짝 잘라내고 다시 시도해 주세요',
-      'fail'
-    );
+    expect(globalToast).toHaveBeenCalledWith('영상 미리보기를 만들지 못했어요. 다시 시도해 주세요', 'fail');
+  });
+
+  it('안드로이드 outputPath(스킴 없는 절대경로)를 file:// 로 정규화한다', async () => {
+    setPicked([{ uri: 'file:///v.mov', type: 'video' }]);
+    const { result } = renderHook(() => useMediaPicker());
+
+    const promise = result.current.pickMedia();
+    await Promise.resolve();
+    await Promise.resolve();
+    emit('finish', { outputPath: '/data/user/0/com.keeper.love/files/trimmedVideo_1752.mp4' });
+    const picked = await promise;
+
+    const expected = 'file:///data/user/0/com.keeper.love/files/trimmedVideo_1752.mp4';
+    expect(picked.video?.uri).toBe(expected);
+    expect(isValidFile).toHaveBeenLastCalledWith(expected);
+    expect((VideoThumbnails.getThumbnailAsync as jest.Mock).mock.calls[0][0]).toBe(expected);
+  });
+
+  it('이미 스킴이 있는 outputPath 는 그대로 둔다', async () => {
+    setPicked([{ uri: 'file:///v.mov', type: 'video' }]);
+    const { result } = renderHook(() => useMediaPicker());
+
+    const promise = result.current.pickMedia();
+    await Promise.resolve();
+    await Promise.resolve();
+    emit('finish', { outputPath: 'file:///var/mobile/trimmed.mp4' });
+    const picked = await promise;
+
+    expect(picked.video?.uri).toBe('file:///var/mobile/trimmed.mp4');
   });
 
   it('썸네일을 0초가 아닌 지점에서 생성한다 (time:0 회귀 방지)', async () => {

@@ -35,7 +35,6 @@ module.exports = [
     }
   ],
   'expo-video',
-  'react-native-compressor',
   [
     'expo-build-properties',
     {

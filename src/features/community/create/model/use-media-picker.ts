@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import VideoTrim, { isValidFile, showEditor } from 'react-native-video-trim';
 
 import { MediaVideoDto } from '@/entities/community';
-import { globalToast, logger } from '@/shared/lib';
+import { globalToast, logger, toFileUri } from '@/shared/lib';
 
 const TRIM_MAX_MS = 30000;
 
@@ -19,7 +19,7 @@ const trimVideo = (uri: string): Promise<TrimResult> =>
     subs.push(
       VideoTrim.onFinishTrimming(({ outputPath }: { outputPath: string }) => {
         cleanup();
-        resolve({ status: 'done', uri: outputPath });
+        resolve({ status: 'done', uri: toFileUri(outputPath) });
       }),
       VideoTrim.onCancel(() => {
         cleanup();
@@ -78,7 +78,7 @@ export const useMediaPicker = () => {
         thumbnailUri = await generateThumbnail(trimmedUri, trimmedInfo?.duration ?? 0);
       } catch (error) {
         logger.error(error);
-        globalToast('영상 미리보기를 만들지 못했어요. 영상 앞부분을 살짝 잘라내고 다시 시도해 주세요', 'fail');
+        globalToast('영상 미리보기를 만들지 못했어요. 다시 시도해 주세요', 'fail');
         return { images, video: null };
       }
 

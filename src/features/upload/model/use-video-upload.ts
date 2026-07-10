@@ -1,32 +1,35 @@
 import { useMutation } from '@tanstack/react-query';
 import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
-import { Video } from 'react-native-compressor';
+import { compress } from 'react-native-video-trim';
 
 import { getPresignedUrls } from '@/entities/upload';
+import { toFileUri } from '@/shared/lib';
 
 const VIDEO_MAX_SIZE = 720;
 const VIDEO_BITRATE = 2_000_000;
 
 type LocalVideo = { uri: string; thumbnailUri: string };
+type Thumbnail = { uri: string; portrait: boolean };
 export type VideoUploadResult = { videoUrl: string; videoThumbnailUrl: string };
-type VideoUploadVars = { video: LocalVideo; onProgress?: (progress: number) => void };
+type VideoUploadVars = { video: LocalVideo };
 
-const compressVideo = async (uri: string, onProgress?: (progress: number) => void): Promise<string> => {
+const compressVideo = async (uri: string, portrait: boolean): Promise<string> => {
   try {
-    return await Video.compress(
-      uri,
-      { compressionMethod: 'manual', maxSize: VIDEO_MAX_SIZE, bitrate: VIDEO_BITRATE },
-      (progress) => onProgress?.(progress)
-    );
+    const { outputPath } = await compress(uri, {
+      bitrate: VIDEO_BITRATE,
+      width: portrait ? -1 : VIDEO_MAX_SIZE,
+      height: portrait ? VIDEO_MAX_SIZE : -1
+    });
+    return toFileUri(outputPath);
   } catch {
     return uri;
   }
 };
 
-const toJpeg = async (uri: string): Promise<string> => {
+const toJpeg = async (uri: string): Promise<Thumbnail> => {
   const rendered = await ImageManipulator.manipulate(uri).renderAsync();
   const result = await rendered.saveAsync({ format: SaveFormat.JPEG });
-  return result.uri;
+  return { uri: result.uri, portrait: rendered.height > rendered.width };
 };
 
 const putFile = async (uploadUrl: string, uri: string, contentType: string) => {
@@ -37,13 +40,11 @@ const putFile = async (uploadUrl: string, uri: string, contentType: string) => {
   }
 };
 
-const uploadVideo = async ({ video, onProgress }: VideoUploadVars): Promise<VideoUploadResult> => {
-  const [compressedUri, thumbnailUri] = await Promise.all([
-    compressVideo(video.uri, onProgress),
-    toJpeg(video.thumbnailUri)
-  ]);
+const uploadVideo = async ({ video }: VideoUploadVars): Promise<VideoUploadResult> => {
+  const thumbnail = await toJpeg(video.thumbnailUri);
 
-  const [videoPresign, thumbPresign] = await Promise.all([
+  const [compressedUri, videoPresign, thumbPresign] = await Promise.all([
+    compressVideo(video.uri, thumbnail.portrait),
     getPresignedUrls({ count: 1, mediaType: 'video' }),
     getPresignedUrls({ count: 1, mediaType: 'image' })
   ]);
@@ -52,7 +53,7 @@ const uploadVideo = async ({ video, onProgress }: VideoUploadVars): Promise<Vide
 
   await Promise.all([
     putFile(videoItem.uploadUrl, compressedUri, 'video/mp4'),
-    putFile(thumbItem.uploadUrl, thumbnailUri, 'image/jpeg')
+    putFile(thumbItem.uploadUrl, thumbnail.uri, 'image/jpeg')
   ]);
 
   return { videoUrl: videoItem.publicUrl, videoThumbnailUrl: thumbItem.publicUrl };
