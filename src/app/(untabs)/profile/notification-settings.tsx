@@ -1,5 +1,4 @@
 import { LogIn } from '@tamagui/lucide-icons';
-import { useState } from 'react';
 import { Pressable } from 'react-native';
 import { ScrollView, styled, Text, View, XStack, YStack } from 'tamagui';
 
@@ -12,7 +11,6 @@ import {
   useNotificationPreferences
 } from '@/features/notification';
 import { SCREEN_GUTTER } from '@/shared/lib';
-import { useAnalytics } from '@/shared/lib/analytics';
 import { NavigateHeader } from '@/shared/ui';
 
 const Page = () => {
@@ -22,14 +20,6 @@ const Page = () => {
   const openLoginSheet = useOpenLoginSheet();
   const { isGranted, openSettings } = useNotificationPermission();
   const { categories, isEnabled, toggle } = useNotificationPreferences(isLoggedIn);
-
-  const { optOut, optIn, optedOut } = useAnalytics();
-  const [analyticsAllowed, setAnalyticsAllowed] = useState(!optedOut);
-  const handleAnalyticsToggle = (next: boolean) => {
-    setAnalyticsAllowed(next);
-    if (next) optIn();
-    else optOut();
-  };
 
   const generalCategories = categories.filter((category) => NOTIFICATION_CATEGORY_META[category].section === 'general');
   const adminCategories = categories.filter((category) => NOTIFICATION_CATEGORY_META[category].section === 'admin');
@@ -74,16 +64,6 @@ const Page = () => {
             {adminCategories.map(renderToggle)}
           </YStack>
         )}
-
-        <YStack px={SCREEN_GUTTER} mt={32}>
-          <SectionTitle>개인정보</SectionTitle>
-          <NotificationToggleRow
-            label="이용 정보 분석 허용"
-            description="서비스 개선을 위한 익명 사용 통계 수집에 동의해요"
-            value={analyticsAllowed}
-            onChange={handleAnalyticsToggle}
-          />
-        </YStack>
       </ScrollView>
     </Container>
   );

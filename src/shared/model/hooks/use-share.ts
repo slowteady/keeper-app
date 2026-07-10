@@ -10,6 +10,7 @@ import { useIsSharing, useSetIsSharing } from '../share/share-atom';
 const POST_SHARE_GUARD_MS = 600;
 
 const WEB_BASE_URL = process.env.EXPO_PUBLIC_SHARE_URL ?? 'https://our-keeper.com';
+const SHARE_UTM = 'utm_source=app&utm_medium=share';
 
 type ShareParams =
   | {
@@ -32,18 +33,21 @@ export const useShare = () => {
       try {
         const shareUrl =
           params.type === 'app'
-            ? WEB_BASE_URL
-            : `${WEB_BASE_URL}/share/${params.type}/${encodeURIComponent(params.id.toString())}`;
+            ? `${WEB_BASE_URL}?${SHARE_UTM}`
+            : `${WEB_BASE_URL}/share/${params.type}/${encodeURIComponent(params.id.toString())}?${SHARE_UTM}`;
 
         const result =
           Platform.OS === 'ios'
             ? await Share.share({ url: shareUrl, title: 'keeper' })
             : await Share.share({ message: shareUrl, title: 'keeper' });
 
+        // Android 는 취소도 sharedAction 으로 돌려준다. platform 을 실어 안드로이드 수치를 공유 시트 노출로 읽는다.
         if (result.action === Share.sharedAction) {
           track(
             ANALYTICS_EVENT.contentShared,
-            params.type === 'app' ? { type: 'app' } : { type: params.type, id: String(params.id) }
+            params.type === 'app'
+              ? { type: 'app', platform: Platform.OS }
+              : { type: params.type, id: String(params.id), platform: Platform.OS }
           );
         }
       } catch {

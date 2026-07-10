@@ -13,10 +13,7 @@ export const useAnalytics = () => {
       track: (event: AnalyticsEvent, properties?: Props) => posthog?.capture(event, properties),
       screen: (name: string, properties?: Props) => posthog?.screen(name, properties),
       identify: (distinctId: string, properties?: Props) => posthog?.identify(distinctId, properties),
-      reset: () => posthog?.reset(),
-      optOut: () => posthog?.optOut(),
-      optIn: () => posthog?.optIn(),
-      optedOut: posthog?.optedOut ?? false
+      reset: () => posthog?.reset()
     }),
     [posthog]
   );

@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { logger } from '@/shared/lib/utils/handle-error';
+
 export const NOTIFICATION_TYPES = [
   'REPORT_RESOLVED_AUTHOR',
   'REPORT_RESOLVED_REPORTER',
@@ -9,12 +11,14 @@ export const NOTIFICATION_TYPES = [
   'ADMIN_NEW_REPORT',
   'ADMIN_NEW_INQUIRY',
   'POST_COMMENTED',
-  'COMMENT_REPLIED'
+  'COMMENT_REPLIED',
+  'ADOPT_DEADLINE_NEAR',
+  'SHELTER_NEW_ADOPT'
 ] as const;
 
 export const PUSH_PLATFORMS = ['IOS', 'ANDROID'] as const;
 
-export const NOTIFICATION_CATEGORIES = ['COMMUNITY', 'REPORT', 'INQUIRY'] as const;
+export const NOTIFICATION_CATEGORIES = ['COMMUNITY', 'REPORT', 'INQUIRY', 'FAVORITE'] as const;
 
 export const NotificationTypeSchema = z.enum(NOTIFICATION_TYPES);
 export type NotificationTypeDto = z.infer<typeof NotificationTypeSchema>;
@@ -34,7 +38,9 @@ export const NOTIFICATION_TYPE_LABEL: Record<NotificationTypeDto, string> = {
   ADMIN_NEW_REPORT: '새 신고',
   ADMIN_NEW_INQUIRY: '새 문의',
   POST_COMMENTED: '댓글',
-  COMMENT_REPLIED: '답글'
+  COMMENT_REPLIED: '답글',
+  ADOPT_DEADLINE_NEAR: '마감 임박',
+  SHELTER_NEW_ADOPT: '새 공고'
 };
 
 export type NotificationCategorySection = 'general' | 'admin';
@@ -46,6 +52,11 @@ export const NOTIFICATION_CATEGORY_META: Record<
   COMMUNITY: {
     label: '댓글·답글',
     description: '내 글의 댓글, 내 댓글의 답글 알림을 받아요',
+    section: 'general'
+  },
+  FAVORITE: {
+    label: '관심 공고·보호소',
+    description: '관심 있는 공고의 마감·상태 변화, 관심 보호소의 새 공고 알림을 받아요',
     section: 'general'
   },
   REPORT: {
@@ -74,8 +85,17 @@ export const NotificationSchema = z.object({
 });
 export type NotificationDto = z.infer<typeof NotificationSchema>;
 
+const KnownNotificationSchema = NotificationSchema.nullable().catch(null);
+
+const dropUnknown = (items: (NotificationDto | null)[]) => {
+  const known = items.filter((item): item is NotificationDto => item !== null);
+  const dropped = items.length - known.length;
+  if (dropped > 0) logger.error('[notification] 해석할 수 없는 알림을 건너뜁니다', dropped);
+  return known;
+};
+
 export const NotificationListResponseSchema = z.object({
-  items: z.array(NotificationSchema),
+  items: z.array(KnownNotificationSchema).transform(dropUnknown),
   total: z.number(),
   page: z.number(),
   size: z.number(),

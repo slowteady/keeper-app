@@ -1,4 +1,10 @@
-import { MissingDataSchema, MissingListSchema, MissingParamsSchema, MissingResponseSchema } from './schema';
+import {
+  MissingContactSchema,
+  MissingDataSchema,
+  MissingListSchema,
+  MissingParamsSchema,
+  MissingResponseSchema
+} from './schema';
 
 const VALID_MISSING = {
   id: 'm1',
@@ -50,16 +56,27 @@ describe('MissingResponseSchema', () => {
 });
 
 describe('MissingDataSchema', () => {
-  it('callTel(문자열) 포함 시 통과', () => {
-    expect(() => MissingDataSchema.parse({ ...VALID_MISSING, callTel: '010-1234-5678' })).not.toThrow();
+  it('hasCallTel(boolean) 포함 시 통과', () => {
+    expect(() => MissingDataSchema.parse({ ...VALID_MISSING, hasCallTel: true })).not.toThrow();
   });
 
-  it('callTel null 허용', () => {
-    expect(() => MissingDataSchema.parse({ ...VALID_MISSING, callTel: null })).not.toThrow();
+  it('hasCallTel 누락 시 실패', () => {
+    expect(() => MissingDataSchema.parse(VALID_MISSING)).toThrow();
+  });
+
+  it('전화번호는 상세 응답에 실리지 않는다', () => {
+    const parsed = MissingDataSchema.parse({ ...VALID_MISSING, hasCallTel: true, callTel: '010-1234-5678' });
+    expect(parsed).not.toHaveProperty('callTel');
+  });
+});
+
+describe('MissingContactSchema', () => {
+  it('callTel 문자열 통과', () => {
+    expect(() => MissingContactSchema.parse({ callTel: '010-1234-5678' })).not.toThrow();
   });
 
   it('callTel 누락 시 실패', () => {
-    expect(() => MissingDataSchema.parse(VALID_MISSING)).toThrow();
+    expect(() => MissingContactSchema.parse({})).toThrow();
   });
 });
 

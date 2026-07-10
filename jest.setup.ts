@@ -157,10 +157,6 @@ jest.mock('@react-native-kakao/core', () => ({
 
 jest.mock('@mj-studio/react-native-naver-map', () => ({}));
 
-jest.mock('react-native-compressor', () => ({
-  Video: { compress: jest.fn(() => Promise.resolve('file:///compressed.mp4')) }
-}));
-
 jest.mock('react-native-video-trim', () => ({
   __esModule: true,
   default: {
@@ -169,7 +165,8 @@ jest.mock('react-native-video-trim', () => ({
     onError: jest.fn(() => ({ remove: jest.fn() }))
   },
   showEditor: jest.fn(),
-  isValidFile: jest.fn(() => Promise.resolve({ isValid: true, fileType: 'video', duration: 1000 }))
+  isValidFile: jest.fn(() => Promise.resolve({ isValid: true, fileType: 'video', duration: 1000 })),
+  compress: jest.fn(() => Promise.resolve({ outputPath: 'file:///compressed.mp4' }))
 }));
 
 jest.mock('expo-video', () => {
