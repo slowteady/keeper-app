@@ -9,7 +9,7 @@ import { getMissingContact, mapToMissingDetail, missingQueries } from '@/entitie
 import { useLoginRequired } from '@/features/auth';
 import { globalToast, SCREEN_GUTTER } from '@/shared/lib';
 import { useListRefreshing, useShare } from '@/shared/model';
-import { BottomButton, CallModal, Carousel, DetailErrorBoundary, SuspenseFallback } from '@/shared/ui';
+import { BottomButton, CallModal, Carousel, DetailErrorBoundary, NoImage, SuspenseFallback } from '@/shared/ui';
 import { Share as ShareIcon } from '@/shared/ui/icons/outline';
 import { DetailSpecSection } from '@/widgets/adopt-section';
 
@@ -68,11 +68,13 @@ const MissingDetailContent = ({ id }: { id: string }) => {
         contentContainerStyle={{ paddingTop: 0, paddingBottom: buttonHeight + 40 } as never}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
       >
-        {missing.photos.length > 0 && (
-          <Hero mb={16}>
+        <Hero mb={16}>
+          {missing.photos.length > 0 ? (
             <Carousel data={missing.photos} showIndicator showImageViewer imageRadius={0} />
-          </Hero>
-        )}
+          ) : (
+            <NoImage style={{ borderRadius: 0 }} />
+          )}
+        </Hero>
 
         <ActionRow px={SCREEN_GUTTER} mb={24}>
           <Pressable hitSlop={10} onPress={handlePressShare} accessibilityLabel="공유">
