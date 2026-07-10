@@ -2,6 +2,9 @@ import { usePathname } from 'expo-router';
 import { PostHogProvider, usePostHog } from 'posthog-react-native';
 import { PropsWithChildren, useEffect } from 'react';
 
+import { subscribeDeeplink } from '../deeplink';
+import { ANALYTICS_EVENT } from './events';
+
 const POSTHOG_KEY = process.env.EXPO_PUBLIC_POSTHOG_KEY;
 const POSTHOG_HOST = process.env.EXPO_PUBLIC_POSTHOG_HOST ?? 'https://us.i.posthog.com';
 const ENABLED = !__DEV__ && !!POSTHOG_KEY;
@@ -23,6 +26,27 @@ const ScreenTracker = () => {
   return null;
 };
 
+const DeeplinkTracker = () => {
+  const posthog = usePostHog();
+
+  useEffect(
+    () =>
+      subscribeDeeplink(({ type, id, utmSource, utmMedium, utmContent, initial }) =>
+        posthog.capture(ANALYTICS_EVENT.deeplinkOpened, {
+          type,
+          id,
+          utm_source: utmSource,
+          utm_medium: utmMedium,
+          utm_content: utmContent,
+          initial
+        })
+      ),
+    [posthog]
+  );
+
+  return null;
+};
+
 export const AnalyticsProvider = ({ children }: PropsWithChildren) => (
   <PostHogProvider
     apiKey={POSTHOG_KEY ?? 'phc_disabled'}
@@ -30,6 +54,7 @@ export const AnalyticsProvider = ({ children }: PropsWithChildren) => (
     autocapture={{ captureTouches: false, captureScreens: false }}
   >
     <ScreenTracker />
+    <DeeplinkTracker />
     {children}
   </PostHogProvider>
 );

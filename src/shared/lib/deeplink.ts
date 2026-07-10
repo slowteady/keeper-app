@@ -5,6 +5,53 @@ type ShareType = (typeof SHARE_TYPES)[number];
 
 const isShareType = (value: string): value is ShareType => SHARE_TYPES.includes(value as ShareType);
 
+export type DeeplinkEvent = {
+  type: ShareType;
+  id: string;
+  utmSource: string | null;
+  utmMedium: string | null;
+  utmContent: string | null;
+  initial: boolean;
+};
+
+type DeeplinkListener = (event: DeeplinkEvent) => void;
+
+let pendingEvent: DeeplinkEvent | null = null;
+let listener: DeeplinkListener | null = null;
+
+// redirectSystemPath 는 React 트리 밖 모듈 스코프에서 호출된다. 콜드 스타트 유입은 보관했다가 구독 시점에 넘긴다.
+export const subscribeDeeplink = (onEvent: DeeplinkListener) => {
+  listener = onEvent;
+
+  if (pendingEvent) {
+    const event = pendingEvent;
+    pendingEvent = null;
+    onEvent(event);
+  }
+
+  return () => {
+    listener = null;
+  };
+};
+
+const emitDeeplink = (event: DeeplinkEvent) => {
+  if (listener) listener(event);
+  else pendingEvent = event;
+};
+
+const extractUtm = (path: string): Pick<DeeplinkEvent, 'utmSource' | 'utmMedium' | 'utmContent'> => {
+  try {
+    const { searchParams } = new URL(path);
+    return {
+      utmSource: searchParams.get('utm_source'),
+      utmMedium: searchParams.get('utm_medium'),
+      utmContent: searchParams.get('utm_content')
+    };
+  } catch {
+    return { utmSource: null, utmMedium: null, utmContent: null };
+  }
+};
+
 const extractSegments = (path: string): string[] => {
   let pathname = path;
   try {
@@ -38,10 +85,11 @@ export function resolveNotificationPath(
   }
 }
 
-export function redirectSystemPath({ path }: { path: string; initial: boolean }) {
+export function redirectSystemPath({ path, initial }: { path: string; initial: boolean }) {
   try {
     const [type, id] = extractSegments(path);
     if (id && isShareType(type)) {
+      emitDeeplink({ type, id, ...extractUtm(path), initial });
       return `/(untabs)/${type}/${id}`;
     }
     return path;
