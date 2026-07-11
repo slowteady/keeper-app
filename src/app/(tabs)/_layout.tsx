@@ -13,7 +13,6 @@ const TabsLayout = () => {
   return (
     <Tabs
       tabBar={(props) => <NoticeAwareTabBar {...props} />}
-      detachInactiveScreens={false}
       screenOptions={{ headerShown: false, animation: 'fade' }}
     >
       <Tabs.Screen name="home" />
