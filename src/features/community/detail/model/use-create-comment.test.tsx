@@ -36,7 +36,7 @@ beforeEach(() => {
 });
 
 describe('useCreateComment', () => {
-  it('mutate({content}) 호출 시 commentApi.create(postId, content, undefined) 호출', async () => {
+  it('mutate({content}) 호출 시 commentApi.create(postId, content, undefined, undefined) 호출', async () => {
     mockedCreate.mockResolvedValue({ id: 1 });
     const { wrapper } = setup();
     const { result } = renderHook(() => useCreateComment({ postId: '10' }), { wrapper });
@@ -45,7 +45,7 @@ describe('useCreateComment', () => {
       await result.current.mutateAsync({ content: '첫 댓글' });
     });
 
-    expect(mockedCreate).toHaveBeenCalledWith('10', '첫 댓글', undefined);
+    expect(mockedCreate).toHaveBeenCalledWith('10', '첫 댓글', undefined, undefined);
   });
 
   it('mutate({content, parentId}) 호출 시 commentApi.create 에 parentId 전달', async () => {
@@ -57,7 +57,19 @@ describe('useCreateComment', () => {
       await result.current.mutateAsync({ content: '답글', parentId: '5' });
     });
 
-    expect(mockedCreate).toHaveBeenCalledWith('10', '답글', '5');
+    expect(mockedCreate).toHaveBeenCalledWith('10', '답글', '5', undefined);
+  });
+
+  it('mutate({content, parentId, replyToId}) 호출 시 commentApi.create 에 replyToId 전달', async () => {
+    mockedCreate.mockResolvedValue({ id: 1 });
+    const { wrapper } = setup();
+    const { result } = renderHook(() => useCreateComment({ postId: '10' }), { wrapper });
+
+    await act(async () => {
+      await result.current.mutateAsync({ content: '되받아치기', parentId: '5', replyToId: '7' });
+    });
+
+    expect(mockedCreate).toHaveBeenCalledWith('10', '되받아치기', '5', '7');
   });
 
   it('성공 시 해당 postId 댓글 리스트 invalidate(refetchType none — 낙관 prepend 유지) (성공 토스트는 띄우지 않음 — Instagram BP)', async () => {

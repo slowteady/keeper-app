@@ -35,9 +35,15 @@ const getList = async (postId: string, params: CommentListParams): Promise<Comme
   return CommentListResponseSchema.parse(res.data.data);
 };
 
-const create = async (postId: string, content: string, parentId?: string | null): Promise<CommentDto> => {
-  const body: { content: string; parentId?: string } = { content };
+const create = async (
+  postId: string,
+  content: string,
+  parentId?: string | null,
+  replyToId?: string | null
+): Promise<CommentDto> => {
+  const body: { content: string; parentId?: string; replyToId?: string } = { content };
   if (parentId !== undefined && parentId !== null) body.parentId = parentId;
+  if (replyToId !== undefined && replyToId !== null) body.replyToId = replyToId;
   const res = await authApi.post<ApiResponse<CommentDto>>(`${BASE}/posts/${postId}/comments`, body);
   return CommentSchema.parse(res.data.data);
 };

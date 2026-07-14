@@ -9,6 +9,7 @@ export const CommentSchema = z.object({
   displayTime: z.string(),
   isEdited: z.boolean().default(false),
   parentId: z.string().nullable().default(null),
+  replyTo: z.object({ id: z.string(), nickname: z.string() }).nullable().default(null),
   replyCount: z.coerce.number().default(0)
 });
 export type CommentDto = z.infer<typeof CommentSchema>;

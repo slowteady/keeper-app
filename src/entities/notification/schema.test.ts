@@ -45,7 +45,8 @@ describe('NOTIFICATION enum 가드 (백엔드 단일 출처 미러)', () => {
       'POST_COMMENTED',
       'COMMENT_REPLIED',
       'ADOPT_DEADLINE_NEAR',
-      'SHELTER_NEW_ADOPT'
+      'SHELTER_NEW_ADOPT',
+      'ADOPT_CLOSED'
     ]);
   });
 

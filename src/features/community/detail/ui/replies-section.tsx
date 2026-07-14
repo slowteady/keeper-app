@@ -10,10 +10,16 @@ import { useReplies } from '../model/use-replies';
 export type RepliesSectionProps = {
   parentComment: CommentDto;
   onPressReplyMore?: (reply: CommentDto) => void;
+  onPressReplyTo?: (reply: CommentDto) => void;
   autoExpand?: boolean;
 };
 
-export const RepliesSection = ({ parentComment, onPressReplyMore, autoExpand = false }: RepliesSectionProps) => {
+export const RepliesSection = ({
+  parentComment,
+  onPressReplyMore,
+  onPressReplyTo,
+  autoExpand = false
+}: RepliesSectionProps) => {
   const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
@@ -47,6 +53,7 @@ export const RepliesSection = ({ parentComment, onPressReplyMore, autoExpand = f
                 <CommentCard
                   comment={reply}
                   onPressMore={onPressReplyMore ? () => onPressReplyMore(reply) : undefined}
+                  onPressReply={onPressReplyTo ? () => onPressReplyTo(reply) : undefined}
                 />
               </View>
             ))

@@ -13,7 +13,8 @@ export const NOTIFICATION_TYPES = [
   'POST_COMMENTED',
   'COMMENT_REPLIED',
   'ADOPT_DEADLINE_NEAR',
-  'SHELTER_NEW_ADOPT'
+  'SHELTER_NEW_ADOPT',
+  'ADOPT_CLOSED'
 ] as const;
 
 export const PUSH_PLATFORMS = ['IOS', 'ANDROID'] as const;
@@ -40,7 +41,8 @@ export const NOTIFICATION_TYPE_LABEL: Record<NotificationTypeDto, string> = {
   POST_COMMENTED: '댓글',
   COMMENT_REPLIED: '답글',
   ADOPT_DEADLINE_NEAR: '마감 임박',
-  SHELTER_NEW_ADOPT: '새 공고'
+  SHELTER_NEW_ADOPT: '새 공고',
+  ADOPT_CLOSED: '공고 종료'
 };
 
 export type NotificationCategorySection = 'general' | 'admin';
