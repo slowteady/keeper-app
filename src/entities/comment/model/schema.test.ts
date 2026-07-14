@@ -24,6 +24,15 @@ describe('CommentSchema', () => {
     const { content: _content, ...rest } = VALID_COMMENT;
     expect(() => CommentSchema.parse(rest)).toThrow();
   });
+
+  it('replyTo 가 있으면 통과', () => {
+    expect(() => CommentSchema.parse({ ...VALID_COMMENT, replyTo: { id: 'u2', nickname: '상대' } })).not.toThrow();
+  });
+
+  it('replyTo 누락 또는 null 이면 null 로 기본', () => {
+    expect(CommentSchema.parse(VALID_COMMENT).replyTo).toBeNull();
+    expect(CommentSchema.parse({ ...VALID_COMMENT, replyTo: null }).replyTo).toBeNull();
+  });
 });
 
 describe('CommentSortOrderSchema', () => {

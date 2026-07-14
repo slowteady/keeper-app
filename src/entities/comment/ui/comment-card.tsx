@@ -10,7 +10,6 @@ import { CommentDto } from '../model';
 export type CommentCardProps = {
   comment: CommentDto;
   onPressMore?: () => void;
-  // root 댓글에서만 노출 — reply 카드(parentId 존재)에는 안 보임 (1뎁스)
   onPressReply?: () => void;
 };
 

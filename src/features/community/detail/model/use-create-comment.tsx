@@ -10,6 +10,7 @@ import { patchPostCommentCount } from '../lib/patch-comment-count';
 export type CreateCommentVars = {
   content: string;
   parentId?: string | null;
+  replyToId?: string | null;
 };
 
 type CommentPage = { items: CommentDto[]; nextCursor: string | null; hasNext: boolean } & Record<string, unknown>;
@@ -60,7 +61,7 @@ export const useCreateComment = ({ postId }: { postId: string }) => {
     };
 
   return useMutation<CommentDto, unknown, CreateCommentVars, MutationContext>({
-    mutationFn: ({ content, parentId }) => commentApi.create(postId, content, parentId),
+    mutationFn: ({ content, parentId, replyToId }) => commentApi.create(postId, content, parentId, replyToId),
     onMutate: async ({ content, parentId }) => {
       const tempId = `temp-${Date.now()}`;
       const optimistic: CommentDto = {
@@ -70,6 +71,7 @@ export const useCreateComment = ({ postId }: { postId: string }) => {
         displayTime: new Date().toISOString(),
         isEdited: false,
         parentId: parentId ?? null,
+        replyTo: null,
         replyCount: 0
       };
 

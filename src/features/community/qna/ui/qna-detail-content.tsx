@@ -87,7 +87,11 @@ export const QnaDetailContent = ({ id, scrollToComments, commentId, editCommentI
 
   const [comment, setComment] = useState('');
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
-  const [replyTarget, setReplyTarget] = useState<{ parentId: string; nickname: string } | null>(null);
+  const [replyTarget, setReplyTarget] = useState<{
+    parentId: string;
+    replyToId?: string;
+    nickname: string;
+  } | null>(null);
   const [repliedParentId, setRepliedParentId] = useState<string | null>(null);
   const commentInputRef = useRef<ComponentRef<typeof CommentFormInput>>(null);
   const { requireLogin, isLoggedIn } = useLoginRequired();
@@ -118,7 +122,7 @@ export const QnaDetailContent = ({ id, scrollToComments, commentId, editCommentI
   }, []);
 
   const handleEnterReplyMode = useCallback(
-    async (target: { parentId: string; nickname: string }) => {
+    async (target: { parentId: string; replyToId?: string; nickname: string }) => {
       await requireLogin(() => {
         setEditingCommentId(null);
         setReplyTarget(target);
@@ -159,9 +163,10 @@ export const QnaDetailContent = ({ id, scrollToComments, commentId, editCommentI
         updateCommentMutation.mutate({ commentId: targetCommentId, content });
       } else {
         const parentId = replyTarget?.parentId;
+        const replyToId = replyTarget?.replyToId;
         setComment('');
         setReplyTarget(null);
-        createCommentMutation.mutate({ content, parentId });
+        createCommentMutation.mutate({ content, parentId, replyToId });
         if (parentId) setRepliedParentId(parentId);
       }
       Keyboard.dismiss();
@@ -218,6 +223,13 @@ export const QnaDetailContent = ({ id, scrollToComments, commentId, editCommentI
                 authorId: reply.user?.id ?? null,
                 content: reply.content,
                 postId: id
+              })
+            }
+            onPressReplyTo={(reply) =>
+              handleEnterReplyMode({
+                parentId: item.id,
+                replyToId: reply.id,
+                nickname: reply.user?.nickname ?? '탈퇴한 사용자'
               })
             }
           />
