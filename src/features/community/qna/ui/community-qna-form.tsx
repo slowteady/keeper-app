@@ -3,11 +3,7 @@ import { UseFormReturn } from 'react-hook-form';
 import { Form, styled, Text, View, YStack } from 'tamagui';
 
 import { CommunityQnaFormDto, QNA_ANIMAL_TYPE_OPTIONS, QNA_CATEGORY_OPTIONS } from '@/entities/community';
-
-import { LabelChipGroup } from '../../create/ui/field/label-chip-group';
-import { LabelTextArea } from '../../create/ui/field/label-text-area';
-import { LabelTextField } from '../../create/ui/field/label-text-field';
-import { MediaAttachField } from '../../create/ui/field/media-attach-field';
+import { LabelChipGroup, LabelTextArea, LabelTextField, MediaAttachField } from '@/shared/ui/form';
 
 export type CommunityQnaFormProps = {
   form: UseFormReturn<CommunityQnaFormDto>;

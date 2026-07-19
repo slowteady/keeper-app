@@ -7,18 +7,20 @@ import { PosterDto, PosterSchema } from './schema';
 
 const BASE_URL = '/posters';
 
-const getPoster = async (desertionNo: string): Promise<PosterDto> => {
-  const res = await authApi.get<ApiResponse<PosterDto>>(`${BASE_URL}/adopt/${desertionNo}`);
+export type PosterType = 'adopt' | 'missing';
+
+const getPoster = async (type: PosterType, id: string): Promise<PosterDto> => {
+  const res = await authApi.get<ApiResponse<PosterDto>>(`${BASE_URL}/${type}/${id}`);
   return PosterSchema.parse(res.data.data);
 };
 
 export const posterQueries = {
   all: () => ['posters'] as const,
-  adopt: (desertionNo: string) =>
+  detail: (type: PosterType, id: string) =>
     queryOptions({
-      queryKey: [...posterQueries.all(), 'adopt', desertionNo] as const,
-      queryFn: () => getPoster(desertionNo),
-      enabled: !!desertionNo,
+      queryKey: [...posterQueries.all(), type, id] as const,
+      queryFn: () => getPoster(type, id),
+      enabled: !!id,
       staleTime: Infinity,
       throwOnError: false
     })

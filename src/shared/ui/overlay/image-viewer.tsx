@@ -94,7 +94,7 @@ export const ImageViewer = ({ open, onClose, images, defaultIndex }: ImageViewer
                 ref={galleryRef}
                 data={images}
                 renderItem={renderItem}
-                keyExtractor={(item) => item}
+                keyExtractor={(item, index) => `${index}-${item}`}
                 initialIndex={defaultIndex}
                 onIndexChange={handleIndexChange}
                 maxScale={4}

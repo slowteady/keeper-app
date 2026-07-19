@@ -79,6 +79,8 @@ export function resolveNotificationPath(
     case 'post':
     case 'comment':
       return `/(untabs)/community/${refId}`;
+    case 'missing':
+      return `/(untabs)/missing/post/${refId}`;
     case 'inquiry':
       return `/(untabs)/profile/inquiry/${refId}`;
     case 'adopt':

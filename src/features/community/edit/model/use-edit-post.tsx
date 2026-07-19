@@ -10,10 +10,9 @@ import {
   type PostDetailUnion
 } from '@/entities/community';
 import { toCreateAdoptionPersonalBody, updateAdoptionPersonal } from '@/features/community/create/model/api';
-import { resolveVideoUpload } from '@/features/community/create/model/resolve-video';
-import { useAdoptFormSelectors } from '@/features/community/create/model/use-adopt-form-selectors';
-import { useImageUpload, useVideoUpload } from '@/features/upload';
+import { resolveVideoUpload, useImageUpload, useVideoUpload } from '@/features/upload';
 import { getModerationMessage, globalToast } from '@/shared/lib';
+import { useAnimalFormSelectors } from '@/shared/ui/form';
 
 import { fromAdoptionPersonalDetail } from '../lib/from-detail';
 
@@ -28,7 +27,7 @@ export const useEditPost = (postId: string) => {
   });
 
   const animalType = useWatch({ control: form.control, name: 'animalType' });
-  const { openAgeSelector, openKindSelector } = useAdoptFormSelectors(form, animalType);
+  const { openAgeSelector, openKindSelector } = useAnimalFormSelectors(form, animalType);
 
   const imageUpload = useImageUpload();
   const videoUpload = useVideoUpload();

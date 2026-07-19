@@ -10,13 +10,12 @@ import {
   communityQueries,
   CREATE_POST_OPTIONS
 } from '@/entities/community';
-import { useImageUpload, useVideoUpload } from '@/features/upload';
+import { resolveVideoUpload, useImageUpload, useVideoUpload } from '@/features/upload';
 import { getModerationMessage, globalToast } from '@/shared/lib';
 import { ANALYTICS_EVENT, useAnalytics } from '@/shared/lib/analytics';
+import { useAnimalFormSelectors } from '@/shared/ui/form';
 
 import { createAdoptionPersonal, toCreateAdoptionPersonalBody } from './api';
-import { resolveVideoUpload } from './resolve-video';
-import { useAdoptFormSelectors } from './use-adopt-form-selectors';
 
 export const useCreatePost = () => {
   const queryClient = useQueryClient();
@@ -63,7 +62,7 @@ export const useCreatePost = () => {
     }
   }, [animalType, form]);
 
-  const { openAgeSelector, openKindSelector } = useAdoptFormSelectors(form, animalType);
+  const { openAgeSelector, openKindSelector } = useAnimalFormSelectors(form, animalType);
 
   const imageUpload = useImageUpload();
   const videoUpload = useVideoUpload();

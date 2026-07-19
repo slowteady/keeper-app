@@ -7,7 +7,7 @@ import { globalToast } from '@/shared/lib';
 export const usePosterSave = () => {
   const [isSaving, setIsSaving] = useState(false);
 
-  const save = async (url: string, desertionNo: string): Promise<boolean> => {
+  const save = async (url: string, id: string): Promise<boolean> => {
     if (isSaving) {
       return false;
     }
@@ -19,7 +19,7 @@ export const usePosterSave = () => {
         return false;
       }
 
-      const destination = new File(Paths.cache, `keeper-poster-${desertionNo}.png`);
+      const destination = new File(Paths.cache, `keeper-poster-${id}.png`);
       if (destination.exists) {
         destination.delete();
       }

@@ -43,7 +43,8 @@ module.exports = [
         extraMavenRepos: [
           'https://repository.map.naver.com/archive/maven',
           'https://devrepo.kakao.com/nexus/content/groups/public/'
-        ]
+        ],
+        extraProguardRules: '-keep class com.henninghall.date_picker.** { *; }'
       }
     }
   ],
@@ -82,5 +83,6 @@ module.exports = [
     {
       defaultChannel: 'default'
     }
-  ]
+  ],
+  '@react-native-community/datetimepicker'
 ];

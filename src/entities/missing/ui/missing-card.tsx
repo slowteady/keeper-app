@@ -5,7 +5,11 @@ import { StyleSheet } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
+import { StatusChip, StatusDimOverlay } from '@/shared/ui/data-display/status-overlay';
 import { NoImage } from '@/shared/ui/fallback/no-image';
+
+import { MISSING_STATUS_INFO } from '../constant';
+import { MissingStatusDto } from '../schema';
 
 export type MissingCardProps = {
   uri: string;
@@ -13,10 +17,11 @@ export type MissingCardProps = {
   region: string;
   date: string;
   specialMark?: string;
+  status?: MissingStatusDto;
   onPress?: () => void;
 };
 
-const MissingCardComponent = ({ uri, kind, region, date, specialMark, onPress }: MissingCardProps) => {
+const MissingCardComponent = ({ uri, kind, region, date, specialMark, status, onPress }: MissingCardProps) => {
   const cardTap = useMemo(
     () =>
       Gesture.Tap()
@@ -36,6 +41,12 @@ const MissingCardComponent = ({ uri, kind, region, date, specialMark, onPress }:
       <Container>
         <ImageContainer>
           <CardImage uri={uri} />
+          {status === 'RESOLVED' && (
+            <>
+              <StatusDimOverlay rounded={12} />
+              <StatusChip label={MISSING_STATUS_INFO.RESOLVED.label} />
+            </>
+          )}
         </ImageContainer>
 
         <Title numberOfLines={2}>{kind}</Title>

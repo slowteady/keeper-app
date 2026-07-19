@@ -9,6 +9,7 @@ import { styled, Text, View, XStack } from 'tamagui';
 
 import { MissingItem } from '@/entities/missing';
 import { useFeaturedMissing } from '@/features/missing';
+import { MISSING_RED } from '@/shared/lib';
 import { useCarousel } from '@/shared/model';
 import { NoImage, Skeleton } from '@/shared/ui';
 
@@ -177,7 +178,7 @@ const TopBar = styled(XStack, {
   justify: 'space-between',
   px: 16,
   py: 11,
-  bg: '#FF2D2D'
+  bg: MISSING_RED
 });
 
 const TopBarLeft = styled(XStack, {

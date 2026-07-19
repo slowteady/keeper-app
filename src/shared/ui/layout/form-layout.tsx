@@ -1,6 +1,6 @@
-import { cloneElement, ReactElement, ReactNode, useState } from 'react';
+import { cloneElement, ReactElement, ReactNode, RefObject, useState } from 'react';
 import { LayoutChangeEvent, StyleProp, ViewStyle } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { KeyboardAwareScrollView, KeyboardAwareScrollViewRef } from 'react-native-keyboard-controller';
 import { styled, YStack, YStackProps } from 'tamagui';
 
 type FooterElement = ReactElement<{ onLayout?: (event: LayoutChangeEvent) => void }>;
@@ -10,9 +10,10 @@ export type FormLayoutProps = {
   footer: FooterElement;
   contentContainerStyle?: StyleProp<ViewStyle>;
   containerProps?: YStackProps;
+  scrollRef?: RefObject<KeyboardAwareScrollViewRef | null>;
 };
 
-export const FormLayout = ({ children, footer, contentContainerStyle, containerProps }: FormLayoutProps) => {
+export const FormLayout = ({ children, footer, contentContainerStyle, containerProps, scrollRef }: FormLayoutProps) => {
   const [footerHeight, setFooterHeight] = useState(0);
 
   const footerWithLayout = cloneElement(footer, {
@@ -22,6 +23,7 @@ export const FormLayout = ({ children, footer, contentContainerStyle, containerP
   return (
     <Container {...containerProps}>
       <KeyboardAwareScrollView
+        ref={scrollRef}
         mode="layout"
         keyboardShouldPersistTaps="handled"
         bottomOffset={20}

@@ -13,10 +13,11 @@ import { shelterQueries } from '@/entities/shelter';
 import { useAdoptList, usePersonalAdoptList } from '@/features/adopt';
 import { useNoticeList } from '@/features/notice';
 import { useHomeShelter } from '@/features/shelter';
-import { SCREEN_GUTTER, SECTION_GAP } from '@/shared/lib';
+import { SCREEN_GUTTER } from '@/shared/lib';
 import { useListRefreshing } from '@/shared/model';
 import { RouteErrorBoundary } from '@/shared/ui';
 import {
+  HeroReportCta,
   HomeAdoptSection,
   HomeFooterSection,
   HomeMissingHero,
@@ -79,15 +80,16 @@ const Page = () => {
       switch (item.id) {
         case 'banner':
           return (
-            <View px={SCREEN_GUTTER} pt={hasNotice ? 8 : 24} pb={SECTION_GAP}>
+            <View px={SCREEN_GUTTER} pt={hasNotice ? 8 : 24} pb={24}>
               <HomeMissingHero fallbackImages={IMAGES} />
+              <HeroReportCta />
             </View>
           );
         case 'notice':
           return <HomeNoticeSection />;
         case 'adopt':
           return (
-            <View pb={SECTION_GAP}>
+            <View pb={24}>
               <HomeAdoptSection
                 convertedData={convertedData}
                 isLoading={isLoading}
@@ -98,7 +100,7 @@ const Page = () => {
           );
         case 'personal':
           return (
-            <View pb={SECTION_GAP}>
+            <View pb={24}>
               <HomePersonalSection
                 convertedData={personalData}
                 isLoading={personalLoading}
@@ -109,7 +111,7 @@ const Page = () => {
           );
         case 'shelter':
           return (
-            <View pb={SECTION_GAP}>
+            <View pb={24}>
               <HomeShelterSection
                 shelters={shelter.shelters}
                 isGranted={shelter.isGranted}

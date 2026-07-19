@@ -56,7 +56,7 @@ const BasicCarousel = forwardRef<PagerView, BasicCarouselProps>(
             </View>
           ]
         : []),
-      ...data.map((image) => <View key={image}>{renderPage(image)}</View>)
+      ...data.map((image, index) => <View key={`${index}-${image}`}>{renderPage(image)}</View>)
     ];
 
     return (

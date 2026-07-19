@@ -119,7 +119,7 @@ const AdoptDetailContent = ({ id }: { id: string }) => {
             <Pressable hitSlop={10} onPress={handlePressShare} accessibilityLabel="공유">
               <ShareIcon width={22} height={22} color={black600.val} />
             </Pressable>
-            {!ended && <PosterSaveButton desertionNo={adopt.id} color={black600.val} />}
+            {!ended && <PosterSaveButton source={{ type: 'adopt', id: adopt.id }} color={black600.val} />}
           </Actions>
         </ActionRow>
 
@@ -297,10 +297,11 @@ const BannerWrap = styled(View, {
   px: 16,
   py: 14,
   rounded: 10,
+  borderLeftWidth: 4,
   variants: {
     tone: {
-      positive: { backgroundColor: '$successLightest' },
-      neutral: { backgroundColor: '$backgroundDefault' }
+      positive: { backgroundColor: '$successLightest', borderLeftColor: '$successMain' },
+      neutral: { backgroundColor: '$backgroundDefault', borderLeftColor: '$black700' }
     }
   } as const
 });

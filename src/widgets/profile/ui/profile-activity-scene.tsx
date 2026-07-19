@@ -13,6 +13,7 @@ import {
 } from '@/entities/community';
 import { useCurrentUser } from '@/features/auth';
 import { useAdoptionStatus, useCommentMenu, usePostMenu } from '@/features/community';
+import { useMissingMenu } from '@/features/missing/detail/model/use-missing-menu';
 import { useMyComments, useMyPosts } from '@/features/profile';
 import { useListRefreshing, useScrollToTop } from '@/shared/model';
 import { ButtonGroup, ScrollToTopButton } from '@/shared/ui';
@@ -30,6 +31,7 @@ type ActivityOption = (typeof ACTIVITY_OPTIONS)[number]['id'];
 
 const CATEGORY_LABEL: Record<MyPostItemDto['category'], string> = {
   ADOPTION_PERSONAL: '개인공고',
+  MISSING: '실종',
   ADOPTION_LIFE: '입양생활',
   QNA: '궁금해요'
 };
@@ -117,7 +119,14 @@ const MyPostList = ({ type }: { type: MyPostType }) => {
 const MyPostListItem = ({ item, type }: { item: MyPostItemDto; type: MyPostType }) => {
   const { user } = useCurrentUser();
   const { setCompleted, setInProgress } = useAdoptionStatus(item.id);
+  const isMissing = item.category === 'MISSING';
   const isPersonal = type === 'personal' && !!item.adoptionStatus;
+  const { openMissingMenu } = useMissingMenu({
+    id: item.id,
+    authorId: user?.id,
+    isOwner: true,
+    stayOnDelete: true
+  });
   const { openPostMenu } = usePostMenu({
     postId: item.id,
     authorId: user?.id,
@@ -136,10 +145,16 @@ const MyPostListItem = ({ item, type }: { item: MyPostItemDto; type: MyPostType 
       categoryLabel={CATEGORY_LABEL[item.category]}
       status={adoptionStatusChip(item)}
       onPress={(id) =>
-        router.push(type === 'personal' ? `/(untabs)/adopt-personal/${id}` : `/(untabs)/community/${id}`)
+        router.push(
+          isMissing
+            ? `/(untabs)/missing/post/${id}`
+            : type === 'personal'
+              ? `/(untabs)/adopt-personal/${id}`
+              : `/(untabs)/community/${id}`
+        )
       }
-      onPressMore={openPostMenu}
-      hideCategory={type === 'personal'}
+      onPressMore={isMissing ? openMissingMenu : openPostMenu}
+      hideCategory={type === 'personal' && !isMissing}
       hideLikeCount
     />
   );

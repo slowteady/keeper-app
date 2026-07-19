@@ -6,6 +6,7 @@ import { Dimensions, Pressable, StyleSheet } from 'react-native';
 import { styled, Text, View, XStack, YStack } from 'tamagui';
 
 import { toggleHaptic } from '@/shared/lib';
+import { StatusChip, StatusDimOverlay } from '@/shared/ui/data-display/status-overlay';
 import { NoImage } from '@/shared/ui/fallback/no-image';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 
@@ -66,9 +67,14 @@ const AdoptCardComponent = ({
       <Pressable onPress={onPress} disabled={!onPress}>
         <ImageContainer size={size}>
           <ImageWithSkeleton uri={uri} />
-          {status && isAdoptEnded(status) && <EndedDim />}
+          {status && isAdoptEnded(status) && <StatusDimOverlay />}
           {status && <StatusBadge status={status} />}
-          {completed && <CompletedOverlay />}
+          {completed && (
+            <>
+              <StatusDimOverlay />
+              <StatusChip label="입양완료" />
+            </>
+          )}
           {statusChips.length > 0 && <StatusChipOverlay data={statusChips} />}
           {imageCount > 1 && (
             <ImageCountBadge>
@@ -116,32 +122,6 @@ const StatusBadge = ({ status }: { status: AdoptStatusDto }) => {
         {info.label}
       </Text>
     </View>
-  );
-};
-
-const EndedDim = styled(View, {
-  position: 'absolute',
-  t: 0,
-  l: 0,
-  r: 0,
-  b: 0,
-  rounded: 8,
-  bg: '$black900',
-  opacity: 0.45
-});
-
-const CompletedOverlay = () => {
-  return (
-    <>
-      <View position="absolute" t={0} l={0} r={0} b={0} rounded={8} bg="$black900" opacity={0.45} />
-      <View position="absolute" t={0} l={0} r={0} b={0} justify="center" items="center">
-        <View px={10} py={5} rounded={999} bg="$black800">
-          <Text fontWeight={600} fontSize={12} lineHeight={14} color="#fff">
-            입양완료
-          </Text>
-        </View>
-      </View>
-    </>
   );
 };
 
