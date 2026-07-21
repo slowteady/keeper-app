@@ -108,17 +108,13 @@ AdoptCard.displayName = 'AdoptCard';
 const StatusBadge = ({ status }: { status: AdoptStatusDto }) => {
   if (!isAdoptEnded(status)) return null;
   const info = ADOPT_STATUS_INFO[status];
+  const isPositive = info.tone === 'positive';
+  const isNaturalDeath = status === 'NATURAL_DEATH';
+  const bg = isPositive ? '$successMain' : isNaturalDeath ? '#D9D9D9' : '$black700';
+  const textColor = isNaturalDeath ? '#888888' : '#fff';
   return (
-    <View
-      position="absolute"
-      t={8}
-      l={8}
-      px={8}
-      py={4}
-      rounded={999}
-      bg={info.tone === 'positive' ? '$successMain' : '$black700'}
-    >
-      <Text fontWeight={600} fontSize={11} lineHeight={13} color="#fff">
+    <View position="absolute" t={8} l={8} px={7} py={5} rounded={5} bg={bg}>
+      <Text fontWeight={600} fontSize={12} lineHeight={14} color={textColor}>
         {info.label}
       </Text>
     </View>
@@ -209,18 +205,18 @@ const ImageContainer = styled(View, {
       },
       medium: {
         width: ADOPT_CARD_IMAGE_SIZES.medium,
-        mb: 20
+        mb: 16
       }
     }
   } as const
 });
 
 const Title = styled(Text, {
-  fontWeight: 600,
+  fontWeight: 700,
   color: '$black900',
   numberOfLines: 1,
   ellipsizeMode: 'tail',
-  mb: 20,
+  mb: 16,
   variants: {
     size: {
       small: {
@@ -240,7 +236,7 @@ const DescriptionContainer = styled(YStack, {
   variants: {
     size: {
       small: { mb: 16 },
-      medium: { mb: 20 }
+      medium: { mb: 16 }
     }
   }
 });
@@ -289,9 +285,9 @@ const ChipContainer = styled(XStack, {
 });
 
 const OverlayBadge = styled(View, {
-  px: 8,
-  py: 4,
-  rounded: 999,
+  px: 7,
+  py: 5,
+  rounded: 5,
   variants: {
     variant: {
       error: { backgroundColor: '$errorMain' },
@@ -307,8 +303,8 @@ const OverlayBadge = styled(View, {
 
 const OverlayBadgeText = styled(Text, {
   fontWeight: 600,
-  fontSize: 11,
-  lineHeight: 13,
+  fontSize: 12,
+  lineHeight: 14,
   color: '#fff'
 });
 

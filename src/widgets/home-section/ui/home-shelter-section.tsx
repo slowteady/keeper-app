@@ -1,7 +1,9 @@
 import { FlashList, ListRenderItemInfo } from '@shopify/flash-list';
+import { ChevronRight } from '@tamagui/lucide-icons';
 import { router } from 'expo-router';
 import { useCallback } from 'react';
-import { styled, Text, View, XStack } from 'tamagui';
+import { Dimensions, Pressable } from 'react-native';
+import { styled, Text, View, XStack, YStack } from 'tamagui';
 
 import { DistancePermissionPrompt, ShelterCard, ShelterDto } from '@/entities/shelter';
 import { useFavoriteShelter } from '@/features/favorite-shelter';
@@ -12,6 +14,8 @@ const CARD_WIDTH = 270;
 const CARD_GAP = 12;
 const CARD_SNAP_INTERVAL = CARD_WIDTH + CARD_GAP;
 const CARD_MIN_HEIGHT = 102;
+const SCREEN_GUTTER_PX = 20;
+const NODATA_WIDTH = Dimensions.get('window').width - SCREEN_GUTTER_PX * 2;
 
 export type HomeShelterSectionProps = {
   shelters?: ShelterDto[];
@@ -37,7 +41,7 @@ export const HomeShelterSection = ({ shelters, isGranted, isLoading }: HomeShelt
   return (
     <>
       <HeaderContainer px={SCREEN_GUTTER} mb={16}>
-        <Text fontSize={26} lineHeight={36} fontWeight="600" color="$black900">
+        <Text fontSize={26} lineHeight={36} fontWeight="700" color="$black900">
           내 주변 보호소
         </Text>
         <XStack items="center" mt={12} onPress={() => router.push('/shelter')}>
@@ -71,6 +75,8 @@ export const HomeShelterSection = ({ shelters, isGranted, isLoading }: HomeShelt
   );
 };
 
+const NODATA_COLOR = '#7E7E7E';
+
 const EmptyComponent = ({ isLoading }: { isLoading: boolean }) => {
   return isLoading ? (
     <XStack gap={16}>
@@ -81,13 +87,28 @@ const EmptyComponent = ({ isLoading }: { isLoading: boolean }) => {
       ))}
     </XStack>
   ) : (
-    <NodataContainer>
-      <Text fontSize={14} lineHeight={16} fontWeight="500" color="$black500">
-        가까운 곳에 보호소가 없어요
-      </Text>
-    </NodataContainer>
+    <NodataCard />
   );
 };
+
+const NodataCard = () => (
+  <NodataContainer>
+    <YStack flex={1}>
+      <NodataText>가까운 곳에 보호소가 없어요</NodataText>
+      <XStack items="center" justify="space-between">
+        <NodataText>좀 더 넓은 범위로 설정해보세요</NodataText>
+        <Pressable
+          onPress={() => router.push('/shelter')}
+          accessibilityRole="button"
+          accessibilityLabel="전체 보호소 보기"
+          hitSlop={10}
+        >
+          <ChevronRight size={20} color={'#ADB3AF' as never} />
+        </Pressable>
+      </XStack>
+    </YStack>
+  </NodataContainer>
+);
 
 const HeaderContainer = styled(XStack, {
   justify: 'space-between',
@@ -95,12 +116,18 @@ const HeaderContainer = styled(XStack, {
 });
 
 const NodataContainer = styled(XStack, {
-  width: CARD_WIDTH,
-  bg: '$white900',
+  width: NODATA_WIDTH,
+  bg: '#F7F7F7',
   items: 'center',
-  justify: 'center',
-  borderColor: '$white800',
-  borderWidth: 1,
-  rounded: 12,
-  height: CARD_MIN_HEIGHT
+  justify: 'space-between',
+  rounded: 16,
+  px: 20,
+  py: 24
+});
+
+const NodataText = styled(Text, {
+  fontSize: 16,
+  lineHeight: 24,
+  fontWeight: '500',
+  color: NODATA_COLOR
 });

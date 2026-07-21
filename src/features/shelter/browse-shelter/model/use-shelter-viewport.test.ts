@@ -75,7 +75,7 @@ describe('useShelterViewport', () => {
     });
   });
 
-  it('권한 승인 후 위치가 아직 없어도 지도 초기화를 기다릴 수 있다', () => {
+  it('권한 승인 후 위치가 아직 없어도 fallback 좌표로 지도를 즉시 초기화한다', () => {
     (useLocation as jest.Mock).mockReturnValue({
       userLocation: undefined,
       isGranted: true,
@@ -87,6 +87,6 @@ describe('useShelterViewport', () => {
 
     expect(result.current.isGranted).toBe(true);
     expect(result.current.permissionStatus).toBe('granted');
-    expect(result.current.camera).toBeUndefined();
+    expect(result.current.camera).toEqual({ latitude: 37.5665, longitude: 126.978, zoom: 12 });
   });
 });

@@ -135,7 +135,7 @@ export const LocationBottomSheet = forwardRef<BottomSheetModal, LocationBottomSh
 
 const Header = styled(View, {
   pt: 12,
-  pb: 10
+  pb: 4
 });
 
 const NodataContainer = styled(XStack, {

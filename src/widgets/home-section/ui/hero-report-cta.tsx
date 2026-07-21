@@ -17,7 +17,8 @@ export const HeroReportCta = () => {
       py={16}
       px={18}
       bg="$white850"
-      overflow="hidden"
+      borderLeftWidth={4}
+      borderLeftColor={MISSING_RED}
       mt={12}
     >
       <YStack gap={2}>
@@ -36,7 +37,6 @@ export const HeroReportCta = () => {
           <ChevronRight size={16} color={white900.val as never} />
         </Action>
       </Pressable>
-      <Accent />
     </XStack>
   );
 };
@@ -69,13 +69,4 @@ const ActionText = styled(Text, {
   lineHeight: 16,
   fontWeight: '700',
   color: '$white900'
-});
-
-const Accent = styled(YStack, {
-  position: 'absolute',
-  l: 0,
-  t: 0,
-  b: 0,
-  width: 4,
-  bg: MISSING_RED
 });

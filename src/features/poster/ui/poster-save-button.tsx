@@ -1,3 +1,4 @@
+import { ImageDown } from '@tamagui/lucide-icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { Image } from 'expo-image';
 import { useEffect } from 'react';
@@ -59,7 +60,7 @@ export const PosterSaveButton = ({ source, color, label, overlay = false }: Post
 
   return (
     <Pressable hitSlop={10} accessibilityLabel="포스터 저장" onPressIn={warmImage} onPress={openPreview}>
-      <Poster width={22} height={22} color={color} />
+      <ImageDown size={22} color={color as never} />
     </Pressable>
   );
 };

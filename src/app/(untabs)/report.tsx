@@ -71,7 +71,7 @@ const Title = styled(Text, {
 });
 
 const InfoBox = styled(View, {
-  bg: '$white800',
+  bg: '#F7F7F7',
   rounded: 8,
   px: 16,
   py: 14,

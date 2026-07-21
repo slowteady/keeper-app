@@ -55,7 +55,7 @@ export const HomePersonalSection = ({ convertedData, isLoading, onGoDetail, onGo
   return (
     <>
       <HeaderContainer px={SCREEN_GUTTER} mb={16}>
-        <Text fontSize={26} lineHeight={36} fontWeight="600" color="$black900">
+        <Text fontSize={26} lineHeight={36} fontWeight="700" color="$black900">
           개인 공고
         </Text>
         <XStack items="center" mt={12} onPress={onGoList}>

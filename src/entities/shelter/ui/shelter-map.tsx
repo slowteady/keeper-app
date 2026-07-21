@@ -176,8 +176,8 @@ const ShelterMarker = memo(({ data, onTap, isSelected }: ShelterMarkerProps) => 
       image={require('@/assets/images/marker.png')}
       latitude={data.latitude}
       longitude={data.longitude}
-      height={isSelected ? 42 : 32}
-      width={isSelected ? 38 : 28}
+      height={isSelected ? 37 : 32}
+      width={isSelected ? 33 : 28}
       onTap={handleTap}
       caption={{
         text: data.name,

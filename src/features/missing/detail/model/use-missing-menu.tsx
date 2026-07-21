@@ -13,7 +13,7 @@ export type MissingMenuId = 'EDIT' | 'DELETE' | 'REPORT' | 'BLOCK';
 const EDIT_ITEM: BottomSheetMenuData<MissingMenuId> = { id: 'EDIT', label: '수정하기' };
 const DELETE_ITEM: BottomSheetMenuData<MissingMenuId> = { id: 'DELETE', label: '삭제하기', destructive: true };
 const REPORT_ITEM: BottomSheetMenuData<MissingMenuId> = { id: 'REPORT', label: '신고하기', destructive: true };
-const BLOCK_ITEM: BottomSheetMenuData<MissingMenuId> = { id: 'BLOCK', label: '차단하기', destructive: true };
+const BLOCK_ITEM: BottomSheetMenuData<MissingMenuId> = { id: 'BLOCK', label: '차단하기' };
 
 type UseMissingMenuParams = {
   id: string;

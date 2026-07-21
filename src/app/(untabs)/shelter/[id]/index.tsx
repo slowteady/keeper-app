@@ -159,9 +159,9 @@ const ShelterDetailContent = ({ id }: { id: string }) => {
         onScroll={handleScroll}
         renderItem={renderItem}
         emptyComponentVariant="list"
-        contentContainerStyle={{ paddingTop: 48, paddingBottom: buttonHeight + 40 }}
+        contentContainerStyle={{ paddingTop: 32, paddingBottom: buttonHeight + 40 }}
         header={
-          <YStack mb={24} gap={28}>
+          <YStack mb={12} gap={28}>
             <View px={SCREEN_GUTTER}>
               <ShelterDetailOverviewSection
                 data={shelterData}

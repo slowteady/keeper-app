@@ -24,7 +24,7 @@ export const LoginSheetView = ({
   const { bottom } = useLayout();
 
   return (
-    <YStack pt={8} pb={bottom + 12} gap={20}>
+    <YStack pt={24} pb={bottom + 12} gap={20}>
       <LottieView
         source={require('@/assets/animations/dogs-wag.json')}
         autoPlay
@@ -32,7 +32,7 @@ export const LoginSheetView = ({
         style={{ width: 200, height: 108, alignSelf: 'center' }}
       />
 
-      <YStack gap={8}>
+      <YStack gap={6}>
         <Text fontSize={24} lineHeight={32} fontWeight="700" color="$black900">
           keeper와 함께할까요?
         </Text>
@@ -41,7 +41,7 @@ export const LoginSheetView = ({
         </Text>
       </YStack>
 
-      <YStack gap={10}>
+      <YStack gap={10} mt={8}>
         <SocialLoginButton
           provider="kakao"
           label="카카오로 계속하기"

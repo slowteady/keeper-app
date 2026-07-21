@@ -80,7 +80,7 @@ const Page = () => {
       switch (item.id) {
         case 'banner':
           return (
-            <View px={SCREEN_GUTTER} pt={hasNotice ? 8 : 24} pb={24}>
+            <View px={SCREEN_GUTTER} pt={hasNotice ? 8 : 24} pb={44}>
               <HomeMissingHero fallbackImages={IMAGES} />
               <HeroReportCta />
             </View>
@@ -89,7 +89,7 @@ const Page = () => {
           return <HomeNoticeSection />;
         case 'adopt':
           return (
-            <View pb={24}>
+            <View pb={44}>
               <HomeAdoptSection
                 convertedData={convertedData}
                 isLoading={isLoading}
@@ -100,7 +100,7 @@ const Page = () => {
           );
         case 'personal':
           return (
-            <View pb={24}>
+            <View pb={44}>
               <HomePersonalSection
                 convertedData={personalData}
                 isLoading={personalLoading}
@@ -111,7 +111,7 @@ const Page = () => {
           );
         case 'shelter':
           return (
-            <View pb={24}>
+            <View pb={44}>
               <HomeShelterSection
                 shelters={shelter.shelters}
                 isGranted={shelter.isGranted}

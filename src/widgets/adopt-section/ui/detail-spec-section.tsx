@@ -1,21 +1,39 @@
-import { styled, Text, XStack, YStack } from 'tamagui';
+import { Fragment } from 'react';
+import { ColorTokens, styled, Text, View, XStack, YStack } from 'tamagui';
 
 export type DetailSpecRow = { label: string; value: string };
 
-export const DetailSpecSection = ({ title, rows }: { title: string; rows: DetailSpecRow[] }) => {
+export type DetailSpecSectionProps = {
+  title: string;
+  rows: DetailSpecRow[];
+  boxBg?: ColorTokens | string;
+  headerGap?: number;
+  withDividers?: boolean;
+};
+
+export const DetailSpecSection = ({
+  title,
+  rows,
+  boxBg,
+  headerGap = 12,
+  withDividers = false
+}: DetailSpecSectionProps) => {
   if (rows.length === 0) return null;
 
   return (
-    <YStack gap={12}>
+    <YStack gap={headerGap}>
       <SectionLabel>{title}</SectionLabel>
-      <Box>
-        {rows.map((row) => (
-          <Row key={row.label}>
-            <Label>{row.label}</Label>
-            <Value lineBreakStrategyIOS="hangul-word" style={{ textAlign: 'right' }}>
-              {row.value}
-            </Value>
-          </Row>
+      <Box {...(boxBg ? { bg: boxBg as never } : {})}>
+        {rows.map((row, idx) => (
+          <Fragment key={row.label}>
+            {withDividers && idx > 0 && <Divider />}
+            <Row>
+              <Label>{row.label}</Label>
+              <Value lineBreakStrategyIOS="hangul-word" style={{ textAlign: 'right' }}>
+                {row.value}
+              </Value>
+            </Row>
+          </Fragment>
         ))}
       </Box>
     </YStack>
@@ -30,7 +48,7 @@ const SectionLabel = styled(Text, {
 });
 
 const Box = styled(YStack, {
-  bg: '$backgroundDefault',
+  bg: '#F7F7F7',
   rounded: 12,
   p: 20,
   gap: 16
@@ -56,4 +74,9 @@ const Value = styled(Text, {
   fontWeight: 500,
   lineHeight: 22,
   color: '$black700'
+});
+
+const Divider = styled(View, {
+  height: 1,
+  bg: '#D9D9D9'
 });

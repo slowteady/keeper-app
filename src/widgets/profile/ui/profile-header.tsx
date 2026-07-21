@@ -1,5 +1,5 @@
 import { ChevronRight, FileText, Heart } from '@tamagui/lucide-icons';
-import { styled, Text, View, XStack, YStack } from 'tamagui';
+import { styled, Text, useTheme, View, XStack, YStack } from 'tamagui';
 
 import { SOCIAL_LABEL, UserDto } from '@/entities/auth';
 import { EmptyAvatar, UserAvatar } from '@/entities/profile';
@@ -27,6 +27,8 @@ export const ProfileHeader = ({
   onActivity,
   onChangeProfileImage
 }: ProfileHeaderProps) => {
+  const { black500 } = useTheme();
+  const chevronColor = black500.val;
   return (
     <View px={SCREEN_GUTTER} mb={8} pt={40}>
       {isLoading ? (
@@ -55,19 +57,21 @@ export const ProfileHeader = ({
                   onPressEdit={onChangeProfileImage}
                 />
                 <YStack flex={1} gap={8}>
-                  <Text numberOfLines={1} fontSize={20} lineHeight={20} fontWeight="500" color="$black900">
-                    {user.nickname}님
-                  </Text>
+                  <XStack items="center" justify="space-between" gap={12}>
+                    <Text numberOfLines={1} fontSize={20} lineHeight={20} fontWeight="500" color="$black900" flex={1}>
+                      {user.nickname}님
+                    </Text>
+                    <AccountAction onPress={onAccount}>
+                      <Text fontSize={13} lineHeight={16} fontWeight="600" style={{ color: chevronColor }}>
+                        계정관리
+                      </Text>
+                      <ChevronRight size={14} color={chevronColor as never} />
+                    </AccountAction>
+                  </XStack>
                   <Text numberOfLines={1} fontSize={13} lineHeight={16} fontWeight="500" color="$black500">
                     {SOCIAL_LABEL[user.socialType]} 계정으로 로그인했어요
                   </Text>
                 </YStack>
-                <AccountAction onPress={onAccount}>
-                  <Text fontSize={13} lineHeight={16} fontWeight="600" color="$black600">
-                    계정관리
-                  </Text>
-                  <ChevronRight size={14} color="$black500" />
-                </AccountAction>
               </>
             ) : (
               <>
@@ -106,7 +110,6 @@ const LoginAction = styled(XStack, {
 });
 
 const AccountAction = styled(XStack, {
-  height: 44,
   items: 'center',
   gap: 2
 });

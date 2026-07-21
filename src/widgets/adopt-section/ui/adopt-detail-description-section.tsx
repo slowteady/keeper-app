@@ -96,7 +96,7 @@ const ShelterName = styled(Text, {
 });
 
 const Card = styled(YStack, {
-  bg: '$backgroundDefault',
+  bg: '#F7F7F7',
   rounded: 12,
   p: 20
 });
