@@ -47,7 +47,7 @@ const SectionLabel = styled(Text, {
 });
 
 const LinkBox = styled(XStack, {
-  bg: '$backgroundDefault',
+  bg: '#F7F7F7',
   rounded: 12,
   p: 16,
   items: 'center',

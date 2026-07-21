@@ -19,6 +19,7 @@ import { useSetShelterSearchCoord, useShelterSearchCoord } from './shelter-searc
 const DEFAULT_ZOOM = 12;
 const CLUSTER_MAX_ZOOM = 16;
 const CLUSTER_RADIUS = 60;
+const FALLBACK_COORD = { latitude: 37.5665, longitude: 126.978 };
 
 export const useShelterViewport = () => {
   const { userLocation, isGranted, permissionStatus } = useLocation();
@@ -143,7 +144,7 @@ export const useShelterViewport = () => {
     if (userLocation) mapRef.current?.animateCameraTo({ ...userLocation, zoom: DEFAULT_ZOOM });
   }, [userLocation]);
 
-  const initialCamera = userLocation ? { ...userLocation, zoom: DEFAULT_ZOOM } : undefined;
+  const initialCamera = { ...(userLocation ?? FALLBACK_COORD), zoom: DEFAULT_ZOOM };
 
   return {
     clusters,

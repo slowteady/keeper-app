@@ -4,17 +4,18 @@ import {
   AnimalTypeSchema,
   GenderSchema,
   HealthCheckSchema,
+  MediaVideoSchema,
   NeuterYnSchema,
   VaccinationCheckSchema
 } from '@/shared/model';
 
 import { CREATE_POST_OPTIONS } from './constant';
 
+export { MediaVideoSchema };
+export type { MediaVideoDto } from '@/shared/model';
+
 export const ProtectionTypeSchema = z.enum(['TEMPORARY', 'ADOPTION', 'BOTH']);
 export type ProtectionTypeDto = z.infer<typeof ProtectionTypeSchema>;
-
-export const MediaVideoSchema = z.object({ uri: z.string(), thumbnailUri: z.string(), duration: z.number() });
-export type MediaVideoDto = z.infer<typeof MediaVideoSchema>;
 
 export const CommunityAdoptFormSchema = z.object({
   animalType: AnimalTypeSchema,
@@ -118,7 +119,7 @@ export type CommunityAdoptDetailDto = z.infer<typeof CommunityAdoptDetailSchema>
 
 export const CommunityAdoptListSchema = z.object({
   id: z.string(),
-  category: z.enum(['ADOPTION_PERSONAL', 'ADOPTION_LIFE', 'QNA']).nullish(),
+  category: z.enum(['ADOPTION_PERSONAL', 'MISSING', 'ADOPTION_LIFE', 'QNA']).nullish(),
   user: PostUserSummarySchema.nullable(),
   displayTime: z.string(),
   title: z.string(),
@@ -253,7 +254,7 @@ export const MyCommentListResponseSchema = z.object({
 export type MyCommentListResponseDto = z.infer<typeof MyCommentListResponseSchema>;
 
 export const MyPostItemSchema = CommunityAdoptListSchema.extend({
-  category: z.enum(['ADOPTION_PERSONAL', 'ADOPTION_LIFE', 'QNA'])
+  category: z.enum(['ADOPTION_PERSONAL', 'MISSING', 'ADOPTION_LIFE', 'QNA'])
 });
 export type MyPostItemDto = z.infer<typeof MyPostItemSchema>;
 

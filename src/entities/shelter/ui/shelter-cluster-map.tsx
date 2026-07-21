@@ -19,8 +19,7 @@ const MARKER = require('@/assets/images/marker.png');
 
 export type ShelterProps = { shelter: ShelterDto };
 export type ClusterPointFeature =
-  | Supercluster.PointFeature<ShelterProps>
-  | Supercluster.ClusterFeature<Supercluster.AnyProps>;
+  Supercluster.PointFeature<ShelterProps> | Supercluster.ClusterFeature<Supercluster.AnyProps>;
 
 const clusterSymbol = (count: number) =>
   count >= 100 ? 'highDensityCluster' : count >= 10 ? 'mediumDensityCluster' : 'lowDensityCluster';

@@ -1,12 +1,14 @@
 import axios from 'axios';
 import Constants from 'expo-constants';
 
-// dev 모드에서는 metro가 알려주는 호스트(hostUri)로 동적 결정.
-// 시뮬레이터 = localhost, 실기기 = 호스트 머신 LAN IP — 자동 매핑되어 둘 다 동작한다.
+// dev 모드에서 localhost 로 적어둔 경우에만 metro 호스트(hostUri)로 갈아끼운다.
+// 시뮬레이터 = localhost 그대로, 실기기 = 호스트 머신 LAN IP 로 자동 매핑.
+// 그 외 host 를 명시했다면 그대로 쓴다 — Metro 와 백엔드가 다른 머신일 수 있다
+// (예: 노트북에서 Metro, 맥미니 백엔드에 Tailscale 로 접속).
 const resolveBaseUrl = () => {
   const configured = process.env.EXPO_PUBLIC_API_URL;
   if (!__DEV__ || !configured) return configured;
-  if (configured.startsWith('https://')) return configured;
+  if (!/\/\/(localhost|127\.0\.0\.1)([:/]|$)/.test(configured)) return configured;
   const hostUri = Constants.expoConfig?.hostUri ?? Constants.expoGoConfig?.debuggerHost;
   if (!hostUri) return configured;
   const host = hostUri.split(':')[0];

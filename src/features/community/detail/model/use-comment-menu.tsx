@@ -18,7 +18,7 @@ const MINE_MENU: readonly BottomSheetMenuData<CommentMenuId>[] = [
   { id: 'DELETE', label: '삭제하기', destructive: true }
 ] as const;
 const REPORT_ITEM: BottomSheetMenuData<CommentMenuId> = { id: 'REPORT', label: '신고하기', destructive: true };
-const BLOCK_ITEM: BottomSheetMenuData<CommentMenuId> = { id: 'BLOCK', label: '차단하기', destructive: true };
+const BLOCK_ITEM: BottomSheetMenuData<CommentMenuId> = { id: 'BLOCK', label: '차단하기' };
 
 export type CommentMenuTarget = {
   commentId: string;

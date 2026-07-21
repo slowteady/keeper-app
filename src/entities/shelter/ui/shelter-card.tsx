@@ -86,7 +86,7 @@ const ShelterCardComponent = ({
               fontSize={13}
               lineHeight={15}
               fontWeight="400"
-              color="$black500"
+              color="$black600"
               ml={hasDistance ? 4 : 0}
             >
               {hasDistance ? `| ${convertedAddress}` : convertedAddress}

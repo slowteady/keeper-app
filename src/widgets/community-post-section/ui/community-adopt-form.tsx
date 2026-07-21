@@ -4,15 +4,17 @@ import { LayoutChangeEvent, TextInput } from 'react-native';
 import { Accordion, Form, Square, styled, Text, useTheme, View, YStack } from 'tamagui';
 
 import { CommunityAdoptFormDto, CREATE_POST_OPTIONS } from '@/entities/community';
-import { ContactSelectField } from '@/features/community/create/ui/field/contact-select-field';
-import { LabelChipGroup } from '@/features/community/create/ui/field/label-chip-group';
-import { LabelSelectField } from '@/features/community/create/ui/field/label-select-field';
-import { LabelTextArea } from '@/features/community/create/ui/field/label-text-area';
-import { LabelTextField } from '@/features/community/create/ui/field/label-text-field';
-import { MediaAttachField } from '@/features/community/create/ui/field/media-attach-field';
-import { OptionSelectField } from '@/features/community/create/ui/field/option-select-field';
 import { FREE_ADOPTION_NOTICE, SafetyNotice } from '@/features/community/safety';
 import { SCREEN_GUTTER } from '@/shared/lib';
+import {
+  ContactSelectField,
+  LabelChipGroup,
+  LabelSelectField,
+  LabelTextArea,
+  LabelTextField,
+  MediaAttachField,
+  OptionSelectField
+} from '@/shared/ui/form';
 import { DownArrow } from '@/shared/ui/icons/mini';
 
 export type CommunityAdoptFormProps = {
@@ -68,8 +70,20 @@ export const CommunityAdoptForm = ({
       <Section>
         <SectionTitle>공고 정보</SectionTitle>
         <YStack gap={16}>
-          <OptionSelectField name="protectionType" control={control} label="보호 유형" required />
-          <OptionSelectField name="animalType" control={control} label="분류" required />
+          <OptionSelectField
+            name="protectionType"
+            control={control}
+            label="보호 유형"
+            options={CREATE_POST_OPTIONS.protectionType}
+            required
+          />
+          <OptionSelectField
+            name="animalType"
+            control={control}
+            label="분류"
+            options={CREATE_POST_OPTIONS.animalType}
+            required
+          />
           <LabelTextArea
             name="title"
             control={control}
@@ -119,7 +133,7 @@ export const CommunityAdoptForm = ({
           <Accordion.Content bg="transparent" p={0}>
             <Accordion.HeightAnimator animation="quick" exitStyle={{ opacity: 0, height: 0 }}>
               <YStack px={SCREEN_GUTTER} pb={24} gap={16}>
-                <OptionSelectField name="gender" control={control} label="성별" />
+                <OptionSelectField name="gender" control={control} label="성별" options={CREATE_POST_OPTIONS.gender} />
                 <LabelSelectField
                   name="age"
                   control={control}
@@ -167,9 +181,24 @@ export const CommunityAdoptForm = ({
           <Accordion.Content bg="transparent" p={0}>
             <Accordion.HeightAnimator animation="quick" exitStyle={{ opacity: 0, height: 0 }}>
               <YStack px={SCREEN_GUTTER} pb={24} gap={16}>
-                <OptionSelectField name="neuterYn" control={control} label="중성화" />
-                <OptionSelectField name="vaccinationCheck" control={control} label="예방접종" />
-                <OptionSelectField name="healthCheck" control={control} label="건강검진" />
+                <OptionSelectField
+                  name="neuterYn"
+                  control={control}
+                  label="중성화"
+                  options={CREATE_POST_OPTIONS.neuterYn}
+                />
+                <OptionSelectField
+                  name="vaccinationCheck"
+                  control={control}
+                  label="예방접종"
+                  options={CREATE_POST_OPTIONS.vaccinationCheck}
+                />
+                <OptionSelectField
+                  name="healthCheck"
+                  control={control}
+                  label="건강검진"
+                  options={CREATE_POST_OPTIONS.healthCheck}
+                />
                 <LabelTextArea
                   name="health"
                   control={control}
@@ -267,7 +296,9 @@ export const CommunityAdoptForm = ({
 
       <Section onLayout={onContactLayout}>
         <ContactSelectField
+          name="contact"
           control={control}
+          options={CREATE_POST_OPTIONS.contact}
           label="연락 정보"
           helper="여러 개 선택할 수 있어요"
           required

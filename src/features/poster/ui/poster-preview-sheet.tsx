@@ -5,17 +5,17 @@ import { Text, useTheme, YStack } from 'tamagui';
 
 import { Button, NoImage, Skeleton, useBottomSheet } from '@/shared/ui';
 
-import { usePoster } from '../model/use-poster';
+import { PosterSource, usePoster } from '../model/use-poster';
 import { usePosterSave } from '../model/use-poster-save';
 
 type PosterPreviewSheetProps = {
-  desertionNo: string;
+  source: PosterSource;
 };
 
-export const PosterPreviewSheet = ({ desertionNo }: PosterPreviewSheetProps) => {
+export const PosterPreviewSheet = ({ source }: PosterPreviewSheetProps) => {
   const { white850 } = useTheme();
   const { dismiss } = useBottomSheet();
-  const { url, isLoading, isError, isEnded, refetch } = usePoster(desertionNo);
+  const { url, isLoading, isError, isEnded, refetch } = usePoster(source);
   const { save, isSaving } = usePosterSave();
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const [isImageError, setIsImageError] = useState(false);
@@ -33,7 +33,7 @@ export const PosterPreviewSheet = ({ desertionNo }: PosterPreviewSheetProps) => 
     if (!url) {
       return;
     }
-    if (await save(url, desertionNo)) {
+    if (await save(url, source.id)) {
       dismiss();
     }
   };

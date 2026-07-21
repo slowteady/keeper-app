@@ -46,6 +46,7 @@ jest.mock('@/features/community/create/model/api', () => {
 });
 
 jest.mock('@/features/upload', () => ({
+  ...jest.requireActual('@/features/upload'),
   useImageUpload: () => ({ mutateAsync: (...args: unknown[]) => mockUpload(...args), isPending: false }),
   useVideoUpload: () => ({ mutateAsync: jest.fn(), isPending: false })
 }));

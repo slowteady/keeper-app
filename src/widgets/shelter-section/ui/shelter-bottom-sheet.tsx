@@ -61,7 +61,7 @@ export const ShelterBottomSheet = ({
       handleIndicatorStyle={{ width: 48, borderRadius: 30, backgroundColor: white800.val }}
     >
       <Header>
-        <Text fontSize={15} lineHeight={18} fontWeight="600" color="$black900">
+        <Text fontSize={18} lineHeight={18} fontWeight="600" color="$black900">
           이 지역 보호소 {count}곳
         </Text>
       </Header>
@@ -71,7 +71,7 @@ export const ShelterBottomSheet = ({
         keyExtractor={(item: ShelterDto) => item.id}
         renderItem={renderItem}
         onScrollToIndexFailed={() => undefined}
-        ItemSeparatorComponent={() => <View height={6} />}
+        ItemSeparatorComponent={() => <View height={2} />}
         contentContainerStyle={{ paddingBottom: 24 }}
         ListEmptyComponent={<EmptyComponent isLoading={isLoading} />}
         showsVerticalScrollIndicator={false}
@@ -99,5 +99,6 @@ const EmptyComponent = ({ isLoading }: { isLoading: boolean }) =>
 
 const Header = styled(View, {
   px: 20,
-  pb: 12
+  pt: 12,
+  pb: 8
 });

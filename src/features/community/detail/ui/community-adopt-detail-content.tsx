@@ -6,10 +6,11 @@ import { styled, Text, useTheme, View, XStack } from 'tamagui';
 import { PROTECTION_LABEL } from '@/entities/adopt';
 import { PostCardHeader, PostCardTitle } from '@/entities/community';
 import { useCurrentUser, useLoginRequired } from '@/features/auth';
+import { ContactSafetyNotice } from '@/features/community/safety';
 import { useLikePost } from '@/features/like-post';
 import { formatTimeAgo, toggleHaptic } from '@/shared/lib';
 import { useLayout, useListRefreshing } from '@/shared/model';
-import { BottomButton, Carousel, ConfirmModal, Skeleton, useBottomSheet, useModal } from '@/shared/ui';
+import { BottomButton, Carousel, ConfirmModal, ContactSheet, Skeleton, useBottomSheet, useModal } from '@/shared/ui';
 import { AnimatedHeart } from '@/shared/ui/icons/animation';
 import { Share as ShareIcon } from '@/shared/ui/icons/outline';
 import { DetailSpecSection } from '@/widgets/adopt-section';
@@ -22,7 +23,6 @@ import {
 import { useAdoptionStatus } from '../model/use-adoption-status';
 import { useCommunityAdoptDetailFeed } from '../model/use-community-adopt-detail-feed';
 import { usePostMenu } from '../model/use-post-menu';
-import { ContactSheet } from './contact-sheet';
 
 export type CommunityAdoptDetailContentProps = {
   id: string;
@@ -59,7 +59,10 @@ export const CommunityAdoptDetailContent = ({ id }: CommunityAdoptDetailContentP
   const openContactSheet = useCallback(() => {
     requireLogin(async () => {
       const contacts = await getContacts();
-      present(<ContactSheet contacts={contacts} />, { enableDynamicSizing: true, onDismiss: dismiss });
+      present(<ContactSheet contacts={contacts} notice={<ContactSafetyNotice />} />, {
+        enableDynamicSizing: true,
+        onDismiss: dismiss
+      });
     });
   }, [requireLogin, present, dismiss, getContacts]);
 
@@ -315,6 +318,8 @@ const CompletedBanner = styled(View, {
   px: 16,
   py: 14,
   rounded: 10,
+  borderLeftWidth: 4,
+  borderLeftColor: '$successMain',
   bg: '$successLightest'
 });
 

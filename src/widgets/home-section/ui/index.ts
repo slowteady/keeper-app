@@ -1,3 +1,4 @@
+export * from './hero-report-cta';
 export * from './home-adopt-section';
 export * from './home-banner-section';
 export * from './home-footer-section';

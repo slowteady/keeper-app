@@ -66,7 +66,7 @@ const Container = styled(XStack, {
   items: 'center',
   bg: 'transparent',
   px: 16,
-  mb: 16,
+  mb: 6,
   rounded: 6,
   justify: 'space-between',
   borderWidth: 1

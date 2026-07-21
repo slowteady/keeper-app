@@ -13,6 +13,9 @@ export const ShelterDetailDescriptionSection = ({ time, person, tel }: ShelterDe
   return (
     <DetailSpecSection
       title="운영정보"
+      boxBg="#F7F7F7"
+      headerGap={10}
+      withDividers
       rows={[
         { label: '운영시간', value: orFallback(time) },
         { label: '연락처', value: orFallback(tel) },

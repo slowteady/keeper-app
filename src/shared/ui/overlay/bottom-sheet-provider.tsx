@@ -30,6 +30,9 @@ export type PresentOptions = {
   // BottomSheetView wrap 비활성화 — content 가 직접 BottomSheetScrollView 등을 wrap 하는 경우
   // (dynamic sizing + 내부 스크롤 케이스 — 중첩 시 스크롤 안 됨)
   disableViewWrap?: boolean;
+  // false 면 콘텐츠 영역 드래그가 시트를 움직이지 않음. 내부에 휠 피커처럼
+  // 자체 드래그를 쓰는 네이티브 컨트롤이 있을 때 필요 (제스처 가로채기 방지)
+  enableContentPanningGesture?: boolean;
 };
 
 export type BottomSheetContextType = {
@@ -51,6 +54,7 @@ export const BottomSheetProvider = ({ children }: { children: React.ReactNode })
   const [dynamicSizing, setDynamicSizing] = useState(false);
   const [maxDynamic, setMaxDynamic] = useState<number | undefined>(undefined);
   const [disableViewWrap, setDisableViewWrap] = useState(false);
+  const [contentPanning, setContentPanning] = useState(true);
 
   const onDismissRef = useRef<(() => void) | undefined>(undefined);
   const sheetRef = useRef<BottomSheetModal>(null);
@@ -74,6 +78,7 @@ export const BottomSheetProvider = ({ children }: { children: React.ReactNode })
     setDynamicSizing(!!opts?.enableDynamicSizing);
     setMaxDynamic(opts?.maxDynamicContentSize);
     setDisableViewWrap(!!opts?.disableViewWrap);
+    setContentPanning(opts?.enableContentPanningGesture ?? true);
     onDismissRef.current = opts?.onDismiss;
     setMandatory(!!opts?.mandatory);
     // setState 가 함수를 받으면 updater 로 해석하므로 래핑
@@ -123,6 +128,7 @@ export const BottomSheetProvider = ({ children }: { children: React.ReactNode })
           // mandatory 모드: 스와이프 down / 핸들 드래그로 닫히지 않음. dismiss() 호출만 닫음.
           enablePanDownToClose={!mandatory}
           enableHandlePanningGesture={!mandatory}
+          enableContentPanningGesture={contentPanning}
           handleComponent={mandatory ? null : undefined}
           handleIndicatorStyle={{ ...sheetHandleIndicatorStyle(white800.val), marginBottom: 12 }}
           backgroundStyle={SHEET_BACKGROUND_STYLE}
@@ -133,6 +139,7 @@ export const BottomSheetProvider = ({ children }: { children: React.ReactNode })
             setFooterRender(undefined);
             setMandatory(false);
             setDisableViewWrap(false);
+            setContentPanning(true);
           }}
           enableDynamicSizing={dynamicSizing}
           maxDynamicContentSize={maxDynamic}

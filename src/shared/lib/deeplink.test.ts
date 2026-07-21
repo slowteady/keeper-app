@@ -45,6 +45,14 @@ describe('resolveNotificationPath', () => {
   it('shelter-favorite refType 은 관심 목록의 보호소 탭으로 보낸다', () => {
     expect(resolveNotificationPath('shelter-favorite', null)).toBe('/(untabs)/profile/like?tab=shelter');
   });
+
+  it('missing refType 은 유저 실종글 상세로 보낸다', () => {
+    expect(resolveNotificationPath('missing', 'abc-123')).toBe('/(untabs)/missing/post/abc-123');
+  });
+
+  it('post refType 은 커뮤니티 상세로 보낸다(실종과 구분)', () => {
+    expect(resolveNotificationPath('post', 'xyz')).toBe('/(untabs)/community/xyz');
+  });
 });
 
 describe('redirectSystemPath', () => {

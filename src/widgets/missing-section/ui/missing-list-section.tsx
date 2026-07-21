@@ -1,18 +1,18 @@
 import { ListRenderItemInfo } from '@shopify/flash-list';
+import dayjs from 'dayjs';
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { View, YStack } from 'tamagui';
 
 import { ADOPT_OPTIONS } from '@/entities/adopt';
-import { MissingCard, MissingCardSkeleton, MissingItem } from '@/entities/missing';
-import { MissingFilterBar, useMissingFilter, useMissingList } from '@/features/missing';
+import { MissingCard, MissingCardSkeleton, MissingFeedItemDto } from '@/entities/missing';
+import { MissingFilterBar, useMissingFeed, useMissingFilter } from '@/features/missing';
 import { globalToast } from '@/shared/lib';
 import { useScrollToTop } from '@/shared/model';
 import { ButtonGroup, FeedNodata, ScrollToTopButton, ShowMoreButton } from '@/shared/ui';
 import { AdoptListSection } from '@/widgets/adopt-section';
 
-const LIST_SIZE = 16;
 const SKELETON_ROWS = 3;
 
 type AnimalType = (typeof ADOPT_OPTIONS.ANIMAL)[number]['id'];
@@ -20,21 +20,28 @@ type AnimalType = (typeof ADOPT_OPTIONS.ANIMAL)[number]['id'];
 export const MissingListSection = () => {
   const router = useRouter();
   const [animalType, setAnimalType] = useState<AnimalType>('ALL');
-  const { ref, scrollY, onScroll, scrollToTop } = useScrollToTop<MissingItem>();
+  const { ref, scrollY, onScroll, scrollToTop } = useScrollToTop<MissingFeedItemDto>();
   const { region, applyNearby, clear } = useMissingFilter();
-  const { convertedData, moreButtonText, isLoading, isError, isFetchingNextPage, hasNextPage, refresh, fetchNextPage } =
-    useMissingList({
-      size: LIST_SIZE,
-      sido: region?.sido,
-      sigungu: region?.sigungu,
-      animalType: animalType === 'ALL' ? undefined : animalType
-    });
+  const { items, isLoading, isError, isFetchingNextPage, hasNextPage, refresh, fetchNextPage } = useMissingFeed({
+    animalType: animalType === 'ALL' ? undefined : animalType,
+    sido: region?.sido,
+    sigungu: region?.sigungu
+  });
 
   useEffect(() => {
     ref.current?.scrollToOffset({ offset: 0, animated: false });
   }, [animalType, region, ref]);
 
-  const goDetail = useCallback((id: string) => router.push({ pathname: '/missing/[id]', params: { id } }), [router]);
+  const goDetail = useCallback(
+    (item: MissingFeedItemDto) => {
+      if (item.source === 'USER') {
+        router.push({ pathname: '/missing/post/[id]', params: { id: item.id } });
+      } else {
+        router.push({ pathname: '/missing/[id]', params: { id: item.id } });
+      }
+    },
+    [router]
+  );
 
   const handlePressNearby = useCallback(async () => {
     if (region) {
@@ -48,15 +55,15 @@ export const MissingListSection = () => {
   }, [region, applyNearby, clear]);
 
   const renderItem = useCallback(
-    ({ item }: ListRenderItemInfo<MissingItem>) => (
+    ({ item }: ListRenderItemInfo<MissingFeedItemDto>) => (
       <View mb={32}>
         <MissingCard
-          uri={item.uri}
-          kind={item.kind}
+          uri={item.thumbnail ?? ''}
+          kind={item.kindLabel}
           region={item.region}
-          date={item.date}
-          specialMark={item.specialMark}
-          onPress={() => goDetail(item.id)}
+          date={dayjs(item.sortDate).format('YYYY.MM.DD')}
+          status={item.status}
+          onPress={() => goDetail(item)}
         />
       </View>
     ),
@@ -72,7 +79,7 @@ export const MissingListSection = () => {
     <View flex={1}>
       <AdoptListSection
         ref={ref}
-        data={convertedData}
+        data={items}
         numColumns={1}
         isLoading={isLoading}
         onRefreshCallback={refresh}
@@ -87,7 +94,7 @@ export const MissingListSection = () => {
         footer={
           hasNextPage ? (
             <View mb={24} justify="center">
-              <ShowMoreButton text={moreButtonText} onPress={handleMore} isLoading={isFetchingNextPage} />
+              <ShowMoreButton text="더보기" onPress={handleMore} isLoading={isFetchingNextPage} />
             </View>
           ) : undefined
         }

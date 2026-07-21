@@ -82,13 +82,15 @@ export const ShelterDetailOverviewSection = ({
       </MapWrap>
 
       <AddressRow>
-        <MapPin size={18} color={black500.val as never} />
+        <View height={22} justify="center">
+          <MapPin size={18} color={black500.val as never} />
+        </View>
         <AddressText numberOfLines={2}>{address}</AddressText>
         {onPressDirections && (
           <Pressable hitSlop={8} onPress={onPressDirections} accessibilityLabel="길찾기">
             <DirectionsButton>
-              <Navigation size={14} color={black600.val as never} />
               <DirectionsText>길찾기</DirectionsText>
+              <Navigation size={14} color={black600.val as never} />
             </DirectionsButton>
           </Pressable>
         )}
@@ -124,8 +126,9 @@ const Title = styled(Text, {
 });
 
 const AddressRow = styled(XStack, {
-  items: 'center',
-  gap: 8
+  items: 'flex-start',
+  gap: 4,
+  mt: 4
 });
 
 const AddressText = styled(Text, {
@@ -138,8 +141,9 @@ const AddressText = styled(Text, {
 
 const DirectionsButton = styled(XStack, {
   items: 'center',
-  gap: 4,
-  px: 12,
+  gap: 2,
+  pl: 12,
+  pr: 10,
   py: 7,
   rounded: 999,
   bg: '$backgroundDefault'
@@ -149,5 +153,5 @@ const DirectionsText = styled(Text, {
   fontSize: 13,
   lineHeight: 15,
   fontWeight: '600',
-  color: '$black700'
+  color: '$black600'
 });

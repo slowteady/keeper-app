@@ -179,13 +179,13 @@ const TextTabContainer = styled(XStack, {
 });
 
 const TextTabItem = styled(View, {
-  pb: 12,
+  pb: 8,
   mb: -1,
   borderBottomWidth: 2.5
 });
 
 const TextTabLabel = styled(Text, {
-  fontSize: 22,
+  fontSize: 20,
   lineHeight: 26,
   fontWeight: '700'
 });

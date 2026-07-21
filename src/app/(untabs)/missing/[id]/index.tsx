@@ -1,4 +1,4 @@
-import { Clock, Landmark, MapPin } from '@tamagui/lucide-icons';
+import { Clock, MapPin } from '@tamagui/lucide-icons';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
 import { Suspense, useMemo, useState } from 'react';
@@ -96,13 +96,6 @@ const MissingDetailContent = ({ id }: { id: string }) => {
                   <MapPin size={16} color={black600.val as never} />
                   <InfoLabel>실종장소</InfoLabel>
                   <InfoValue lineBreakStrategyIOS="hangul-word">{missing.happenPlace}</InfoValue>
-                </InfoRow>
-              )}
-              {!!missing.orgNm && (
-                <InfoRow>
-                  <Landmark size={16} color={black600.val as never} />
-                  <InfoLabel>관할기관</InfoLabel>
-                  <InfoValue>{missing.orgNm}</InfoValue>
                 </InfoRow>
               )}
             </YStack>

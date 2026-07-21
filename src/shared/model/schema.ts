@@ -19,3 +19,6 @@ export type VaccinationCheckDto = z.infer<typeof VaccinationCheckSchema>;
 
 export const HealthCheckSchema = z.enum(['Y', 'N', 'U', 'NONE']);
 export type HealthCheckDto = z.infer<typeof HealthCheckSchema>;
+
+export const MediaVideoSchema = z.object({ uri: z.string(), thumbnailUri: z.string(), duration: z.number() });
+export type MediaVideoDto = z.infer<typeof MediaVideoSchema>;

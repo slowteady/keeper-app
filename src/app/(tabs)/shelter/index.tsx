@@ -85,7 +85,7 @@ const Page = () => {
     router.push({ pathname: '/shelter/[id]', params: { id } });
   }, []);
 
-  if (permissionStatus === undefined || (isGranted && userLocation === undefined)) {
+  if (permissionStatus === undefined) {
     return (
       <Container>
         <Skeleton style={{ flex: 1 }} />

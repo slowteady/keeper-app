@@ -1,3 +1,4 @@
+import { useFocusEffect } from '@react-navigation/native';
 import { ChevronRight, Siren } from '@tamagui/lucide-icons';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -9,6 +10,7 @@ import { styled, Text, View, XStack } from 'tamagui';
 
 import { MissingItem } from '@/entities/missing';
 import { useFeaturedMissing } from '@/features/missing';
+import { MISSING_RED } from '@/shared/lib';
 import { useCarousel } from '@/shared/model';
 import { NoImage, Skeleton } from '@/shared/ui';
 
@@ -39,14 +41,22 @@ export const HomeMissingHero = ({ fallbackImages }: HomeMissingHeroProps) => {
     interactingRef.current = e.nativeEvent.pageScrollState !== 'idle';
   }, []);
 
-  useEffect(() => {
-    if (featured.length <= 1) return;
-    const id = setInterval(() => {
-      if (interactingRef.current) return;
-      carouselRef.current?.setPage((activeRef.current + 1) % featured.length);
-    }, AUTOPLAY_MS);
-    return () => clearInterval(id);
-  }, [featured.length, carouselRef]);
+  useFocusEffect(
+    useCallback(() => {
+      if (featured.length <= 1) return;
+
+      interactingRef.current = false;
+
+      const id = setInterval(() => {
+        if (interactingRef.current) return;
+        requestAnimationFrame(() => {
+          carouselRef.current?.setPage((activeRef.current + 1) % featured.length);
+        });
+      }, AUTOPLAY_MS);
+
+      return () => clearInterval(id);
+    }, [featured.length, carouselRef])
+  );
 
   const goDetail = useCallback((id: string) => router.push({ pathname: '/missing/[id]', params: { id } }), [router]);
   const goList = useCallback(() => router.push('/missing'), [router]);
@@ -177,7 +187,7 @@ const TopBar = styled(XStack, {
   justify: 'space-between',
   px: 16,
   py: 11,
-  bg: '#FF2D2D'
+  bg: MISSING_RED
 });
 
 const TopBarLeft = styled(XStack, {

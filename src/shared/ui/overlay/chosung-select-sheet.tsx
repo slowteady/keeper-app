@@ -17,7 +17,7 @@ type FlatRow =
   | { type: 'item'; title: ChosungLabel; option: SelectOption; key: string };
 
 const HEADER_HEIGHT = 36;
-const ROW_HEIGHT = 44;
+const ROW_HEIGHT = 38;
 
 export type ChosungSelectSheetProps = {
   options: SelectOption[];
@@ -223,4 +223,4 @@ const styles = StyleSheet.create({
 
 const ChipText = styled(Text, { fontSize: 13, fontWeight: '600', lineHeight: 17 });
 const RowText = styled(Text, { fontSize: 16, fontWeight: '500', lineHeight: 20 });
-const SectionTitle = styled(Text, { fontSize: 14, fontWeight: '700', color: '$black700', lineHeight: 18 });
+const SectionTitle = styled(Text, { fontSize: 16, fontWeight: '700', color: '$black700', lineHeight: 20 });

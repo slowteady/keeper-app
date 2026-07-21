@@ -14,7 +14,7 @@ export type PostMenuId = 'TOGGLE_ADOPTION' | 'EDIT' | 'DELETE' | 'REPORT' | 'BLO
 const EDIT_ITEM: BottomSheetMenuData<PostMenuId> = { id: 'EDIT', label: '수정하기' };
 const DELETE_ITEM: BottomSheetMenuData<PostMenuId> = { id: 'DELETE', label: '삭제하기', destructive: true };
 const REPORT_ITEM: BottomSheetMenuData<PostMenuId> = { id: 'REPORT', label: '신고하기', destructive: true };
-const BLOCK_ITEM: BottomSheetMenuData<PostMenuId> = { id: 'BLOCK', label: '차단하기', destructive: true };
+const BLOCK_ITEM: BottomSheetMenuData<PostMenuId> = { id: 'BLOCK', label: '차단하기' };
 
 type AdoptionMenu = {
   status: 'IN_PROGRESS' | 'COMPLETED';

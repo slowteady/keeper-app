@@ -3,7 +3,7 @@ import { Images, MapPin, Play } from '@tamagui/lucide-icons';
 import { Image } from 'expo-image';
 import { memo, useCallback } from 'react';
 import { Pressable, StyleSheet } from 'react-native';
-import { styled, Text, View, XStack } from 'tamagui';
+import { styled, Text, useTheme, View, XStack } from 'tamagui';
 
 import { formatDuration, toggleHaptic } from '@/shared/lib';
 import { NoImage } from '@/shared/ui/fallback/no-image';
@@ -54,6 +54,8 @@ const PersonalAdoptCardComponent = ({
   hasVideo = false,
   videoDuration
 }: PersonalAdoptCardProps) => {
+  const { black600 } = useTheme();
+
   const handlePressFavorite = useCallback(() => {
     if (!onPressFavorite) return;
     toggleHaptic(isLiked);
@@ -106,7 +108,7 @@ const PersonalAdoptCardComponent = ({
         {compact
           ? !!region && (
               <RegionLine>
-                <MapPin size={13} color="$black500" />
+                <MapPin size={13} color={black600.val as never} />
                 <RegionText>{region}</RegionText>
               </RegionLine>
             )
@@ -176,10 +178,10 @@ const Container = styled(View, {
 const ImageContainer = styled(View, {
   width: '100%',
   aspectRatio: 4 / 3,
-  mb: 18,
+  mb: 16,
   variants: {
     compact: {
-      true: { aspectRatio: 5 / 4, mb: 18 }
+      true: { aspectRatio: 5 / 4, mb: 16 }
     }
   } as const
 });
@@ -188,17 +190,17 @@ const ProtectionBadge = styled(View, {
   position: 'absolute',
   t: 10,
   l: 10,
-  px: 8,
-  py: 4,
-  rounded: 999,
-  bg: 'rgba(255,255,255,0.92)'
+  px: 7,
+  py: 5,
+  rounded: 5,
+  bg: '#212121'
 });
 
 const ProtectionText = styled(Text, {
-  fontWeight: 700,
+  fontWeight: 600,
   fontSize: 12,
   lineHeight: 14,
-  color: '$black800'
+  color: '#fff'
 });
 
 const MediaBadge = styled(XStack, {
@@ -224,17 +226,17 @@ const TitleRow = styled(XStack, {
   items: 'flex-start',
   justify: 'space-between',
   gap: 12,
-  mb: 14,
+  mb: 10,
   variants: {
     compact: {
-      true: { mb: 16 }
+      true: { mb: 10 }
     }
   } as const
 });
 
 const Title = styled(Text, {
   flex: 1,
-  fontWeight: 600,
+  fontWeight: 700,
   fontSize: 17,
   lineHeight: 26,
   color: '$black900',
@@ -250,7 +252,7 @@ const Title = styled(Text, {
 const RegionLine = styled(XStack, {
   items: 'center',
   gap: 4,
-  mb: 14
+  mb: 10
 });
 
 const RegionText = styled(Text, {
@@ -258,7 +260,7 @@ const RegionText = styled(Text, {
   fontWeight: 500,
   fontSize: 14,
   lineHeight: 17,
-  color: '$black500',
+  color: '$black600',
   numberOfLines: 1,
   ellipsizeMode: 'tail'
 });

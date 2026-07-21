@@ -59,5 +59,5 @@ const Container = styled(XStack, {
   justify: 'center',
   width: '100%',
   py: 14,
-  rounded: 5
+  rounded: 8
 });

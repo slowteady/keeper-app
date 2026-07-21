@@ -10,10 +10,8 @@ import {
   communityQueries,
   QNA_CATEGORY_OPTIONS
 } from '@/entities/community';
-import { useImageUpload, useVideoUpload } from '@/features/upload';
+import { resolveVideoUpload, useImageUpload, useVideoUpload } from '@/features/upload';
 import { getModerationMessage, globalToast } from '@/shared/lib';
-
-import { resolveVideoUpload } from '../../create/model/resolve-video';
 
 export const useCreateQnaPost = () => {
   const queryClient = useQueryClient();

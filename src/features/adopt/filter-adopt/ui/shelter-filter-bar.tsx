@@ -79,7 +79,7 @@ export const ShelterFilterBar = ({ filter, animalType, sortValue, onChangeSort }
 
   return (
     <XStack items="center" gap={14}>
-      <FadeEdgesScrollView ref={scrollRef} contentContainerStyle={{ gap: 6, alignItems: 'center', paddingRight: 12 }}>
+      <FadeEdgesScrollView ref={scrollRef} contentContainerStyle={{ gap: 4, alignItems: 'center', paddingRight: 12 }}>
         {activeCount > 0 && <ResetChip onPress={reset} />}
         {breedEnabled && <FilterChip label={labels.breed ?? '품종'} active={!!applied.breed} onPress={openBreed} />}
         <FilterChip label={labels.region ?? '지역'} active={!!applied.region} onPress={openRegion} />

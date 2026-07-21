@@ -71,7 +71,7 @@ const SectionLabel = styled(Text, {
 });
 
 const Box = styled(YStack, {
-  bg: '$backgroundDefault',
+  bg: '#F7F7F7',
   rounded: 12,
   p: 20,
   gap: 16
