@@ -14,17 +14,17 @@ const STATUS_OPTIONS = [
 export type MissingFilterBarProps = {
   active: boolean;
   onPressNearby: () => void;
-  status: MissingStatusFilter;
-  onChangeStatus: (status: MissingStatusFilter) => void;
+  status?: MissingStatusFilter;
+  onChangeStatus?: (status: MissingStatusFilter) => void;
 };
 
-export const MissingFilterBar = ({ active, onPressNearby, status, onChangeStatus }: MissingFilterBarProps) => {
+export const MissingFilterBar = ({ active, onPressNearby, status = 'ALL', onChangeStatus }: MissingFilterBarProps) => {
   const applied = status === 'ALL' ? '' : status;
 
   const { open: openStatus } = useBottomSheetMenu({
     data: STATUS_OPTIONS,
     value: applied,
-    onPress: (item) => onChangeStatus(item.id === '' ? 'ALL' : (item.id as MissingStatusDto))
+    onPress: (item) => onChangeStatus?.(item.id === '' ? 'ALL' : (item.id as MissingStatusDto))
   });
 
   const label = STATUS_OPTIONS.find((item) => item.id === applied)?.label;
@@ -34,7 +34,9 @@ export const MissingFilterBar = ({ active, onPressNearby, status, onChangeStatus
       <ChipButton selected={active} onPress={onPressNearby}>
         내 주변
       </ChipButton>
-      <FilterChip label={applied ? (label ?? '상태') : '상태'} active={!!applied} onPress={openStatus} />
+      {onChangeStatus && (
+        <FilterChip label={applied ? (label ?? '상태') : '상태'} active={!!applied} onPress={openStatus} />
+      )}
     </XStack>
   );
 };
