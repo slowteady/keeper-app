@@ -26,7 +26,7 @@ export const FormLayout = ({ children, footer, contentContainerStyle, containerP
         ref={scrollRef}
         mode="layout"
         keyboardShouldPersistTaps="handled"
-        bottomOffset={20}
+        bottomOffset={footerHeight + 20}
         extraKeyboardSpace={footerHeight}
         contentContainerStyle={[contentContainerStyle, { paddingBottom: footerHeight }]}
       >

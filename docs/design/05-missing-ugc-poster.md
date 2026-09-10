@@ -113,7 +113,7 @@ PosterPreviewSheet (features/poster, generic화: source={type:'missing', id})
 └─ ShareButton (기존 share feature)  카톡/인스타/기타 공유시트
 ```
 
-- BP: 입력 즉시 결과물 → 미리보기 모달 + 공유시트(Canva/Animalert 표준). 인쇄 A4/소셜 2포맷은 후속(P1). MVP 단일 세로 포맷.
+- BP: 입력 즉시 결과물 → 미리보기 모달 + 공유시트(Canva/Animalert 표준). 소셜 세로 포맷(1080x1350)이 MVP. 인쇄 A4(2480x3506)는 포스터 재설계 사이클에서 **백엔드만 선행 구현**(`GET .../poster?format=print`), 앱 진입 UI 는 후속(P1).
 - generic화: `posterQueries.adopt(desertionNo)` → `posterQueries.poster(source)` 로 소스 파라미터화. 실종 소스 추가.
 
 ## FSD 슬라이스 매핑

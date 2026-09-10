@@ -57,7 +57,7 @@ export const MissingInfoSection = ({ missing }: { missing: MissingDetailDto }) =
 
       {!!missing.description && (
         <YStack gap={12}>
-          <Title>상세 특징</Title>
+          <Title>상세 설명</Title>
           <Body lineBreakStrategyIOS="hangul-word">{missing.description}</Body>
         </YStack>
       )}
