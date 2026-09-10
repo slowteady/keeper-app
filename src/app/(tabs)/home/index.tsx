@@ -17,6 +17,7 @@ import { SCREEN_GUTTER } from '@/shared/lib';
 import { useListRefreshing } from '@/shared/model';
 import { RouteErrorBoundary } from '@/shared/ui';
 import {
+  HeroReportCta,
   HomeAdoptSection,
   HomeFooterSection,
   HomeMissingHero,
@@ -81,6 +82,7 @@ const Page = () => {
           return (
             <View px={SCREEN_GUTTER} pt={hasNotice ? 8 : 24} pb={44}>
               <HomeMissingHero fallbackImages={IMAGES} />
+              <HeroReportCta />
             </View>
           );
         case 'notice':

@@ -25,6 +25,7 @@ export const useCreateMissing = () => {
       video: null,
       animalType: 'DOG',
       colorFeature: '',
+      description: undefined,
       lostAt: '',
       address: '',
       regionCode: null,

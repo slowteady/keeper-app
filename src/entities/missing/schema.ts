@@ -126,7 +126,8 @@ export const MissingCreateFormSchema = z.object({
   images: z.array(z.string()).min(1, '사진을 1장 이상 등록해 주세요'),
   video: MediaVideoSchema.nullable().optional(),
   animalType: z.enum(ANIMAL_TYPES),
-  colorFeature: z.string().trim().min(1, '특징을 입력해 주세요').max(500, '특징은 500자 이내로 입력해 주세요'),
+  colorFeature: z.string().trim().min(1, '특징을 입력해 주세요').max(60, '특징은 60자 이내로 입력해 주세요'),
+  description: z.string().trim().max(500, '상세 설명은 500자 이내로 입력해 주세요').optional(),
   lostAt: z
     .string()
     .min(1, '실종일시를 선택해 주세요')

@@ -13,6 +13,7 @@ export const toMissingCreateBody = (
 ): MissingCreateBody => ({
   animalType: form.animalType,
   colorFeature: form.colorFeature,
+  description: trimmed(form.description),
   lostAt: form.lostAt,
   lat: form.lat,
   lng: form.lng,

@@ -7,10 +7,10 @@ import { View, YStack } from 'tamagui';
 
 import { ADOPT_OPTIONS } from '@/entities/adopt';
 import { MissingCard, MissingCardSkeleton, MissingFeedItemDto } from '@/entities/missing';
-import { MissingFilterBar, useMissingFeed, useMissingFilter } from '@/features/missing';
+import { MissingFilterBar, MissingStatusFilter, useMissingFeed, useMissingFilter } from '@/features/missing';
 import { globalToast } from '@/shared/lib';
 import { useScrollToTop } from '@/shared/model';
-import { ButtonGroup, FeedNodata, ScrollToTopButton, ShowMoreButton } from '@/shared/ui';
+import { ButtonGroup, FeedNodata, ScrollToTopButton, ShowMoreButton, WriteFab } from '@/shared/ui';
 import { AdoptListSection } from '@/widgets/adopt-section';
 
 const SKELETON_ROWS = 3;
@@ -20,17 +20,19 @@ type AnimalType = (typeof ADOPT_OPTIONS.ANIMAL)[number]['id'];
 export const MissingListSection = () => {
   const router = useRouter();
   const [animalType, setAnimalType] = useState<AnimalType>('ALL');
+  const [status, setStatus] = useState<MissingStatusFilter>('ALL');
   const { ref, scrollY, onScroll, scrollToTop } = useScrollToTop<MissingFeedItemDto>();
   const { region, applyNearby, clear } = useMissingFilter();
   const { items, isLoading, isError, isFetchingNextPage, hasNextPage, refresh, fetchNextPage } = useMissingFeed({
     animalType: animalType === 'ALL' ? undefined : animalType,
     sido: region?.sido,
-    sigungu: region?.sigungu
+    sigungu: region?.sigungu,
+    status: status === 'ALL' ? undefined : status
   });
 
   useEffect(() => {
     ref.current?.scrollToOffset({ offset: 0, animated: false });
-  }, [animalType, region, ref]);
+  }, [animalType, region, status, ref]);
 
   const goDetail = useCallback(
     (item: MissingFeedItemDto) => {
@@ -88,7 +90,12 @@ export const MissingListSection = () => {
         header={
           <YStack mb={16} gap={14}>
             <ButtonGroup data={ADOPT_OPTIONS.ANIMAL} id={animalType} onChange={setAnimalType} />
-            <MissingFilterBar active={!!region} onPressNearby={handlePressNearby} />
+            <MissingFilterBar
+              active={!!region}
+              onPressNearby={handlePressNearby}
+              status={status}
+              onChangeStatus={setStatus}
+            />
           </YStack>
         }
         footer={
@@ -103,7 +110,13 @@ export const MissingListSection = () => {
         }
         contentContainerStyle={{ paddingTop: 8, paddingBottom: 24, paddingHorizontal: 20 }}
       />
-      <ScrollToTopButton scrollY={scrollY} onPress={scrollToTop} threshold={400} />
+      <WriteFab
+        label="실종글 쓰기"
+        onPress={() => router.push('/missing/write')}
+        scrollY={scrollY}
+        testID="missing-write-fab"
+      />
+      <ScrollToTopButton scrollY={scrollY} onPress={scrollToTop} threshold={400} bottom={80} />
     </View>
   );
 };
