@@ -24,7 +24,18 @@ const MISSING_URL = '/missing';
 
 export type MissingCreateBody = Pick<
   MissingCreateFormDto,
-  'animalType' | 'colorFeature' | 'lostAt' | 'lat' | 'lng' | 'address' | 'name' | 'age' | 'weight' | 'hasIdTag' | 'rfid'
+  | 'animalType'
+  | 'colorFeature'
+  | 'description'
+  | 'lostAt'
+  | 'lat'
+  | 'lng'
+  | 'address'
+  | 'name'
+  | 'age'
+  | 'weight'
+  | 'hasIdTag'
+  | 'rfid'
 > & {
   regionCode?: string | null;
   breed: string;

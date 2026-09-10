@@ -4,6 +4,7 @@ import { LayoutChangeEvent, TextInput } from 'react-native';
 import { Form, styled, Text, View, YStack } from 'tamagui';
 
 import { MISSING_FORM_OPTIONS, MissingCreateFormDto } from '@/entities/missing';
+import { MISSING_SAFETY_NOTICE, SafetyNotice } from '@/features/community/safety';
 import {
   ContactSelectField,
   DateTimeField,
@@ -62,10 +63,20 @@ export const MissingForm = ({
             control={control}
             label="특징"
             required
+            maxLength={60}
+            rows={2}
+            minH={64}
+            helper="포스터에 표시돼요. 한눈에 알아볼 핵심 단서만 적어주세요"
+            placeholder="예) 코에 반점, 뒷다리 절음, 파란 목줄"
+          />
+          <LabelTextArea
+            name="description"
+            control={control}
+            label="상세 설명"
             maxLength={500}
             rows={4}
             minH={100}
-            placeholder="예) 크림색 소형 푸들, 왼쪽 귀에 검은 반점, 빨간 목줄 착용, 낯가림 있고 겁이 많아요"
+            placeholder="실종 당시 상황, 성격, 건강 상태 등 자유롭게 적어주세요"
           />
           <DateTimeField
             name="lostAt"
@@ -146,7 +157,7 @@ export const MissingForm = ({
 
       <Divider />
 
-      <Section onLayout={onContactLayout}>
+      <Section onLayout={onContactLayout} gap={16}>
         <ContactSelectField
           name="contact"
           control={control}
@@ -156,6 +167,7 @@ export const MissingForm = ({
           required
           inputRef={fieldRefs?.contactInput}
         />
+        <SafetyNotice message={MISSING_SAFETY_NOTICE} />
       </Section>
     </Form>
   );

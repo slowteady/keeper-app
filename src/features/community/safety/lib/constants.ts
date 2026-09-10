@@ -16,4 +16,4 @@ export const CONTACT_SAFETY_NOTICE =
 export const FREE_ADOPTION_NOTICE = '책임비 분양비 등 금전요구는 금지되며,\n위반 시 제재 대상이 될 수 있어요';
 
 export const MISSING_SAFETY_NOTICE =
-  '사례금은 keeper가 관여하지 않는 당사자 간 협의 사항이에요\n선입금 요구 등 금전 사기에 주의해주세요';
+  '입력한 연락처는 발견 소식을 받기 위해 신고를 보는 이용자에게 공개돼요\n찾은 뒤 상태를 찾음으로 바꾸거나 삭제하면 공개가 중단돼요\n사례금은 keeper가 관여하지 않는 당사자 간 협의 사항이며, 선입금 요구 등 금전 사기에 주의해주세요';

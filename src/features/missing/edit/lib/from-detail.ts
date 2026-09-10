@@ -19,6 +19,7 @@ export const fromMissingDetail = (
     : null,
   animalType: detail.animalType,
   colorFeature: detail.colorFeature,
+  description: detail.description ?? undefined,
   lostAt: detail.lostAt,
   address: detail.address,
   lat: detail.lat,

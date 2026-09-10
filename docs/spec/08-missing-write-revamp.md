@@ -24,7 +24,7 @@
 
 `breed` 는 프론트 `specificType`(품종 시트)에 대응, `gender` 는 `M`/`F` 문자열을 그대로 저장한다(커뮤니티 패리티).
 
-`description` 은 이번 사이클에서 폼 노출하지 않는다. 컬럼은 유지(추후 "실종 정황" 확장 여지).
+`description` 은 후속 사이클(특징 필드 분리)에서 폼에 노출했다. `colorFeature` 는 포스터에 그대로 실리는 짧은 식별 단서(60자 필수), `description` 은 상세 화면 전용 자유 서술(500자 선택)로 역할을 나눈다.
 
 ### 1.2 `PostContact` 다형 연결
 
@@ -93,25 +93,26 @@ queryKey·엔드포인트는 **변경 없음**. 요청/응답 body 만 바뀐다
 
 ## 4. 스키마 3중 검증
 
-| 필드                    | frontend zod (Form)                                   | backend DTO                      | DB column                                                      | 일치                             |
-| ----------------------- | ----------------------------------------------------- | -------------------------------- | -------------------------------------------------------------- | -------------------------------- |
-| `images`                | `string[]` min 1                                      | `string[]` 1~10                  | `Json?`                                                        | ✅                               |
-| `video`                 | `MediaVideoSchema \| null`                            | `{url, thumbnailUrl, duration}?` | `video_url`/`video_thumbnail_url`/`video_duration` 각 nullable | ✅ (평탄화 매핑)                 |
-| `animalType`            | `enum(DOG,CAT,OTHER)`                                 | 동일 enum                        | `AnimalType` NOT NULL                                          | ✅                               |
-| `colorFeature`          | `trim().min(1).max(500)`                              | `min 1`                          | `Text` NOT NULL                                                | ⚠️ **DTO 에 max 500 추가**       |
-| `lostAt`                | `string` min 1                                        | ISO datetime                     | `Timestamptz(6)` NOT NULL                                      | ✅                               |
-| `lat`/`lng`             | `z.number()` (메시지 없음)                            | number                           | `Decimal(9,6)` NOT NULL                                        | ⚠️ **zod 한글 메시지 추가**      |
-| `address`               | `min(1)`                                              | `min 1`                          | `VarChar(255)` NOT NULL                                        | ⚠️ **양쪽 max 255 추가**         |
-| `regionCode`            | `nullable().optional()`                               | `optional`                       | `VarChar(10)?`                                                 | ✅                               |
-| `contacts`              | `array().min(1)`, 요소 `{type,value}`, SNS URL refine | 동일                             | `PostContact` 1:N                                              | ✅ (커뮤니티와 동일 규칙 재사용) |
-| `name`                  | `trim().max(30).optional()`                           | `max 30 optional`                | `VarChar(30)?`                                                 | ✅                               |
-| `gender`                | `enum(M,F).optional()`                                | 동일                             | `VarChar(10)?`                                                 | ✅                               |
-| `breed`(`specificType`) | `max(100).optional()`                                 | `max 100 optional`               | `VarChar(100)?`                                                | ✅                               |
-| `age`                   | `string().optional()`                                 | `optional`                       | `Text?`                                                        | ✅                               |
-| `weight`                | `string().optional()`                                 | `optional`                       | `Text?`                                                        | ✅                               |
-| `hasIdTag`              | `enum(Y,N).optional()`                                | `YnType optional`                | `YnType?`                                                      | ✅                               |
-| ~~`reward`~~            | 제거                                                  | 제거                             | DROP                                                           | ✅                               |
-| ~~`contactPhone`~~      | 제거                                                  | 제거                             | DROP                                                           | ✅                               |
+| 필드                    | frontend zod (Form)                                   | backend DTO                      | DB column                                                      | 일치                              |
+| ----------------------- | ----------------------------------------------------- | -------------------------------- | -------------------------------------------------------------- | --------------------------------- |
+| `images`                | `string[]` min 1                                      | `string[]` 1~10                  | `Json?`                                                        | ✅                                |
+| `video`                 | `MediaVideoSchema \| null`                            | `{url, thumbnailUrl, duration}?` | `video_url`/`video_thumbnail_url`/`video_duration` 각 nullable | ✅ (평탄화 매핑)                  |
+| `animalType`            | `enum(DOG,CAT,OTHER)`                                 | 동일 enum                        | `AnimalType` NOT NULL                                          | ✅                                |
+| `colorFeature`          | `trim().min(1).max(60)`                               | `trim().min(1).max(60)`          | `Text` NOT NULL                                                | ✅ (특징 필드 분리에서 60자 확정) |
+| `description`           | `trim().max(500).optional()`                          | `trim().max(500).optional()`     | `Text` NULL                                                    | ✅ (특징 필드 분리에서 폼 노출)   |
+| `lostAt`                | `string` min 1                                        | ISO datetime                     | `Timestamptz(6)` NOT NULL                                      | ✅                                |
+| `lat`/`lng`             | `z.number()` (메시지 없음)                            | number                           | `Decimal(9,6)` NOT NULL                                        | ⚠️ **zod 한글 메시지 추가**       |
+| `address`               | `min(1)`                                              | `min 1`                          | `VarChar(255)` NOT NULL                                        | ⚠️ **양쪽 max 255 추가**          |
+| `regionCode`            | `nullable().optional()`                               | `optional`                       | `VarChar(10)?`                                                 | ✅                                |
+| `contacts`              | `array().min(1)`, 요소 `{type,value}`, SNS URL refine | 동일                             | `PostContact` 1:N                                              | ✅ (커뮤니티와 동일 규칙 재사용)  |
+| `name`                  | `trim().max(30).optional()`                           | `max 30 optional`                | `VarChar(30)?`                                                 | ✅                                |
+| `gender`                | `enum(M,F).optional()`                                | 동일                             | `VarChar(10)?`                                                 | ✅                                |
+| `breed`(`specificType`) | `max(100).optional()`                                 | `max 100 optional`               | `VarChar(100)?`                                                | ✅                                |
+| `age`                   | `string().optional()`                                 | `optional`                       | `Text?`                                                        | ✅                                |
+| `weight`                | `string().optional()`                                 | `optional`                       | `Text?`                                                        | ✅                                |
+| `hasIdTag`              | `enum(Y,N).optional()`                                | `YnType optional`                | `YnType?`                                                      | ✅                                |
+| ~~`reward`~~            | 제거                                                  | 제거                             | DROP                                                           | ✅                                |
+| ~~`contactPhone`~~      | 제거                                                  | 제거                             | DROP                                                           | ✅                                |
 
 ⚠️ 표시 3건은 이번 사이클의 추가 작업 항목이다.
 

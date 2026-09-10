@@ -10,6 +10,7 @@ import { FieldLabel } from './field-label';
 export interface LabelTextAreaProps<T extends FieldValues> extends TextAreaProps {
   label: string;
   required?: boolean;
+  helper?: string;
   name: FieldPath<T>;
   control: Control<T>;
 }
@@ -17,6 +18,7 @@ export interface LabelTextAreaProps<T extends FieldValues> extends TextAreaProps
 export const LabelTextArea = <T extends FieldValues>({
   label,
   required,
+  helper,
   name,
   control,
   ...props
@@ -45,6 +47,12 @@ export const LabelTextArea = <T extends FieldValues>({
                 </XStack>
               )}
             </XStack>
+
+            {helper && (
+              <Text fontSize={13} lineHeight={18} color="$black500" mb={8}>
+                {helper}
+              </Text>
+            )}
 
             <TextArea
               variant="fill"

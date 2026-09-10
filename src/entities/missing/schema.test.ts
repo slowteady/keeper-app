@@ -285,4 +285,20 @@ describe('MissingCreateFormSchema', () => {
   it('colorFeature 빈 값은 거부', () => {
     expect(() => MissingCreateFormSchema.parse({ ...form, colorFeature: '' })).toThrow();
   });
+
+  it('colorFeature 60자 초과는 거부', () => {
+    expect(() => MissingCreateFormSchema.parse({ ...form, colorFeature: '가'.repeat(61) })).toThrow();
+  });
+
+  it('colorFeature 60자는 통과', () => {
+    expect(MissingCreateFormSchema.parse({ ...form, colorFeature: '가'.repeat(60) }).colorFeature).toHaveLength(60);
+  });
+
+  it('description 없이도 통과', () => {
+    expect(MissingCreateFormSchema.parse(form).description).toBeUndefined();
+  });
+
+  it('description 500자 초과는 거부', () => {
+    expect(() => MissingCreateFormSchema.parse({ ...form, description: '가'.repeat(501) })).toThrow();
+  });
 });
