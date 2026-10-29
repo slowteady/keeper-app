@@ -22,7 +22,6 @@
 | [api-patterns](api-patterns.md)           | query/mutation, 스키마, 에러 처리를 다룰 때 |
 | [testing](testing.md)                     | 테스트를 쓰거나 mock 방식을 정할 때         |
 | [library-catalog](library-catalog.md)     | 새 컴포넌트를 직접 짜기 전에                |
-| [analytics-events](analytics-events.md)   | 분석 이벤트를 추가·변경할 때                |
 
 ## 이전 기록
 
