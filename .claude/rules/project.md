@@ -32,7 +32,7 @@
 ## 화면
 
 - 디자인 시스템: Tamagui 토큰. 색 코드 직접 사용 금지.
-- 문구: 해요체. 추상적인 미사여구 없이 구체적으로 쓴다.
+- 화면 문구와 배치: 공통 규칙은 `ui.md`. 더해서 추상적인 미사여구 없이 구체적으로 쓴다.
 
 ## 브랜치
 
@@ -42,7 +42,7 @@
 
 ## 작업 흐름
 
-- PR 자동 리뷰(GitHub Actions `claude-review.yml`)는 쓰지 않는다. 보일러플레이트를 복사할 때 그 파일은 빼고, 리뷰는 PR 전에 로컬 `pr-review`로 한다 → keeper-app `docs/decisions/0001-이슈-기반-작업.md`
+- PR 자동 리뷰(GitHub Actions `claude-review.yml`)는 쓰지 않는다. 보일러플레이트를 복사할 때 그 파일은 빼고, 리뷰는 PR 전에 로컬 `pr-review`로 한다 → keeper-app `docs/decisions/0001-issue-based-workflow.md`
 
 ## 검증
 
